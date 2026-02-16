@@ -7,17 +7,18 @@ import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { formatMoney, formatDate } from '@/lib/format';
 import { russianDocsApi } from '@/api/russianDocs';
+import { t } from '@/i18n';
 import type { RussianDocument } from './types';
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('russianDocs.projectSolnechny') },
+  { value: '3', label: t('russianDocs.projectBridge') },
+  { value: '6', label: t('russianDocs.projectMall') },
 ];
 
-const contractOptions = [
-  { value: 'c1', label: 'Договор ГП №12-2025' },
-  { value: 'c2', label: 'Договор субподряда №45-2025' },
+const getContractOptions = () => [
+  { value: 'c1', label: t('russianDocs.contractGP') },
+  { value: 'c2', label: t('russianDocs.contractSubcontract') },
 ];
 
 interface AvailableKs2 {
@@ -90,64 +91,64 @@ const FormKs3Page: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Новая справка КС-3"
-        subtitle="Справка о стоимости выполненных работ и затрат (форма КС-3)"
+        title={t('russianDocs.ks3Title')}
+        subtitle={t('russianDocs.ks3Subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Исп. документация', href: '/russian-docs' },
-          { label: 'Новая КС-3' },
+          { label: t('russianDocs.breadcrumbHome'), href: '/' },
+          { label: t('russianDocs.breadcrumbExecDocs'), href: '/russian-docs' },
+          { label: t('russianDocs.breadcrumbNewKs3') },
         ]}
         actions={
           <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/russian-docs')}>
-            Назад
+            {t('russianDocs.back')}
           </Button>
         }
       />
 
       <form onSubmit={handleSubmit}>
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 space-y-6 mb-6">
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Реквизиты справки</h3>
+          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('russianDocs.ks3Requisites')}</h3>
 
-          <FormField label="Наименование" required>
-            <Input placeholder="Справка о стоимости за..." value={name} onChange={(e) => setName(e.target.value)} />
+          <FormField label={t('russianDocs.nameLabel')} required>
+            <Input placeholder={t('russianDocs.ks3NamePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
           </FormField>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Проект" required>
-              <Select options={projectOptions} value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="Выберите проект" />
+            <FormField label={t('russianDocs.project')} required>
+              <Select options={getProjectOptions()} value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder={t('russianDocs.ks3SelectProject')} />
             </FormField>
-            <FormField label="Договор" required>
-              <Select options={contractOptions} value={contractId} onChange={(e) => setContractId(e.target.value)} placeholder="Выберите договор" />
+            <FormField label={t('russianDocs.contract')} required>
+              <Select options={getContractOptions()} value={contractId} onChange={(e) => setContractId(e.target.value)} placeholder={t('russianDocs.ks3SelectContract')} />
             </FormField>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <FormField label="Дата справки" required>
+            <FormField label={t('russianDocs.ks3CertDate')} required>
               <Input type="date" value={documentDate} onChange={(e) => setDocumentDate(e.target.value)} />
             </FormField>
-            <FormField label="Период с" required>
+            <FormField label={t('russianDocs.ks3PeriodFrom')} required>
               <Input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
             </FormField>
-            <FormField label="Период по" required>
+            <FormField label={t('russianDocs.ks3PeriodTo')} required>
               <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
             </FormField>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Заказчик" required>
-              <Input placeholder="ООО &quot;...&quot;" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+            <FormField label={t('russianDocs.customer')} required>
+              <Input placeholder={t('russianDocs.ks3CustomerPlaceholder')} value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
             </FormField>
-            <FormField label="Подрядчик" required>
-              <Input placeholder="ООО &quot;...&quot;" value={contractorName} onChange={(e) => setContractorName(e.target.value)} />
+            <FormField label={t('russianDocs.contractor')} required>
+              <Input placeholder={t('russianDocs.ks3ContractorPlaceholder')} value={contractorName} onChange={(e) => setContractorName(e.target.value)} />
             </FormField>
           </div>
         </div>
 
         {/* KS-2 selection */}
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Акты КС-2 для включения в справку</h3>
+          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('russianDocs.ks3Ks2Title')}</h3>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-            Выберите акты КС-2 за отчётный период, которые войдут в данную справку КС-3.
+            {t('russianDocs.ks3Ks2Hint')}
           </p>
 
           <div className="space-y-3">
@@ -169,7 +170,7 @@ const FormKs3Page: React.FC = () => {
                 <FileText size={18} className="text-neutral-400 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{ks2.number} — {ks2.name}</p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Дата: {formatDate(ks2.documentDate)}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('russianDocs.ks3Ks2Date')}: {formatDate(ks2.documentDate)}</p>
                 </div>
                 <span className="text-sm font-medium tabular-nums text-neutral-700 dark:text-neutral-300 flex-shrink-0">
                   {formatMoney(ks2.totalWithVat)}
@@ -181,10 +182,10 @@ const FormKs3Page: React.FC = () => {
           {selectedKs2.length > 0 && (
             <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
               <span className="text-sm text-neutral-500 dark:text-neutral-400">
-                Выбрано актов: <strong>{selectedKs2.length}</strong>
+                {t('russianDocs.ks3SelectedCount')}: <strong>{selectedKs2.length}</strong>
               </span>
               <div className="text-right">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Итого стоимость работ</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.ks3WorksTotal')}</p>
                 <p className="text-lg font-semibold tabular-nums text-neutral-900 dark:text-neutral-100">{formatMoney(worksTotal)}</p>
               </div>
             </div>
@@ -192,9 +193,9 @@ const FormKs3Page: React.FC = () => {
         </div>
 
         <div className="flex items-center justify-end gap-3">
-          <Button variant="secondary" onClick={() => navigate('/russian-docs')}>Отмена</Button>
+          <Button variant="secondary" onClick={() => navigate('/russian-docs')}>{t('russianDocs.cancel')}</Button>
           <Button type="submit" iconLeft={<Save size={16} />} disabled={!name || !projectId || !contractId || selectedKs2.length === 0}>
-            Создать справку КС-3
+            {t('russianDocs.ks3Submit')}
           </Button>
         </div>
       </form>

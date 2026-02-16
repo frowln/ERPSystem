@@ -53,7 +53,7 @@ const ChangeEventDetailPage: React.FC = () => {
   });
 
   if (isLoading || !event) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>;
   }
 
   const e = event;

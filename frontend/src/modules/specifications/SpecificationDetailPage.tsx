@@ -15,6 +15,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { specificationsApi } from '@/api/specifications';
 import { formatMoney, formatMoneyCompact } from '@/lib/format';
+import { t } from '@/i18n';
 import type { Specification, SpecItem } from '@/types';
 
 const SpecificationDetailPage: React.FC = () => {
@@ -62,7 +63,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'itemType',
-        header: 'Тип',
+        header: t('specifications.detailColType'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -74,7 +75,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('specifications.detailColName'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -87,7 +88,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'quantity',
-        header: 'Количество',
+        header: t('specifications.detailColQuantity'),
         size: 100,
         cell: ({ row }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">
@@ -97,7 +98,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'unitOfMeasure',
-        header: 'Ед.изм.',
+        header: t('specifications.detailColUnit'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>()}</span>
@@ -105,7 +106,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'plannedAmount',
-        header: 'Сумма',
+        header: t('specifications.detailColAmount'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -115,7 +116,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'procurementStatus',
-        header: 'Статус закупки',
+        header: t('specifications.detailColProcurementStatus'),
         size: 130,
         cell: ({ getValue }) => {
           const val = getValue<string>();
@@ -135,7 +136,7 @@ const SpecificationDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'estimateStatus',
-        header: 'Статус сметы',
+        header: t('specifications.detailColEstimateStatus'),
         size: 120,
         cell: ({ getValue }) => {
           const val = getValue<string>();
@@ -159,11 +160,11 @@ const SpecificationDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={s?.name ?? ''}
-        subtitle={`${s?.projectName ?? ''} / Версия ${s?.version ?? ''}`}
+        subtitle={t('specifications.detailVersionSubtitle', { project: s?.projectName ?? '', version: String(s?.version ?? '') })}
         backTo="/specifications"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Спецификации', href: '/specifications' },
+          { label: t('specifications.breadcrumbHome'), href: '/' },
+          { label: t('specifications.breadcrumbSpecifications'), href: '/specifications' },
           { label: s?.name ?? '' },
         ]}
         actions={
@@ -180,25 +181,25 @@ const SpecificationDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<Layers size={18} />}
-          label="Всего позиций"
+          label={t('specifications.detailTotalItems')}
           value={String(summary.total)}
           subtitle={formatMoneyCompact(s?.totalAmount ?? 0)}
         />
         <MetricCard
           icon={<Package size={18} />}
-          label="Материалы"
+          label={t('specifications.detailMaterials')}
           value={String(summary.materialCount)}
           subtitle={formatMoneyCompact(summary.materialAmount)}
         />
         <MetricCard
           icon={<Wrench size={18} />}
-          label="Работы"
+          label={t('specifications.detailWorks')}
           value={String(summary.workCount)}
           subtitle={formatMoneyCompact(summary.workAmount)}
         />
         <MetricCard
           icon={<Cpu size={18} />}
-          label="Оборудование"
+          label={t('specifications.detailEquipment')}
           value={String(summary.equipmentCount)}
           subtitle={formatMoneyCompact(summary.equipmentAmount)}
         />
@@ -212,8 +213,8 @@ const SpecificationDetailPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет позиций"
-        emptyDescription="Добавьте позиции в спецификацию"
+        emptyTitle={t('specifications.detailEmptyTitle')}
+        emptyDescription={t('specifications.detailEmptyDescription')}
       />
     </div>
   );

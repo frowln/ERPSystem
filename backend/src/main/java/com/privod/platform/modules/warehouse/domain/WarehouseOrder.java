@@ -23,6 +23,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "warehouse_orders", indexes = {
+        @Index(name = "idx_wo_org", columnList = "organization_id"),
+        @Index(name = "idx_wo_org_status", columnList = "organization_id, status"),
+        @Index(name = "idx_wo_org_number", columnList = "organization_id, order_number", unique = true),
         @Index(name = "idx_wo_type", columnList = "order_type"),
         @Index(name = "idx_wo_warehouse", columnList = "warehouse_id"),
         @Index(name = "idx_wo_stock_movement", columnList = "stock_movement_id"),
@@ -36,7 +39,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class WarehouseOrder extends BaseEntity {
 
-    @Column(name = "order_number", nullable = false, unique = true, length = 50)
+    @Column(name = "order_number", nullable = false, length = 50)
     private String orderNumber;
 
     @Enumerated(EnumType.STRING)
@@ -83,6 +86,6 @@ public class WarehouseOrder extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    @Column(name = "organization_id")
+    @Column(name = "organization_id", nullable = false)
     private UUID organizationId;
 }

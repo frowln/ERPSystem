@@ -1,6 +1,9 @@
 package com.privod.platform.modules.warehouse.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.warehouse.domain.WarehouseLocation;
 import com.privod.platform.modules.warehouse.domain.WarehouseLocationType;
 import com.privod.platform.modules.warehouse.repository.WarehouseLocationRepository;
@@ -25,13 +28,19 @@ import java.util.UUID;
 public class WarehouseLocationService {
 
     private final WarehouseLocationRepository locationRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<WarehouseLocationResponse> listLocations(String search, WarehouseLocationType locationType,
                                                           UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
         Specification<WarehouseLocation> spec = Specification
-                .where(WarehouseLocationSpecification.notDeleted())
+                .where(WarehouseLocationSpecification.belongsToOrganization(organizationId))
+                .and(WarehouseLocationSpecification.notDeleted())
                 .and(WarehouseLocationSpecification.hasLocationType(locationType))
                 .and(WarehouseLocationSpecification.belongsToProject(projectId))
                 .and(WarehouseLocationSpecification.searchByNameOrCode(search));
@@ -41,13 +50,16 @@ public class WarehouseLocationService {
 
     @Transactional(readOnly = true)
     public WarehouseLocationResponse getLocation(UUID id) {
-        WarehouseLocation location = getLocationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        WarehouseLocation location = getLocationOrThrow(id, organizationId);
         return WarehouseLocationResponse.fromEntity(location);
     }
 
     @Transactional(readOnly = true)
     public List<WarehouseLocationResponse> getChildren(UUID parentId) {
-        return locationRepository.findByParentIdAndDeletedFalse(parentId)
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getLocationOrThrow(parentId, organizationId);
+        return locationRepository.findByOrganizationIdAndParentIdAndDeletedFalse(organizationId, parentId)
                 .stream()
                 .map(WarehouseLocationResponse::fromEntity)
                 .toList();
@@ -55,11 +67,17 @@ public class WarehouseLocationService {
 
     @Transactional
     public WarehouseLocationResponse createLocation(CreateWarehouseLocationRequest request) {
-        if (request.code() != null && locationRepository.existsByCodeAndDeletedFalse(request.code())) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.code() != null
+                && locationRepository.existsByOrganizationIdAndCodeAndDeletedFalse(organizationId, request.code())) {
             throw new IllegalArgumentException("Склад с кодом '" + request.code() + "' уже существует");
         }
+        validateProjectTenant(request.projectId(), organizationId);
+        validateUserTenant(request.responsibleId(), organizationId);
+        validateParentTenant(request.parentId(), organizationId);
 
         WarehouseLocation location = WarehouseLocation.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .code(request.code())
                 .locationType(request.locationType())
@@ -80,14 +98,15 @@ public class WarehouseLocationService {
 
     @Transactional
     public WarehouseLocationResponse updateLocation(UUID id, UpdateWarehouseLocationRequest request) {
-        WarehouseLocation location = getLocationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        WarehouseLocation location = getLocationOrThrow(id, organizationId);
 
         if (request.name() != null) {
             location.setName(request.name());
         }
         if (request.code() != null) {
             if (!request.code().equals(location.getCode())
-                    && locationRepository.existsByCodeAndDeletedFalse(request.code())) {
+                    && locationRepository.existsByOrganizationIdAndCodeAndDeletedFalse(organizationId, request.code())) {
                 throw new IllegalArgumentException("Склад с кодом '" + request.code() + "' уже существует");
             }
             location.setCode(request.code());
@@ -96,18 +115,24 @@ public class WarehouseLocationService {
             location.setLocationType(request.locationType());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             location.setProjectId(request.projectId());
         }
         if (request.address() != null) {
             location.setAddress(request.address());
         }
         if (request.responsibleId() != null) {
+            validateUserTenant(request.responsibleId(), organizationId);
             location.setResponsibleId(request.responsibleId());
         }
         if (request.responsibleName() != null) {
             location.setResponsibleName(request.responsibleName());
         }
         if (request.parentId() != null) {
+            if (id.equals(request.parentId())) {
+                throw new IllegalArgumentException("Локация не может быть родителем самой себе");
+            }
+            validateParentTenant(request.parentId(), organizationId);
             location.setParentId(request.parentId());
         }
         if (request.active() != null) {
@@ -123,7 +148,8 @@ public class WarehouseLocationService {
 
     @Transactional
     public void deleteLocation(UUID id) {
-        WarehouseLocation location = getLocationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        WarehouseLocation location = getLocationOrThrow(id, organizationId);
         location.softDelete();
         locationRepository.save(location);
         auditService.logDelete("WarehouseLocation", id);
@@ -131,9 +157,31 @@ public class WarehouseLocationService {
         log.info("Warehouse location deleted: {} ({})", location.getName(), id);
     }
 
-    private WarehouseLocation getLocationOrThrow(UUID id) {
-        return locationRepository.findById(id)
-                .filter(l -> !l.isDeleted())
+    private WarehouseLocation getLocationOrThrow(UUID id, UUID organizationId) {
+        return locationRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Складская локация не найдена: " + id));
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+        projectRepository.findByIdAndOrganizationIdAndDeletedFalse(projectId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+    }
+
+    private void validateParentTenant(UUID parentId, UUID organizationId) {
+        if (parentId == null) {
+            return;
+        }
+        getLocationOrThrow(parentId, organizationId);
     }
 }

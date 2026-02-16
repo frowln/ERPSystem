@@ -12,6 +12,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { closeoutApi } from '@/api/closeout';
 import { formatDate, formatPercent } from '@/lib/format';
+import { t } from '@/i18n';
 import type { CommissioningChecklist } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange'> = {
@@ -22,13 +23,13 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   ON_HOLD: 'orange',
 };
 
-const statusLabels: Record<string, string> = {
-  NOT_STARTED: 'Не начат',
-  IN_PROGRESS: 'В процессе',
-  COMPLETED: 'Завершён',
-  FAILED: 'Не пройден',
-  ON_HOLD: 'Приостановлен',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  NOT_STARTED: t('closeout.commStatusNotStarted'),
+  IN_PROGRESS: t('closeout.commStatusInProgress'),
+  COMPLETED: t('closeout.commStatusCompleted'),
+  FAILED: t('closeout.commStatusFailed'),
+  ON_HOLD: t('closeout.commStatusOnHold'),
+});
 
 type TabId = 'all' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
 
@@ -85,17 +86,19 @@ const CommissioningListPage: React.FC = () => {
     ), 0) / checklists.length;
   }, [checklists]);
 
+  const statusLabels = getStatusLabels();
+
   const columns = useMemo<ColumnDef<CommissioningChecklist, unknown>[]>(
     () => [
       {
         accessorKey: 'checklistNumber',
-        header: '\u2116',
+        header: t('closeout.commListColNumber'),
         size: 120,
         cell: ({ getValue }) => <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'systemName',
-        header: 'Система',
+        header: t('closeout.commListColSystem'),
         size: 240,
         cell: ({ row }) => (
           <div>
@@ -106,7 +109,7 @@ const CommissioningListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('closeout.commListColStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -118,7 +121,7 @@ const CommissioningListPage: React.FC = () => {
       },
       {
         id: 'progress',
-        header: 'Прогресс',
+        header: t('closeout.commListColProgress'),
         size: 150,
         cell: ({ row }) => {
           const progressPercent = row.original.totalItems > 0
@@ -136,7 +139,7 @@ const CommissioningListPage: React.FC = () => {
       },
       {
         accessorKey: 'passedItems',
-        header: 'Прошли / Не прошли',
+        header: t('closeout.commListColPassedFailed'),
         size: 160,
         cell: ({ row }) => (
           <span className="text-sm">
@@ -148,17 +151,17 @@ const CommissioningListPage: React.FC = () => {
       },
       {
         accessorKey: 'inspectorName',
-        header: 'Инспектор',
+        header: t('closeout.commListColInspector'),
         size: 170,
       },
       {
         accessorKey: 'inspectionDate',
-        header: 'Дата проверки',
+        header: t('closeout.commListColInspectionDate'),
         size: 130,
         cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
       },
     ],
-    [],
+    [statusLabels],
   );
 
   const handleRowClick = useCallback(
@@ -169,12 +172,12 @@ const CommissioningListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Пусконаладочные работы"
-        subtitle={`${checklists.length} чек-листов в системе`}
+        title={t('closeout.commListTitle')}
+        subtitle={t('closeout.commListSubtitle', { count: String(checklists.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Завершение', href: '/closeout/dashboard' },
-          { label: 'Пусконаладка' },
+          { label: t('closeout.breadcrumbHome'), href: '/' },
+          { label: t('closeout.breadcrumbCloseout'), href: '/closeout/dashboard' },
+          { label: t('closeout.breadcrumbCommissioning') },
         ]}
         actions={(
           <div className="flex items-center gap-2">
@@ -183,18 +186,18 @@ const CommissioningListPage: React.FC = () => {
               iconLeft={<LayoutGrid size={16} />}
               onClick={() => navigate('/closeout/commissioning/board')}
             >
-              Доска
+              {t('closeout.commListBoardButton')}
             </Button>
             <Button iconLeft={<Plus size={16} />}>
-              Новый чек-лист
+              {t('closeout.commListNewChecklist')}
             </Button>
           </div>
         )}
         tabs={[
-          { id: 'all', label: 'Все', count: counts.all },
-          { id: 'IN_PROGRESS', label: 'В процессе', count: counts.in_progress },
-          { id: 'COMPLETED', label: 'Завершены', count: counts.completed },
-          { id: 'FAILED', label: 'Не пройдены', count: counts.failed },
+          { id: 'all', label: t('closeout.commListTabAll'), count: counts.all },
+          { id: 'IN_PROGRESS', label: t('closeout.commListTabInProgress'), count: counts.in_progress },
+          { id: 'COMPLETED', label: t('closeout.commListTabCompleted'), count: counts.completed },
+          { id: 'FAILED', label: t('closeout.commListTabFailed'), count: counts.failed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -203,25 +206,25 @@ const CommissioningListPage: React.FC = () => {
       {isError && checklists.length === 0 ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить чек-листы пусконаладки"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('closeout.commListErrorTitle')}
+          description={t('closeout.checkConnection')}
+          actionLabel={t('closeout.retryAction')}
           onAction={() => { void refetch(); }}
         />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <MetricCard icon={<ClipboardCheck size={18} />} label="Всего чек-листов" value={counts.all} />
-            <MetricCard icon={<Clock size={18} />} label="В процессе" value={counts.in_progress} subtitle="ожидают проверки" />
-            <MetricCard icon={<CheckCircle2 size={18} />} label="Завершены" value={counts.completed} />
-            <MetricCard icon={<XCircle size={18} />} label="Средняя готовность" value={formatPercent(avgCompletion)} />
+            <MetricCard icon={<ClipboardCheck size={18} />} label={t('closeout.commListMetricTotal')} value={counts.all} />
+            <MetricCard icon={<Clock size={18} />} label={t('closeout.commListMetricInProgress')} value={counts.in_progress} subtitle={t('closeout.commListMetricInProgressSubtitle')} />
+            <MetricCard icon={<CheckCircle2 size={18} />} label={t('closeout.commListMetricCompleted')} value={counts.completed} />
+            <MetricCard icon={<XCircle size={18} />} label={t('closeout.commListMetricAvgCompletion')} value={formatPercent(avgCompletion)} />
           </div>
 
           <div className="flex items-center gap-3 mb-4">
             <div className="relative flex-1 max-w-xs">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
               <Input
-                placeholder="Поиск по номеру, системе..."
+                placeholder={t('closeout.commListSearchPlaceholder')}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 className="pl-9"
@@ -229,7 +232,7 @@ const CommissioningListPage: React.FC = () => {
             </div>
             <Select
               options={[
-                { value: '', label: 'Все статусы' },
+                { value: '', label: t('closeout.commListAllStatuses') },
                 ...Object.entries(statusLabels).map(([value, label]) => ({ value, label })),
               ]}
               value={statusFilter}
@@ -248,8 +251,8 @@ const CommissioningListPage: React.FC = () => {
             enableDensityToggle
             enableExport
             pageSize={20}
-            emptyTitle="Нет чек-листов пусконаладки"
-            emptyDescription="Создайте первый чек-лист для начала проверок"
+            emptyTitle={t('closeout.commListEmptyTitle')}
+            emptyDescription={t('closeout.commListEmptyDescription')}
           />
         </>
       )}

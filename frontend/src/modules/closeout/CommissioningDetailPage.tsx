@@ -8,6 +8,7 @@ import { EmptyState } from '@/design-system/components/EmptyState';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { closeoutApi } from '@/api/closeout';
 import { formatDate, formatDateTime, formatPercent } from '@/lib/format';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange'> = {
   NOT_STARTED: 'gray',
@@ -17,13 +18,13 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   ON_HOLD: 'orange',
 };
 
-const statusLabels: Record<string, string> = {
-  NOT_STARTED: 'Не начат',
-  IN_PROGRESS: 'В процессе',
-  COMPLETED: 'Завершён',
-  FAILED: 'Не пройден',
-  ON_HOLD: 'Приостановлен',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  NOT_STARTED: t('closeout.commStatusNotStarted'),
+  IN_PROGRESS: t('closeout.commStatusInProgress'),
+  COMPLETED: t('closeout.commStatusCompleted'),
+  FAILED: t('closeout.commStatusFailed'),
+  ON_HOLD: t('closeout.commStatusOnHold'),
+});
 
 const CommissioningDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,30 +41,32 @@ const CommissioningDetailPage: React.FC = () => {
     enabled: Boolean(id),
   });
 
+  const statusLabels = getStatusLabels();
+
   if (!id) {
-    return <EmptyState variant="ERROR" title="Некорректный идентификатор чек-листа" />;
+    return <EmptyState variant="ERROR" title={t('closeout.commDetailInvalidId')} />;
   }
 
   if (isError && !checklist) {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Чек-лист пусконаладки"
+          title={t('closeout.commDetailChecklistTitle')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Пусконаладка', href: '/closeout/commissioning' },
+            { label: t('closeout.breadcrumbHome'), href: '/' },
+            { label: t('closeout.breadcrumbCommissioning'), href: '/closeout/commissioning' },
           ]}
           actions={(
             <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/closeout/commissioning')}>
-              Назад к списку
+              {t('closeout.backToList')}
             </Button>
           )}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить чек-лист"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('closeout.commDetailErrorTitle')}
+          description={t('closeout.checkConnection')}
+          actionLabel={t('closeout.retryAction')}
           onAction={() => { void refetch(); }}
         />
       </div>
@@ -73,13 +76,13 @@ const CommissioningDetailPage: React.FC = () => {
   if (isLoading && !checklist) {
     return (
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 text-sm text-neutral-500 dark:text-neutral-400">
-        Загрузка чек-листа...
+        {t('closeout.commDetailLoading')}
       </div>
     );
   }
 
   if (!checklist) {
-    return <EmptyState variant="ERROR" title="Чек-лист не найден" />;
+    return <EmptyState variant="ERROR" title={t('closeout.commDetailNotFound')} />;
   }
 
   const progressPercent = checklist.totalItems > 0
@@ -92,13 +95,13 @@ const CommissioningDetailPage: React.FC = () => {
         title={checklist.checklistNumber}
         subtitle={checklist.systemName}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Пусконаладка', href: '/closeout/commissioning' },
+          { label: t('closeout.breadcrumbHome'), href: '/' },
+          { label: t('closeout.breadcrumbCommissioning'), href: '/closeout/commissioning' },
           { label: checklist.checklistNumber },
         ]}
         actions={(
           <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/closeout/commissioning')}>
-            Назад к списку
+            {t('closeout.backToList')}
           </Button>
         )}
       />
@@ -107,7 +110,7 @@ const CommissioningDetailPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Статус и прогресс</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.commDetailStatusAndProgress')}</h3>
               <StatusBadge
                 status={checklist.status}
                 colorMap={statusColorMap}
@@ -117,25 +120,25 @@ const CommissioningDetailPage: React.FC = () => {
             <div className="w-full h-3 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden mb-2">
               <div className="h-full bg-primary-500 rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
             </div>
-            <p className="text-sm text-neutral-600">{formatPercent(progressPercent)} выполнения</p>
+            <p className="text-sm text-neutral-600">{t('closeout.commDetailCompletion', { percent: formatPercent(progressPercent) })}</p>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Результаты проверки</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('closeout.commDetailResultsTitle')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Всего пунктов</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('closeout.commDetailTotalItems')}</p>
                 <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{checklist.totalItems}</p>
               </div>
               <div className="rounded-lg border border-success-200 bg-success-50 p-4">
-                <p className="text-xs text-success-700 mb-1">Пройдено</p>
+                <p className="text-xs text-success-700 mb-1">{t('closeout.commDetailPassed')}</p>
                 <p className="text-lg font-semibold text-success-700 flex items-center gap-1">
                   <CheckCircle2 size={16} />
                   {checklist.passedItems}
                 </p>
               </div>
               <div className="rounded-lg border border-danger-200 bg-danger-50 p-4">
-                <p className="text-xs text-danger-700 mb-1">Не пройдено</p>
+                <p className="text-xs text-danger-700 mb-1">{t('closeout.commDetailFailed')}</p>
                 <p className="text-lg font-semibold text-danger-700 flex items-center gap-1">
                   <XCircle size={16} />
                   {checklist.failedItems}
@@ -145,19 +148,19 @@ const CommissioningDetailPage: React.FC = () => {
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Примечания</h3>
-            <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">{checklist.notes ?? 'Примечания не указаны'}</p>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t('closeout.commDetailNotesTitle')}</h3>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">{checklist.notes ?? t('closeout.commDetailNoNotes')}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 space-y-3">
-            <InfoRow icon={<ClipboardCheck size={14} />} label="Система" value={checklist.systemName} />
-            <InfoRow icon={<ClipboardCheck size={14} />} label="Подсистема" value={checklist.subsystem ?? '—'} />
-            <InfoRow icon={<User size={14} />} label="Инспектор" value={checklist.inspectorName} />
-            <InfoRow icon={<Calendar size={14} />} label="Дата проверки" value={formatDate(checklist.inspectionDate)} />
-            <InfoRow icon={<Building2 size={14} />} label="Проект" value={checklist.projectName} />
-            <InfoRow icon={<Calendar size={14} />} label="Создан" value={formatDateTime(checklist.createdAt)} />
+            <InfoRow icon={<ClipboardCheck size={14} />} label={t('closeout.commDetailSystem')} value={checklist.systemName} />
+            <InfoRow icon={<ClipboardCheck size={14} />} label={t('closeout.commDetailSubsystem')} value={checklist.subsystem ?? '\u2014'} />
+            <InfoRow icon={<User size={14} />} label={t('closeout.commDetailInspector')} value={checklist.inspectorName} />
+            <InfoRow icon={<Calendar size={14} />} label={t('closeout.commDetailInspectionDate')} value={formatDate(checklist.inspectionDate)} />
+            <InfoRow icon={<Building2 size={14} />} label={t('closeout.commDetailProject')} value={checklist.projectName} />
+            <InfoRow icon={<Calendar size={14} />} label={t('closeout.commDetailCreatedAt')} value={formatDateTime(checklist.createdAt)} />
           </div>
         </div>
       </div>

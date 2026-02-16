@@ -14,13 +14,14 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { leaveApi } from '@/api/leave';
+import { t } from '@/i18n';
 import type { LeaveAllocation } from './types';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'APPROVED', label: 'Утверждён' },
-  { value: 'EXPIRED', label: 'Истёк' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('leave.allocations.allStatuses') },
+  { value: 'DRAFT', label: t('leave.allocations.statusDraft') },
+  { value: 'APPROVED', label: t('leave.allocations.statusApproved') },
+  { value: 'EXPIRED', label: t('leave.allocations.statusExpired') },
 ];
 
 const LeaveAllocationPage: React.FC = () => {
@@ -64,7 +65,7 @@ const LeaveAllocationPage: React.FC = () => {
     () => [
       {
         accessorKey: 'employeeName',
-        header: 'Сотрудник',
+        header: t('leave.allocations.colEmployee'),
         size: 230,
         cell: ({ row }) => (
           <div>
@@ -77,7 +78,7 @@ const LeaveAllocationPage: React.FC = () => {
       },
       {
         accessorKey: 'leaveTypeName',
-        header: 'Тип отпуска',
+        header: t('leave.allocations.colLeaveType'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-sm text-neutral-800 dark:text-neutral-200">{getValue<string>()}</span>
@@ -85,7 +86,7 @@ const LeaveAllocationPage: React.FC = () => {
       },
       {
         accessorKey: 'year',
-        header: 'Год',
+        header: t('leave.allocations.colYear'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">{getValue<number>()}</span>
@@ -93,7 +94,7 @@ const LeaveAllocationPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('leave.allocations.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -105,36 +106,36 @@ const LeaveAllocationPage: React.FC = () => {
       },
       {
         accessorKey: 'allocatedDays',
-        header: 'Выделено',
+        header: t('leave.allocations.colAllocated'),
         size: 100,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm font-medium text-neutral-700 dark:text-neutral-300">{getValue<number>()} дн.</span>
+          <span className="tabular-nums text-sm font-medium text-neutral-700 dark:text-neutral-300">{getValue<number>()} {t('leave.allocations.daysSuffix')}</span>
         ),
       },
       {
         accessorKey: 'usedDays',
-        header: 'Использовано',
+        header: t('leave.allocations.colUsed'),
         size: 120,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm text-neutral-600">{getValue<number>()} дн.</span>
+          <span className="tabular-nums text-sm text-neutral-600">{getValue<number>()} {t('leave.allocations.daysSuffix')}</span>
         ),
       },
       {
         accessorKey: 'remainingDays',
-        header: 'Остаток',
+        header: t('leave.allocations.colRemaining'),
         size: 100,
         cell: ({ getValue }) => {
           const val = getValue<number>();
           return (
             <span className={`tabular-nums text-sm font-medium ${val > 0 ? 'text-success-600' : 'text-danger-600'}`}>
-              {val} дн.
+              {val} {t('leave.allocations.daysSuffix')}
             </span>
           );
         },
       },
       {
         id: 'progress',
-        header: 'Прогресс',
+        header: t('leave.allocations.colProgress'),
         size: 140,
         cell: ({ row }) => {
           const pct = row.original.allocatedDays > 0
@@ -165,39 +166,39 @@ const LeaveAllocationPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Распределение отпусков"
-        subtitle={`${allocations.length} записей`}
+        title={t('leave.allocations.title')}
+        subtitle={t('leave.allocations.subtitleRecords', { count: String(allocations.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Отпуска' },
-          { label: 'Распределение' },
+          { label: t('leave.allocations.breadcrumbHome'), href: '/' },
+          { label: t('leave.allocations.breadcrumbLeave') },
+          { label: t('leave.allocations.breadcrumbAllocations') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/leave/allocations/new')}>
-            Новое распределение
+            {t('leave.allocations.newAllocation')}
           </Button>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Users size={18} />} label="Сотрудников" value={metrics.uniqueEmployees} />
-        <MetricCard icon={<Calendar size={18} />} label="Выделено дней" value={metrics.totalAllocated} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Использовано" value={metrics.totalUsed} />
-        <MetricCard icon={<BarChart3 size={18} />} label="Остаток" value={metrics.totalRemaining} />
+        <MetricCard icon={<Users size={18} />} label={t('leave.allocations.metricEmployees')} value={metrics.uniqueEmployees} />
+        <MetricCard icon={<Calendar size={18} />} label={t('leave.allocations.metricAllocated')} value={metrics.totalAllocated} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('leave.allocations.metricUsed')} value={metrics.totalUsed} />
+        <MetricCard icon={<BarChart3 size={18} />} label={t('leave.allocations.metricRemaining')} value={metrics.totalRemaining} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по сотруднику, типу..."
+            placeholder={t('leave.allocations.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-48"
@@ -214,8 +215,8 @@ const LeaveAllocationPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет данных о распределении"
-        emptyDescription="Создайте первое распределение отпусков"
+        emptyTitle={t('leave.allocations.emptyTitle')}
+        emptyDescription={t('leave.allocations.emptyDescription')}
       />
     </div>
   );

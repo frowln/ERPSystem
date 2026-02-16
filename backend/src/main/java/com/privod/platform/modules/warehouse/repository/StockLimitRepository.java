@@ -15,13 +15,31 @@ import java.util.UUID;
 public interface StockLimitRepository extends JpaRepository<StockLimit, UUID>,
         JpaSpecificationExecutor<StockLimit> {
 
+    Optional<StockLimit> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
+    Page<StockLimit> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
+
     Page<StockLimit> findByDeletedFalse(Pageable pageable);
+
+    Page<StockLimit> findByOrganizationIdAndMaterialIdAndDeletedFalse(UUID organizationId,
+                                                                       UUID materialId,
+                                                                       Pageable pageable);
 
     Page<StockLimit> findByMaterialIdAndDeletedFalse(UUID materialId, Pageable pageable);
 
+    Page<StockLimit> findByOrganizationIdAndWarehouseLocationIdAndDeletedFalse(UUID organizationId,
+                                                                                UUID warehouseLocationId,
+                                                                                Pageable pageable);
+
     Page<StockLimit> findByWarehouseLocationIdAndDeletedFalse(UUID warehouseLocationId, Pageable pageable);
 
+    List<StockLimit> findByOrganizationIdAndIsActiveTrueAndDeletedFalse(UUID organizationId);
+
     List<StockLimit> findByIsActiveTrueAndDeletedFalse();
+
+    Optional<StockLimit> findByOrganizationIdAndMaterialIdAndWarehouseLocationIdAndDeletedFalse(UUID organizationId,
+                                                                                                  UUID materialId,
+                                                                                                  UUID warehouseLocationId);
 
     Optional<StockLimit> findByMaterialIdAndWarehouseLocationIdAndDeletedFalse(UUID materialId, UUID warehouseLocationId);
 }

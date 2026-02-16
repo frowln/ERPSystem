@@ -4,6 +4,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { submittalsApi } from '@/api/submittals';
+import { t } from '@/i18n';
 import type { CreateSubmittalRequest } from './types';
 import toast from 'react-hot-toast';
 
@@ -12,22 +13,24 @@ interface SubmittalCreateModalProps {
   onClose: () => void;
 }
 
-const typeOptions = [
-  { value: 'SHOP_DRAWING', label: 'Рабочий чертёж' },
-  { value: 'PRODUCT_DATA', label: 'Данные продукта' },
-  { value: 'SAMPLE', label: 'Образец' },
-  { value: 'DESIGN_DATA', label: 'Проектные данные' },
-  { value: 'TEST_REPORT', label: 'Протокол испытаний' },
-  { value: 'CERTIFICATE', label: 'Сертификат' },
-  { value: 'OTHER', label: 'Прочее' },
+const getTypeOptions = () => [
+  { value: 'SHOP_DRAWING', label: t('submittals.modalTypeShopDrawing') },
+  { value: 'PRODUCT_DATA', label: t('submittals.modalTypeProductData') },
+  { value: 'SAMPLE', label: t('submittals.modalTypeSample') },
+  { value: 'DESIGN_DATA', label: t('submittals.modalTypeDesignData') },
+  { value: 'TEST_REPORT', label: t('submittals.modalTypeTestReport') },
+  { value: 'CERTIFICATE', label: t('submittals.modalTypeCertificate') },
+  { value: 'OTHER', label: t('submittals.modalTypeOther') },
 ];
 
+// Mock data -- will be replaced by API data
 const reviewerOptions = [
   { value: 'u1', label: 'Иванов А.С.' },
   { value: 'u2', label: 'Петров В.К.' },
   { value: 'u3', label: 'Сидоров М.Н.' },
 ];
 
+// Mock data -- will be replaced by API data
 const projectOptions = [
   { value: '1', label: 'ЖК "Солнечный"' },
   { value: '3', label: 'Мост через р. Вятка' },
@@ -49,7 +52,7 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
     mutationFn: (payload: CreateSubmittalRequest) => submittalsApi.createSubmittal(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['submittals'] });
-      toast.success('Субмиттал создан');
+      toast.success(t('submittals.modalCreateSuccess'));
       setTitle('');
       setDescription('');
       setType('SHOP_DRAWING');
@@ -61,7 +64,7 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
       onClose();
     },
     onError: () => {
-      toast.error('Не удалось создать субмиттал');
+      toast.error(t('submittals.modalCreateError'));
     },
   });
 
@@ -83,32 +86,32 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
     <Modal
       open={open}
       onClose={onClose}
-      title="Новый субмиттел"
-      description="Заполните информацию для создания нового субмиттела"
+      title={t('submittals.modalTitle')}
+      description={t('submittals.modalDescription')}
       size="lg"
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Отмена
+            {t('submittals.modalCancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={!title} loading={createMutation.isPending}>
-            Создать
+            {t('submittals.modalCreate')}
           </Button>
         </>
       }
     >
       <div className="space-y-4">
-        <FormField label="Название" required>
+        <FormField label={t('submittals.modalLabelTitle')} required>
           <Input
-            placeholder="Название субмиттела"
+            placeholder={t('submittals.modalPlaceholderTitle')}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </FormField>
 
-        <FormField label="Описание">
+        <FormField label={t('submittals.modalLabelDescription')}>
           <Textarea
-            placeholder="Описание..."
+            placeholder={t('submittals.modalPlaceholderDescription')}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
@@ -116,7 +119,7 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Проект" required>
+          <FormField label={t('submittals.modalLabelProject')} required>
             <Select
               options={projectOptions}
               value={projectId}
@@ -124,17 +127,17 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
             />
           </FormField>
 
-          <FormField label="Тип" required>
+          <FormField label={t('submittals.modalLabelType')} required>
             <Select
-              options={typeOptions}
+              options={getTypeOptions()}
               value={type}
               onChange={(e) => setType(e.target.value)}
             />
           </FormField>
 
-          <FormField label="Раздел спецификации">
+          <FormField label={t('submittals.modalLabelSpecSection')}>
             <Input
-              placeholder="Напр. Раздел КР"
+              placeholder={t('submittals.modalPlaceholderSpecSection')}
               value={specSection}
               onChange={(e) => setSpecSection(e.target.value)}
             />
@@ -142,21 +145,21 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Срок рассмотрения">
+          <FormField label={t('submittals.modalLabelDueDate')}>
             <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           </FormField>
 
-          <FormField label="Требуемая дата">
+          <FormField label={t('submittals.modalLabelRequiredDate')}>
             <Input type="date" value={requiredDate} onChange={(e) => setRequiredDate(e.target.value)} />
           </FormField>
         </div>
 
-        <FormField label="Рецензент">
+        <FormField label={t('submittals.modalLabelReviewer')}>
           <Select
             options={reviewerOptions}
             value={reviewerId}
             onChange={(e) => setReviewerId(e.target.value)}
-            placeholder="Выберите рецензента"
+            placeholder={t('submittals.modalPlaceholderReviewer')}
           />
         </FormField>
       </div>

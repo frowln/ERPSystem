@@ -10,6 +10,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { materialAnalogsApi } from '@/api/materialAnalogs';
 import { formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 import type { MaterialAnalog, SubstitutionType } from './types';
 
 const substitutionTypeColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
@@ -19,12 +20,12 @@ const substitutionTypeColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yell
   alternative: 'purple',
 };
 
-const substitutionTypeLabels: Record<string, string> = {
-  equivalent: 'Эквивалент',
-  superior: 'Превосходящий',
-  inferior: 'Уступающий',
-  alternative: 'Альтернатива',
-};
+const getSubstitutionTypeLabels = (): Record<string, string> => ({
+  equivalent: t('specifications.materialsSubTypeEquivalent'),
+  superior: t('specifications.materialsSubTypeSuperior'),
+  inferior: t('specifications.materialsSubTypeInferior'),
+  alternative: t('specifications.materialsSubTypeAlternative'),
+});
 
 const qualityRatingColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   A: 'green',
@@ -34,20 +35,20 @@ const qualityRatingColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow'
   unrated: 'gray',
 };
 
-const qualityRatingLabels: Record<string, string> = {
-  A: 'A - Отлично',
-  B: 'B - Хорошо',
-  C: 'C - Удовлетв.',
-  D: 'D - Низкое',
-  unrated: 'Не оценен',
-};
+const getQualityRatingLabels = (): Record<string, string> => ({
+  A: t('specifications.materialsQualityA'),
+  B: t('specifications.materialsQualityB'),
+  C: t('specifications.materialsQualityC'),
+  D: t('specifications.materialsQualityD'),
+  unrated: t('specifications.materialsQualityUnrated'),
+});
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы замен' },
-  { value: 'equivalent', label: 'Эквивалент' },
-  { value: 'superior', label: 'Превосходящий' },
-  { value: 'inferior', label: 'Уступающий' },
-  { value: 'alternative', label: 'Альтернатива' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('specifications.materialsFilterAllTypes') },
+  { value: 'equivalent', label: t('specifications.materialsFilterEquivalent') },
+  { value: 'superior', label: t('specifications.materialsFilterSuperior') },
+  { value: 'inferior', label: t('specifications.materialsFilterInferior') },
+  { value: 'alternative', label: t('specifications.materialsFilterAlternative') },
 ];
 
 const MaterialAnalogsPage: React.FC = () => {
@@ -84,121 +85,125 @@ const MaterialAnalogsPage: React.FC = () => {
   }), [analogs]);
 
   const columns = useMemo<ColumnDef<MaterialAnalog, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'originalMaterialName',
-        header: 'Оригинальный материал',
-        size: 220,
-        cell: ({ row }) => (
-          <div>
-            <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.originalMaterialName}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.originalMaterialCode ?? '---'}</p>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'analogMaterialName',
-        header: 'Аналог',
-        size: 220,
-        cell: ({ row }) => (
-          <div>
-            <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.analogMaterialName}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.supplierName}</p>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'substitutionType',
-        header: 'Тип замены',
-        size: 140,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={substitutionTypeColorMap}
-            label={substitutionTypeLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'qualityRating',
-        header: 'Качество',
-        size: 120,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={qualityRatingColorMap}
-            label={qualityRatingLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'priceDifferencePercent',
-        header: 'Разница цены',
-        size: 120,
-        cell: ({ getValue }) => {
-          const val = getValue<number>();
-          const color = val < 0 ? 'text-success-600' : val > 0 ? 'text-danger-600' : 'text-neutral-500 dark:text-neutral-400';
-          return <span className={`tabular-nums font-medium ${color}`}>{val > 0 ? '+' : ''}{val.toFixed(1)}%</span>;
+    () => {
+      const subLabels = getSubstitutionTypeLabels();
+      const qualLabels = getQualityRatingLabels();
+      return [
+        {
+          accessorKey: 'originalMaterialName',
+          header: t('specifications.materialsColOriginal'),
+          size: 220,
+          cell: ({ row }) => (
+            <div>
+              <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.originalMaterialName}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.originalMaterialCode ?? '---'}</p>
+            </div>
+          ),
         },
-      },
-      {
-        accessorKey: 'leadTimeDays',
-        header: 'Срок поставки',
-        size: 110,
-        cell: ({ getValue }) => {
-          const val = getValue<number>();
-          return val ? <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{val} дн.</span> : <span className="text-neutral-400">---</span>;
+        {
+          accessorKey: 'analogMaterialName',
+          header: t('specifications.materialsColAnalog'),
+          size: 220,
+          cell: ({ row }) => (
+            <div>
+              <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.analogMaterialName}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.supplierName}</p>
+            </div>
+          ),
         },
-      },
-      {
-        accessorKey: 'isApproved',
-        header: 'Статус',
-        size: 120,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<boolean>() ? 'APPROVED' : 'PENDING'}
-            colorMap={{ approved: 'green', pending: 'yellow' }}
-            label={getValue<boolean>() ? 'Утверждён' : 'На рассмотрении'}
-          />
-        ),
-      },
-    ],
+        {
+          accessorKey: 'substitutionType',
+          header: t('specifications.materialsColSubstitutionType'),
+          size: 140,
+          cell: ({ getValue }) => (
+            <StatusBadge
+              status={getValue<string>()}
+              colorMap={substitutionTypeColorMap}
+              label={subLabels[getValue<string>()] ?? getValue<string>()}
+            />
+          ),
+        },
+        {
+          accessorKey: 'qualityRating',
+          header: t('specifications.materialsColQuality'),
+          size: 120,
+          cell: ({ getValue }) => (
+            <StatusBadge
+              status={getValue<string>()}
+              colorMap={qualityRatingColorMap}
+              label={qualLabels[getValue<string>()] ?? getValue<string>()}
+            />
+          ),
+        },
+        {
+          accessorKey: 'priceDifferencePercent',
+          header: t('specifications.materialsColPriceDiff'),
+          size: 120,
+          cell: ({ getValue }) => {
+            const val = getValue<number>();
+            const color = val < 0 ? 'text-success-600' : val > 0 ? 'text-danger-600' : 'text-neutral-500 dark:text-neutral-400';
+            return <span className={`tabular-nums font-medium ${color}`}>{val > 0 ? '+' : ''}{val.toFixed(1)}%</span>;
+          },
+        },
+        {
+          accessorKey: 'leadTimeDays',
+          header: t('specifications.materialsColLeadTime'),
+          size: 110,
+          cell: ({ getValue }) => {
+            const val = getValue<number>();
+            return val ? <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{val} {t('specifications.materialsDays')}</span> : <span className="text-neutral-400">---</span>;
+          },
+        },
+        {
+          accessorKey: 'isApproved',
+          header: t('specifications.materialsColStatus'),
+          size: 120,
+          cell: ({ getValue }) => (
+            <StatusBadge
+              status={getValue<boolean>() ? 'APPROVED' : 'PENDING'}
+              colorMap={{ approved: 'green', pending: 'yellow' }}
+              label={getValue<boolean>() ? t('specifications.materialsStatusApproved') : t('specifications.materialsStatusPending')}
+            />
+          ),
+        },
+      ];
+    },
     [],
   );
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Аналоги материалов"
-        subtitle={`${analogs.length} аналогов в базе`}
+        title={t('specifications.materialsTitle')}
+        subtitle={t('specifications.materialsSubtitle', { count: String(analogs.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Спецификации', href: '/specifications' },
-          { label: 'Аналоги материалов' },
+          { label: t('specifications.breadcrumbHome'), href: '/' },
+          { label: t('specifications.breadcrumbSpecifications'), href: '/specifications' },
+          { label: t('specifications.materialsBreadcrumb') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>Добавить аналог</Button>
+          <Button iconLeft={<Plus size={16} />}>{t('specifications.materialsAddAnalog')}</Button>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<ArrowLeftRight size={18} />} label="Всего аналогов" value={metrics.total} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Утверждено" value={metrics.approved} />
+        <MetricCard icon={<ArrowLeftRight size={18} />} label={t('specifications.materialsMetricTotal')} value={metrics.total} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('specifications.materialsMetricApproved')} value={metrics.approved} />
         <MetricCard
           icon={<DollarSign size={18} />}
-          label="Средняя разница цены"
+          label={t('specifications.materialsMetricAvgPriceDiff')}
           value={`${metrics.avgSavings.toFixed(1)}%`}
-          trend={{ direction: metrics.avgSavings < 0 ? 'up' : 'down', value: metrics.avgSavings < 0 ? 'Экономия' : 'Удорожание' }}
+          trend={{ direction: metrics.avgSavings < 0 ? 'up' : 'down', value: metrics.avgSavings < 0 ? t('specifications.materialsTrendSaving') : t('specifications.materialsTrendMore') }}
         />
-        <MetricCard icon={<Star size={18} />} label="Эквиваленты" value={metrics.equivalents} />
+        <MetricCard icon={<Star size={18} />} label={t('specifications.materialsMetricEquivalents')} value={metrics.equivalents} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по материалу, поставщику..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('specifications.materialsSearchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={typeFilterOptions} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-48" />
+        <Select options={getTypeFilterOptions()} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-48" />
       </div>
 
       <DataTable<MaterialAnalog>
@@ -210,8 +215,8 @@ const MaterialAnalogsPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет аналогов материалов"
-        emptyDescription="Добавьте первый аналог для управления заменами"
+        emptyTitle={t('specifications.materialsEmptyTitle')}
+        emptyDescription={t('specifications.materialsEmptyDescription')}
       />
     </div>
   );

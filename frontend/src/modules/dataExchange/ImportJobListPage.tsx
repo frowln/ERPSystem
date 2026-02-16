@@ -11,6 +11,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { dataExchangeApi } from '@/api/dataExchange';
 import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 import type { ImportJob, ImportStatus, ImportEntityType } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange'> = {
@@ -22,30 +23,30 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   PARTIALLY_COMPLETED: 'orange',
 };
 
-const statusLabels: Record<string, string> = {
-  PENDING: 'Ожидание',
-  VALIDATING: 'Валидация',
-  IN_PROGRESS: 'В процессе',
-  COMPLETED: 'Завершён',
-  FAILED: 'Ошибка',
-  PARTIALLY_COMPLETED: 'Частично',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  PENDING: t('dataExchange.importStatusPending'),
+  VALIDATING: t('dataExchange.importStatusValidating'),
+  IN_PROGRESS: t('dataExchange.importStatusInProgress'),
+  COMPLETED: t('dataExchange.importStatusCompleted'),
+  FAILED: t('dataExchange.importStatusFailed'),
+  PARTIALLY_COMPLETED: t('dataExchange.importStatusPartially'),
+});
 
-const entityTypeLabels: Record<string, string> = {
-  PROJECTS: 'Проекты',
-  CONTRACTS: 'Договоры',
-  MATERIALS: 'Материалы',
-  EMPLOYEES: 'Сотрудники',
-  DOCUMENTS: 'Документы',
-  WBS: 'Структура работ',
-  BUDGET_ITEMS: 'Статьи бюджета',
-  INVOICES: 'Счета',
-};
+const getEntityTypeLabels = (): Record<string, string> => ({
+  PROJECTS: t('dataExchange.entityProjects'),
+  CONTRACTS: t('dataExchange.entityContracts'),
+  MATERIALS: t('dataExchange.entityMaterials'),
+  EMPLOYEES: t('dataExchange.entityEmployees'),
+  DOCUMENTS: t('dataExchange.entityDocuments'),
+  WBS: t('dataExchange.entityWbs'),
+  BUDGET_ITEMS: t('dataExchange.entityBudgetItems'),
+  INVOICES: t('dataExchange.entityInvoices'),
+});
 
 function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} Б`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
+  if (bytes < 1024) return t('dataExchange.fileSizeB', { size: String(bytes) });
+  if (bytes < 1024 * 1024) return t('dataExchange.fileSizeKB', { size: (bytes / 1024).toFixed(1) });
+  return t('dataExchange.fileSizeMB', { size: (bytes / (1024 * 1024)).toFixed(1) });
 }
 
 type TabId = 'all' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
@@ -94,7 +95,7 @@ const ImportJobListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'fileName',
-        header: 'Файл',
+        header: t('dataExchange.colFile'),
         size: 260,
         cell: ({ row }) => (
           <div>
@@ -105,27 +106,27 @@ const ImportJobListPage: React.FC = () => {
       },
       {
         accessorKey: 'entityType',
-        header: 'Тип данных',
+        header: t('dataExchange.colDataType'),
         size: 150,
         cell: ({ getValue }) => (
-          <span className="text-neutral-700 dark:text-neutral-300">{entityTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
+          <span className="text-neutral-700 dark:text-neutral-300">{getEntityTypeLabels()[getValue<string>()] ?? getValue<string>()}</span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('dataExchange.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={statusColorMap}
-            label={statusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         id: 'progress',
-        header: 'Прогресс',
+        header: t('dataExchange.colProgress'),
         size: 160,
         cell: ({ row }) => {
           const pct = row.original.totalRows > 0 ? (row.original.processedRows / row.original.totalRows) * 100 : 0;
@@ -148,25 +149,25 @@ const ImportJobListPage: React.FC = () => {
       },
       {
         id: 'results',
-        header: 'Результат',
+        header: t('dataExchange.colResult'),
         size: 120,
         cell: ({ row }) => (
           <div className="text-sm">
             <span className="text-green-600">{row.original.successCount}</span>
             {row.original.errorCount > 0 && (
-              <span className="text-danger-600"> / {row.original.errorCount} ош.</span>
+              <span className="text-danger-600"> / {row.original.errorCount} {t('dataExchange.errorsAbbrev')}</span>
             )}
           </div>
         ),
       },
       {
         accessorKey: 'uploadedByName',
-        header: 'Загрузил',
+        header: t('dataExchange.colUploadedBy'),
         size: 140,
       },
       {
         accessorKey: 'startedAt',
-        header: 'Начало',
+        header: t('dataExchange.colStarted'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm">{formatDateTime(getValue<string>())}</span>
@@ -179,44 +180,44 @@ const ImportJobListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Импорт данных"
-        subtitle={`${imports.length} задач импорта`}
+        title={t('dataExchange.importTitle')}
+        subtitle={t('dataExchange.importSubtitle', { count: String(imports.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обмен данными', href: '/data-exchange' },
-          { label: 'Импорт' },
+          { label: t('dataExchange.breadcrumbHome'), href: '/' },
+          { label: t('dataExchange.breadcrumbDataExchange'), href: '/data-exchange' },
+          { label: t('dataExchange.breadcrumbImport') },
         ]}
         actions={
           <Button iconLeft={<Upload size={16} />}>
-            Загрузить файл
+            {t('dataExchange.uploadFile')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: counts.all },
-          { id: 'IN_PROGRESS', label: 'В процессе', count: counts.in_progress },
-          { id: 'COMPLETED', label: 'Завершены', count: counts.completed },
-          { id: 'FAILED', label: 'С ошибками', count: counts.failed },
+          { id: 'all', label: t('dataExchange.tabAll'), count: counts.all },
+          { id: 'IN_PROGRESS', label: t('dataExchange.tabInProgress'), count: counts.in_progress },
+          { id: 'COMPLETED', label: t('dataExchange.tabCompleted'), count: counts.completed },
+          { id: 'FAILED', label: t('dataExchange.tabFailed'), count: counts.failed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileUp size={18} />} label="Всего импортов" value={counts.all} />
-        <MetricCard icon={<Clock size={18} />} label="В обработке" value={counts.in_progress} />
-        <MetricCard icon={<CheckCircle2 size={18} />} label="Успешных" value={counts.completed} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Всего строк" value={formatNumber(totalRows)} />
+        <MetricCard icon={<FileUp size={18} />} label={t('dataExchange.metricTotalImports')} value={counts.all} />
+        <MetricCard icon={<Clock size={18} />} label={t('dataExchange.metricInProcessing')} value={counts.in_progress} />
+        <MetricCard icon={<CheckCircle2 size={18} />} label={t('dataExchange.metricSuccessful')} value={counts.completed} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('dataExchange.metricTotalRows')} value={formatNumber(totalRows)} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по имени файла..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('dataExchange.searchImportPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все типы данных' },
-            ...Object.entries(entityTypeLabels).map(([value, label]) => ({ value, label })),
+            { value: '', label: t('dataExchange.filterAllDataTypes') },
+            ...Object.entries(getEntityTypeLabels()).map(([value, label]) => ({ value, label })),
           ]}
           value={entityFilter}
           onChange={(e) => setEntityFilter(e.target.value)}
@@ -233,8 +234,8 @@ const ImportJobListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет задач импорта"
-        emptyDescription="Загрузите файл для начала импорта данных"
+        emptyTitle={t('dataExchange.emptyImportTitle')}
+        emptyDescription={t('dataExchange.emptyImportDescription')}
       />
     </div>
   );

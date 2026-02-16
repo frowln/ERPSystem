@@ -28,11 +28,11 @@ interface QualityCheckCreateModalProps {
   onClose: () => void;
 }
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectHorizon') },
+  { value: '3', label: t('mockData.projectBridge') },
+  { value: '6', label: t('mockData.projectCentral') },
 ];
 
 const getTypeOptions = () => [
@@ -42,12 +42,12 @@ const getTypeOptions = () => [
   { value: 'AUDIT', label: t('quality.checkCreate.typeAudit') },
 ];
 
-const inspectorOptions = [
-  { value: 'Иванов А.С.', label: 'Иванов А.С.' },
-  { value: 'Петров В.К.', label: 'Петров В.К.' },
-  { value: 'Сидоров М.Н.', label: 'Сидоров М.Н.' },
-  { value: 'Козлов Д.А.', label: 'Козлов Д.А.' },
-  { value: 'Новикова Е.И.', label: 'Новикова Е.И.' },
+const getInspectorOptions = () => [
+  { value: t('mockData.personIvanovAS'), label: t('mockData.personIvanovAS') },
+  { value: t('mockData.personPetrovVK'), label: t('mockData.personPetrovVK') },
+  { value: t('mockData.personSidorovMN'), label: t('mockData.personSidorovMN') },
+  { value: t('mockData.personKozlovDA'), label: t('mockData.personKozlovDA') },
+  { value: t('mockData.personNovikovaEI'), label: t('mockData.personNovikovaEI') },
 ];
 
 export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = ({ open, onClose }) => {
@@ -127,7 +127,7 @@ export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('quality.checkCreate.labelProject')} error={errors.projectId?.message} required>
             <Select
-              options={projectOptions}
+              options={getProjectOptions()}
               placeholder={t('quality.checkCreate.placeholderProject')}
               hasError={!!errors.projectId}
               {...register('projectId')}
@@ -146,7 +146,7 @@ export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('quality.checkCreate.labelInspector')} error={errors.inspectorName?.message} required>
             <Select
-              options={inspectorOptions}
+              options={getInspectorOptions()}
               placeholder={t('quality.checkCreate.placeholderInspector')}
               hasError={!!errors.inspectorName}
               {...register('inspectorName')}

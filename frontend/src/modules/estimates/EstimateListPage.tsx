@@ -15,6 +15,7 @@ import { estimatesApi } from '@/api/estimates';
 import { formatMoney, formatDate, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { Estimate } from '@/types';
+import { t } from '@/i18n';
 
 type TabId = 'all' | 'DRAFT' | 'IN_WORK' | 'ACTIVE';
 
@@ -60,7 +61,7 @@ const EstimateListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('estimates.list.colName'),
         size: 260,
         cell: ({ row }) => (
           <div>
@@ -71,7 +72,7 @@ const EstimateListPage: React.FC = () => {
       },
       {
         accessorKey: 'projectName',
-        header: 'Проект',
+        header: t('estimates.list.colProject'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>()}</span>
@@ -79,7 +80,7 @@ const EstimateListPage: React.FC = () => {
       },
       {
         accessorKey: 'specificationName',
-        header: 'Спецификация',
+        header: t('estimates.list.colSpecification'),
         size: 200,
         cell: ({ getValue }) => (
           <span className="text-neutral-600 text-xs">{getValue<string>()}</span>
@@ -87,7 +88,7 @@ const EstimateListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('estimates.list.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -99,7 +100,7 @@ const EstimateListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalAmount',
-        header: 'План',
+        header: t('estimates.list.colPlan'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -109,7 +110,7 @@ const EstimateListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalSpent',
-        header: 'Факт',
+        header: t('estimates.list.colFact'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block text-neutral-700 dark:text-neutral-300">
@@ -119,7 +120,7 @@ const EstimateListPage: React.FC = () => {
       },
       {
         accessorKey: 'variancePercent',
-        header: 'Отклонение',
+        header: t('estimates.list.colVariance'),
         size: 120,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -148,17 +149,17 @@ const EstimateListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Сметы"
-        subtitle={`${estimates.length} смет в системе`}
+        title={t('estimates.list.title')}
+        subtitle={t('estimates.list.subtitle', { count: String(estimates.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Сметы' },
+          { label: t('estimates.list.breadcrumbHome'), href: '/' },
+          { label: t('estimates.list.breadcrumbEstimates') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновик', count: tabCounts.draft },
-          { id: 'IN_WORK', label: 'В работе', count: tabCounts.in_work },
-          { id: 'ACTIVE', label: 'Активна', count: tabCounts.active },
+          { id: 'all', label: t('estimates.list.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('estimates.list.tabDraft'), count: tabCounts.draft },
+          { id: 'IN_WORK', label: t('estimates.list.tabInWork'), count: tabCounts.in_work },
+          { id: 'ACTIVE', label: t('estimates.list.tabActive'), count: tabCounts.active },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -169,7 +170,7 @@ const EstimateListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, проекту..."
+            placeholder={t('estimates.list.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -187,8 +188,8 @@ const EstimateListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет смет"
-        emptyDescription="Сметы создаются на основе спецификаций"
+        emptyTitle={t('estimates.list.emptyTitle')}
+        emptyDescription={t('estimates.list.emptyDescription')}
       />
     </div>
   );

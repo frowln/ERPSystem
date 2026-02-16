@@ -32,6 +32,7 @@ import {
   type QueuedMobileSubmission,
 } from './draftStore';
 import { useMobileSubmissionQueue } from './useMobileSubmissionQueue';
+import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import { isAxiosError } from 'axios';
 
@@ -42,12 +43,12 @@ const reportStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow'>
   APPROVED: 'green',
 };
 
-const reportStatusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  SUBMITTED: 'Отправлен',
-  REVIEWED: 'На проверке',
-  APPROVED: 'Утверждён',
-};
+const getReportStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('mobileModule.dashboard.reportStatusDraft'),
+  SUBMITTED: t('mobileModule.dashboard.reportStatusSubmitted'),
+  REVIEWED: t('mobileModule.dashboard.reportStatusReviewed'),
+  APPROVED: t('mobileModule.dashboard.reportStatusApproved'),
+});
 
 const taskStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red'> = {
   ASSIGNED: 'blue',
@@ -56,12 +57,12 @@ const taskStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 
   CANCELLED: 'gray',
 };
 
-const taskStatusLabels: Record<string, string> = {
-  ASSIGNED: 'Назначена',
-  IN_PROGRESS: 'В работе',
-  COMPLETED: 'Выполнена',
-  CANCELLED: 'Отменена',
-};
+const getTaskStatusLabels = (): Record<string, string> => ({
+  ASSIGNED: t('mobileModule.dashboard.taskStatusAssigned'),
+  IN_PROGRESS: t('mobileModule.dashboard.taskStatusInProgress'),
+  COMPLETED: t('mobileModule.dashboard.taskStatusCompleted'),
+  CANCELLED: t('mobileModule.dashboard.taskStatusCancelled'),
+});
 
 const normalizeSyncError = (error: unknown): { status: Extract<QueueItemStatus, 'FAILED' | 'CONFLICT'>; message: string } => {
   if (isAxiosError(error)) {
@@ -69,7 +70,7 @@ const normalizeSyncError = (error: unknown): { status: Extract<QueueItemStatus, 
     if (statusCode === 409) {
       return {
         status: 'CONFLICT',
-        message: 'Конфликт версии данных. Требуется ручное решение.',
+        message: t('mobileModule.dashboard.syncErrorConflict'),
       };
     }
 
@@ -79,13 +80,13 @@ const normalizeSyncError = (error: unknown): { status: Extract<QueueItemStatus, 
 
     return {
       status: 'FAILED',
-      message: responseMessage || error.message || 'Ошибка синхронизации с сервером',
+      message: responseMessage || error.message || t('mobileModule.dashboard.syncErrorServer'),
     };
   }
 
   return {
     status: 'FAILED',
-    message: 'Неизвестная ошибка синхронизации',
+    message: t('mobileModule.dashboard.syncErrorUnknown'),
   };
 };
 
@@ -177,18 +178,18 @@ const MobileDashboardPage: React.FC = () => {
     mutationFn: (taskId: string) => mobileApi.completeTask(taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mobile-tasks'] });
-      toast.success('Задача обновлена');
+      toast.success(t('mobileModule.dashboard.taskUpdated'));
     },
     onError: () => {
-      toast.error('Не удалось обновить задачу');
+      toast.error(t('mobileModule.dashboard.taskUpdateError'));
     },
   });
 
   const handleSync = useCallback(async () => {
     if (syncingQueue) return;
-    if (guardDemoModeAction('Синхронизация данных')) return;
+    if (guardDemoModeAction(t('mobileModule.dashboard.demoSyncAction'))) return;
     if (!isOnline) {
-      toast.error('Синхронизация недоступна офлайн');
+      toast.error(t('mobileModule.dashboard.syncUnavailableOffline'));
       return;
     }
 
@@ -225,7 +226,7 @@ const MobileDashboardPage: React.FC = () => {
         try {
           await removeStoredMobilePhotoFiles(item.photos);
         } catch {
-          toast.error(`Отчёт синхронизирован, но локальные фото не очищены: ${item.payload.title}`);
+          toast.error(t('mobileModule.dashboard.syncPhotoCleanError', { title: item.payload.title }));
         }
         syncedCount += 1;
       } catch (error) {
@@ -258,16 +259,16 @@ const MobileDashboardPage: React.FC = () => {
     ]);
 
     if (syncedCount > 0) {
-      toast.success(`Синхронизировано отчетов: ${syncedCount}`);
+      toast.success(t('mobileModule.dashboard.syncedReports', { count: String(syncedCount) }));
     }
     if (remaining.length > 0) {
-      toast.error(`Не удалось синхронизировать: ${remaining.length}`);
+      toast.error(t('mobileModule.dashboard.syncFailedCount', { count: String(remaining.length) }));
     }
     if (conflictCount > 0) {
-      toast.error(`Конфликтов синхронизации: ${conflictCount}`);
+      toast.error(t('mobileModule.dashboard.syncConflicts', { count: String(conflictCount) }));
     }
     if (syncedCount === 0 && remaining.length === 0) {
-      toast.success('Синхронизация завершена');
+      toast.success(t('mobileModule.dashboard.syncComplete'));
     }
 
     setSyncingQueue(false);
@@ -284,7 +285,7 @@ const MobileDashboardPage: React.FC = () => {
       };
     });
     saveMobileSubmissionQueue(nextQueue);
-    toast.success(asNew ? 'Элемент будет отправлен как новый' : 'Элемент добавлен в повторную синхронизацию');
+    toast.success(asNew ? t('mobileModule.dashboard.retryAsNewSuccess') : t('mobileModule.dashboard.retrySuccess'));
   }, [localQueue]);
 
   const removeQueueItem = useCallback(async (id: string) => {
@@ -292,10 +293,10 @@ const MobileDashboardPage: React.FC = () => {
     if (!target) return;
 
     const isConfirmed = await confirm({
-      title: 'Удалить элемент из очереди синхронизации?',
-      description: 'Операция необратима. Локальные данные отчета и фото будут удалены.',
-      confirmLabel: 'Удалить',
-      cancelLabel: 'Отмена',
+      title: t('mobileModule.dashboard.removeConfirmTitle'),
+      description: t('mobileModule.dashboard.removeConfirmDescription'),
+      confirmLabel: t('mobileModule.dashboard.removeConfirmLabel'),
+      cancelLabel: t('mobileModule.dashboard.removeConfirmCancel'),
       confirmVariant: 'danger',
       items: [target.payload.title],
     });
@@ -306,9 +307,9 @@ const MobileDashboardPage: React.FC = () => {
     try {
       await removeStoredMobilePhotoFiles(target.photos);
     } catch {
-      toast.error('Элемент удален, но локальные фото очистить не удалось');
+      toast.error(t('mobileModule.dashboard.removePhotoCleanError'));
     }
-    toast.success('Элемент удален из локальной очереди');
+    toast.success(t('mobileModule.dashboard.removeSuccess'));
   }, [confirm, localQueue]);
 
   const dataUnavailable = reportsError || tasksError || syncStatusError;
@@ -322,11 +323,11 @@ const MobileDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Мобильная панель"
-        subtitle="Полевые данные и задачи"
+        title={t('mobileModule.dashboard.title')}
+        subtitle={t('mobileModule.dashboard.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Мобильное приложение' },
+          { label: t('mobileModule.dashboard.breadcrumbHome'), href: '/' },
+          { label: t('mobileModule.dashboard.breadcrumbMobile') },
         ]}
         actions={
           <div className="flex items-center gap-2">
@@ -336,10 +337,10 @@ const MobileDashboardPage: React.FC = () => {
               onClick={handleSync}
               loading={syncingQueue}
             >
-              Синхронизировать
+              {t('mobileModule.dashboard.syncBtn')}
             </Button>
             <Button iconLeft={<FileText size={16} />} onClick={() => navigate('/mobile/reports/new')}>
-              Новый отчёт
+              {t('mobileModule.dashboard.newReport')}
             </Button>
           </div>
         }
@@ -347,33 +348,33 @@ const MobileDashboardPage: React.FC = () => {
 
       {dataUnavailable && (
         <div className="mb-4 rounded-xl border border-warning-200 bg-warning-50 p-3 text-sm text-warning-800">
-          Часть мобильных данных сейчас недоступна. Отображаются только данные, полученные с сервера и из локальной очереди.
+          {t('mobileModule.dashboard.dataUnavailable')}
         </div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<FileText size={18} />}
-          label="Отчётов сегодня"
+          label={t('mobileModule.dashboard.metricTodayReports')}
           value={reportsLoading ? '---' : metrics.todayReports}
         />
         <MetricCard
           icon={<ListChecks size={18} />}
-          label="Активных задач"
+          label={t('mobileModule.dashboard.metricActiveTasks')}
           value={tasksLoading ? '---' : metrics.pendingTasks}
-          trend={{ direction: 'neutral', value: `${metrics.completedToday} выполнено` }}
+          trend={{ direction: 'neutral', value: t('mobileModule.dashboard.metricActiveTasksTrend', { count: String(metrics.completedToday) }) }}
         />
         <MetricCard
           icon={<CloudOff size={18} />}
-          label="Ожидают синхронизации"
+          label={t('mobileModule.dashboard.metricPendingSync')}
           value={metrics.pendingSync}
-          trend={{ direction: metrics.pendingSync > 0 ? 'down' : 'neutral', value: metrics.pendingSync > 0 ? 'Требуется синхронизация' : 'Все синхронизировано' }}
+          trend={{ direction: metrics.pendingSync > 0 ? 'down' : 'neutral', value: metrics.pendingSync > 0 ? t('mobileModule.dashboard.trendNeedSync') : t('mobileModule.dashboard.trendAllSynced') }}
         />
         <MetricCard
           icon={<Smartphone size={18} />}
-          label="Статус связи"
-          value={isOnline ? 'Онлайн' : 'Офлайн'}
-          trend={{ direction: isOnline ? 'neutral' : 'down', value: syncStatus.lastSyncAt ? `Синхр: ${formatRelativeTime(syncStatus.lastSyncAt)}` : '---' }}
+          label={t('mobileModule.dashboard.metricConnectionStatus')}
+          value={isOnline ? t('mobileModule.dashboard.statusOnline') : t('mobileModule.dashboard.statusOffline')}
+          trend={{ direction: isOnline ? 'neutral' : 'down', value: syncStatus.lastSyncAt ? t('mobileModule.dashboard.syncTimeLabel', { time: formatRelativeTime(syncStatus.lastSyncAt) }) : '---' }}
         />
       </div>
 
@@ -382,19 +383,19 @@ const MobileDashboardPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <RefreshCw size={18} className="text-warning-600" />
             <div>
-              <p className="text-sm font-medium text-warning-800">Ожидают синхронизации</p>
+              <p className="text-sm font-medium text-warning-800">{t('mobileModule.dashboard.syncBannerTitle')}</p>
               <p className="text-xs text-warning-600 mt-0.5">
-                {syncStatus.pendingReports > 0 && `${syncStatus.pendingReports} отчёт(ов)`}
+                {syncStatus.pendingReports > 0 && t('mobileModule.dashboard.syncBannerReports', { count: String(syncStatus.pendingReports) })}
                 {syncStatus.pendingReports > 0 && syncStatus.pendingPhotos > 0 && ', '}
-                {syncStatus.pendingPhotos > 0 && `${syncStatus.pendingPhotos} фото`}
-                {localQueue.length > 0 && `, ${localQueue.length} отчёт(ов) в локальной очереди`}
-                {queueStats.photoCount > 0 && ` (${queueStats.photoCount} фото)`}
-                {syncStatus.failedItems > 0 && ` | ${syncStatus.failedItems} с ошибкой`}
+                {syncStatus.pendingPhotos > 0 && t('mobileModule.dashboard.syncBannerPhotos', { count: String(syncStatus.pendingPhotos) })}
+                {localQueue.length > 0 && t('mobileModule.dashboard.syncBannerLocalQueue', { count: String(localQueue.length) })}
+                {queueStats.photoCount > 0 && t('mobileModule.dashboard.syncBannerLocalPhotos', { count: String(queueStats.photoCount) })}
+                {syncStatus.failedItems > 0 && t('mobileModule.dashboard.syncBannerFailed', { count: String(syncStatus.failedItems) })}
               </p>
             </div>
           </div>
           <Button size="sm" onClick={handleSync} loading={syncingQueue}>
-            Синхронизировать
+            {t('mobileModule.dashboard.syncBannerBtn')}
           </Button>
         </div>
       )}
@@ -403,7 +404,7 @@ const MobileDashboardPage: React.FC = () => {
         <div className="bg-danger-50 border border-danger-200 rounded-xl p-4 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle size={16} className="text-danger-600" />
-            <p className="text-sm font-semibold text-danger-800">Требуется решение конфликтов синхронизации</p>
+            <p className="text-sm font-semibold text-danger-800">{t('mobileModule.dashboard.conflictResolutionRequired')}</p>
           </div>
           <div className="space-y-3">
             {localQueue
@@ -412,9 +413,9 @@ const MobileDashboardPage: React.FC = () => {
                 <div key={item.id} className="rounded-lg border border-danger-200 bg-white dark:bg-neutral-900 p-3">
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{item.payload.title}</p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                    Статус: {item.status === 'CONFLICT' ? 'Конфликт' : 'Ошибка'} |
-                    Попыток: {item.attempts} |
-                    Фото: {item.photos.length}
+                    {t('mobileModule.dashboard.queueItemStatus')}: {item.status === 'CONFLICT' ? t('mobileModule.dashboard.queueItemConflict') : t('mobileModule.dashboard.queueItemError')} |
+                    {t('mobileModule.dashboard.queueItemAttempts')}: {item.attempts} |
+                    {t('mobileModule.dashboard.queueItemPhotos')}: {item.photos.length}
                   </p>
                   {item.lastError && (
                     <p className="text-xs text-danger-700 mt-1">{item.lastError}</p>
@@ -426,7 +427,7 @@ const MobileDashboardPage: React.FC = () => {
                       iconLeft={<RefreshCcw size={12} />}
                       onClick={() => markQueueItemForRetry(item.id)}
                     >
-                      Повторить
+                      {t('mobileModule.dashboard.retryBtn')}
                     </Button>
                     {item.status === 'CONFLICT' && (
                       <Button
@@ -434,7 +435,7 @@ const MobileDashboardPage: React.FC = () => {
                         variant="secondary"
                         onClick={() => markQueueItemForRetry(item.id, true)}
                       >
-                        Отправить как новый
+                        {t('mobileModule.dashboard.sendAsNewBtn')}
                       </Button>
                     )}
                     <Button
@@ -443,7 +444,7 @@ const MobileDashboardPage: React.FC = () => {
                       iconLeft={<Trash2 size={12} />}
                       onClick={() => void removeQueueItem(item.id)}
                     >
-                      Удалить из очереди
+                      {t('mobileModule.dashboard.removeFromQueueBtn')}
                     </Button>
                   </div>
                 </div>
@@ -455,14 +456,14 @@ const MobileDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Мои задачи</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('mobileModule.dashboard.myTasks')}</h3>
             <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-full">
-              {activeTasks.length} активных
+              {activeTasks.length} {t('mobileModule.dashboard.activeCount')}
             </span>
           </div>
 
           {activeTasks.length === 0 ? (
-            <div className="text-sm text-neutral-500 dark:text-neutral-400">Активных задач нет</div>
+            <div className="text-sm text-neutral-500 dark:text-neutral-400">{t('mobileModule.dashboard.noActiveTasks')}</div>
           ) : (
             <div className="space-y-3">
               {activeTasks.map((task) => (
@@ -475,7 +476,7 @@ const MobileDashboardPage: React.FC = () => {
                     <StatusBadge
                       status={task.status}
                       colorMap={taskStatusColorMap}
-                      label={taskStatusLabels[task.status]}
+                      label={getTaskStatusLabels()[task.status]}
                     />
                   </div>
                   {task.description && (
@@ -486,7 +487,7 @@ const MobileDashboardPage: React.FC = () => {
                     {task.dueDate && (
                       <span className="flex items-center gap-1">
                         <Clock size={10} />
-                        {`до ${task.dueDate}`}
+                        {t('mobileModule.dashboard.dueDatePrefix', { date: task.dueDate })}
                       </span>
                     )}
                   </div>
@@ -496,11 +497,11 @@ const MobileDashboardPage: React.FC = () => {
                       size="xs"
                       loading={completeTaskMutation.isPending}
                       onClick={() => {
-                        if (guardDemoModeAction('Обновление задачи')) return;
+                        if (guardDemoModeAction(t('mobileModule.dashboard.demoTaskUpdate'))) return;
                         completeTaskMutation.mutate(task.id);
                       }}
                     >
-                      Отметить выполненной
+                      {t('mobileModule.dashboard.markCompleted')}
                     </Button>
                   </div>
                 </div>
@@ -511,19 +512,19 @@ const MobileDashboardPage: React.FC = () => {
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Последние отчёты</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('mobileModule.dashboard.recentReports')}</h3>
             <Button
               variant="ghost"
               size="xs"
               iconRight={<ArrowRight size={14} />}
               onClick={() => navigate('/mobile/reports')}
             >
-              Все отчёты
+              {t('mobileModule.dashboard.allReports')}
             </Button>
           </div>
 
           {recentReports.length === 0 ? (
-            <div className="text-sm text-neutral-500 dark:text-neutral-400">Отчётов пока нет</div>
+            <div className="text-sm text-neutral-500 dark:text-neutral-400">{t('mobileModule.dashboard.noReportsYet')}</div>
           ) : (
             <div className="space-y-3">
               {recentReports.map((report) => (
@@ -537,7 +538,7 @@ const MobileDashboardPage: React.FC = () => {
                     <StatusBadge
                       status={report.status}
                       colorMap={reportStatusColorMap}
-                      label={reportStatusLabels[report.status]}
+                      label={getReportStatusLabels()[report.status]}
                     />
                   </div>
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{report.title}</p>
@@ -557,7 +558,7 @@ const MobileDashboardPage: React.FC = () => {
                 iconLeft={<Camera size={14} />}
                 onClick={() => navigate('/mobile/photos')}
               >
-                Фотогалерея
+                {t('mobileModule.dashboard.photoGallery')}
               </Button>
             </div>
           </div>

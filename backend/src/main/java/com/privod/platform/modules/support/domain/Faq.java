@@ -15,6 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "faqs", indexes = {
+        @Index(name = "idx_faq_org", columnList = "organization_id"),
         @Index(name = "idx_faq_category", columnList = "category_id"),
         @Index(name = "idx_faq_sort", columnList = "sort_order")
 })
@@ -24,6 +25,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Faq extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "question", columnDefinition = "TEXT", nullable = false)
     private String question;

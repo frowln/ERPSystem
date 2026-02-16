@@ -19,6 +19,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "crm_leads", indexes = {
+        @Index(name = "idx_crm_lead_org", columnList = "organization_id"),
+        @Index(name = "idx_crm_lead_org_status", columnList = "organization_id, status"),
         @Index(name = "idx_crm_lead_status", columnList = "status"),
         @Index(name = "idx_crm_lead_stage", columnList = "stage_id"),
         @Index(name = "idx_crm_lead_assigned", columnList = "assigned_to_id"),
@@ -34,6 +36,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrmLead extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 300)
     private String name;

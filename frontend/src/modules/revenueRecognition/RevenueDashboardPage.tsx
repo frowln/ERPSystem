@@ -13,16 +13,18 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { revenueRecognitionApi } from '@/api/revenueRecognition';
 import { formatMoneyCompact, formatPercent, formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 import type { RevenueContract } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red'> = {
   ACTIVE: 'green', COMPLETED: 'blue', SUSPENDED: 'yellow', TERMINATED: 'red',
 };
-const statusLabels: Record<string, string> = {
-  ACTIVE: 'Активный', COMPLETED: 'Завершён', SUSPENDED: 'Приостановлен', TERMINATED: 'Расторгнут',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  ACTIVE: t('revenueRecognition.statusActive'), COMPLETED: t('revenueRecognition.statusCompleted'), SUSPENDED: t('revenueRecognition.statusSuspended'), TERMINATED: t('revenueRecognition.statusTerminated'),
+});
 const RevenueDashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const statusLabels = getStatusLabels();
 
   const { data: contractData } = useQuery({
     queryKey: ['revenue-dashboard-contracts'],
@@ -47,16 +49,16 @@ const RevenueDashboardPage: React.FC = () => {
   const contractColumns = useMemo<ColumnDef<RevenueContract, unknown>[]>(
     () => [
       { accessorKey: 'contractNumber', header: '\u2116', size: 90, cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span> },
-      { accessorKey: 'contractName', header: 'Контракт', size: 220, cell: ({ row }) => (
+      { accessorKey: 'contractName', header: t('revenueRecognition.colContract'), size: 220, cell: ({ row }) => (
         <div>
           <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.contractName}</p>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.clientName}</p>
         </div>
       ) },
-      { accessorKey: 'status', header: 'Статус', size: 120, cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()] ?? getValue<string>()} /> },
-      { accessorKey: 'totalRevenue', header: 'Общая выручка', size: 130, cell: ({ getValue }) => <span className="tabular-nums">{formatMoneyCompact(getValue<number>())}</span> },
-      { accessorKey: 'recognizedRevenue', header: 'Признано', size: 130, cell: ({ getValue }) => <span className="tabular-nums text-green-600">{formatMoneyCompact(getValue<number>())}</span> },
-      { accessorKey: 'percentComplete', header: '% выполн.', size: 100, cell: ({ getValue }) => {
+      { accessorKey: 'status', header: t('common.status'), size: 120, cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()] ?? getValue<string>()} /> },
+      { accessorKey: 'totalRevenue', header: t('revenueRecognition.totalRevenue'), size: 130, cell: ({ getValue }) => <span className="tabular-nums">{formatMoneyCompact(getValue<number>())}</span> },
+      { accessorKey: 'recognizedRevenue', header: t('revenueRecognition.recognized'), size: 130, cell: ({ getValue }) => <span className="tabular-nums text-green-600">{formatMoneyCompact(getValue<number>())}</span> },
+      { accessorKey: 'percentComplete', header: t('revenueRecognition.percentComplete'), size: 100, cell: ({ getValue }) => {
         const pct = getValue<number>();
         return (
           <div className="flex items-center gap-2">
@@ -67,7 +69,7 @@ const RevenueDashboardPage: React.FC = () => {
           </div>
         );
       } },
-      { accessorKey: 'grossMargin', header: 'Маржа', size: 80, cell: ({ getValue }) => <span className="tabular-nums">{formatPercent(getValue<number>())}</span> },
+      { accessorKey: 'grossMargin', header: t('revenueRecognition.margin'), size: 80, cell: ({ getValue }) => <span className="tabular-nums">{formatPercent(getValue<number>())}</span> },
     ],
     [],
   );
@@ -75,21 +77,21 @@ const RevenueDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Признание выручки"
-        subtitle="Сводный обзор по стандартам МСФО 15 / РСБУ"
+        title={t('revenueRecognition.title')}
+        subtitle={t('revenueRecognition.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Признание выручки' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('revenueRecognition.title') },
         ]}
       />
 
       {/* Key metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Активных контрактов" value={metrics.activeCount} />
-        <MetricCard icon={<DollarSign size={18} />} label="Общая выручка" value={formatMoneyCompact(metrics.totalRevenue)} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Признано" value={formatMoneyCompact(metrics.totalRecognized)} trend={{ direction: 'up', value: formatPercent((metrics.totalRecognized / Math.max(metrics.totalRevenue, 1)) * 100) }} />
-        <MetricCard icon={<PieChart size={18} />} label="Ожидает признания" value={formatMoneyCompact(metrics.unrecoRevenue)} />
-        <MetricCard icon={<BarChart3 size={18} />} label="Средняя маржа" value={formatPercent(metrics.avgMargin)} />
+        <MetricCard icon={<FileText size={18} />} label={t('revenueRecognition.activeContracts')} value={metrics.activeCount} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('revenueRecognition.totalRevenue')} value={formatMoneyCompact(metrics.totalRevenue)} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('revenueRecognition.recognized')} value={formatMoneyCompact(metrics.totalRecognized)} trend={{ direction: 'up', value: formatPercent((metrics.totalRecognized / Math.max(metrics.totalRevenue, 1)) * 100) }} />
+        <MetricCard icon={<PieChart size={18} />} label={t('revenueRecognition.pendingRecognition')} value={formatMoneyCompact(metrics.unrecoRevenue)} />
+        <MetricCard icon={<BarChart3 size={18} />} label={t('revenueRecognition.avgMargin')} value={formatPercent(metrics.avgMargin)} />
       </div>
 
       {/* Quick navigation */}
@@ -99,22 +101,22 @@ const RevenueDashboardPage: React.FC = () => {
             <FileText size={20} className="text-primary-600" />
             <ArrowRight size={16} className="text-neutral-400" />
           </div>
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Контракты</h3>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Управление контрактами и методами признания</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('revenueRecognition.contracts')}</h3>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('revenueRecognition.contractsDescription')}</p>
         </button>
         <button onClick={() => navigate('/revenue/periods')} className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 hover:border-primary-300 hover:shadow-sm transition-all text-left">
           <div className="flex items-center justify-between mb-2">
             <Calendar size={20} className="text-primary-600" />
             <ArrowRight size={16} className="text-neutral-400" />
           </div>
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Периоды</h3>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Сводные данные признания по отчётным периодам</p>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('revenueRecognition.periods')}</h3>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('revenueRecognition.periodsDescription')}</p>
         </button>
         <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
           <div className="flex items-center justify-between mb-2">
             <BarChart3 size={20} className="text-primary-600" />
           </div>
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Динамика по кварталам</h3>
+          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('revenueRecognition.quarterlyDynamics')}</h3>
           <div className="mt-2 space-y-1">
             {([] as any[]).slice(-3).map((ps) => (
               <div key={ps.period} className="flex items-center justify-between text-sm">
@@ -128,7 +130,7 @@ const RevenueDashboardPage: React.FC = () => {
 
       {/* Revenue vs Cost bar chart (simplified) */}
       <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Выручка и затраты по кварталам</h3>
+        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('revenueRecognition.revenueCostByQuarter')}</h3>
         <div className="space-y-3">
           {([] as any[]).map((ps) => (
             <div key={ps.period} className="flex items-center gap-4">
@@ -138,14 +140,14 @@ const RevenueDashboardPage: React.FC = () => {
                   <div
                     className="h-full bg-green-400 rounded-l"
                     style={{ width: `${(ps.recognized / 350000000) * 100}%` }}
-                    title={`Выручка: ${formatMoney(ps.recognized)}`}
+                    title={`${t('revenueRecognition.revenue')}: ${formatMoney(ps.recognized)}`}
                   />
                 </div>
                 <div className="flex-1 h-5 bg-neutral-50 dark:bg-neutral-800 rounded overflow-hidden relative">
                   <div
                     className="h-full bg-blue-400 rounded-l"
                     style={{ width: `${(ps.cost / 350000000) * 100}%` }}
-                    title={`Затраты: ${formatMoney(ps.cost)}`}
+                    title={`${t('revenueRecognition.costs')}: ${formatMoney(ps.cost)}`}
                   />
                 </div>
               </div>
@@ -159,11 +161,11 @@ const RevenueDashboardPage: React.FC = () => {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-green-400 rounded" />
-                <span>Выручка</span>
+                <span>{t('revenueRecognition.revenue')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-blue-400 rounded" />
-                <span>Затраты</span>
+                <span>{t('revenueRecognition.costs')}</span>
               </div>
             </div>
           </div>
@@ -173,9 +175,9 @@ const RevenueDashboardPage: React.FC = () => {
       {/* Contracts table */}
       <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Контракты</h3>
+          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('revenueRecognition.contracts')}</h3>
           <Button variant="ghost" size="sm" onClick={() => navigate('/revenue/contracts')}>
-            Все контракты
+            {t('revenueRecognition.allContracts')}
           </Button>
         </div>
         <DataTable<RevenueContract>
@@ -183,8 +185,8 @@ const RevenueDashboardPage: React.FC = () => {
           columns={contractColumns}
           onRowClick={(c) => navigate(`/revenue/contracts/${c.id}`)}
           pageSize={10}
-          emptyTitle="Нет контрактов"
-          emptyDescription="Данные загружаются..."
+          emptyTitle={t('revenueRecognition.emptyTitle')}
+          emptyDescription={t('revenueRecognition.loadingData')}
         />
       </div>
     </div>

@@ -10,6 +10,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { EmptyState } from '@/design-system/components/EmptyState';
 import { workflowApi } from '@/api/workflow';
+import { t } from '@/i18n';
 import type { WorkflowDefinition, WorkflowStep } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'> = {
@@ -18,20 +19,20 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   DRAFT: 'yellow',
 };
 
-const statusLabels: Record<string, string> = {
-  ACTIVE: 'Активный',
-  INACTIVE: 'Неактивный',
-  DRAFT: 'Черновик',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  ACTIVE: t('workflow.statusActive'),
+  INACTIVE: t('workflow.statusInactive'),
+  DRAFT: t('workflow.statusDraft'),
+});
 
-const entityTypeLabels: Record<string, string> = {
-  CONTRACT: 'Договор',
-  DOCUMENT: 'Документ',
-  PURCHASE_REQUEST: 'Заявка на закупку',
-  INVOICE: 'Счёт',
-  BUDGET: 'Бюджет',
-  CHANGE_ORDER: 'Доп. соглашение',
-};
+const getEntityTypeLabels = (): Record<string, string> => ({
+  CONTRACT: t('workflow.entityContract'),
+  DOCUMENT: t('workflow.entityDocument'),
+  PURCHASE_REQUEST: t('workflow.entityPurchaseRequest'),
+  INVOICE: t('workflow.entityInvoice'),
+  BUDGET: t('workflow.entityBudget'),
+  CHANGE_ORDER: t('workflow.entityChangeOrder'),
+});
 
 
 const emptyWorkflow: WorkflowDefinition = {
@@ -69,6 +70,9 @@ const WorkflowDesignerPage: React.FC = () => {
   const currentWorkflow = workflow ?? (isNew ? emptyWorkflow : emptyWorkflow);
   const currentSteps = steps ?? [];
 
+  const statusLabels = getStatusLabels();
+  const entityTypeLabels = getEntityTypeLabels();
+
   const totalSlaHours = useMemo(() => {
     return currentSteps.reduce((sum, s) => sum + (s.slaHours ?? 0), 0);
   }, [currentSteps]);
@@ -78,24 +82,24 @@ const WorkflowDesignerPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title={isNew ? 'Новый бизнес-процесс' : currentWorkflow.name}
-        subtitle={isNew ? 'Настройте шаги нового процесса' : `Версия ${currentWorkflow.version} | ${entityTypeLabels[currentWorkflow.entityType] ?? currentWorkflow.entityType}`}
+        title={isNew ? t('workflow.newProcess') : currentWorkflow.name}
+        subtitle={isNew ? t('workflow.newProcessSubtitle') : `${t('workflow.versionLabel')} ${currentWorkflow.version} | ${entityTypeLabels[currentWorkflow.entityType] ?? currentWorkflow.entityType}`}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бизнес-процессы', href: '/workflow/templates' },
-          { label: isNew ? 'Новый' : currentWorkflow.name },
+          { label: t('workflow.breadcrumbHome'), href: '/' },
+          { label: t('workflow.breadcrumbWorkflows'), href: '/workflow/templates' },
+          { label: isNew ? t('workflow.breadcrumbNew') : currentWorkflow.name },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="outline" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/workflow/templates')}>
-              Назад
+              {t('common.back')}
             </Button>
             <Button variant="outline" iconLeft={<Save size={16} />}>
-              Сохранить
+              {t('common.save')}
             </Button>
             {!isNew && currentWorkflow.status === 'DRAFT' && (
               <Button iconLeft={<Play size={16} />}>
-                Активировать
+                {t('workflow.activate')}
               </Button>
             )}
           </div>
@@ -104,15 +108,15 @@ const WorkflowDesignerPage: React.FC = () => {
 
       {/* Info cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Settings2 size={18} />} label="Количество шагов" value={currentSteps.length} />
-        <MetricCard icon={<ArrowRight size={18} />} label="Автоматических" value={autoSteps} subtitle="выполняются автоматически" />
+        <MetricCard icon={<Settings2 size={18} />} label={t('workflow.metricStepsCount')} value={currentSteps.length} />
+        <MetricCard icon={<ArrowRight size={18} />} label={t('workflow.metricAutomatic')} value={autoSteps} subtitle={t('workflow.metricAutomaticSubtitle')} />
         <MetricCard
           icon={<Play size={18} />}
-          label="Общий SLA"
-          value={totalSlaHours > 0 ? `${totalSlaHours} ч.` : '---'}
+          label={t('workflow.metricTotalSla')}
+          value={totalSlaHours > 0 ? `${totalSlaHours} ${t('maintenance.hoursAbbrev')}` : '---'}
         />
         <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Статус процесса</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('workflow.processStatus')}</p>
           <StatusBadge
             status={currentWorkflow.status}
             colorMap={statusColorMap}
@@ -123,22 +127,22 @@ const WorkflowDesignerPage: React.FC = () => {
 
       {/* Workflow details form */}
       <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Параметры процесса</h3>
+        <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('workflow.processParams')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Название</label>
-            <Input defaultValue={currentWorkflow.name} placeholder="Введите название процесса" />
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelName')}</label>
+            <Input defaultValue={currentWorkflow.name} placeholder={t('workflow.placeholderName')} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Тип сущности</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelEntityType')}</label>
             <Select
               options={Object.entries(entityTypeLabels).map(([value, label]) => ({ value, label }))}
               defaultValue={currentWorkflow.entityType}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Описание</label>
-            <Input defaultValue={currentWorkflow.description ?? ''} placeholder="Описание процесса" />
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelDescription')}</label>
+            <Input defaultValue={currentWorkflow.description ?? ''} placeholder={t('workflow.placeholderDescription')} />
           </div>
         </div>
       </div>
@@ -146,16 +150,16 @@ const WorkflowDesignerPage: React.FC = () => {
       {/* Steps visual designer */}
       <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Шаги процесса</h3>
+          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('workflow.processSteps')}</h3>
           <Button variant="outline" size="sm" iconLeft={<Plus size={14} />} onClick={() => setAddStepOpen(true)}>
-            Добавить шаг
+            {t('workflow.addStep')}
           </Button>
         </div>
 
         {currentSteps.length === 0 ? (
           <EmptyState
-            title="Нет шагов"
-            description="Добавьте первый шаг для настройки бизнес-процесса"
+            title={t('workflow.noSteps')}
+            description={t('workflow.noStepsDescription')}
           />
         ) : (
           <div className="space-y-3">
@@ -185,10 +189,10 @@ const WorkflowDesignerPage: React.FC = () => {
                   <p className="text-sm text-neutral-700 dark:text-neutral-300">{step.requiredRole}</p>
                   <div className="flex items-center gap-2 mt-1">
                     {step.slaHours && (
-                      <span className="text-xs text-neutral-500 dark:text-neutral-400">SLA: {step.slaHours} ч.</span>
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">SLA: {step.slaHours} {t('maintenance.hoursAbbrev')}</span>
                     )}
                     {step.isAutomatic && (
-                      <span className="text-xs text-green-600 font-medium">Авто</span>
+                      <span className="text-xs text-green-600 font-medium">{t('workflow.autoLabel')}</span>
                     )}
                   </div>
                 </div>
@@ -227,40 +231,40 @@ const WorkflowDesignerPage: React.FC = () => {
       <Modal
         open={addStepOpen}
         onClose={() => setAddStepOpen(false)}
-        title="Добавить шаг"
+        title={t('workflow.addStep')}
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Название шага</label>
-            <Input placeholder="Например: Проверка юристом" />
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelStepName')}</label>
+            <Input placeholder={t('workflow.placeholderStepName')} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Статус: откуда</label>
-              <Input placeholder="Исходный статус" />
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelStatusFrom')}</label>
+              <Input placeholder={t('workflow.placeholderStatusFrom')} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Статус: куда</label>
-              <Input placeholder="Целевой статус" />
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelStatusTo')}</label>
+              <Input placeholder={t('workflow.placeholderStatusTo')} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Роль ответственного</label>
-              <Input placeholder="Роль" />
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelResponsibleRole')}</label>
+              <Input placeholder={t('workflow.placeholderRole')} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">SLA (часы)</label>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('workflow.labelSlaHours')}</label>
               <Input type="number" placeholder="24" />
             </div>
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="isAutomatic" className="rounded border-neutral-300 dark:border-neutral-600" />
-            <label htmlFor="isAutomatic" className="text-sm text-neutral-700 dark:text-neutral-300">Автоматический шаг</label>
+            <label htmlFor="isAutomatic" className="text-sm text-neutral-700 dark:text-neutral-300">{t('workflow.labelAutomatic')}</label>
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => setAddStepOpen(false)}>Отмена</Button>
-            <Button onClick={() => setAddStepOpen(false)}>Добавить</Button>
+            <Button variant="outline" onClick={() => setAddStepOpen(false)}>{t('common.cancel')}</Button>
+            <Button onClick={() => setAddStepOpen(false)}>{t('workflow.addStepButton')}</Button>
           </div>
         </div>
       </Modal>

@@ -6,6 +6,7 @@ import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { kepApi } from '@/api/kep';
 import { apiClient } from '@/api/client';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 
 interface KepSignWizardProps {
@@ -31,7 +32,12 @@ interface Certificate {
   serial: string;
 }
 
-const STEPS = ['Выбор документа', 'Выбор сертификата', 'Подписание', 'Результат'] as const;
+const getSteps = () => [
+  t('russianDocs.kepStepDocument'),
+  t('russianDocs.kepStepCertificate'),
+  t('russianDocs.kepStepSigning'),
+  t('russianDocs.kepStepResult'),
+] as const;
 
 export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, documentId: initialDocId }) => {
   const [step, setStep] = useState(0);
@@ -83,7 +89,7 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
   );
 
   const certSelectOptions = useMemo(() =>
-    certificates.map((c) => ({ value: c.id, label: `${c.owner} (${c.issuer}, до ${c.validTo})` })),
+    certificates.map((c) => ({ value: c.id, label: `${c.owner} (${c.issuer}, ${t('russianDocs.kepCertValidity').toLowerCase().split(' ')[0]} ${c.validTo})` })),
     [certificates],
   );
 
@@ -100,11 +106,11 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
     // Simulate sign result
     if (pin.length >= 4) {
       setSignResult('SUCCESS');
-      toast.success('Документ подписан КЭП');
+      toast.success(t('russianDocs.kepToastSuccess'));
     } else {
       setSignResult('ERROR');
-      setErrorMessage('Неверный ПИН-код контейнера закрытого ключа. Проверьте правильность ввода.');
-      toast.error('Ошибка подписания КЭП');
+      setErrorMessage(t('russianDocs.kepSignErrorPin'));
+      toast.error(t('russianDocs.kepToastError'));
     }
 
     setSigning(false);
@@ -128,30 +134,32 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
     ? new Date(selectedCert.validTo) < new Date()
     : false;
 
+  const STEPS = getSteps();
+
   return (
     <Modal
       open={open}
       onClose={resetAndClose}
-      title="Подписание документа КЭП"
-      description="Квалифицированная электронная подпись"
+      title={t('russianDocs.kepTitle')}
+      description={t('russianDocs.kepDescription')}
       size="lg"
       footer={
         step === 3 ? (
           <Button onClick={resetAndClose}>
-            {signResult === 'SUCCESS' ? 'Готово' : 'Закрыть'}
+            {signResult === 'SUCCESS' ? t('russianDocs.done') : t('russianDocs.close')}
           </Button>
         ) : (
           <>
             <Button variant="secondary" onClick={step === 0 ? resetAndClose : () => setStep(step - 1)}>
-              {step === 0 ? 'Отмена' : 'Назад'}
+              {step === 0 ? t('russianDocs.cancel') : t('russianDocs.back')}
             </Button>
             {step < 2 ? (
               <Button onClick={() => setStep(step + 1)} disabled={!canNext}>
-                Далее
+                {t('russianDocs.next')}
               </Button>
             ) : (
               <Button onClick={handleSign} loading={signing} disabled={!canNext}>
-                Подписать
+                {t('russianDocs.sign')}
               </Button>
             )}
           </>
@@ -180,31 +188,31 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
       {/* Step 1: Select document */}
       {step === 0 && (
         <div className="space-y-4">
-          <FormField label="Документ для подписания" required>
+          <FormField label={t('russianDocs.kepSelectDocument')} required>
             <Select
               options={documentSelectOptions}
               value={documentId}
               onChange={(e) => setDocumentId(e.target.value)}
-              placeholder="Выберите документ"
+              placeholder={t('russianDocs.kepSelectDocPlaceholder')}
             />
           </FormField>
           {selectedDoc && (
             <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Название</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepDocName')}</p>
                   <p className="text-sm font-medium">{selectedDoc.name}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Дата документа</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepDocDate')}</p>
                   <p className="text-sm">{selectedDoc.date}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Формат</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepDocFormat')}</p>
                   <p className="text-sm">{selectedDoc.type}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Размер</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepDocSize')}</p>
                   <p className="text-sm">{selectedDoc.size}</p>
                 </div>
               </div>
@@ -216,37 +224,37 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
       {/* Step 2: Select certificate */}
       {step === 1 && (
         <div className="space-y-4">
-          <FormField label="Сертификат КЭП" required>
+          <FormField label={t('russianDocs.kepCertLabel')} required>
             <Select
               options={certSelectOptions}
               value={certId}
               onChange={(e) => setCertId(e.target.value)}
-              placeholder="Выберите сертификат"
+              placeholder={t('russianDocs.kepCertPlaceholder')}
             />
           </FormField>
           {selectedCert && (
             <div className={`border rounded-lg p-4 ${isCertExpired ? 'bg-danger-50 border-danger-200' : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700'}`}>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Владелец</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepCertOwner')}</p>
                   <p className="text-sm font-medium">{selectedCert.owner}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Удостоверяющий центр</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepCertIssuer')}</p>
                   <p className="text-sm">{selectedCert.issuer}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Серийный номер</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepCertSerial')}</p>
                   <p className="text-sm font-mono text-xs">{selectedCert.serial}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Срок действия</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('russianDocs.kepCertValidity')}</p>
                   <p className="text-sm">{selectedCert.validFrom} - {selectedCert.validTo}</p>
                 </div>
               </div>
               {isCertExpired && (
                 <p className="text-sm text-danger-700 font-medium mt-3">
-                  Внимание: срок действия сертификата истёк!
+                  {t('russianDocs.kepCertExpired')}
                 </p>
               )}
             </div>
@@ -258,14 +266,14 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
       {step === 2 && (
         <div className="space-y-4">
           <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-3 text-sm">
-            <p><strong>Документ:</strong> {selectedDoc?.name}</p>
-            <p className="mt-1"><strong>Сертификат:</strong> {selectedCert?.owner} ({selectedCert?.issuer})</p>
+            <p><strong>{t('russianDocs.kepDocumentLabel')}:</strong> {selectedDoc?.name}</p>
+            <p className="mt-1"><strong>{t('russianDocs.kepCertificateLabel')}:</strong> {selectedCert?.owner} ({selectedCert?.issuer})</p>
           </div>
 
-          <FormField label="ПИН-код контейнера закрытого ключа" required hint="Введите ПИН-код, установленный при создании контейнера ключа">
+          <FormField label={t('russianDocs.kepPinLabel')} required hint={t('russianDocs.kepPinHint')}>
             <Input
               type="password"
-              placeholder="Введите ПИН-код"
+              placeholder={t('russianDocs.kepPinPlaceholder')}
               value={pin}
               onChange={(e) => setPin(e.target.value)}
               autoFocus
@@ -274,7 +282,7 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
 
           <div className="bg-warning-50 border border-warning-200 rounded-lg p-3">
             <p className="text-sm text-warning-800">
-              Не передавайте ПИН-код третьим лицам. Система не сохраняет введённый ПИН-код.
+              {t('russianDocs.kepPinWarning')}
             </p>
           </div>
         </div>
@@ -290,14 +298,14 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-success-900">Документ успешно подписан</h3>
+              <h3 className="text-lg font-semibold text-success-900">{t('russianDocs.kepSignSuccess')}</h3>
               <p className="text-sm text-success-700 mt-2">
-                Документ "{selectedDoc?.name}" подписан квалифицированной электронной подписью.
+                {t('russianDocs.kepSignSuccessDetail', { name: selectedDoc?.name ?? '' })}
               </p>
               <div className="mt-4 text-sm text-success-700 space-y-1">
-                <p>Подписант: {selectedCert?.owner}</p>
-                <p>Дата подписания: {new Date().toLocaleDateString('ru-RU')}</p>
-                <p>УЦ: {selectedCert?.issuer}</p>
+                <p>{t('russianDocs.kepSignSigner')}: {selectedCert?.owner}</p>
+                <p>{t('russianDocs.kepSignDate')}: {new Date().toLocaleDateString('ru-RU')}</p>
+                <p>{t('russianDocs.kepSignCA')}: {selectedCert?.issuer}</p>
               </div>
             </div>
           )}
@@ -309,10 +317,10 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-danger-900">Ошибка подписания</h3>
+              <h3 className="text-lg font-semibold text-danger-900">{t('russianDocs.kepSignError')}</h3>
               <p className="text-sm text-danger-700 mt-2">{errorMessage}</p>
               <Button variant="secondary" size="sm" className="mt-4" onClick={() => { setStep(2); setPin(''); }}>
-                Попробовать снова
+                {t('russianDocs.tryAgain')}
               </Button>
             </div>
           )}

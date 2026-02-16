@@ -12,6 +12,7 @@ import { formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { SupportTicket, TicketStatus } from './types';
 import { TicketCreateModal } from './TicketCreateModal';
+import { t } from '@/i18n';
 
 type BoardColumnId = TicketStatus;
 
@@ -23,21 +24,21 @@ interface BoardColumn {
   collapsed: boolean;
 }
 
-const defaultColumns: BoardColumn[] = [
-  { id: 'OPEN', title: 'Открыта', color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'ASSIGNED', title: 'Назначена', color: 'bg-cyan-500', headerBg: 'bg-cyan-50', collapsed: false },
-  { id: 'IN_PROGRESS', title: 'В работе', color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'WAITING_RESPONSE', title: 'Ожидание ответа', color: 'bg-orange-500', headerBg: 'bg-orange-50', collapsed: false },
-  { id: 'RESOLVED', title: 'Решена', color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
-  { id: 'CLOSED', title: 'Закрыта', color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
+const getDefaultColumns = (): BoardColumn[] => [
+  { id: 'OPEN', title: t('support.colOpen'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
+  { id: 'ASSIGNED', title: t('support.colAssigned'), color: 'bg-cyan-500', headerBg: 'bg-cyan-50', collapsed: false },
+  { id: 'IN_PROGRESS', title: t('support.colInProgress'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
+  { id: 'WAITING_RESPONSE', title: t('support.colWaitingResponse'), color: 'bg-orange-500', headerBg: 'bg-orange-50', collapsed: false },
+  { id: 'RESOLVED', title: t('support.colResolved'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
+  { id: 'CLOSED', title: t('support.colClosed'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
 ];
 
-const priorityLabels: Record<string, string> = {
-  LOW: 'Низкий',
-  MEDIUM: 'Средний',
-  HIGH: 'Высокий',
-  CRITICAL: 'Критический',
-};
+const getPriorityLabels = (): Record<string, string> => ({
+  LOW: t('support.priorityLow'),
+  MEDIUM: t('support.priorityMedium'),
+  HIGH: t('support.priorityHigh'),
+  CRITICAL: t('support.priorityCritical'),
+});
 
 const priorityColors: Record<string, string> = {
   LOW: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600',
@@ -46,19 +47,19 @@ const priorityColors: Record<string, string> = {
   CRITICAL: 'bg-red-100 text-red-700',
 };
 
-const categoryLabels: Record<string, string> = {
-  TECHNICAL: 'Техническая',
-  ACCESS: 'Доступ',
-  DOCUMENTS: 'Документы',
-  EQUIPMENT: 'Оборудование',
-  SAFETY: 'Безопасность',
-  SCHEDULE: 'График',
-  OTHER: 'Прочее',
-};
+const getCategoryLabels = (): Record<string, string> => ({
+  TECHNICAL: t('support.catTechnical'),
+  ACCESS: t('support.catAccess'),
+  DOCUMENTS: t('support.catDocuments'),
+  EQUIPMENT: t('support.catEquipment'),
+  SAFETY: t('support.catSafety'),
+  SCHEDULE: t('support.catSchedule'),
+  OTHER: t('support.catOther'),
+});
 
 function categoryLabel(value?: string): string {
-  if (!value) return 'Без категории';
-  return categoryLabels[value] ?? value;
+  if (!value) return t('support.catNone');
+  return getCategoryLabels()[value] ?? value;
 }
 
 const TicketBoardPage: React.FC = () => {
@@ -66,7 +67,7 @@ const TicketBoardPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [items, setItems] = useState<SupportTicket[]>([]);
-  const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
+  const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -101,7 +102,7 @@ const TicketBoardPage: React.FC = () => {
       ]);
     },
     onError: () => {
-      toast.error('Не удалось изменить статус заявки');
+      toast.error(t('support.statusChangeError'));
     },
   });
 
@@ -153,7 +154,7 @@ const TicketBoardPage: React.FC = () => {
     }
 
     if (status === 'ASSIGNED' && !current.assignedToId) {
-      toast.error('Нельзя перевести в "Назначена" без исполнителя');
+      toast.error(t('support.cannotAssignNoAssignee'));
       setDraggedId(null);
       setDragOverCol(null);
       return;
@@ -192,12 +193,12 @@ const TicketBoardPage: React.FC = () => {
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
       <PageHeader
-        title="Тикеты поддержки - Доска"
-        subtitle={`${items.length} тикетов`}
+        title={t('support.boardTitle')}
+        subtitle={t('support.boardSubtitle', { count: String(items.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Поддержка', href: '/support/tickets' },
-          { label: 'Доска' },
+          { label: t('support.breadcrumbHome'), href: '/' },
+          { label: t('support.breadcrumbSupport'), href: '/support/tickets' },
+          { label: t('support.breadcrumbBoard') },
         ]}
         actions={(
           <div className="flex items-center gap-2">
@@ -208,7 +209,7 @@ const TicketBoardPage: React.FC = () => {
               onClick={() => setShowFilters(!showFilters)}
               className={hasFilters ? 'border-primary-300 text-primary-600' : ''}
             >
-              Фильтры
+              {t('support.btnFilters')}
             </Button>
             <Button
               variant="secondary"
@@ -216,10 +217,10 @@ const TicketBoardPage: React.FC = () => {
               iconLeft={<List size={14} />}
               onClick={() => navigate('/support/tickets')}
             >
-              Список
+              {t('support.btnList')}
             </Button>
             <Button iconLeft={<Plus size={16} />} onClick={() => setCreateModalOpen(true)}>
-              Новый тикет
+              {t('support.btnNewTicket')}
             </Button>
           </div>
         )}
@@ -230,7 +231,7 @@ const TicketBoardPage: React.FC = () => {
           <div className="relative flex-1 max-w-xs">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
             <Input
-              placeholder="Поиск по номеру, теме, категории..."
+              placeholder={t('support.searchPlaceholder')}
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               className="pl-9"
@@ -238,8 +239,8 @@ const TicketBoardPage: React.FC = () => {
           </div>
           <Select
             options={[
-              { value: '', label: 'Все статусы' },
-              ...defaultColumns.map((column) => ({ value: column.id, label: column.title })),
+              { value: '', label: t('support.allStatuses') },
+              ...getDefaultColumns().map((column) => ({ value: column.id, label: column.title })),
             ]}
             value={filterStatus}
             onChange={(event) => setFilterStatus(event.target.value)}
@@ -255,7 +256,7 @@ const TicketBoardPage: React.FC = () => {
                 setFilterStatus('');
               }}
             >
-              Сбросить
+              {t('support.btnReset')}
             </Button>
           )}
         </div>
@@ -264,9 +265,9 @@ const TicketBoardPage: React.FC = () => {
       {isError && items.length === 0 ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить доску заявок"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('support.errorLoadBoard')}
+          description={t('support.errorLoadBoardDesc')}
+          actionLabel={t('support.btnRetry')}
           onAction={() => { void refetch(); }}
         />
       ) : (
@@ -314,10 +315,10 @@ const TicketBoardPage: React.FC = () => {
                     {columnItems.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-8 text-center">
                         <p className="text-xs text-neutral-400">
-                          {isLoading ? 'Загрузка...' : 'Нет тикетов'}
+                          {isLoading ? t('support.loadingTickets') : t('support.noTickets')}
                         </p>
                         {!isLoading && (
-                          <p className="text-[10px] text-neutral-300 mt-0.5">Перетащите карточку сюда</p>
+                          <p className="text-[10px] text-neutral-300 mt-0.5">{t('support.dragHint')}</p>
                         )}
                       </div>
                     ) : (
@@ -339,7 +340,7 @@ const TicketBoardPage: React.FC = () => {
                               priorityColors[item.priority] ?? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600',
                             )}
                             >
-                              {priorityLabels[item.priority] ?? item.priority}
+                              {getPriorityLabels()[item.priority] ?? item.priority}
                             </span>
                           </div>
 
@@ -352,7 +353,7 @@ const TicketBoardPage: React.FC = () => {
                           </div>
 
                           <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">
-                            От: {item.requesterName ?? item.requesterId ?? '—'}
+                            {t('support.fromLabel', { name: item.requesterName ?? item.requesterId ?? '—' })}
                           </p>
 
                           <div className="flex items-center justify-between">

@@ -3,37 +3,38 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { searchApi } from '@/api/search';
 import { isDemoMode } from '@/lib/demoMode';
+import { t } from '@/i18n';
 import type { SearchResult, SearchFilters } from './types';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const ENTITY_TYPES = [
-  { value: 'PROJECT', label: 'Проекты', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
-  { value: 'contract', label: 'Договоры', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+const getEntityTypes = () => [
+  { value: 'PROJECT', label: t('search.entityProjects'), icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
+  { value: 'contract', label: t('search.entityContracts'), icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
   { value: 'RFI', label: 'RFI', icon: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-  { value: 'ISSUE', label: 'Замечания', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z' },
-  { value: 'DOCUMENT', label: 'Документы', icon: 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z' },
-  { value: 'employee', label: 'Сотрудники', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
-  { value: 'MATERIAL', label: 'Материалы', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
-  { value: 'TASK', label: 'Задачи', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
+  { value: 'ISSUE', label: t('search.entityIssues'), icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z' },
+  { value: 'DOCUMENT', label: t('search.entityDocuments'), icon: 'M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z' },
+  { value: 'employee', label: t('search.entityEmployees'), icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+  { value: 'MATERIAL', label: t('search.entityMaterials'), icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+  { value: 'TASK', label: t('search.entityTasks'), icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
 ] as const;
 
-const PROJECT_OPTIONS = [
-  { value: '', label: 'Все проекты' },
+const getProjectOptions = () => [
+  { value: '', label: t('search.allProjects') },
   { value: '1', label: 'ЖК "Солнечный"' },
   { value: '2', label: 'ЖК "Новые Горизонты"' },
   { value: '3', label: 'Мост через р. Вятка' },
   { value: '6', label: 'ТЦ "Центральный"' },
 ];
 
-const SUGGESTIONS = [
-  'Акты КС-2 за март',
-  'Просроченные задачи',
-  'Договоры с ООО "СтальТорг"',
-  'Замечания по качеству',
-  'Спецификация арматуры',
+const getSuggestions = () => [
+  t('search.suggestion1'),
+  t('search.suggestion2'),
+  t('search.suggestion3'),
+  t('search.suggestion4'),
+  t('search.suggestion5'),
 ];
 
 const STATUS_COLORS: Record<string, string> = {
@@ -46,15 +47,15 @@ const STATUS_COLORS: Record<string, string> = {
   overdue: 'bg-danger-100 text-danger-700',
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  active: 'Активен',
-  open: 'Открыт',
-  closed: 'Закрыт',
-  draft: 'Черновик',
-  in_progress: 'В работе',
-  completed: 'Завершен',
-  overdue: 'Просрочен',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  active: t('search.statusActive'),
+  open: t('search.statusOpen'),
+  closed: t('search.statusClosed'),
+  draft: t('search.statusDraft'),
+  in_progress: t('search.statusInProgress'),
+  completed: t('search.statusCompleted'),
+  overdue: t('search.statusOverdue'),
+});
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -114,6 +115,11 @@ const GlobalSearchPage: React.FC = () => {
     enabled: debouncedQuery.length >= 2,
   });
 
+  const ENTITY_TYPES = getEntityTypes();
+  const PROJECT_OPTIONS = getProjectOptions();
+  const SUGGESTIONS = getSuggestions();
+  const STATUS_LABELS = getStatusLabels();
+
   // When API is not yet connected, filter mock data client-side
   const apiResults = data as { items?: SearchResult[]; content?: SearchResult[] } | undefined;
   const results: SearchResult[] = apiResults?.items ?? apiResults?.content ?? (
@@ -162,8 +168,8 @@ const GlobalSearchPage: React.FC = () => {
     <div className="space-y-6">
       {/* Search header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Поиск</h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Поиск по всем разделам системы</p>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{t('search.title')}</h1>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('search.subtitle')}</p>
       </div>
 
       {/* Large search input */}
@@ -178,13 +184,13 @@ const GlobalSearchPage: React.FC = () => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Введите запрос для поиска..."
+          placeholder={t('search.inputPlaceholder')}
           className="w-full pl-12 pr-4 py-4 text-lg border border-neutral-300 dark:border-neutral-600 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow"
         />
         {query && (
             <button
               onClick={() => setQuery('')}
-              aria-label="Очистить строку поиска"
+              aria-label={t('search.clearInput')}
               className="absolute inset-y-0 right-0 pr-4 flex items-center text-neutral-400 hover:text-neutral-600"
             >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -199,7 +205,7 @@ const GlobalSearchPage: React.FC = () => {
         <div className="w-full lg:w-64 shrink-0 space-y-6">
           {/* Entity type filters */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Тип объекта</h3>
+            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">{t('search.entityTypeFilter')}</h3>
             <div className="space-y-1.5">
               {ENTITY_TYPES.map((type) => (
                 <label
@@ -227,7 +233,7 @@ const GlobalSearchPage: React.FC = () => {
 
           {/* Project filter */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Проект</h3>
+            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">{t('search.projectFilter')}</h3>
             <select
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
@@ -241,10 +247,10 @@ const GlobalSearchPage: React.FC = () => {
 
           {/* Date range filter */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Период</h3>
+            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">{t('search.periodFilter')}</h3>
             <div className="space-y-2">
               <div>
-                <label className="text-xs text-neutral-500 dark:text-neutral-400">С</label>
+                <label className="text-xs text-neutral-500 dark:text-neutral-400">{t('search.dateFrom')}</label>
                 <input
                   type="date"
                   value={dateFrom}
@@ -253,7 +259,7 @@ const GlobalSearchPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="text-xs text-neutral-500 dark:text-neutral-400">По</label>
+                <label className="text-xs text-neutral-500 dark:text-neutral-400">{t('search.dateTo')}</label>
                 <input
                   type="date"
                   value={dateTo}
@@ -275,7 +281,7 @@ const GlobalSearchPage: React.FC = () => {
               }}
               className="text-sm text-primary-600 hover:underline"
             >
-              Сбросить фильтры
+              {t('search.clearFilters')}
             </button>
           )}
         </div>
@@ -304,10 +310,10 @@ const GlobalSearchPage: React.FC = () => {
               <svg className="w-16 h-16 text-neutral-200 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <h3 className="text-lg font-medium text-neutral-600">Начните вводить запрос</h3>
-              <p className="text-sm text-neutral-400 mt-1 mb-6">Поиск по проектам, договорам, документам, задачам и другим объектам</p>
+              <h3 className="text-lg font-medium text-neutral-600">{t('search.startTyping')}</h3>
+              <p className="text-sm text-neutral-400 mt-1 mb-6">{t('search.startTypingDescription')}</p>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-3">Попробуйте:</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-3">{t('search.trySuggestions')}</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {SUGGESTIONS.map((s) => (
                     <button
@@ -329,16 +335,16 @@ const GlobalSearchPage: React.FC = () => {
               <svg className="w-16 h-16 text-neutral-200 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
               </svg>
-              <h3 className="text-lg font-medium text-neutral-600">Ничего не найдено</h3>
+              <h3 className="text-lg font-medium text-neutral-600">{t('search.noResults')}</h3>
               <p className="text-sm text-neutral-400 mt-1">
-                По запросу "{debouncedQuery}" результатов нет. Попробуйте изменить запрос или фильтры.
+                {t('search.noResultsFor', { query: debouncedQuery })}
               </p>
               <div className="mt-4">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Рекомендации:</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">{t('search.recommendations')}</p>
                 <ul className="text-sm text-neutral-500 dark:text-neutral-400 space-y-1">
-                  <li>Проверьте правильность написания</li>
-                  <li>Используйте более общие слова</li>
-                  <li>Снимите лишние фильтры</li>
+                  <li>{t('search.recommendCheckSpelling')}</li>
+                  <li>{t('search.recommendBroaderTerms')}</li>
+                  <li>{t('search.recommendRemoveFilters')}</li>
                 </ul>
               </div>
             </div>
@@ -348,7 +354,7 @@ const GlobalSearchPage: React.FC = () => {
           {!isLoading && Object.keys(groupedResults).length > 0 && (
             <div className="space-y-6">
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                Найдено результатов: <strong>{results.length}</strong>
+                {t('search.resultsFound', { count: results.length })}
               </p>
 
               {Object.entries(groupedResults).map(([type, items]) => {

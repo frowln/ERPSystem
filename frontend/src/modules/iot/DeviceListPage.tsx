@@ -11,6 +11,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { iotApi } from '@/api/iot';
 import { formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 import type { IoTDevice } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -22,24 +23,24 @@ const deviceStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' 
   maintenance: 'purple',
 };
 
-const deviceStatusLabels: Record<string, string> = {
-  online: 'Онлайн',
-  offline: 'Офлайн',
-  warning: 'Предупреждение',
-  error: 'Ошибка',
-  maintenance: 'Обслуживание',
-};
+const getDeviceStatusLabels = (): Record<string, string> => ({
+  online: t('iot.statusOnline'),
+  offline: t('iot.statusOffline'),
+  warning: t('iot.statusWarning'),
+  error: t('iot.statusError'),
+  maintenance: t('iot.statusMaintenance'),
+});
 
-const sensorTypeLabels: Record<string, string> = {
-  temperature: 'Температура',
-  humidity: 'Влажность',
-  vibration: 'Вибрация',
-  pressure: 'Давление',
-  gps: 'GPS-трекер',
-  dust: 'Пыль',
-  noise: 'Шум',
-  structural: 'Структурный',
-};
+const getSensorTypeLabels = (): Record<string, string> => ({
+  temperature: t('iot.sensorTemperature'),
+  humidity: t('iot.sensorHumidity'),
+  vibration: t('iot.sensorVibration'),
+  pressure: t('iot.sensorPressure'),
+  gps: t('iot.sensorGps'),
+  dust: t('iot.sensorDust'),
+  noise: t('iot.sensorNoise'),
+  structural: t('iot.sensorStructural'),
+});
 
 const sensorTypeColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   temperature: 'red',
@@ -54,9 +55,9 @@ const sensorTypeColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 
 
 type TabId = 'all' | 'ONLINE' | 'WARNING' | 'OFFLINE';
 
-const sensorTypeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  ...Object.entries(sensorTypeLabels).map(([v, l]) => ({ value: v, label: l })),
+const getSensorTypeFilterOptions = () => [
+  { value: '', label: t('iot.devices.allTypes') },
+  ...Object.entries(getSensorTypeLabels()).map(([v, l]) => ({ value: v, label: l })),
 ];
 
 
@@ -116,92 +117,96 @@ const DeviceListPage: React.FC = () => {
   }, [devices]);
 
   const columns = useMemo<ColumnDef<IoTDevice, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'code',
-        header: 'Код',
-        size: 120,
-        cell: ({ getValue }) => (
-          <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'name',
-        header: 'Устройство',
-        size: 250,
-        cell: ({ row }) => (
-          <div>
-            <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[230px]">{row.original.name}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.location}</p>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'sensorType',
-        header: 'Тип',
-        size: 130,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={sensorTypeColorMap}
-            label={sensorTypeLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'status',
-        header: 'Статус',
-        size: 140,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={deviceStatusColorMap}
-            label={deviceStatusLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'lastReadingValue',
-        header: 'Показание',
-        size: 120,
-        cell: ({ row }) => {
-          const val = row.original.lastReadingValue;
-          const unit = row.original.lastReadingUnit;
-          return val != null ? (
-            <span className="tabular-nums font-medium text-neutral-900 dark:text-neutral-100">{val} {unit}</span>
-          ) : (
-            <span className="text-neutral-400">---</span>
-          );
+    () => {
+      const deviceStatusLabels = getDeviceStatusLabels();
+      const sensorTypeLabels = getSensorTypeLabels();
+      return [
+        {
+          accessorKey: 'code',
+          header: t('iot.devices.colCode'),
+          size: 120,
+          cell: ({ getValue }) => (
+            <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
+          ),
         },
-      },
-      {
-        accessorKey: 'batteryLevel',
-        header: 'Батарея',
-        size: 100,
-        cell: ({ getValue }) => {
-          const level = getValue<number | undefined>();
-          if (level == null) return <span className="text-neutral-400">---</span>;
-          const color = level > 50 ? 'text-success-600' : level > 20 ? 'text-warning-600' : 'text-danger-600';
-          return <span className={`tabular-nums font-medium ${color}`}>{level}%</span>;
+        {
+          accessorKey: 'name',
+          header: t('iot.devices.colDevice'),
+          size: 250,
+          cell: ({ row }) => (
+            <div>
+              <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[230px]">{row.original.name}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.location}</p>
+            </div>
+          ),
         },
-      },
-      {
-        accessorKey: 'projectName',
-        header: 'Проект',
-        size: 160,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-700 dark:text-neutral-300 text-sm">{getValue<string>() ?? '---'}</span>
-        ),
-      },
-      {
-        accessorKey: 'lastReadingAt',
-        header: 'Последнее чтение',
-        size: 150,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600 text-xs">{formatDateTime(getValue<string>())}</span>
-        ),
-      },
-    ],
+        {
+          accessorKey: 'sensorType',
+          header: t('iot.devices.colType'),
+          size: 130,
+          cell: ({ getValue }) => (
+            <StatusBadge
+              status={getValue<string>()}
+              colorMap={sensorTypeColorMap}
+              label={sensorTypeLabels[getValue<string>()] ?? getValue<string>()}
+            />
+          ),
+        },
+        {
+          accessorKey: 'status',
+          header: t('iot.devices.colStatus'),
+          size: 140,
+          cell: ({ getValue }) => (
+            <StatusBadge
+              status={getValue<string>()}
+              colorMap={deviceStatusColorMap}
+              label={deviceStatusLabels[getValue<string>()] ?? getValue<string>()}
+            />
+          ),
+        },
+        {
+          accessorKey: 'lastReadingValue',
+          header: t('iot.devices.colReading'),
+          size: 120,
+          cell: ({ row }) => {
+            const val = row.original.lastReadingValue;
+            const unit = row.original.lastReadingUnit;
+            return val != null ? (
+              <span className="tabular-nums font-medium text-neutral-900 dark:text-neutral-100">{val} {unit}</span>
+            ) : (
+              <span className="text-neutral-400">---</span>
+            );
+          },
+        },
+        {
+          accessorKey: 'batteryLevel',
+          header: t('iot.devices.colBattery'),
+          size: 100,
+          cell: ({ getValue }) => {
+            const level = getValue<number | undefined>();
+            if (level == null) return <span className="text-neutral-400">---</span>;
+            const color = level > 50 ? 'text-success-600' : level > 20 ? 'text-warning-600' : 'text-danger-600';
+            return <span className={`tabular-nums font-medium ${color}`}>{level}%</span>;
+          },
+        },
+        {
+          accessorKey: 'projectName',
+          header: t('iot.devices.colProject'),
+          size: 160,
+          cell: ({ getValue }) => (
+            <span className="text-neutral-700 dark:text-neutral-300 text-sm">{getValue<string>() ?? '---'}</span>
+          ),
+        },
+        {
+          accessorKey: 'lastReadingAt',
+          header: t('iot.devices.colLastReading'),
+          size: 150,
+          cell: ({ getValue }) => (
+            <span className="text-neutral-600 text-xs">{formatDateTime(getValue<string>())}</span>
+          ),
+        },
+      ];
+    },
     [],
   );
 
@@ -213,23 +218,23 @@ const DeviceListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="IoT-устройства"
-        subtitle={`${devices.length} устройств на площадках`}
+        title={t('iot.devices.title')}
+        subtitle={t('iot.devices.subtitleDevices', { count: String(devices.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'IoT мониторинг' },
-          { label: 'Устройства' },
+          { label: t('iot.devices.breadcrumbHome'), href: '/' },
+          { label: t('iot.devices.breadcrumbIot') },
+          { label: t('iot.devices.breadcrumbDevices') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Добавить устройство
+            {t('iot.devices.addDevice')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ONLINE', label: 'Онлайн', count: tabCounts.online },
-          { id: 'WARNING', label: 'Тревоги', count: tabCounts.warning },
-          { id: 'OFFLINE', label: 'Офлайн', count: tabCounts.offline },
+          { id: 'all', label: t('iot.devices.tabAll'), count: tabCounts.all },
+          { id: 'ONLINE', label: t('iot.devices.tabOnline'), count: tabCounts.online },
+          { id: 'WARNING', label: t('iot.devices.tabWarning'), count: tabCounts.warning },
+          { id: 'OFFLINE', label: t('iot.devices.tabOffline'), count: tabCounts.offline },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -237,24 +242,24 @@ const DeviceListPage: React.FC = () => {
 
       {/* Metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Cpu size={18} />} label="Всего устройств" value={metrics.total} />
+        <MetricCard icon={<Cpu size={18} />} label={t('iot.devices.metricTotal')} value={metrics.total} />
         <MetricCard
           icon={<Wifi size={18} />}
-          label="Онлайн"
+          label={t('iot.devices.metricOnline')}
           value={metrics.online}
           trend={{ direction: 'neutral', value: `${Math.round((metrics.online / Math.max(1, metrics.total)) * 100)}%` }}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Тревоги"
+          label={t('iot.devices.metricAlerts')}
           value={metrics.alertCount}
-          trend={{ direction: metrics.alertCount > 0 ? 'down' : 'neutral', value: metrics.alertCount > 0 ? 'Требуют внимания' : 'Нет' }}
+          trend={{ direction: metrics.alertCount > 0 ? 'down' : 'neutral', value: metrics.alertCount > 0 ? t('iot.devices.trendNeedAttention') : t('iot.devices.trendNo') }}
         />
         <MetricCard
           icon={<Battery size={18} />}
-          label="Низкий заряд"
+          label={t('iot.devices.metricLowBattery')}
           value={metrics.lowBattery}
-          trend={{ direction: metrics.lowBattery > 0 ? 'down' : 'neutral', value: metrics.lowBattery > 0 ? 'Заменить батарею' : 'Норма' }}
+          trend={{ direction: metrics.lowBattery > 0 ? 'down' : 'neutral', value: metrics.lowBattery > 0 ? t('iot.devices.trendReplaceBattery') : t('iot.devices.trendNormal') }}
         />
       </div>
 
@@ -263,14 +268,14 @@ const DeviceListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по коду, названию, расположению..."
+            placeholder={t('iot.devices.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={sensorTypeFilterOptions}
+          options={getSensorTypeFilterOptions()}
           value={sensorTypeFilter}
           onChange={(e) => setSensorTypeFilter(e.target.value)}
           className="w-48"
@@ -288,8 +293,8 @@ const DeviceListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет IoT-устройств"
-        emptyDescription="Добавьте первое устройство для мониторинга"
+        emptyTitle={t('iot.devices.emptyTitle')}
+        emptyDescription={t('iot.devices.emptyDescription')}
       />
     </div>
   );

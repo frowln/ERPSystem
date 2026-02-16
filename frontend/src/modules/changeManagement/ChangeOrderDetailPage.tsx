@@ -61,7 +61,7 @@ const ChangeOrderDetailPage: React.FC = () => {
   });
 
   if (isLoading || !order) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>;
   }
 
   const o = order;

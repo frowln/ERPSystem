@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { formatDate } from '@/lib/format';
 import { ptoApi } from '@/api/pto';
+import { t } from '@/i18n';
 
 interface WorkPermit {
   id: string;
@@ -26,15 +27,15 @@ interface WorkPermit {
 }
 
 
-const permitTypeLabels: Record<string, string> = {
-  general: 'Общий допуск',
-  hot_work: 'Огневые работы',
-  height_work: 'Работы на высоте',
-  confined_space: 'Замкнутые пространства',
-  electrical: 'Электромонтажные',
-  excavation: 'Земляные работы',
-  crane: 'Крановые работы',
-};
+const getPermitTypeLabels = (): Record<string, string> => ({
+  general: t('pto.wpTypeGeneral'),
+  hot_work: t('pto.wpTypeHotWork'),
+  height_work: t('pto.wpTypeHeightWork'),
+  confined_space: t('pto.wpTypeConfinedSpace'),
+  electrical: t('pto.wpTypeElectrical'),
+  excavation: t('pto.wpTypeExcavation'),
+  crane: t('pto.wpTypeCrane'),
+});
 
 const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red'> = {
   active: 'green',
@@ -43,13 +44,14 @@ const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red
   closed: 'gray',
   suspended: 'orange' as 'red',
 };
-const statusLabels: Record<string, string> = {
-  active: 'Действует',
-  pending: 'Ожидает',
-  expired: 'Просрочен',
-  closed: 'Закрыт',
-  suspended: 'Приостановлен',
-};
+
+const getStatusLabels = (): Record<string, string> => ({
+  active: t('pto.wpStatusActive'),
+  pending: t('pto.wpStatusPending'),
+  expired: t('pto.wpStatusExpired'),
+  closed: t('pto.wpStatusClosed'),
+  suspended: t('pto.wpStatusSuspended'),
+});
 
 const WorkPermitListPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -91,16 +93,19 @@ const WorkPermitListPage: React.FC = () => {
   const activeCount = permits.filter((p) => p.status === 'ACTIVE').length;
   const expiredCount = permits.filter((p) => p.status === 'EXPIRED').length;
 
+  const permitTypeLabels = getPermitTypeLabels();
+  const statusLabels = getStatusLabels();
+
   const columns = useMemo<ColumnDef<WorkPermit, unknown>[]>(() => [
     {
       accessorKey: 'number',
-      header: '№',
+      header: t('pto.wpListColNumber'),
       size: 120,
       cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'description',
-      header: 'Описание',
+      header: t('pto.wpListColDescription'),
       size: 260,
       cell: ({ row }) => (
         <div>
@@ -111,13 +116,13 @@ const WorkPermitListPage: React.FC = () => {
     },
     {
       accessorKey: 'type',
-      header: 'Тип',
+      header: t('pto.wpListColType'),
       size: 170,
       cell: ({ getValue }) => <span className="text-neutral-600">{permitTypeLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('pto.wpListColStatus'),
       size: 130,
       cell: ({ getValue }) => (
         <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()]} />
@@ -125,58 +130,58 @@ const WorkPermitListPage: React.FC = () => {
     },
     {
       accessorKey: 'contractor',
-      header: 'Подрядчик',
+      header: t('pto.wpListColContractor'),
       size: 160,
     },
     {
       accessorKey: 'startDate',
-      header: 'Начало',
+      header: t('pto.wpListColStartDate'),
       size: 110,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
     {
       accessorKey: 'endDate',
-      header: 'Окончание',
+      header: t('pto.wpListColEndDate'),
       size: 110,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
-  ], []);
+  ], [permitTypeLabels, statusLabels]);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Наряд-допуски"
-        subtitle={`${permits.length} наряд-допусков`}
+        title={t('pto.wpListTitle')}
+        subtitle={t('pto.wpListSubtitle', { count: String(permits.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'ПТО' },
-          { label: 'Наряд-допуски' },
+          { label: t('pto.breadcrumbHome'), href: '/' },
+          { label: t('pto.breadcrumbPto') },
+          { label: t('pto.breadcrumbWorkPermits') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>Новый наряд-допуск</Button>}
+        actions={<Button iconLeft={<Plus size={16} />}>{t('pto.wpListNewPermit')}</Button>}
         tabs={[
-          { id: 'all', label: 'Все', count: permits.length },
-          { id: 'ACTIVE', label: 'Действующие', count: activeCount },
-          { id: 'PENDING', label: 'Ожидающие' },
-          { id: 'EXPIRED', label: 'Просроченные', count: expiredCount },
+          { id: 'all', label: t('pto.wpListTabAll'), count: permits.length },
+          { id: 'ACTIVE', label: t('pto.wpListTabActive'), count: activeCount },
+          { id: 'PENDING', label: t('pto.wpListTabPending') },
+          { id: 'EXPIRED', label: t('pto.wpListTabExpired'), count: expiredCount },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard icon={<ShieldCheck size={18} />} label="Всего допусков" value={permits.length} />
-        <MetricCard icon={<ShieldCheck size={18} />} label="Действующих" value={activeCount} />
-        <MetricCard icon={<ShieldCheck size={18} />} label="Просрочено" value={expiredCount} />
+        <MetricCard icon={<ShieldCheck size={18} />} label={t('pto.wpListMetricTotal')} value={permits.length} />
+        <MetricCard icon={<ShieldCheck size={18} />} label={t('pto.wpListMetricActive')} value={activeCount} />
+        <MetricCard icon={<ShieldCheck size={18} />} label={t('pto.wpListMetricExpired')} value={expiredCount} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('pto.wpListSearchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все типы' },
+            { value: '', label: t('pto.wpListAllTypes') },
             ...Object.entries(permitTypeLabels).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={typeFilter}
@@ -194,8 +199,8 @@ const WorkPermitListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет наряд-допусков"
-        emptyDescription="Создайте первый наряд-допуск"
+        emptyTitle={t('pto.wpListEmptyTitle')}
+        emptyDescription={t('pto.wpListEmptyDescription')}
       />
     </div>
   );

@@ -13,6 +13,7 @@ import { designApi } from '@/api/design';
 import { formatDate } from '@/lib/format';
 import type { DesignVersion } from './types';
 import type { PaginatedResponse } from '@/types';
+import { t } from '@/i18n';
 
 const versionStatusColorMap: Record<string, 'gray' | 'yellow' | 'green' | 'purple' | 'red' | 'blue'> = {
   draft: 'gray',
@@ -23,22 +24,22 @@ const versionStatusColorMap: Record<string, 'gray' | 'yellow' | 'green' | 'purpl
   archived: 'blue',
 };
 
-const versionStatusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  in_review: 'На проверке',
-  approved: 'Утверждён',
-  superseded: 'Замещён',
-  rejected: 'Отклонён',
-  archived: 'В архиве',
-};
+const getVersionStatusLabels = (): Record<string, string> => ({
+  draft: t('design.versionStatusDraft'),
+  in_review: t('design.versionStatusInReview'),
+  approved: t('design.versionStatusApproved'),
+  superseded: t('design.versionStatusSuperseded'),
+  rejected: t('design.versionStatusRejected'),
+  archived: t('design.versionStatusArchived'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'IN_REVIEW', label: 'На проверке' },
-  { value: 'APPROVED', label: 'Утверждён' },
-  { value: 'SUPERSEDED', label: 'Замещён' },
-  { value: 'REJECTED', label: 'Отклонён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('design.filterAllStatuses') },
+  { value: 'DRAFT', label: t('design.filterDraft') },
+  { value: 'IN_REVIEW', label: t('design.filterInReview') },
+  { value: 'APPROVED', label: t('design.filterApproved') },
+  { value: 'SUPERSEDED', label: t('design.filterSuperseded') },
+  { value: 'REJECTED', label: t('design.filterRejected') },
 ];
 
 type TabId = 'all' | 'DRAFT' | 'IN_REVIEW' | 'APPROVED';
@@ -107,7 +108,7 @@ const DesignVersionListPage: React.FC = () => {
       },
       {
         accessorKey: 'title',
-        header: 'Наименование',
+        header: t('design.colTitle'),
         size: 300,
         cell: ({ row }) => (
           <div>
@@ -118,7 +119,7 @@ const DesignVersionListPage: React.FC = () => {
       },
       {
         accessorKey: 'version',
-        header: 'Версия',
+        header: t('design.colVersion'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="font-mono font-medium text-primary-600">{getValue<string>()}</span>
@@ -126,19 +127,19 @@ const DesignVersionListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('design.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={versionStatusColorMap}
-            label={versionStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getVersionStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'authorName',
-        header: 'Автор',
+        header: t('design.colAuthor'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -146,7 +147,7 @@ const DesignVersionListPage: React.FC = () => {
       },
       {
         accessorKey: 'reviewCount',
-        header: 'Проверки',
+        header: t('design.colReviewCount'),
         size: 100,
         cell: ({ getValue }) => {
           const count = getValue<number>();
@@ -157,7 +158,7 @@ const DesignVersionListPage: React.FC = () => {
       },
       {
         accessorKey: 'updatedAt',
-        header: 'Обновлено',
+        header: t('design.colUpdatedAt'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -176,7 +177,7 @@ const DesignVersionListPage: React.FC = () => {
               navigate(`/design/versions/${row.original.id}`);
             }}
           >
-            Открыть
+            {t('design.openAction')}
           </Button>
         ),
       },
@@ -192,23 +193,23 @@ const DesignVersionListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Версии проектной документации"
-        subtitle={`${versions.length} версий в системе`}
+        title={t('design.versionsTitle')}
+        subtitle={t('design.versionsSubtitle', { count: String(versions.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Проектирование' },
-          { label: 'Версии' },
+          { label: t('design.breadcrumbHome'), href: '/' },
+          { label: t('design.breadcrumbDesign') },
+          { label: t('design.breadcrumbVersions') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Новая версия
+            {t('design.newVersion')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновики', count: tabCounts.draft },
-          { id: 'IN_REVIEW', label: 'На проверке', count: tabCounts.in_review },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
+          { id: 'all', label: t('design.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('design.tabDrafts'), count: tabCounts.draft },
+          { id: 'IN_REVIEW', label: t('design.tabOnReview'), count: tabCounts.in_review },
+          { id: 'APPROVED', label: t('design.tabApproved'), count: tabCounts.approved },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -218,25 +219,25 @@ const DesignVersionListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<Layers size={18} />}
-          label="Всего версий"
+          label={t('design.metricTotalVersionsList')}
           value={metrics.total}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="На проверке"
+          label={t('design.metricOnReview')}
           value={metrics.inReview}
-          trend={metrics.inReview > 0 ? { direction: 'up', value: `${metrics.inReview} шт.` } : undefined}
+          trend={metrics.inReview > 0 ? { direction: 'up', value: t('design.trendItemsCount', { count: String(metrics.inReview) }) } : undefined}
         />
         <MetricCard
           icon={<CheckCircle size={18} />}
-          label="Утверждено"
+          label={t('design.metricApproved')}
           value={metrics.approved}
         />
         <MetricCard
           icon={<FileText size={18} />}
-          label="Отклонено"
+          label={t('design.metricRejected')}
           value={metrics.rejected}
-          trend={metrics.rejected > 0 ? { direction: 'down', value: 'Требуют доработки' } : undefined}
+          trend={metrics.rejected > 0 ? { direction: 'down', value: t('design.trendNeedRevision') } : undefined}
         />
       </div>
 
@@ -245,14 +246,14 @@ const DesignVersionListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию..."
+            placeholder={t('design.searchVersionPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -270,8 +271,8 @@ const DesignVersionListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет версий документации"
-        emptyDescription="Создайте первую версию проектной документации"
+        emptyTitle={t('design.emptyVersionsTitle')}
+        emptyDescription={t('design.emptyVersionsDescription')}
       />
     </div>
   );

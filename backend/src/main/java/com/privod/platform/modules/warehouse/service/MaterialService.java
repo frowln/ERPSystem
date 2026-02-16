@@ -1,6 +1,7 @@
 package com.privod.platform.modules.warehouse.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.warehouse.domain.Material;
 import com.privod.platform.modules.warehouse.domain.MaterialCategory;
 import com.privod.platform.modules.warehouse.repository.MaterialRepository;
@@ -29,8 +30,10 @@ public class MaterialService {
 
     @Transactional(readOnly = true)
     public Page<MaterialResponse> listMaterials(String search, MaterialCategory category, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Specification<Material> spec = Specification
-                .where(MaterialSpecification.notDeleted())
+                .where(MaterialSpecification.belongsToOrganization(organizationId))
+                .and(MaterialSpecification.notDeleted())
                 .and(MaterialSpecification.hasCategory(category))
                 .and(MaterialSpecification.searchByNameOrCode(search));
 
@@ -39,17 +42,21 @@ public class MaterialService {
 
     @Transactional(readOnly = true)
     public MaterialResponse getMaterial(UUID id) {
-        Material material = getMaterialOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Material material = getMaterialOrThrow(id, organizationId);
         return MaterialResponse.fromEntity(material);
     }
 
     @Transactional
     public MaterialResponse createMaterial(CreateMaterialRequest request) {
-        if (request.code() != null && materialRepository.existsByCodeAndDeletedFalse(request.code())) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.code() != null
+                && materialRepository.existsByOrganizationIdAndCodeAndDeletedFalse(organizationId, request.code())) {
             throw new IllegalArgumentException("Материал с кодом '" + request.code() + "' уже существует");
         }
 
         Material material = Material.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .code(request.code())
                 .category(request.category())
@@ -69,14 +76,15 @@ public class MaterialService {
 
     @Transactional
     public MaterialResponse updateMaterial(UUID id, UpdateMaterialRequest request) {
-        Material material = getMaterialOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Material material = getMaterialOrThrow(id, organizationId);
 
         if (request.name() != null) {
             material.setName(request.name());
         }
         if (request.code() != null) {
             if (!request.code().equals(material.getCode())
-                    && materialRepository.existsByCodeAndDeletedFalse(request.code())) {
+                    && materialRepository.existsByOrganizationIdAndCodeAndDeletedFalse(organizationId, request.code())) {
                 throw new IllegalArgumentException("Материал с кодом '" + request.code() + "' уже существует");
             }
             material.setCode(request.code());
@@ -109,7 +117,8 @@ public class MaterialService {
 
     @Transactional
     public void deleteMaterial(UUID id) {
-        Material material = getMaterialOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Material material = getMaterialOrThrow(id, organizationId);
         material.softDelete();
         materialRepository.save(material);
         auditService.logDelete("Material", id);
@@ -117,9 +126,8 @@ public class MaterialService {
         log.info("Material deleted: {} ({})", material.getName(), id);
     }
 
-    Material getMaterialOrThrow(UUID id) {
-        return materialRepository.findById(id)
-                .filter(m -> !m.isDeleted())
+    Material getMaterialOrThrow(UUID id, UUID organizationId) {
+        return materialRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Материал не найден: " + id));
     }
 }

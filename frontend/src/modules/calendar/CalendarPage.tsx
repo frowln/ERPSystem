@@ -21,13 +21,19 @@ import { EmptyState } from '@/design-system/components/EmptyState';
 import { calendarApi, type CalendarEvent } from '@/api/calendar';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 
-const MONTHS_RU = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+const getMonths = () => [
+  t('calendar.monthJan'), t('calendar.monthFeb'), t('calendar.monthMar'),
+  t('calendar.monthApr'), t('calendar.monthMay'), t('calendar.monthJun'),
+  t('calendar.monthJul'), t('calendar.monthAug'), t('calendar.monthSep'),
+  t('calendar.monthOct'), t('calendar.monthNov'), t('calendar.monthDec'),
 ];
 
-const DAYS_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const getDays = () => [
+  t('calendar.dayMon'), t('calendar.dayTue'), t('calendar.dayWed'),
+  t('calendar.dayThu'), t('calendar.dayFri'), t('calendar.daySat'), t('calendar.daySun'),
+];
 
 const typeColorMap: Record<string, 'blue' | 'red' | 'orange' | 'green' | 'purple' | 'gray'> = {
   MEETING: 'blue',
@@ -39,15 +45,15 @@ const typeColorMap: Record<string, 'blue' | 'red' | 'orange' | 'green' | 'purple
   OTHER: 'gray',
 };
 
-const typeLabels: Record<string, string> = {
-  MEETING: 'Совещание',
-  DEADLINE: 'Дедлайн',
-  INSPECTION: 'Инспекция',
-  DELIVERY: 'Поставка',
-  MILESTONE: 'Веха',
-  HOLIDAY: 'Выходной',
-  OTHER: 'Событие',
-};
+const getTypeLabels = (): Record<string, string> => ({
+  MEETING: t('calendar.typeMeeting'),
+  DEADLINE: t('calendar.typeDeadline'),
+  INSPECTION: t('calendar.typeInspection'),
+  DELIVERY: t('calendar.typeDelivery'),
+  MILESTONE: t('calendar.typeMilestone'),
+  HOLIDAY: t('calendar.typeHoliday'),
+  OTHER: t('calendar.typeOther'),
+});
 
 function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
@@ -67,7 +73,7 @@ function isSameDay(dateIso: string, date: Date): boolean {
 }
 
 function getEventTimeLabel(event: CalendarEvent): string {
-  if (event.isAllDay) return 'Весь день';
+  if (event.isAllDay) return t('calendar.allDay');
   if (event.startTime && event.endTime) return `${event.startTime} - ${event.endTime}`;
   if (event.startTime) return event.startTime;
   return '—';
@@ -132,16 +138,18 @@ const CalendarPage: React.FC = () => {
       .slice(0, 10);
   }, [events, today]);
 
-  const upcomingColumns = useMemo<ColumnDef<CalendarEvent, unknown>[]>(() => [
+  const upcomingColumns = useMemo<ColumnDef<CalendarEvent, unknown>[]>(() => {
+    const typeLbls = getTypeLabels();
+    return [
     {
       accessorKey: 'startDate',
-      header: 'Дата',
+      header: t('calendar.colDate'),
       size: 100,
       cell: ({ row }) => <span className="tabular-nums">{formatDate(row.original.startDate)}</span>,
     },
     {
       accessorKey: 'title',
-      header: 'Событие',
+      header: t('calendar.colEvent'),
       size: 280,
       cell: ({ row }) => (
         <div>
@@ -154,38 +162,38 @@ const CalendarPage: React.FC = () => {
     },
     {
       accessorKey: 'eventType',
-      header: 'Тип',
+      header: t('calendar.colType'),
       size: 120,
       cell: ({ row }) => (
         <StatusBadge
           status={row.original.eventType}
           colorMap={typeColorMap}
-          label={typeLabels[row.original.eventType] ?? row.original.eventType}
+          label={typeLbls[row.original.eventType] ?? row.original.eventType}
         />
       ),
     },
     {
       accessorKey: 'startTime',
-      header: 'Время',
+      header: t('calendar.colTime'),
       size: 120,
       cell: ({ row }) => (
         <span className="text-neutral-600 tabular-nums">{getEventTimeLabel(row.original)}</span>
       ),
     },
-  ], []);
+  ]; }, []);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Календарь"
-        subtitle="Планирование событий и контроль сроков"
+        title={t('calendar.title')}
+        subtitle={t('calendar.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Календарь' },
+          { label: t('calendar.breadcrumbHome'), href: '/' },
+          { label: t('calendar.breadcrumbCalendar') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/calendar/events/new')}>
-            Новое событие
+            {t('calendar.newEvent')}
           </Button>
         }
       />
@@ -194,7 +202,7 @@ const CalendarPage: React.FC = () => {
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700">
           <EmptyState
             variant="ERROR"
-            actionLabel="Повторить"
+            actionLabel={t('calendar.retry')}
             onAction={() => refetch()}
           />
         </div>
@@ -207,17 +215,17 @@ const CalendarPage: React.FC = () => {
                   <button
                     onClick={() => navigateMonth(-1)}
                     className="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors"
-                    aria-label="Предыдущий месяц"
+                    aria-label={t('calendar.prevMonth')}
                   >
                     <ChevronLeft size={18} />
                   </button>
                   <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 min-w-[200px] text-center">
-                    {MONTHS_RU[month]} {year}
+                    {getMonths()[month]} {year}
                   </h2>
                   <button
                     onClick={() => navigateMonth(1)}
                     className="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors"
-                    aria-label="Следующий месяц"
+                    aria-label={t('calendar.nextMonth')}
                   >
                     <ChevronRight size={18} />
                   </button>
@@ -225,7 +233,7 @@ const CalendarPage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-7 border-b border-neutral-100">
-                {DAYS_RU.map((day) => (
+                {getDays().map((day) => (
                   <div key={day} className="px-2 py-2 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     {day}
                   </div>
@@ -275,7 +283,7 @@ const CalendarPage: React.FC = () => {
                           </button>
                         ))}
                         {dayEvents.length > 3 && (
-                          <p className="text-[10px] text-neutral-500 dark:text-neutral-400 pl-1">+{dayEvents.length - 3} ещё</p>
+                          <p className="text-[10px] text-neutral-500 dark:text-neutral-400 pl-1">+{dayEvents.length - 3} {t('calendar.more')}</p>
                         )}
                       </div>
                     </div>
@@ -286,15 +294,15 @@ const CalendarPage: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Ближайшие события</h3>
+            <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">{t('calendar.upcomingEvents')}</h3>
             <DataTable<CalendarEvent>
               data={upcomingEvents}
               columns={upcomingColumns}
               loading={isLoading}
               onRowClick={(event) => setSelectedEvent(event)}
               pageSize={10}
-              emptyTitle="Нет событий"
-              emptyDescription="Предстоящих событий не найдено"
+              emptyTitle={t('calendar.emptyTitle')}
+              emptyDescription={t('calendar.emptyDescription')}
             />
           </div>
         </div>
@@ -312,7 +320,7 @@ const CalendarPage: React.FC = () => {
               <StatusBadge
                 status={selectedEvent.eventType}
                 colorMap={typeColorMap}
-                label={typeLabels[selectedEvent.eventType] ?? selectedEvent.eventType}
+                label={getTypeLabels()[selectedEvent.eventType] ?? selectedEvent.eventType}
               />
               <span className="text-sm text-neutral-500 dark:text-neutral-400">{selectedEvent.organizerName}</span>
             </div>
@@ -339,7 +347,7 @@ const CalendarPage: React.FC = () => {
                   className="inline-flex items-center gap-1.5 text-primary-700 hover:text-primary-800"
                 >
                   <Users size={14} />
-                  Подключиться к встрече
+                  {t('calendar.joinMeeting')}
                   <ExternalLink size={12} />
                 </a>
               )}

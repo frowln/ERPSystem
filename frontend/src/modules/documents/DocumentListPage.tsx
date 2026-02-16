@@ -11,12 +11,13 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { documentsApi } from '@/api/documents';
 import { formatDate, formatFileSize } from '@/lib/format';
 import { guardDemoModeAction } from '@/lib/demoMode';
+import { t } from '@/i18n';
 import type { Document } from '@/types';
 
 type TabId = 'all' | 'ACTIVE' | 'UNDER_REVIEW' | 'ARCHIVED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('documents.list.allStatuses') },
   { value: 'DRAFT', label: documentStatusLowerLabels.DRAFT },
   { value: 'UNDER_REVIEW', label: documentStatusLowerLabels.UNDER_REVIEW },
   { value: 'APPROVED', label: documentStatusLowerLabels.APPROVED },
@@ -25,8 +26,8 @@ const statusFilterOptions = [
   { value: 'CANCELLED', label: documentStatusLowerLabels.CANCELLED },
 ];
 
-const categoryFilterOptions = [
-  { value: '', label: 'Все категории' },
+const getCategoryFilterOptions = () => [
+  { value: '', label: t('documents.list.allCategories') },
   { value: 'CONTRACT', label: documentCategoryLabels.CONTRACT },
   { value: 'ESTIMATE', label: documentCategoryLabels.ESTIMATE },
   { value: 'SPECIFICATION', label: documentCategoryLabels.SPECIFICATION },
@@ -99,20 +100,20 @@ const DocumentListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'title',
-        header: 'Документ',
+        header: t('documents.list.colDocument'),
         size: 300,
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.title}</p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-              {(row.original.documentNumber ?? 'Без номера')} · v{row.original.docVersion}
+              {(row.original.documentNumber ?? t('documents.list.noNumber'))} · v{row.original.docVersion}
             </p>
           </div>
         ),
       },
       {
         accessorKey: 'category',
-        header: 'Категория',
+        header: t('documents.list.colCategory'),
         size: 140,
         cell: ({ getValue }) => {
           const category = getValue<string>();
@@ -127,7 +128,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('documents.list.colStatus'),
         size: 140,
         cell: ({ getValue }) => {
           const status = getValue<string>();
@@ -142,7 +143,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'projectName',
-        header: 'Проект',
+        header: t('documents.list.colProject'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -150,23 +151,23 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'fileName',
-        header: 'Файл',
+        header: t('documents.list.colFile'),
         size: 220,
         cell: ({ row }) => (
           <div>
-            <p className="text-neutral-900 dark:text-neutral-100 truncate max-w-[210px]">{row.original.fileName ?? 'Не загружен'}</p>
+            <p className="text-neutral-900 dark:text-neutral-100 truncate max-w-[210px]">{row.original.fileName ?? t('documents.list.notUploaded')}</p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{formatFileSize(row.original.fileSize)}</p>
           </div>
         ),
       },
       {
         accessorKey: 'authorName',
-        header: 'Автор',
+        header: t('documents.list.colAuthor'),
         size: 150,
       },
       {
         accessorKey: 'createdAt',
-        header: 'Создан',
+        header: t('documents.list.colCreated'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -183,28 +184,28 @@ const DocumentListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Документы"
-        subtitle={`${documents.length} документов в системе`}
+        title={t('documents.list.title')}
+        subtitle={t('documents.list.subtitle', { count: documents.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Документы' },
+          { label: t('documents.list.breadcrumbHome'), href: '/' },
+          { label: t('documents.list.breadcrumbDocuments') },
         ]}
         actions={
           <Button
             iconLeft={<Plus size={16} />}
             onClick={() => {
-              if (guardDemoModeAction('Создание документа')) return;
+              if (guardDemoModeAction(t('documents.list.demoCreateAction'))) return;
               navigate('/documents/new');
             }}
           >
-            Новый документ
+            {t('documents.list.newDocument')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Активные', count: tabCounts.active },
-          { id: 'UNDER_REVIEW', label: 'На проверке', count: tabCounts.underReview },
-          { id: 'ARCHIVED', label: 'Архив', count: tabCounts.archived },
+          { id: 'all', label: t('documents.list.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('documents.list.tabActive'), count: tabCounts.active },
+          { id: 'UNDER_REVIEW', label: t('documents.list.tabUnderReview'), count: tabCounts.underReview },
+          { id: 'ARCHIVED', label: t('documents.list.tabArchived'), count: tabCounts.archived },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -212,7 +213,7 @@ const DocumentListPage: React.FC = () => {
 
       {isError && (
         <div className="mb-4 rounded-xl border border-warning-200 bg-warning-50 p-3 text-sm text-warning-800">
-          Не удалось загрузить часть данных документов. Проверьте подключение и обновите страницу.
+          {t('documents.list.loadError')}
         </div>
       )}
 
@@ -220,7 +221,7 @@ const DocumentListPage: React.FC = () => {
         <div className="relative flex-1 max-w-sm">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, номеру, файлу, автору..."
+            placeholder={t('documents.list.searchPlaceholder')}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
@@ -228,14 +229,14 @@ const DocumentListPage: React.FC = () => {
         </div>
 
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(event) => setStatusFilter(event.target.value)}
           className="w-48"
         />
 
         <Select
-          options={categoryFilterOptions}
+          options={getCategoryFilterOptions()}
           value={categoryFilter}
           onChange={(event) => setCategoryFilter(event.target.value)}
           className="w-56"
@@ -251,8 +252,8 @@ const DocumentListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Документы не найдены"
-        emptyDescription="Загрузите первый документ или измените фильтры"
+        emptyTitle={t('documents.list.emptyTitle')}
+        emptyDescription={t('documents.list.emptyDescription')}
       />
     </div>
   );

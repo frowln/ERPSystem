@@ -17,7 +17,7 @@ import { t } from '@/i18n';
 import { permissionsApi, type AdminUser } from '@/api/permissions';
 import type { PaginatedResponse } from '@/types';
 
-const allGroups = ['Администраторы', 'Руководители проектов', 'Старшие руководители', 'Инженеры', 'Главные инженеры', 'Инженеры ПТО', 'Бухгалтерия', 'Снабженцы', 'Наблюдатели'];
+const getAllGroups = () => [t('mockData.groupAdmins'), t('mockData.groupProjectManagers'), t('mockData.groupSeniorManagers'), t('mockData.groupEngineers'), t('mockData.groupLeadEngineers'), t('mockData.groupPTOEngineers'), t('mockData.groupAccounting'), t('mockData.groupProcurement'), t('mockData.groupObservers')];
 
 const userStatusColorMap: Record<string, 'green' | 'red' | 'yellow'> = { active: 'green', blocked: 'red', pending: 'yellow' };
 const userStatusLabels: Record<string, string> = { active: t('settings.users.statusActive'), blocked: t('settings.users.statusBlocked'), pending: t('settings.users.statusPending') };
@@ -274,7 +274,7 @@ const UsersAdminPage: React.FC = () => {
                 <div className="space-y-3">
                   <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('settings.users.groupsInstruction')}</p>
                   <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg divide-y divide-neutral-100">
-                    {allGroups.map((group) => (
+                    {getAllGroups().map((group) => (
                       <label key={group} className="flex items-center gap-3 px-4 py-2.5 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer">
                         <Checkbox defaultChecked={(selectedUser.groupNames ?? selectedUser.groups ?? []).includes(group)} />
                         <span className="text-sm text-neutral-700 dark:text-neutral-300">{group}</span>
@@ -368,7 +368,7 @@ const UsersAdminPage: React.FC = () => {
           </FormField>
           <FormField label={t('settings.users.fieldAccessGroups')} className="sm:col-span-2">
             <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg divide-y divide-neutral-100 max-h-40 overflow-y-auto">
-              {allGroups.map((group) => (
+              {getAllGroups().map((group) => (
                 <label key={group} className="flex items-center gap-3 px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer">
                   <Checkbox />
                   <span className="text-sm text-neutral-700 dark:text-neutral-300">{group}</span>

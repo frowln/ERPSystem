@@ -1,6 +1,8 @@
 package com.privod.platform.modules.fleet.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.fleet.domain.EquipmentInspection;
 import com.privod.platform.modules.fleet.domain.InspectionType;
 import com.privod.platform.modules.fleet.repository.EquipmentInspectionRepository;
@@ -27,29 +29,37 @@ public class EquipmentInspectionService {
 
     private final EquipmentInspectionRepository inspectionRepository;
     private final VehicleRepository vehicleRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<EquipmentInspectionResponse> listInspections(UUID vehicleId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (vehicleId != null) {
+            getVehicleOrThrow(vehicleId, organizationId);
             return inspectionRepository.findByVehicleIdAndDeletedFalse(vehicleId, pageable)
                     .map(EquipmentInspectionResponse::fromEntity);
         }
-        return inspectionRepository.findAll(pageable).map(EquipmentInspectionResponse::fromEntity);
+        List<UUID> vehicleIds = getOrganizationVehicleIds(organizationId);
+        if (vehicleIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return inspectionRepository.findByVehicleIdInAndDeletedFalse(vehicleIds, pageable)
+                .map(EquipmentInspectionResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public EquipmentInspectionResponse getInspection(UUID id) {
-        EquipmentInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        EquipmentInspection inspection = getInspectionOrThrow(id, organizationId);
         return EquipmentInspectionResponse.fromEntity(inspection);
     }
 
     @Transactional
     public EquipmentInspectionResponse createInspection(CreateInspectionRequest request) {
-        vehicleRepository.findById(request.vehicleId())
-                .filter(v -> !v.isDeleted())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Техника не найдена: " + request.vehicleId()));
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getVehicleOrThrow(request.vehicleId(), organizationId);
+        validateInspectorTenant(request.inspectorId(), organizationId);
 
         EquipmentInspection inspection = EquipmentInspection.builder()
                 .vehicleId(request.vehicleId())
@@ -73,7 +83,10 @@ public class EquipmentInspectionService {
 
     @Transactional
     public EquipmentInspectionResponse updateInspection(UUID id, UpdateInspectionRequest request) {
-        EquipmentInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        EquipmentInspection inspection = getInspectionOrThrow(id, organizationId);
+
+        validateInspectorTenant(request.inspectorId(), organizationId);
 
         if (request.inspectorId() != null) inspection.setInspectorId(request.inspectorId());
         if (request.inspectionDate() != null) inspection.setInspectionDate(request.inspectionDate());
@@ -92,7 +105,8 @@ public class EquipmentInspectionService {
 
     @Transactional
     public void deleteInspection(UUID id) {
-        EquipmentInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        EquipmentInspection inspection = getInspectionOrThrow(id, organizationId);
         inspection.softDelete();
         inspectionRepository.save(inspection);
         auditService.logDelete("EquipmentInspection", inspection.getId());
@@ -102,23 +116,51 @@ public class EquipmentInspectionService {
 
     @Transactional(readOnly = true)
     public List<EquipmentInspectionResponse> getDailyCheckList(LocalDate date) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         LocalDate checkDate = date != null ? date : LocalDate.now();
-        return inspectionRepository.findByTypeAndDate(InspectionType.DAILY, checkDate).stream()
+        List<UUID> vehicleIds = getOrganizationVehicleIds(organizationId);
+        if (vehicleIds.isEmpty()) {
+            return List.of();
+        }
+        return inspectionRepository.findByTypeAndDateAndVehicleIds(InspectionType.DAILY, checkDate, vehicleIds).stream()
                 .map(EquipmentInspectionResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<EquipmentInspectionResponse> getUpcomingInspections(int daysAhead) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         LocalDate threshold = LocalDate.now().plusDays(daysAhead);
-        return inspectionRepository.findUpcomingInspections(threshold).stream()
+        List<UUID> vehicleIds = getOrganizationVehicleIds(organizationId);
+        if (vehicleIds.isEmpty()) {
+            return List.of();
+        }
+        return inspectionRepository.findUpcomingInspectionsByVehicleIds(vehicleIds, threshold).stream()
                 .map(EquipmentInspectionResponse::fromEntity)
                 .toList();
     }
 
-    private EquipmentInspection getInspectionOrThrow(UUID id) {
-        return inspectionRepository.findById(id)
-                .filter(i -> !i.isDeleted())
+    private EquipmentInspection getInspectionOrThrow(UUID id, UUID organizationId) {
+        EquipmentInspection inspection = inspectionRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Осмотр не найден: " + id));
+        getVehicleOrThrow(inspection.getVehicleId(), organizationId);
+        return inspection;
+    }
+
+    private void validateInspectorTenant(UUID inspectorId, UUID organizationId) {
+        if (inspectorId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(inspectorId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + inspectorId));
+    }
+
+    private void getVehicleOrThrow(UUID vehicleId, UUID organizationId) {
+        vehicleRepository.findByIdAndOrganizationIdAndDeletedFalse(vehicleId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Техника не найдена: " + vehicleId));
+    }
+
+    private List<UUID> getOrganizationVehicleIds(UUID organizationId) {
+        return vehicleRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
     }
 }

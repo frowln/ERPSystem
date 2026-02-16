@@ -29,6 +29,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
             "LOWER(e.position) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Employee> search(@Param("search") String search, Pageable pageable);
 
+    @Query("SELECT e FROM Employee e WHERE e.deleted = false AND e.organizationId = :organizationId AND " +
+            "(LOWER(e.fullName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(e.employeeNumber) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(e.position) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Employee> searchByOrganizationId(@Param("organizationId") UUID organizationId,
+                                          @Param("search") String search,
+                                          Pageable pageable);
+
+    long countByOrganizationIdAndDeletedFalse(UUID organizationId);
+
     @Query("SELECT e FROM Employee e JOIN CrewAssignment ca ON ca.employeeId = e.id " +
             "WHERE ca.projectId = :projectId AND ca.active = true AND e.deleted = false")
     List<Employee> findByProjectId(@Param("projectId") UUID projectId);

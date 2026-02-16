@@ -17,6 +17,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "account_plans", indexes = {
+        @Index(name = "idx_account_plan_org", columnList = "organization_id"),
+        @Index(name = "idx_account_plan_org_code", columnList = "organization_id, code", unique = true),
         @Index(name = "idx_account_plan_code", columnList = "code"),
         @Index(name = "idx_account_plan_parent", columnList = "parent_id"),
         @Index(name = "idx_account_plan_type", columnList = "account_type")
@@ -28,7 +30,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AccountPlan extends BaseEntity {
 
-    @Column(name = "code", nullable = false, unique = true, length = 20)
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
+    @Column(name = "code", nullable = false, length = 20)
     private String code;
 
     @Column(name = "name", nullable = false, length = 500)

@@ -195,9 +195,9 @@ const KpiPage: React.FC = () => {
         <Select
           options={[
             { value: '', label: t('analytics.kpi.allProjects') },
-            { value: 'p1', label: 'ЖК "Солнечный"' },
-            { value: 'p2', label: 'БЦ "Горизонт"' },
-            { value: 'p3', label: 'Мост через р. Вятка' },
+            { value: 'p1', label: t('common.mockProjects.solnechny') },
+            { value: 'p2', label: t('common.mockProjects.gorizont') },
+            { value: 'p3', label: t('common.mockProjects.mostVyatka') },
           ]}
           value={project}
           onChange={(e) => setProject(e.target.value)}

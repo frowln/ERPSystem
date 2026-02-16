@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { formatNumber } from '@/lib/format';
 import { hrRussianApi } from '@/api/hrRussian';
+import { t } from '@/i18n';
 import type { TimeSheetEntry } from './types';
 
 const timeSheetStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red'> = {
@@ -19,29 +20,45 @@ const timeSheetStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yello
   rejected: 'red',
 };
 
-const timeSheetStatusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  submitted: 'На утверждении',
-  approved: 'Утверждён',
-  rejected: 'Отклонён',
-};
+const getTimeSheetStatusLabels = (): Record<string, string> => ({
+  draft: t('hrRussian.timesheet.statusDraft'),
+  submitted: t('hrRussian.timesheet.statusSubmitted'),
+  approved: t('hrRussian.timesheet.statusApproved'),
+  rejected: t('hrRussian.timesheet.statusRejected'),
+});
 
 type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'APPROVED';
 
-const monthOptions = [
-  { value: '', label: 'Все периоды' },
-  { value: '2026-02', label: 'Февраль 2026' },
-  { value: '2026-01', label: 'Январь 2026' },
-  { value: '2025-12', label: 'Декабрь 2025' },
+const getMonthOptions = () => [
+  { value: '', label: t('hrRussian.timesheet.allPeriods') },
+  { value: '2026-02', label: `${t('hrRussian.timesheet.months.february')} 2026` },
+  { value: '2026-01', label: `${t('hrRussian.timesheet.months.january')} 2026` },
+  { value: '2025-12', label: `${t('hrRussian.timesheet.months.december')} 2025` },
 ];
 
-const departmentOptions = [
-  { value: '', label: 'Все подразделения' },
-  { value: 'Строительный отдел', label: 'Строительный отдел' },
-  { value: 'ПТО', label: 'ПТО' },
-  { value: 'Бухгалтерия', label: 'Бухгалтерия' },
-  { value: 'Контроль качества', label: 'Контроль качества' },
-  { value: 'Проектный отдел', label: 'Проектный отдел' },
+const getDepartmentOptions = () => [
+  { value: '', label: t('hrRussian.timesheet.allDepartments') },
+  { value: 'Строительный отдел', label: t('hrRussian.timesheet.deptConstruction') },
+  { value: 'ПТО', label: t('hrRussian.timesheet.deptPto') },
+  { value: 'Бухгалтерия', label: t('hrRussian.timesheet.deptAccounting') },
+  { value: 'Контроль качества', label: t('hrRussian.timesheet.deptQuality') },
+  { value: 'Проектный отдел', label: t('hrRussian.timesheet.deptDesign') },
+];
+
+const getMonthNames = (): string[] => [
+  '',
+  t('hrRussian.timesheet.months.january'),
+  t('hrRussian.timesheet.months.february'),
+  t('hrRussian.timesheet.months.march'),
+  t('hrRussian.timesheet.months.april'),
+  t('hrRussian.timesheet.months.may'),
+  t('hrRussian.timesheet.months.june'),
+  t('hrRussian.timesheet.months.july'),
+  t('hrRussian.timesheet.months.august'),
+  t('hrRussian.timesheet.months.september'),
+  t('hrRussian.timesheet.months.october'),
+  t('hrRussian.timesheet.months.november'),
+  t('hrRussian.timesheet.months.december'),
 ];
 
 
@@ -113,115 +130,118 @@ const TimeSheetPage: React.FC = () => {
     return { totalHours, totalOvertime, totalSickDays, pendingApproval };
   }, [timesheets]);
 
-  const columns = useMemo<ColumnDef<TimeSheetEntry, unknown>[]>(() => [
-    {
-      accessorKey: 'employeeName',
-      header: 'Сотрудник',
-      size: 220,
-      cell: ({ row }) => (
-        <div>
-          <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.employeeName}</p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.department}</p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'month',
-      header: 'Период',
-      size: 120,
-      cell: ({ getValue }) => {
-        const month = getValue<string>();
-        const [year, m] = month.split('-');
-        const monthNames = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-        return <span className="text-neutral-700 dark:text-neutral-300">{monthNames[parseInt(m)]} {year}</span>;
+  const columns = useMemo<ColumnDef<TimeSheetEntry, unknown>[]>(() => {
+    const statusLabels = getTimeSheetStatusLabels();
+    const monthNames = getMonthNames();
+    return [
+      {
+        accessorKey: 'employeeName',
+        header: t('hrRussian.timesheet.colEmployee'),
+        size: 220,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.employeeName}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.department}</p>
+          </div>
+        ),
       },
-    },
-    {
-      accessorKey: 'status',
-      header: 'Статус',
-      size: 130,
-      cell: ({ getValue }) => (
-        <StatusBadge
-          status={getValue<string>()}
-          colorMap={timeSheetStatusColorMap}
-          label={timeSheetStatusLabels[getValue<string>()] ?? getValue<string>()}
-        />
-      ),
-    },
-    {
-      accessorKey: 'workDays',
-      header: 'Рабочих дн.',
-      size: 100,
-      cell: ({ getValue }) => (
-        <span className="tabular-nums text-center block font-medium">{getValue<number>()}</span>
-      ),
-    },
-    {
-      accessorKey: 'totalHours',
-      header: 'Всего часов',
-      size: 110,
-      cell: ({ getValue }) => (
-        <span className="tabular-nums text-center block font-medium">{getValue<number>()}</span>
-      ),
-    },
-    {
-      accessorKey: 'overtimeHours',
-      header: 'Переработка',
-      size: 110,
-      cell: ({ getValue }) => {
-        const hours = getValue<number>();
-        return (
-          <span className={`tabular-nums text-center block font-medium ${hours > 0 ? 'text-warning-600' : 'text-neutral-400'}`}>
-            {hours > 0 ? `+${hours}` : '0'}
-          </span>
-        );
+      {
+        accessorKey: 'month',
+        header: t('hrRussian.timesheet.colPeriod'),
+        size: 120,
+        cell: ({ getValue }) => {
+          const month = getValue<string>();
+          const [year, m] = month.split('-');
+          return <span className="text-neutral-700 dark:text-neutral-300">{monthNames[parseInt(m)]} {year}</span>;
+        },
       },
-    },
-    {
-      accessorKey: 'vacationDays',
-      header: 'Отпуск',
-      size: 80,
-      cell: ({ getValue }) => {
-        const days = getValue<number>();
-        return <span className={`tabular-nums text-center block ${days > 0 ? 'text-primary-600 font-medium' : 'text-neutral-400'}`}>{days}</span>;
+      {
+        accessorKey: 'status',
+        header: t('hrRussian.timesheet.colStatus'),
+        size: 130,
+        cell: ({ getValue }) => (
+          <StatusBadge
+            status={getValue<string>()}
+            colorMap={timeSheetStatusColorMap}
+            label={statusLabels[getValue<string>()] ?? getValue<string>()}
+          />
+        ),
       },
-    },
-    {
-      accessorKey: 'sickDays',
-      header: 'Б/л',
-      size: 70,
-      cell: ({ getValue }) => {
-        const days = getValue<number>();
-        return <span className={`tabular-nums text-center block ${days > 0 ? 'text-danger-600 font-medium' : 'text-neutral-400'}`}>{days}</span>;
+      {
+        accessorKey: 'workDays',
+        header: t('hrRussian.timesheet.colWorkDays'),
+        size: 100,
+        cell: ({ getValue }) => (
+          <span className="tabular-nums text-center block font-medium">{getValue<number>()}</span>
+        ),
       },
-    },
-    {
-      accessorKey: 'businessTripDays',
-      header: 'Командир.',
-      size: 90,
-      cell: ({ getValue }) => {
-        const days = getValue<number>();
-        return <span className={`tabular-nums text-center block ${days > 0 ? 'text-cyan-600 font-medium' : 'text-neutral-400'}`}>{days}</span>;
+      {
+        accessorKey: 'totalHours',
+        header: t('hrRussian.timesheet.colTotalHours'),
+        size: 110,
+        cell: ({ getValue }) => (
+          <span className="tabular-nums text-center block font-medium">{getValue<number>()}</span>
+        ),
       },
-    },
-  ], []);
+      {
+        accessorKey: 'overtimeHours',
+        header: t('hrRussian.timesheet.colOvertime'),
+        size: 110,
+        cell: ({ getValue }) => {
+          const hours = getValue<number>();
+          return (
+            <span className={`tabular-nums text-center block font-medium ${hours > 0 ? 'text-warning-600' : 'text-neutral-400'}`}>
+              {hours > 0 ? `+${hours}` : '0'}
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: 'vacationDays',
+        header: t('hrRussian.timesheet.colVacation'),
+        size: 80,
+        cell: ({ getValue }) => {
+          const days = getValue<number>();
+          return <span className={`tabular-nums text-center block ${days > 0 ? 'text-primary-600 font-medium' : 'text-neutral-400'}`}>{days}</span>;
+        },
+      },
+      {
+        accessorKey: 'sickDays',
+        header: t('hrRussian.timesheet.colSickLeave'),
+        size: 70,
+        cell: ({ getValue }) => {
+          const days = getValue<number>();
+          return <span className={`tabular-nums text-center block ${days > 0 ? 'text-danger-600 font-medium' : 'text-neutral-400'}`}>{days}</span>;
+        },
+      },
+      {
+        accessorKey: 'businessTripDays',
+        header: t('hrRussian.timesheet.colBusinessTrip'),
+        size: 90,
+        cell: ({ getValue }) => {
+          const days = getValue<number>();
+          return <span className={`tabular-nums text-center block ${days > 0 ? 'text-cyan-600 font-medium' : 'text-neutral-400'}`}>{days}</span>;
+        },
+      },
+    ];
+  }, []);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Табель учёта рабочего времени"
-        subtitle={`${timesheets.length} записей`}
+        title={t('hrRussian.timesheet.title')}
+        subtitle={t('hrRussian.timesheet.subtitleRecords', { count: String(timesheets.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Кадры РФ' },
-          { label: 'Табель' },
+          { label: t('hrRussian.timesheet.breadcrumbHome'), href: '/' },
+          { label: t('hrRussian.timesheet.breadcrumbHr') },
+          { label: t('hrRussian.timesheet.breadcrumbTimesheet') },
         ]}
-        actions={<Button>Сформировать табель</Button>}
+        actions={<Button>{t('hrRussian.timesheet.generateTimesheet')}</Button>}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновики', count: tabCounts.draft },
-          { id: 'SUBMITTED', label: 'На утверждении', count: tabCounts.submitted },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
+          { id: 'all', label: t('hrRussian.timesheet.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('hrRussian.timesheet.tabDrafts'), count: tabCounts.draft },
+          { id: 'SUBMITTED', label: t('hrRussian.timesheet.tabSubmitted'), count: tabCounts.submitted },
+          { id: 'APPROVED', label: t('hrRussian.timesheet.tabApproved'), count: tabCounts.approved },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -229,19 +249,19 @@ const TimeSheetPage: React.FC = () => {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Clock size={18} />} label="Всего часов" value={formatNumber(metrics.totalHours)} />
+        <MetricCard icon={<Clock size={18} />} label={t('hrRussian.timesheet.metricTotalHours')} value={formatNumber(metrics.totalHours)} />
         <MetricCard
           icon={<AlertCircle size={18} />}
-          label="Переработка"
-          value={`${metrics.totalOvertime} ч`}
-          trend={{ direction: metrics.totalOvertime > 0 ? 'down' : 'neutral', value: metrics.totalOvertime > 0 ? 'Сверхурочные' : 'Нет' }}
+          label={t('hrRussian.timesheet.metricOvertime')}
+          value={`${metrics.totalOvertime} ${t('hrRussian.timesheet.hoursSuffix')}`}
+          trend={{ direction: metrics.totalOvertime > 0 ? 'down' : 'neutral', value: metrics.totalOvertime > 0 ? t('hrRussian.timesheet.trendOvertime') : t('hrRussian.timesheet.trendNone') }}
         />
-        <MetricCard icon={<Calendar size={18} />} label="Больничных дней" value={metrics.totalSickDays} />
+        <MetricCard icon={<Calendar size={18} />} label={t('hrRussian.timesheet.metricSickDays')} value={metrics.totalSickDays} />
         <MetricCard
           icon={<CheckCircle size={18} />}
-          label="На утверждении"
+          label={t('hrRussian.timesheet.metricPending')}
           value={metrics.pendingApproval}
-          trend={{ direction: metrics.pendingApproval > 0 ? 'up' : 'neutral', value: metrics.pendingApproval > 0 ? 'Ожидают' : 'Нет' }}
+          trend={{ direction: metrics.pendingApproval > 0 ? 'up' : 'neutral', value: metrics.pendingApproval > 0 ? t('hrRussian.timesheet.trendAwaiting') : t('hrRussian.timesheet.trendNone') }}
         />
       </div>
 
@@ -250,20 +270,20 @@ const TimeSheetPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по ФИО, подразделению..."
+            placeholder={t('hrRussian.timesheet.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={monthOptions}
+          options={getMonthOptions()}
           value={monthFilter}
           onChange={(e) => setMonthFilter(e.target.value)}
           className="w-48"
         />
         <Select
-          options={departmentOptions}
+          options={getDepartmentOptions()}
           value={departmentFilter}
           onChange={(e) => setDepartmentFilter(e.target.value)}
           className="w-52"
@@ -280,8 +300,8 @@ const TimeSheetPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет записей табеля"
-        emptyDescription="Табель учёта рабочего времени пуст"
+        emptyTitle={t('hrRussian.timesheet.emptyTitle')}
+        emptyDescription={t('hrRussian.timesheet.emptyDescription')}
       />
     </div>
   );

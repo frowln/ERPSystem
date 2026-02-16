@@ -1,17 +1,23 @@
 package com.privod.platform.modules.procurement.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.procurement.domain.PurchaseRequest;
 import com.privod.platform.modules.procurement.domain.PurchaseRequestItem;
 import com.privod.platform.modules.procurement.domain.PurchaseRequestPriority;
 import com.privod.platform.modules.procurement.domain.PurchaseRequestStatus;
 import com.privod.platform.modules.procurement.repository.PurchaseRequestItemRepository;
 import com.privod.platform.modules.procurement.repository.PurchaseRequestRepository;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.procurement.web.dto.CreatePurchaseRequestItemRequest;
 import com.privod.platform.modules.procurement.web.dto.CreatePurchaseRequestRequest;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestDashboardResponse;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestItemResponse;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestListResponse;
+import com.privod.platform.modules.procurement.web.dto.PurchaseRequestCountersResponse;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestResponse;
 import com.privod.platform.modules.procurement.web.dto.UpdatePurchaseRequestItemRequest;
 import com.privod.platform.modules.procurement.web.dto.UpdatePurchaseRequestRequest;
@@ -19,15 +25,18 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -37,25 +46,76 @@ public class ProcurementService {
 
     private final PurchaseRequestRepository purchaseRequestRepository;
     private final PurchaseRequestItemRepository purchaseRequestItemRepository;
+    private final ProjectRepository projectRepository;
+    private final ContractRepository contractRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
-    public Page<PurchaseRequestListResponse> listRequests(UUID projectId, PurchaseRequestStatus status,
+    public Page<PurchaseRequestListResponse> listRequests(UUID projectId, List<PurchaseRequestStatus> statuses,
                                                            PurchaseRequestPriority priority, UUID assignedToId,
+                                                           UUID requestedById,
+                                                           String search,
                                                            Pageable pageable) {
-        Specification<PurchaseRequest> spec = Specification
-                .where(PurchaseRequestSpecification.notDeleted())
-                .and(PurchaseRequestSpecification.hasProject(projectId))
-                .and(PurchaseRequestSpecification.hasStatus(status))
-                .and(PurchaseRequestSpecification.hasPriority(priority))
-                .and(PurchaseRequestSpecification.assignedTo(assignedToId));
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+        validateUserTenant(assignedToId, organizationId);
+        validateUserTenant(requestedById, organizationId);
 
-        return purchaseRequestRepository.findAll(spec, pageable).map(PurchaseRequestListResponse::fromEntity);
+        Specification<PurchaseRequest> spec = buildRequestSpec(
+                organizationId, projectId, priority, search, statuses, assignedToId, requestedById
+        );
+
+        Page<PurchaseRequest> page = purchaseRequestRepository.findAll(spec, pageable);
+        return enrichList(page, organizationId);
+    }
+
+    @Transactional(readOnly = true)
+    public PurchaseRequestCountersResponse getRequestCounters(
+            UUID projectId,
+            PurchaseRequestPriority priority,
+            String search,
+            UUID requestedById
+    ) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+        validateUserTenant(requestedById, organizationId);
+
+        Specification<PurchaseRequest> baseSpec = buildRequestSpec(
+                organizationId, projectId, priority, search, List.of(), null, null
+        );
+
+        long all = purchaseRequestRepository.count(baseSpec);
+        long my = requestedById == null
+                ? 0L
+                : purchaseRequestRepository.count(baseSpec.and(PurchaseRequestSpecification.requestedBy(requestedById)));
+        long inApproval = purchaseRequestRepository.count(baseSpec.and(
+                PurchaseRequestSpecification.hasStatuses(List.of(
+                        PurchaseRequestStatus.SUBMITTED,
+                        PurchaseRequestStatus.IN_APPROVAL
+                ))
+        ));
+        long inWork = purchaseRequestRepository.count(baseSpec.and(
+                PurchaseRequestSpecification.hasStatuses(List.of(
+                        PurchaseRequestStatus.APPROVED,
+                        PurchaseRequestStatus.ASSIGNED,
+                        PurchaseRequestStatus.ORDERED
+                ))
+        ));
+        long delivered = purchaseRequestRepository.count(baseSpec.and(
+                PurchaseRequestSpecification.hasStatuses(List.of(
+                        PurchaseRequestStatus.DELIVERED,
+                        PurchaseRequestStatus.CLOSED
+                ))
+        ));
+
+        return new PurchaseRequestCountersResponse(all, my, inApproval, inWork, delivered);
     }
 
     @Transactional(readOnly = true)
     public PurchaseRequestResponse getRequest(UUID id) {
-        PurchaseRequest pr = getRequestOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequest pr = getRequestOrThrow(id, organizationId);
         List<PurchaseRequestItemResponse> items = purchaseRequestItemRepository
                 .findByRequestIdAndDeletedFalseOrderBySequenceAsc(id)
                 .stream()
@@ -66,9 +126,16 @@ public class ProcurementService {
 
     @Transactional
     public PurchaseRequestResponse createRequest(CreatePurchaseRequestRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID requestedById = SecurityUtils.requireCurrentUserId();
+        User requestedBy = getUserOrThrow(requestedById, organizationId);
+        validateProjectTenant(request.projectId(), organizationId);
+        validateContractTenant(request.contractId(), organizationId);
+
         String name = generateRequestName();
 
         PurchaseRequest pr = PurchaseRequest.builder()
+                .organizationId(organizationId)
                 .name(name)
                 .requestDate(request.requestDate())
                 .projectId(request.projectId())
@@ -76,8 +143,8 @@ public class ProcurementService {
                 .specificationId(request.specificationId())
                 .status(PurchaseRequestStatus.DRAFT)
                 .priority(request.priority() != null ? request.priority() : PurchaseRequestPriority.MEDIUM)
-                .requestedById(request.requestedById())
-                .requestedByName(request.requestedByName())
+                .requestedById(requestedById)
+                .requestedByName(formatFullName(requestedBy.getFirstName(), requestedBy.getLastName()))
                 .notes(request.notes())
                 .build();
 
@@ -90,16 +157,19 @@ public class ProcurementService {
 
     @Transactional
     public PurchaseRequestResponse updateRequest(UUID id, UpdatePurchaseRequestRequest request) {
-        PurchaseRequest pr = getRequestOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequest pr = getRequestOrThrow(id, organizationId);
         validateDraftStatus(pr.getStatus());
 
         if (request.requestDate() != null) {
             pr.setRequestDate(request.requestDate());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             pr.setProjectId(request.projectId());
         }
         if (request.contractId() != null) {
+            validateContractTenant(request.contractId(), organizationId);
             pr.setContractId(request.contractId());
         }
         if (request.specificationId() != null) {
@@ -129,7 +199,8 @@ public class ProcurementService {
 
     @Transactional
     public PurchaseRequestItemResponse addItem(UUID requestId, CreatePurchaseRequestItemRequest request) {
-        PurchaseRequest pr = getRequestOrThrow(requestId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequest pr = getRequestOrThrow(requestId, organizationId);
         validateDraftStatus(pr.getStatus());
 
         PurchaseRequestItem item = PurchaseRequestItem.builder()
@@ -155,8 +226,9 @@ public class ProcurementService {
 
     @Transactional
     public PurchaseRequestItemResponse updateItem(UUID itemId, UpdatePurchaseRequestItemRequest request) {
-        PurchaseRequestItem item = getItemOrThrow(itemId);
-        PurchaseRequest pr = getRequestOrThrow(item.getRequestId());
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequestItem item = getItemOrThrow(itemId, organizationId);
+        PurchaseRequest pr = getRequestOrThrow(item.getRequestId(), organizationId);
         validateDraftStatus(pr.getStatus());
 
         if (request.specItemId() != null) {
@@ -193,8 +265,9 @@ public class ProcurementService {
 
     @Transactional
     public void removeItem(UUID itemId) {
-        PurchaseRequestItem item = getItemOrThrow(itemId);
-        PurchaseRequest pr = getRequestOrThrow(item.getRequestId());
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequestItem item = getItemOrThrow(itemId, organizationId);
+        PurchaseRequest pr = getRequestOrThrow(item.getRequestId(), organizationId);
         validateDraftStatus(pr.getStatus());
 
         item.softDelete();
@@ -218,7 +291,8 @@ public class ProcurementService {
 
     @Transactional
     public PurchaseRequestResponse rejectRequest(UUID id, String reason) {
-        PurchaseRequest pr = getRequestOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequest pr = getRequestOrThrow(id, organizationId);
         PurchaseRequestStatus oldStatus = pr.getStatus();
 
         if (!pr.canTransitionTo(PurchaseRequestStatus.REJECTED)) {
@@ -243,7 +317,9 @@ public class ProcurementService {
 
     @Transactional
     public PurchaseRequestResponse assignRequest(UUID id, UUID assignedToId) {
-        PurchaseRequest pr = getRequestOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateUserTenant(assignedToId, organizationId);
+        PurchaseRequest pr = getRequestOrThrow(id, organizationId);
         PurchaseRequestStatus oldStatus = pr.getStatus();
 
         if (!pr.canTransitionTo(PurchaseRequestStatus.ASSIGNED)) {
@@ -288,7 +364,8 @@ public class ProcurementService {
 
     @Transactional
     public void recalculateTotals(UUID requestId) {
-        PurchaseRequest pr = getRequestOrThrow(requestId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequest pr = getRequestOrThrow(requestId, organizationId);
         BigDecimal total = purchaseRequestItemRepository.sumAmountByRequestId(requestId);
         pr.setTotalAmount(total != null ? total : BigDecimal.ZERO);
         purchaseRequestRepository.save(pr);
@@ -298,15 +375,18 @@ public class ProcurementService {
 
     @Transactional(readOnly = true)
     public PurchaseRequestDashboardResponse getDashboardSummary(UUID projectId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
         Map<String, Long> statusCounts = new HashMap<>();
-        List<Object[]> statusData = purchaseRequestRepository.countByStatusForProject(projectId);
+        List<Object[]> statusData = purchaseRequestRepository.countByStatusForProjectAndOrganizationId(projectId, organizationId);
         for (Object[] row : statusData) {
             PurchaseRequestStatus status = (PurchaseRequestStatus) row[0];
             Long count = (Long) row[1];
             statusCounts.put(status.name(), count);
         }
 
-        BigDecimal totalAmount = purchaseRequestRepository.sumTotalAmountForProject(projectId);
+        BigDecimal totalAmount = purchaseRequestRepository.sumTotalAmountForProjectAndOrganizationId(projectId, organizationId);
 
         return new PurchaseRequestDashboardResponse(
                 statusCounts,
@@ -318,8 +398,112 @@ public class ProcurementService {
     // Private helpers
     // ========================================================================
 
+    private Specification<PurchaseRequest> buildRequestSpec(
+            UUID organizationId,
+            UUID projectId,
+            PurchaseRequestPriority priority,
+            String search,
+            List<PurchaseRequestStatus> statuses,
+            UUID assignedToId,
+            UUID requestedById
+    ) {
+        Specification<PurchaseRequest> spec = Specification
+                .where(PurchaseRequestSpecification.notDeleted())
+                .and(PurchaseRequestSpecification.belongsToOrganization(organizationId))
+                .and(PurchaseRequestSpecification.hasProject(projectId))
+                .and(PurchaseRequestSpecification.hasPriority(priority))
+                .and(PurchaseRequestSpecification.hasStatuses(statuses))
+                .and(PurchaseRequestSpecification.assignedTo(assignedToId))
+                .and(PurchaseRequestSpecification.requestedBy(requestedById));
+        if (StringUtils.hasText(search)) {
+            spec = spec.and(PurchaseRequestSpecification.quickSearch(search));
+        }
+        return spec;
+    }
+
+    private Page<PurchaseRequestListResponse> enrichList(Page<PurchaseRequest> page, UUID organizationId) {
+        List<UUID> projectIds = page.getContent().stream()
+                .map(PurchaseRequest::getProjectId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        List<UUID> assigneeIds = page.getContent().stream()
+                .map(PurchaseRequest::getAssignedToId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        List<UUID> requestIds = page.getContent().stream()
+                .map(PurchaseRequest::getId)
+                .toList();
+
+        Map<UUID, String> projectNameMap = resolveProjectNames(projectIds, organizationId);
+        Map<UUID, String> assigneeNameMap = resolveUserNames(assigneeIds, organizationId);
+        Map<UUID, Long> itemCountMap = resolveItemCounts(requestIds);
+
+        List<PurchaseRequestListResponse> enriched = page.getContent().stream()
+                .map(request -> PurchaseRequestListResponse.fromEntity(
+                        request,
+                        request.getProjectId() != null ? projectNameMap.get(request.getProjectId()) : null,
+                        request.getAssignedToId() != null ? assigneeNameMap.get(request.getAssignedToId()) : null,
+                        itemCountMap.get(request.getId())
+                ))
+                .toList();
+
+        return new PageImpl<>(enriched, page.getPageable(), page.getTotalElements());
+    }
+
+    private Map<UUID, String> resolveProjectNames(List<UUID> projectIds, UUID organizationId) {
+        if (projectIds.isEmpty()) {
+            return Map.of();
+        }
+        Map<UUID, String> map = new HashMap<>();
+        for (Object[] row : projectRepository.findNamesByIdsAndOrganizationId(projectIds, organizationId)) {
+            map.put((UUID) row[0], (String) row[1]);
+        }
+        return map;
+    }
+
+    private Map<UUID, String> resolveUserNames(List<UUID> userIds, UUID organizationId) {
+        if (userIds.isEmpty()) {
+            return Map.of();
+        }
+        Map<UUID, String> map = new HashMap<>();
+        for (Object[] row : userRepository.findNamesByIdsAndOrganizationId(userIds, organizationId)) {
+            UUID id = (UUID) row[0];
+            String firstName = (String) row[1];
+            String lastName = (String) row[2];
+            map.put(id, formatFullName(firstName, lastName));
+        }
+        return map;
+    }
+
+    private Map<UUID, Long> resolveItemCounts(List<UUID> requestIds) {
+        if (requestIds.isEmpty()) {
+            return Map.of();
+        }
+        Map<UUID, Long> map = new HashMap<>();
+        for (Object[] row : purchaseRequestItemRepository.countByRequestIds(requestIds)) {
+            map.put((UUID) row[0], (Long) row[1]);
+        }
+        return map;
+    }
+
+    private String formatFullName(String firstName, String lastName) {
+        if (!StringUtils.hasText(firstName) && !StringUtils.hasText(lastName)) {
+            return null;
+        }
+        if (!StringUtils.hasText(firstName)) {
+            return lastName.trim();
+        }
+        if (!StringUtils.hasText(lastName)) {
+            return firstName.trim();
+        }
+        return firstName.trim() + " " + lastName.trim();
+    }
+
     private PurchaseRequestResponse transitionStatus(UUID id, PurchaseRequestStatus targetStatus, String actionLabel) {
-        PurchaseRequest pr = getRequestOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseRequest pr = getRequestOrThrow(id, organizationId);
         PurchaseRequestStatus oldStatus = pr.getStatus();
 
         if (!pr.canTransitionTo(targetStatus)) {
@@ -341,16 +525,46 @@ public class ProcurementService {
         return PurchaseRequestResponse.fromEntity(pr, items);
     }
 
-    private PurchaseRequest getRequestOrThrow(UUID id) {
-        return purchaseRequestRepository.findById(id)
-                .filter(p -> !p.isDeleted())
+    private PurchaseRequest getRequestOrThrow(UUID id, UUID organizationId) {
+        return purchaseRequestRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Заявка на закупку не найдена: " + id));
     }
 
-    private PurchaseRequestItem getItemOrThrow(UUID itemId) {
-        return purchaseRequestItemRepository.findById(itemId)
+    private PurchaseRequestItem getItemOrThrow(UUID itemId, UUID organizationId) {
+        PurchaseRequestItem item = purchaseRequestItemRepository.findById(itemId)
                 .filter(i -> !i.isDeleted())
                 .orElseThrow(() -> new EntityNotFoundException("Позиция заявки не найдена: " + itemId));
+        getRequestOrThrow(item.getRequestId(), organizationId);
+        return item;
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+        projectRepository.findByIdAndOrganizationIdAndDeletedFalse(projectId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+    }
+
+    private void validateContractTenant(UUID contractId, UUID organizationId) {
+        if (contractId == null) {
+            return;
+        }
+        contractRepository.findByIdAndOrganizationIdAndDeletedFalse(contractId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Контракт не найден: " + contractId));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+    }
+
+    private User getUserOrThrow(UUID userId, UUID organizationId) {
+        return userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
     }
 
     private void validateDraftStatus(PurchaseRequestStatus status) {

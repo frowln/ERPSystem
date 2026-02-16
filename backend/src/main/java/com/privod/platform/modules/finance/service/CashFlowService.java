@@ -1,11 +1,13 @@
 package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.finance.domain.CashFlowEntry;
 import com.privod.platform.modules.finance.repository.CashFlowEntryRepository;
 import com.privod.platform.modules.finance.web.dto.CashFlowEntryResponse;
 import com.privod.platform.modules.finance.web.dto.CashFlowSummaryResponse;
 import com.privod.platform.modules.finance.web.dto.CreateCashFlowEntryRequest;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,25 +30,40 @@ import java.util.UUID;
 public class CashFlowService {
 
     private final CashFlowEntryRepository cashFlowEntryRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<CashFlowEntryResponse> listEntries(UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             return cashFlowEntryRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
                     .map(CashFlowEntryResponse::fromEntity);
         }
-        return cashFlowEntryRepository.findAll(pageable).map(CashFlowEntryResponse::fromEntity);
+        List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+        if (projectIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return cashFlowEntryRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable)
+                .map(CashFlowEntryResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public CashFlowEntryResponse getEntry(UUID id) {
-        CashFlowEntry entry = getEntryOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CashFlowEntry entry = getEntryOrThrow(id, organizationId);
         return CashFlowEntryResponse.fromEntity(entry);
     }
 
     @Transactional
     public CashFlowEntryResponse createEntry(CreateCashFlowEntryRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для движения ДДС");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         CashFlowEntry entry = CashFlowEntry.builder()
                 .projectId(request.projectId())
                 .entryDate(request.entryDate())
@@ -69,7 +86,8 @@ public class CashFlowService {
 
     @Transactional
     public void deleteEntry(UUID id) {
-        CashFlowEntry entry = getEntryOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CashFlowEntry entry = getEntryOrThrow(id, organizationId);
         entry.softDelete();
         cashFlowEntryRepository.save(entry);
         auditService.logDelete("CashFlowEntry", id);
@@ -79,6 +97,8 @@ public class CashFlowService {
 
     @Transactional(readOnly = true)
     public List<CashFlowEntryResponse> getProjectCashFlow(UUID projectId, LocalDate dateFrom, LocalDate dateTo) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
         return cashFlowEntryRepository.findByProjectIdAndDateRange(projectId, dateFrom, dateTo)
                 .stream()
                 .map(CashFlowEntryResponse::fromEntity)
@@ -87,6 +107,8 @@ public class CashFlowService {
 
     @Transactional(readOnly = true)
     public CashFlowSummaryResponse getCashFlowSummary(UUID projectId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
         BigDecimal totalInflow = cashFlowEntryRepository.sumByProjectIdAndDirection(projectId, "in");
         BigDecimal totalOutflow = cashFlowEntryRepository.sumByProjectIdAndDirection(projectId, "out");
 
@@ -129,9 +151,24 @@ public class CashFlowService {
         return new CashFlowSummaryResponse(inflow, outflow, inflow.subtract(outflow), monthlyBreakdown);
     }
 
-    private CashFlowEntry getEntryOrThrow(UUID id) {
-        return cashFlowEntryRepository.findById(id)
-                .filter(e -> !e.isDeleted())
+    private CashFlowEntry getEntryOrThrow(UUID id, UUID organizationId) {
+        CashFlowEntry entry = cashFlowEntryRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Запись движения денежных средств не найдена: " + id));
+        validateProjectTenant(entry.getProjectId(), organizationId);
+        return entry;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .filter(p -> organizationId.equals(p.getOrganizationId()))
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
     }
 }

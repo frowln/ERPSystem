@@ -29,29 +29,29 @@ const dispatchOrderSchema = z.object({
 
 type DispatchOrderFormData = z.input<typeof dispatchOrderSchema>;
 
-const projectOptions = [
+const getProjectOptions = () => [
   { value: '', label: t('forms.dispatchOrder.noProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+  { value: '1', label: t('forms.dispatchOrder.projectSolnechny') },
+  { value: '2', label: t('forms.dispatchOrder.projectHorizont') },
+  { value: '3', label: t('forms.dispatchOrder.projectBridge') },
+  { value: '6', label: t('forms.dispatchOrder.projectCentral') },
 ];
 
-const vehicleOptions = [
+const getVehicleOptions = () => [
   { value: '', label: t('forms.dispatchOrder.vehicleNotSelected') },
-  { value: 'v1', label: 'КАМАЗ 65115 (А123ВС 77)' },
-  { value: 'v2', label: 'МАЗ 6430 (В456ОР 50)' },
-  { value: 'v3', label: 'Volvo FH16 (Е789КМ 77)' },
-  { value: 'v4', label: 'MAN TGS (Н012ТУ 50)' },
-  { value: 'v5', label: 'Scania R440 (Х345ЕН 77)' },
+  { value: 'v1', label: t('forms.dispatchOrder.vehicleKamaz') },
+  { value: 'v2', label: t('forms.dispatchOrder.vehicleMaz') },
+  { value: 'v3', label: t('forms.dispatchOrder.vehicleVolvo') },
+  { value: 'v4', label: t('forms.dispatchOrder.vehicleMan') },
+  { value: 'v5', label: t('forms.dispatchOrder.vehicleScania') },
 ];
 
-const driverOptions = [
+const getDriverOptions = () => [
   { value: '', label: t('forms.dispatchOrder.driverNotAssigned') },
-  { value: 'd1', label: 'Смирнов А.В.' },
-  { value: 'd2', label: 'Кузнецов Д.И.' },
-  { value: 'd3', label: 'Попов М.С.' },
-  { value: 'd4', label: 'Васильев Е.Н.' },
+  { value: 'd1', label: t('forms.dispatchOrder.driverSmirnov') },
+  { value: 'd2', label: t('forms.dispatchOrder.driverKuznetsov') },
+  { value: 'd3', label: t('forms.dispatchOrder.driverPopov') },
+  { value: 'd4', label: t('forms.dispatchOrder.driverVasiliev') },
 ];
 
 const DispatchOrderFormPage: React.FC = () => {
@@ -185,7 +185,7 @@ const DispatchOrderFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.dispatchOrder.labelProject')} error={errors.projectId?.message}>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
               />
@@ -201,14 +201,14 @@ const DispatchOrderFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.dispatchOrder.labelVehicle')} error={errors.vehicleId?.message}>
               <Select
-                options={vehicleOptions}
+                options={getVehicleOptions()}
                 hasError={!!errors.vehicleId}
                 {...register('vehicleId')}
               />
             </FormField>
             <FormField label={t('forms.dispatchOrder.labelDriver')} error={errors.driverId?.message}>
               <Select
-                options={driverOptions}
+                options={getDriverOptions()}
                 hasError={!!errors.driverId}
                 {...register('driverId')}
               />
@@ -221,21 +221,21 @@ const DispatchOrderFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.dispatchOrder.labelOrigin')} error={errors.origin?.message} required>
               <Input
-                placeholder="Москва, ул. Строителей, 15"
+                placeholder={t('forms.dispatchOrder.placeholderOrigin')}
                 hasError={!!errors.origin}
                 {...register('origin')}
               />
             </FormField>
             <FormField label={t('forms.dispatchOrder.labelDestination')} error={errors.destination?.message} required>
               <Input
-                placeholder="Строительная площадка ЖК Солнечный"
+                placeholder={t('forms.dispatchOrder.placeholderDestination')}
                 hasError={!!errors.destination}
                 {...register('destination')}
               />
             </FormField>
             <FormField label={t('forms.dispatchOrder.labelCargoDescription')} error={errors.cargoDescription?.message} className="sm:col-span-2">
               <Textarea
-                placeholder="Арматура, 12 мм, 200 прутков..."
+                placeholder={t('forms.dispatchOrder.placeholderCargoDescription')}
                 rows={3}
                 hasError={!!errors.cargoDescription}
                 {...register('cargoDescription')}

@@ -81,15 +81,15 @@ public class ProjectFinancialService {
 
         // --- Revenue side: contracts with customer ---
         BigDecimal contractAmount = contractRepository
-                .sumAmountByProjectIdAndTypeCodes(projectId, REVENUE_TYPE_CODES);
+                .sumAmountByProjectIdAndTypeCodesAndOrganizationId(projectId, REVENUE_TYPE_CODES, currentOrgId);
 
         // --- Expense side: subcontract, supply, service contracts ---
         BigDecimal subcontractAmount = contractRepository
-                .sumAmountByProjectIdAndTypeCodes(projectId, SUBCONTRACT_TYPE_CODES);
+                .sumAmountByProjectIdAndTypeCodesAndOrganizationId(projectId, SUBCONTRACT_TYPE_CODES, currentOrgId);
         BigDecimal supplyAmount = contractRepository
-                .sumAmountByProjectIdAndTypeCodes(projectId, SUPPLY_TYPE_CODES);
+                .sumAmountByProjectIdAndTypeCodesAndOrganizationId(projectId, SUPPLY_TYPE_CODES, currentOrgId);
         BigDecimal serviceAmount = contractRepository
-                .sumAmountByProjectIdAndTypeCodes(projectId, SERVICE_TYPE_CODES);
+                .sumAmountByProjectIdAndTypeCodesAndOrganizationId(projectId, SERVICE_TYPE_CODES, currentOrgId);
 
         // --- Invoices ---
         BigDecimal invoicedToCustomer = invoiceRepository
@@ -170,6 +170,9 @@ public class ProjectFinancialService {
      */
     @Transactional(readOnly = true)
     public DashboardFinancialTotals getDashboardTotals(List<UUID> projectIds) {
+        UUID currentOrgId = SecurityUtils.getCurrentOrganizationId()
+                .orElseThrow(() -> new AccessDeniedException("Organization context is required"));
+
         if (projectIds == null || projectIds.isEmpty()) {
             return DashboardFinancialTotals.ZERO;
         }
@@ -182,7 +185,7 @@ public class ProjectFinancialService {
 
         for (UUID projectId : projectIds) {
             totalContractAmount = totalContractAmount.add(
-                    contractRepository.sumAmountByProjectIdAndTypeCodes(projectId, REVENUE_TYPE_CODES));
+                    contractRepository.sumAmountByProjectIdAndTypeCodesAndOrganizationId(projectId, REVENUE_TYPE_CODES, currentOrgId));
 
             BigDecimal ccBudget = costCodeRepository.sumBudgetAmountByProjectId(projectId);
             BigDecimal budgetPC = budgetRepository.sumPlannedCostByProjectId(projectId);

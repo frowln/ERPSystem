@@ -18,27 +18,28 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { rfiApi } from '@/api/rfi';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import type { Rfi } from './types';
 import { RfiCreateModal } from './RfiCreateModal';
 
 type TabId = 'all' | 'OPEN' | 'ANSWERED' | 'OVERDUE' | 'CLOSED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'OPEN', label: 'Открыт' },
-  { value: 'ANSWERED', label: 'Отвечен' },
-  { value: 'CLOSED', label: 'Закрыт' },
-  { value: 'OVERDUE', label: 'Просрочен' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('rfi.filterAllStatuses') },
+  { value: 'DRAFT', label: t('rfi.filterStatusDraft') },
+  { value: 'OPEN', label: t('rfi.filterStatusOpen') },
+  { value: 'ANSWERED', label: t('rfi.filterStatusAnswered') },
+  { value: 'CLOSED', label: t('rfi.filterStatusClosed') },
+  { value: 'OVERDUE', label: t('rfi.filterStatusOverdue') },
 ];
 
-const priorityFilterOptions = [
-  { value: '', label: 'Все приоритеты' },
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityFilterOptions = () => [
+  { value: '', label: t('rfi.filterAllPriorities') },
+  { value: 'LOW', label: t('rfi.filterPriorityLow') },
+  { value: 'MEDIUM', label: t('rfi.filterPriorityMedium') },
+  { value: 'HIGH', label: t('rfi.filterPriorityHigh') },
+  { value: 'CRITICAL', label: t('rfi.filterPriorityCritical') },
 ];
 
 const RfiListPage: React.FC = () => {
@@ -58,10 +59,10 @@ const RfiListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rfis'] });
-      toast.success('RFI удалён(ы)');
+      toast.success(t('rfi.deleteSuccess'));
     },
     onError: () => {
-      toast.error('Ошибка при удалении');
+      toast.error(t('rfi.deleteError'));
     },
   });
 
@@ -137,7 +138,7 @@ const RfiListPage: React.FC = () => {
       },
       {
         accessorKey: 'subject',
-        header: 'Тема',
+        header: t('rfi.colSubject'),
         size: 300,
         cell: ({ row }) => (
           <div>
@@ -148,7 +149,7 @@ const RfiListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('rfi.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -160,7 +161,7 @@ const RfiListPage: React.FC = () => {
       },
       {
         accessorKey: 'priority',
-        header: 'Приоритет',
+        header: t('rfi.colPriority'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -172,7 +173,7 @@ const RfiListPage: React.FC = () => {
       },
       {
         accessorKey: 'assignedToName',
-        header: 'Ответственный',
+        header: t('rfi.colAssignee'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -180,7 +181,7 @@ const RfiListPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('rfi.colDueDate'),
         size: 120,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
@@ -205,7 +206,7 @@ const RfiListPage: React.FC = () => {
               navigate(`/rfis/${row.original.id}`);
             }}
           >
-            Открыть
+            {t('rfi.openAction')}
           </Button>
         ),
       },
@@ -221,23 +222,23 @@ const RfiListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Запросы информации (RFI)"
-        subtitle={`${rfis.length} запросов в системе`}
+        title={t('rfi.listTitle')}
+        subtitle={t('rfi.listSubtitle', { count: String(rfis.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'RFI' },
+          { label: t('rfi.breadcrumbHome'), href: '/' },
+          { label: t('rfi.breadcrumbRfi') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => setCreateModalOpen(true)}>
-            Новый RFI
+            {t('rfi.newRfi')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'OPEN', label: 'Открытые', count: tabCounts.open },
-          { id: 'ANSWERED', label: 'Отвеченные', count: tabCounts.answered },
-          { id: 'OVERDUE', label: 'Просроченные', count: tabCounts.overdue },
-          { id: 'CLOSED', label: 'Закрытые', count: tabCounts.closed },
+          { id: 'all', label: t('rfi.tabAll'), count: tabCounts.all },
+          { id: 'OPEN', label: t('rfi.tabOpen'), count: tabCounts.open },
+          { id: 'ANSWERED', label: t('rfi.tabAnswered'), count: tabCounts.answered },
+          { id: 'OVERDUE', label: t('rfi.tabOverdue'), count: tabCounts.overdue },
+          { id: 'CLOSED', label: t('rfi.tabClosed'), count: tabCounts.closed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -247,25 +248,25 @@ const RfiListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<FileQuestion size={18} />}
-          label="Всего RFI"
+          label={t('rfi.metricTotal')}
           value={metrics.total}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="Открытые"
+          label={t('rfi.metricOpen')}
           value={metrics.open}
-          trend={{ direction: metrics.open > 3 ? 'up' : 'neutral', value: `${metrics.open} шт.` }}
+          trend={{ direction: metrics.open > 3 ? 'up' : 'neutral', value: `${metrics.open} ${t('specifications.materialsDays')}` }}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Просроченные"
+          label={t('rfi.metricOverdue')}
           value={metrics.overdue}
-          trend={{ direction: metrics.overdue > 0 ? 'down' : 'neutral', value: metrics.overdue > 0 ? 'Требуют внимания' : 'Нет' }}
+          trend={{ direction: metrics.overdue > 0 ? 'down' : 'neutral', value: metrics.overdue > 0 ? t('rfi.trendNeedAttention') : t('rfi.trendNone') }}
         />
         <MetricCard
           icon={<Timer size={18} />}
-          label="Среднее время ответа"
-          value={`${metrics.avgResponse.toFixed(1)} дн.`}
+          label={t('rfi.metricAvgResponse')}
+          value={`${metrics.avgResponse.toFixed(1)} ${t('specifications.materialsDays')}`}
         />
       </div>
 
@@ -274,14 +275,14 @@ const RfiListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, теме..."
+            placeholder={t('rfi.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={priorityFilterOptions}
+          options={getPriorityFilterOptions()}
           value={priorityFilter}
           onChange={(e) => setPriorityFilter(e.target.value)}
           className="w-48"
@@ -301,24 +302,24 @@ const RfiListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('rfi.bulkDelete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} RFI?`,
-                description: 'Операция необратима. Выбранные запросы информации будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('rfi.confirmDeleteTitle', { count: String(ids.length) }),
+                description: t('rfi.confirmDeleteDescription'),
+                confirmLabel: t('rfi.confirmDeleteConfirm'),
+                cancelLabel: t('rfi.confirmDeleteCancel'),
               });
               if (!isConfirmed) return;
               deleteRfiMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет запросов информации"
-        emptyDescription="Создайте первый RFI для начала работы"
+        emptyTitle={t('rfi.emptyTitle')}
+        emptyDescription={t('rfi.emptyDescription')}
       />
 
       <RfiCreateModal

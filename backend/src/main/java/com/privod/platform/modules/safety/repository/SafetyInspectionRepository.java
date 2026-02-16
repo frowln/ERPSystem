@@ -8,11 +8,18 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface SafetyInspectionRepository extends JpaRepository<SafetyInspection, UUID>,
         JpaSpecificationExecutor<SafetyInspection> {
+
+    Optional<SafetyInspection> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
+    Page<SafetyInspection> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
+
+    Page<SafetyInspection> findByOrganizationIdAndProjectIdAndDeletedFalse(UUID organizationId, UUID projectId, Pageable pageable);
 
     Page<SafetyInspection> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 

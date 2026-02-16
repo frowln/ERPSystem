@@ -19,6 +19,7 @@ import { EmptyState } from '@/design-system/components/EmptyState';
 import { useConfirmDialog } from '@/design-system/components/ConfirmDialog/provider';
 import { accountingApi } from '@/api/accounting';
 import { formatMoney, formatDateLong, formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 
 const JournalEntryDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,11 +56,11 @@ const JournalEntryDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['journal-entries'] });
       queryClient.invalidateQueries({ queryKey: ['accounting-dashboard'] });
-      toast.success('Проводка удалена');
+      toast.success(t('accounting.detailDeleteSuccess'));
       navigate('/accounting/journal');
     },
     onError: () => {
-      toast.error('Не удалось удалить проводку');
+      toast.error(t('accounting.detailDeleteError'));
     },
   });
 
@@ -67,21 +68,21 @@ const JournalEntryDetailPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Проводка"
-          subtitle="Детальный просмотр"
+          title={t('accounting.breadcrumbJournalEntry')}
+          subtitle={t('accounting.detailViewSubtitle')}
           backTo="/accounting/journal"
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия', href: '/accounting' },
-            { label: 'Журнал проводок', href: '/accounting/journal' },
-            { label: 'Проводка' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+            { label: t('accounting.breadcrumbJournalEntries'), href: '/accounting/journal' },
+            { label: t('accounting.breadcrumbJournalEntry') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить проводку"
-          description="Запись не найдена или временно недоступна"
-          actionLabel="Повторить"
+          title={t('accounting.detailErrorTitle')}
+          description={t('accounting.detailErrorDescription')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetch();
           }}
@@ -94,14 +95,14 @@ const JournalEntryDetailPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Проводка"
-          subtitle="Загрузка..."
+          title={t('accounting.breadcrumbJournalEntry')}
+          subtitle={t('accounting.detailLoadingSubtitle')}
           backTo="/accounting/journal"
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия', href: '/accounting' },
-            { label: 'Журнал проводок', href: '/accounting/journal' },
-            { label: 'Проводка' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+            { label: t('accounting.breadcrumbJournalEntries'), href: '/accounting/journal' },
+            { label: t('accounting.breadcrumbJournalEntry') },
           ]}
         />
       </div>
@@ -119,12 +120,12 @@ const JournalEntryDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={entry.number}
-        subtitle="Бухгалтерская проводка"
+        subtitle={t('accounting.detailSubtitle')}
         backTo="/accounting/journal"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия', href: '/accounting' },
-          { label: 'Журнал проводок', href: '/accounting/journal' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+          { label: t('accounting.breadcrumbJournalEntries'), href: '/accounting/journal' },
           { label: entry.number },
         ]}
         actions={
@@ -135,7 +136,7 @@ const JournalEntryDetailPage: React.FC = () => {
               iconLeft={<Edit size={14} />}
               onClick={() => navigate(`/accounting/journal/${entry.id}/edit`)}
             >
-              Редактировать
+              {t('accounting.detailEditButton')}
             </Button>
             <Button
               variant="danger"
@@ -144,10 +145,10 @@ const JournalEntryDetailPage: React.FC = () => {
               iconLeft={<Trash2 size={14} />}
               onClick={async () => {
                 const confirmed = await confirm({
-                  title: 'Удалить проводку?',
-                  description: 'Операция необратима. Проводка будет удалена из журнала.',
-                  confirmLabel: 'Удалить',
-                  cancelLabel: 'Отмена',
+                  title: t('accounting.detailDeleteTitle'),
+                  description: t('accounting.detailDeleteDescription'),
+                  confirmLabel: t('accounting.detailDeleteConfirm'),
+                  cancelLabel: t('accounting.detailDeleteCancel'),
                   items: [entry.number],
                 });
 
@@ -155,7 +156,7 @@ const JournalEntryDetailPage: React.FC = () => {
                 deleteMutation.mutate();
               }}
             >
-              Удалить
+              {t('accounting.detailDeleteButton')}
             </Button>
           </div>
         }
@@ -166,7 +167,7 @@ const JournalEntryDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3 flex items-center gap-2">
               <BookOpen size={16} className="text-primary-500" />
-              Описание операции
+              {t('accounting.detailOperationTitle')}
             </h3>
             <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">{entry.description}</p>
           </div>
@@ -174,26 +175,26 @@ const JournalEntryDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <ArrowRightLeft size={16} className="text-primary-500" />
-              Корреспонденция счетов
+              {t('accounting.detailCorrespondenceTitle')}
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-neutral-200 dark:border-neutral-700">
-                    <th className="text-left py-2 pr-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">Сторона</th>
-                    <th className="text-left py-2 px-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">Счёт</th>
-                    <th className="text-right py-2 pl-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">Сумма</th>
+                    <th className="text-left py-2 pr-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('accounting.detailCorrespondenceSide')}</th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('accounting.detailCorrespondenceAccount')}</th>
+                    <th className="text-right py-2 pl-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">{t('accounting.detailCorrespondenceAmount')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-neutral-100">
-                    <td className="py-3 pr-4 text-neutral-600">Дебет</td>
+                    <td className="py-3 pr-4 text-neutral-600">{t('accounting.detailCorrespondenceDebit')}</td>
                     <td className="py-3 px-4 text-neutral-900 dark:text-neutral-100">{debitLabel}</td>
                     <td className="py-3 pl-4 text-right font-medium">{formatMoney(entry.amount)}</td>
                   </tr>
                   <tr className="border-b border-neutral-100">
-                    <td className="py-3 pr-4 text-neutral-600">Кредит</td>
+                    <td className="py-3 pr-4 text-neutral-600">{t('accounting.detailCorrespondenceCredit')}</td>
                     <td className="py-3 px-4 text-neutral-900 dark:text-neutral-100">{creditLabel}</td>
                     <td className="py-3 pl-4 text-right font-medium">{formatMoney(entry.amount)}</td>
                   </tr>
@@ -205,17 +206,17 @@ const JournalEntryDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <FileText size={16} className="text-primary-500" />
-              Документ-основание
+              {t('accounting.detailDocumentTitle')}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Тип документа</p>
-                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{entry.documentType ?? 'Не указан'}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('accounting.detailDocumentType')}</p>
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{entry.documentType ?? t('accounting.notSpecified')}</p>
               </div>
               <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">UUID документа</p>
-                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 break-all">{entry.documentId ?? 'Не указан'}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('accounting.detailDocumentUuid')}</p>
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 break-all">{entry.documentId ?? t('accounting.notSpecified')}</p>
               </div>
             </div>
           </div>
@@ -223,19 +224,19 @@ const JournalEntryDetailPage: React.FC = () => {
 
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('accounting.detailSidebarTitle')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<Hash size={15} />} label="Номер" value={entry.number} />
-              <InfoItem icon={<Calendar size={15} />} label="Дата" value={formatDateLong(entry.entryDate)} />
-              <InfoItem icon={<User size={15} />} label="Создал" value={entry.createdBy ?? 'Система'} />
-              <InfoItem icon={<Clock size={15} />} label="Создано" value={formatDateTime(entry.createdAt)} />
-              <InfoItem icon={<Hash size={15} />} label="UUID периода" value={entry.periodId} />
-              <InfoItem icon={<Hash size={15} />} label="UUID журнала" value={entry.journalId} />
+              <InfoItem icon={<Hash size={15} />} label={t('accounting.detailLabelNumber')} value={entry.number} />
+              <InfoItem icon={<Calendar size={15} />} label={t('accounting.detailLabelDate')} value={formatDateLong(entry.entryDate)} />
+              <InfoItem icon={<User size={15} />} label={t('accounting.detailLabelCreatedBy')} value={entry.createdBy ?? t('accounting.system')} />
+              <InfoItem icon={<Clock size={15} />} label={t('accounting.detailLabelCreatedAt')} value={formatDateTime(entry.createdAt)} />
+              <InfoItem icon={<Hash size={15} />} label={t('accounting.detailLabelPeriodUuid')} value={entry.periodId} />
+              <InfoItem icon={<Hash size={15} />} label={t('accounting.detailLabelJournalUuid')} value={entry.journalId} />
             </div>
           </div>
 
           <div className="bg-primary-50 rounded-xl border border-primary-200 p-6">
-            <h3 className="text-sm font-semibold text-primary-900 mb-3">Сумма</h3>
+            <h3 className="text-sm font-semibold text-primary-900 mb-3">{t('accounting.detailAmountTitle')}</h3>
             <p className="text-lg font-bold text-primary-900 tabular-nums">{formatMoney(entry.amount)}</p>
           </div>
         </div>

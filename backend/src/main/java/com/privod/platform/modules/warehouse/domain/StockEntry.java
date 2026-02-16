@@ -17,11 +17,13 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "stock_entries", indexes = {
+        @Index(name = "idx_stock_org", columnList = "organization_id"),
+        @Index(name = "idx_stock_org_location", columnList = "organization_id, location_id"),
         @Index(name = "idx_stock_material", columnList = "material_id"),
         @Index(name = "idx_stock_location", columnList = "location_id")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uq_stock_material_location",
-                columnNames = {"material_id", "location_id", "deleted"})
+                columnNames = {"organization_id", "material_id", "location_id", "deleted"})
 })
 @Getter
 @Setter
@@ -29,6 +31,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockEntry extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "material_id", nullable = false)
     private UUID materialId;

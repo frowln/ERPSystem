@@ -30,10 +30,10 @@ const getTypeOptions = () => [
   { value: 'OTHER', label: t('safety.incidentCreate.typeOther') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '3', label: t('mockData.projectBridge') },
+  { value: '6', label: t('mockData.projectCentral') },
 ];
 
 export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps> = ({ open, onClose }) => {
@@ -128,7 +128,7 @@ export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('safety.incidentCreate.labelProject')} required>
             <Select
-              options={projectOptions}
+              options={getProjectOptions()}
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               placeholder={t('safety.incidentCreate.placeholderProject')}

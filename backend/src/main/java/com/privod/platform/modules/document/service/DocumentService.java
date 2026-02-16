@@ -390,8 +390,7 @@ public class DocumentService {
             return projectId;
         }
 
-        Contract contract = contractRepository.findById(contractId)
-                .filter(c -> !c.isDeleted())
+        Contract contract = contractRepository.findByIdAndOrganizationIdAndDeletedFalse(contractId, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Договор не найден: " + contractId));
 
         if (contract.getProjectId() == null) {

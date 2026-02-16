@@ -17,25 +17,26 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { legalApi } from '@/api/legal';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { ContractLegalTemplate } from './types';
 import type { PaginatedResponse } from '@/types';
 
-const categoryFilterOptions = [
-  { value: '', label: 'Все категории' },
-  { value: 'CONSTRUCTION', label: 'Строительство' },
-  { value: 'SUPPLY', label: 'Поставка' },
-  { value: 'SERVICE', label: 'Услуги' },
-  { value: 'SUBCONTRACT', label: 'Субподряд' },
-  { value: 'LEASE', label: 'Аренда' },
+const getCategoryFilterOptions = () => [
+  { value: '', label: t('legal.filterAllCategories') },
+  { value: 'CONSTRUCTION', label: t('legal.categoryConstruction') },
+  { value: 'SUPPLY', label: t('legal.categorySupply') },
+  { value: 'SERVICE', label: t('legal.categoryService') },
+  { value: 'SUBCONTRACT', label: t('legal.categorySubcontract') },
+  { value: 'LEASE', label: t('legal.categoryLease') },
   { value: 'NDA', label: 'NDA' },
-  { value: 'OTHER', label: 'Прочее' },
+  { value: 'OTHER', label: t('legal.categoryOther') },
 ];
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'ACTIVE', label: 'Активный' },
-  { value: 'ARCHIVED', label: 'Архивный' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('legal.filterAllStatuses') },
+  { value: 'DRAFT', label: t('legal.statusDraft') },
+  { value: 'ACTIVE', label: t('legal.statusActive') },
+  { value: 'ARCHIVED', label: t('legal.statusArchived') },
 ];
 
 
@@ -83,7 +84,7 @@ const LegalTemplateListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('legal.colCode'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -91,7 +92,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Шаблон',
+        header: t('legal.colTemplate'),
         size: 300,
         cell: ({ row }) => (
           <div>
@@ -104,7 +105,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'category',
-        header: 'Категория',
+        header: t('legal.colCategory'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -116,7 +117,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('legal.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -128,7 +129,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'version',
-        header: 'Версия',
+        header: t('legal.colVersion'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">v{getValue<number>()}</span>
@@ -136,7 +137,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'clauseCount',
-        header: 'Пунктов',
+        header: t('legal.colClauses'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">{getValue<number>()}</span>
@@ -144,7 +145,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'authorName',
-        header: 'Автор',
+        header: t('legal.colAuthor'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -152,7 +153,7 @@ const LegalTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'lastUsedDate',
-        header: 'Посл. использование',
+        header: t('legal.colLastUsed'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600 text-xs">{formatDate(getValue<string>())}</span>
@@ -170,45 +171,45 @@ const LegalTemplateListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Шаблоны договоров"
-        subtitle={`${templates.length} шаблонов`}
+        title={t('legal.templatesTitle')}
+        subtitle={t('legal.templatesCount', { count: templates.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Юридический отдел' },
-          { label: 'Шаблоны' },
+          { label: t('legal.breadcrumbHome'), href: '/' },
+          { label: t('legal.breadcrumbLegal') },
+          { label: t('legal.breadcrumbTemplates') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/legal/templates/new')}>
-            Новый шаблон
+            {t('legal.newTemplate')}
           </Button>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Всего шаблонов" value={metrics.total} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Активных" value={metrics.active} />
-        <MetricCard icon={<Tag size={18} />} label="Категорий" value={metrics.categories} />
-        <MetricCard icon={<Clock size={18} />} label="Всего пунктов" value={metrics.totalClauses} />
+        <MetricCard icon={<FileText size={18} />} label={t('legal.metricTotalTemplates')} value={metrics.total} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('legal.metricActive')} value={metrics.active} />
+        <MetricCard icon={<Tag size={18} />} label={t('legal.metricCategories')} value={metrics.categories} />
+        <MetricCard icon={<Clock size={18} />} label={t('legal.metricTotalClauses')} value={metrics.totalClauses} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по коду, названию, автору..."
+            placeholder={t('legal.searchTemplatePlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={categoryFilterOptions}
+          options={getCategoryFilterOptions()}
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="w-48"
         />
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-40"
@@ -225,8 +226,8 @@ const LegalTemplateListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет шаблонов"
-        emptyDescription="Создайте первый шаблон договора"
+        emptyTitle={t('legal.emptyTemplatesTitle')}
+        emptyDescription={t('legal.emptyTemplatesDescription')}
       />
     </div>
   );

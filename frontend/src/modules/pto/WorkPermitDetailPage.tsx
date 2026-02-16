@@ -21,6 +21,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { formatDateLong, formatDateTime } from '@/lib/format';
 import toast from 'react-hot-toast';
 import { ptoApi } from '@/api/pto';
+import { t } from '@/i18n';
 
 const permitStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   draft: 'gray',
@@ -32,25 +33,25 @@ const permitStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' 
   rejected: 'red',
 };
 
-const permitStatusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  submitted: 'Подан',
-  approved: 'Одобрен',
-  active: 'Действует',
-  expired: 'Истёк',
-  closed: 'Закрыт',
-  rejected: 'Отклонён',
-};
+const getPermitStatusLabels = (): Record<string, string> => ({
+  draft: t('pto.wpDetailStatusDraft'),
+  submitted: t('pto.wpDetailStatusSubmitted'),
+  approved: t('pto.wpDetailStatusApproved'),
+  active: t('pto.wpDetailStatusActive'),
+  expired: t('pto.wpDetailStatusExpired'),
+  closed: t('pto.wpDetailStatusClosed'),
+  rejected: t('pto.wpDetailStatusRejected'),
+});
 
-const workPermitTypeLabels: Record<string, string> = {
-  hot_work: 'Огневые работы',
-  confined_space: 'Работа в замкнутых пространствах',
-  height_work: 'Работа на высоте',
-  excavation: 'Земляные работы',
-  electrical: 'Электромонтажные работы',
-  crane: 'Работа с грузоподъёмным оборудованием',
-  demolition: 'Демонтажные работы',
-};
+const getWorkPermitTypeLabels = (): Record<string, string> => ({
+  hot_work: t('pto.wpDetailTypeHotWork'),
+  confined_space: t('pto.wpDetailTypeConfinedSpace'),
+  height_work: t('pto.wpDetailTypeHeightWork'),
+  excavation: t('pto.wpDetailTypeExcavation'),
+  electrical: t('pto.wpDetailTypeElectrical'),
+  crane: t('pto.wpDetailTypeCrane'),
+  demolition: t('pto.wpDetailTypeDemolition'),
+});
 
 interface WorkPermit {
   id: string;
@@ -72,16 +73,16 @@ interface WorkPermit {
   updatedAt: string;
 }
 
-const statusActions: Record<string, { label: string; target: string }[]> = {
-  draft: [{ label: 'Подать на согласование', target: 'SUBMITTED' }],
+const getStatusActions = (): Record<string, { label: string; target: string }[]> => ({
+  draft: [{ label: t('pto.wpDetailActionSubmit'), target: 'SUBMITTED' }],
   submitted: [
-    { label: 'Одобрить', target: 'APPROVED' },
-    { label: 'Отклонить', target: 'REJECTED' },
+    { label: t('pto.wpDetailActionApprove'), target: 'APPROVED' },
+    { label: t('pto.wpDetailActionReject'), target: 'REJECTED' },
   ],
-  approved: [{ label: 'Активировать', target: 'ACTIVE' }],
-  active: [{ label: 'Закрыть', target: 'CLOSED' }],
-  rejected: [{ label: 'На доработку', target: 'DRAFT' }],
-};
+  approved: [{ label: t('pto.wpDetailActionActivate'), target: 'ACTIVE' }],
+  active: [{ label: t('pto.wpDetailActionClose'), target: 'CLOSED' }],
+  rejected: [{ label: t('pto.wpDetailActionRevise'), target: 'DRAFT' }],
+});
 
 const WorkPermitDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -95,7 +96,7 @@ const WorkPermitDetailPage: React.FC = () => {
   });
 
   if (wpLoading || !rawPermit) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('pto.wpDetailLoading')}</div>;
   }
 
   const wp: WorkPermit = {
@@ -119,24 +120,27 @@ const WorkPermitDetailPage: React.FC = () => {
   };
   const [statusOverride, setStatusOverride] = useState<string | null>(null);
   const effectiveStatus = statusOverride ?? wp.status;
+  const permitStatusLabels = getPermitStatusLabels();
+  const workPermitTypeLabels = getWorkPermitTypeLabels();
+  const statusActions = getStatusActions();
   const actions = useMemo(() => statusActions[effectiveStatus] ?? [], [effectiveStatus]);
 
   const handleStatusChange = (targetStatus: string) => {
     setStatusOverride(targetStatus);
-    toast.success(`Статус наряда: ${permitStatusLabels[targetStatus] ?? targetStatus}`);
+    toast.success(t('pto.wpDetailStatusToast', { status: permitStatusLabels[targetStatus] ?? targetStatus }));
   };
 
   const handleDelete = async () => {
     const isConfirmed = await confirm({
-      title: 'Удалить наряд-допуск?',
-      description: 'Операция необратима. Наряд-допуск будет удален.',
-      confirmLabel: 'Удалить наряд',
-      cancelLabel: 'Отмена',
+      title: t('pto.wpDetailDeleteConfirmTitle'),
+      description: t('pto.wpDetailDeleteConfirmDescription'),
+      confirmLabel: t('pto.wpDetailDeleteConfirmLabel'),
+      cancelLabel: t('pto.wpDetailDeleteCancel'),
       items: [wp.number],
     });
     if (!isConfirmed) return;
 
-    toast.success('Наряд-допуск удален');
+    toast.success(t('pto.wpDetailDeleteSuccess'));
     navigate('/pto/work-permits');
   };
 
@@ -147,8 +151,8 @@ const WorkPermitDetailPage: React.FC = () => {
         subtitle={`${wp.projectName} / ${workPermitTypeLabels[wp.type] ?? wp.type}`}
         backTo="/pto/work-permits"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Наряды-допуски', href: '/pto/work-permits' },
+          { label: t('pto.breadcrumbHome'), href: '/' },
+          { label: t('pto.wpDetailBreadcrumbPermits'), href: '/pto/work-permits' },
           { label: wp.number },
         ]}
         actions={
@@ -162,11 +166,11 @@ const WorkPermitDetailPage: React.FC = () => {
               size="sm"
               iconLeft={<Edit size={14} />}
               onClick={() => {
-                toast('Редактирование доступно в реестре нарядов-допусков');
+                toast(t('pto.wpDetailEditHint'));
                 navigate('/pto/work-permits');
               }}
             >
-              Редактировать
+              {t('pto.wpDetailEdit')}
             </Button>
             <Button
               variant="danger"
@@ -174,7 +178,7 @@ const WorkPermitDetailPage: React.FC = () => {
               iconLeft={<Trash2 size={14} />}
               onClick={handleDelete}
             >
-              Удалить
+              {t('pto.wpDetailDelete')}
             </Button>
           </div>
         }
@@ -186,17 +190,17 @@ const WorkPermitDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Shield size={16} className="text-primary-500" />
-              Описание работ
+              {t('pto.wpDetailDescriptionTitle')}
             </h3>
             <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">{wp.description}</p>
             <div className="mt-4 grid grid-cols-2 gap-4">
               <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Тип работ</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('pto.wpDetailWorkTypeLabel')}</p>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{workPermitTypeLabels[wp.type] ?? wp.type}</p>
               </div>
               <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Количество работников</p>
-                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{wp.workersCount} чел.</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('pto.wpDetailWorkersCountLabel')}</p>
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{wp.workersCount} {t('pto.wpDetailWorkersUnit')}</p>
               </div>
             </div>
           </div>
@@ -205,7 +209,7 @@ const WorkPermitDetailPage: React.FC = () => {
           <div className="bg-warning-50 rounded-xl border border-warning-200 p-6">
             <h3 className="text-sm font-semibold text-warning-800 mb-4 flex items-center gap-2">
               <AlertTriangle size={16} className="text-warning-600" />
-              Условия проведения работ ({wp.conditions.length})
+              {t('pto.wpDetailConditionsTitle', { count: String(wp.conditions.length) })}
             </h3>
             <div className="space-y-2">
               {wp.conditions.map((condition, idx) => (
@@ -221,20 +225,20 @@ const WorkPermitDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('pto.wpDetailSidebarDetails')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<MapPin size={15} />} label="Место проведения" value={wp.location} />
-              <InfoItem icon={<Calendar size={15} />} label="Начало" value={formatDateLong(wp.startDate)} />
-              <InfoItem icon={<Calendar size={15} />} label="Окончание" value={formatDateLong(wp.endDate)} />
+              <InfoItem icon={<MapPin size={15} />} label={t('pto.wpDetailLocation')} value={wp.location} />
+              <InfoItem icon={<Calendar size={15} />} label={t('pto.wpDetailStartDate')} value={formatDateLong(wp.startDate)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('pto.wpDetailEndDate')} value={formatDateLong(wp.endDate)} />
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Ответственные</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('pto.wpDetailResponsible')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Ответственный за работы" value={wp.responsibleName} />
-              <InfoItem icon={<User size={15} />} label="Выдал наряд" value={wp.issuedByName} />
-              <InfoItem icon={<Shield size={15} />} label="Инженер по ОТ" value={wp.safetyOfficerName} />
+              <InfoItem icon={<User size={15} />} label={t('pto.wpDetailResponsiblePerson')} value={wp.responsibleName} />
+              <InfoItem icon={<User size={15} />} label={t('pto.wpDetailIssuedBy')} value={wp.issuedByName} />
+              <InfoItem icon={<Shield size={15} />} label={t('pto.wpDetailSafetyOfficer')} value={wp.safetyOfficerName} />
             </div>
           </div>
 
@@ -242,13 +246,13 @@ const WorkPermitDetailPage: React.FC = () => {
           <div className={`rounded-xl border p-6 ${wp.status === 'ACTIVE' ? 'bg-success-50 border-success-200' : wp.status === 'EXPIRED' ? 'bg-danger-50 border-danger-200' : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700'}`}>
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2 flex items-center gap-2">
               {wp.status === 'ACTIVE' ? <CheckCircle2 size={15} className="text-success-600" /> : <Clock size={15} />}
-              Статус действия
+              {t('pto.wpDetailStatusTitle')}
             </h3>
             <p className={`text-lg font-bold ${wp.status === 'ACTIVE' ? 'text-success-700' : wp.status === 'EXPIRED' ? 'text-danger-700' : 'text-neutral-700 dark:text-neutral-300'}`}>
               {permitStatusLabels[wp.status]}
             </p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-              Создано: {formatDateLong(wp.createdAt)}
+              {t('pto.wpDetailCreatedAt')} {formatDateLong(wp.createdAt)}
             </p>
           </div>
         </div>

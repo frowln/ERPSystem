@@ -31,19 +31,19 @@ const inspectionTypeOptions = [
   { value: 'REGULATORY', label: t('forms.safetyInspection.inspectionTypes.regulatory') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectHorizon') },
+  { value: '3', label: t('mockData.projectBridge') },
+  { value: '6', label: t('mockData.projectCentral') },
 ];
 
-const inspectorOptions = [
+const getInspectorOptions = () => [
   { value: '', label: t('forms.safetyInspection.inspectorNotAssigned') },
-  { value: 'u1', label: 'Иванов И.И.' },
-  { value: 'u2', label: 'Петров П.П.' },
-  { value: 'u3', label: 'Сидоров С.С.' },
-  { value: 'u4', label: 'Козлов К.К.' },
+  { value: 'u1', label: t('mockData.personIvanovII') },
+  { value: 'u2', label: t('mockData.personPetrovPP') },
+  { value: 'u3', label: t('mockData.personSidorovSS') },
+  { value: 'u4', label: t('mockData.personKozlovKK') },
 ];
 
 const SafetyInspectionFormPage: React.FC = () => {
@@ -167,7 +167,7 @@ const SafetyInspectionFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.safetyInspection.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.safetyInspection.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -175,7 +175,7 @@ const SafetyInspectionFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.safetyInspection.labelInspector')} error={errors.inspectorId?.message}>
               <Select
-                options={inspectorOptions}
+                options={getInspectorOptions()}
                 placeholder={t('forms.safetyInspection.placeholderInspector')}
                 hasError={!!errors.inspectorId}
                 {...register('inspectorId')}

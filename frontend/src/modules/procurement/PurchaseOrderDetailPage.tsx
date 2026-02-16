@@ -5,6 +5,7 @@ import {
   Calendar,
   CheckCircle2,
   ClipboardList,
+  FileText,
   FolderKanban,
   Lock,
   MapPin,
@@ -37,18 +38,18 @@ import {
 import { formatDate, formatDateLong, formatMoney, formatNumber } from '@/lib/format';
 import { t } from '@/i18n';
 
-type OrderAction = 'send' | 'confirm' | 'cancel' | 'close';
+type OrderAction = 'send' | 'confirm' | 'invoice' | 'cancel' | 'close';
 
-const statusLabels: Record<PurchaseOrderStatus, string> = {
-  DRAFT: 'Черновик',
-  SENT: 'Отправлен',
-  CONFIRMED: 'Подтверждён',
-  PARTIALLY_DELIVERED: 'Частично доставлен',
-  DELIVERED: 'Доставлен',
-  INVOICED: 'Оплачен',
-  CLOSED: 'Закрыт',
-  CANCELLED: 'Отменён',
-};
+const getStatusLabels = (): Record<PurchaseOrderStatus, string> => ({
+  DRAFT: t('procurement.orderStatus.draft'),
+  SENT: t('procurement.orderStatus.sent'),
+  CONFIRMED: t('procurement.orderStatus.confirmed'),
+  PARTIALLY_DELIVERED: t('procurement.orderStatus.partiallyDelivered'),
+  DELIVERED: t('procurement.orderStatus.delivered'),
+  INVOICED: t('procurement.orderStatus.invoiced'),
+  CLOSED: t('procurement.orderStatus.closed'),
+  CANCELLED: t('procurement.orderStatus.cancelled'),
+});
 
 const statusColorMap: Record<PurchaseOrderStatus, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   DRAFT: 'gray',
@@ -61,19 +62,21 @@ const statusColorMap: Record<PurchaseOrderStatus, 'gray' | 'blue' | 'green' | 'y
   CANCELLED: 'red',
 };
 
-const actionLabelMap: Record<OrderAction, string> = {
-  send: 'Отправить',
-  confirm: 'Подтвердить',
-  cancel: 'Отменить',
-  close: 'Закрыть',
-};
+const getActionLabelMap = (): Record<OrderAction, string> => ({
+  send: t('procurement.orderAction.send'),
+  confirm: t('procurement.orderAction.confirm'),
+  invoice: t('procurement.orderAction.invoice'),
+  cancel: t('procurement.orderAction.cancel'),
+  close: t('procurement.orderAction.close'),
+});
 
-const actionSuccessMap: Record<OrderAction, string> = {
-  send: 'Заказ отправлен поставщику',
-  confirm: 'Заказ подтверждён',
-  cancel: 'Заказ отменён',
-  close: 'Заказ закрыт',
-};
+const getActionSuccessMap = (): Record<OrderAction, string> => ({
+  send: t('procurement.orderAction.sendSuccess'),
+  confirm: t('procurement.orderAction.confirmSuccess'),
+  invoice: t('procurement.orderAction.invoiceSuccess'),
+  cancel: t('procurement.orderAction.cancelSuccess'),
+  close: t('procurement.orderAction.closeSuccess'),
+});
 
 const shortUuid = (value?: string) => (value ? `${value.slice(0, 8)}…` : '—');
 
@@ -107,6 +110,7 @@ const getAvailableActions = (status: PurchaseOrderStatus): OrderAction[] => {
     case 'SENT':
       return ['confirm', 'cancel'];
     case 'DELIVERED':
+      return ['invoice', 'close'];
     case 'INVOICED':
       return ['close'];
     default:
@@ -178,7 +182,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
     [materials],
   );
   const materialSelectOptions = useMemo(
-    () => [{ value: '', label: 'Выберите материал' }, ...materialOptions],
+    () => [{ value: '', label: t('procurement.orderForm.selectMaterial') }, ...materialOptions],
     [materialOptions],
   );
   const materialById = useMemo(
@@ -193,6 +197,8 @@ const PurchaseOrderDetailPage: React.FC = () => {
           return procurementApi.sendPurchaseOrder(current.id);
         case 'confirm':
           return procurementApi.confirmPurchaseOrder(current.id);
+        case 'invoice':
+          return procurementApi.invoicePurchaseOrder(current.id);
         case 'cancel':
           return procurementApi.cancelPurchaseOrder(current.id);
         case 'close':
@@ -202,16 +208,16 @@ const PurchaseOrderDetailPage: React.FC = () => {
     },
     onMutate: ({ action }) => {
       setPendingOrderAction(action);
-      toast.loading(`${actionLabelMap[action]}...`, { id: 'purchase-order-status' });
+      toast.loading(`${getActionLabelMap()[action]}...`, { id: 'purchase-order-status' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
       queryClient.invalidateQueries({ queryKey: ['purchase-order', variables.current.id] });
       queryClient.invalidateQueries({ queryKey: ['purchase-order-items', variables.current.id] });
-      toast.success(actionSuccessMap[variables.action], { id: 'purchase-order-status' });
+      toast.success(getActionSuccessMap()[variables.action], { id: 'purchase-order-status' });
     },
     onError: () => {
-      toast.error('Не удалось обновить статус заказа', { id: 'purchase-order-status' });
+      toast.error(t('procurement.orderDetail.errorStatusUpdate'), { id: 'purchase-order-status' });
     },
     onSettled: () => {
       setPendingOrderAction(null);
@@ -227,17 +233,17 @@ const PurchaseOrderDetailPage: React.FC = () => {
     },
     onMutate: ({ itemId }) => {
       setPendingItemId(itemId);
-      toast.loading('Регистрируем поставку...', { id: 'purchase-order-delivery' });
+      toast.loading(t('procurement.orderDetail.toastRegisteringDelivery'), { id: 'purchase-order-delivery' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
       queryClient.invalidateQueries({ queryKey: ['purchase-order', variables.orderId] });
       queryClient.invalidateQueries({ queryKey: ['purchase-order-items', variables.orderId] });
       setDeliveryDrafts((prev) => ({ ...prev, [variables.itemId]: '' }));
-      toast.success('Поставка зарегистрирована', { id: 'purchase-order-delivery' });
+      toast.success(t('procurement.orderDetail.toastDeliveryRegistered'), { id: 'purchase-order-delivery' });
     },
     onError: () => {
-      toast.error('Не удалось зарегистрировать поставку', { id: 'purchase-order-delivery' });
+      toast.error(t('procurement.orderDetail.errorDeliveryFailed'), { id: 'purchase-order-delivery' });
     },
     onSettled: () => {
       setPendingItemId(null);
@@ -257,15 +263,15 @@ const PurchaseOrderDetailPage: React.FC = () => {
       return procurementApi.updatePurchaseOrder(payload.orderId, payload.data);
     },
     onMutate: () => {
-      toast.loading('Сохраняем реквизиты заказа...', { id: 'purchase-order-update' });
+      toast.loading(t('procurement.orderDetail.toastSavingDetails'), { id: 'purchase-order-update' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-order', variables.orderId] });
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
-      toast.success('Реквизиты заказа обновлены', { id: 'purchase-order-update' });
+      toast.success(t('procurement.orderDetail.toastDetailsUpdated'), { id: 'purchase-order-update' });
     },
     onError: () => {
-      toast.error('Не удалось обновить реквизиты заказа', { id: 'purchase-order-update' });
+      toast.error(t('procurement.orderDetail.errorDetailsUpdate'), { id: 'purchase-order-update' });
     },
   });
 
@@ -275,15 +281,15 @@ const PurchaseOrderDetailPage: React.FC = () => {
       return orderId;
     },
     onMutate: () => {
-      toast.loading('Удаляем заказ...', { id: 'purchase-order-delete' });
+      toast.loading(t('procurement.orderDetail.toastDeletingOrder'), { id: 'purchase-order-delete' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
-      toast.success('Заказ удалён', { id: 'purchase-order-delete' });
+      toast.success(t('procurement.orderDetail.toastOrderDeleted'), { id: 'purchase-order-delete' });
       navigate('/procurement/purchase-orders');
     },
     onError: () => {
-      toast.error('Не удалось удалить заказ', { id: 'purchase-order-delete' });
+      toast.error(t('procurement.orderDetail.errorDeleteOrder'), { id: 'purchase-order-delete' });
     },
   });
 
@@ -292,7 +298,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
       return procurementApi.addPurchaseOrderItem(payload.orderId, payload.data);
     },
     onMutate: () => {
-      toast.loading('Добавляем позицию...', { id: 'purchase-order-add-item' });
+      toast.loading(t('procurement.orderDetail.toastAddingItem'), { id: 'purchase-order-add-item' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-order', variables.orderId] });
@@ -306,10 +312,10 @@ const PurchaseOrderDetailPage: React.FC = () => {
         unitPrice: '',
         vatRate: '20',
       });
-      toast.success('Позиция добавлена', { id: 'purchase-order-add-item' });
+      toast.success(t('procurement.orderDetail.toastItemAdded'), { id: 'purchase-order-add-item' });
     },
     onError: () => {
-      toast.error('Не удалось добавить позицию', { id: 'purchase-order-add-item' });
+      toast.error(t('procurement.orderDetail.errorAddItem'), { id: 'purchase-order-add-item' });
     },
   });
 
@@ -320,16 +326,16 @@ const PurchaseOrderDetailPage: React.FC = () => {
     },
     onMutate: ({ itemId }) => {
       setPendingDeleteItemId(itemId);
-      toast.loading('Удаляем позицию...', { id: 'purchase-order-delete-item' });
+      toast.loading(t('procurement.orderDetail.toastDeletingItem'), { id: 'purchase-order-delete-item' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-order', variables.orderId] });
       queryClient.invalidateQueries({ queryKey: ['purchase-order-items', variables.orderId] });
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
-      toast.success('Позиция удалена', { id: 'purchase-order-delete-item' });
+      toast.success(t('procurement.orderDetail.toastItemDeleted'), { id: 'purchase-order-delete-item' });
     },
     onError: () => {
-      toast.error('Не удалось удалить позицию', { id: 'purchase-order-delete-item' });
+      toast.error(t('procurement.orderDetail.errorDeleteItem'), { id: 'purchase-order-delete-item' });
     },
     onSettled: () => {
       setPendingDeleteItemId(null);
@@ -352,17 +358,17 @@ const PurchaseOrderDetailPage: React.FC = () => {
       return procurementApi.updatePurchaseOrderItem(payload.orderId, payload.itemId, payload.data);
     },
     onMutate: () => {
-      toast.loading('Сохраняем позицию...', { id: 'purchase-order-update-item' });
+      toast.loading(t('procurement.orderDetail.toastSavingItem'), { id: 'purchase-order-update-item' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-order', variables.orderId] });
       queryClient.invalidateQueries({ queryKey: ['purchase-order-items', variables.orderId] });
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
       setEditingItemId(null);
-      toast.success('Позиция обновлена', { id: 'purchase-order-update-item' });
+      toast.success(t('procurement.orderDetail.toastItemUpdated'), { id: 'purchase-order-update-item' });
     },
     onError: () => {
-      toast.error('Не удалось обновить позицию', { id: 'purchase-order-update-item' });
+      toast.error(t('procurement.orderDetail.errorUpdateItem'), { id: 'purchase-order-update-item' });
     },
   });
 
@@ -406,12 +412,12 @@ const PurchaseOrderDetailPage: React.FC = () => {
     const baseColumns: ColumnDef<PurchaseOrderItem, unknown>[] = [
       {
         accessorKey: 'materialName',
-        header: 'Материал',
+        header: t('procurement.orderDetail.colMaterial'),
         size: 260,
         cell: ({ row, getValue }) => (
           <div>
             <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-              {getValue<string>() || `Материал ${shortUuid(row.original.materialId)}`}
+              {getValue<string>() || `${t('procurement.orderDetail.colMaterial')} ${shortUuid(row.original.materialId)}`}
             </p>
             <p className="text-xs text-neutral-500">ID: {shortUuid(row.original.materialId)}</p>
           </div>
@@ -419,13 +425,13 @@ const PurchaseOrderDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'unit',
-        header: 'Ед.',
+        header: t('procurement.orderDetail.colUnit'),
         size: 70,
         cell: ({ getValue }) => <span>{getValue<string>() || '—'}</span>,
       },
       {
         id: 'quantity',
-        header: 'Заказано',
+        header: t('procurement.orderDetail.colOrdered'),
         size: 120,
         cell: ({ row }) => (
           <span className="tabular-nums">
@@ -435,7 +441,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
       },
       {
         id: 'delivered',
-        header: 'Доставлено',
+        header: t('procurement.orderDetail.colDelivered'),
         size: 150,
         cell: ({ row }) => {
           const ordered = toNumber(row.original.quantity);
@@ -459,7 +465,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
       },
       {
         id: 'remaining',
-        header: 'Остаток',
+        header: t('procurement.orderDetail.colRemaining'),
         size: 120,
         cell: ({ row }) => {
           const ordered = toNumber(row.original.quantity);
@@ -474,7 +480,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
       },
       {
         accessorKey: 'totalAmount',
-        header: 'Сумма',
+        header: t('procurement.orderDetail.colAmount'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="tabular-nums font-medium block text-right">
@@ -484,7 +490,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
       },
       {
         id: 'registerDelivery',
-        header: 'Поставка',
+        header: t('procurement.orderDetail.colDelivery'),
         size: 240,
         cell: ({ row }) => {
           const item = row.original;
@@ -508,9 +514,9 @@ const PurchaseOrderDetailPage: React.FC = () => {
                 onChange={(event) => {
                   setDeliveryDrafts((prev) => ({ ...prev, [itemId]: event.target.value }));
                 }}
-                placeholder="Кол-во"
+                placeholder={t('procurement.orderDetail.placeholderQty')}
                 className="h-8 w-24"
-                aria-label={`Количество поставки по ${item.materialName || item.materialId}`}
+                aria-label={`${t('procurement.orderDetail.ariaDeliveryQty')} ${item.materialName || item.materialId}`}
               />
               <Button
                 variant="secondary"
@@ -523,11 +529,11 @@ const PurchaseOrderDetailPage: React.FC = () => {
                   }
                   const parsed = parseQuantityInput(value);
                   if (!parsed) {
-                    toast.error('Введите корректное количество поставки');
+                    toast.error(t('procurement.orderDetail.errorInvalidDeliveryQty'));
                     return;
                   }
                   if (parsed > remaining) {
-                    toast.error(`Нельзя поставить больше остатка (${formatNumber(remaining)})`);
+                    toast.error(`${t('procurement.orderDetail.errorExceedsRemaining')} (${formatNumber(remaining)})`);
                     return;
                   }
                   registerDeliveryMutation.mutate({
@@ -537,7 +543,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
                   });
                 }}
               >
-                Принять
+                {t('procurement.orderDetail.accept')}
               </Button>
             </div>
           );
@@ -548,7 +554,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
     if (isDraft) {
       baseColumns.push({
         id: 'draftActions',
-        header: 'Управление',
+        header: t('procurement.orderDetail.colManagement'),
         size: 240,
         cell: ({ row }) => {
           const item = row.original;
@@ -576,7 +582,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
                   });
                 }}
               >
-                {isEditing ? 'Выбрано' : 'Редакт.'}
+                {isEditing ? t('procurement.orderDetail.selected') : t('procurement.orderDetail.edit')}
               </Button>
               <Button
                 variant="danger"
@@ -588,9 +594,9 @@ const PurchaseOrderDetailPage: React.FC = () => {
                     return;
                   }
                   const isConfirmed = await confirm({
-                    title: `Удалить позицию ${item.materialName || shortUuid(item.materialId)}?`,
-                    description: 'Позиция будет исключена из заказа.',
-                    confirmLabel: 'Удалить позицию',
+                    title: `${t('procurement.orderDetail.confirmDeleteItemTitle')} ${item.materialName || shortUuid(item.materialId)}?`,
+                    description: t('procurement.orderDetail.confirmDeleteItemDescription'),
+                    confirmLabel: t('procurement.orderDetail.confirmDeleteItemLabel'),
                     cancelLabel: t('common.cancel'),
                     confirmVariant: 'danger',
                   });
@@ -600,7 +606,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
                   deleteItemMutation.mutate({ orderId: order.id, itemId: item.id });
                 }}
               >
-                Удалить
+                {t('common.delete')}
               </Button>
             </div>
           );
@@ -625,21 +631,21 @@ const PurchaseOrderDetailPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Заказ поставщику"
-          subtitle="Purchase Order"
+          title={t('procurement.orderDetail.title')}
+          subtitle={t('procurement.orderDetail.subtitlePurchaseOrder')}
           backTo="/procurement/purchase-orders"
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
+            { label: t('procurement.orderDetail.breadcrumbHome'), href: '/' },
             { label: t('procurement.title'), href: '/procurement' },
-            { label: 'Заказы поставщикам', href: '/procurement/purchase-orders' },
-            { label: 'Ошибка загрузки' },
+            { label: t('procurement.orderDetail.breadcrumbOrders'), href: '/procurement/purchase-orders' },
+            { label: t('procurement.orderDetail.breadcrumbLoadError') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить заказ"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('procurement.orderDetail.errorLoadTitle')}
+          description={t('procurement.orderDetail.errorLoadDescription')}
+          actionLabel={t('common.refresh')}
           onAction={() => {
             void refetchOrder();
           }}
@@ -652,20 +658,20 @@ const PurchaseOrderDetailPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Загрузка заказа..."
+          title={t('procurement.orderDetail.loading')}
           backTo="/procurement/purchase-orders"
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
+            { label: t('procurement.orderDetail.breadcrumbHome'), href: '/' },
             { label: t('procurement.title'), href: '/procurement' },
-            { label: 'Заказы поставщикам', href: '/procurement/purchase-orders' },
-            { label: 'Загрузка' },
+            { label: t('procurement.orderDetail.breadcrumbOrders'), href: '/procurement/purchase-orders' },
+            { label: t('common.loading') },
           ]}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <MetricCard label="Сумма заказа" value="—" loading />
-          <MetricCard label="Позиции" value="—" loading />
-          <MetricCard label="Доставлено" value="—" loading />
-          <MetricCard label="План поставки" value="—" loading />
+          <MetricCard label={t('procurement.orderDetail.metricAmount')} value="—" loading />
+          <MetricCard label={t('procurement.orderDetail.metricItems')} value="—" loading />
+          <MetricCard label={t('procurement.orderDetail.metricDelivered')} value="—" loading />
+          <MetricCard label={t('procurement.orderDetail.metricDeliveryPlan')} value="—" loading />
         </div>
       </div>
     );
@@ -684,12 +690,12 @@ const PurchaseOrderDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={order.orderNumber}
-        subtitle={`Создан ${formatDateLong(order.createdAt)} / Поставщик ${shortUuid(order.supplierId)}`}
+        subtitle={`${t('procurement.orderDetail.created')} ${formatDateLong(order.createdAt)} / ${t('procurement.orderDetail.supplier')} ${shortUuid(order.supplierId)}`}
         backTo="/procurement/purchase-orders"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
+          { label: t('procurement.orderDetail.breadcrumbHome'), href: '/' },
           { label: t('procurement.title'), href: '/procurement' },
-          { label: 'Заказы поставщикам', href: '/procurement/purchase-orders' },
+          { label: t('procurement.orderDetail.breadcrumbOrders'), href: '/procurement/purchase-orders' },
           { label: order.orderNumber },
         ]}
         actions={(
@@ -697,13 +703,14 @@ const PurchaseOrderDetailPage: React.FC = () => {
             <StatusBadge
               status={order.status}
               colorMap={statusColorMap}
-              label={statusLabels[order.status] ?? order.status}
+              label={getStatusLabels()[order.status] ?? order.status}
               size="md"
             />
             {canChangeStatus && availableActions.map((action) => {
               const icon =
                 action === 'send' ? <Send size={14} /> :
                   action === 'confirm' ? <CheckCircle2 size={14} /> :
+                    action === 'invoice' ? <FileText size={14} /> :
                     action === 'close' ? <Lock size={14} /> :
                       <XCircle size={14} />;
               const isPending = transitionMutation.isPending && pendingOrderAction === action;
@@ -721,9 +728,9 @@ const PurchaseOrderDetailPage: React.FC = () => {
                     }
                     if (action === 'cancel') {
                       const isConfirmed = await confirm({
-                        title: `Отменить заказ ${order.orderNumber}?`,
-                        description: 'Заказ будет недоступен для дальнейшей поставки.',
-                        confirmLabel: 'Отменить заказ',
+                        title: `${t('procurement.orderDetail.confirmCancelTitle')} ${order.orderNumber}?`,
+                        description: t('procurement.orderDetail.confirmCancelDescription'),
+                        confirmLabel: t('procurement.orderDetail.confirmCancelLabel'),
                         cancelLabel: t('common.cancel'),
                         confirmVariant: 'danger',
                         items: [order.orderNumber],
@@ -735,7 +742,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
                     transitionMutation.mutate({ action, current: order });
                   }}
                 >
-                  {actionLabelMap[action]}
+                  {getActionLabelMap()[action]}
                 </Button>
               );
             })}
@@ -749,9 +756,9 @@ const PurchaseOrderDetailPage: React.FC = () => {
                     return;
                   }
                   const isConfirmed = await confirm({
-                    title: `Удалить заказ ${order.orderNumber}?`,
-                    description: 'Удалить можно только черновик. Действие необратимо.',
-                    confirmLabel: 'Удалить заказ',
+                    title: `${t('procurement.orderDetail.confirmDeleteTitle')} ${order.orderNumber}?`,
+                    description: t('procurement.orderDetail.confirmDeleteDescription'),
+                    confirmLabel: t('procurement.orderDetail.confirmDeleteLabel'),
                     cancelLabel: t('common.cancel'),
                     confirmVariant: 'danger',
                     items: [order.orderNumber],
@@ -762,7 +769,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
                   deleteOrderMutation.mutate(order.id);
                 }}
               >
-                Удалить заказ
+                {t('procurement.orderDetail.deleteOrder')}
               </Button>
             )}
             <Button
@@ -770,7 +777,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
               size="sm"
               onClick={() => navigate('/procurement/purchase-orders')}
             >
-              К списку
+              {t('procurement.orderDetail.toList')}
             </Button>
           </div>
         )}
@@ -779,24 +786,24 @@ const PurchaseOrderDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<ClipboardList size={16} />}
-          label="Сумма заказа"
+          label={t('procurement.orderDetail.metricAmount')}
           value={formatMoney(order.totalAmount)}
         />
         <MetricCard
           icon={<Package size={16} />}
-          label="Позиции"
+          label={t('procurement.orderDetail.metricItems')}
           value={String(items.length)}
-          subtitle={`${formatNumber(totalOrderedQty)} ед.`}
+          subtitle={`${formatNumber(totalOrderedQty)} ${t('procurement.orderDetail.unitsSuffix')}`}
         />
         <MetricCard
           icon={<Truck size={16} />}
-          label="Доставлено"
+          label={t('procurement.orderDetail.metricDelivered')}
           value={`${deliveryPercent.toFixed(0)}%`}
-          subtitle={`${formatNumber(totalDeliveredQty)} из ${formatNumber(totalOrderedQty)}`}
+          subtitle={`${formatNumber(totalDeliveredQty)} ${t('procurement.orderDetail.outOf')} ${formatNumber(totalOrderedQty)}`}
         />
         <MetricCard
           icon={<Calendar size={16} />}
-          label="План поставки"
+          label={t('procurement.orderDetail.metricDeliveryPlan')}
           value={formatDate(order.expectedDeliveryDate)}
         />
       </div>
@@ -804,10 +811,10 @@ const PurchaseOrderDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-            Исполнение поставки
+            {t('procurement.orderDetail.deliveryExecution')}
           </h3>
           <div className="flex justify-between text-sm text-neutral-600 dark:text-neutral-300 mb-2">
-            <span>{formatNumber(totalDeliveredQty)} / {formatNumber(totalOrderedQty)} ед.</span>
+            <span>{formatNumber(totalDeliveredQty)} / {formatNumber(totalOrderedQty)} {t('procurement.orderDetail.unitsSuffix')}</span>
             <span>{deliveryPercent.toFixed(0)}%</span>
           </div>
           <div className="h-3 rounded-full bg-neutral-200 dark:bg-neutral-700 overflow-hidden">
@@ -817,20 +824,20 @@ const PurchaseOrderDetailPage: React.FC = () => {
             />
           </div>
           <p className="mt-3 text-xs text-neutral-500">
-            После подтверждения заказа фиксируйте поставки по каждой позиции в таблице ниже.
+            {t('procurement.orderDetail.deliveryHint')}
           </p>
         </div>
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 space-y-4">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-            Реквизиты заказа
+            {t('procurement.orderDetail.orderDetails')}
           </h3>
-          <InfoRow icon={<FolderKanban size={15} />} label="Проект" value={shortUuid(order.projectId)} />
-          <InfoRow icon={<Package size={15} />} label="Заявка на закупку" value={shortUuid(order.purchaseRequestId)} />
-          <InfoRow icon={<Calendar size={15} />} label="Дата заказа" value={formatDate(order.orderDate)} />
-          <InfoRow icon={<Calendar size={15} />} label="Факт поставки" value={formatDate(order.actualDeliveryDate)} />
-          <InfoRow icon={<Percent size={15} />} label="НДС" value={formatMoney(order.vatAmount)} />
-          <InfoRow icon={<MapPin size={15} />} label="Адрес поставки" value={order.deliveryAddress || '—'} />
+          <InfoRow icon={<FolderKanban size={15} />} label={t('procurement.orderDetail.infoProject')} value={shortUuid(order.projectId)} />
+          <InfoRow icon={<Package size={15} />} label={t('procurement.orderDetail.infoPurchaseRequest')} value={shortUuid(order.purchaseRequestId)} />
+          <InfoRow icon={<Calendar size={15} />} label={t('procurement.orderDetail.infoOrderDate')} value={formatDate(order.orderDate)} />
+          <InfoRow icon={<Calendar size={15} />} label={t('procurement.orderDetail.infoActualDelivery')} value={formatDate(order.actualDeliveryDate)} />
+          <InfoRow icon={<Percent size={15} />} label={t('procurement.orderDetail.infoVat')} value={formatMoney(order.vatAmount)} />
+          <InfoRow icon={<MapPin size={15} />} label={t('procurement.orderDetail.infoDeliveryAddress')} value={order.deliveryAddress || '—'} />
         </div>
       </div>
 
@@ -838,28 +845,28 @@ const PurchaseOrderDetailPage: React.FC = () => {
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Реквизиты черновика</p>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('procurement.orderDetail.draftRequisites')}</p>
               <Input
                 type="date"
                 value={draftMeta.expectedDeliveryDate}
                 onChange={(event) => setDraftMeta((prev) => ({ ...prev, expectedDeliveryDate: event.target.value }))}
               />
               <Input
-                placeholder="Условия оплаты"
+                placeholder={t('procurement.orderDetail.placeholderPaymentTerms')}
                 value={draftMeta.paymentTerms}
                 onChange={(event) => setDraftMeta((prev) => ({ ...prev, paymentTerms: event.target.value }))}
               />
               <Input
-                placeholder="Адрес поставки"
+                placeholder={t('procurement.orderDetail.placeholderDeliveryAddress')}
                 value={draftMeta.deliveryAddress}
                 onChange={(event) => setDraftMeta((prev) => ({ ...prev, deliveryAddress: event.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Комментарий</p>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('procurement.orderDetail.draftNotes')}</p>
               <Textarea
                 rows={5}
-                placeholder="Комментарий к заказу"
+                placeholder={t('procurement.orderDetail.placeholderOrderNotes')}
                 value={draftMeta.notes}
                 onChange={(event) => setDraftMeta((prev) => ({ ...prev, notes: event.target.value }))}
               />
@@ -879,14 +886,14 @@ const PurchaseOrderDetailPage: React.FC = () => {
                   });
                 }}
               >
-                Сохранить реквизиты
+                {t('procurement.orderDetail.saveRequisites')}
               </Button>
             </div>
           </div>
 
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              Добавить позицию в заказ
+              {t('procurement.orderDetail.addItemTitle')}
             </h3>
             <Button
               variant="secondary"
@@ -898,19 +905,19 @@ const PurchaseOrderDetailPage: React.FC = () => {
                 const unitPrice = parseQuantityInput(draftItem.unitPrice);
                 const vatRate = toNumber(draftItem.vatRate);
                 if (!draftItem.materialId.trim()) {
-                  toast.error('Укажите ID материала');
+                  toast.error(t('procurement.orderDetail.validationMaterialId'));
                   return;
                 }
                 if (!quantity) {
-                  toast.error('Введите корректное количество');
+                  toast.error(t('procurement.orderDetail.validationQuantity'));
                   return;
                 }
                 if (!unitPrice) {
-                  toast.error('Введите корректную цену');
+                  toast.error(t('procurement.orderDetail.validationPrice'));
                   return;
                 }
                 if (vatRate < 0 || vatRate > 100) {
-                  toast.error('НДС должен быть в диапазоне 0-100');
+                  toast.error(t('procurement.orderDetail.validationVatRange'));
                   return;
                 }
                 addItemMutation.mutate({
@@ -926,7 +933,7 @@ const PurchaseOrderDetailPage: React.FC = () => {
                 });
               }}
             >
-              Добавить позицию
+              {t('procurement.orderDetail.addItemButton')}
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
@@ -947,39 +954,39 @@ const PurchaseOrderDetailPage: React.FC = () => {
               />
             ) : (
               <Input
-                placeholder="ID материала"
+                placeholder={t('procurement.orderDetail.placeholderMaterialId')}
                 value={draftItem.materialId}
                 onChange={(event) => setDraftItem((prev) => ({ ...prev, materialId: event.target.value }))}
               />
             )}
             <Input
-              placeholder="Наименование"
+              placeholder={t('procurement.orderDetail.placeholderMaterialName')}
               value={draftItem.materialName}
               onChange={(event) => setDraftItem((prev) => ({ ...prev, materialName: event.target.value }))}
             />
             <Input
-              placeholder="Ед."
+              placeholder={t('procurement.orderDetail.placeholderUnit')}
               value={draftItem.unit}
               onChange={(event) => setDraftItem((prev) => ({ ...prev, unit: event.target.value }))}
             />
             <Input
               type="text"
               inputMode="decimal"
-              placeholder="Кол-во"
+              placeholder={t('procurement.orderDetail.placeholderQuantity')}
               value={draftItem.quantity}
               onChange={(event) => setDraftItem((prev) => ({ ...prev, quantity: event.target.value }))}
             />
             <Input
               type="text"
               inputMode="decimal"
-              placeholder="Цена"
+              placeholder={t('procurement.orderDetail.placeholderPrice')}
               value={draftItem.unitPrice}
               onChange={(event) => setDraftItem((prev) => ({ ...prev, unitPrice: event.target.value }))}
             />
             <Input
               type="text"
               inputMode="decimal"
-              placeholder="НДС %"
+              placeholder={t('procurement.orderDetail.placeholderVatPercent')}
               value={draftItem.vatRate}
               onChange={(event) => setDraftItem((prev) => ({ ...prev, vatRate: event.target.value }))}
             />
@@ -990,9 +997,9 @@ const PurchaseOrderDetailPage: React.FC = () => {
       {hasItemsError ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить позиции заказа"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('procurement.orderDetail.itemsLoadError')}
+          description={t('procurement.orderDetail.itemsLoadErrorDescription')}
+          actionLabel={t('common.retry')}
           onAction={() => {
             void refetchItems();
           }}
@@ -1008,15 +1015,15 @@ const PurchaseOrderDetailPage: React.FC = () => {
           enableSavedViews
           savedViewsKey={`procurement-purchase-order-items-${order.id}`}
           pageSize={20}
-          emptyTitle="В заказе нет позиций"
-          emptyDescription="Добавьте позиции в заказ, чтобы зарегистрировать поставки."
+          emptyTitle={t('procurement.orderDetail.itemsEmptyTitle')}
+          emptyDescription={t('procurement.orderDetail.itemsEmptyDescription')}
         />
       )}
 
       {isDraft && editingItemId && (
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mt-6">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-            Редактирование позиции
+            {t('procurement.orderDetail.editItemTitle')}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 mb-4">
             {materialOptions.length > 0 ? (
@@ -1036,39 +1043,39 @@ const PurchaseOrderDetailPage: React.FC = () => {
               />
             ) : (
               <Input
-                placeholder="ID материала"
+                placeholder={t('procurement.orderDetail.placeholderMaterialId')}
                 value={editingItemDraft.materialId}
                 onChange={(event) => setEditingItemDraft((prev) => ({ ...prev, materialId: event.target.value }))}
               />
             )}
             <Input
-              placeholder="Наименование"
+              placeholder={t('procurement.orderDetail.placeholderMaterialName')}
               value={editingItemDraft.materialName}
               onChange={(event) => setEditingItemDraft((prev) => ({ ...prev, materialName: event.target.value }))}
             />
             <Input
-              placeholder="Ед."
+              placeholder={t('procurement.orderDetail.placeholderUnit')}
               value={editingItemDraft.unit}
               onChange={(event) => setEditingItemDraft((prev) => ({ ...prev, unit: event.target.value }))}
             />
             <Input
               type="text"
               inputMode="decimal"
-              placeholder="Кол-во"
+              placeholder={t('procurement.orderDetail.placeholderQuantity')}
               value={editingItemDraft.quantity}
               onChange={(event) => setEditingItemDraft((prev) => ({ ...prev, quantity: event.target.value }))}
             />
             <Input
               type="text"
               inputMode="decimal"
-              placeholder="Цена"
+              placeholder={t('procurement.orderDetail.placeholderPrice')}
               value={editingItemDraft.unitPrice}
               onChange={(event) => setEditingItemDraft((prev) => ({ ...prev, unitPrice: event.target.value }))}
             />
             <Input
               type="text"
               inputMode="decimal"
-              placeholder="НДС %"
+              placeholder={t('procurement.orderDetail.placeholderVatPercent')}
               value={editingItemDraft.vatRate}
               onChange={(event) => setEditingItemDraft((prev) => ({ ...prev, vatRate: event.target.value }))}
             />
@@ -1085,19 +1092,19 @@ const PurchaseOrderDetailPage: React.FC = () => {
                 const unitPrice = parseQuantityInput(editingItemDraft.unitPrice);
                 const vatRate = toNumber(editingItemDraft.vatRate);
                 if (!editingItemDraft.materialId.trim()) {
-                  toast.error('Укажите ID материала');
+                  toast.error(t('procurement.orderDetail.validationMaterialId'));
                   return;
                 }
                 if (!quantity) {
-                  toast.error('Введите корректное количество');
+                  toast.error(t('procurement.orderDetail.validationQuantity'));
                   return;
                 }
                 if (!unitPrice) {
-                  toast.error('Введите корректную цену');
+                  toast.error(t('procurement.orderDetail.validationPrice'));
                   return;
                 }
                 if (vatRate < 0 || vatRate > 100) {
-                  toast.error('НДС должен быть в диапазоне 0-100');
+                  toast.error(t('procurement.orderDetail.validationVatRange'));
                   return;
                 }
                 const itemId = editingItemId;
@@ -1118,14 +1125,14 @@ const PurchaseOrderDetailPage: React.FC = () => {
                 });
               }}
             >
-              Сохранить позицию
+              {t('procurement.orderDetail.saveItem')}
             </Button>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => setEditingItemId(null)}
             >
-              Отмена
+              {t('common.cancel')}
             </Button>
           </div>
         </section>

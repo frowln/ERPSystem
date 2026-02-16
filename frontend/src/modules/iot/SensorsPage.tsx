@@ -15,6 +15,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { iotApi } from '@/api/iot';
 import { formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 import type { IoTDevice } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -26,13 +27,13 @@ const deviceStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' 
   maintenance: 'purple',
 };
 
-const deviceStatusLabels: Record<string, string> = {
-  online: 'Онлайн',
-  offline: 'Офлайн',
-  warning: 'Предупреждение',
-  error: 'Ошибка',
-  maintenance: 'Обслуживание',
-};
+const getDeviceStatusLabels = (): Record<string, string> => ({
+  online: t('iot.statusOnline'),
+  offline: t('iot.statusOffline'),
+  warning: t('iot.statusWarning'),
+  error: t('iot.statusError'),
+  maintenance: t('iot.statusMaintenance'),
+});
 
 const sensorTypeIcons: Record<string, React.ReactNode> = {
   temperature: <Thermometer size={18} className="text-red-500" />,
@@ -45,16 +46,16 @@ const sensorTypeIcons: Record<string, React.ReactNode> = {
   structural: <Building2 size={18} className="text-gray-500" />,
 };
 
-const sensorTypeLabels: Record<string, string> = {
-  temperature: 'Температура',
-  humidity: 'Влажность',
-  vibration: 'Вибрация',
-  pressure: 'Давление',
-  gps: 'GPS-трекер',
-  dust: 'Пыль',
-  noise: 'Шум',
-  structural: 'Структурный',
-};
+const getSensorTypeLabels = (): Record<string, string> => ({
+  temperature: t('iot.sensorTemperature'),
+  humidity: t('iot.sensorHumidity'),
+  vibration: t('iot.sensorVibration'),
+  pressure: t('iot.sensorPressure'),
+  gps: t('iot.sensorGps'),
+  dust: t('iot.sensorDust'),
+  noise: t('iot.sensorNoise'),
+  structural: t('iot.sensorStructural'),
+});
 
 
 const SensorDashboardPage: React.FC = () => {
@@ -66,6 +67,7 @@ const SensorDashboardPage: React.FC = () => {
   const devices = deviceData?.content ?? [];
 
   const sensorGroups = useMemo(() => {
+    const sensorTypeLabels = getSensorTypeLabels();
     const groups: Record<string, IoTDevice[]> = {};
     devices.forEach((d) => {
       if (!groups[d.sensorType]) groups[d.sensorType] = [];
@@ -88,33 +90,35 @@ const SensorDashboardPage: React.FC = () => {
     alerts: devices.filter((d) => [ 'WARNING', 'ERROR'].includes(d.status)).length,
   }), [devices]);
 
+  const deviceStatusLabels = getDeviceStatusLabels();
+
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Панель датчиков"
-        subtitle="Мониторинг всех типов датчиков по объектам"
+        title={t('iot.sensors.title')}
+        subtitle={t('iot.sensors.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'IoT мониторинг', href: '/iot/devices' },
-          { label: 'Датчики' },
+          { label: t('iot.sensors.breadcrumbHome'), href: '/' },
+          { label: t('iot.sensors.breadcrumbIot'), href: '/iot/devices' },
+          { label: t('iot.sensors.breadcrumbSensors') },
         ]}
       />
 
       {/* Overall metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Activity size={18} />} label="Всего датчиков" value={overallMetrics.totalSensors} />
-        <MetricCard icon={<Thermometer size={18} />} label="Типов датчиков" value={overallMetrics.types} />
+        <MetricCard icon={<Activity size={18} />} label={t('iot.sensors.metricTotalSensors')} value={overallMetrics.totalSensors} />
+        <MetricCard icon={<Thermometer size={18} />} label={t('iot.sensors.metricSensorTypes')} value={overallMetrics.types} />
         <MetricCard
           icon={<MapPin size={18} />}
-          label="Онлайн"
+          label={t('iot.sensors.metricOnline')}
           value={overallMetrics.online}
           trend={{ direction: 'neutral', value: `${Math.round((overallMetrics.online / Math.max(1, overallMetrics.totalSensors)) * 100)}%` }}
         />
         <MetricCard
           icon={<Activity size={18} />}
-          label="Тревоги"
+          label={t('iot.sensors.metricAlerts')}
           value={overallMetrics.alerts}
-          trend={{ direction: overallMetrics.alerts > 0 ? 'down' : 'neutral', value: overallMetrics.alerts > 0 ? 'Внимание' : 'Нет' }}
+          trend={{ direction: overallMetrics.alerts > 0 ? 'down' : 'neutral', value: overallMetrics.alerts > 0 ? t('iot.sensors.trendAttention') : t('iot.sensors.trendNo') }}
         />
       </div>
 
@@ -127,7 +131,7 @@ const SensorDashboardPage: React.FC = () => {
                 {group.icon}
                 <div>
                   <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{group.label}</h3>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{group.online}/{group.total} онлайн</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{group.online}/{group.total} {t('iot.sensors.onlineSuffix')}</p>
                 </div>
               </div>
               <div className="w-16 h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
@@ -166,7 +170,7 @@ const SensorDashboardPage: React.FC = () => {
 
             {group.devices.length > 0 && (
               <p className="text-[10px] text-neutral-400 mt-3">
-                Последнее обновление: {formatDateTime(group.devices[0].lastReadingAt ?? new Date().toISOString())}
+                {t('iot.sensors.lastUpdate')} {formatDateTime(group.devices[0].lastReadingAt ?? new Date().toISOString())}
               </p>
             )}
           </div>

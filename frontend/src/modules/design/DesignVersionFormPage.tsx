@@ -42,11 +42,11 @@ const statusOptions = [
   { value: 'SUPERSEDED', label: t('forms.designVersion.statuses.superseded') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('design.projectOptionSolnechny') },
+  { value: '2', label: t('design.projectOptionHorizont') },
+  { value: '3', label: t('design.projectOptionBridge') },
+  { value: '6', label: t('design.projectOptionCentral') },
 ];
 
 const DesignVersionFormPage: React.FC = () => {
@@ -154,7 +154,7 @@ const DesignVersionFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.designVersion.labelName')} error={errors.name?.message} required className="sm:col-span-2">
               <Input
-                placeholder="Архитектурные решения - Секция А"
+                placeholder={t('design.placeholderVersionName')}
                 hasError={!!errors.name}
                 {...register('name')}
               />
@@ -176,7 +176,7 @@ const DesignVersionFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.designVersion.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.designVersion.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}

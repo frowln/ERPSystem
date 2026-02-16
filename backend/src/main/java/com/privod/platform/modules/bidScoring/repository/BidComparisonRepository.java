@@ -8,16 +8,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface BidComparisonRepository extends JpaRepository<BidComparison, UUID>, JpaSpecificationExecutor<BidComparison> {
 
-    Page<BidComparison> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
+    Optional<BidComparison> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
 
-    Page<BidComparison> findByStatusAndDeletedFalse(ComparisonStatus status, Pageable pageable);
+    Page<BidComparison> findByOrganizationIdAndProjectIdAndDeletedFalse(
+            UUID organizationId,
+            UUID projectId,
+            Pageable pageable
+    );
 
-    Page<BidComparison> findByDeletedFalse(Pageable pageable);
+    Page<BidComparison> findByOrganizationIdAndStatusAndDeletedFalse(
+            UUID organizationId,
+            ComparisonStatus status,
+            Pageable pageable
+    );
 
-    long countByProjectIdAndDeletedFalse(UUID projectId);
+    Page<BidComparison> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
+
+    long countByOrganizationIdAndProjectIdAndDeletedFalse(UUID organizationId, UUID projectId);
 }

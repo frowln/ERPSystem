@@ -9,19 +9,20 @@ import { FormField, Input } from '@/design-system/components/FormField';
 import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/api/auth';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
-const loginSchema = z.object({
+const getLoginSchema = () => z.object({
   email: z
     .string()
-    .min(1, 'Введите email')
-    .email('Некорректный формат email'),
+    .min(1, t('auth.validation.emailRequired'))
+    .email(t('auth.validation.emailInvalid')),
   password: z
     .string()
-    .min(1, 'Введите пароль')
-    .min(6, 'Минимум 6 символов'),
+    .min(1, t('auth.validation.passwordRequired'))
+    .min(6, t('auth.validation.passwordMin')),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = z.infer<ReturnType<typeof getLoginSchema>>;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(getLoginSchema()),
     defaultValues: {
       email: '',
       password: '',
@@ -49,16 +50,16 @@ const LoginPage: React.FC = () => {
     try {
       const response = await authApi.login(data);
       setAuth(response.user, response.token);
-      toast.success('Добро пожаловать!');
+      toast.success(t('auth.welcomeMessage'));
       const redirectTo = redirectAfterLogin ?? '/';
       setRedirectAfterLogin(null);
       navigate(redirectTo, { replace: true });
     } catch (err: unknown) {
       const error = err as { response?: { status?: number; data?: { message?: string } } };
       if (error.response?.status === 401) {
-        setServerError('Неверный email или пароль');
+        setServerError(t('auth.invalidCredentials'));
       } else {
-        setServerError(error.response?.data?.message ?? 'Ошибка входа. Попробуйте позже.');
+        setServerError(error.response?.data?.message ?? t('auth.loginError'));
       }
     } finally {
       setIsLoading(false);
@@ -78,26 +79,25 @@ const LoginPage: React.FC = () => {
             <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
               <Building2 size={22} className="text-white" />
             </div>
-            <span className="text-xl font-bold text-white tracking-wide">ПРИВОД</span>
+            <span className="text-xl font-bold text-white tracking-wide">{t('auth.brandName')}</span>
           </div>
 
           <div className="max-w-md">
             <h1 className="text-4xl font-bold text-white leading-tight mb-4">
-              Строительная
+              {t('auth.brandingTitleLine1')}
               <br />
-              платформа
+              {t('auth.brandingTitleLine2')}
             </h1>
             <p className="text-lg text-neutral-400 leading-relaxed">
-              Управление проектами, документами, снабжением и финансами
-              строительной компании в едином пространстве.
+              {t('auth.brandingSubtitle')}
             </p>
 
             <div className="mt-10 grid grid-cols-2 gap-6">
               {[
-                { value: '500+', label: 'Проектов' },
-                { value: '12 млрд ₽', label: 'Бюджет' },
-                { value: '2 000+', label: 'Пользователей' },
-                { value: '99.9%', label: 'Аптайм' },
+                { value: '500+', label: t('auth.stats.projects') },
+                { value: t('auth.stats.budgetValue'), label: t('auth.stats.budget') },
+                { value: '2 000+', label: t('auth.stats.users') },
+                { value: '99.9%', label: t('auth.stats.uptime') },
               ].map((stat) => (
                 <div key={stat.label}>
                   <p className="text-2xl font-bold text-white">{stat.value}</p>
@@ -108,7 +108,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           <p className="text-xs text-neutral-600">
-            &copy; {new Date().getFullYear()} Привод. Все права защищены.
+            &copy; {new Date().getFullYear()} {t('auth.copyright')}
           </p>
         </div>
       </div>
@@ -121,13 +121,13 @@ const LoginPage: React.FC = () => {
             <div className="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center">
               <Building2 size={20} className="text-white" />
             </div>
-            <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-wide">ПРИВОД</span>
+            <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-wide">{t('auth.brandName')}</span>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">Вход в систему</h2>
+            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">{t('auth.loginTitle')}</h2>
             <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-              Введите данные для доступа к платформе
+              {t('auth.loginSubtitle')}
             </p>
           </div>
 
@@ -138,7 +138,7 @@ const LoginPage: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <FormField label="Email" htmlFor="login-email" error={errors.email?.message} required>
+            <FormField label={t('auth.email')} htmlFor="login-email" error={errors.email?.message} required>
               <Input
                 id="login-email"
                 type="email"
@@ -149,12 +149,12 @@ const LoginPage: React.FC = () => {
               />
             </FormField>
 
-            <FormField label="Пароль" htmlFor="login-password" error={errors.password?.message} required>
+            <FormField label={t('auth.password')} htmlFor="login-password" error={errors.password?.message} required>
               <div className="relative">
                 <Input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Введите пароль"
+                  placeholder={t('auth.passwordPlaceholder')}
                   autoComplete="current-password"
                   hasError={!!errors.password}
                   className="pr-10"
@@ -163,7 +163,7 @@ const LoginPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+                  aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -177,28 +177,28 @@ const LoginPage: React.FC = () => {
                   type="checkbox"
                   className="h-3.5 w-3.5 rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500"
                 />
-                <span className="text-sm text-neutral-600 dark:text-neutral-400">Запомнить меня</span>
+                <span className="text-sm text-neutral-600 dark:text-neutral-400">{t('auth.rememberMe')}</span>
               </label>
               <button type="button" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                Забыли пароль?
+                {t('auth.forgotPassword')}
               </button>
             </div>
 
             <Button type="submit" fullWidth loading={isLoading} size="lg">
-              Войти
+              {t('auth.login')}
             </Button>
           </form>
 
           <p className="mt-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
-            Нет аккаунта?{' '}
+            {t('auth.noAccount')}{' '}
             <button className="text-primary-600 hover:text-primary-700 font-medium">
-              Свяжитесь с администратором
+              {t('auth.contactAdmin')}
             </button>
           </p>
 
           {import.meta.env.DEV && (
             <div className="mt-4 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-xs text-primary-700">
-              Тестовый вход: admin@privod.com / admin123
+              {t('auth.testCredentials')}
             </div>
           )}
         </div>

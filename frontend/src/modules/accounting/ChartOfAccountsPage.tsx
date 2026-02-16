@@ -5,6 +5,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Input } from '@/design-system/components/FormField';
 import { EmptyState } from '@/design-system/components/EmptyState';
 import { accountingApi, type Account } from '@/api/accounting';
+import { t } from '@/i18n';
 
 const typeColors: Record<string, string> = {
   ACTIVE: 'text-blue-600 bg-blue-50',
@@ -79,7 +80,7 @@ const AccountRow: React.FC<{ account: Account; level: number; search: string }> 
               account.analytical ? 'text-success-700 bg-success-50' : 'text-neutral-600 bg-neutral-100 dark:bg-neutral-800'
             }`}
           >
-            {account.analytical ? 'Аналитический' : 'Синтетический'}
+            {account.analytical ? t('accounting.chartAnalytical') : t('accounting.chartSynthetic')}
           </span>
         </td>
       </tr>
@@ -125,21 +126,21 @@ const ChartOfAccountsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="План счетов"
-        subtitle={`Всего счетов: ${summary.total}`}
+        title={t('accounting.chartTitle')}
+        subtitle={t('accounting.chartSubtitle', { count: summary.total })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия', href: '/accounting' },
-          { label: 'План счетов' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+          { label: t('accounting.breadcrumbChartOfAccounts') },
         ]}
       />
 
       {isError && !hasData ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить план счетов"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('accounting.chartErrorTitle')}
+          description={t('accounting.checkConnectionRetry')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetch();
           }}
@@ -148,15 +149,15 @@ const ChartOfAccountsPage: React.FC = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Активные</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('accounting.chartSummaryActive')}</p>
               <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{summary.active}</p>
             </div>
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Пассивные</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('accounting.chartSummaryPassive')}</p>
               <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{summary.passive}</p>
             </div>
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Активно-пассивные</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('accounting.chartSummaryActivePassive')}</p>
               <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{summary.activePassive}</p>
             </div>
           </div>
@@ -168,7 +169,7 @@ const ChartOfAccountsPage: React.FC = () => {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
               />
               <Input
-                placeholder="Поиск по коду или названию..."
+                placeholder={t('accounting.chartSearchPlaceholder')}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 className="pl-9"
@@ -181,16 +182,16 @@ const ChartOfAccountsPage: React.FC = () => {
               <thead>
                 <tr className="border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
                   <th className="text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-4 py-2.5 w-44">
-                    Код счёта
+                    {t('accounting.chartColCode')}
                   </th>
                   <th className="text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-4 py-2.5">
-                    Наименование
+                    {t('accounting.chartColName')}
                   </th>
                   <th className="text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-4 py-2.5 w-44">
-                    Тип
+                    {t('accounting.chartColType')}
                   </th>
                   <th className="text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-4 py-2.5 w-44">
-                    Уровень
+                    {t('accounting.chartColLevel')}
                   </th>
                 </tr>
               </thead>
@@ -201,7 +202,7 @@ const ChartOfAccountsPage: React.FC = () => {
                 {!isLoading && (accounts?.length ?? 0) === 0 && (
                   <tr>
                     <td className="px-4 py-8 text-sm text-neutral-500 dark:text-neutral-400" colSpan={4}>
-                      План счетов пуст.
+                      {t('accounting.chartEmpty')}
                     </td>
                   </tr>
                 )}

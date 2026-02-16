@@ -20,21 +20,22 @@ import { FormField } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { portalApi } from '@/api/portal';
 import { formatDate, formatRelativeTime } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PortalUser, PortalAccess } from './types';
 import toast from 'react-hot-toast';
 
 const userStatusColorMap: Record<string, 'green' | 'blue' | 'yellow' | 'gray' | 'red'> = {
   active: 'green', invited: 'blue', suspended: 'yellow', deactivated: 'gray',
 };
-const userStatusLabels: Record<string, string> = {
-  active: 'Активен', invited: 'Приглашён', suspended: 'Приостановлен', deactivated: 'Деактивирован',
-};
-const roleLabels: Record<string, string> = {
-  client: 'Заказчик', contractor: 'Подрядчик', subcontractor: 'Субподрядчик', consultant: 'Консультант',
-};
-const accessLabels: Record<string, string> = {
-  view: 'Просмотр', comment: 'Комментирование', upload: 'Загрузка', full: 'Полный',
-};
+const getUserStatusLabels = (): Record<string, string> => ({
+  active: t('portal.admin.userStatusActive'), invited: t('portal.admin.userStatusInvited'), suspended: t('portal.admin.userStatusSuspended'), deactivated: t('portal.admin.userStatusDeactivated'),
+});
+const getRoleLabels = (): Record<string, string> => ({
+  client: t('portal.admin.roleClient'), contractor: t('portal.admin.roleContractor'), subcontractor: t('portal.admin.roleSubcontractor'), consultant: t('portal.admin.roleConsultant'),
+});
+const getAccessLabels = (): Record<string, string> => ({
+  view: t('portal.admin.accessView'), comment: t('portal.admin.accessComment'), upload: t('portal.admin.accessUpload'), full: t('portal.admin.accessFull'),
+});
 
 type TabId = 'users' | 'ACCESS';
 
@@ -84,9 +85,13 @@ const PortalAdminPage: React.FC = () => {
     totalAccess: accessList.length,
   }), [users, accessList]);
 
-  const userColumns = useMemo<ColumnDef<PortalUser, unknown>[]>(() => [
+  const userColumns = useMemo<ColumnDef<PortalUser, unknown>[]>(() => {
+    const userStatusLabels = getUserStatusLabels();
+    const roleLabels = getRoleLabels();
+    const accessLabels = getAccessLabels();
+    return [
     {
-      accessorKey: 'fullName', header: 'Имя', size: 200,
+      accessorKey: 'fullName', header: t('portal.admin.colName'), size: 200,
       cell: ({ row }) => (
         <div>
           <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.fullName}</p>
@@ -94,29 +99,32 @@ const PortalAdminPage: React.FC = () => {
         </div>
       ),
     },
-    { accessorKey: 'companyName', header: 'Организация', size: 180, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
+    { accessorKey: 'companyName', header: t('portal.admin.colOrganization'), size: 180, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
     {
-      accessorKey: 'role', header: 'Роль', size: 130,
+      accessorKey: 'role', header: t('portal.admin.colRole'), size: 130,
       cell: ({ getValue }) => <span className="text-sm text-neutral-700 dark:text-neutral-300">{roleLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
-      accessorKey: 'status', header: 'Статус', size: 130,
+      accessorKey: 'status', header: t('portal.admin.colStatus'), size: 130,
       cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={userStatusColorMap} label={userStatusLabels[getValue<string>()] ?? getValue<string>()} />,
     },
     {
-      accessorKey: 'accessLevel', header: 'Доступ', size: 120,
+      accessorKey: 'accessLevel', header: t('portal.admin.colAccess'), size: 120,
       cell: ({ getValue }) => <span className="text-sm text-neutral-700 dark:text-neutral-300">{accessLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
-      accessorKey: 'lastLoginAt', header: 'Последний вход', size: 150,
-      cell: ({ getValue }) => <span className="text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>() ? formatRelativeTime(getValue<string>()) : 'Не входил'}</span>,
+      accessorKey: 'lastLoginAt', header: t('portal.admin.colLastLogin'), size: 150,
+      cell: ({ getValue }) => <span className="text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>() ? formatRelativeTime(getValue<string>()) : t('portal.admin.neverLoggedIn')}</span>,
     },
-    { accessorKey: 'createdAt', header: 'Создан', size: 110, cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span> },
-  ], []);
+    { accessorKey: 'createdAt', header: t('portal.admin.colCreated'), size: 110, cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span> },
+  ];
+  }, []);
 
-  const accessColumns = useMemo<ColumnDef<PortalAccess, unknown>[]>(() => [
+  const accessColumns = useMemo<ColumnDef<PortalAccess, unknown>[]>(() => {
+    const accessLabels = getAccessLabels();
+    return [
     {
-      accessorKey: 'userName', header: 'Пользователь', size: 180,
+      accessorKey: 'userName', header: t('portal.admin.colUser'), size: 180,
       cell: ({ row }) => (
         <div>
           <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.userName}</p>
@@ -124,22 +132,23 @@ const PortalAdminPage: React.FC = () => {
         </div>
       ),
     },
-    { accessorKey: 'companyName', header: 'Организация', size: 170, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
-    { accessorKey: 'projectName', header: 'Проект', size: 200, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
+    { accessorKey: 'companyName', header: t('portal.admin.colOrganization'), size: 170, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
+    { accessorKey: 'projectName', header: t('portal.admin.colProject'), size: 200, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
     {
-      accessorKey: 'accessLevel', header: 'Уровень доступа', size: 140,
+      accessorKey: 'accessLevel', header: t('portal.admin.colAccessLevel'), size: 140,
       cell: ({ getValue }) => <span className="text-sm text-neutral-700 dark:text-neutral-300">{accessLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
-    { accessorKey: 'grantedByName', header: 'Выдал', size: 140, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
-    { accessorKey: 'grantedAt', header: 'Дата', size: 110, cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span> },
+    { accessorKey: 'grantedByName', header: t('portal.admin.colGrantedBy'), size: 140, cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
+    { accessorKey: 'grantedAt', header: t('portal.admin.colDate'), size: 110, cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span> },
     {
       id: 'actions', header: '', size: 90,
-      cell: () => <Button variant="ghost" size="xs">Отозвать</Button>,
+      cell: () => <Button variant="ghost" size="xs">{t('portal.admin.revokeAccess')}</Button>,
     },
-  ], []);
+  ];
+  }, []);
 
   const handleCreateUser = () => {
-    toast.success(`Пользователь портала создан: ${newName}`);
+    toast.success(t('portal.admin.userCreated', { name: newName }));
     setCreateModalOpen(false);
     setNewName(''); setNewEmail(''); setNewCompany(''); setNewRole('client'); setNewAccessLevel('VIEW');
   };
@@ -147,37 +156,37 @@ const PortalAdminPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Управление порталом"
-        subtitle="Пользователи и уровни доступа"
+        title={t('portal.admin.title')}
+        subtitle={t('portal.admin.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портал', href: '/portal' },
-          { label: 'Управление' },
+          { label: t('portal.admin.breadcrumbHome'), href: '/' },
+          { label: t('portal.admin.breadcrumbPortal'), href: '/portal' },
+          { label: t('portal.admin.breadcrumbAdmin') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => setCreateModalOpen(true)}>
-            Добавить пользователя
+            {t('portal.admin.addUser')}
           </Button>
         }
         tabs={[
-          { id: 'users', label: 'Пользователи', count: users.length },
-          { id: 'ACCESS', label: 'Доступ к проектам', count: accessList.length },
+          { id: 'users', label: t('portal.admin.tabUsers'), count: users.length },
+          { id: 'ACCESS', label: t('portal.admin.tabAccess'), count: accessList.length },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Users size={18} />} label="Всего пользователей" value={metrics.totalUsers} />
-        <MetricCard icon={<UserCheck size={18} />} label="Активные" value={metrics.activeUsers} />
-        <MetricCard icon={<UserX size={18} />} label="Приглашённые" value={metrics.invitedUsers} trend={metrics.invitedUsers > 0 ? { direction: 'neutral', value: 'Ожидают' } : undefined} />
-        <MetricCard icon={<Shield size={18} />} label="Выдано доступов" value={metrics.totalAccess} />
+        <MetricCard icon={<Users size={18} />} label={t('portal.admin.metricTotalUsers')} value={metrics.totalUsers} />
+        <MetricCard icon={<UserCheck size={18} />} label={t('portal.admin.metricActive')} value={metrics.activeUsers} />
+        <MetricCard icon={<UserX size={18} />} label={t('portal.admin.metricInvited')} value={metrics.invitedUsers} trend={metrics.invitedUsers > 0 ? { direction: 'neutral', value: t('portal.admin.trendAwaiting') } : undefined} />
+        <MetricCard icon={<Shield size={18} />} label={t('portal.admin.metricAccessGrants')} value={metrics.totalAccess} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по имени, email, организации..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('portal.admin.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -191,8 +200,8 @@ const PortalAdminPage: React.FC = () => {
           enableDensityToggle
           enableExport
           pageSize={20}
-          emptyTitle="Нет пользователей портала"
-          emptyDescription="Добавьте первого пользователя для начала работы"
+          emptyTitle={t('portal.admin.usersEmptyTitle')}
+          emptyDescription={t('portal.admin.usersEmptyDescription')}
         />
       ) : (
         <DataTable<PortalAccess>
@@ -204,8 +213,8 @@ const PortalAdminPage: React.FC = () => {
           enableDensityToggle
           enableExport
           pageSize={20}
-          emptyTitle="Нет выданных доступов"
-          emptyDescription="Предоставьте доступ пользователям к проектам"
+          emptyTitle={t('portal.admin.accessEmptyTitle')}
+          emptyDescription={t('portal.admin.accessEmptyDescription')}
         />
       )}
 
@@ -213,32 +222,32 @@ const PortalAdminPage: React.FC = () => {
       <Modal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
-        title="Новый пользователь портала"
-        description="Добавьте внешнего пользователя для доступа к порталу"
+        title={t('portal.admin.createModalTitle')}
+        description={t('portal.admin.createModalDescription')}
         size="lg"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setCreateModalOpen(false)}>Отмена</Button>
-            <Button onClick={handleCreateUser} disabled={!newName || !newEmail || !newCompany}>Создать</Button>
+            <Button variant="secondary" onClick={() => setCreateModalOpen(false)}>{t('portal.admin.cancelBtn')}</Button>
+            <Button onClick={handleCreateUser} disabled={!newName || !newEmail || !newCompany}>{t('portal.admin.createBtn')}</Button>
           </>
         }
       >
         <div className="space-y-4">
-          <FormField label="ФИО" required>
-            <Input placeholder="Иванов Иван Иванович" value={newName} onChange={(e) => setNewName(e.target.value)} />
+          <FormField label={t('portal.admin.labelFullName')} required>
+            <Input placeholder={t('portal.admin.placeholderFullName')} value={newName} onChange={(e) => setNewName(e.target.value)} />
           </FormField>
-          <FormField label="Email" required>
-            <Input type="email" placeholder="user@company.ru" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+          <FormField label={t('portal.admin.labelEmailField')} required>
+            <Input type="email" placeholder={t('portal.admin.placeholderEmail')} value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
           </FormField>
-          <FormField label="Организация" required>
-            <Input placeholder="ООО 'Компания'" value={newCompany} onChange={(e) => setNewCompany(e.target.value)} />
+          <FormField label={t('portal.admin.labelOrganization')} required>
+            <Input placeholder={t('portal.admin.placeholderOrganization')} value={newCompany} onChange={(e) => setNewCompany(e.target.value)} />
           </FormField>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Роль">
-              <Select options={Object.entries(roleLabels).map(([v, l]) => ({ value: v, label: l }))} value={newRole} onChange={(e) => setNewRole(e.target.value)} />
+            <FormField label={t('portal.admin.labelRole')}>
+              <Select options={Object.entries(getRoleLabels()).map(([v, l]) => ({ value: v, label: l }))} value={newRole} onChange={(e) => setNewRole(e.target.value)} />
             </FormField>
-            <FormField label="Уровень доступа">
-              <Select options={Object.entries(accessLabels).map(([v, l]) => ({ value: v, label: l }))} value={newAccessLevel} onChange={(e) => setNewAccessLevel(e.target.value)} />
+            <FormField label={t('portal.admin.labelAccessLevel')}>
+              <Select options={Object.entries(getAccessLabels()).map(([v, l]) => ({ value: v, label: l }))} value={newAccessLevel} onChange={(e) => setNewAccessLevel(e.target.value)} />
             </FormField>
           </div>
         </div>

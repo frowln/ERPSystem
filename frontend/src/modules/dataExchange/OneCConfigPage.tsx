@@ -10,6 +10,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
 import { onecApi } from '@/api/onec';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { OneCConfig } from './types';
 
 const configStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
@@ -23,21 +24,21 @@ const directionColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | '
   bidirectional: 'purple',
 };
 
-const directionLabels: Record<string, string> = {
-  import: 'Импорт',
-  export: 'Экспорт',
-  bidirectional: 'Двусторонний',
-};
+const getDirectionLabels = (): Record<string, string> => ({
+  import: t('dataExchange.directionImport'),
+  export: t('dataExchange.directionExport'),
+  bidirectional: t('dataExchange.directionBidirectional'),
+});
 
-const entityTypeLabels: Record<string, string> = {
-  contracts: 'Договоры',
-  invoices: 'Счета',
-  payments: 'Платежи',
-  materials: 'Материалы',
-  employees: 'Сотрудники',
-  cost_items: 'Статьи затрат',
-  organizations: 'Организации',
-};
+const getEntityTypeLabels = (): Record<string, string> => ({
+  contracts: t('dataExchange.onecEntityContracts'),
+  invoices: t('dataExchange.onecEntityInvoices'),
+  payments: t('dataExchange.onecEntityPayments'),
+  materials: t('dataExchange.onecEntityMaterials'),
+  employees: t('dataExchange.onecEntityEmployees'),
+  cost_items: t('dataExchange.onecEntityCostItems'),
+  organizations: t('dataExchange.onecEntityOrganizations'),
+});
 
 const OneCConfigPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -66,7 +67,7 @@ const OneCConfigPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Подключение',
+        header: t('dataExchange.colConnection'),
         size: 250,
         cell: ({ row }) => (
           <div>
@@ -77,45 +78,46 @@ const OneCConfigPage: React.FC = () => {
       },
       {
         accessorKey: 'databaseName',
-        header: 'База данных',
+        header: t('dataExchange.colDatabase'),
         size: 160,
         cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-600">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'isActive',
-        header: 'Статус',
+        header: t('dataExchange.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<boolean>() ? 'ACTIVE' : 'INACTIVE'}
             colorMap={configStatusColorMap}
-            label={getValue<boolean>() ? 'Активно' : 'Неактивно'}
+            label={getValue<boolean>() ? t('dataExchange.statusActive') : t('dataExchange.statusInactive')}
           />
         ),
       },
       {
         accessorKey: 'exchangeDirection',
-        header: 'Направление',
+        header: t('dataExchange.colDirection'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={directionColorMap}
-            label={directionLabels[getValue<string>()] ?? getValue<string>()}
+            label={getDirectionLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'entityTypes',
-        header: 'Сущности',
+        header: t('dataExchange.colEntities'),
         size: 200,
         cell: ({ getValue }) => {
           const types = getValue<string[]>();
+          const entityLabels = getEntityTypeLabels();
           return (
             <div className="flex flex-wrap gap-1">
-              {types.slice(0, 3).map((t) => (
-                <span key={t} className="text-[10px] bg-neutral-100 dark:bg-neutral-800 text-neutral-600 px-1.5 py-0.5 rounded">
-                  {entityTypeLabels[t] ?? t}
+              {types.slice(0, 3).map((tp) => (
+                <span key={tp} className="text-[10px] bg-neutral-100 dark:bg-neutral-800 text-neutral-600 px-1.5 py-0.5 rounded">
+                  {entityLabels[tp] ?? tp}
                 </span>
               ))}
               {types.length > 3 && (
@@ -127,13 +129,13 @@ const OneCConfigPage: React.FC = () => {
       },
       {
         accessorKey: 'syncInterval',
-        header: 'Интервал',
+        header: t('dataExchange.colInterval'),
         size: 90,
-        cell: ({ getValue }) => <span className="tabular-nums text-neutral-500 dark:text-neutral-400">{getValue<number>()} мин</span>,
+        cell: ({ getValue }) => <span className="tabular-nums text-neutral-500 dark:text-neutral-400">{getValue<number>()} {t('dataExchange.minuteAbbrev')}</span>,
       },
       {
         accessorKey: 'lastSyncAt',
-        header: 'Последняя синхр.',
+        header: t('dataExchange.colLastSync'),
         size: 150,
         cell: ({ getValue }) => {
           const val = getValue<string>();
@@ -151,7 +153,7 @@ const OneCConfigPage: React.FC = () => {
             iconLeft={<RefreshCw size={14} />}
             disabled={!row.original.isActive}
           >
-            Синхр.
+            {t('dataExchange.syncButton')}
           </Button>
         ),
       },
@@ -162,29 +164,29 @@ const OneCConfigPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Интеграция с 1С"
-        subtitle={`${configs.length} подключений`}
+        title={t('dataExchange.onecTitle')}
+        subtitle={t('dataExchange.onecSubtitle', { count: String(configs.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обмен данными', href: '/data-exchange' },
-          { label: 'Интеграция с 1С' },
+          { label: t('dataExchange.breadcrumbHome'), href: '/' },
+          { label: t('dataExchange.breadcrumbDataExchange'), href: '/data-exchange' },
+          { label: t('dataExchange.breadcrumbOnec') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>Новое подключение</Button>
+          <Button iconLeft={<Plus size={16} />}>{t('dataExchange.newConnection')}</Button>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Database size={18} />} label="Всего подключений" value={metrics.total} />
-        <MetricCard icon={<Link size={18} />} label="Активные" value={metrics.active} />
-        <MetricCard icon={<RefreshCw size={18} />} label="Авто-синхр." value={metrics.autoSync} />
-        <MetricCard icon={<Settings size={18} />} label="Типов сущностей" value={metrics.entityCount} />
+        <MetricCard icon={<Database size={18} />} label={t('dataExchange.metricTotalConnections')} value={metrics.total} />
+        <MetricCard icon={<Link size={18} />} label={t('dataExchange.metricActive')} value={metrics.active} />
+        <MetricCard icon={<RefreshCw size={18} />} label={t('dataExchange.metricAutoSync')} value={metrics.autoSync} />
+        <MetricCard icon={<Settings size={18} />} label={t('dataExchange.metricEntityTypes')} value={metrics.entityCount} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по названию, базе данных..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('dataExchange.searchOnecPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -195,8 +197,8 @@ const OneCConfigPage: React.FC = () => {
         enableColumnVisibility
         enableDensityToggle
         pageSize={20}
-        emptyTitle="Нет подключений к 1С"
-        emptyDescription="Настройте первое подключение к базе 1С"
+        emptyTitle={t('dataExchange.emptyOnecTitle')}
+        emptyDescription={t('dataExchange.emptyOnecDescription')}
       />
     </div>
   );

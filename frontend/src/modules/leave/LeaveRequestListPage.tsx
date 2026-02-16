@@ -15,18 +15,19 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { leaveApi } from '@/api/leave';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { LeaveRequest } from './types';
 import type { PaginatedResponse } from '@/types';
 
 type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REFUSED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'SUBMITTED', label: 'На рассмотрении' },
-  { value: 'APPROVED', label: 'Утверждён' },
-  { value: 'REFUSED', label: 'Отклонён' },
-  { value: 'CANCELLED', label: 'Отменён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('leave.requests.allStatuses') },
+  { value: 'DRAFT', label: t('leave.requests.statusDraft') },
+  { value: 'SUBMITTED', label: t('leave.requests.statusSubmitted') },
+  { value: 'APPROVED', label: t('leave.requests.statusApproved') },
+  { value: 'REFUSED', label: t('leave.requests.statusRefused') },
+  { value: 'CANCELLED', label: t('leave.requests.statusCancelled') },
 ];
 
 
@@ -48,7 +49,7 @@ const LeaveRequestListPage: React.FC = () => {
   });
 
   const refuseMutation = useMutation({
-    mutationFn: (id: string) => leaveApi.refuseLeaveRequest(id, 'Отклонено руководителем'),
+    mutationFn: (id: string) => leaveApi.refuseLeaveRequest(id, t('leave.requests.refuseReason')),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leave-requests'] }),
   });
 
@@ -93,7 +94,7 @@ const LeaveRequestListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('leave.requests.colNumber'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -101,7 +102,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'employeeName',
-        header: 'Сотрудник',
+        header: t('leave.requests.colEmployee'),
         size: 230,
         cell: ({ row }) => (
           <div>
@@ -114,7 +115,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'leaveTypeName',
-        header: 'Тип отпуска',
+        header: t('leave.requests.colLeaveType'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-sm text-neutral-800 dark:text-neutral-200">{getValue<string>()}</span>
@@ -122,7 +123,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('leave.requests.colStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -134,7 +135,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'dateFrom',
-        header: 'Период',
+        header: t('leave.requests.colPeriod'),
         size: 180,
         cell: ({ row }) => (
           <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">
@@ -144,7 +145,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'durationDays',
-        header: 'Дней',
+        header: t('leave.requests.colDays'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm font-medium text-neutral-700 dark:text-neutral-300">{getValue<number>()}</span>
@@ -152,7 +153,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'approverName',
-        header: 'Утверждающий',
+        header: t('leave.requests.colApprover'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -160,7 +161,7 @@ const LeaveRequestListPage: React.FC = () => {
       },
       {
         id: 'actions',
-        header: 'Действия',
+        header: t('leave.requests.colActions'),
         size: 180,
         cell: ({ row }) => {
           if (row.original.status !== 'SUBMITTED') return null;
@@ -176,7 +177,7 @@ const LeaveRequestListPage: React.FC = () => {
                 className="text-success-600 hover:text-success-700"
               >
                 <CheckCircle size={14} className="mr-1" />
-                Утвердить
+                {t('leave.requests.actionApprove')}
               </Button>
               <Button
                 variant="ghost"
@@ -188,7 +189,7 @@ const LeaveRequestListPage: React.FC = () => {
                 className="text-danger-600 hover:text-danger-700"
               >
                 <XCircle size={14} className="mr-1" />
-                Отклонить
+                {t('leave.requests.actionRefuse')}
               </Button>
             </div>
           );
@@ -206,48 +207,48 @@ const LeaveRequestListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Заявки на отпуск"
-        subtitle={`${requests.length} заявок`}
+        title={t('leave.requests.title')}
+        subtitle={t('leave.requests.subtitleRequests', { count: String(requests.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Отпуска' },
-          { label: 'Заявки' },
+          { label: t('leave.requests.breadcrumbHome'), href: '/' },
+          { label: t('leave.requests.breadcrumbLeave') },
+          { label: t('leave.requests.breadcrumbRequests') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/leave/requests/new')}>
-            Новая заявка
+            {t('leave.requests.newRequest')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновики', count: tabCounts.draft },
-          { id: 'SUBMITTED', label: 'На рассмотрении', count: tabCounts.submitted },
-          { id: 'APPROVED', label: 'Утверждены', count: tabCounts.approved },
-          { id: 'REFUSED', label: 'Отклонены', count: tabCounts.refused },
+          { id: 'all', label: t('leave.requests.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('leave.requests.tabDrafts'), count: tabCounts.draft },
+          { id: 'SUBMITTED', label: t('leave.requests.tabSubmitted'), count: tabCounts.submitted },
+          { id: 'APPROVED', label: t('leave.requests.tabApproved'), count: tabCounts.approved },
+          { id: 'REFUSED', label: t('leave.requests.tabRefused'), count: tabCounts.refused },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Calendar size={18} />} label="Всего заявок" value={metrics.total} />
-        <MetricCard icon={<Clock size={18} />} label="Ожидают решения" value={metrics.pending} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Утверждено" value={metrics.approved} />
-        <MetricCard icon={<Calendar size={18} />} label="Дней отпуска (утв.)" value={metrics.totalDays} />
+        <MetricCard icon={<Calendar size={18} />} label={t('leave.requests.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<Clock size={18} />} label={t('leave.requests.metricPending')} value={metrics.pending} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('leave.requests.metricApproved')} value={metrics.approved} />
+        <MetricCard icon={<Calendar size={18} />} label={t('leave.requests.metricTotalDays')} value={metrics.totalDays} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, сотруднику..."
+            placeholder={t('leave.requests.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-48"
@@ -264,8 +265,8 @@ const LeaveRequestListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет заявок на отпуск"
-        emptyDescription="Создайте первую заявку на отпуск"
+        emptyTitle={t('leave.requests.emptyTitle')}
+        emptyDescription={t('leave.requests.emptyDescription')}
       />
     </div>
   );

@@ -57,10 +57,10 @@ const departmentOptions = [
 
 const projectOptions = [
   { value: '', label: t('forms.employee.noProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectGorizont') },
+  { value: '3', label: t('mockData.projectBridgeVyatka') },
+  { value: '6', label: t('mockData.projectTsCentralny') },
 ];
 
 const contractTypeOptions = [
@@ -146,16 +146,16 @@ const EmployeeFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.employee.sectionPersonal')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.employee.labelLastName')} error={errors.lastName?.message} required>
-              <Input placeholder="Иванов" hasError={!!errors.lastName} {...register('lastName')} />
+              <Input placeholder={t('forms.employee.placeholderLastName')} hasError={!!errors.lastName} {...register('lastName')} />
             </FormField>
             <FormField label={t('forms.employee.labelFirstName')} error={errors.firstName?.message} required>
-              <Input placeholder="Иван" hasError={!!errors.firstName} {...register('firstName')} />
+              <Input placeholder={t('forms.employee.placeholderFirstName')} hasError={!!errors.firstName} {...register('firstName')} />
             </FormField>
             <FormField label={t('forms.employee.labelMiddleName')} error={errors.middleName?.message}>
-              <Input placeholder="Иванович" hasError={!!errors.middleName} {...register('middleName')} />
+              <Input placeholder={t('forms.employee.placeholderMiddleName')} hasError={!!errors.middleName} {...register('middleName')} />
             </FormField>
             <FormField label={t('forms.employee.labelPosition')} error={errors.position?.message} required>
-              <Input placeholder="Инженер-строитель" hasError={!!errors.position} {...register('position')} />
+              <Input placeholder={t('forms.employee.placeholderPosition')} hasError={!!errors.position} {...register('position')} />
             </FormField>
             <FormField label={t('forms.employee.labelDepartment')} error={errors.departmentId?.message} required>
               <Select

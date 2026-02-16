@@ -14,10 +14,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "materials", indexes = {
-        @Index(name = "idx_material_code", columnList = "code", unique = true),
+        @Index(name = "idx_material_org", columnList = "organization_id"),
+        @Index(name = "idx_material_org_code", columnList = "organization_id, code", unique = true),
         @Index(name = "idx_material_category", columnList = "category"),
         @Index(name = "idx_material_active", columnList = "active")
 })
@@ -28,10 +30,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class Material extends BaseEntity {
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
-    @Column(name = "code", unique = true, length = 100)
+    @Column(name = "code", length = 100)
     private String code;
 
     @Enumerated(EnumType.STRING)

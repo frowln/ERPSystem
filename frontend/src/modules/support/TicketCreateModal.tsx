@@ -7,44 +7,45 @@ import { supportApi } from '@/api/support';
 import type { CreateTicketRequest } from './types';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/stores/authStore';
+import { t } from '@/i18n';
 
 interface TicketCreateModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const priorityOptions = [
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityOptions = () => [
+  { value: 'LOW', label: t('support.priorityLow') },
+  { value: 'MEDIUM', label: t('support.priorityMedium') },
+  { value: 'HIGH', label: t('support.priorityHigh') },
+  { value: 'CRITICAL', label: t('support.priorityCritical') },
 ];
 
-const categoryOptions = [
-  { value: 'TECHNICAL', label: 'Техническая' },
-  { value: 'ACCESS', label: 'Доступ' },
-  { value: 'DOCUMENTS', label: 'Документы' },
-  { value: 'EQUIPMENT', label: 'Оборудование' },
-  { value: 'SAFETY', label: 'Безопасность' },
-  { value: 'SCHEDULE', label: 'График' },
-  { value: 'OTHER', label: 'Прочее' },
+const getHardcodedCategoryOptions = () => [
+  { value: 'TECHNICAL', label: t('support.catTechnical') },
+  { value: 'ACCESS', label: t('support.catAccess') },
+  { value: 'DOCUMENTS', label: t('support.catDocuments') },
+  { value: 'EQUIPMENT', label: t('support.catEquipment') },
+  { value: 'SAFETY', label: t('support.catSafety') },
+  { value: 'SCHEDULE', label: t('support.catSchedule') },
+  { value: 'OTHER', label: t('support.catOther') },
 ];
 
-const fallbackCategoryOptions = [
-  { value: 'TECHNICAL', label: 'Техническая' },
-  { value: 'ACCESS', label: 'Доступ' },
-  { value: 'DOCUMENTS', label: 'Документы' },
-  { value: 'EQUIPMENT', label: 'Оборудование' },
-  { value: 'SAFETY', label: 'Безопасность' },
-  { value: 'SCHEDULE', label: 'График' },
-  { value: 'OTHER', label: 'Прочее' },
+const getFallbackCategoryOptions = () => [
+  { value: 'TECHNICAL', label: t('support.catTechnical') },
+  { value: 'ACCESS', label: t('support.catAccess') },
+  { value: 'DOCUMENTS', label: t('support.catDocuments') },
+  { value: 'EQUIPMENT', label: t('support.catEquipment') },
+  { value: 'SAFETY', label: t('support.catSafety') },
+  { value: 'SCHEDULE', label: t('support.catSchedule') },
+  { value: 'OTHER', label: t('support.catOther') },
 ];
 
 export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((state) => state.user);
   const fallbackReporterName = `${currentUser?.firstName ?? ''} ${currentUser?.lastName ?? ''}`.trim();
-  const reporterName = (currentUser?.fullName ?? fallbackReporterName) || currentUser?.email || 'Текущий пользователь';
+  const reporterName = (currentUser?.fullName ?? fallbackReporterName) || currentUser?.email || t('support.currentUser');
 
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
@@ -65,7 +66,7 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
           value: categoryRow.code,
           label: categoryRow.name,
         }))
-        : fallbackCategoryOptions
+        : getFallbackCategoryOptions()
     ),
     [categories],
   );
@@ -82,12 +83,12 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
     mutationFn: (payload: CreateTicketRequest) => supportApi.createTicket(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] });
-      toast.success('Заявка поддержки создана');
+      toast.success(t('support.ticketCreated'));
       resetForm();
       onClose();
     },
     onError: () => {
-      toast.error('Не удалось создать заявку поддержки');
+      toast.error(t('support.errorCreateTicket'));
     },
   });
 
@@ -104,7 +105,7 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
     const normalizedDescription = description.trim();
 
     if (!normalizedSubject || !normalizedDescription) {
-      toast.error('Тема и описание обязательны');
+      toast.error(t('support.validationRequired'));
       return;
     }
 
@@ -123,39 +124,39 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
     <Modal
       open={open}
       onClose={onClose}
-      title="Новая заявка поддержки"
-      description="Опишите вашу проблему или запрос"
+      title={t('support.createTitle')}
+      description={t('support.createDescription')}
       size="lg"
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Отмена
+            {t('support.createCancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={!subject || !description} loading={createMutation.isPending}>
-            Создать заявку
+            {t('support.createSubmit')}
           </Button>
         </>
       }
     >
       <div className="space-y-4">
-        <FormField label="Заявитель">
+        <FormField label={t('support.labelReporter')}>
           <Input
             value={reporterName}
             readOnly
           />
         </FormField>
 
-        <FormField label="Тема заявки" required>
+        <FormField label={t('support.labelSubjectField')} required>
           <Input
-            placeholder="Краткое описание проблемы"
+            placeholder={t('support.placeholderSubject')}
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
         </FormField>
 
-        <FormField label="Описание" required>
+        <FormField label={t('support.labelDescriptionField')} required>
           <Textarea
-            placeholder="Подробно опишите проблему или запрос..."
+            placeholder={t('support.placeholderDescription')}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
@@ -163,7 +164,7 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Категория" required>
+          <FormField label={t('support.labelCategory')} required>
             <Select
               options={categoryOptions}
               value={category}
@@ -171,16 +172,16 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
             />
           </FormField>
 
-          <FormField label="Приоритет" required>
+          <FormField label={t('support.labelPriorityField')} required>
             <Select
-              options={priorityOptions}
+              options={getPriorityOptions()}
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
             />
           </FormField>
         </div>
 
-        <FormField label="Желаемый срок решения">
+        <FormField label={t('support.labelDesiredDeadline')}>
           <Input
             type="date"
             value={dueDate}

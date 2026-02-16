@@ -242,9 +242,9 @@ const CrewPage: React.FC = () => {
           <FormField label={t('hr.crews.modalFieldProject')} required>
             <Select
               options={[
-                { value: 'p1', label: 'ЖК "Солнечный"' },
-                { value: 'p2', label: 'БЦ "Горизонт"' },
-                { value: 'p3', label: 'Мост через р. Вятка' },
+                { value: 'p1', label: t('mockData.projectSolnechny') },
+                { value: 'p2', label: t('mockData.projectGorizont') },
+                { value: 'p3', label: t('mockData.projectBridgeVyatka') },
               ]}
               placeholder={t('hr.crews.modalFieldProjectPlaceholder')}
             />

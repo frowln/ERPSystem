@@ -9,6 +9,7 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input } from '@/design-system/components/FormField';
 import { leaveApi } from '@/api/leave';
+import { t } from '@/i18n';
 import type { LeaveType } from './types';
 
 const LeaveTypesPage: React.FC = () => {
@@ -26,16 +27,16 @@ const LeaveTypesPage: React.FC = () => {
     if (!search) return types;
     const lower = search.toLowerCase();
     return types.filter(
-      (t) =>
-        t.name.toLowerCase().includes(lower) ||
-        t.code.toLowerCase().includes(lower),
+      (tp) =>
+        tp.name.toLowerCase().includes(lower) ||
+        tp.code.toLowerCase().includes(lower),
     );
   }, [types, search]);
 
   const metrics = useMemo(() => {
-    const active = types.filter((t) => t.isActive).length;
-    const paid = types.filter((t) => t.isPaid).length;
-    const totalEmployees = types.reduce((s, t) => s + t.employeeCount, 0);
+    const active = types.filter((tp) => tp.isActive).length;
+    const paid = types.filter((tp) => tp.isPaid).length;
+    const totalEmployees = types.reduce((s, tp) => s + tp.employeeCount, 0);
     return { total: types.length, active, paid, totalEmployees };
   }, [types]);
 
@@ -43,7 +44,7 @@ const LeaveTypesPage: React.FC = () => {
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('leave.types.colCode'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -51,7 +52,7 @@ const LeaveTypesPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('leave.types.colName'),
         size: 250,
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
@@ -65,39 +66,39 @@ const LeaveTypesPage: React.FC = () => {
       },
       {
         accessorKey: 'isPaid',
-        header: 'Оплата',
+        header: t('leave.types.colPaid'),
         size: 100,
         cell: ({ getValue }) => (
           <span className={`text-sm font-medium ${getValue<boolean>() ? 'text-success-600' : 'text-neutral-500 dark:text-neutral-400'}`}>
-            {getValue<boolean>() ? 'Оплачиваемый' : 'Без оплаты'}
+            {getValue<boolean>() ? t('leave.types.paidYes') : t('leave.types.paidNo')}
           </span>
         ),
       },
       {
         accessorKey: 'requiresApproval',
-        header: 'Согласование',
+        header: t('leave.types.colApproval'),
         size: 120,
         cell: ({ getValue }) => (
           <div className="flex items-center gap-1">
             {getValue<boolean>() ? (
-              <><CheckCircle size={14} className="text-warning-500" /><span className="text-sm text-neutral-700 dark:text-neutral-300">Требуется</span></>
+              <><CheckCircle size={14} className="text-warning-500" /><span className="text-sm text-neutral-700 dark:text-neutral-300">{t('leave.types.approvalRequired')}</span></>
             ) : (
-              <><XCircle size={14} className="text-neutral-400" /><span className="text-sm text-neutral-500 dark:text-neutral-400">Нет</span></>
+              <><XCircle size={14} className="text-neutral-400" /><span className="text-sm text-neutral-500 dark:text-neutral-400">{t('leave.types.approvalNo')}</span></>
             )}
           </div>
         ),
       },
       {
         accessorKey: 'maxDaysPerYear',
-        header: 'Макс. дней/год',
+        header: t('leave.types.colMaxDays'),
         size: 120,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">{getValue<number>() ?? 'Без лимита'}</span>
+          <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">{getValue<number>() ?? t('leave.types.noLimit')}</span>
         ),
       },
       {
         accessorKey: 'employeeCount',
-        header: 'Сотрудников',
+        header: t('leave.types.colEmployees'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm font-medium text-primary-600">{getValue<number>()}</span>
@@ -105,12 +106,12 @@ const LeaveTypesPage: React.FC = () => {
       },
       {
         accessorKey: 'isActive',
-        header: 'Активен',
+        header: t('leave.types.colActive'),
         size: 100,
         cell: ({ getValue }) => (
           <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${getValue<boolean>() ? 'bg-success-50 text-success-700' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${getValue<boolean>() ? 'bg-success-500' : 'bg-neutral-400'}`} />
-            {getValue<boolean>() ? 'Активен' : 'Неактивен'}
+            {getValue<boolean>() ? t('leave.types.activeYes') : t('leave.types.activeNo')}
           </span>
         ),
       },
@@ -126,32 +127,32 @@ const LeaveTypesPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Типы отпусков"
-        subtitle={`${types.length} типов`}
+        title={t('leave.types.title')}
+        subtitle={t('leave.types.subtitleTypes', { count: String(types.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Отпуска' },
-          { label: 'Типы' },
+          { label: t('leave.types.breadcrumbHome'), href: '/' },
+          { label: t('leave.types.breadcrumbLeave') },
+          { label: t('leave.types.breadcrumbTypes') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/leave/types/new')}>
-            Новый тип
+            {t('leave.types.newType')}
           </Button>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Tag size={18} />} label="Всего типов" value={metrics.total} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Активных" value={metrics.active} />
-        <MetricCard icon={<Tag size={18} />} label="Оплачиваемых" value={metrics.paid} />
-        <MetricCard icon={<Users size={18} />} label="Сотрудников" value={metrics.totalEmployees} />
+        <MetricCard icon={<Tag size={18} />} label={t('leave.types.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('leave.types.metricActive')} value={metrics.active} />
+        <MetricCard icon={<Tag size={18} />} label={t('leave.types.metricPaid')} value={metrics.paid} />
+        <MetricCard icon={<Users size={18} />} label={t('leave.types.metricEmployees')} value={metrics.totalEmployees} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, коду..."
+            placeholder={t('leave.types.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -167,8 +168,8 @@ const LeaveTypesPage: React.FC = () => {
         enableColumnVisibility
         enableDensityToggle
         pageSize={20}
-        emptyTitle="Нет типов отпусков"
-        emptyDescription="Создайте первый тип отпуска"
+        emptyTitle={t('leave.types.emptyTitle')}
+        emptyDescription={t('leave.types.emptyDescription')}
       />
     </div>
   );

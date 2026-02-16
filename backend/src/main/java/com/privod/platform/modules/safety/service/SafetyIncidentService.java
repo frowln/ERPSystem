@@ -1,6 +1,9 @@
 package com.privod.platform.modules.safety.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.safety.domain.IncidentSeverity;
 import com.privod.platform.modules.safety.domain.IncidentStatus;
 import com.privod.platform.modules.safety.domain.IncidentType;
@@ -20,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -30,28 +32,40 @@ import java.util.UUID;
 public class SafetyIncidentService {
 
     private final SafetyIncidentRepository incidentRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<IncidentResponse> listIncidents(UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (projectId != null) {
-            return incidentRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+            validateProjectTenant(projectId, organizationId);
+            return incidentRepository.findByOrganizationIdAndProjectIdAndDeletedFalse(organizationId, projectId, pageable)
                     .map(IncidentResponse::fromEntity);
         }
-        return incidentRepository.findAll(pageable).map(IncidentResponse::fromEntity);
+        return incidentRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
+                .map(IncidentResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public IncidentResponse getIncident(UUID id) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
         return IncidentResponse.fromEntity(incident);
     }
 
     @Transactional
     public IncidentResponse createIncident(CreateIncidentRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для инцидента");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         String number = generateIncidentNumber();
 
         SafetyIncident incident = SafetyIncident.builder()
+                .organizationId(organizationId)
                 .number(number)
                 .incidentDate(request.incidentDate())
                 .projectId(request.projectId())
@@ -81,12 +95,14 @@ public class SafetyIncidentService {
 
     @Transactional
     public IncidentResponse updateIncident(UUID id, UpdateIncidentRequest request) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
 
         if (request.incidentDate() != null) {
             incident.setIncidentDate(request.incidentDate());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             incident.setProjectId(request.projectId());
         }
         if (request.locationDescription() != null) {
@@ -150,7 +166,8 @@ public class SafetyIncidentService {
 
     @Transactional
     public IncidentResponse investigate(UUID id, UUID investigatorId, String investigatorName) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
 
         if (!incident.canTransitionTo(IncidentStatus.UNDER_INVESTIGATION)) {
             throw new IllegalStateException(
@@ -175,7 +192,8 @@ public class SafetyIncidentService {
 
     @Transactional
     public IncidentResponse addCorrectiveAction(UUID id, String rootCause, String correctiveAction) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
 
         if (!incident.canTransitionTo(IncidentStatus.CORRECTIVE_ACTION)) {
             throw new IllegalStateException(
@@ -200,7 +218,8 @@ public class SafetyIncidentService {
 
     @Transactional
     public IncidentResponse resolveIncident(UUID id) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
 
         if (!incident.canTransitionTo(IncidentStatus.RESOLVED)) {
             throw new IllegalStateException(
@@ -223,7 +242,8 @@ public class SafetyIncidentService {
 
     @Transactional
     public IncidentResponse closeIncident(UUID id) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
 
         if (!incident.canTransitionTo(IncidentStatus.CLOSED)) {
             throw new IllegalStateException(
@@ -245,7 +265,8 @@ public class SafetyIncidentService {
 
     @Transactional
     public void deleteIncident(UUID id) {
-        SafetyIncident incident = getIncidentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyIncident incident = getIncidentOrThrow(id, organizationId);
         incident.softDelete();
         incidentRepository.save(incident);
         auditService.logDelete("SafetyIncident", id);
@@ -254,46 +275,63 @@ public class SafetyIncidentService {
 
     @Transactional(readOnly = true)
     public Page<IncidentResponse> getProjectIncidents(UUID projectId, Pageable pageable) {
-        return incidentRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+        return incidentRepository.findByOrganizationIdAndProjectIdAndDeletedFalse(organizationId, projectId, pageable)
                 .map(IncidentResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public IncidentDashboardResponse getDashboard(UUID projectId) {
-        long totalIncidents = incidentRepository.countTotal(projectId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
+        }
+        long totalIncidents = incidentRepository.countTotal(organizationId, projectId);
 
         Map<String, Long> severityCounts = new HashMap<>();
-        for (Object[] row : incidentRepository.countBySeverity(projectId)) {
+        for (Object[] row : incidentRepository.countBySeverity(organizationId, projectId)) {
             IncidentSeverity sev = (IncidentSeverity) row[0];
             Long count = (Long) row[1];
             severityCounts.put(sev.name(), count);
         }
 
         Map<String, Long> typeCounts = new HashMap<>();
-        for (Object[] row : incidentRepository.countByType(projectId)) {
+        for (Object[] row : incidentRepository.countByType(organizationId, projectId)) {
             IncidentType type = (IncidentType) row[0];
             Long count = (Long) row[1];
             typeCounts.put(type.name(), count);
         }
 
         Map<String, Long> statusCounts = new HashMap<>();
-        for (Object[] row : incidentRepository.countByStatus(projectId)) {
+        for (Object[] row : incidentRepository.countByStatus(organizationId, projectId)) {
             IncidentStatus status = (IncidentStatus) row[0];
             Long count = (Long) row[1];
             statusCounts.put(status.name(), count);
         }
 
-        int totalWorkDaysLost = incidentRepository.sumWorkDaysLost(projectId);
+        int totalWorkDaysLost = incidentRepository.sumWorkDaysLost(organizationId, projectId);
 
         return new IncidentDashboardResponse(
                 totalIncidents, severityCounts, typeCounts, statusCounts, totalWorkDaysLost
         );
     }
 
-    private SafetyIncident getIncidentOrThrow(UUID id) {
-        return incidentRepository.findById(id)
-                .filter(i -> !i.isDeleted())
+    private SafetyIncident getIncidentOrThrow(UUID id, UUID organizationId) {
+        return incidentRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Инцидент не найден: " + id));
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
     }
 
     private String generateIncidentNumber() {

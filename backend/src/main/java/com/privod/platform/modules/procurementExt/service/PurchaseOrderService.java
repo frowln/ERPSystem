@@ -10,6 +10,7 @@ import com.privod.platform.modules.procurementExt.repository.PurchaseOrderReposi
 import com.privod.platform.modules.procurementExt.web.dto.PurchaseOrderBulkTransitionAction;
 import com.privod.platform.modules.procurementExt.web.dto.PurchaseOrderBulkTransitionResponse;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,8 +38,14 @@ public class PurchaseOrderService {
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
-    public Page<PurchaseOrder> listOrders(PurchaseOrderStatus status, UUID projectId,
-                                           UUID supplierId, Pageable pageable) {
+    public Page<PurchaseOrder> listOrders(
+            PurchaseOrderStatus status,
+            UUID projectId,
+            UUID supplierId,
+            UUID purchaseRequestId,
+            String search,
+            Pageable pageable
+    ) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Specification<PurchaseOrder> spec = Specification.where(notDeleted())
                 .and(tenantScope(organizationId));
@@ -50,6 +57,12 @@ public class PurchaseOrderService {
         }
         if (supplierId != null) {
             spec = spec.and((root, q, cb) -> cb.equal(root.get("supplierId"), supplierId));
+        }
+        if (purchaseRequestId != null) {
+            spec = spec.and((root, q, cb) -> cb.equal(root.get("purchaseRequestId"), purchaseRequestId));
+        }
+        if (StringUtils.hasText(search)) {
+            spec = spec.and(quickSearch(search));
         }
         return orderRepository.findAll(spec, pageable);
     }
@@ -321,6 +334,22 @@ public class PurchaseOrderService {
     }
 
     @Transactional
+    public PurchaseOrder invoiceOrder(UUID id) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PurchaseOrder order = getOrderOrThrow(id, organizationId);
+        if (order.getStatus() != PurchaseOrderStatus.DELIVERED) {
+            throw new IllegalStateException("Пометить как оплаченный можно только полностью доставленный заказ");
+        }
+
+        PurchaseOrderStatus old = order.getStatus();
+        order.setStatus(PurchaseOrderStatus.INVOICED);
+        order = orderRepository.save(order);
+        auditService.logStatusChange("PurchaseOrder", order.getId(), old.name(), PurchaseOrderStatus.INVOICED.name());
+        log.info("Purchase order invoiced: {} ({})", order.getOrderNumber(), order.getId());
+        return order;
+    }
+
+    @Transactional
     public PurchaseOrderBulkTransitionResponse bulkTransitionOrders(
             PurchaseOrderBulkTransitionAction action,
             List<UUID> orderIds
@@ -411,6 +440,7 @@ public class PurchaseOrderService {
         switch (action) {
             case SEND -> sendOrder(orderId);
             case CONFIRM -> confirmOrder(orderId);
+            case INVOICE -> invoiceOrder(orderId);
             case CANCEL -> cancelOrder(orderId);
             case CLOSE -> closeOrder(orderId);
         }
@@ -493,5 +523,40 @@ public class PurchaseOrderService {
 
     private static Specification<PurchaseOrder> tenantScope(UUID organizationId) {
         return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
+    }
+
+    private static Specification<PurchaseOrder> quickSearch(String rawSearch) {
+        String normalizedSearch = rawSearch.trim().toLowerCase();
+        String pattern = "%" + normalizedSearch + "%";
+        UUID parsedUuid = tryParseUuid(rawSearch);
+
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.like(cb.lower(root.get("orderNumber").as(String.class)), pattern));
+            predicates.add(cb.like(cb.lower(root.get("paymentTerms").as(String.class)), pattern));
+            predicates.add(cb.like(cb.lower(root.get("deliveryAddress").as(String.class)), pattern));
+            predicates.add(cb.like(cb.lower(root.get("notes").as(String.class)), pattern));
+            predicates.add(cb.like(cb.lower(root.get("status").as(String.class)), pattern));
+
+            if (parsedUuid != null) {
+                predicates.add(cb.equal(root.get("supplierId"), parsedUuid));
+                predicates.add(cb.equal(root.get("projectId"), parsedUuid));
+                predicates.add(cb.equal(root.get("purchaseRequestId"), parsedUuid));
+                predicates.add(cb.equal(root.get("contractId"), parsedUuid));
+            }
+
+            return cb.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private static UUID tryParseUuid(String value) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+        try {
+            return UUID.fromString(value.trim());
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

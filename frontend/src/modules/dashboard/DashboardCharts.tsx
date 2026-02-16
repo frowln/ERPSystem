@@ -115,7 +115,7 @@ const DashboardCharts: React.FC<DashboardChartsProps> = ({ projectsByStatus, bud
                   color: '#f8fafc',
                   padding: '8px 12px',
                 }}
-                formatter={(value: number) => [`${value} млн ₽`]}
+                formatter={(value: number) => [`${value} ${t('dashboard.millionRub')}`]}
               />
               <Bar dataKey="budget" name={t('dashboard.budgetLabel')} fill="#bfdbfe" radius={[4, 4, 0, 0]} barSize={24} />
               <Bar dataKey="actual" name={t('dashboard.actualLabel')} fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={24} />

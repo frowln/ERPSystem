@@ -10,6 +10,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { closeoutApi } from '@/api/closeout';
 import { formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { ChecklistStatus, CommissioningChecklist } from './types';
 
 type CmStatus = ChecklistStatus;
@@ -34,12 +35,12 @@ interface BoardColumn {
   collapsed: boolean;
 }
 
-const defaultColumns: BoardColumn[] = [
-  { id: 'NOT_STARTED', title: 'Не начато', color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
-  { id: 'IN_PROGRESS', title: 'В процессе', color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'ON_HOLD', title: 'Пауза', color: 'bg-orange-500', headerBg: 'bg-orange-50', collapsed: false },
-  { id: 'COMPLETED', title: 'Завершено', color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'FAILED', title: 'Не пройдено', color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
+const getDefaultColumns = (): BoardColumn[] => [
+  { id: 'NOT_STARTED', title: t('closeout.commBoardColumnNotStarted'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
+  { id: 'IN_PROGRESS', title: t('closeout.commBoardColumnInProgress'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
+  { id: 'ON_HOLD', title: t('closeout.commBoardColumnOnHold'), color: 'bg-orange-500', headerBg: 'bg-orange-50', collapsed: false },
+  { id: 'COMPLETED', title: t('closeout.commBoardColumnCompleted'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
+  { id: 'FAILED', title: t('closeout.commBoardColumnFailed'), color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
 ];
 
 function toCard(checklist: CommissioningChecklist): CmCard {
@@ -65,7 +66,7 @@ const CommissioningBoardPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [items, setItems] = useState<CmCard[]>([]);
-  const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
+  const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -98,7 +99,7 @@ const CommissioningBoardPage: React.FC = () => {
       ]);
     },
     onError: () => {
-      toast.error('Не удалось обновить статус чек-листа');
+      toast.error(t('closeout.commBoardStatusError'));
     },
   });
 
@@ -180,13 +181,13 @@ const CommissioningBoardPage: React.FC = () => {
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
       <PageHeader
-        title="Пусконаладка - Доска"
-        subtitle={`${items.length} объектов`}
+        title={t('closeout.commBoardTitle')}
+        subtitle={t('closeout.commBoardSubtitle', { count: String(items.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Завершение', href: '/closeout/dashboard' },
-          { label: 'Пусконаладка', href: '/closeout/commissioning' },
-          { label: 'Доска' },
+          { label: t('closeout.breadcrumbHome'), href: '/' },
+          { label: t('closeout.breadcrumbCloseout'), href: '/closeout/dashboard' },
+          { label: t('closeout.breadcrumbCommissioning'), href: '/closeout/commissioning' },
+          { label: t('closeout.breadcrumbBoard') },
         ]}
         actions={(
           <div className="flex items-center gap-2">
@@ -197,7 +198,7 @@ const CommissioningBoardPage: React.FC = () => {
               onClick={() => setShowFilters(!showFilters)}
               className={hasFilters ? 'border-primary-300 text-primary-600' : ''}
             >
-              Фильтры
+              {t('closeout.commBoardFilters')}
             </Button>
             <Button
               variant="secondary"
@@ -205,9 +206,9 @@ const CommissioningBoardPage: React.FC = () => {
               iconLeft={<List size={14} />}
               onClick={() => navigate('/closeout/commissioning')}
             >
-              Список
+              {t('closeout.commBoardListButton')}
             </Button>
-            <Button iconLeft={<Plus size={16} />}>Новый объект</Button>
+            <Button iconLeft={<Plus size={16} />}>{t('closeout.commBoardNewObject')}</Button>
           </div>
         )}
       />
@@ -217,7 +218,7 @@ const CommissioningBoardPage: React.FC = () => {
           <div className="relative flex-1 max-w-xs">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
             <Input
-              placeholder="Поиск по коду, названию, системе..."
+              placeholder={t('closeout.commBoardSearchPlaceholder')}
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               className="pl-9"
@@ -225,8 +226,8 @@ const CommissioningBoardPage: React.FC = () => {
           </div>
           <Select
             options={[
-              { value: '', label: 'Все статусы' },
-              ...defaultColumns.map((column) => ({ value: column.id, label: column.title })),
+              { value: '', label: t('closeout.commBoardAllStatuses') },
+              ...columns.map((column) => ({ value: column.id, label: column.title })),
             ]}
             value={filterStatus}
             onChange={(event) => setFilterStatus(event.target.value)}
@@ -242,7 +243,7 @@ const CommissioningBoardPage: React.FC = () => {
                 setFilterStatus('');
               }}
             >
-              Сбросить
+              {t('closeout.commBoardReset')}
             </Button>
           )}
         </div>
@@ -251,9 +252,9 @@ const CommissioningBoardPage: React.FC = () => {
       {isError && items.length === 0 ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить доску пусконаладки"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('closeout.commBoardErrorTitle')}
+          description={t('closeout.checkConnection')}
+          actionLabel={t('closeout.retryAction')}
           onAction={() => { void refetch(); }}
         />
       ) : (
@@ -295,8 +296,8 @@ const CommissioningBoardPage: React.FC = () => {
                   <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[100px]">
                     {columnItems.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <p className="text-xs text-neutral-400">{isLoading ? 'Загрузка...' : 'Нет объектов'}</p>
-                        {!isLoading && <p className="text-[10px] text-neutral-300 mt-0.5">Перетащите карточку сюда</p>}
+                        <p className="text-xs text-neutral-400">{isLoading ? t('closeout.commBoardLoading') : t('closeout.commBoardNoObjects')}</p>
+                        {!isLoading && <p className="text-[10px] text-neutral-300 mt-0.5">{t('closeout.commBoardDragHint')}</p>}
                       </div>
                     ) : (
                       columnItems.map((item) => (

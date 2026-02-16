@@ -385,7 +385,7 @@ const SettingsPage: React.FC = () => {
                   <FormField label={t('settings.page.fieldLanguage')}>
                     <Select
                       options={[
-                        { value: 'ru', label: 'Русский' },
+                        { value: 'ru', label: t('mockData.languageRussian') },
                         { value: 'en', label: 'English' },
                       ]}
                       value={companyForm.language}
@@ -395,11 +395,11 @@ const SettingsPage: React.FC = () => {
                   <FormField label={t('settings.page.fieldTimezone')}>
                     <Select
                       options={[
-                        { value: 'Europe/Moscow', label: 'Москва (UTC+3)' },
-                        { value: 'Europe/Samara', label: 'Самара (UTC+4)' },
-                        { value: 'Asia/Yekaterinburg', label: 'Екатеринбург (UTC+5)' },
-                        { value: 'Asia/Novosibirsk', label: 'Новосибирск (UTC+7)' },
-                        { value: 'Asia/Vladivostok', label: 'Владивосток (UTC+10)' },
+                        { value: 'Europe/Moscow', label: t('mockData.timezoneMoscow') },
+                        { value: 'Europe/Samara', label: t('mockData.timezoneSamara') },
+                        { value: 'Asia/Yekaterinburg', label: t('mockData.timezoneYekaterinburg') },
+                        { value: 'Asia/Novosibirsk', label: t('mockData.timezoneNovosibirsk') },
+                        { value: 'Asia/Vladivostok', label: t('mockData.timezoneVladivostok') },
                       ]}
                       value={companyForm.timezone}
                       onChange={(e) => setCompanyForm((prev) => ({ ...prev, timezone: e.target.value }))}

@@ -11,6 +11,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { Button } from '@/design-system/components/Button';
 import { portalApi } from '@/api/portal';
 import { formatDate, formatPercent, formatMoneyCompact } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PortalProject } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'orange'> = {
@@ -21,20 +22,20 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'ora
   COMPLETED: 'green',
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  PLANNING: 'Планирование',
-  IN_PROGRESS: 'В работе',
-  ON_HOLD: 'Приостановлен',
-  COMPLETED: 'Завершён',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('portal.projects.statusDraft'),
+  PLANNING: t('portal.projects.statusPlanning'),
+  IN_PROGRESS: t('portal.projects.statusInProgress'),
+  ON_HOLD: t('portal.projects.statusOnHold'),
+  COMPLETED: t('portal.projects.statusCompleted'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'IN_PROGRESS', label: 'В работе' },
-  { value: 'PLANNING', label: 'Планирование' },
-  { value: 'ON_HOLD', label: 'Приостановлен' },
-  { value: 'COMPLETED', label: 'Завершён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('portal.projects.statusAll') },
+  { value: 'IN_PROGRESS', label: t('portal.projects.statusInProgress') },
+  { value: 'PLANNING', label: t('portal.projects.statusPlanning') },
+  { value: 'ON_HOLD', label: t('portal.projects.statusOnHold') },
+  { value: 'COMPLETED', label: t('portal.projects.statusCompleted') },
 ];
 
 const PortalProjectListPage: React.FC = () => {
@@ -68,13 +69,15 @@ const PortalProjectListPage: React.FC = () => {
     openIssues: projects.reduce((s, p) => s + p.openIssueCount, 0),
   }), [projects]);
 
-  const columns = useMemo<ColumnDef<PortalProject, unknown>[]>(() => [
+  const columns = useMemo<ColumnDef<PortalProject, unknown>[]>(() => {
+    const statusLabels = getStatusLabels();
+    return [
     {
-      accessorKey: 'code', header: 'Код', size: 100,
+      accessorKey: 'code', header: t('portal.projects.colCode'), size: 100,
       cell: ({ getValue }) => <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>,
     },
     {
-      accessorKey: 'name', header: 'Название проекта', size: 250,
+      accessorKey: 'name', header: t('portal.projects.colName'), size: 250,
       cell: ({ row }) => (
         <div>
           <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[230px]">{row.original.name}</p>
@@ -83,11 +86,11 @@ const PortalProjectListPage: React.FC = () => {
       ),
     },
     {
-      accessorKey: 'status', header: 'Статус', size: 130,
+      accessorKey: 'status', header: t('portal.projects.colStatus'), size: 130,
       cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()] ?? getValue<string>()} />,
     },
     {
-      accessorKey: 'progress', header: 'Прогресс', size: 150,
+      accessorKey: 'progress', header: t('portal.projects.colProgress'), size: 150,
       cell: ({ getValue }) => {
         const val = getValue<number>();
         return (
@@ -101,22 +104,23 @@ const PortalProjectListPage: React.FC = () => {
       },
     },
     {
-      accessorKey: 'managerName', header: 'Руководитель', size: 150,
+      accessorKey: 'managerName', header: t('portal.projects.colManager'), size: 150,
       cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>,
     },
     {
-      accessorKey: 'documentCount', header: 'Документы', size: 100,
+      accessorKey: 'documentCount', header: t('portal.projects.colDocuments'), size: 100,
       cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300 tabular-nums">{getValue<number>()}</span>,
     },
     {
-      accessorKey: 'plannedEndDate', header: 'Срок', size: 110,
+      accessorKey: 'plannedEndDate', header: t('portal.projects.colDeadline'), size: 110,
       cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300 tabular-nums">{formatDate(getValue<string>())}</span>,
     },
     {
-      accessorKey: 'budget', header: 'Бюджет', size: 130,
+      accessorKey: 'budget', header: t('portal.projects.colBudget'), size: 130,
       cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300 tabular-nums">{formatMoneyCompact(getValue<number>())}</span>,
     },
-  ], []);
+  ];
+  }, []);
 
   const handleRowClick = useCallback(
     (project: PortalProject) => navigate(`/projects/${project.id}`),
@@ -126,28 +130,28 @@ const PortalProjectListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Проекты портала"
-        subtitle={`${projects.length} проектов доступно`}
+        title={t('portal.projects.title')}
+        subtitle={t('portal.projects.subtitle', { count: String(projects.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портал', href: '/portal' },
-          { label: 'Проекты' },
+          { label: t('portal.projects.breadcrumbHome'), href: '/' },
+          { label: t('portal.projects.breadcrumbPortal'), href: '/portal' },
+          { label: t('portal.projects.breadcrumbProjects') },
         ]}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FolderOpen size={18} />} label="Всего проектов" value={metrics.total} />
-        <MetricCard icon={<FolderOpen size={18} />} label="Активные" value={metrics.active} />
-        <MetricCard icon={<FileText size={18} />} label="Документов" value={metrics.totalDocs} />
-        <MetricCard icon={<AlertCircle size={18} />} label="Открытые замечания" value={metrics.openIssues} trend={metrics.openIssues > 0 ? { direction: 'down', value: 'Требуют внимания' } : undefined} />
+        <MetricCard icon={<FolderOpen size={18} />} label={t('portal.projects.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<FolderOpen size={18} />} label={t('portal.projects.metricActive')} value={metrics.active} />
+        <MetricCard icon={<FileText size={18} />} label={t('portal.projects.metricDocs')} value={metrics.totalDocs} />
+        <MetricCard icon={<AlertCircle size={18} />} label={t('portal.projects.metricOpenIssues')} value={metrics.openIssues} trend={metrics.openIssues > 0 ? { direction: 'down', value: t('portal.projects.trendNeedAttention') } : undefined} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по названию, коду..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('portal.projects.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={statusFilterOptions} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-48" />
+        <Select options={getStatusFilterOptions()} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-48" />
       </div>
 
       <DataTable<PortalProject>
@@ -159,8 +163,8 @@ const PortalProjectListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет доступных проектов"
-        emptyDescription="Проекты появятся после предоставления доступа"
+        emptyTitle={t('portal.projects.emptyTitle')}
+        emptyDescription={t('portal.projects.emptyDescription')}
       />
     </div>
   );

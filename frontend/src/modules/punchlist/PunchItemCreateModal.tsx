@@ -4,42 +4,43 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { punchlistApi } from '@/api/punchlist';
+import { t } from '@/i18n';
 
 interface PunchItemCreateModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const priorityOptions = [
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityOptions = () => [
+  { value: 'LOW', label: t('punchlist.priorityLow') },
+  { value: 'MEDIUM', label: t('punchlist.priorityMedium') },
+  { value: 'HIGH', label: t('punchlist.priorityHigh') },
+  { value: 'CRITICAL', label: t('punchlist.priorityCritical') },
 ];
 
-const categoryOptions = [
-  { value: 'STRUCTURAL', label: 'Конструктивные' },
-  { value: 'ARCHITECTURAL', label: 'Архитектурные' },
-  { value: 'MECHANICAL', label: 'Механические' },
-  { value: 'ELECTRICAL', label: 'Электрика' },
-  { value: 'PLUMBING', label: 'Водоснабжение' },
-  { value: 'FINISHING', label: 'Отделочные' },
-  { value: 'FIRE_SAFETY', label: 'Пожарная безопасность' },
-  { value: 'LANDSCAPING', label: 'Благоустройство' },
-  { value: 'OTHER', label: 'Прочее' },
+const getCategoryOptions = () => [
+  { value: 'STRUCTURAL', label: t('punchlist.catStructural') },
+  { value: 'ARCHITECTURAL', label: t('punchlist.catArchitectural') },
+  { value: 'MECHANICAL', label: t('punchlist.catMechanical') },
+  { value: 'ELECTRICAL', label: t('punchlist.catElectrical') },
+  { value: 'PLUMBING', label: t('punchlist.catPlumbing') },
+  { value: 'FINISHING', label: t('punchlist.catFinishing') },
+  { value: 'FIRE_SAFETY', label: t('punchlist.catFireSafety') },
+  { value: 'LANDSCAPING', label: t('punchlist.catLandscaping') },
+  { value: 'OTHER', label: t('punchlist.catOther') },
 ];
 
-const punchListOptions = [
-  { value: 'pl1', label: 'Замечания по секции А' },
-  { value: 'pl2', label: 'Замечания по паркингу' },
-  { value: 'pl3', label: 'Замечания по благоустройству' },
+const getPunchListOptions = () => [
+  { value: 'pl1', label: t('punchlist.listSectionA') },
+  { value: 'pl2', label: t('punchlist.listParking') },
+  { value: 'pl3', label: t('punchlist.listLandscaping') },
 ];
 
-const assigneeOptions = [
-  { value: 'u1', label: 'Иванов А.С.' },
-  { value: 'u2', label: 'Петров В.К.' },
-  { value: 'u3', label: 'Сидоров М.Н.' },
-  { value: 'u4', label: 'Козлов Д.А.' },
+const getAssigneeOptions = () => [
+  { value: 'u1', label: t('mockData.personIvanovAS') },
+  { value: 'u2', label: t('mockData.personPetrovVK') },
+  { value: 'u3', label: t('mockData.personSidorovMN') },
+  { value: 'u4', label: t('mockData.personKozlovDA') },
 ];
 
 export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open, onClose }) => {
@@ -86,41 +87,41 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
     <Modal
       open={open}
       onClose={onClose}
-      title="Новое замечание"
-      description="Добавьте замечание в перечень (Punch List)"
+      title={t('punchlist.modalTitle')}
+      description={t('punchlist.modalDescription')}
       size="lg"
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Отмена
+            {t('punchlist.modalCancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={!title || !description || !category || !location}>
-            Создать замечание
+            {t('punchlist.modalCreate')}
           </Button>
         </>
       }
     >
       <div className="space-y-4">
-        <FormField label="Punch List" required>
+        <FormField label={t('punchlist.labelPunchListField')} required>
           <Select
-            options={punchListOptions}
+            options={getPunchListOptions()}
             value={punchListId}
             onChange={(e) => setPunchListId(e.target.value)}
-            placeholder="Выберите перечень"
+            placeholder={t('punchlist.placeholderSelectList')}
           />
         </FormField>
 
-        <FormField label="Название замечания" required>
+        <FormField label={t('punchlist.labelTitleField')} required>
           <Input
-            placeholder="Краткое описание дефекта"
+            placeholder={t('punchlist.placeholderTitleField')}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </FormField>
 
-        <FormField label="Подробное описание" required>
+        <FormField label={t('punchlist.labelDescriptionField')} required>
           <Textarea
-            placeholder="Опишите замечание, укажите размеры, характер дефекта..."
+            placeholder={t('punchlist.placeholderDescriptionField')}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
@@ -128,42 +129,42 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Категория" required>
+          <FormField label={t('punchlist.labelCategoryField')} required>
             <Select
-              options={categoryOptions}
+              options={getCategoryOptions()}
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Выберите категорию"
+              placeholder={t('punchlist.placeholderSelectCategory')}
             />
           </FormField>
-          <FormField label="Приоритет" required>
+          <FormField label={t('punchlist.labelPriorityField')} required>
             <Select
-              options={priorityOptions}
+              options={getPriorityOptions()}
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
             />
           </FormField>
         </div>
 
-        <FormField label="Расположение" required>
+        <FormField label={t('punchlist.labelLocationField')} required>
           <Input
-            placeholder="Секция, этаж, помещение"
+            placeholder={t('punchlist.placeholderLocationField')}
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Этаж">
+          <FormField label={t('punchlist.labelFloorField')}>
             <Input
-              placeholder="Номер этажа"
+              placeholder={t('punchlist.placeholderFloorField')}
               value={floor}
               onChange={(e) => setFloor(e.target.value)}
             />
           </FormField>
-          <FormField label="Помещение / Квартира">
+          <FormField label={t('punchlist.labelRoomField')}>
             <Input
-              placeholder="Номер помещения"
+              placeholder={t('punchlist.placeholderRoomField')}
               value={room}
               onChange={(e) => setRoom(e.target.value)}
             />
@@ -171,15 +172,15 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Исполнитель">
+          <FormField label={t('punchlist.labelAssigneeField')}>
             <Select
-              options={assigneeOptions}
+              options={getAssigneeOptions()}
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
-              placeholder="Выберите исполнителя"
+              placeholder={t('punchlist.placeholderSelectAssignee')}
             />
           </FormField>
-          <FormField label="Срок устранения">
+          <FormField label={t('punchlist.labelDueDateField')}>
             <Input
               type="date"
               value={dueDate}

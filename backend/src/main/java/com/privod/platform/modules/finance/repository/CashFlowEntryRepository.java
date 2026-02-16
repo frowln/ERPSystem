@@ -12,12 +12,17 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface CashFlowEntryRepository extends JpaRepository<CashFlowEntry, UUID>, JpaSpecificationExecutor<CashFlowEntry> {
 
+    Optional<CashFlowEntry> findByIdAndDeletedFalse(UUID id);
+
     Page<CashFlowEntry> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
+
+    Page<CashFlowEntry> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);
 
     @Query("SELECT c FROM CashFlowEntry c WHERE c.projectId = :projectId " +
             "AND c.entryDate >= :dateFrom AND c.entryDate <= :dateTo " +

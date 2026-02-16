@@ -1,6 +1,7 @@
 import { apiClient } from './client';
 import type {
   PurchaseRequest,
+  PurchaseRequestItem,
   PurchaseRequestStatus,
   PaginatedResponse,
   PaginationParams,
@@ -8,8 +9,10 @@ import type {
 
 export interface ProcurementFilters extends PaginationParams {
   status?: PurchaseRequestStatus;
+  statuses?: PurchaseRequestStatus[];
   projectId?: string;
   priority?: string;
+  requestedById?: string;
   search?: string;
 }
 
@@ -23,6 +26,35 @@ export interface ProcurementDashboard {
   byPriority: { priority: string; count: number }[];
 }
 
+export interface PurchaseRequestCounters {
+  all: number;
+  my: number;
+  inApproval: number;
+  inWork: number;
+  delivered: number;
+}
+
+export interface CreatePurchaseRequestPayload {
+  requestDate: string;
+  projectId?: string;
+  contractId?: string;
+  specificationId?: string;
+  priority?: PurchaseRequest['priority'];
+  requestedById?: string;
+  requestedByName?: string;
+  notes?: string;
+}
+
+export interface CreatePurchaseRequestItemPayload {
+  specItemId?: string;
+  sequence?: number;
+  name: string;
+  quantity: number;
+  unitOfMeasure: string;
+  unitPrice?: number;
+  notes?: string;
+}
+
 export type PurchaseOrderStatus =
   | 'DRAFT'
   | 'SENT'
@@ -33,7 +65,7 @@ export type PurchaseOrderStatus =
   | 'CLOSED'
   | 'CANCELLED';
 
-export type PurchaseOrderBulkTransitionAction = 'SEND' | 'CONFIRM' | 'CANCEL' | 'CLOSE';
+export type PurchaseOrderBulkTransitionAction = 'SEND' | 'CONFIRM' | 'INVOICE' | 'CANCEL' | 'CLOSE';
 
 export interface PurchaseOrder {
   id: string;
@@ -126,11 +158,26 @@ export interface PurchaseOrderFilters extends PaginationParams {
   status?: PurchaseOrderStatus;
   projectId?: string;
   supplierId?: string;
+  purchaseRequestId?: string;
+  search?: string;
 }
 
 export const procurementApi = {
   getPurchaseRequests: async (params?: ProcurementFilters): Promise<PaginatedResponse<PurchaseRequest>> => {
-    const response = await apiClient.get<PaginatedResponse<PurchaseRequest>>('/procurement/requests', { params });
+    const { statuses, ...rest } = params ?? {};
+    const response = await apiClient.get<PaginatedResponse<PurchaseRequest>>('/procurement/requests', {
+      params: {
+        ...rest,
+        statuses: statuses && statuses.length > 0 ? statuses.join(',') : undefined,
+      },
+    });
+    return response.data;
+  },
+
+  getPurchaseRequestCounters: async (params?: Pick<ProcurementFilters, 'projectId' | 'priority' | 'requestedById' | 'search'>): Promise<PurchaseRequestCounters> => {
+    const response = await apiClient.get<PurchaseRequestCounters>('/procurement/requests/counters', {
+      params,
+    });
     return response.data;
   },
 
@@ -139,26 +186,48 @@ export const procurementApi = {
     return response.data;
   },
 
-  createPurchaseRequest: async (data: Partial<PurchaseRequest>): Promise<PurchaseRequest> => {
+  createPurchaseRequest: async (data: CreatePurchaseRequestPayload): Promise<PurchaseRequest> => {
     const response = await apiClient.post<PurchaseRequest>('/procurement/requests', data);
     return response.data;
   },
 
+  addPurchaseRequestItem: async (id: string, data: CreatePurchaseRequestItemPayload): Promise<PurchaseRequestItem> => {
+    const response = await apiClient.post<PurchaseRequestItem>(`/procurement/requests/${id}/items`, data);
+    return response.data;
+  },
+
   getProcurementDashboard: async (projectId?: string): Promise<ProcurementDashboard> => {
-    const response = await apiClient.get<ProcurementDashboard>('/procurement/dashboard', {
+    const response = await apiClient.get<ProcurementDashboard>('/procurement/requests/dashboard', {
       params: projectId ? { projectId } : undefined,
     });
     return response.data;
   },
 
   getMaterials: async (): Promise<{ id: string; name: string; unit: string }[]> => {
-    const response = await apiClient.get<{ id: string; name: string; unit: string }[]>('/procurement/materials');
-    return response.data;
+    const response = await apiClient.get<PaginatedResponse<{ id: string; name: string; unitOfMeasure: string }>>(
+      '/warehouse/materials',
+      { params: { page: 0, size: 500, sort: 'name,asc' } },
+    );
+    return response.data.content.map((material) => ({
+      id: material.id,
+      name: material.name,
+      unit: material.unitOfMeasure || 'шт',
+    }));
   },
 
   getSuppliers: async (): Promise<{ id: string; name: string; email: string; categories: string[] }[]> => {
-    const response = await apiClient.get<{ id: string; name: string; email: string; categories: string[] }[]>('/procurement/suppliers');
-    return response.data;
+    const response = await apiClient.get<Array<{
+      id: string;
+      name: string;
+      email?: string | null;
+      categories?: string[] | null;
+    }>>('/procurement/suppliers');
+    return response.data.map((supplier) => ({
+      id: supplier.id,
+      name: supplier.name,
+      email: supplier.email?.trim() ?? '',
+      categories: (supplier.categories ?? []).filter((category): category is string => category != null && category.trim().length > 0),
+    }));
   },
 
   sendPriceRequests: async (data: {
@@ -177,7 +246,55 @@ export const procurementApi = {
     comment?: string;
     conditions?: string;
   }): Promise<void> => {
-    await apiClient.post(`/procurement/requests/${id}/approve`, data);
+    if (data.decision === 'APPROVE') {
+      await apiClient.post(`/procurement/requests/${id}/approve`);
+      return;
+    }
+
+    const reason = data.comment?.trim() || data.conditions?.trim() || (
+      data.decision === 'RETURN' ? 'Возвращено на доработку' : 'Отклонено'
+    );
+    await apiClient.post(`/procurement/requests/${id}/reject`, { reason });
+  },
+
+  submitPurchaseRequest: async (id: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/submit`);
+    return response.data;
+  },
+
+  approvePurchaseRequestStatus: async (id: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/approve`);
+    return response.data;
+  },
+
+  rejectPurchaseRequest: async (id: string, reason: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/reject`, { reason });
+    return response.data;
+  },
+
+  assignPurchaseRequest: async (id: string, assignedToId: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/assign`, { assignedToId });
+    return response.data;
+  },
+
+  markPurchaseRequestOrdered: async (id: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/ordered`);
+    return response.data;
+  },
+
+  markPurchaseRequestDelivered: async (id: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/delivered`);
+    return response.data;
+  },
+
+  closePurchaseRequest: async (id: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/close`);
+    return response.data;
+  },
+
+  cancelPurchaseRequest: async (id: string): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>(`/procurement/requests/${id}/cancel`);
+    return response.data;
   },
 
   mergePurchaseRequests: async (data: {
@@ -273,6 +390,11 @@ export const procurementApi = {
 
   closePurchaseOrder: async (id: string): Promise<PurchaseOrder> => {
     const response = await apiClient.post<PurchaseOrder>(`/procurement/purchase-orders/${id}/close`);
+    return response.data;
+  },
+
+  invoicePurchaseOrder: async (id: string): Promise<PurchaseOrder> => {
+    const response = await apiClient.post<PurchaseOrder>(`/procurement/purchase-orders/${id}/invoice`);
     return response.data;
   },
 

@@ -9,6 +9,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { bimApi, type DesignPackage } from '@/api/bim';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red' | 'purple'> = {
   draft: 'gray',
@@ -18,24 +19,24 @@ const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red
   rejected: 'red',
   superseded: 'purple',
 };
-const statusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  issued: 'Выпущен',
-  in_review: 'На проверке',
-  approved: 'Утверждён',
-  rejected: 'Отклонён',
-  superseded: 'Заменён',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  draft: t('bim.packageStatusDraft'),
+  issued: t('bim.packageStatusIssued'),
+  in_review: t('bim.packageStatusInReview'),
+  approved: t('bim.packageStatusApproved'),
+  rejected: t('bim.packageStatusRejected'),
+  superseded: t('bim.packageStatusSuperseded'),
+});
 
-const sectionLabels: Record<string, string> = {
-  AR: 'Архитектурные решения',
-  KR: 'Конструкции',
-  OV: 'Отопление и вентиляция',
-  VK: 'Водоснабжение и канализация',
-  ES: 'Электроснабжение',
-  SS: 'Слаботочные системы',
-  GP: 'Генплан',
-};
+const getSectionLabels = (): Record<string, string> => ({
+  AR: t('bim.sectionAR'),
+  KR: t('bim.sectionKR'),
+  OV: t('bim.sectionOV'),
+  VK: t('bim.sectionVK'),
+  ES: t('bim.sectionES'),
+  SS: t('bim.sectionSS'),
+  GP: t('bim.sectionGP'),
+});
 
 const DesignPackagePage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -69,16 +70,19 @@ const DesignPackagePage: React.FC = () => {
     rejected: packages.filter((p) => p.status === 'REJECTED').length,
   }), [packages]);
 
-  const columns = useMemo<ColumnDef<DesignPackage, unknown>[]>(() => [
+  const columns = useMemo<ColumnDef<DesignPackage, unknown>[]>(() => {
+    const secLabels = getSectionLabels();
+    const stLabels = getStatusLabels();
+    return [
     {
       accessorKey: 'code',
-      header: 'Шифр',
+      header: t('bim.colCipher'),
       size: 100,
       cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'name',
-      header: 'Наименование',
+      header: t('bim.colPackageName'),
       size: 280,
       cell: ({ row }) => (
         <div>
@@ -89,61 +93,61 @@ const DesignPackagePage: React.FC = () => {
     },
     {
       accessorKey: 'section',
-      header: 'Раздел',
+      header: t('bim.colSection'),
       size: 180,
-      cell: ({ getValue }) => <span className="text-neutral-600">{sectionLabels[getValue<string>()] ?? getValue<string>()}</span>,
+      cell: ({ getValue }) => <span className="text-neutral-600">{secLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
       accessorKey: 'revision',
-      header: 'Ревизия',
+      header: t('bim.colRevision'),
       size: 80,
       cell: ({ getValue }) => <span className="font-mono text-xs">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'sheetsCount',
-      header: 'Листов',
+      header: t('bim.colSheets'),
       size: 80,
       cell: ({ getValue }) => <span className="tabular-nums">{getValue<number>()}</span>,
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('bim.colPackageStatus'),
       size: 130,
       cell: ({ getValue }) => (
-        <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()]} />
+        <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={stLabels[getValue<string>()]} />
       ),
     },
     {
       accessorKey: 'reviewer',
-      header: 'Проверяющий',
+      header: t('bim.colReviewerPackage'),
       size: 160,
     },
     {
       accessorKey: 'issueDate',
-      header: 'Дата выпуска',
+      header: t('bim.colIssueDate'),
       size: 120,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
-  ], []);
+  ]; }, []);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Проектные комплекты"
-        subtitle={`${packages.length} комплектов в системе`}
+        title={t('bim.packagesTitle')}
+        subtitle={t('bim.packagesSubtitle', { count: String(packages.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'BIM' },
-          { label: 'Проектные комплекты' },
+          { label: t('bim.breadcrumbHome'), href: '/' },
+          { label: t('bim.breadcrumbBim') },
+          { label: t('bim.breadcrumbPackages') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>Новый комплект</Button>
+          <Button iconLeft={<Plus size={16} />}>{t('bim.newPackage')}</Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'IN_REVIEW', label: 'На проверке', count: tabCounts.in_review },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
-          { id: 'REJECTED', label: 'Отклонённые', count: tabCounts.rejected },
+          { id: 'all', label: t('bim.tabAll'), count: tabCounts.all },
+          { id: 'IN_REVIEW', label: t('bim.tabInReview'), count: tabCounts.in_review },
+          { id: 'APPROVED', label: t('bim.tabApproved'), count: tabCounts.approved },
+          { id: 'REJECTED', label: t('bim.tabRejected'), count: tabCounts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -152,12 +156,12 @@ const DesignPackagePage: React.FC = () => {
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по названию, шифру..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('bim.searchPackagePlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все разделы' },
-            ...Object.entries(sectionLabels).map(([v, l]) => ({ value: v, label: l })),
+            { value: '', label: t('bim.filterAllSections') },
+            ...Object.entries(getSectionLabels()).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={sectionFilter}
           onChange={(e) => setSectionFilter(e.target.value)}
@@ -174,8 +178,8 @@ const DesignPackagePage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет комплектов"
-        emptyDescription="Создайте первый проектный комплект"
+        emptyTitle={t('bim.emptyPackagesTitle')}
+        emptyDescription={t('bim.emptyPackagesDescription')}
       />
     </div>
   );

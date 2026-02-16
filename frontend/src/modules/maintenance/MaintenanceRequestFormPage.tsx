@@ -29,13 +29,13 @@ const maintenanceRequestSchema = z.object({
 
 type MaintenanceRequestFormData = z.infer<typeof maintenanceRequestSchema>;
 
-const equipmentOptions = [
-  { value: 'eq1', label: 'Башенный кран КБ-403' },
-  { value: 'eq2', label: 'Экскаватор CAT 320' },
-  { value: 'eq3', label: 'Бетононасос Putzmeister BSA' },
-  { value: 'eq4', label: 'Компрессор Atlas Copco XAS' },
-  { value: 'eq5', label: 'Генератор Caterpillar DE220' },
-  { value: 'eq6', label: 'Сварочный аппарат Lincoln V350' },
+const getEquipmentOptions = () => [
+  { value: 'eq1', label: t('maintenance.equipmentOptionCrane') },
+  { value: 'eq2', label: t('maintenance.equipmentOptionExcavator') },
+  { value: 'eq3', label: t('maintenance.equipmentOptionPump') },
+  { value: 'eq4', label: t('maintenance.equipmentOptionCompressor') },
+  { value: 'eq5', label: t('maintenance.equipmentOptionGenerator') },
+  { value: 'eq6', label: t('maintenance.equipmentOptionWelder') },
 ];
 
 const priorityOptions = [
@@ -167,14 +167,14 @@ const MaintenanceRequestFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.maintenanceRequest.labelTitle')} error={errors.title?.message} required className="sm:col-span-2">
               <Input
-                placeholder="Замена подшипника лебёдки крана"
+                placeholder={t('maintenance.placeholderRequestTitle')}
                 hasError={!!errors.title}
                 {...register('title')}
               />
             </FormField>
             <FormField label={t('forms.maintenanceRequest.labelEquipment')} error={errors.equipmentId?.message} required>
               <Select
-                options={equipmentOptions}
+                options={getEquipmentOptions()}
                 placeholder={t('forms.maintenanceRequest.placeholderEquipment')}
                 hasError={!!errors.equipmentId}
                 {...register('equipmentId')}

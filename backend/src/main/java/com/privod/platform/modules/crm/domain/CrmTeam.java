@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "crm_teams", indexes = {
+        @Index(name = "idx_crm_team_org", columnList = "organization_id"),
         @Index(name = "idx_crm_team_leader", columnList = "leader_id"),
         @Index(name = "idx_crm_team_active", columnList = "is_active")
 })
@@ -25,6 +26,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrmTeam extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 200)
     private String name;

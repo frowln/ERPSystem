@@ -44,21 +44,21 @@ const getTypeOptions = () => [
   { value: 'RENTAL', label: t('costManagement.commitmentCreate.typeRental') },
 ];
 
-const vendorOptions = [
-  { value: 'ООО "СтройМонтаж"', label: 'ООО "СтройМонтаж"' },
-  { value: 'АО "ЭлектроСтрой"', label: 'АО "ЭлектроСтрой"' },
-  { value: 'ООО "БетонСервис"', label: 'ООО "БетонСервис"' },
-  { value: 'ООО "ПроектГрупп"', label: 'ООО "ПроектГрупп"' },
-  { value: 'АО "ДорСтрой"', label: 'АО "ДорСтрой"' },
-  { value: 'ПАО "МеталлТрейд"', label: 'ПАО "МеталлТрейд"' },
+const getVendorOptions = () => [
+  { value: t('common.mockVendors.stroyMontazh'), label: t('common.mockVendors.stroyMontazh') },
+  { value: t('common.mockVendors.elektroStroy'), label: t('common.mockVendors.elektroStroy') },
+  { value: t('common.mockVendors.betonServis'), label: t('common.mockVendors.betonServis') },
+  { value: t('common.mockVendors.proektGrupp'), label: t('common.mockVendors.proektGrupp') },
+  { value: t('common.mockVendors.dorStroy'), label: t('common.mockVendors.dorStroy') },
+  { value: t('common.mockVendors.metallTrade'), label: t('common.mockVendors.metallTrade') },
 ];
 
 const getContractOptions = () => [
   { value: '', label: t('costManagement.commitmentCreate.noContract') },
-  { value: 'c1', label: 'ДГ-2025-001' },
-  { value: 'c2', label: 'ДГ-2025-002' },
-  { value: 'c3', label: 'ДГ-2025-003' },
-  { value: 'c4', label: 'ДГ-2025-004' },
+  { value: 'c1', label: t('common.mockContracts.dg001Short') },
+  { value: 'c2', label: t('common.mockContracts.dg002Short') },
+  { value: 'c3', label: t('common.mockContracts.dg003Short') },
+  { value: 'c4', label: t('common.mockContracts.dg004Short') },
 ];
 
 export const CommitmentCreateModal: React.FC<CommitmentCreateModalProps> = ({ open, onClose }) => {
@@ -151,7 +151,7 @@ export const CommitmentCreateModal: React.FC<CommitmentCreateModalProps> = ({ op
           </FormField>
           <FormField label={t('costManagement.commitmentCreate.labelVendor')} error={errors.vendorName?.message} required>
             <Select
-              options={vendorOptions}
+              options={getVendorOptions()}
               placeholder={t('costManagement.commitmentCreate.placeholderVendor')}
               hasError={!!errors.vendorName}
               {...register('vendorName')}

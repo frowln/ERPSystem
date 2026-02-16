@@ -30,12 +30,12 @@ const riskOptions = [
   { value: 'CRITICAL', label: t('forms.taxRisk.riskLevels.critical') },
 ];
 
-const projectOptions = [
+const getProjectOptions = () => [
   { value: '', label: t('forms.taxRisk.noProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+  { value: '1', label: t('forms.taxRisk.projectSunny') },
+  { value: '2', label: t('forms.taxRisk.projectHorizon') },
+  { value: '3', label: t('forms.taxRisk.projectBridge') },
+  { value: '6', label: t('forms.taxRisk.projectCentral') },
 ];
 
 const TaxRiskFormPage: React.FC = () => {
@@ -124,10 +124,10 @@ const TaxRiskFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.common.basicInfo')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.taxRisk.labelName')} error={errors.name?.message} required className="sm:col-span-2">
-              <Input placeholder="Оценка рисков проекта Q1 2026" hasError={!!errors.name} {...register('name')} />
+              <Input placeholder={t('forms.taxRisk.placeholderName')} hasError={!!errors.name} {...register('name')} />
             </FormField>
             <FormField label={t('forms.taxRisk.labelProject')} error={errors.projectId?.message}>
-              <Select options={projectOptions} hasError={!!errors.projectId} {...register('projectId')} />
+              <Select options={getProjectOptions()} hasError={!!errors.projectId} {...register('projectId')} />
             </FormField>
             <FormField label={t('forms.taxRisk.labelAssessmentDate')} error={errors.assessmentDate?.message} required>
               <Input type="date" hasError={!!errors.assessmentDate} {...register('assessmentDate')} />

@@ -17,30 +17,31 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { legalApi } from '@/api/legal';
 import { formatDate, formatMoneyCompact } from '@/lib/format';
+import { t } from '@/i18n';
 import type { LegalCase } from './types';
 import type { PaginatedResponse } from '@/types';
 
 type TabId = 'all' | 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'OPEN', label: 'Открыто' },
-  { value: 'IN_PROGRESS', label: 'В работе' },
-  { value: 'ON_HOLD', label: 'Приостановлено' },
-  { value: 'RESOLVED', label: 'Решено' },
-  { value: 'CLOSED', label: 'Закрыто' },
-  { value: 'APPEAL', label: 'Апелляция' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('legal.filterAllStatuses') },
+  { value: 'DRAFT', label: t('legal.statusDraft') },
+  { value: 'OPEN', label: t('legal.caseStatusOpen') },
+  { value: 'IN_PROGRESS', label: t('legal.caseStatusInProgress') },
+  { value: 'ON_HOLD', label: t('legal.caseStatusOnHold') },
+  { value: 'RESOLVED', label: t('legal.caseStatusResolved') },
+  { value: 'CLOSED', label: t('legal.caseStatusClosed') },
+  { value: 'APPEAL', label: t('legal.caseStatusAppeal') },
 ];
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'LITIGATION', label: 'Судебное' },
-  { value: 'ARBITRATION', label: 'Арбитраж' },
-  { value: 'CLAIM', label: 'Претензия' },
-  { value: 'CONSULTATION', label: 'Консультация' },
-  { value: 'CONTRACT_DISPUTE', label: 'Договорной спор' },
-  { value: 'REGULATORY', label: 'Регуляторное' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('legal.filterAllTypes') },
+  { value: 'LITIGATION', label: t('legal.caseTypeLitigation') },
+  { value: 'ARBITRATION', label: t('legal.caseTypeArbitration') },
+  { value: 'CLAIM', label: t('legal.caseTypeClaim') },
+  { value: 'CONSULTATION', label: t('legal.caseTypeConsultation') },
+  { value: 'CONTRACT_DISPUTE', label: t('legal.caseTypeContractDispute') },
+  { value: 'REGULATORY', label: t('legal.caseTypeRegulatory') },
 ];
 
 
@@ -97,7 +98,7 @@ const LegalCaseListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('legal.colNumber'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -105,20 +106,20 @@ const LegalCaseListPage: React.FC = () => {
       },
       {
         accessorKey: 'title',
-        header: 'Дело',
+        header: t('legal.colCase'),
         size: 300,
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[280px]">{row.original.title}</p>
             {row.original.opposingParty && (
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Сторона: {row.original.opposingParty}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('legal.opposingPartyLabel')}: {row.original.opposingParty}</p>
             )}
           </div>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('legal.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -130,7 +131,7 @@ const LegalCaseListPage: React.FC = () => {
       },
       {
         accessorKey: 'caseType',
-        header: 'Тип',
+        header: t('legal.colType'),
         size: 150,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -142,7 +143,7 @@ const LegalCaseListPage: React.FC = () => {
       },
       {
         accessorKey: 'claimAmount',
-        header: 'Сумма иска',
+        header: t('legal.colClaimAmount'),
         size: 140,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -155,7 +156,7 @@ const LegalCaseListPage: React.FC = () => {
       },
       {
         accessorKey: 'assignedLawyerName',
-        header: 'Юрист',
+        header: t('legal.colLawyer'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -163,7 +164,7 @@ const LegalCaseListPage: React.FC = () => {
       },
       {
         accessorKey: 'hearingDate',
-        header: 'Заседание',
+        header: t('legal.colHearing'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600 text-xs">{formatDate(getValue<string>())}</span>
@@ -171,7 +172,7 @@ const LegalCaseListPage: React.FC = () => {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Создано',
+        header: t('legal.colCreated'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600 text-xs">{formatDate(getValue<string>())}</span>
@@ -189,48 +190,48 @@ const LegalCaseListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Юридические дела"
-        subtitle={`${cases.length} дел`}
+        title={t('legal.casesTitle')}
+        subtitle={t('legal.casesCount', { count: cases.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Юридический отдел' },
-          { label: 'Дела' },
+          { label: t('legal.breadcrumbHome'), href: '/' },
+          { label: t('legal.breadcrumbLegal') },
+          { label: t('legal.breadcrumbCases') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/legal/cases/new')}>
-            Новое дело
+            {t('legal.newCase')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'OPEN', label: 'Открытые', count: tabCounts.open },
-          { id: 'IN_PROGRESS', label: 'В работе', count: tabCounts.in_progress },
-          { id: 'RESOLVED', label: 'Решённые', count: tabCounts.resolved },
-          { id: 'CLOSED', label: 'Закрытые', count: tabCounts.closed },
+          { id: 'all', label: t('legal.tabAll'), count: tabCounts.all },
+          { id: 'OPEN', label: t('legal.tabOpen'), count: tabCounts.open },
+          { id: 'IN_PROGRESS', label: t('legal.tabInProgress'), count: tabCounts.in_progress },
+          { id: 'RESOLVED', label: t('legal.tabResolved'), count: tabCounts.resolved },
+          { id: 'CLOSED', label: t('legal.tabClosed'), count: tabCounts.closed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Scale size={18} />} label="Всего дел" value={metrics.total} />
-        <MetricCard icon={<Clock size={18} />} label="Активные" value={metrics.active} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Сумма исков" value={formatMoneyCompact(metrics.totalClaimAmount)} />
-        <MetricCard icon={<DollarSign size={18} />} label="Урегулировано" value={formatMoneyCompact(metrics.totalResolved)} />
+        <MetricCard icon={<Scale size={18} />} label={t('legal.metricTotalCases')} value={metrics.total} />
+        <MetricCard icon={<Clock size={18} />} label={t('legal.metricActiveCases')} value={metrics.active} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('legal.metricClaimAmount')} value={formatMoneyCompact(metrics.totalClaimAmount)} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('legal.metricResolved')} value={formatMoneyCompact(metrics.totalResolved)} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию, стороне..."
+            placeholder={t('legal.searchCasePlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={typeFilterOptions}
+          options={getTypeFilterOptions()}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="w-48"
@@ -247,8 +248,8 @@ const LegalCaseListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет юридических дел"
-        emptyDescription="Создайте первое дело для начала работы"
+        emptyTitle={t('legal.emptyCasesTitle')}
+        emptyDescription={t('legal.emptyCasesDescription')}
       />
     </div>
   );

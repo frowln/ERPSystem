@@ -67,11 +67,11 @@ const iconMap: Record<string, { icon: React.ElementType; color: string; bg: stri
 };
 
 // Fallback mock data when API is unavailable
-const fallbackIntegrations: IntegrationSummary[] = [
+const getFallbackIntegrations = (): IntegrationSummary[] => [
   {
     id: '1c',
-    name: '1С:Предприятие',
-    description: 'Синхронизация справочников, документов, бухгалтерских проводок и взаиморасчётов.',
+    name: t('mockData.integration1CName'),
+    description: t('mockData.integration1CDescription'),
     type: '1c',
     enabled: false,
     configured: false,
@@ -83,7 +83,7 @@ const fallbackIntegrations: IntegrationSummary[] = [
   {
     id: 'TELEGRAM',
     name: 'Telegram Bot',
-    description: 'Push-уведомления в Telegram, отправка отчётов и оповещений о задачах.',
+    description: t('mockData.integrationTelegramDescription'),
     type: 'TELEGRAM',
     enabled: false,
     configured: false,
@@ -94,8 +94,8 @@ const fallbackIntegrations: IntegrationSummary[] = [
   },
   {
     id: 'SBIS',
-    name: 'СБИС',
-    description: 'Документооборот через СБИС: отправка, приём и подписание первичных документов.',
+    name: t('mockData.integrationSBISName'),
+    description: t('mockData.integrationSBISDescription'),
     type: 'SBIS',
     enabled: false,
     configured: false,
@@ -106,8 +106,8 @@ const fallbackIntegrations: IntegrationSummary[] = [
   },
   {
     id: 'EDO',
-    name: 'ЭДО (Диадок / Контур)',
-    description: 'Электронный документооборот: отправка и получение документов через ЭДО.',
+    name: t('mockData.integrationEDOName'),
+    description: t('mockData.integrationEDODescription'),
     type: 'EDO',
     enabled: false,
     configured: false,
@@ -174,10 +174,10 @@ const OneCConfigModal: React.FC<ConfigModalProps> = ({ onClose, onSaved }) => {
   return (
     <div className="space-y-4">
       <FormField label={t('settings.integrations.fieldConfigName')} required>
-        <Input placeholder="Основная 1С" value={form.name}
+        <Input placeholder={t('mockData.placeholder1CMain')} value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })} />
       </FormField>
-      <FormField label={t('settings.integrations.fieldServerUrl')} required hint="Например: http://server:8080/1c">
+      <FormField label={t('settings.integrations.fieldServerUrl')} required hint={t('mockData.hintServerUrl')}>
         <Input placeholder="http://1c-server:8080" value={form.baseUrl}
           onChange={(e) => setForm({ ...form, baseUrl: e.target.value })} />
       </FormField>
@@ -309,7 +309,7 @@ const SbisConfigModal: React.FC<ConfigModalProps> = ({ onClose, onSaved }) => {
   return (
     <div className="space-y-4">
       <FormField label={t('settings.integrations.fieldConfigName')} required>
-        <Input placeholder="СБИС основной" value={form.name}
+        <Input placeholder={t('mockData.placeholderSBISMain')} value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })} />
       </FormField>
       <FormField label={t('settings.integrations.fieldSbisApiUrl')} required>
@@ -404,7 +404,7 @@ const IntegrationsPage: React.FC = () => {
         return await integrationsApi.getSettings();
       } catch {
         return {
-          integrations: fallbackIntegrations,
+          integrations: getFallbackIntegrations(),
           totalConfigured: 0,
           totalConnected: 0,
           lastGlobalSync: null,
@@ -414,7 +414,7 @@ const IntegrationsPage: React.FC = () => {
     refetchInterval: 30000,
   });
 
-  const integrations: IntegrationCardData[] = (settingsData?.integrations ?? fallbackIntegrations).map((item) => ({
+  const integrations: IntegrationCardData[] = (settingsData?.integrations ?? getFallbackIntegrations()).map((item) => ({
     ...item,
     icon: iconMap[item.id]?.icon ?? FileText,
     iconColor: iconMap[item.id]?.color ?? 'text-neutral-600',
@@ -496,7 +496,7 @@ const IntegrationsPage: React.FC = () => {
         <MetricCard
           icon={<Link2 size={18} />}
           label={t('settings.integrations.metricConnected')}
-          value={`${connectedCount} из ${integrations.length}`}
+          value={t('mockData.connectedOf', { connected: String(connectedCount), total: String(integrations.length) })}
         />
         <MetricCard
           icon={<CheckCircle2 size={18} />}

@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { CheckCircle2, Lock, Search, Send, ShoppingCart, XCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, FileText, Lock, Search, Send, ShoppingCart, XCircle } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -17,19 +17,20 @@ import {
   type PurchaseOrderBulkTransitionAction,
   type PurchaseOrderStatus,
 } from '@/api/procurement';
+import { projectsApi } from '@/api/projects';
 import { formatDate, formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 
-const statusLabels: Record<PurchaseOrderStatus, string> = {
-  DRAFT: 'Черновик',
-  SENT: 'Отправлен',
-  CONFIRMED: 'Подтверждён',
-  PARTIALLY_DELIVERED: 'Частично доставлен',
-  DELIVERED: 'Доставлен',
-  INVOICED: 'Оплачен',
-  CLOSED: 'Закрыт',
-  CANCELLED: 'Отменён',
-};
+const getStatusLabels = (): Record<PurchaseOrderStatus, string> => ({
+  DRAFT: t('procurement.orderStatus.draft'),
+  SENT: t('procurement.orderStatus.sent'),
+  CONFIRMED: t('procurement.orderStatus.confirmed'),
+  PARTIALLY_DELIVERED: t('procurement.orderStatus.partiallyDelivered'),
+  DELIVERED: t('procurement.orderStatus.delivered'),
+  INVOICED: t('procurement.orderStatus.invoiced'),
+  CLOSED: t('procurement.orderStatus.closed'),
+  CANCELLED: t('procurement.orderStatus.cancelled'),
+});
 
 const statusColorMap: Record<PurchaseOrderStatus, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   DRAFT: 'gray',
@@ -42,37 +43,42 @@ const statusColorMap: Record<PurchaseOrderStatus, 'gray' | 'blue' | 'green' | 'y
   CANCELLED: 'red',
 };
 
-type OrderAction = 'send' | 'confirm' | 'cancel' | 'close';
+type OrderAction = 'send' | 'confirm' | 'invoice' | 'cancel' | 'close';
 
-const actionLabelMap: Record<OrderAction, string> = {
-  send: 'Отправить',
-  confirm: 'Подтвердить',
-  cancel: 'Отменить',
-  close: 'Закрыть',
-};
+const getActionLabelMap = (): Record<OrderAction, string> => ({
+  send: t('procurement.orderAction.send'),
+  confirm: t('procurement.orderAction.confirm'),
+  invoice: t('procurement.orderAction.invoice'),
+  cancel: t('procurement.orderAction.cancel'),
+  close: t('procurement.orderAction.close'),
+});
 
-const actionSuccessMap: Record<OrderAction, string> = {
-  send: 'Заказ отправлен поставщику',
-  confirm: 'Заказ подтверждён',
-  cancel: 'Заказ отменён',
-  close: 'Заказ закрыт',
-};
+const getActionSuccessMap = (): Record<OrderAction, string> => ({
+  send: t('procurement.orderAction.sendSuccess'),
+  confirm: t('procurement.orderAction.confirmSuccess'),
+  invoice: t('procurement.orderAction.invoiceSuccess'),
+  cancel: t('procurement.orderAction.cancelSuccess'),
+  close: t('procurement.orderAction.closeSuccess'),
+});
 
-const actionBulkSuccessMap: Record<OrderAction, string> = {
-  send: 'Заказы отправлены поставщикам',
-  confirm: 'Заказы подтверждены',
-  cancel: 'Заказы отменены',
-  close: 'Заказы закрыты',
-};
+const getActionBulkSuccessMap = (): Record<OrderAction, string> => ({
+  send: t('procurement.orderAction.bulkSendSuccess'),
+  confirm: t('procurement.orderAction.bulkConfirmSuccess'),
+  invoice: t('procurement.orderAction.bulkInvoiceSuccess'),
+  cancel: t('procurement.orderAction.bulkCancelSuccess'),
+  close: t('procurement.orderAction.bulkCloseSuccess'),
+});
 
 const actionBulkMap: Record<OrderAction, PurchaseOrderBulkTransitionAction> = {
   send: 'SEND',
   confirm: 'CONFIRM',
+  invoice: 'INVOICE',
   cancel: 'CANCEL',
   close: 'CLOSE',
 };
 
 const shortUuid = (value?: string) => (value ? `${value.slice(0, 8)}…` : '—');
+const isUuidLike = (value: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.trim());
 
 const getAvailableActions = (status: PurchaseOrderStatus): OrderAction[] => {
   switch (status) {
@@ -81,6 +87,7 @@ const getAvailableActions = (status: PurchaseOrderStatus): OrderAction[] => {
     case 'SENT':
       return ['confirm', 'cancel'];
     case 'DELIVERED':
+      return ['invoice', 'close'];
     case 'INVOICED':
       return ['close'];
     default:
@@ -96,12 +103,73 @@ type BulkTransitionVariables = {
 
 const PurchaseOrderListPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const confirm = useConfirmDialog();
   const queryClient = useQueryClient();
 
+  const initialPurchaseRequestFilter = searchParams.get('purchaseRequestId')?.trim() ?? '';
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<PurchaseOrderStatus | ''>('');
+  const [supplierFilter, setSupplierFilter] = useState('');
+  const [projectFilter, setProjectFilter] = useState('');
+  const [purchaseRequestFilter, setPurchaseRequestFilter] = useState(initialPurchaseRequestFilter);
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
+
+  const normalizedPurchaseRequestFilter = purchaseRequestFilter.trim();
+  const purchaseRequestFilterParam = isUuidLike(normalizedPurchaseRequestFilter)
+    ? normalizedPurchaseRequestFilter
+    : undefined;
+  const searchParamsString = searchParams.toString();
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 350);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [search]);
+
+  useEffect(() => {
+    const next = new URLSearchParams(searchParamsString);
+    if (purchaseRequestFilterParam) {
+      next.set('purchaseRequestId', purchaseRequestFilterParam);
+    } else {
+      next.delete('purchaseRequestId');
+    }
+    if (next.toString() !== searchParamsString) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [purchaseRequestFilterParam, searchParamsString, setSearchParams]);
+
+  const { data: suppliers = [] } = useQuery({
+    queryKey: ['procurement-suppliers'],
+    queryFn: procurementApi.getSuppliers,
+  });
+
+  const { data: projectsResponse } = useQuery({
+    queryKey: ['projects', 'purchase-order-list'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 300, sort: 'name,asc' }),
+  });
+  const projects = projectsResponse?.content ?? [];
+
+  const supplierOptions = useMemo(
+    () => [{ value: '', label: t('procurement.orderList.allSuppliers') }, ...suppliers.map((supplier) => ({ value: supplier.id, label: supplier.name }))],
+    [suppliers],
+  );
+  const projectOptions = useMemo(
+    () => [{ value: '', label: t('procurement.orderList.allProjects') }, ...projects.map((project) => ({ value: project.id, label: project.name }))],
+    [projects],
+  );
+  const supplierNameById = useMemo(
+    () => new Map(suppliers.map((supplier) => [supplier.id, supplier.name])),
+    [suppliers],
+  );
+  const projectNameById = useMemo(
+    () => new Map(projects.map((project) => [project.id, project.name])),
+    [projects],
+  );
 
   const {
     data,
@@ -109,13 +177,17 @@ const PurchaseOrderListPage: React.FC = () => {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ['purchase-orders', statusFilter],
+    queryKey: ['purchase-orders', statusFilter, supplierFilter, projectFilter, purchaseRequestFilterParam, debouncedSearch],
     queryFn: () =>
       procurementApi.getPurchaseOrders({
         page: 0,
         size: 300,
         sort: 'createdAt,desc',
         status: statusFilter || undefined,
+        supplierId: supplierFilter || undefined,
+        projectId: projectFilter || undefined,
+        purchaseRequestId: purchaseRequestFilterParam,
+        search: debouncedSearch || undefined,
       }),
   });
 
@@ -128,6 +200,8 @@ const PurchaseOrderListPage: React.FC = () => {
           return procurementApi.sendPurchaseOrder(order.id);
         case 'confirm':
           return procurementApi.confirmPurchaseOrder(order.id);
+        case 'invoice':
+          return procurementApi.invoicePurchaseOrder(order.id);
         case 'cancel':
           return procurementApi.cancelPurchaseOrder(order.id);
         case 'close':
@@ -137,15 +211,15 @@ const PurchaseOrderListPage: React.FC = () => {
     },
     onMutate: ({ order, action }) => {
       setPendingOrderId(order.id);
-      toast.loading(`${actionLabelMap[action]}...`, { id: 'purchase-order-transition' });
+      toast.loading(`${getActionLabelMap()[action]}...`, { id: 'purchase-order-transition' });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
       queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
-      toast.success(actionSuccessMap[variables.action], { id: 'purchase-order-transition' });
+      toast.success(getActionSuccessMap()[variables.action], { id: 'purchase-order-transition' });
     },
     onError: () => {
-      toast.error('Не удалось обновить статус заказа', { id: 'purchase-order-transition' });
+      toast.error(t('procurement.orderList.errorStatusUpdate'), { id: 'purchase-order-transition' });
     },
     onSettled: () => {
       setPendingOrderId(null);
@@ -160,16 +234,16 @@ const PurchaseOrderListPage: React.FC = () => {
       });
     },
     onMutate: ({ action }) => {
-      toast.loading(`${actionLabelMap[action]} (массово)...`, { id: 'purchase-order-bulk-transition' });
+      toast.loading(`${getActionLabelMap()[action]} (${t('procurement.orderList.bulk')})...`, { id: 'purchase-order-bulk-transition' });
     },
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
       queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
 
       const skippedCount = variables.skippedOrders.length;
-      const successParts = [`${actionBulkSuccessMap[variables.action]}: ${response.successCount}`];
+      const successParts = [`${getActionBulkSuccessMap()[variables.action]}: ${response.successCount}`];
       if (skippedCount > 0) {
-        successParts.push(`пропущено: ${skippedCount}`);
+        successParts.push(`${t('procurement.orderList.skipped')}: ${skippedCount}`);
       }
       toast.success(successParts.join(', '), { id: 'purchase-order-bulk-transition' });
 
@@ -180,13 +254,13 @@ const PurchaseOrderListPage: React.FC = () => {
           .map((error) => `${orderNumberById.get(error.orderId) ?? shortUuid(error.orderId)}: ${error.message}`)
           .join(' | ');
         const overflow = response.failedCount > 3 ? ` (+${response.failedCount - 3})` : '';
-        toast.error(`Ошибок: ${response.failedCount}. ${details}${overflow}`, {
+        toast.error(`${t('procurement.orderList.errors')}: ${response.failedCount}. ${details}${overflow}`, {
           id: 'purchase-order-bulk-transition-errors',
         });
       }
     },
     onError: () => {
-      toast.error('Не удалось выполнить массовое действие', { id: 'purchase-order-bulk-transition' });
+      toast.error(t('procurement.orderList.errorBulkAction'), { id: 'purchase-order-bulk-transition' });
     },
   });
 
@@ -197,7 +271,7 @@ const PurchaseOrderListPage: React.FC = () => {
 
     const eligibleOrders = selectedRows.filter((order) => getAvailableActions(order.status).includes(action));
     if (eligibleOrders.length === 0) {
-      toast.error(`Нет заказов в статусе, подходящем для действия "${actionLabelMap[action]}"`);
+      toast.error(`${t('procurement.orderList.errorNoEligible')} "${getActionLabelMap()[action]}"`);
       return;
     }
 
@@ -206,41 +280,48 @@ const PurchaseOrderListPage: React.FC = () => {
 
     const dialogMeta = action === 'send'
       ? {
-        title: 'Отправить выбранные заказы?',
-        description: 'Будут отправлены только заказы в статусе "Черновик".',
-        confirmLabel: 'Отправить',
+        title: t('procurement.orderList.bulkSendTitle'),
+        description: t('procurement.orderList.bulkSendDescription'),
+        confirmLabel: t('procurement.orderAction.send'),
       }
       : action === 'confirm'
         ? {
-          title: 'Подтвердить выбранные заказы?',
-          description: 'Будут подтверждены только заказы в статусе "Отправлен".',
-          confirmLabel: 'Подтвердить',
+          title: t('procurement.orderList.bulkConfirmTitle'),
+          description: t('procurement.orderList.bulkConfirmDescription'),
+          confirmLabel: t('procurement.orderAction.confirm'),
         }
+        : action === 'invoice'
+          ? {
+            title: t('procurement.orderList.bulkInvoiceTitle'),
+            description: t('procurement.orderList.bulkInvoiceDescription'),
+            confirmLabel: t('procurement.orderList.bulkInvoiceConfirmLabel'),
+          }
         : action === 'close'
           ? {
-            title: 'Закрыть выбранные заказы?',
-            description: 'Будут закрыты только полностью доставленные или оплаченные заказы.',
-            confirmLabel: 'Закрыть',
+            title: t('procurement.orderList.bulkCloseTitle'),
+            description: t('procurement.orderList.bulkCloseDescription'),
+            confirmLabel: t('procurement.orderAction.close'),
           }
           : {
-            title: 'Отменить выбранные заказы?',
-            description: 'Подходящие заказы будут переведены в статус "Отменён".',
-            confirmLabel: 'Отменить',
+            title: t('procurement.orderList.bulkCancelTitle'),
+            description: t('procurement.orderList.bulkCancelDescription'),
+            confirmLabel: t('procurement.orderAction.cancel'),
             confirmVariant: 'danger' as const,
           };
 
     const description = skippedOrders.length > 0
-      ? `${dialogMeta.description} Пропущено неподходящих: ${skippedOrders.length}.`
+      ? `${dialogMeta.description} ${t('procurement.orderList.skippedIneligible')}: ${skippedOrders.length}.`
       : dialogMeta.description;
 
     void (async () => {
+      const statusLbls = getStatusLabels();
       const isConfirmed = await confirm({
-        title: `${dialogMeta.title} (${eligibleOrders.length} из ${selectedRows.length})`,
+        title: `${dialogMeta.title} (${eligibleOrders.length} ${t('procurement.orderList.outOf')} ${selectedRows.length})`,
         description,
         confirmLabel: dialogMeta.confirmLabel,
         cancelLabel: t('common.cancel'),
         confirmVariant: dialogMeta.confirmVariant,
-        items: eligibleOrders.slice(0, 5).map((order) => `${order.orderNumber} — ${statusLabels[order.status]}`),
+        items: eligibleOrders.slice(0, 5).map((order) => `${order.orderNumber} — ${statusLbls[order.status]}`),
       });
       if (!isConfirmed) {
         return;
@@ -250,31 +331,11 @@ const PurchaseOrderListPage: React.FC = () => {
     })();
   };
 
-  const filtered = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
-    if (!normalizedSearch) {
-      return orders;
-    }
-
-    return orders.filter((order) => {
-      const haystack = [
-        order.orderNumber,
-        order.supplierId,
-        order.projectId ?? '',
-        order.purchaseRequestId ?? '',
-        order.status,
-      ]
-        .join(' ')
-        .toLowerCase();
-      return haystack.includes(normalizedSearch);
-    });
-  }, [orders, search]);
-
   const columns = useMemo<ColumnDef<PurchaseOrder, unknown>[]>(
     () => [
       {
         accessorKey: 'orderNumber',
-        header: '№ заказа',
+        header: t('procurement.orderList.colOrderNumber'),
         size: 170,
         cell: ({ row, getValue }) => (
           <button
@@ -291,50 +352,72 @@ const PurchaseOrderListPage: React.FC = () => {
       },
       {
         accessorKey: 'orderDate',
-        header: 'Дата',
+        header: t('procurement.orderList.colDate'),
         size: 120,
         cell: ({ getValue }) => formatDate(getValue<string>()),
       },
       {
         accessorKey: 'supplierId',
-        header: 'Поставщик',
+        header: t('procurement.orderList.colSupplier'),
         size: 180,
-        cell: ({ getValue }) => (
-          <span className="text-sm text-neutral-700 dark:text-neutral-300">{shortUuid(getValue<string>())}</span>
-        ),
+        cell: ({ getValue }) => {
+          const supplierId = getValue<string>();
+          const supplierName = supplierNameById.get(supplierId);
+          return (
+            <div className="leading-tight">
+              <p className="text-sm text-neutral-800 dark:text-neutral-100">{supplierName ?? shortUuid(supplierId)}</p>
+              {supplierName && (
+                <p className="text-[11px] text-neutral-500 dark:text-neutral-400 font-mono">{shortUuid(supplierId)}</p>
+              )}
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'projectId',
-        header: 'Проект',
+        header: t('procurement.orderList.colProject'),
         size: 150,
-        cell: ({ getValue }) => (
-          <span className="text-sm text-neutral-700 dark:text-neutral-300">{shortUuid(getValue<string>() || undefined)}</span>
-        ),
+        cell: ({ getValue }) => {
+          const projectId = getValue<string>() || '';
+          if (!projectId) {
+            return <span className="text-sm text-neutral-500">—</span>;
+          }
+          const projectName = projectNameById.get(projectId);
+          return (
+            <div className="leading-tight">
+              <p className="text-sm text-neutral-800 dark:text-neutral-100">{projectName ?? shortUuid(projectId)}</p>
+              {projectName && (
+                <p className="text-[11px] text-neutral-500 dark:text-neutral-400 font-mono">{shortUuid(projectId)}</p>
+              )}
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'expectedDeliveryDate',
-        header: 'План поставки',
+        header: t('procurement.orderList.colDeliveryPlan'),
         size: 140,
         cell: ({ getValue }) => formatDate((getValue<string | undefined>() ?? null)),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('procurement.orderList.colStatus'),
         size: 170,
         cell: ({ getValue }) => {
           const status = getValue<PurchaseOrderStatus>();
+          const statusLbls = getStatusLabels();
           return (
             <StatusBadge
               status={status}
               colorMap={statusColorMap}
-              label={statusLabels[status] ?? status}
+              label={statusLbls[status] ?? status}
             />
           );
         },
       },
       {
         accessorKey: 'totalAmount',
-        header: 'Сумма',
+        header: t('procurement.orderList.colAmount'),
         size: 170,
         cell: ({ getValue }) => (
           <span className="tabular-nums font-medium text-right block">
@@ -344,7 +427,7 @@ const PurchaseOrderListPage: React.FC = () => {
       },
       {
         id: 'actions',
-        header: 'Действия',
+        header: t('procurement.orderList.colActions'),
         size: 220,
         cell: ({ row }) => {
           const order = row.original;
@@ -361,6 +444,7 @@ const PurchaseOrderListPage: React.FC = () => {
                 const icon =
                   action === 'send' ? <Send size={12} /> :
                     action === 'confirm' ? <CheckCircle2 size={12} /> :
+                      action === 'invoice' ? <FileText size={12} /> :
                       action === 'close' ? <Lock size={12} /> :
                         <XCircle size={12} />;
 
@@ -380,9 +464,9 @@ const PurchaseOrderListPage: React.FC = () => {
 
                       if (action === 'cancel') {
                         const isConfirmed = await confirm({
-                          title: `Отменить заказ ${order.orderNumber}?`,
-                          description: 'Статус будет изменён на "Отменён".',
-                          confirmLabel: 'Отменить заказ',
+                          title: `${t('procurement.orderList.confirmCancelTitle')} ${order.orderNumber}?`,
+                          description: t('procurement.orderList.confirmCancelDescription'),
+                          confirmLabel: t('procurement.orderList.confirmCancelLabel'),
                           cancelLabel: t('common.cancel'),
                           confirmVariant: 'danger',
                           items: [order.orderNumber],
@@ -395,7 +479,7 @@ const PurchaseOrderListPage: React.FC = () => {
                       transitionMutation.mutate({ order, action });
                     }}
                   >
-                    {actionLabelMap[action]}
+                    {getActionLabelMap()[action]}
                   </Button>
                 );
               })}
@@ -404,26 +488,34 @@ const PurchaseOrderListPage: React.FC = () => {
         },
       },
     ],
-    [bulkTransitionMutation, confirm, navigate, pendingOrderId, transitionMutation],
+    [bulkTransitionMutation, confirm, navigate, pendingOrderId, projectNameById, supplierNameById, transitionMutation],
+  );
+
+  const hasActiveFilters = Boolean(
+    search.trim()
+    || statusFilter
+    || supplierFilter
+    || projectFilter
+    || normalizedPurchaseRequestFilter,
   );
 
   if (isError && orders.length === 0) {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Заказы поставщикам"
-          subtitle="Purchase Orders"
+          title={t('procurement.orderList.title')}
+          subtitle={t('procurement.orderList.subtitlePurchaseOrders')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
+            { label: t('procurement.orderList.breadcrumbHome'), href: '/' },
             { label: t('procurement.title'), href: '/procurement' },
-            { label: 'Заказы поставщикам' },
+            { label: t('procurement.orderList.title') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить заказы поставщикам"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('procurement.orderList.errorLoadTitle')}
+          description={t('procurement.orderList.errorLoadDescription')}
+          actionLabel={t('common.refresh')}
           onAction={() => {
             void refetch();
           }}
@@ -435,12 +527,14 @@ const PurchaseOrderListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Заказы поставщикам"
-        subtitle={`${orders.length} заказов`}
+        title={t('procurement.orderList.title')}
+        subtitle={hasActiveFilters
+          ? `${t('procurement.orderList.found')}: ${data?.totalElements ?? orders.length}`
+          : `${data?.totalElements ?? orders.length} ${t('procurement.orderList.ordersSuffix')}`}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
+          { label: t('procurement.orderList.breadcrumbHome'), href: '/' },
           { label: t('procurement.title'), href: '/procurement' },
-          { label: 'Заказы поставщикам' },
+          { label: t('procurement.orderList.title') },
         ]}
         actions={(
           <div className="flex items-center gap-2">
@@ -448,14 +542,14 @@ const PurchaseOrderListPage: React.FC = () => {
               variant="primary"
               onClick={() => navigate('/procurement/purchase-orders/new')}
             >
-              Новый заказ
+              {t('procurement.orderList.newOrder')}
             </Button>
             <Button
               variant="secondary"
               iconLeft={<ShoppingCart size={16} />}
               onClick={() => navigate('/procurement')}
             >
-              Заявки на закупку
+              {t('procurement.orderList.purchaseRequests')}
             </Button>
           </div>
         )}
@@ -465,7 +559,7 @@ const PurchaseOrderListPage: React.FC = () => {
         <div className="relative flex-1 min-w-[240px] max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, проекту, поставщику..."
+            placeholder={t('procurement.orderList.searchPlaceholder')}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
@@ -477,14 +571,77 @@ const PurchaseOrderListPage: React.FC = () => {
           value={statusFilter}
           onChange={(event) => setStatusFilter((event.target.value as PurchaseOrderStatus) || '')}
           options={[
-            { value: '', label: 'Все статусы' },
-            ...Object.entries(statusLabels).map(([value, label]) => ({ value, label })),
+            { value: '', label: t('procurement.orderList.allStatuses') },
+            ...Object.entries(getStatusLabels()).map(([value, label]) => ({ value, label })),
           ]}
         />
+
+        <Select
+          className="w-72"
+          value={supplierFilter}
+          onChange={(event) => setSupplierFilter(event.target.value)}
+          options={supplierOptions}
+        />
+
+        <Select
+          className="w-72"
+          value={projectFilter}
+          onChange={(event) => setProjectFilter(event.target.value)}
+          options={projectOptions}
+        />
+
+        <Input
+          className="w-72"
+          placeholder={t('procurement.orderList.placeholderRequestId')}
+          value={purchaseRequestFilter}
+          onChange={(event) => setPurchaseRequestFilter(event.target.value)}
+        />
+
+        {hasActiveFilters && (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              setSearch('');
+              setDebouncedSearch('');
+              setStatusFilter('');
+              setSupplierFilter('');
+              setProjectFilter('');
+              setPurchaseRequestFilter('');
+            }}
+          >
+            {t('common.reset')}
+          </Button>
+        )}
       </div>
 
+      {normalizedPurchaseRequestFilter && !purchaseRequestFilterParam && (
+        <p className="text-xs text-danger-600 mb-4">
+          {t('procurement.orderList.uuidFilterWarning')}
+        </p>
+      )}
+
+      {purchaseRequestFilterParam && (
+        <div className="mb-4 flex items-center gap-2 flex-wrap">
+          <StatusBadge
+            status="REQUEST_FILTER"
+            colorMap={{ REQUEST_FILTER: 'blue' }}
+            label={`${t('procurement.orderList.request')}: ${shortUuid(purchaseRequestFilterParam)}`}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            size="xs"
+            onClick={() => navigate(`/procurement/${purchaseRequestFilterParam}`)}
+          >
+            {t('procurement.orderList.openRequest')}
+          </Button>
+        </div>
+      )}
+
       <DataTable<PurchaseOrder>
-        data={filtered}
+        data={orders}
         columns={columns}
         loading={isLoading}
         onRowClick={(order) => navigate(`/procurement/purchase-orders/${order.id}`)}
@@ -496,28 +653,35 @@ const PurchaseOrderListPage: React.FC = () => {
         savedViewsKey="procurement-purchase-orders"
         bulkActions={[
           {
-            label: 'Отправить',
+            label: t('procurement.orderAction.send'),
             icon: <Send size={13} />,
             onClick: (rows) => {
               handleBulkActionRequest('send', rows);
             },
           },
           {
-            label: 'Подтвердить',
+            label: t('procurement.orderAction.confirm'),
             icon: <CheckCircle2 size={13} />,
             onClick: (rows) => {
               handleBulkActionRequest('confirm', rows);
             },
           },
           {
-            label: 'Закрыть',
+            label: t('procurement.orderAction.invoice'),
+            icon: <FileText size={13} />,
+            onClick: (rows) => {
+              handleBulkActionRequest('invoice', rows);
+            },
+          },
+          {
+            label: t('procurement.orderAction.close'),
             icon: <Lock size={13} />,
             onClick: (rows) => {
               handleBulkActionRequest('close', rows);
             },
           },
           {
-            label: 'Отменить',
+            label: t('procurement.orderAction.cancel'),
             icon: <XCircle size={13} />,
             variant: 'danger',
             onClick: (rows) => {
@@ -526,8 +690,10 @@ const PurchaseOrderListPage: React.FC = () => {
           },
         ]}
         pageSize={20}
-        emptyTitle="Нет заказов поставщикам"
-        emptyDescription="Заказы появятся после конвертации заявок на закупку"
+        emptyTitle={hasActiveFilters ? t('procurement.orderList.emptySearchTitle') : t('procurement.orderList.emptyTitle')}
+        emptyDescription={hasActiveFilters
+          ? t('procurement.orderList.emptySearchDescription')
+          : t('procurement.orderList.emptyDescription')}
       />
     </div>
   );

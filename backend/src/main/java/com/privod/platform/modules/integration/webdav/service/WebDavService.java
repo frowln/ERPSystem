@@ -132,7 +132,7 @@ public class WebDavService {
             HttpEntity<byte[]> request = new HttpEntity<>(fileBytes, headers);
 
             restTemplate.exchange(fullUrl, HttpMethod.PUT, request, String.class);
-            file.setFileSize((long) fileBytes.length);
+            file.setFileSizeBytes((long) fileBytes.length);
             log.info("Файл загружен на WebDAV: {} -> {} ({} bytes)",
                     file.getFileName(), file.getRemotePath(), fileBytes.length);
         } catch (Exception e) {

@@ -17,4 +17,7 @@ public interface PurchaseRequestItemRepository extends JpaRepository<PurchaseReq
 
     @Query("SELECT COALESCE(SUM(i.amount), 0) FROM PurchaseRequestItem i WHERE i.requestId = :requestId AND i.deleted = false")
     BigDecimal sumAmountByRequestId(@Param("requestId") UUID requestId);
+
+    @Query("SELECT i.requestId, COUNT(i) FROM PurchaseRequestItem i WHERE i.deleted = false AND i.requestId IN :requestIds GROUP BY i.requestId")
+    List<Object[]> countByRequestIds(@Param("requestIds") List<UUID> requestIds);
 }

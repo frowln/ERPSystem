@@ -46,18 +46,18 @@ const priorityOptions = [
 ];
 
 const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+  { value: '1', label: t('regulatory.projectSunny') },
+  { value: '2', label: t('mockData.projectHorizon') },
+  { value: '3', label: t('regulatory.projectBridgeLabel') },
+  { value: '6', label: t('regulatory.projectCentral') },
 ];
 
 const assigneeOptions = [
   { value: '', label: t('forms.punchListItem.assigneeNotAssigned') },
-  { value: 'u1', label: 'Иванов И.И.' },
-  { value: 'u2', label: 'Петров П.П.' },
-  { value: 'u3', label: 'Сидоров С.С.' },
-  { value: 'u4', label: 'Козлов К.К.' },
+  { value: 'u1', label: t('mockData.personIvanovII') },
+  { value: 'u2', label: t('mockData.personPetrovPP') },
+  { value: 'u3', label: t('mockData.personSidorovSS') },
+  { value: 'u4', label: t('mockData.personKozlovKK') },
 ];
 
 const mapUiCategoryToApiCategory: Record<UiPunchCategory, PunchCategory> = {

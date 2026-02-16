@@ -4,6 +4,8 @@ import com.privod.platform.modules.warehouse.domain.Material;
 import com.privod.platform.modules.warehouse.domain.MaterialCategory;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.UUID;
+
 public final class MaterialSpecification {
 
     private MaterialSpecification() {
@@ -11,6 +13,10 @@ public final class MaterialSpecification {
 
     public static Specification<Material> notDeleted() {
         return (root, query, cb) -> cb.equal(root.get("deleted"), false);
+    }
+
+    public static Specification<Material> belongsToOrganization(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
     }
 
     public static Specification<Material> hasCategory(MaterialCategory category) {

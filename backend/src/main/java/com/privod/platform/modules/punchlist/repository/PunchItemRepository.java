@@ -1,7 +1,6 @@
 package com.privod.platform.modules.punchlist.repository;
 
 import com.privod.platform.modules.punchlist.domain.PunchItem;
-import com.privod.platform.modules.punchlist.domain.PunchItemStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,10 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface PunchItemRepository extends JpaRepository<PunchItem, UUID> {
+
+    Optional<PunchItem> findByIdAndDeletedFalse(UUID id);
 
     List<PunchItem> findByPunchListIdAndDeletedFalse(UUID punchListId);
 

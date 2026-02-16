@@ -16,6 +16,7 @@ import {
 import { punchlistApi } from '@/api/punchlist';
 import { formatDate, formatDateTime } from '@/lib/format';
 import type { PunchItem } from './types';
+import { t } from '@/i18n';
 interface HistoryEntry {
   id: string;
   action: string;
@@ -71,7 +72,7 @@ const PunchlistItemDetailPage: React.FC = () => {
   if (punchItem.createdAt) {
     history.push({
       id: 'h-created',
-      action: 'Замечание создано',
+      action: t('punchlist.historyCreated'),
       authorName: punchItem.createdByName,
       timestamp: punchItem.createdAt,
     });
@@ -79,7 +80,7 @@ const PunchlistItemDetailPage: React.FC = () => {
   if (punchItem.updatedAt && punchItem.updatedAt !== punchItem.createdAt) {
     history.push({
       id: 'h-updated',
-      action: 'Обновлено',
+      action: t('punchlist.historyUpdated'),
       authorName: punchItem.assignedToName || punchItem.createdByName,
       timestamp: punchItem.updatedAt,
     });
@@ -87,7 +88,7 @@ const PunchlistItemDetailPage: React.FC = () => {
   if (punchItem.approvedDate) {
     history.push({
       id: 'h-approved',
-      action: 'Принято',
+      action: t('punchlist.historyApproved'),
       authorName: punchItem.approvedByName ?? '',
       timestamp: punchItem.approvedDate,
     });
@@ -98,23 +99,23 @@ const PunchlistItemDetailPage: React.FC = () => {
       case 'OPEN':
         return (
           <Button iconLeft={<Play size={16} />} onClick={() => statusMutation.mutate({ itemId: id!, status: 'IN_PROGRESS' })}>
-            Взять в работу
+            {t('punchlist.btnTakeToWork')}
           </Button>
         );
       case 'IN_PROGRESS':
         return (
           <Button iconLeft={<Eye size={16} />} onClick={() => statusMutation.mutate({ itemId: id!, status: 'READY_FOR_REVIEW' })}>
-            На проверку
+            {t('punchlist.btnSendForReview')}
           </Button>
         );
       case 'READY_FOR_REVIEW':
         return (
           <div className="flex gap-2">
             <Button variant="secondary" iconLeft={<XCircle size={16} />} onClick={() => statusMutation.mutate({ itemId: id!, status: 'IN_PROGRESS' })}>
-              Отклонить
+              {t('punchlist.btnReject')}
             </Button>
             <Button iconLeft={<CheckCircle size={16} />} onClick={() => statusMutation.mutate({ itemId: id!, status: 'CLOSED' })}>
-              Принять
+              {t('punchlist.btnAccept')}
             </Button>
           </div>
         );
@@ -129,15 +130,15 @@ const PunchlistItemDetailPage: React.FC = () => {
         title={punchItem.number}
         subtitle={punchItem.title}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Punch List', href: '/punchlist' },
-          { label: 'Замечания', href: '/punchlist/items' },
+          { label: t('punchlist.breadcrumbHome'), href: '/' },
+          { label: t('punchlist.breadcrumbPunchList'), href: '/punchlist' },
+          { label: t('punchlist.breadcrumbItems'), href: '/punchlist/items' },
           { label: punchItem.number },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/punchlist/items')}>
-              Назад
+              {t('punchlist.btnBack')}
             </Button>
             {statusActions}
           </div>
@@ -148,55 +149,55 @@ const PunchlistItemDetailPage: React.FC = () => {
         {/* Main content */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Описание замечания</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionDescription')}</h3>
             <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">{punchItem.description}</p>
 
             <div className="grid grid-cols-2 gap-y-4 gap-x-8 mt-6 pt-4 border-t border-neutral-200 dark:border-neutral-700">
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Категория</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelCategory')}</p>
                 <div className="mt-1">
                   <StatusBadge status={punchItem.category} colorMap={punchCategoryColorMap} label={punchCategoryLabels[punchItem.category]} />
                 </div>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Приоритет</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelPriority')}</p>
                 <div className="mt-1">
                   <StatusBadge status={punchItem.priority} colorMap={punchItemPriorityColorMap} label={punchItemPriorityLabels[punchItem.priority]} />
                 </div>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Статус</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelStatus')}</p>
                 <div className="mt-1">
                   <StatusBadge status={punchItem.status} colorMap={punchItemStatusColorMap} label={punchItemStatusLabels[punchItem.status]} />
                 </div>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Punch List</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelPunchList')}</p>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.punchListName}</p>
               </div>
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Расположение</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionLocation')}</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Проект</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelProject')}</p>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.projectName}</p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Полное расположение</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelFullLocation')}</p>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.location}</p>
               </div>
               {punchItem.floor && (
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Этаж</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelFloor')}</p>
                   <p className="text-sm text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.floor}</p>
                 </div>
               )}
               {punchItem.room && (
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Помещение</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelRoom')}</p>
                   <p className="text-sm text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.room}</p>
                 </div>
               )}
@@ -205,14 +206,14 @@ const PunchlistItemDetailPage: React.FC = () => {
 
           {punchItem.notes && (
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-2">Примечания</h3>
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-2">{t('punchlist.sectionNotes')}</h3>
               <p className="text-sm text-neutral-700 dark:text-neutral-300">{punchItem.notes}</p>
             </div>
           )}
 
           {/* History */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">История</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionHistory')}</h3>
             <div className="space-y-4">
               {history.map((entry) => (
                 <div key={entry.id} className="flex gap-3">
@@ -237,19 +238,19 @@ const PunchlistItemDetailPage: React.FC = () => {
         {/* Side panel */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Ответственные</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionResponsible')}</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Исполнитель</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelAssigneePerson')}</p>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.assignedToName}</p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Автор</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelAuthor')}</p>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.createdByName}</p>
               </div>
               {punchItem.approvedByName && (
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Принял</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.labelApprovedBy')}</p>
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mt-1">{punchItem.approvedByName}</p>
                 </div>
               )}
@@ -257,37 +258,37 @@ const PunchlistItemDetailPage: React.FC = () => {
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Сроки</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionDeadlines')}</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">Срок устранения</span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('punchlist.labelDueDate')}</span>
                 <span className="text-sm font-medium tabular-nums">
                   {formatDate(punchItem.dueDate)}
                 </span>
               </div>
               {punchItem.completedDate && (
                 <div className="flex justify-between">
-                  <span className="text-sm text-neutral-500 dark:text-neutral-400">Устранено</span>
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('punchlist.labelCompletedDate')}</span>
                   <span className="text-sm tabular-nums">{formatDate(punchItem.completedDate)}</span>
                 </div>
               )}
               {punchItem.approvedDate && (
                 <div className="flex justify-between">
-                  <span className="text-sm text-neutral-500 dark:text-neutral-400">Принято</span>
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('punchlist.labelApprovedDate')}</span>
                   <span className="text-sm tabular-nums">{formatDate(punchItem.approvedDate)}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">Создано</span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('punchlist.labelCreatedDate')}</span>
                 <span className="text-sm tabular-nums">{formatDate(punchItem.createdAt)}</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Фотографии</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionPhotos')}</h3>
             {punchItem.photoUrls.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Фотографии не прикреплены</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('punchlist.noPhotos')}</p>
             ) : (
               <div className="grid grid-cols-2 gap-2">
                 {punchItem.photoUrls.map((url, idx) => (
@@ -296,7 +297,7 @@ const PunchlistItemDetailPage: React.FC = () => {
               </div>
             )}
             <Button variant="secondary" size="sm" className="mt-3 w-full">
-              Добавить фото
+              {t('punchlist.btnAddPhoto')}
             </Button>
           </div>
         </div>

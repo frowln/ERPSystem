@@ -14,6 +14,7 @@ import { cn } from '@/lib/cn';
 import { formatRelativeTime } from '@/lib/format';
 import { notificationsApi } from '@/api/notifications';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { t } from '@/i18n';
 import type { Notification, NotificationType } from '@/api/notifications';
 
 const typeIcons: Record<NotificationType, React.ElementType> = {
@@ -36,16 +37,16 @@ const typeColors: Record<NotificationType, string> = {
   PAYMENT: 'bg-orange-50 text-orange-600',
   PROJECT: 'bg-primary-50 text-primary-600',
 };
-const typeLabels: Record<NotificationType, string> = {
-  INFO: 'Информация',
-  WARNING: 'Предупреждение',
-  ERROR: 'Ошибка',
-  SUCCESS: 'Успех',
-  TASK: 'Задача',
-  DOCUMENT: 'Документ',
-  PAYMENT: 'Платёж',
-  PROJECT: 'Проект',
-};
+const getTypeLabels = (): Record<NotificationType, string> => ({
+  INFO: t('notificationsPage.typeInfo'),
+  WARNING: t('notificationsPage.typeWarning'),
+  ERROR: t('notificationsPage.typeError'),
+  SUCCESS: t('notificationsPage.typeSuccess'),
+  TASK: t('notificationsPage.typeTask'),
+  DOCUMENT: t('notificationsPage.typeDocument'),
+  PAYMENT: t('notificationsPage.typePayment'),
+  PROJECT: t('notificationsPage.typeProject'),
+});
 
 type TabId = 'all' | 'UNREAD' | 'READ';
 
@@ -92,7 +93,7 @@ const NotificationsPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['NOTIFICATIONS'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
     } catch {
-      toast.error('Не удалось отметить уведомление как прочитанное');
+      toast.error(t('notificationsPage.markReadError'));
     }
   }, [queryClient]);
 
@@ -102,9 +103,9 @@ const NotificationsPage: React.FC = () => {
       markAllReadInStore();
       queryClient.invalidateQueries({ queryKey: ['NOTIFICATIONS'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-      toast.success('Все уведомления отмечены как прочитанные');
+      toast.success(t('notificationsPage.allMarkedRead'));
     } catch {
-      toast.error('Не удалось отметить все как прочитанные');
+      toast.error(t('notificationsPage.markAllReadError'));
     }
   }, [queryClient, markAllReadInStore]);
 
@@ -122,26 +123,28 @@ const NotificationsPage: React.FC = () => {
     markAllReadInStore();
   }, [markAllReadInStore]);
 
+  const typeLabels = getTypeLabels();
+
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Уведомления"
-        subtitle={unreadCount > 0 ? `${unreadCount} непрочитанных` : 'Все прочитано'}
+        title={t('notificationsPage.title')}
+        subtitle={unreadCount > 0 ? t('notificationsPage.unreadCount', { count: unreadCount }) : t('notificationsPage.allRead')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Уведомления' },
+          { label: t('notificationsPage.breadcrumbHome'), href: '/' },
+          { label: t('notificationsPage.breadcrumbNotifications') },
         ]}
         actions={
           unreadCount > 0 ? (
             <Button variant="secondary" iconLeft={<CheckCheck size={16} />} onClick={markAllAsRead}>
-              Отметить все как прочитанные
+              {t('notificationsPage.markAllRead')}
             </Button>
           ) : undefined
         }
         tabs={[
-          { id: 'all', label: 'Все', count: notifications.length },
-          { id: 'UNREAD', label: 'Непрочитанные', count: unreadCount },
-          { id: 'READ', label: 'Прочитанные', count: notifications.length - unreadCount },
+          { id: 'all', label: t('notificationsPage.tabAll'), count: notifications.length },
+          { id: 'UNREAD', label: t('notificationsPage.tabUnread'), count: unreadCount },
+          { id: 'READ', label: t('notificationsPage.tabRead'), count: notifications.length - unreadCount },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -152,7 +155,7 @@ const NotificationsPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск уведомлений..."
+            placeholder={t('notificationsPage.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -160,7 +163,7 @@ const NotificationsPage: React.FC = () => {
         </div>
         <Select
           options={[
-            { value: '', label: 'Все типы' },
+            { value: '', label: t('notificationsPage.allTypes') },
             ...Object.entries(typeLabels).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={typeFilter}
@@ -215,7 +218,7 @@ const NotificationsPage: React.FC = () => {
                     <button
                       onClick={(e) => { e.stopPropagation(); markAsRead(notif.id); }}
                       className="p-1 text-neutral-400 hover:text-primary-600 rounded"
-                      title="Отметить как прочитанное"
+                      title={t('notificationsPage.markAsReadTooltip')}
                     >
                       <Check size={14} />
                     </button>
@@ -229,8 +232,8 @@ const NotificationsPage: React.FC = () => {
         !isLoading && (
           <EmptyState
             variant="no-data"
-            title="Нет уведомлений"
-            description="Новые уведомления появятся здесь"
+            title={t('notificationsPage.emptyTitle')}
+            description={t('notificationsPage.emptyDescription')}
           />
         )
       )}

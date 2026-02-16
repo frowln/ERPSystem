@@ -12,6 +12,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { useConfirmDialog } from '@/design-system/components/ConfirmDialog/provider';
 import { accountingApi, type JournalEntry } from '@/api/accounting';
 import { formatMoney, formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 
 const JournalEntriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -104,21 +105,21 @@ const JournalEntriesPage: React.FC = () => {
       return uniqueIds.length;
     },
     onMutate: () => {
-      toast.loading('Удаление проводок...', { id: 'journal-entries-bulk-delete' });
+      toast.loading(t('accounting.journalDeletingEntries'), { id: 'journal-entries-bulk-delete' });
     },
     onSuccess: (deletedCount) => {
       queryClient.invalidateQueries({ queryKey: ['journal-entries'] });
       queryClient.invalidateQueries({ queryKey: ['accounting-dashboard'] });
-      toast.success(`Удалено проводок: ${deletedCount}`, { id: 'journal-entries-bulk-delete' });
+      toast.success(t('accounting.journalDeletedCount', { count: deletedCount }), { id: 'journal-entries-bulk-delete' });
     },
     onError: () => {
-      toast.error('Не удалось удалить выбранные проводки', { id: 'journal-entries-bulk-delete' });
+      toast.error(t('accounting.journalDeleteError'), { id: 'journal-entries-bulk-delete' });
     },
   });
 
   const accountOptions = useMemo(
     () => [
-      { value: '', label: 'Все счета' },
+      { value: '', label: t('accounting.journalAllAccounts') },
       ...(accountsData?.content ?? []).map((account) => ({
         value: account.id,
         label: `${account.code} - ${account.name}`,
@@ -129,7 +130,7 @@ const JournalEntriesPage: React.FC = () => {
 
   const periodOptions = useMemo(
     () => [
-      { value: '', label: 'Все периоды' },
+      { value: '', label: t('accounting.journalAllPeriods') },
       ...(periodsData?.content ?? []).map((period) => ({
         value: period.id,
         label: `${period.month.toString().padStart(2, '0')}.${period.year}`,
@@ -140,7 +141,7 @@ const JournalEntriesPage: React.FC = () => {
 
   const journalOptions = useMemo(
     () => [
-      { value: '', label: 'Все журналы' },
+      { value: '', label: t('accounting.journalAllJournals') },
       ...(journalsData?.content ?? []).map((journal) => ({
         value: journal.id,
         label: `${journal.code} - ${journal.name}`,
@@ -153,7 +154,7 @@ const JournalEntriesPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '№ проводки',
+        header: t('accounting.journalColNumber'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>
@@ -161,7 +162,7 @@ const JournalEntriesPage: React.FC = () => {
       },
       {
         accessorKey: 'entryDate',
-        header: 'Дата',
+        header: t('accounting.journalColDate'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -169,20 +170,20 @@ const JournalEntriesPage: React.FC = () => {
       },
       {
         accessorKey: 'description',
-        header: 'Операция',
+        header: t('accounting.journalColOperation'),
         size: 330,
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.description}</p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-              Документ: {row.original.documentType ?? 'не указан'}
+              {t('accounting.journalDocumentLabel', { value: row.original.documentType ?? t('accounting.journalDocumentNotSpecified') })}
             </p>
           </div>
         ),
       },
       {
         accessorKey: 'debitAccountId',
-        header: 'Дебет',
+        header: t('accounting.journalColDebit'),
         size: 220,
         cell: ({ getValue }) => {
           const accountId = getValue<string>();
@@ -196,7 +197,7 @@ const JournalEntriesPage: React.FC = () => {
       },
       {
         accessorKey: 'creditAccountId',
-        header: 'Кредит',
+        header: t('accounting.journalColCredit'),
         size: 220,
         cell: ({ getValue }) => {
           const accountId = getValue<string>();
@@ -210,7 +211,7 @@ const JournalEntriesPage: React.FC = () => {
       },
       {
         accessorKey: 'amount',
-        header: 'Сумма',
+        header: t('accounting.journalColAmount'),
         size: 170,
         cell: ({ getValue }) => (
           <span className="tabular-nums font-medium text-right block">
@@ -220,9 +221,9 @@ const JournalEntriesPage: React.FC = () => {
       },
       {
         accessorKey: 'createdBy',
-        header: 'Автор',
+        header: t('accounting.journalColAuthor'),
         size: 150,
-        cell: ({ getValue }) => getValue<string>() || 'Система',
+        cell: ({ getValue }) => getValue<string>() || t('accounting.system'),
       },
     ],
     [accountById],
@@ -232,19 +233,19 @@ const JournalEntriesPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Журнал проводок"
-          subtitle="Проводки бухгалтерского учёта"
+          title={t('accounting.journalTitle')}
+          subtitle={t('accounting.journalSubtitleAccounting')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия', href: '/accounting' },
-            { label: 'Журнал проводок' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+            { label: t('accounting.breadcrumbJournalEntries') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить проводки"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('accounting.journalErrorTitle')}
+          description={t('accounting.checkConnectionRetry')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetch();
           }}
@@ -256,12 +257,12 @@ const JournalEntriesPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Журнал проводок"
-        subtitle={`${entries.length} проводок | Отфильтровано: ${formatMoney(totalAmount)}`}
+        title={t('accounting.journalTitle')}
+        subtitle={t('accounting.journalSubtitle', { count: entries.length, amount: formatMoney(totalAmount) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия', href: '/accounting' },
-          { label: 'Журнал проводок' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+          { label: t('accounting.breadcrumbJournalEntries') },
         ]}
         actions={
           <div className="flex items-center gap-2">
@@ -270,10 +271,10 @@ const JournalEntriesPage: React.FC = () => {
               iconLeft={<BookOpen size={16} />}
               onClick={() => navigate('/accounting/journals')}
             >
-              Журналы
+              {t('accounting.journalJournalsButton')}
             </Button>
             <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/accounting/journal/new')}>
-              Новая проводка
+              {t('accounting.journalNewButton')}
             </Button>
           </div>
         }
@@ -283,7 +284,7 @@ const JournalEntriesPage: React.FC = () => {
         <div className="relative flex-1 min-w-[240px] max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, описанию..."
+            placeholder={t('accounting.journalSearchPlaceholder')}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
@@ -325,7 +326,7 @@ const JournalEntriesPage: React.FC = () => {
         savedViewsKey="accounting-journal-entries"
         bulkActions={[
           {
-            label: bulkDeleteMutation.isPending ? 'Удаление...' : 'Удалить',
+            label: bulkDeleteMutation.isPending ? t('accounting.journalBulkDeletePending') : t('accounting.journalBulkDeleteLabel'),
             icon: <Trash2 size={14} />,
             variant: 'danger',
             onClick: (selectedRows) => {
@@ -334,10 +335,10 @@ const JournalEntriesPage: React.FC = () => {
               }
               void (async () => {
                 const isConfirmed = await confirm({
-                  title: `Удалить ${selectedRows.length} проводок?`,
-                  description: 'Действие обратимо только через резервную копию.',
-                  confirmLabel: 'Удалить',
-                  cancelLabel: 'Отмена',
+                  title: t('accounting.journalBulkDeleteTitle', { count: selectedRows.length }),
+                  description: t('accounting.journalBulkDeleteDescription'),
+                  confirmLabel: t('accounting.journalBulkDeleteConfirm'),
+                  cancelLabel: t('accounting.journalBulkDeleteCancel'),
                   confirmVariant: 'danger',
                   items: selectedRows.slice(0, 5).map((row) => row.number),
                 });
@@ -350,8 +351,8 @@ const JournalEntriesPage: React.FC = () => {
           },
         ]}
         pageSize={20}
-        emptyTitle="Нет проводок"
-        emptyDescription="Создайте первую бухгалтерскую проводку"
+        emptyTitle={t('accounting.journalEmptyTitle')}
+        emptyDescription={t('accounting.journalEmptyDescription')}
       />
     </div>
   );

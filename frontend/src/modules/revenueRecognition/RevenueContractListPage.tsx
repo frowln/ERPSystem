@@ -11,6 +11,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { revenueRecognitionApi } from '@/api/revenueRecognition';
 import { formatDate, formatMoney, formatMoneyCompact, formatPercent } from '@/lib/format';
+import { t } from '@/i18n';
 import type { RevenueContract, RevenueContractStatus, RecognitionMethod } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'> = {
@@ -20,31 +21,33 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   TERMINATED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  ACTIVE: 'Активный',
-  COMPLETED: 'Завершён',
-  SUSPENDED: 'Приостановлен',
-  TERMINATED: 'Расторгнут',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  ACTIVE: t('revenueRecognition.statusActive'),
+  COMPLETED: t('revenueRecognition.statusCompleted'),
+  SUSPENDED: t('revenueRecognition.statusSuspended'),
+  TERMINATED: t('revenueRecognition.statusTerminated'),
+});
 
-const methodLabels: Record<string, string> = {
-  PERCENTAGE_OF_COMPLETION: 'Процент завершения',
-  COMPLETED_CONTRACT: 'Завершённый контракт',
-  INPUT_METHOD: 'Метод затрат',
-  OUTPUT_METHOD: 'Метод выпуска',
-};
+const getMethodLabels = (): Record<string, string> => ({
+  PERCENTAGE_OF_COMPLETION: t('revenueRecognition.methodPercentage'),
+  COMPLETED_CONTRACT: t('revenueRecognition.methodCompleted'),
+  INPUT_METHOD: t('revenueRecognition.methodInput'),
+  OUTPUT_METHOD: t('revenueRecognition.methodOutput'),
+});
 
-const standardLabels: Record<string, string> = {
-  IFRS_15: 'МСФО 15',
+const getStandardLabels = (): Record<string, string> => ({
+  IFRS_15: t('revenueRecognition.standardIFRS15'),
   ASC_606: 'ASC 606',
-  RAS: 'РСБУ',
-};
+  RAS: t('revenueRecognition.standardRAS'),
+});
 
 type TabId = 'all' | 'ACTIVE' | 'COMPLETED' | 'SUSPENDED';
 
 
 const RevenueContractListPage: React.FC = () => {
   const navigate = useNavigate();
+  const statusLabels = getStatusLabels();
+  const methodLabels = getMethodLabels();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
   const [methodFilter, setMethodFilter] = useState('');
@@ -103,7 +106,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'contractName',
-        header: 'Контракт',
+        header: t('revenueRecognition.colContract'),
         size: 240,
         cell: ({ row }) => (
           <div>
@@ -114,7 +117,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('common.status'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -126,7 +129,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'method',
-        header: 'Метод',
+        header: t('revenueRecognition.colMethod'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-xs text-neutral-600">{methodLabels[getValue<string>()] ?? getValue<string>()}</span>
@@ -134,7 +137,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalRevenue',
-        header: 'Общая выручка',
+        header: t('revenueRecognition.totalRevenue'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="tabular-nums font-medium">{formatMoneyCompact(getValue<number>())}</span>
@@ -142,7 +145,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'recognizedRevenue',
-        header: 'Признано',
+        header: t('revenueRecognition.recognized'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-green-600">{formatMoneyCompact(getValue<number>())}</span>
@@ -150,7 +153,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'percentComplete',
-        header: '% выполнения',
+        header: t('revenueRecognition.percentComplete'),
         size: 130,
         cell: ({ getValue }) => {
           const pct = getValue<number>();
@@ -166,7 +169,7 @@ const RevenueContractListPage: React.FC = () => {
       },
       {
         accessorKey: 'grossMargin',
-        header: 'Маржа',
+        header: t('revenueRecognition.margin'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatPercent(getValue<number>())}</span>
@@ -184,43 +187,43 @@ const RevenueContractListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Контракты признания выручки"
-        subtitle={`${contracts.length} контрактов в системе`}
+        title={t('revenueRecognition.contractsTitle')}
+        subtitle={t('revenueRecognition.contractsSubtitle', { count: String(contracts.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Признание выручки', href: '/revenue' },
-          { label: 'Контракты' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('revenueRecognition.title'), href: '/revenue' },
+          { label: t('revenueRecognition.contracts') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Новый контракт
+            {t('revenueRecognition.newContract')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: counts.all },
-          { id: 'ACTIVE', label: 'Активные', count: counts.active },
-          { id: 'COMPLETED', label: 'Завершены', count: counts.completed },
-          { id: 'SUSPENDED', label: 'Приостановлены', count: counts.suspended },
+          { id: 'all', label: t('common.all'), count: counts.all },
+          { id: 'ACTIVE', label: t('revenueRecognition.tabActive'), count: counts.active },
+          { id: 'COMPLETED', label: t('revenueRecognition.tabCompleted'), count: counts.completed },
+          { id: 'SUSPENDED', label: t('revenueRecognition.tabSuspended'), count: counts.suspended },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Всего контрактов" value={counts.all} />
-        <MetricCard icon={<DollarSign size={18} />} label="Общая выручка" value={formatMoneyCompact(totals.totalRevenue)} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Признано" value={formatMoneyCompact(totals.totalRecognized)} />
-        <MetricCard icon={<BarChart3 size={18} />} label="Средняя маржа" value={formatPercent(totals.avgMargin)} />
+        <MetricCard icon={<FileText size={18} />} label={t('revenueRecognition.totalContracts')} value={counts.all} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('revenueRecognition.totalRevenue')} value={formatMoneyCompact(totals.totalRevenue)} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('revenueRecognition.recognized')} value={formatMoneyCompact(totals.totalRecognized)} />
+        <MetricCard icon={<BarChart3 size={18} />} label={t('revenueRecognition.avgMargin')} value={formatPercent(totals.avgMargin)} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('revenueRecognition.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все методы' },
+            { value: '', label: t('revenueRecognition.allMethods') },
             ...Object.entries(methodLabels).map(([value, label]) => ({ value, label })),
           ]}
           value={methodFilter}
@@ -239,8 +242,8 @@ const RevenueContractListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет контрактов"
-        emptyDescription="Создайте первый контракт для признания выручки"
+        emptyTitle={t('revenueRecognition.emptyTitle')}
+        emptyDescription={t('revenueRecognition.contractsEmptyDescription')}
       />
     </div>
   );

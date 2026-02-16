@@ -11,6 +11,8 @@ import com.privod.platform.modules.bidScoring.web.dto.CreateBidComparisonRequest
 import com.privod.platform.modules.bidScoring.web.dto.CreateBidCriteriaRequest;
 import com.privod.platform.modules.bidScoring.web.dto.CreateBidScoreRequest;
 import com.privod.platform.modules.bidScoring.web.dto.UpdateBidComparisonRequest;
+import com.privod.platform.modules.bidScoring.web.dto.UpdateBidCriteriaRequest;
+import com.privod.platform.modules.bidScoring.web.dto.UpdateBidScoreRequest;
 import com.privod.platform.modules.bidScoring.web.dto.VendorTotalScoreResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -151,6 +153,16 @@ public class BidScoringController {
                 .body(ApiResponse.ok(response));
     }
 
+    @PutMapping("/criteria/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'PROCUREMENT_MANAGER')")
+    @Operation(summary = "Update an existing bid criteria")
+    public ResponseEntity<ApiResponse<BidCriteriaResponse>> updateCriteria(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateBidCriteriaRequest request) {
+        BidCriteriaResponse response = bidScoringService.updateCriteria(id, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
     @DeleteMapping("/criteria/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
     @Operation(summary = "Soft delete a bid criteria")
@@ -186,6 +198,16 @@ public class BidScoringController {
         BidScoreResponse response = bidScoringService.createScore(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok(response));
+    }
+
+    @PutMapping("/scores/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'PROCUREMENT_MANAGER')")
+    @Operation(summary = "Update an existing bid score")
+    public ResponseEntity<ApiResponse<BidScoreResponse>> updateScore(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateBidScoreRequest request) {
+        BidScoreResponse response = bidScoringService.updateScore(id, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @DeleteMapping("/scores/{id}")

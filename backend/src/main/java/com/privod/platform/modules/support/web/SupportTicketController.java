@@ -152,18 +152,16 @@ public class SupportTicketController {
     @GetMapping("/my")
     @Operation(summary = "Get tickets reported by current user")
     public ResponseEntity<ApiResponse<PageResponse<SupportTicketResponse>>> getMyTickets(
-            @RequestParam UUID reporterId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<SupportTicketResponse> page = ticketService.getMyTickets(reporterId, pageable);
+        Page<SupportTicketResponse> page = ticketService.getMyTickets(pageable);
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
     }
 
     @GetMapping("/assigned")
     @Operation(summary = "Get tickets assigned to a user")
     public ResponseEntity<ApiResponse<PageResponse<SupportTicketResponse>>> getAssigned(
-            @RequestParam UUID assigneeId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<SupportTicketResponse> page = ticketService.getAssignedTickets(assigneeId, pageable);
+        Page<SupportTicketResponse> page = ticketService.getAssignedTickets(pageable);
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
     }
 }

@@ -21,6 +21,7 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -52,12 +53,12 @@ const eventLevelColorMap: Record<string, 'blue' | 'yellow' | 'red' | 'gray'> = {
   critical: 'red',
 };
 
-const eventLevelLabels: Record<string, string> = {
-  info: 'Информация',
-  warning: 'Предупреждение',
-  error: 'Ошибка',
-  critical: 'Критично',
-};
+const getEventLevelLabels = (): Record<string, string> => ({
+  info: t('monitoring.levelInfo'),
+  warning: t('monitoring.levelWarning'),
+  error: t('monitoring.levelError'),
+  critical: t('monitoring.levelCritical'),
+});
 
 const healthStatusColorMap: Record<string, 'green' | 'yellow' | 'red'> = {
   healthy: 'green',
@@ -65,11 +66,11 @@ const healthStatusColorMap: Record<string, 'green' | 'yellow' | 'red'> = {
   down: 'red',
 };
 
-const healthStatusLabels: Record<string, string> = {
-  healthy: 'Работает',
-  degraded: 'Деградация',
-  down: 'Недоступен',
-};
+const getHealthStatusLabels = (): Record<string, string> => ({
+  healthy: t('monitoring.healthHealthy'),
+  degraded: t('monitoring.healthDegraded'),
+  down: t('monitoring.healthDown'),
+});
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -109,23 +110,25 @@ const MonitoringDashboardPage: React.FC = () => {
   const avgResponseTime = Math.round(healthChecks.reduce((s, h) => s + h.responseTime, 0) / healthChecks.length);
   const activeUsers = 23; // mock
 
+  const eventLevelLabels = getEventLevelLabels();
+
   const eventColumns = useMemo<ColumnDef<SystemEvent, unknown>[]>(() => [
     {
       accessorKey: 'timestamp',
-      header: 'Время',
+      header: t('monitoring.colTime'),
       size: 160,
       cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400 tabular-nums">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'level',
-      header: 'Уровень',
+      header: t('monitoring.colLevel'),
       size: 130,
       cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={eventLevelColorMap} label={eventLevelLabels[getValue<string>()] ?? getValue<string>()} />,
     },
-    { accessorKey: 'SERVICE', header: 'Сервис', size: 140, cell: ({ getValue }) => <span className="font-medium text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
+    { accessorKey: 'SERVICE', header: t('monitoring.colService'), size: 140, cell: ({ getValue }) => <span className="font-medium text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
     {
       accessorKey: 'message',
-      header: 'Сообщение',
+      header: t('monitoring.colMessage'),
       size: 350,
       cell: ({ row }) => (
         <div>
@@ -134,31 +137,31 @@ const MonitoringDashboardPage: React.FC = () => {
         </div>
       ),
     },
-  ], []);
+  ], [eventLevelLabels]);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Мониторинг системы"
-        subtitle="Состояние сервисов и системные события"
-        breadcrumbs={[{ label: 'Главная', href: '/' }, { label: 'Аналитика', href: '/analytics' }, { label: 'Мониторинг' }]}
+        title={t('monitoring.title')}
+        subtitle={t('monitoring.subtitle')}
+        breadcrumbs={[{ label: t('monitoring.breadcrumbHome'), href: '/' }, { label: t('monitoring.breadcrumbAnalytics'), href: '/analytics' }, { label: t('monitoring.breadcrumbMonitoring') }]}
         actions={
           <Button variant="secondary" iconLeft={<RefreshCw size={16} />}>
-            Обновить
+            {t('monitoring.refresh')}
           </Button>
         }
       />
 
       {/* Metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Activity size={18} />} label="Uptime" value="99.95%" trend={{ direction: 'up', value: '+0.02%' }} subtitle="за 30 дней" />
-        <MetricCard icon={<Clock size={18} />} label="Среднее время ответа" value={`${avgResponseTime} мс`} trend={{ direction: avgResponseTime < 100 ? 'down' : 'up', value: avgResponseTime < 100 ? '-5 мс' : '+15 мс' }} />
-        <MetricCard icon={<Users size={18} />} label="Активные пользователи" value={activeUsers} subtitle="в данный момент" />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Ошибок / час" value={errorsCount} trend={errorsCount > 2 ? { direction: 'up', value: `${errorsCount}` } : { direction: 'neutral', value: '0' }} />
+        <MetricCard icon={<Activity size={18} />} label="Uptime" value="99.95%" trend={{ direction: 'up', value: '+0.02%' }} subtitle={t('monitoring.metricUptimeSubtitle')} />
+        <MetricCard icon={<Clock size={18} />} label={t('monitoring.metricAvgResponse')} value={`${avgResponseTime} ${t('monitoring.msUnit')}`} trend={{ direction: avgResponseTime < 100 ? 'down' : 'up', value: avgResponseTime < 100 ? `-5 ${t('monitoring.msUnit')}` : `+15 ${t('monitoring.msUnit')}` }} />
+        <MetricCard icon={<Users size={18} />} label={t('monitoring.metricActiveUsers')} value={activeUsers} subtitle={t('monitoring.metricActiveUsersSubtitle')} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('monitoring.metricErrorsPerHour')} value={errorsCount} trend={errorsCount > 2 ? { direction: 'up', value: `${errorsCount}` } : { direction: 'neutral', value: '0' }} />
       </div>
 
       {/* Health checks */}
-      <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Состояние сервисов</h3>
+      <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">{t('monitoring.serviceStatus')}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {healthChecks.map((hc) => {
           const Icon = hc.icon;
@@ -176,15 +179,15 @@ const MonitoringDashboardPage: React.FC = () => {
               </div>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <p className="text-neutral-500 dark:text-neutral-400">Время</p>
-                  <p className={cn('font-medium tabular-nums', hc.responseTime > 200 ? 'text-warning-600' : 'text-neutral-900 dark:text-neutral-100')}>{hc.responseTime} мс</p>
+                  <p className="text-neutral-500 dark:text-neutral-400">{t('monitoring.hcTime')}</p>
+                  <p className={cn('font-medium tabular-nums', hc.responseTime > 200 ? 'text-warning-600' : 'text-neutral-900 dark:text-neutral-100')}>{hc.responseTime} {t('monitoring.msUnit')}</p>
                 </div>
                 <div>
                   <p className="text-neutral-500 dark:text-neutral-400">Uptime</p>
                   <p className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">{hc.uptime}</p>
                 </div>
                 <div>
-                  <p className="text-neutral-500 dark:text-neutral-400">Проверка</p>
+                  <p className="text-neutral-500 dark:text-neutral-400">{t('monitoring.hcCheck')}</p>
                   <p className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">{hc.lastCheck}</p>
                 </div>
               </div>
@@ -195,7 +198,7 @@ const MonitoringDashboardPage: React.FC = () => {
 
       {/* Recent events */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Системные события</h3>
+        <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{t('monitoring.systemEvents')}</h3>
         <div className="flex items-center gap-1.5">
           {['all', 'INFO', 'WARNING', 'ERROR'].map((level) => (
             <button
@@ -206,7 +209,7 @@ const MonitoringDashboardPage: React.FC = () => {
                 eventFilter === level ? 'bg-primary-50 text-primary-700' : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800',
               )}
             >
-              {level === 'all' ? 'Все' : eventLevelLabels[level]}
+              {level === 'all' ? t('monitoring.filterAll') : eventLevelLabels[level]}
             </button>
           ))}
         </div>
@@ -219,8 +222,8 @@ const MonitoringDashboardPage: React.FC = () => {
         enableColumnVisibility
         enableExport
         pageSize={20}
-        emptyTitle="Нет событий"
-        emptyDescription="Системных событий не найдено"
+        emptyTitle={t('monitoring.emptyTitle')}
+        emptyDescription={t('monitoring.emptyDescription')}
       />
     </div>
   );

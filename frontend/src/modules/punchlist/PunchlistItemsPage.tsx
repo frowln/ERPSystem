@@ -21,25 +21,26 @@ import { punchlistApi } from '@/api/punchlist';
 import { formatDate } from '@/lib/format';
 import type { PunchItem } from './types';
 import { PunchItemCreateModal } from './PunchItemCreateModal';
+import { t } from '@/i18n';
 
 type TabId = 'all' | 'OPEN' | 'IN_PROGRESS' | 'REVIEW' | 'CLOSED';
 
-const priorityFilterOptions = [
-  { value: '', label: 'Все приоритеты' },
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityFilterOptions = () => [
+  { value: '', label: t('punchlist.priorityFilterAll') },
+  { value: 'LOW', label: t('punchlist.priorityLow') },
+  { value: 'MEDIUM', label: t('punchlist.priorityMedium') },
+  { value: 'HIGH', label: t('punchlist.priorityHigh') },
+  { value: 'CRITICAL', label: t('punchlist.priorityCritical') },
 ];
 
-const categoryFilterOptions = [
-  { value: '', label: 'Все категории' },
-  { value: 'STRUCTURAL', label: 'Конструктивные' },
-  { value: 'ARCHITECTURAL', label: 'Архитектурные' },
-  { value: 'ELECTRICAL', label: 'Электрика' },
-  { value: 'PLUMBING', label: 'Водоснабжение' },
-  { value: 'FINISHING', label: 'Отделочные' },
-  { value: 'FIRE_SAFETY', label: 'Пожарная безопасность' },
+const getCategoryFilterOptions = () => [
+  { value: '', label: t('punchlist.categoryFilterAll') },
+  { value: 'STRUCTURAL', label: t('punchlist.catStructural') },
+  { value: 'ARCHITECTURAL', label: t('punchlist.catArchitectural') },
+  { value: 'ELECTRICAL', label: t('punchlist.catElectrical') },
+  { value: 'PLUMBING', label: t('punchlist.catPlumbing') },
+  { value: 'FINISHING', label: t('punchlist.catFinishing') },
+  { value: 'FIRE_SAFETY', label: t('punchlist.catFireSafety') },
 ];
 
 
@@ -105,7 +106,7 @@ const PunchlistItemsPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('regulatory.colNumber'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -113,7 +114,7 @@ const PunchlistItemsPage: React.FC = () => {
       },
       {
         accessorKey: 'title',
-        header: 'Замечание',
+        header: t('punchlist.colItem'),
         size: 260,
         cell: ({ row }) => (
           <div>
@@ -124,7 +125,7 @@ const PunchlistItemsPage: React.FC = () => {
       },
       {
         accessorKey: 'category',
-        header: 'Категория',
+        header: t('punchlist.colCategory'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -136,7 +137,7 @@ const PunchlistItemsPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('punchlist.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -148,7 +149,7 @@ const PunchlistItemsPage: React.FC = () => {
       },
       {
         accessorKey: 'priority',
-        header: 'Приоритет',
+        header: t('punchlist.colPriority'),
         size: 110,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -160,7 +161,7 @@ const PunchlistItemsPage: React.FC = () => {
       },
       {
         accessorKey: 'assignedToName',
-        header: 'Исполнитель',
+        header: t('punchlist.colAssignee'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -168,7 +169,7 @@ const PunchlistItemsPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('punchlist.colDueDate'),
         size: 110,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
@@ -192,44 +193,44 @@ const PunchlistItemsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Замечания (Punch List)"
-        subtitle={`${items.length} замечаний в системе`}
+        title={t('punchlist.itemsTitle')}
+        subtitle={t('punchlist.itemsSubtitle', { count: String(items.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Punch List', href: '/punchlist' },
-          { label: 'Замечания' },
+          { label: t('punchlist.breadcrumbHome'), href: '/' },
+          { label: t('punchlist.breadcrumbPunchList'), href: '/punchlist' },
+          { label: t('punchlist.breadcrumbItems') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => setCreateModalOpen(true)}>
-            Новое замечание
+            {t('punchlist.btnNewItem')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'OPEN', label: 'Открытые', count: tabCounts.open },
-          { id: 'IN_PROGRESS', label: 'В работе', count: tabCounts.in_progress },
-          { id: 'REVIEW', label: 'На проверке', count: tabCounts.review },
-          { id: 'CLOSED', label: 'Закрытые', count: tabCounts.closed },
+          { id: 'all', label: t('punchlist.tabAll'), count: tabCounts.all },
+          { id: 'OPEN', label: t('punchlist.tabOpen'), count: tabCounts.open },
+          { id: 'IN_PROGRESS', label: t('punchlist.tabInProgress'), count: tabCounts.in_progress },
+          { id: 'REVIEW', label: t('punchlist.tabReview'), count: tabCounts.review },
+          { id: 'CLOSED', label: t('punchlist.tabClosed'), count: tabCounts.closed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<ListChecks size={18} />} label="Всего замечаний" value={metrics.total} />
-        <MetricCard icon={<Clock size={18} />} label="Открытые" value={metrics.openCount} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Критические" value={metrics.criticalCount}
-          trend={metrics.criticalCount > 0 ? { direction: 'down', value: 'Требуют внимания' } : undefined} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Закрытые" value={metrics.closedCount} />
+        <MetricCard icon={<ListChecks size={18} />} label={t('punchlist.metricTotalItems')} value={metrics.total} />
+        <MetricCard icon={<Clock size={18} />} label={t('punchlist.metricOpenItems')} value={metrics.openCount} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('punchlist.metricCritical')} value={metrics.criticalCount}
+          trend={metrics.criticalCount > 0 ? { direction: 'down', value: t('punchlist.trendNeedAttention') } : undefined} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('punchlist.metricClosedItems')} value={metrics.closedCount} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, описанию, месту..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('punchlist.searchItemPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={priorityFilterOptions} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} className="w-44" />
-        <Select options={categoryFilterOptions} value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-48" />
+        <Select options={getPriorityFilterOptions()} value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} className="w-44" />
+        <Select options={getCategoryFilterOptions()} value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-48" />
       </div>
 
       <DataTable<PunchItem>
@@ -242,8 +243,8 @@ const PunchlistItemsPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет замечаний"
-        emptyDescription="Создайте первое замечание для начала работы"
+        emptyTitle={t('punchlist.emptyItems')}
+        emptyDescription={t('punchlist.emptyItemsDesc')}
       />
 
       <PunchItemCreateModal

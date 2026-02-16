@@ -49,8 +49,10 @@ public class PurchaseOrderController {
             @RequestParam(required = false) PurchaseOrderStatus status,
             @RequestParam(required = false) UUID projectId,
             @RequestParam(required = false) UUID supplierId,
+            @RequestParam(required = false) UUID purchaseRequestId,
+            @RequestParam(required = false) String search,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PurchaseOrder> page = orderService.listOrders(status, projectId, supplierId, pageable);
+        Page<PurchaseOrder> page = orderService.listOrders(status, projectId, supplierId, purchaseRequestId, search, pageable);
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
     }
 
@@ -168,6 +170,12 @@ public class PurchaseOrderController {
     @Operation(summary = "Закрыть заказ")
     public ResponseEntity<ApiResponse<PurchaseOrder>> close(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.ok(orderService.closeOrder(id)));
+    }
+
+    @PostMapping("/{id}/invoice")
+    @Operation(summary = "Пометить заказ как оплаченный")
+    public ResponseEntity<ApiResponse<PurchaseOrder>> invoice(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(orderService.invoiceOrder(id)));
     }
 
     @PostMapping("/bulk-transition")

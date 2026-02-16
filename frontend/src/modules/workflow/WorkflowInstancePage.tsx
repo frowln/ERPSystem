@@ -9,6 +9,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { workflowApi } from '@/api/workflow';
 import { formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 import type { AutomationExecution, ExecutionStatus } from './types';
 
 const executionStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'> = {
@@ -18,29 +19,29 @@ const executionStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yello
   PENDING: 'yellow',
 };
 
-const executionStatusLabels: Record<string, string> = {
-  SUCCESS: 'Успешно',
-  FAILURE: 'Ошибка',
-  SKIPPED: 'Пропущено',
-  PENDING: 'Ожидание',
-};
+const getExecutionStatusLabels = (): Record<string, string> => ({
+  SUCCESS: t('workflow.execStatusSuccess'),
+  FAILURE: t('workflow.execStatusFailure'),
+  SKIPPED: t('workflow.execStatusSkipped'),
+  PENDING: t('workflow.execStatusPending'),
+});
 
-const triggerTypeLabels: Record<string, string> = {
-  STATUS_CHANGE: 'Смена статуса',
-  FIELD_UPDATE: 'Обновление поля',
-  TIME_BASED: 'По расписанию',
-  APPROVAL: 'Согласование',
-  CREATION: 'Создание',
-};
+const getTriggerTypeLabels = (): Record<string, string> => ({
+  STATUS_CHANGE: t('workflow.triggerStatusChange'),
+  FIELD_UPDATE: t('workflow.triggerFieldUpdate'),
+  TIME_BASED: t('workflow.triggerTimeBased'),
+  APPROVAL: t('workflow.triggerApproval'),
+  CREATION: t('workflow.triggerCreation'),
+});
 
-const actionTypeLabels: Record<string, string> = {
-  SEND_NOTIFICATION: 'Уведомление',
-  ASSIGN_ROLE: 'Назначение роли',
-  UPDATE_STATUS: 'Обновление статуса',
-  CREATE_TASK: 'Создание задачи',
-  SEND_EMAIL: 'Отправка email',
+const getActionTypeLabels = (): Record<string, string> => ({
+  SEND_NOTIFICATION: t('workflow.actionNotification'),
+  ASSIGN_ROLE: t('workflow.actionAssignRole'),
+  UPDATE_STATUS: t('workflow.actionUpdateStatus'),
+  CREATE_TASK: t('workflow.actionCreateTask'),
+  SEND_EMAIL: t('workflow.actionSendEmail'),
   WEBHOOK: 'Webhook',
-};
+});
 
 type TabId = 'all' | 'SUCCESS' | 'failure' | 'PENDING';
 
@@ -55,6 +56,10 @@ const WorkflowInstancePage: React.FC = () => {
   });
 
   const executions = data?.content ?? [];
+
+  const executionStatusLabels = getExecutionStatusLabels();
+  const triggerTypeLabels = getTriggerTypeLabels();
+  const actionTypeLabels = getActionTypeLabels();
 
   const filtered = useMemo(() => {
     let result = executions;
@@ -91,7 +96,7 @@ const WorkflowInstancePage: React.FC = () => {
     () => [
       {
         accessorKey: 'ruleName',
-        header: 'Правило',
+        header: t('workflow.colRule'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -102,7 +107,7 @@ const WorkflowInstancePage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('workflow.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -114,7 +119,7 @@ const WorkflowInstancePage: React.FC = () => {
       },
       {
         accessorKey: 'triggerType',
-        header: 'Триггер',
+        header: t('workflow.colTrigger'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{triggerTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
@@ -122,7 +127,7 @@ const WorkflowInstancePage: React.FC = () => {
       },
       {
         accessorKey: 'actionType',
-        header: 'Действие',
+        header: t('workflow.colAction'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{actionTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
@@ -130,16 +135,16 @@ const WorkflowInstancePage: React.FC = () => {
       },
       {
         accessorKey: 'durationMs',
-        header: 'Время (мс)',
+        header: t('workflow.colDuration'),
         size: 100,
         cell: ({ getValue }) => {
           const ms = getValue<number | undefined>();
-          return <span className="font-mono text-xs tabular-nums">{ms != null ? `${ms} мс` : '---'}</span>;
+          return <span className="font-mono text-xs tabular-nums">{ms != null ? `${ms} ${t('workflow.msAbbrev')}` : '---'}</span>;
         },
       },
       {
         accessorKey: 'startedAt',
-        header: 'Запуск',
+        header: t('workflow.colStartedAt'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm">{formatDateTime(getValue<string>())}</span>
@@ -147,7 +152,7 @@ const WorkflowInstancePage: React.FC = () => {
       },
       {
         accessorKey: 'errorMessage',
-        header: 'Ошибка',
+        header: t('workflow.colError'),
         size: 200,
         cell: ({ getValue }) => {
           const err = getValue<string | undefined>();
@@ -155,44 +160,44 @@ const WorkflowInstancePage: React.FC = () => {
         },
       },
     ],
-    [],
+    [executionStatusLabels, triggerTypeLabels, actionTypeLabels],
   );
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Выполнение процессов"
-        subtitle={`${executions.length} выполнений`}
+        title={t('workflow.executionsTitle')}
+        subtitle={t('workflow.executionsCount', { count: executions.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бизнес-процессы', href: '/workflow/templates' },
-          { label: 'Выполнения' },
+          { label: t('workflow.breadcrumbHome'), href: '/' },
+          { label: t('workflow.breadcrumbWorkflows'), href: '/workflow/templates' },
+          { label: t('workflow.breadcrumbExecutions') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: counts.all },
-          { id: 'SUCCESS', label: 'Успешные', count: counts.success },
-          { id: 'failure', label: 'Ошибки', count: counts.failure },
-          { id: 'PENDING', label: 'Ожидание', count: counts.pending },
+          { id: 'all', label: t('workflow.tabAll'), count: counts.all },
+          { id: 'SUCCESS', label: t('workflow.tabSuccess'), count: counts.success },
+          { id: 'failure', label: t('workflow.tabFailure'), count: counts.failure },
+          { id: 'PENDING', label: t('workflow.tabPending'), count: counts.pending },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Activity size={18} />} label="Всего выполнений" value={counts.all} />
-        <MetricCard icon={<CheckCircle2 size={18} />} label="Успешные" value={counts.success} trend={{ direction: 'up', value: `${((counts.success / Math.max(counts.all, 1)) * 100).toFixed(0)}%` }} />
-        <MetricCard icon={<XCircle size={18} />} label="Ошибки" value={counts.failure} trend={{ direction: counts.failure > 0 ? 'down' : 'neutral', value: counts.failure > 0 ? 'Требуют внимания' : 'Нет' }} />
-        <MetricCard icon={<Clock size={18} />} label="Среднее время" value={`${avgDuration.toFixed(0)} мс`} />
+        <MetricCard icon={<Activity size={18} />} label={t('workflow.metricTotalExecutions')} value={counts.all} />
+        <MetricCard icon={<CheckCircle2 size={18} />} label={t('workflow.tabSuccess')} value={counts.success} trend={{ direction: 'up', value: `${((counts.success / Math.max(counts.all, 1)) * 100).toFixed(0)}%` }} />
+        <MetricCard icon={<XCircle size={18} />} label={t('workflow.tabFailure')} value={counts.failure} trend={{ direction: counts.failure > 0 ? 'down' : 'neutral', value: counts.failure > 0 ? t('workflow.needAttention') : t('workflow.noErrors') }} />
+        <MetricCard icon={<Clock size={18} />} label={t('workflow.metricAvgTime')} value={`${avgDuration.toFixed(0)} ${t('workflow.msAbbrev')}`} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по правилу, ID..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('workflow.searchExecutionPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все статусы' },
+            { value: '', label: t('workflow.filterAllStatuses') },
             ...Object.entries(executionStatusLabels).map(([value, label]) => ({ value, label })),
           ]}
           value={statusFilter}
@@ -210,8 +215,8 @@ const WorkflowInstancePage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет выполнений"
-        emptyDescription="Выполнения появятся после срабатывания правил автоматизации"
+        emptyTitle={t('workflow.emptyExecutionsTitle')}
+        emptyDescription={t('workflow.emptyExecutionsDescription')}
       />
     </div>
   );

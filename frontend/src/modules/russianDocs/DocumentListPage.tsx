@@ -17,18 +17,19 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { russianDocsApi } from '@/api/russianDocs';
 import { formatDate, formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 import type { RussianDocument } from './types';
 
 type TabId = 'all' | 'DRAFT' | 'IN_REVIEW' | 'SIGNED' | 'ARCHIVED';
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'KS2', label: 'КС-2' },
-  { value: 'KS3', label: 'КС-3' },
-  { value: 'M29', label: 'М-29' },
-  { value: 'EXECUTIVE_SCHEME', label: 'Исп. схема' },
-  { value: 'HIDDEN_WORKS_ACT', label: 'Акт скрытых работ' },
-  { value: 'GENERAL_JOURNAL', label: 'Общий журнал' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('russianDocs.allTypes') },
+  { value: 'KS2', label: t('russianDocs.typeKs2') },
+  { value: 'KS3', label: t('russianDocs.typeKs3') },
+  { value: 'M29', label: t('russianDocs.typeM29') },
+  { value: 'EXECUTIVE_SCHEME', label: t('russianDocs.typeExecScheme') },
+  { value: 'HIDDEN_WORKS_ACT', label: t('russianDocs.typeHiddenWorksAct') },
+  { value: 'GENERAL_JOURNAL', label: t('russianDocs.typeGeneralJournal') },
 ];
 
 const DocumentListPage: React.FC = () => {
@@ -90,7 +91,7 @@ const DocumentListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('russianDocs.number'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -98,7 +99,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('russianDocs.docListColumnName'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -109,7 +110,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'documentType',
-        header: 'Тип',
+        header: t('russianDocs.docListColumnType'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -121,7 +122,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('russianDocs.status'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -133,7 +134,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalWithVat',
-        header: 'Сумма с НДС',
+        header: t('russianDocs.docListColumnAmountWithVat'),
         size: 150,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -146,7 +147,7 @@ const DocumentListPage: React.FC = () => {
       },
       {
         accessorKey: 'documentDate',
-        header: 'Дата',
+        header: t('russianDocs.date'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -165,7 +166,7 @@ const DocumentListPage: React.FC = () => {
               navigate(`/russian-docs/${row.original.id}`);
             }}
           >
-            Открыть
+            {t('russianDocs.open')}
           </Button>
         ),
       },
@@ -181,49 +182,49 @@ const DocumentListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Исполнительная документация"
-        subtitle={`${documents.length} документов в системе`}
+        title={t('russianDocs.docListTitle')}
+        subtitle={t('russianDocs.docListSubtitle', { count: documents.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Исп. документация' },
+          { label: t('russianDocs.breadcrumbHome'), href: '/' },
+          { label: t('russianDocs.breadcrumbExecDocs') },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="secondary" iconLeft={<FilePlus2 size={16} />} onClick={() => navigate('/russian-docs/ks2/new')}>
-              КС-2
+              {t('russianDocs.typeKs2')}
             </Button>
             <Button variant="secondary" iconLeft={<FilePlus2 size={16} />} onClick={() => navigate('/russian-docs/ks3/new')}>
-              КС-3
+              {t('russianDocs.typeKs3')}
             </Button>
             <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/russian-docs/new')}>
-              Новый документ
+              {t('russianDocs.newDocument')}
             </Button>
           </div>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновики', count: tabCounts.draft },
-          { id: 'IN_REVIEW', label: 'На проверке', count: tabCounts.in_review },
-          { id: 'SIGNED', label: 'Подписанные', count: tabCounts.signed },
-          { id: 'ARCHIVED', label: 'Архив', count: tabCounts.archived },
+          { id: 'all', label: t('russianDocs.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('russianDocs.tabDrafts'), count: tabCounts.draft },
+          { id: 'IN_REVIEW', label: t('russianDocs.tabInReview'), count: tabCounts.in_review },
+          { id: 'SIGNED', label: t('russianDocs.tabSigned'), count: tabCounts.signed },
+          { id: 'ARCHIVED', label: t('russianDocs.tabArchive'), count: tabCounts.archived },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Всего документов" value={metrics.total} />
-        <MetricCard icon={<ClipboardCheck size={18} />} label="Подписано" value={metrics.signedCount} />
-        <MetricCard icon={<FileText size={18} />} label="Подписано на сумму" value={formatMoney(metrics.signedTotal)} />
-        <MetricCard icon={<Archive size={18} />} label="На подписании" value={formatMoney(metrics.pendingTotal)} />
+        <MetricCard icon={<FileText size={18} />} label={t('russianDocs.metricTotalDocs')} value={metrics.total} />
+        <MetricCard icon={<ClipboardCheck size={18} />} label={t('russianDocs.metricSigned')} value={metrics.signedCount} />
+        <MetricCard icon={<FileText size={18} />} label={t('russianDocs.metricSignedAmount')} value={formatMoney(metrics.signedTotal)} />
+        <MetricCard icon={<Archive size={18} />} label={t('russianDocs.metricOnSigning')} value={formatMoney(metrics.pendingTotal)} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('russianDocs.searchByNumberName')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={typeFilterOptions} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-48" />
+        <Select options={getTypeFilterOptions()} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-48" />
       </div>
 
       <DataTable<RussianDocument>
@@ -236,8 +237,8 @@ const DocumentListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет документов"
-        emptyDescription="Создайте первый документ исполнительной документации"
+        emptyTitle={t('russianDocs.docListEmptyTitle')}
+        emptyDescription={t('russianDocs.docListEmptyDescription')}
       />
     </div>
   );

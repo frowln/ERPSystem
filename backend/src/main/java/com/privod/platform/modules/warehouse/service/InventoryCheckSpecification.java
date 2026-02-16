@@ -15,6 +15,10 @@ public final class InventoryCheckSpecification {
         return (root, query, cb) -> cb.equal(root.get("deleted"), false);
     }
 
+    public static Specification<InventoryCheck> belongsToOrganization(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
+    }
+
     public static Specification<InventoryCheck> hasStatus(InventoryCheckStatus status) {
         return (root, query, cb) -> {
             if (status == null) return cb.conjunction();

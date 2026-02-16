@@ -193,14 +193,14 @@ const CrmLeadFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.crmLead.labelContactName')} error={errors.contactName?.message} required>
               <Input
-                placeholder="Иванов Иван Иванович"
+                placeholder={t('forms.crmLead.placeholderContactName')}
                 hasError={!!errors.contactName}
                 {...register('contactName')}
               />
             </FormField>
             <FormField label={t('forms.crmLead.labelCompany')} error={errors.companyName?.message}>
               <Input
-                placeholder='ООО "СтройИнвест"'
+                placeholder={t('forms.crmLead.placeholderCompany')}
                 hasError={!!errors.companyName}
                 {...register('companyName')}
               />

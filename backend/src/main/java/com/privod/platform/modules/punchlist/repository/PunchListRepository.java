@@ -10,10 +10,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface PunchListRepository extends JpaRepository<PunchList, UUID> {
+
+    Optional<PunchList> findByIdAndDeletedFalse(UUID id);
+
+    Page<PunchList> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);
 
     Page<PunchList> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 

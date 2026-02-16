@@ -43,20 +43,20 @@ const priorityOptions = [
 ];
 
 // Mock data — will be replaced by API data
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectGorizont') },
+  { value: '3', label: t('mockData.projectBridgeVyatka') },
+  { value: '6', label: t('mockData.projectTsCentralny') },
 ];
 
 // Mock data — will be replaced by API data
-const assigneeOptions = [
+const getAssigneeOptions = () => [
   { value: '', label: t('forms.issue.unassigned') },
-  { value: 'u1', label: 'Иванов И.И.' },
-  { value: 'u2', label: 'Петров П.П.' },
-  { value: 'u3', label: 'Сидоров С.С.' },
-  { value: 'u4', label: 'Козлов К.К.' },
+  { value: 'u1', label: t('mockData.personIvanov') },
+  { value: 'u2', label: t('mockData.personPetrov') },
+  { value: 'u3', label: t('mockData.personSidorov') },
+  { value: 'u4', label: t('mockData.personKozlov') },
 ];
 
 const IssueFormPage: React.FC = () => {
@@ -194,14 +194,14 @@ const IssueFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.issue.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
               />
             </FormField>
             <FormField label={t('forms.issue.labelAssignee')} error={errors.assignedToId?.message}>
               <Select
-                options={assigneeOptions}
+                options={getAssigneeOptions()}
                 placeholder={t('forms.issue.selectAssignee')}
                 hasError={!!errors.assignedToId}
                 {...register('assignedToId')}

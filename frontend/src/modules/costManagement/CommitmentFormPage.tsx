@@ -33,20 +33,20 @@ const commitmentSchema = z.object({
 
 type CommitmentFormData = z.input<typeof commitmentSchema>;
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('common.mockProjects.solnechny') },
+  { value: '2', label: t('common.mockProjects.gorizont') },
+  { value: '3', label: t('common.mockProjects.mostVyatka') },
+  { value: '6', label: t('common.mockProjects.tsentralny') },
 ];
 
-const vendorOptions = [
-  { value: 'v1', label: 'ООО "СтройМонтаж"' },
-  { value: 'v2', label: 'АО "ЭлектроСтрой"' },
-  { value: 'v3', label: 'ООО "БетонСервис"' },
-  { value: 'v4', label: 'ООО "ПроектГрупп"' },
-  { value: 'v5', label: 'АО "ДорСтрой"' },
-  { value: 'v6', label: 'ПАО "МеталлТрейд"' },
+const getVendorOptions = () => [
+  { value: 'v1', label: t('common.mockVendors.stroyMontazh') },
+  { value: 'v2', label: t('common.mockVendors.elektroStroy') },
+  { value: 'v3', label: t('common.mockVendors.betonServis') },
+  { value: 'v4', label: t('common.mockVendors.proektGrupp') },
+  { value: 'v5', label: t('common.mockVendors.dorStroy') },
+  { value: 'v6', label: t('common.mockVendors.metallTrade') },
 ];
 
 const typeOptions = [
@@ -63,12 +63,12 @@ const currencyOptions = [
   { value: 'CNY', label: t('forms.commitment.currencies.cny') },
 ];
 
-const contractOptions = [
+const getContractOptions = () => [
   { value: '', label: t('forms.commitment.noContract') },
-  { value: 'c1', label: 'ДГ-2025-001 - Генподряд ЖК "Солнечный"' },
-  { value: 'c2', label: 'ДГ-2025-002 - Субподряд электромонтаж' },
-  { value: 'c3', label: 'ДГ-2025-003 - Поставка бетона' },
-  { value: 'c4', label: 'ДГ-2025-004 - Проектирование БЦ "Горизонт"' },
+  { value: 'c1', label: t('common.mockContracts.dg001') },
+  { value: 'c2', label: t('common.mockContracts.dg002') },
+  { value: 'c3', label: t('common.mockContracts.dg003') },
+  { value: 'c4', label: t('common.mockContracts.dg004') },
 ];
 
 const CommitmentFormPage: React.FC = () => {
@@ -221,7 +221,7 @@ const CommitmentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.commitment.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.commitment.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -229,7 +229,7 @@ const CommitmentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.commitment.labelVendor')} error={errors.vendorId?.message} required>
               <Select
-                options={vendorOptions}
+                options={getVendorOptions()}
                 placeholder={t('forms.commitment.placeholderVendor')}
                 hasError={!!errors.vendorId}
                 {...register('vendorId')}
@@ -237,7 +237,7 @@ const CommitmentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.commitment.labelContract')} error={errors.contractId?.message}>
               <Select
-                options={contractOptions}
+                options={getContractOptions()}
                 hasError={!!errors.contractId}
                 {...register('contractId')}
               />

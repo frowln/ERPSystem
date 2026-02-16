@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
   Wallet,
@@ -12,12 +12,14 @@ import {
   FileText,
   CheckCircle2,
   Send,
+  ShoppingCart,
   UserCheck,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
+import { useConfirmDialog } from '@/design-system/components/ConfirmDialog/provider';
 import {
   StatusBadge,
   purchaseRequestStatusColorMap,
@@ -25,41 +27,127 @@ import {
   purchaseRequestPriorityColorMap,
   purchaseRequestPriorityLabels,
 } from '@/design-system/components/StatusBadge';
-import { procurementApi } from '@/api/procurement';
-import { formatMoney, formatMoneyCompact, formatDateLong } from '@/lib/format';
+import {
+  procurementApi,
+  type PurchaseOrder,
+  type PurchaseOrderStatus,
+} from '@/api/procurement';
+import { formatDate, formatMoney, formatMoneyCompact, formatDateLong } from '@/lib/format';
+import { useAuthStore } from '@/stores/authStore';
 import { t } from '@/i18n';
-import type { PurchaseRequest } from '@/types';
+import type { PurchaseRequest, PurchaseRequestStatus } from '@/types';
 import toast from 'react-hot-toast';
 
-interface PurchaseRequestItem {
-  id: string;
-  name: string;
-  quantity: number;
-  unitOfMeasure: string;
-  unitPrice: number;
-  amount: number;
-}
+const getPurchaseOrderStatusLabels = (): Record<PurchaseOrderStatus, string> => ({
+  DRAFT: t('procurement.orderStatus.draft'),
+  SENT: t('procurement.orderStatus.sent'),
+  CONFIRMED: t('procurement.orderStatus.confirmed'),
+  PARTIALLY_DELIVERED: t('procurement.orderStatus.partiallyDelivered'),
+  DELIVERED: t('procurement.orderStatus.delivered'),
+  INVOICED: t('procurement.orderStatus.invoiced'),
+  CLOSED: t('procurement.orderStatus.closed'),
+  CANCELLED: t('procurement.orderStatus.cancelled'),
+});
+
+const purchaseOrderStatusColorMap: Record<PurchaseOrderStatus, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
+  DRAFT: 'gray',
+  SENT: 'blue',
+  CONFIRMED: 'cyan',
+  PARTIALLY_DELIVERED: 'yellow',
+  DELIVERED: 'green',
+  INVOICED: 'purple',
+  CLOSED: 'gray',
+  CANCELLED: 'red',
+};
+
+const shortUuid = (value?: string) => (value ? `${value.slice(0, 8)}…` : '—');
 
 const PurchaseRequestDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const confirm = useConfirmDialog();
+  const currentUserId = useAuthStore((state) => state.user?.id);
+  const [pendingStatus, setPendingStatus] = useState<PurchaseRequestStatus | null>(null);
 
   const { data: request } = useQuery<PurchaseRequest>({
     queryKey: ['purchase-request', id],
     queryFn: () => procurementApi.getPurchaseRequest(id!),
     enabled: !!id,
   });
+  const {
+    data: relatedOrdersResponse,
+    isLoading: isRelatedOrdersLoading,
+  } = useQuery({
+    queryKey: ['purchase-orders', 'purchase-request', request?.id],
+    queryFn: () => procurementApi.getPurchaseOrders({
+      page: 0,
+      size: 50,
+      sort: 'createdAt,desc',
+      purchaseRequestId: request?.id,
+    }),
+    enabled: !!request?.id,
+  });
 
   const r = request;
-  const [statusOverride, setStatusOverride] = useState<PurchaseRequest['status'] | null>(null);
-  const items: PurchaseRequestItem[] = (r as any)?.items ?? [];
+  const items = r?.items ?? [];
+  const relatedOrders = relatedOrdersResponse?.content ?? [];
 
   if (!r) return null;
 
-  const effectiveStatus = statusOverride ?? r.status;
+  const canCreatePurchaseOrder = ['APPROVED', 'ASSIGNED', 'ORDERED'].includes(r.status);
+  const transitionMutation = useMutation({
+    mutationFn: async ({ current, targetStatus }: { current: PurchaseRequest; targetStatus: PurchaseRequestStatus }) => {
+      switch (targetStatus) {
+        case 'SUBMITTED':
+          return procurementApi.submitPurchaseRequest(current.id);
+        case 'APPROVED':
+          return procurementApi.approvePurchaseRequestStatus(current.id);
+        case 'REJECTED':
+          return procurementApi.rejectPurchaseRequest(current.id, t('procurement.requestDetail.rejectionReason'));
+        case 'ASSIGNED': {
+          const assignedToId = current.assignedToId ?? current.requestedById ?? currentUserId;
+          if (!assignedToId) {
+            throw new Error(t('procurement.requestDetail.errorNoAssignee'));
+          }
+          return procurementApi.assignPurchaseRequest(current.id, assignedToId);
+        }
+        case 'ORDERED':
+          return procurementApi.markPurchaseRequestOrdered(current.id);
+        case 'DELIVERED':
+          return procurementApi.markPurchaseRequestDelivered(current.id);
+        case 'CLOSED':
+          return procurementApi.closePurchaseRequest(current.id);
+        case 'CANCELLED':
+          return procurementApi.cancelPurchaseRequest(current.id);
+        default:
+          throw new Error(`Unsupported status transition: ${targetStatus}`);
+      }
+    },
+    onMutate: ({ targetStatus }) => {
+      setPendingStatus(targetStatus);
+      toast.loading(t('procurement.requestDetail.toastUpdatingStatus'), { id: 'purchase-request-status-transition' });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-request', variables.current.id] });
+      queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['purchase-orders', 'purchase-request', variables.current.id] });
+      toast.success(
+        `${t('procurement.requestDetail.toastStatusChanged')}: ${purchaseRequestStatusLabels[variables.targetStatus] ?? variables.targetStatus}`,
+        { id: 'purchase-request-status-transition' },
+      );
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : t('procurement.requestDetail.errorStatusUpdateFailed');
+      toast.error(message, { id: 'purchase-request-status-transition' });
+    },
+    onSettled: () => {
+      setPendingStatus(null);
+    },
+  });
 
-  const statusActions = useMemo<Array<{ label: string; icon: React.ReactNode; targetStatus: PurchaseRequest['status'] }>>(() => {
-    switch (effectiveStatus) {
+  const statusActions = useMemo<Array<{ label: string; icon: React.ReactNode; targetStatus: PurchaseRequestStatus }>>(() => {
+    switch (r.status) {
       case 'DRAFT': return [{ label: t('procurement.requestDetail.actionSubmit'), icon: <Send size={14} />, targetStatus: 'SUBMITTED' }];
       case 'SUBMITTED': return [
         { label: t('procurement.requestDetail.actionApprove'), icon: <CheckCircle2 size={14} />, targetStatus: 'APPROVED' },
@@ -79,14 +167,31 @@ const PurchaseRequestDetailPage: React.FC = () => {
       ];
       default: return [];
     }
-  }, [effectiveStatus]);
+  }, [r.status]);
 
-  const handleStatusChange = (targetStatus: PurchaseRequest['status']) => {
-    setStatusOverride(targetStatus);
-    toast.success(`${t('procurement.requestDetail.toastStatusChanged')}: ${purchaseRequestStatusLabels[targetStatus] ?? targetStatus}`);
+  const handleStatusChange = async (targetStatus: PurchaseRequestStatus) => {
+    if (transitionMutation.isPending) {
+      return;
+    }
+
+    if (targetStatus === 'REJECTED') {
+      const isConfirmed = await confirm({
+        title: `${t('procurement.requestDetail.confirmRejectTitle')} ${r.name}?`,
+        description: t('procurement.requestDetail.confirmRejectDescription'),
+        confirmLabel: t('common.reject'),
+        cancelLabel: t('common.cancel'),
+        confirmVariant: 'danger',
+        items: [r.name],
+      });
+      if (!isConfirmed) {
+        return;
+      }
+    }
+
+    transitionMutation.mutate({ current: r, targetStatus });
   };
 
-  const columns = useMemo<ColumnDef<PurchaseRequestItem, unknown>[]>(
+  const columns = useMemo<ColumnDef<NonNullable<PurchaseRequest['items']>[number], unknown>[]>(
     () => [
       {
         accessorKey: 'name',
@@ -138,6 +243,69 @@ const PurchaseRequestDetailPage: React.FC = () => {
     [],
   );
 
+  const relatedOrderColumns = useMemo<ColumnDef<PurchaseOrder, unknown>[]>(
+    () => [
+      {
+        accessorKey: 'orderNumber',
+        header: t('procurement.requestDetail.relatedColOrderNumber'),
+        size: 170,
+        cell: ({ row, getValue }) => (
+          <button
+            type="button"
+            className="font-mono text-xs text-primary-700 hover:text-primary-800 hover:underline"
+            onClick={(event) => {
+              event.stopPropagation();
+              navigate(`/procurement/purchase-orders/${row.original.id}`);
+            }}
+          >
+            {getValue<string>()}
+          </button>
+        ),
+      },
+      {
+        accessorKey: 'orderDate',
+        header: t('procurement.requestDetail.relatedColDate'),
+        size: 120,
+        cell: ({ getValue }) => formatDate(getValue<string>()),
+      },
+      {
+        accessorKey: 'status',
+        header: t('procurement.requestDetail.relatedColStatus'),
+        size: 170,
+        cell: ({ getValue }) => {
+          const status = getValue<PurchaseOrderStatus>();
+          const poStatusLabels = getPurchaseOrderStatusLabels();
+          return (
+            <StatusBadge
+              status={status}
+              colorMap={purchaseOrderStatusColorMap}
+              label={poStatusLabels[status] ?? status}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: 'supplierId',
+        header: t('procurement.requestDetail.relatedColSupplier'),
+        size: 170,
+        cell: ({ getValue }) => (
+          <span className="font-mono text-xs">{shortUuid(getValue<string>())}</span>
+        ),
+      },
+      {
+        accessorKey: 'totalAmount',
+        header: t('procurement.requestDetail.relatedColAmount'),
+        size: 140,
+        cell: ({ getValue }) => (
+          <span className="tabular-nums text-right block font-medium">
+            {formatMoney(getValue<number>())}
+          </span>
+        ),
+      },
+    ],
+    [navigate],
+  );
+
   return (
     <div className="animate-fade-in">
       <PageHeader
@@ -152,9 +320,9 @@ const PurchaseRequestDetailPage: React.FC = () => {
         actions={
           <div className="flex items-center gap-2">
             <StatusBadge
-              status={effectiveStatus}
+              status={r.status}
               colorMap={purchaseRequestStatusColorMap}
-              label={purchaseRequestStatusLabels[effectiveStatus] ?? effectiveStatus}
+              label={purchaseRequestStatusLabels[r.status] ?? r.status}
               size="md"
             />
             <StatusBadge
@@ -169,11 +337,34 @@ const PurchaseRequestDetailPage: React.FC = () => {
                 variant="secondary"
                 size="sm"
                 iconLeft={action.icon}
-                onClick={() => handleStatusChange(action.targetStatus)}
+                loading={transitionMutation.isPending && pendingStatus === action.targetStatus}
+                disabled={transitionMutation.isPending}
+                onClick={() => {
+                  void handleStatusChange(action.targetStatus);
+                }}
               >
                 {action.label}
               </Button>
             ))}
+            {canCreatePurchaseOrder && (
+              <Button
+                variant="primary"
+                size="sm"
+                iconLeft={<ShoppingCart size={14} />}
+                onClick={() => {
+                  const params = new URLSearchParams({ purchaseRequestId: r.id });
+                  if (r.projectId) {
+                    params.set('projectId', r.projectId);
+                  }
+                  if (r.name) {
+                    params.set('sourceRequestName', r.name);
+                  }
+                  navigate(`/procurement/purchase-orders/new?${params.toString()}`);
+                }}
+              >
+                {t('procurement.requestDetail.createPurchaseOrder')}
+              </Button>
+            )}
           </div>
         }
       />
@@ -188,7 +379,7 @@ const PurchaseRequestDetailPage: React.FC = () => {
         <MetricCard
           icon={<Layers size={18} />}
           label={t('procurement.requestDetail.metricItems')}
-          value={String(r.itemCount)}
+          value={String(r.itemCount ?? items.length)}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
@@ -205,13 +396,13 @@ const PurchaseRequestDetailPage: React.FC = () => {
           <InfoItem icon={<User size={15} />} label={t('procurement.requestDetail.infoRequestedBy')} value={r.requestedByName} />
           <InfoItem icon={<UserCheck size={15} />} label={t('procurement.requestDetail.infoAssignedTo')} value={r.assignedToName ?? t('procurement.requestDetail.notAssigned')} />
           <InfoItem icon={<Calendar size={15} />} label={t('procurement.requestDetail.infoRequestDate')} value={formatDateLong(r.requestDate)} />
-          <InfoItem icon={<FileText size={15} />} label={t('procurement.requestDetail.infoStatus')} value={purchaseRequestStatusLabels[effectiveStatus] ?? effectiveStatus} />
+          <InfoItem icon={<FileText size={15} />} label={t('procurement.requestDetail.infoStatus')} value={purchaseRequestStatusLabels[r.status] ?? r.status} />
           <InfoItem icon={<AlertTriangle size={15} />} label={t('procurement.requestDetail.infoPriority')} value={purchaseRequestPriorityLabels[r.priority] ?? r.priority} />
         </div>
       </div>
 
       {/* Items table */}
-      <DataTable<PurchaseRequestItem>
+      <DataTable<NonNullable<PurchaseRequest['items']>[number]>
         data={items}
         columns={columns}
         enableExport
@@ -219,6 +410,49 @@ const PurchaseRequestDetailPage: React.FC = () => {
         emptyTitle={t('procurement.requestDetail.emptyTitle')}
         emptyDescription={t('procurement.requestDetail.emptyDescription')}
       />
+
+      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mt-6">
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            {t('procurement.requestDetail.relatedOrdersTitle')}
+          </h3>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate(`/procurement/purchase-orders?purchaseRequestId=${r.id}`)}
+            >
+              {t('procurement.requestDetail.openOrdersList')}
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              iconLeft={<ShoppingCart size={14} />}
+              onClick={() => {
+                const params = new URLSearchParams({ purchaseRequestId: r.id });
+                if (r.projectId) {
+                  params.set('projectId', r.projectId);
+                }
+                if (r.name) {
+                  params.set('sourceRequestName', r.name);
+                }
+                navigate(`/procurement/purchase-orders/new?${params.toString()}`);
+              }}
+            >
+              {t('procurement.requestDetail.newOrderFromRequest')}
+            </Button>
+          </div>
+        </div>
+        <DataTable<PurchaseOrder>
+          data={relatedOrders}
+          columns={relatedOrderColumns}
+          loading={isRelatedOrdersLoading}
+          onRowClick={(orderItem) => navigate(`/procurement/purchase-orders/${orderItem.id}`)}
+          pageSize={10}
+          emptyTitle={t('procurement.requestDetail.relatedOrdersEmptyTitle')}
+          emptyDescription={t('procurement.requestDetail.relatedOrdersEmptyDescription')}
+        />
+      </div>
     </div>
   );
 };

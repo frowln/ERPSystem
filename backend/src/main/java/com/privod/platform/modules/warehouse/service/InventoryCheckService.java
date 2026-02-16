@@ -1,6 +1,9 @@
 package com.privod.platform.modules.warehouse.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.warehouse.domain.InventoryCheck;
 import com.privod.platform.modules.warehouse.domain.InventoryCheckLine;
 import com.privod.platform.modules.warehouse.domain.InventoryCheckStatus;
@@ -14,6 +17,7 @@ import com.privod.platform.modules.warehouse.repository.InventoryCheckRepository
 import com.privod.platform.modules.warehouse.repository.StockEntryRepository;
 import com.privod.platform.modules.warehouse.repository.StockMovementLineRepository;
 import com.privod.platform.modules.warehouse.repository.StockMovementRepository;
+import com.privod.platform.modules.warehouse.repository.WarehouseLocationRepository;
 import com.privod.platform.modules.warehouse.web.dto.CreateInventoryCheckRequest;
 import com.privod.platform.modules.warehouse.web.dto.InventoryCheckLineResponse;
 import com.privod.platform.modules.warehouse.web.dto.InventoryCheckResponse;
@@ -42,12 +46,19 @@ public class InventoryCheckService {
     private final StockEntryRepository stockEntryRepository;
     private final StockMovementRepository movementRepository;
     private final StockMovementLineRepository movementLineRepository;
+    private final WarehouseLocationRepository warehouseLocationRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<InventoryCheckResponse> listChecks(InventoryCheckStatus status, UUID locationId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateLocationTenant(locationId, organizationId);
+
         Specification<InventoryCheck> spec = Specification
-                .where(InventoryCheckSpecification.notDeleted())
+                .where(InventoryCheckSpecification.belongsToOrganization(organizationId))
+                .and(InventoryCheckSpecification.notDeleted())
                 .and(InventoryCheckSpecification.hasStatus(status))
                 .and(InventoryCheckSpecification.hasLocation(locationId));
 
@@ -60,13 +71,16 @@ public class InventoryCheckService {
 
     @Transactional(readOnly = true)
     public InventoryCheckResponse getCheck(UUID id) {
-        InventoryCheck check = getCheckOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        InventoryCheck check = getCheckOrThrow(id, organizationId);
         List<InventoryCheckLineResponse> lines = getCheckLines(id);
         return InventoryCheckResponse.fromEntity(check, lines);
     }
 
     @Transactional(readOnly = true)
     public List<InventoryCheckLineResponse> getCheckLines(UUID checkId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getCheckOrThrow(checkId, organizationId);
         return checkLineRepository.findByCheckIdAndDeletedFalse(checkId)
                 .stream()
                 .map(InventoryCheckLineResponse::fromEntity)
@@ -75,9 +89,15 @@ public class InventoryCheckService {
 
     @Transactional
     public InventoryCheckResponse createCheck(CreateInventoryCheckRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateLocationTenant(request.locationId(), organizationId);
+        validateProjectTenant(request.projectId(), organizationId);
+        validateUserTenant(request.responsibleId(), organizationId);
+
         String name = generateCheckName();
 
         InventoryCheck check = InventoryCheck.builder()
+                .organizationId(organizationId)
                 .name(name)
                 .checkDate(request.checkDate())
                 .locationId(request.locationId())
@@ -97,14 +117,16 @@ public class InventoryCheckService {
 
     @Transactional
     public InventoryCheckResponse startCheck(UUID id) {
-        InventoryCheck check = getCheckOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        InventoryCheck check = getCheckOrThrow(id, organizationId);
 
         if (check.getStatus() != InventoryCheckStatus.PLANNED) {
             throw new IllegalStateException("Начать инвентаризацию можно только из статуса Запланирована");
         }
 
         // Populate expected quantities from current stock
-        List<StockEntry> stockEntries = stockEntryRepository.findByLocationIdAndDeletedFalse(check.getLocationId());
+        List<StockEntry> stockEntries = stockEntryRepository
+                .findByLocationIdAndOrganizationIdAndDeletedFalse(check.getLocationId(), organizationId);
 
         for (StockEntry entry : stockEntries) {
             InventoryCheckLine line = InventoryCheckLine.builder()
@@ -131,14 +153,14 @@ public class InventoryCheckService {
 
     @Transactional
     public InventoryCheckLineResponse updateCheckLine(UUID checkId, UpdateInventoryCheckLineRequest request) {
-        InventoryCheck check = getCheckOrThrow(checkId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        InventoryCheck check = getCheckOrThrow(checkId, organizationId);
 
         if (check.getStatus() != InventoryCheckStatus.IN_PROGRESS) {
             throw new IllegalStateException("Редактирование строк возможно только в статусе В процессе");
         }
 
-        InventoryCheckLine line = checkLineRepository.findById(request.lineId())
-                .filter(l -> !l.isDeleted())
+        InventoryCheckLine line = checkLineRepository.findByIdAndCheckIdAndDeletedFalse(request.lineId(), checkId)
                 .orElseThrow(() -> new EntityNotFoundException("Строка инвентаризации не найдена: " + request.lineId()));
 
         line.setActualQuantity(request.actualQuantity());
@@ -154,7 +176,8 @@ public class InventoryCheckService {
 
     @Transactional
     public InventoryCheckResponse completeCheck(UUID id) {
-        InventoryCheck check = getCheckOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        InventoryCheck check = getCheckOrThrow(id, organizationId);
 
         if (check.getStatus() != InventoryCheckStatus.IN_PROGRESS) {
             throw new IllegalStateException("Завершить инвентаризацию можно только из статуса В процессе");
@@ -169,6 +192,7 @@ public class InventoryCheckService {
 
         if (!linesWithVariance.isEmpty()) {
             StockMovement adjustmentMovement = StockMovement.builder()
+                    .organizationId(organizationId)
                     .number(generateAdjustmentNumber())
                     .movementDate(LocalDate.now())
                     .movementType(StockMovementType.ADJUSTMENT)
@@ -194,7 +218,11 @@ public class InventoryCheckService {
 
                 // Update the stock entry to actual quantity
                 StockEntry stockEntry = stockEntryRepository
-                        .findByMaterialIdAndLocationIdAndDeletedFalse(checkLine.getMaterialId(), check.getLocationId())
+                        .findByMaterialIdAndLocationIdAndOrganizationIdAndDeletedFalse(
+                                checkLine.getMaterialId(),
+                                check.getLocationId(),
+                                organizationId
+                        )
                         .orElse(null);
 
                 if (stockEntry != null) {
@@ -221,7 +249,8 @@ public class InventoryCheckService {
 
     @Transactional
     public InventoryCheckResponse cancelCheck(UUID id) {
-        InventoryCheck check = getCheckOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        InventoryCheck check = getCheckOrThrow(id, organizationId);
 
         if (check.getStatus() == InventoryCheckStatus.COMPLETED || check.getStatus() == InventoryCheckStatus.CANCELLED) {
             throw new IllegalStateException("Невозможно отменить инвентаризацию в статусе " + check.getStatus().getDisplayName());
@@ -237,9 +266,8 @@ public class InventoryCheckService {
         return InventoryCheckResponse.fromEntity(check, lines);
     }
 
-    private InventoryCheck getCheckOrThrow(UUID id) {
-        return checkRepository.findById(id)
-                .filter(c -> !c.isDeleted())
+    private InventoryCheck getCheckOrThrow(UUID id, UUID organizationId) {
+        return checkRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Инвентаризация не найдена: " + id));
     }
 
@@ -251,5 +279,29 @@ public class InventoryCheckService {
     private String generateAdjustmentNumber() {
         long seq = movementRepository.getNextNumberSequence();
         return String.format("MOV-%05d", seq);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+        projectRepository.findByIdAndOrganizationIdAndDeletedFalse(projectId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+    }
+
+    private void validateLocationTenant(UUID locationId, UUID organizationId) {
+        if (locationId == null) {
+            return;
+        }
+        warehouseLocationRepository.findByIdAndOrganizationIdAndDeletedFalse(locationId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Складская локация не найдена: " + locationId));
     }
 }

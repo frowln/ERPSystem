@@ -3,17 +3,18 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Select } from '@/design-system/components/FormField';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
 interface EstimateImportWizardProps {
   open: boolean;
   onClose: () => void;
 }
 
-const formatOptions = [
+const getFormatOptions = () => [
   { value: 'xlsx', label: 'Excel (.xlsx)' },
   { value: 'csv', label: 'CSV' },
-  { value: 'arps', label: 'АРПС (Гранд-Смета)' },
-  { value: 'xml', label: 'XML (смета)' },
+  { value: 'arps', label: t('estimates.import.formatArps') },
+  { value: 'xml', label: t('estimates.import.formatXml') },
 ];
 
 interface ColumnMapping {
@@ -21,18 +22,18 @@ interface ColumnMapping {
   systemField: string;
 }
 
-const systemFields = [
-  { value: '', label: '-- Пропустить --' },
-  { value: 'code', label: 'Шифр расценки' },
-  { value: 'name', label: 'Наименование работ' },
-  { value: 'unit', label: 'Единица измерения' },
-  { value: 'quantity', label: 'Количество' },
-  { value: 'unit_price', label: 'Цена за единицу' },
-  { value: 'total', label: 'Сумма' },
-  { value: 'labor_cost', label: 'Затраты труда (чел-ч)' },
-  { value: 'materials_cost', label: 'Стоимость материалов' },
-  { value: 'machines_cost', label: 'Стоимость машин' },
-  { value: 'section', label: 'Раздел сметы' },
+const getSystemFields = () => [
+  { value: '', label: t('estimates.import.fieldSkip') },
+  { value: 'code', label: t('estimates.import.fieldCode') },
+  { value: 'name', label: t('estimates.import.fieldWorkName') },
+  { value: 'unit', label: t('estimates.import.fieldUnit') },
+  { value: 'quantity', label: t('estimates.import.fieldQuantity') },
+  { value: 'unit_price', label: t('estimates.import.fieldUnitPrice') },
+  { value: 'total', label: t('estimates.import.fieldTotal') },
+  { value: 'labor_cost', label: t('estimates.import.fieldLaborCost') },
+  { value: 'materials_cost', label: t('estimates.import.fieldMaterialsCost') },
+  { value: 'machines_cost', label: t('estimates.import.fieldMachinesCost') },
+  { value: 'section', label: t('estimates.import.fieldSection') },
 ];
 interface PreviewRow {
   code: string;
@@ -43,7 +44,7 @@ interface PreviewRow {
   total: number;
 }
 
-const STEPS = ['Загрузка файла', 'Сопоставление колонок', 'Предпросмотр', 'Импорт'] as const;
+const getSteps = () => [t('estimates.import.stepUpload'), t('estimates.import.stepMapping'), t('estimates.import.stepPreview'), t('estimates.import.stepImport')] as const;
 
 export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open, onClose }) => {
   const [step, setStep] = useState(0);
@@ -69,7 +70,7 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
   const handleFinish = async () => {
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 1500));
-    toast.success(`Смета импортирована: ${0} позиций`);
+    toast.success(t('estimates.import.toastSuccess', { count: '0' }));
     setSubmitting(false);
     resetAndClose();
   };
@@ -89,20 +90,20 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
     <Modal
       open={open}
       onClose={resetAndClose}
-      title="Импорт сметы"
+      title={t('estimates.import.title')}
       size="xl"
       footer={
         <>
           <Button variant="secondary" onClick={step === 0 ? resetAndClose : () => setStep(step - 1)}>
-            {step === 0 ? 'Отмена' : 'Назад'}
+            {step === 0 ? t('common.cancel') : t('common.back')}
           </Button>
-          {step < STEPS.length - 1 ? (
+          {step < getSteps().length - 1 ? (
             <Button onClick={() => setStep(step + 1)} disabled={!canNext}>
-              Далее
+              {t('common.next')}
             </Button>
           ) : (
             <Button onClick={handleFinish} loading={submitting}>
-              Импортировать
+              {t('estimates.import.btnImport')}
             </Button>
           )}
         </>
@@ -110,7 +111,7 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
     >
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-6">
-        {STEPS.map((label, i) => (
+        {getSteps().map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <div
               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
@@ -122,7 +123,7 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
             <span className={`text-sm ${i <= step ? 'text-neutral-900 dark:text-neutral-100 font-medium' : 'text-neutral-400'}`}>
               {label}
             </span>
-            {i < STEPS.length - 1 && <div className="w-8 h-px bg-neutral-300" />}
+            {i < getSteps().length - 1 && <div className="w-8 h-px bg-neutral-300" />}
           </div>
         ))}
       </div>
@@ -130,10 +131,10 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
       {/* Step 1: Upload file */}
       {step === 0 && (
         <div className="space-y-4">
-          <FormField label="Формат файла" required>
-            <Select options={formatOptions} value={format} onChange={(e) => setFormat(e.target.value)} />
+          <FormField label={t('estimates.import.labelFormat')} required>
+            <Select options={getFormatOptions()} value={format} onChange={(e) => setFormat(e.target.value)} />
           </FormField>
-          <FormField label="Файл сметы" required>
+          <FormField label={t('estimates.import.labelFile')} required>
             <div className="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-6 text-center hover:border-primary-400 transition-colors">
               <input
                 type="file"
@@ -146,12 +147,12 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
                 {fileName ? (
                   <div>
                     <p className="text-sm text-primary-700 font-medium">{fileName}</p>
-                    <p className="text-xs text-neutral-400 mt-1">Нажмите для замены</p>
+                    <p className="text-xs text-neutral-400 mt-1">{t('estimates.import.clickToReplace')}</p>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-sm text-neutral-600">Нажмите или перетащите файл сюда</p>
-                    <p className="text-xs text-neutral-400 mt-1">Поддерживаются: XLSX, CSV, АРПС, XML</p>
+                    <p className="text-sm text-neutral-600">{t('estimates.import.dropzoneText')}</p>
+                    <p className="text-xs text-neutral-400 mt-1">{t('estimates.import.supportedFormats')}</p>
                   </div>
                 )}
               </label>
@@ -160,7 +161,7 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
           {format === 'arps' && (
             <div className="bg-primary-50 border border-primary-200 rounded-lg p-3">
               <p className="text-sm text-primary-800">
-                Формат АРПС будет автоматически распознан. Сопоставление колонок не потребуется.
+                {t('estimates.import.arpsAutoHint')}
               </p>
             </div>
           )}
@@ -171,7 +172,7 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
       {step === 1 && (
         <div className="space-y-4">
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Сопоставьте колонки файла с полями системы. Сопоставлено: {mappedCount} из {0}.
+            {t('estimates.import.mappingHint', { mapped: String(mappedCount), total: '0' })}
           </p>
           <div className="space-y-2">
             {mappings.map((mapping, idx) => (
@@ -179,10 +180,10 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
                 <span className="text-sm font-medium w-28 shrink-0">{mapping.fileColumn}</span>
                 <span className="text-neutral-400">→</span>
                 <Select
-                  options={systemFields}
+                  options={getSystemFields()}
                   value={mapping.systemField}
                   onChange={(e) => updateMapping(idx, e.target.value)}
-                  placeholder="Выберите поле"
+                  placeholder={t('estimates.import.selectField')}
                 />
               </div>
             ))}
@@ -194,18 +195,18 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
       {step === 2 && (
         <div className="space-y-4">
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            Предварительный просмотр импортируемых данных ({0} позиций):
+            {t('estimates.import.previewHint', { count: '0' })}
           </p>
           <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
-                  <th className="text-left px-3 py-2 font-medium text-neutral-600">Шифр</th>
-                  <th className="text-left px-3 py-2 font-medium text-neutral-600">Наименование</th>
-                  <th className="text-right px-3 py-2 font-medium text-neutral-600">Ед.</th>
-                  <th className="text-right px-3 py-2 font-medium text-neutral-600">Кол-во</th>
-                  <th className="text-right px-3 py-2 font-medium text-neutral-600">Цена</th>
-                  <th className="text-right px-3 py-2 font-medium text-neutral-600">Сумма</th>
+                  <th className="text-left px-3 py-2 font-medium text-neutral-600">{t('estimates.import.thCode')}</th>
+                  <th className="text-left px-3 py-2 font-medium text-neutral-600">{t('estimates.import.thName')}</th>
+                  <th className="text-right px-3 py-2 font-medium text-neutral-600">{t('estimates.import.thUnit')}</th>
+                  <th className="text-right px-3 py-2 font-medium text-neutral-600">{t('estimates.import.thQty')}</th>
+                  <th className="text-right px-3 py-2 font-medium text-neutral-600">{t('estimates.import.thPrice')}</th>
+                  <th className="text-right px-3 py-2 font-medium text-neutral-600">{t('estimates.import.thTotal')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -222,7 +223,7 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
               </tbody>
               <tfoot>
                 <tr className="bg-neutral-50 dark:bg-neutral-800">
-                  <td colSpan={5} className="px-3 py-2 font-semibold text-right">Итого:</td>
+                  <td colSpan={5} className="px-3 py-2 font-semibold text-right">{t('estimates.import.totalLabel')}</td>
                   <td className="px-3 py-2 text-right font-bold">{totalImportAmount.toLocaleString('ru-RU')} ₽</td>
                 </tr>
               </tfoot>
@@ -235,15 +236,15 @@ export const EstimateImportWizard: React.FC<EstimateImportWizardProps> = ({ open
       {step === 3 && (
         <div className="space-y-4">
           <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 space-y-2 text-sm">
-            <p><strong>Файл:</strong> {fileName}</p>
-            <p><strong>Формат:</strong> {formatOptions.find((f) => f.value === format)?.label}</p>
-            <p><strong>Позиций:</strong> {0}</p>
-            <p><strong>Сопоставлено колонок:</strong> {mappedCount}</p>
-            <p><strong>Общая сумма:</strong> {totalImportAmount.toLocaleString('ru-RU')} ₽</p>
+            <p><strong>{t('estimates.import.summaryFile')}:</strong> {fileName}</p>
+            <p><strong>{t('estimates.import.summaryFormat')}:</strong> {getFormatOptions().find((f) => f.value === format)?.label}</p>
+            <p><strong>{t('estimates.import.summaryItems')}:</strong> {0}</p>
+            <p><strong>{t('estimates.import.summaryMapped')}:</strong> {mappedCount}</p>
+            <p><strong>{t('estimates.import.summaryTotal')}:</strong> {totalImportAmount.toLocaleString('ru-RU')} ₽</p>
           </div>
           <div className="bg-warning-50 border border-warning-200 rounded-lg p-3">
             <p className="text-sm text-warning-800">
-              Данные будут импортированы в новую смету. Проверьте корректность данных перед подтверждением.
+              {t('estimates.import.confirmWarning')}
             </p>
           </div>
         </div>

@@ -1,6 +1,9 @@
 package com.privod.platform.modules.crm.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.crm.domain.CrmActivity;
 import com.privod.platform.modules.crm.domain.CrmLead;
 import com.privod.platform.modules.crm.domain.CrmStage;
@@ -22,6 +25,8 @@ import com.privod.platform.modules.crm.web.dto.CrmPipelineResponse;
 import com.privod.platform.modules.crm.web.dto.CrmStageResponse;
 import com.privod.platform.modules.crm.web.dto.CrmTeamResponse;
 import com.privod.platform.modules.crm.web.dto.UpdateCrmLeadRequest;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +52,8 @@ public class CrmService {
     private final CrmStageRepository stageRepository;
     private final CrmTeamRepository teamRepository;
     private final CrmActivityRepository activityRepository;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     // ===================== Leads =====================
@@ -54,31 +61,46 @@ public class CrmService {
     @Transactional(readOnly = true)
     public Page<CrmLeadResponse> listLeads(String search, LeadStatus status, UUID stageId,
                                              UUID assignedToId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (search != null && !search.isBlank()) {
-            return leadRepository.search(search, pageable).map(CrmLeadResponse::fromEntity);
-        }
-        if (status != null) {
-            return leadRepository.findByStatusAndDeletedFalse(status, pageable).map(CrmLeadResponse::fromEntity);
-        }
-        if (stageId != null) {
-            return leadRepository.findByStageIdAndDeletedFalse(stageId, pageable).map(CrmLeadResponse::fromEntity);
-        }
-        if (assignedToId != null) {
-            return leadRepository.findByAssignedToIdAndDeletedFalse(assignedToId, pageable)
+            return leadRepository.searchByOrganizationId(search, organizationId, pageable)
                     .map(CrmLeadResponse::fromEntity);
         }
-        return leadRepository.findAll(pageable).map(CrmLeadResponse::fromEntity);
+        if (status != null) {
+            return leadRepository.findByOrganizationIdAndStatusAndDeletedFalse(organizationId, status, pageable)
+                    .map(CrmLeadResponse::fromEntity);
+        }
+        if (stageId != null) {
+            getStageOrThrow(stageId, organizationId);
+            return leadRepository.findByOrganizationIdAndStageIdAndDeletedFalse(organizationId, stageId, pageable)
+                    .map(CrmLeadResponse::fromEntity);
+        }
+        if (assignedToId != null) {
+            validateUserTenant(assignedToId, organizationId);
+            return leadRepository.findByOrganizationIdAndAssignedToIdAndDeletedFalse(organizationId, assignedToId, pageable)
+                    .map(CrmLeadResponse::fromEntity);
+        }
+        return leadRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
+                .map(CrmLeadResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public CrmLeadResponse getLead(UUID id) {
-        CrmLead lead = getLeadOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(id, organizationId);
         return CrmLeadResponse.fromEntity(lead);
     }
 
     @Transactional
     public CrmLeadResponse createLead(CreateCrmLeadRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.stageId() != null) {
+            getStageOrThrow(request.stageId(), organizationId);
+        }
+        validateUserTenant(request.assignedToId(), organizationId);
+
         CrmLead lead = CrmLead.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .partnerName(request.partnerName())
                 .email(request.email())
@@ -105,7 +127,8 @@ public class CrmService {
 
     @Transactional
     public CrmLeadResponse updateLead(UUID id, UpdateCrmLeadRequest request) {
-        CrmLead lead = getLeadOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(id, organizationId);
 
         if (request.name() != null) lead.setName(request.name());
         if (request.partnerName() != null) lead.setPartnerName(request.partnerName());
@@ -114,8 +137,14 @@ public class CrmService {
         if (request.companyName() != null) lead.setCompanyName(request.companyName());
         if (request.source() != null) lead.setSource(request.source());
         if (request.medium() != null) lead.setMedium(request.medium());
-        if (request.stageId() != null) lead.setStageId(request.stageId());
-        if (request.assignedToId() != null) lead.setAssignedToId(request.assignedToId());
+        if (request.stageId() != null) {
+            getStageOrThrow(request.stageId(), organizationId);
+            lead.setStageId(request.stageId());
+        }
+        if (request.assignedToId() != null) {
+            validateUserTenant(request.assignedToId(), organizationId);
+            lead.setAssignedToId(request.assignedToId());
+        }
         if (request.expectedRevenue() != null) lead.setExpectedRevenue(request.expectedRevenue());
         if (request.probability() != null) lead.setProbability(request.probability());
         if (request.priority() != null) lead.setPriority(request.priority());
@@ -143,10 +172,9 @@ public class CrmService {
 
     @Transactional
     public CrmLeadResponse moveToStage(UUID leadId, UUID stageId) {
-        CrmLead lead = getLeadOrThrow(leadId);
-        CrmStage stage = stageRepository.findById(stageId)
-                .filter(s -> !s.isDeleted())
-                .orElseThrow(() -> new EntityNotFoundException("Этап CRM не найден: " + stageId));
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(leadId, organizationId);
+        CrmStage stage = getStageOrThrow(stageId, organizationId);
 
         UUID oldStageId = lead.getStageId();
         lead.setStageId(stageId);
@@ -169,7 +197,9 @@ public class CrmService {
 
     @Transactional
     public CrmLeadResponse convertToProject(UUID leadId, ConvertToProjectRequest request) {
-        CrmLead lead = getLeadOrThrow(leadId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(leadId, organizationId);
+        validateProjectTenant(request.projectId(), organizationId);
 
         if (lead.getStatus() != LeadStatus.WON) {
             throw new IllegalStateException("Конвертировать в проект можно только выигранный лид");
@@ -189,7 +219,8 @@ public class CrmService {
 
     @Transactional
     public CrmLeadResponse markAsWon(UUID leadId) {
-        CrmLead lead = getLeadOrThrow(leadId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(leadId, organizationId);
 
         if (!lead.isOpen()) {
             throw new IllegalStateException("Лид уже закрыт");
@@ -208,7 +239,8 @@ public class CrmService {
 
     @Transactional
     public CrmLeadResponse markAsLost(UUID leadId, String reason) {
-        CrmLead lead = getLeadOrThrow(leadId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(leadId, organizationId);
 
         if (!lead.isOpen()) {
             throw new IllegalStateException("Лид уже закрыт");
@@ -227,7 +259,8 @@ public class CrmService {
 
     @Transactional
     public void deleteLead(UUID id) {
-        CrmLead lead = getLeadOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(id, organizationId);
         lead.softDelete();
         leadRepository.save(lead);
         auditService.logDelete("CrmLead", id);
@@ -238,7 +271,8 @@ public class CrmService {
 
     @Transactional(readOnly = true)
     public List<CrmStageResponse> listStages() {
-        return stageRepository.findByDeletedFalseOrderBySequenceAsc()
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return stageRepository.findAccessibleByOrganizationId(organizationId)
                 .stream()
                 .map(CrmStageResponse::fromEntity)
                 .toList();
@@ -246,7 +280,14 @@ public class CrmService {
 
     @Transactional
     public CrmStageResponse createStage(CreateCrmStageRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        stageRepository.findByOrganizationIdAndNameAndDeletedFalse(organizationId, request.name())
+                .ifPresent(existing -> {
+                    throw new IllegalStateException("Этап CRM с названием " + request.name() + " уже существует");
+                });
+
         CrmStage stage = CrmStage.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .sequence(request.sequence())
                 .probability(request.probability())
@@ -266,7 +307,8 @@ public class CrmService {
 
     @Transactional(readOnly = true)
     public List<CrmTeamResponse> listTeams() {
-        return teamRepository.findByActiveTrueAndDeletedFalseOrderByNameAsc()
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return teamRepository.findByOrganizationIdAndActiveTrueAndDeletedFalseOrderByNameAsc(organizationId)
                 .stream()
                 .map(CrmTeamResponse::fromEntity)
                 .toList();
@@ -274,7 +316,11 @@ public class CrmService {
 
     @Transactional
     public CrmTeamResponse createTeam(CreateCrmTeamRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateUserTenant(request.leaderId(), organizationId);
+
         CrmTeam team = CrmTeam.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .leaderId(request.leaderId())
                 .memberIds(request.memberIds())
@@ -294,8 +340,9 @@ public class CrmService {
 
     @Transactional(readOnly = true)
     public List<CrmActivityResponse> getLeadActivities(UUID leadId) {
-        getLeadOrThrow(leadId);
-        return activityRepository.findByLeadIdAndDeletedFalseOrderByScheduledAtDesc(leadId)
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getLeadOrThrow(leadId, organizationId);
+        return activityRepository.findByOrganizationIdAndLeadIdAndDeletedFalseOrderByScheduledAtDesc(organizationId, leadId)
                 .stream()
                 .map(CrmActivityResponse::fromEntity)
                 .toList();
@@ -303,9 +350,12 @@ public class CrmService {
 
     @Transactional
     public CrmActivityResponse createActivity(CreateCrmActivityRequest request) {
-        getLeadOrThrow(request.leadId());
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getLeadOrThrow(request.leadId(), organizationId);
+        validateUserTenant(request.userId(), organizationId);
 
         CrmActivity activity = CrmActivity.builder()
+                .organizationId(organizationId)
                 .leadId(request.leadId())
                 .activityType(request.activityType())
                 .userId(request.userId())
@@ -324,8 +374,8 @@ public class CrmService {
 
     @Transactional
     public CrmActivityResponse completeActivity(UUID activityId, String result) {
-        CrmActivity activity = activityRepository.findById(activityId)
-                .filter(a -> !a.isDeleted())
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmActivity activity = activityRepository.findByIdAndOrganizationIdAndDeletedFalse(activityId, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Активность CRM не найдена: " + activityId));
 
         if (activity.isCompleted()) {
@@ -344,8 +394,9 @@ public class CrmService {
 
     @Transactional(readOnly = true)
     public CrmPipelineResponse getPipelineStats() {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Map<String, Long> statusCounts = new HashMap<>();
-        List<Object[]> statusData = leadRepository.countByStatus();
+        List<Object[]> statusData = leadRepository.countByStatusAndOrganizationId(organizationId);
         long total = 0;
         long open = 0;
         long won = 0;
@@ -362,16 +413,16 @@ public class CrmService {
         }
 
         Map<String, Long> stageCounts = new HashMap<>();
-        List<Object[]> stageData = leadRepository.countByStage();
+        List<Object[]> stageData = leadRepository.countByStageAndOrganizationId(organizationId);
         for (Object[] row : stageData) {
             UUID stageId = (UUID) row[0];
             Long count = (Long) row[1];
             stageCounts.put(stageId != null ? stageId.toString() : "unassigned", count);
         }
 
-        BigDecimal pipelineRevenue = leadRepository.sumPipelineRevenue();
-        BigDecimal weightedRevenue = leadRepository.sumWeightedPipelineRevenue();
-        BigDecimal wonRevenue = leadRepository.sumWonRevenue();
+        BigDecimal pipelineRevenue = leadRepository.sumPipelineRevenueByOrganizationId(organizationId);
+        BigDecimal weightedRevenue = leadRepository.sumWeightedPipelineRevenueByOrganizationId(organizationId);
+        BigDecimal wonRevenue = leadRepository.sumWonRevenueByOrganizationId(organizationId);
 
         return new CrmPipelineResponse(
                 total,
@@ -388,9 +439,36 @@ public class CrmService {
 
     // ===================== Helpers =====================
 
-    private CrmLead getLeadOrThrow(UUID id) {
-        return leadRepository.findById(id)
-                .filter(l -> !l.isDeleted())
+    private CrmLead getLeadOrThrow(UUID id, UUID organizationId) {
+        return leadRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Лид CRM не найден: " + id));
+    }
+
+    private CrmStage getStageOrThrow(UUID stageId, UUID organizationId) {
+        return stageRepository.findAccessibleById(stageId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Этап CRM не найден: " + stageId));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        User user = userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+        if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
+            throw new EntityNotFoundException("Пользователь не найден: " + userId);
+        }
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
     }
 }

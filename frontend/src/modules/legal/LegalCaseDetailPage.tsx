@@ -26,19 +26,20 @@ import {
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { formatDateLong, formatMoney, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { LegalCase, LegalDecision, LegalRemark } from './types';
 
-const statusFlow = [
-  { status: 'OPEN', label: 'Открыто' },
-  { status: 'IN_PROGRESS', label: 'В работе' },
-  { status: 'RESOLVED', label: 'Решено' },
-  { status: 'CLOSED', label: 'Закрыто' },
+const getStatusFlow = () => [
+  { status: 'OPEN', label: t('legal.caseStatusOpen') },
+  { status: 'IN_PROGRESS', label: t('legal.caseStatusInProgress') },
+  { status: 'RESOLVED', label: t('legal.caseStatusResolved') },
+  { status: 'CLOSED', label: t('legal.caseStatusClosed') },
 ];
 
-const decisionTypeLabels: Record<string, string> = {
-  court_ruling: 'Решение суда', settlement: 'Мировое соглашение', mediation: 'Медиация',
-  arbitration_award: 'Арбитражное решение', internal: 'Внутреннее решение',
-};
+const getDecisionTypeLabels = (): Record<string, string> => ({
+  court_ruling: t('legal.decisionCourtRuling'), settlement: t('legal.decisionSettlement'), mediation: t('legal.decisionMediation'),
+  arbitration_award: t('legal.decisionArbitrationAward'), internal: t('legal.decisionInternal'),
+});
 
 
 const LegalCaseDetailPage: React.FC = () => {
@@ -78,19 +79,22 @@ const LegalCaseDetailPage: React.FC = () => {
   const remarkList = remarks ?? [];
 
   if (isLoading || !legalCase) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>;
   }
+
+  const statusFlow = getStatusFlow();
+  const decisionTypeLabels = getDecisionTypeLabels();
 
   const statusActions = useMemo(() => {
     switch (c.status) {
-      case 'DRAFT': return [{ label: 'Открыть дело', targetStatus: 'OPEN' }];
-      case 'OPEN': return [{ label: 'Начать работу', targetStatus: 'IN_PROGRESS' }];
+      case 'DRAFT': return [{ label: t('legal.actionOpenCase'), targetStatus: 'OPEN' }];
+      case 'OPEN': return [{ label: t('legal.actionStartWork'), targetStatus: 'IN_PROGRESS' }];
       case 'IN_PROGRESS': return [
-        { label: 'Решено', targetStatus: 'RESOLVED' },
-        { label: 'Приостановить', targetStatus: 'ON_HOLD' },
+        { label: t('legal.actionResolved'), targetStatus: 'RESOLVED' },
+        { label: t('legal.actionSuspend'), targetStatus: 'ON_HOLD' },
       ];
-      case 'ON_HOLD': return [{ label: 'Возобновить', targetStatus: 'IN_PROGRESS' }];
-      case 'RESOLVED': return [{ label: 'Закрыть дело', targetStatus: 'CLOSED' }];
+      case 'ON_HOLD': return [{ label: t('legal.actionResume'), targetStatus: 'IN_PROGRESS' }];
+      case 'RESOLVED': return [{ label: t('legal.actionCloseCase'), targetStatus: 'CLOSED' }];
       default: return [];
     }
   }, [c.status]);
@@ -104,8 +108,8 @@ const LegalCaseDetailPage: React.FC = () => {
         subtitle={`${c.number}${c.caseNumber ? ` / ${c.caseNumber}` : ''}`}
         backTo="/legal/cases"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Юридический отдел', href: '/legal/cases' },
+          { label: t('legal.breadcrumbHome'), href: '/' },
+          { label: t('legal.breadcrumbLegal'), href: '/legal/cases' },
           { label: c.number },
         ]}
         actions={
@@ -138,7 +142,7 @@ const LegalCaseDetailPage: React.FC = () => {
 
       {/* Status flow */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Ход дела</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('legal.caseProgress')}</h3>
         <div className="flex items-center gap-2">
           {statusFlow.map((step, idx) => {
             const isCompleted = idx < currentStepIndex;
@@ -174,10 +178,10 @@ const LegalCaseDetailPage: React.FC = () => {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<DollarSign size={18} />} label="Сумма иска" value={c.claimAmount ? formatMoneyCompact(c.claimAmount) : '---'} />
-        <MetricCard icon={<DollarSign size={18} />} label="Урегулировано" value={c.resolvedAmount ? formatMoneyCompact(c.resolvedAmount) : '---'} />
-        <MetricCard icon={<Scale size={18} />} label="Решений" value={c.decisionCount} />
-        <MetricCard icon={<MessageSquare size={18} />} label="Комментариев" value={c.remarkCount} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('legal.metricClaimAmount')} value={c.claimAmount ? formatMoneyCompact(c.claimAmount) : '---'} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('legal.metricResolved')} value={c.resolvedAmount ? formatMoneyCompact(c.resolvedAmount) : '---'} />
+        <MetricCard icon={<Scale size={18} />} label={t('legal.metricDecisions')} value={c.decisionCount} />
+        <MetricCard icon={<MessageSquare size={18} />} label={t('legal.metricComments')} value={c.remarkCount} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -187,10 +191,10 @@ const LegalCaseDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <FileText size={16} className="text-primary-500" />
-              Описание
+              {t('legal.descriptionTitle')}
             </h3>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
-              {c.description ?? 'Описание не заполнено'}
+              {c.description ?? t('legal.noDescription')}
             </div>
           </div>
 
@@ -199,14 +203,14 @@ const LegalCaseDetailPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
                 <Scale size={16} className="text-primary-500" />
-                Решения
+                {t('legal.decisionsTitle')}
               </h3>
               <Button variant="secondary" size="sm" onClick={() => navigate(`/legal/cases/${id}/decisions/new`)}>
-                Добавить решение
+                {t('legal.addDecision')}
               </Button>
             </div>
             {decisionList.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Решений пока нет</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('legal.noDecisions')}</p>
             ) : (
               <div className="space-y-3">
                 {decisionList.map((decision) => (
@@ -216,11 +220,11 @@ const LegalCaseDetailPage: React.FC = () => {
                       <div className="flex items-center gap-2">
                         {decision.isInFavor ? (
                           <span className="inline-flex items-center gap-1 text-xs font-medium text-success-600">
-                            <CheckCircle size={14} /> В нашу пользу
+                            <CheckCircle size={14} /> {t('legal.inOurFavor')}
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-xs font-medium text-danger-600">
-                            <XCircle size={14} /> Не в нашу пользу
+                            <XCircle size={14} /> {t('legal.notInOurFavor')}
                           </span>
                         )}
                       </div>
@@ -232,7 +236,7 @@ const LegalCaseDetailPage: React.FC = () => {
                       <p className="text-sm text-neutral-600 mt-2">{decision.description}</p>
                     )}
                     {decision.amount && (
-                      <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mt-2">Сумма: {formatMoneyCompact(decision.amount)}</p>
+                      <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mt-2">{t('legal.amountLabel')}: {formatMoneyCompact(decision.amount)}</p>
                     )}
                   </div>
                 ))}
@@ -244,10 +248,10 @@ const LegalCaseDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <MessageSquare size={16} className="text-primary-500" />
-              Комментарии
+              {t('legal.commentsTitle')}
             </h3>
             {remarkList.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Комментариев пока нет</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('legal.noComments')}</p>
             ) : (
               <div className="space-y-3">
                 {remarkList.map((remark) => (
@@ -259,7 +263,7 @@ const LegalCaseDetailPage: React.FC = () => {
                       <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{remark.authorName}</span>
                       <div className="flex items-center gap-2">
                         {remark.isInternal && (
-                          <span className="text-xs text-warning-600 font-medium">Внутренний</span>
+                          <span className="text-xs text-warning-600 font-medium">{t('legal.internalRemark')}</span>
                         )}
                         <span className="text-xs text-neutral-500 dark:text-neutral-400">{formatDateLong(remark.createdAt)}</span>
                       </div>
@@ -275,40 +279,40 @@ const LegalCaseDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали дела</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('legal.caseDetails')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Юрист" value={c.assignedLawyerName ?? '---'} />
-              <InfoItem icon={<User size={15} />} label="Ответственный" value={c.responsibleName ?? '---'} />
-              <InfoItem icon={<Scale size={15} />} label="Оппонент" value={c.opposingParty ?? '---'} />
-              <InfoItem icon={<Landmark size={15} />} label="Суд" value={c.courtName ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Номер дела" value={c.caseNumber ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Проект" value={c.projectName ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Договор" value={c.contractName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('legal.labelLawyer')} value={c.assignedLawyerName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('legal.labelResponsible')} value={c.responsibleName ?? '---'} />
+              <InfoItem icon={<Scale size={15} />} label={t('legal.labelOpponent')} value={c.opposingParty ?? '---'} />
+              <InfoItem icon={<Landmark size={15} />} label={t('legal.labelCourt')} value={c.courtName ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('legal.labelCaseNumber')} value={c.caseNumber ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('legal.labelProject')} value={c.projectName ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('legal.labelContract')} value={c.contractName ?? '---'} />
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Даты</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('legal.datesTitle')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<Calendar size={15} />} label="Подача иска" value={formatDateLong(c.filingDate)} />
-              <InfoItem icon={<Calendar size={15} />} label="Заседание" value={formatDateLong(c.hearingDate)} />
-              <InfoItem icon={<Calendar size={15} />} label="Создано" value={formatDateLong(c.createdAt)} />
-              <InfoItem icon={<Calendar size={15} />} label="Решено" value={formatDateLong(c.resolutionDate)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('legal.labelFilingDate')} value={formatDateLong(c.filingDate)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('legal.labelHearingDate')} value={formatDateLong(c.hearingDate)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('legal.labelCreatedAt')} value={formatDateLong(c.createdAt)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('legal.labelResolutionDate')} value={formatDateLong(c.resolutionDate)} />
             </div>
           </div>
 
           {/* Financial summary */}
           {c.claimAmount && (
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Финансы</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('legal.financesTitle')}</h3>
               <div className="space-y-3">
                 <div className="p-3 bg-danger-50 rounded-lg border border-danger-100">
-                  <p className="text-xs font-medium text-danger-600 mb-1">Сумма иска</p>
+                  <p className="text-xs font-medium text-danger-600 mb-1">{t('legal.metricClaimAmount')}</p>
                   <p className="text-lg font-bold text-danger-700 tabular-nums">{formatMoney(c.claimAmount)}</p>
                 </div>
                 {c.resolvedAmount != null && (
                   <div className="p-3 bg-success-50 rounded-lg border border-success-100">
-                    <p className="text-xs font-medium text-success-600 mb-1">Урегулировано</p>
+                    <p className="text-xs font-medium text-success-600 mb-1">{t('legal.metricResolved')}</p>
                     <p className="text-lg font-bold text-success-700 tabular-nums">{formatMoney(c.resolvedAmount)}</p>
                   </div>
                 )}
@@ -318,13 +322,13 @@ const LegalCaseDetailPage: React.FC = () => {
 
           {/* Actions */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Действия</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('legal.actionsTitle')}</h3>
             <div className="space-y-2">
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate(`/legal/cases/${id}/decisions/new`)}>
-                Добавить решение
+                {t('legal.addDecision')}
               </Button>
               <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => window.open(`/api/legal/cases/${id}/export?format=pdf`, '_blank')}>
-                Экспорт в PDF
+                {t('legal.exportPdf')}
               </Button>
             </div>
           </div>

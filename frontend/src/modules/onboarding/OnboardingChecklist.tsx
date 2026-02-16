@@ -22,32 +22,32 @@ interface StepConfig {
   href: string;
 }
 
-const stepConfigs: StepConfig[] = [
+const getStepConfigs = (): StepConfig[] => [
   {
     id: 'view-projects',
-    title: 'Просмотрите проекты',
-    description: 'Ознакомьтесь с текущими проектами и их статусами',
+    title: t('onboarding.stepViewProjects'),
+    description: t('onboarding.stepViewProjectsDesc'),
     icon: FolderKanban,
     href: '/projects',
   },
   {
     id: 'create-task',
-    title: 'Создайте задачу',
-    description: 'Перейдите на доску задач и создайте первую задачу',
+    title: t('onboarding.stepCreateTask'),
+    description: t('onboarding.stepCreateTaskDesc'),
     icon: ClipboardList,
     href: '/tasks',
   },
   {
     id: 'explore-documents',
-    title: 'Изучите документы',
-    description: 'Посмотрите раздел документов и загрузите файл',
+    title: t('onboarding.stepExploreDocuments'),
+    description: t('onboarding.stepExploreDocumentsDesc'),
     icon: FileText,
     href: '/documents',
   },
   {
     id: 'check-analytics',
-    title: 'Проверьте аналитику',
-    description: 'Откройте дашборд аналитики для обзора показателей',
+    title: t('onboarding.stepCheckAnalytics'),
+    description: t('onboarding.stepCheckAnalyticsDesc'),
     icon: BarChart3,
     href: '/analytics',
   },
@@ -69,6 +69,7 @@ export const OnboardingChecklist: React.FC = () => {
 
   const completedCount = steps.filter((s) => s.completed).length;
   const progressPercent = Math.round((completedCount / steps.length) * 100);
+  const stepConfigs = getStepConfigs();
 
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 dark:border-neutral-800 p-5 mb-6 animate-fade-in">
@@ -80,10 +81,10 @@ export const OnboardingChecklist: React.FC = () => {
           </div>
           <div>
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              Добро пожаловать в Привод!
+              {t('onboarding.welcomeTitle')}
             </h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-              Выполните шаги для быстрого старта — {completedCount} из {steps.length}
+              {t('onboarding.progressLabel', { completed: completedCount, total: steps.length })}
             </p>
           </div>
         </div>

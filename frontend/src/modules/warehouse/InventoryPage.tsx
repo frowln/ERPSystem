@@ -208,9 +208,9 @@ const InventoryPage: React.FC = () => {
           <FormField label={t('warehouse.inventory.modalFieldLocation')} required>
             <Select
               options={[
-                { value: 'wh1', label: 'Центральный склад' },
-                { value: 'st1', label: 'Площадка ЖК "Солнечный"' },
-                { value: 'st2', label: 'Площадка "Горизонт"' },
+                { value: 'wh1', label: t('mockData.locationCentralWarehouse') },
+                { value: 'st1', label: t('mockData.locationSiteSolnechny') },
+                { value: 'st2', label: t('mockData.locationSiteHorizonShort') },
               ]}
               placeholder={t('warehouse.inventory.modalLocationPlaceholder')}
             />

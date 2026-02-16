@@ -23,6 +23,7 @@ import {
 import { submittalsApi } from '@/api/submittals';
 import { formatDateLong } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { Submittal, SubmittalReview } from './types';
 
 type DetailTab = 'overview' | 'reviews' | 'drawings';
@@ -46,7 +47,7 @@ const SubmittalDetailPage: React.FC = () => {
   });
 
   if (!submittal) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('submittals.detailLoading')}</div>;
   }
 
   const s = submittal;
@@ -59,8 +60,8 @@ const SubmittalDetailPage: React.FC = () => {
         subtitle={`${s.number} / ${s.projectName}`}
         backTo="/submittals"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Субмиттелы', href: '/submittals' },
+          { label: t('submittals.breadcrumbHome'), href: '/' },
+          { label: t('submittals.breadcrumbSubmittals'), href: '/submittals' },
           { label: s.number },
         ]}
         actions={
@@ -78,20 +79,20 @@ const SubmittalDetailPage: React.FC = () => {
               size="md"
             />
             {s.status === 'SUBMITTED' && (
-              <Button variant="secondary" size="sm">Начать рассмотрение</Button>
+              <Button variant="secondary" size="sm">{t('submittals.detailStartReview')}</Button>
             )}
             {s.status === 'UNDER_REVIEW' && (
               <>
-                <Button variant="success" size="sm">Утвердить</Button>
-                <Button variant="danger" size="sm">Отклонить</Button>
+                <Button variant="success" size="sm">{t('submittals.detailApprove')}</Button>
+                <Button variant="danger" size="sm">{t('submittals.detailReject')}</Button>
               </>
             )}
           </div>
         }
         tabs={[
-          { id: 'overview', label: 'Обзор' },
-          { id: 'reviews', label: 'История рассмотрения', count: submittalReviews.length },
-          { id: 'drawings', label: 'Чертежи', count: s.linkedDrawingIds.length },
+          { id: 'overview', label: t('submittals.detailTabOverview') },
+          { id: 'reviews', label: t('submittals.detailTabReviews'), count: submittalReviews.length },
+          { id: 'drawings', label: t('submittals.detailTabDrawings'), count: s.linkedDrawingIds.length },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as DetailTab)}
@@ -102,9 +103,9 @@ const SubmittalDetailPage: React.FC = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Description */}
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Описание</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('submittals.detailDescriptionTitle')}</h3>
               <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                {s.description ?? 'Описание не указано'}
+                {s.description ?? t('submittals.detailNoDescription')}
               </p>
             </div>
 
@@ -115,7 +116,7 @@ const SubmittalDetailPage: React.FC = () => {
                   <User size={20} className="text-primary-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-primary-600 font-medium uppercase tracking-wider">У кого мяч</p>
+                  <p className="text-xs text-primary-600 font-medium uppercase tracking-wider">{t('submittals.detailBallInCourt')}</p>
                   <p className="text-sm font-semibold text-primary-900">{s.ballInCourt}</p>
                 </div>
               </div>
@@ -124,16 +125,16 @@ const SubmittalDetailPage: React.FC = () => {
 
           {/* Sidebar details */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('submittals.detailDetails')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Подал" value={s.submittedByName} />
-              <InfoItem icon={<User size={15} />} label="Рецензент" value={s.reviewerName ?? '---'} />
-              <InfoItem icon={<Calendar size={15} />} label="Дата подачи" value={formatDateLong(s.submitDate)} />
-              <InfoItem icon={<Clock size={15} />} label="Срок рассмотрения" value={formatDateLong(s.dueDate)} />
-              <InfoItem icon={<Calendar size={15} />} label="Требуемая дата" value={formatDateLong(s.requiredDate)} />
-              <InfoItem icon={<Clock size={15} />} label="Lead Time" value={s.leadTimeDays ? `${s.leadTimeDays} дн.` : '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Раздел" value={s.specSection ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Проект" value={s.projectName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('submittals.detailSubmittedBy')} value={s.submittedByName} />
+              <InfoItem icon={<User size={15} />} label={t('submittals.detailReviewer')} value={s.reviewerName ?? '---'} />
+              <InfoItem icon={<Calendar size={15} />} label={t('submittals.detailSubmitDate')} value={formatDateLong(s.submitDate)} />
+              <InfoItem icon={<Clock size={15} />} label={t('submittals.detailDueDate')} value={formatDateLong(s.dueDate)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('submittals.detailRequiredDate')} value={formatDateLong(s.requiredDate)} />
+              <InfoItem icon={<Clock size={15} />} label={t('submittals.detailLeadTime')} value={s.leadTimeDays ? `${s.leadTimeDays} ${t('submittals.days')}` : '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('submittals.detailSection')} value={s.specSection ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('submittals.detailProject')} value={s.projectName ?? '---'} />
             </div>
           </div>
         </div>
@@ -141,7 +142,7 @@ const SubmittalDetailPage: React.FC = () => {
 
       {activeTab === 'reviews' && (
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-6">История рассмотрения</h3>
+          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-6">{t('submittals.detailReviewHistoryTitle')}</h3>
           <div className="relative">
             <div className="absolute left-4 top-8 bottom-8 w-px bg-neutral-200" />
             <div className="space-y-6">
@@ -188,13 +189,13 @@ const SubmittalDetailPage: React.FC = () => {
       {activeTab === 'drawings' && (
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
           <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Связанные чертежи</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('submittals.detailLinkedDrawingsTitle')}</h3>
             <Button variant="secondary" size="sm" onClick={() => navigate('/bim/models')}>
-              BIM-модели
+              {t('submittals.detailBimModels')}
             </Button>
           </div>
           {s.linkedDrawingIds.length === 0 ? (
-            <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">Нет связанных чертежей</div>
+            <div className="p-8 text-center text-sm text-neutral-500 dark:text-neutral-400">{t('submittals.detailNoDrawings')}</div>
           ) : (
             <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-3">
               {s.linkedDrawingIds.map((drawingId) => (
@@ -203,8 +204,8 @@ const SubmittalDetailPage: React.FC = () => {
                     <Image size={16} className="text-primary-600" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">Чертеж {drawingId.toUpperCase()}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Связан с субмитталом {s.number}</p>
+                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">{t('submittals.detailDrawingName', { id: drawingId.toUpperCase() })}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('submittals.detailDrawingLinked', { number: s.number })}</p>
                   </div>
                 </div>
               ))}

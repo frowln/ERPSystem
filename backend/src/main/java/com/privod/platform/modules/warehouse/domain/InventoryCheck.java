@@ -18,11 +18,15 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "inventory_checks", indexes = {
+        @Index(name = "idx_ic_org", columnList = "organization_id"),
+        @Index(name = "idx_ic_org_status", columnList = "organization_id, status"),
+        @Index(name = "idx_ic_org_location", columnList = "organization_id, location_id"),
+        @Index(name = "idx_ic_org_name", columnList = "organization_id, name", unique = true),
         @Index(name = "idx_ic_date", columnList = "check_date"),
         @Index(name = "idx_ic_location", columnList = "location_id"),
         @Index(name = "idx_ic_project", columnList = "project_id"),
         @Index(name = "idx_ic_status", columnList = "status"),
-        @Index(name = "idx_ic_name", columnList = "name", unique = true)
+        @Index(name = "idx_ic_name", columnList = "name")
 })
 @Getter
 @Setter
@@ -31,7 +35,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class InventoryCheck extends BaseEntity {
 
-    @Column(name = "name", unique = true, length = 50)
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
+    @Column(name = "name", length = 50)
     private String name;
 
     @Column(name = "check_date", nullable = false)

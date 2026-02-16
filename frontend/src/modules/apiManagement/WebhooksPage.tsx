@@ -11,6 +11,7 @@ import { Input } from '@/design-system/components/FormField';
 import { apiManagementApi } from '@/api/apiManagement';
 import { formatDate, formatNumber } from '@/lib/format';
 import type { WebhookConfig } from './types';
+import { t } from '@/i18n';
 
 const webhookStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   active: 'green',
@@ -18,11 +19,11 @@ const webhookStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow'
   failed: 'red',
 };
 
-const webhookStatusLabels: Record<string, string> = {
-  active: 'Активен',
-  inactive: 'Неактивен',
-  failed: 'Ошибка',
-};
+const getWebhookStatusLabels = (): Record<string, string> => ({
+  active: t('apiManagement.webhooks.statusActive'),
+  inactive: t('apiManagement.webhooks.statusInactive'),
+  failed: t('apiManagement.webhooks.statusFailed'),
+});
 
 type TabId = 'all' | 'ACTIVE' | 'FAILED' | 'INACTIVE';
 
@@ -70,11 +71,13 @@ const WebhooksPage: React.FC = () => {
     };
   }, [webhooks]);
 
+  const webhookStatusLabels = getWebhookStatusLabels();
+
   const columns = useMemo<ColumnDef<WebhookConfig, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Webhook',
+        header: t('apiManagement.webhooks.colWebhook'),
         size: 220,
         cell: ({ row }) => (
           <div>
@@ -85,7 +88,7 @@ const WebhooksPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('apiManagement.webhooks.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -97,7 +100,7 @@ const WebhooksPage: React.FC = () => {
       },
       {
         accessorKey: 'events',
-        header: 'События',
+        header: t('apiManagement.webhooks.colEvents'),
         size: 220,
         cell: ({ getValue }) => {
           const events = getValue<string[]>();
@@ -117,13 +120,13 @@ const WebhooksPage: React.FC = () => {
       },
       {
         accessorKey: 'successCount',
-        header: 'Успешно',
+        header: t('apiManagement.webhooks.colSuccess'),
         size: 90,
         cell: ({ getValue }) => <span className="tabular-nums text-success-600">{formatNumber(getValue<number>())}</span>,
       },
       {
         accessorKey: 'failureCount',
-        header: 'Ошибки',
+        header: t('apiManagement.webhooks.colErrors'),
         size: 80,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -132,7 +135,7 @@ const WebhooksPage: React.FC = () => {
       },
       {
         accessorKey: 'lastDeliveryStatus',
-        header: 'HTTP код',
+        header: t('apiManagement.webhooks.colHttpCode'),
         size: 90,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -143,7 +146,7 @@ const WebhooksPage: React.FC = () => {
       },
       {
         accessorKey: 'lastDeliveryAt',
-        header: 'Последняя доставка',
+        header: t('apiManagement.webhooks.colLastDelivery'),
         size: 150,
         cell: ({ getValue }) => {
           const val = getValue<string>();
@@ -161,7 +164,7 @@ const WebhooksPage: React.FC = () => {
             iconLeft={<Zap size={14} />}
             disabled={row.original.status === 'INACTIVE'}
           >
-            Тест
+            {t('apiManagement.webhooks.testButton')}
           </Button>
         ),
       },
@@ -172,33 +175,33 @@ const WebhooksPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Webhooks"
-        subtitle={`${webhooks.length} вебхуков`}
+        title={t('apiManagement.webhooks.title')}
+        subtitle={t('apiManagement.webhooks.subtitle', { count: String(webhooks.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'API управление' },
-          { label: 'Webhooks' },
+          { label: t('apiManagement.webhooks.breadcrumbHome'), href: '/' },
+          { label: t('apiManagement.webhooks.breadcrumbApiManagement') },
+          { label: t('apiManagement.webhooks.breadcrumbWebhooks') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>Создать webhook</Button>
+          <Button iconLeft={<Plus size={16} />}>{t('apiManagement.webhooks.createWebhook')}</Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Активные', count: tabCounts.active },
-          { id: 'FAILED', label: 'С ошибками', count: tabCounts.failed },
-          { id: 'INACTIVE', label: 'Неактивные', count: tabCounts.inactive },
+          { id: 'all', label: t('apiManagement.webhooks.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('apiManagement.webhooks.tabActive'), count: tabCounts.active },
+          { id: 'FAILED', label: t('apiManagement.webhooks.tabFailed'), count: tabCounts.failed },
+          { id: 'INACTIVE', label: t('apiManagement.webhooks.tabInactive'), count: tabCounts.inactive },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Webhook size={18} />} label="Всего webhooks" value={metrics.total} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Активные" value={metrics.active} />
-        <MetricCard icon={<Activity size={18} />} label="Всего доставок" value={formatNumber(metrics.totalDeliveries)} />
+        <MetricCard icon={<Webhook size={18} />} label={t('apiManagement.webhooks.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('apiManagement.webhooks.metricActive')} value={metrics.active} />
+        <MetricCard icon={<Activity size={18} />} label={t('apiManagement.webhooks.metricDeliveries')} value={formatNumber(metrics.totalDeliveries)} />
         <MetricCard
           icon={<XCircle size={18} />}
-          label="Успешность"
+          label={t('apiManagement.webhooks.metricSuccessRate')}
           value={`${metrics.successRate.toFixed(1)}%`}
           trend={{ direction: metrics.successRate >= 99 ? 'up' : 'down', value: `${metrics.successRate.toFixed(1)}%` }}
         />
@@ -207,7 +210,7 @@ const WebhooksPage: React.FC = () => {
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по названию, URL..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('apiManagement.webhooks.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -219,8 +222,8 @@ const WebhooksPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет webhooks"
-        emptyDescription="Создайте первый webhook для получения уведомлений"
+        emptyTitle={t('apiManagement.webhooks.emptyTitle')}
+        emptyDescription={t('apiManagement.webhooks.emptyDescription')}
       />
     </div>
   );

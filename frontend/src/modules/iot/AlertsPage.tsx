@@ -12,6 +12,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { FormField, Textarea } from '@/design-system/components/FormField';
 import { iotApi } from '@/api/iot';
 import { formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 import type { IoTAlert, AlertRule } from './types';
 import toast from 'react-hot-toast';
 
@@ -21,30 +22,30 @@ const alertSeverityColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow'
   critical: 'red',
 };
 
-const alertSeverityLabels: Record<string, string> = {
-  info: 'Информация',
-  warning: 'Предупреждение',
-  critical: 'Критический',
-};
+const getAlertSeverityLabels = (): Record<string, string> => ({
+  info: t('iot.alerts.severityInfo'),
+  warning: t('iot.alerts.severityWarning'),
+  critical: t('iot.alerts.severityCritical'),
+});
 
-const sensorTypeLabels: Record<string, string> = {
-  temperature: 'Температура',
-  humidity: 'Влажность',
-  vibration: 'Вибрация',
-  pressure: 'Давление',
-  gps: 'GPS-трекер',
-  dust: 'Пыль',
-  noise: 'Шум',
-  structural: 'Структурный',
-};
+const getSensorTypeLabels = (): Record<string, string> => ({
+  temperature: t('iot.sensorTemperature'),
+  humidity: t('iot.sensorHumidity'),
+  vibration: t('iot.sensorVibration'),
+  pressure: t('iot.sensorPressure'),
+  gps: t('iot.sensorGps'),
+  dust: t('iot.sensorDust'),
+  noise: t('iot.sensorNoise'),
+  structural: t('iot.sensorStructural'),
+});
 
 type TabId = 'alerts' | 'rules';
 
-const severityFilterOptions = [
-  { value: '', label: 'Все уровни' },
-  { value: 'INFO', label: 'Информация' },
-  { value: 'WARNING', label: 'Предупреждение' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getSeverityFilterOptions = () => [
+  { value: '', label: t('iot.alerts.allLevels') },
+  { value: 'INFO', label: t('iot.alerts.severityInfo') },
+  { value: 'WARNING', label: t('iot.alerts.severityWarning') },
+  { value: 'CRITICAL', label: t('iot.alerts.severityCritical') },
 ];
 
 const AlertConfigPage: React.FC = () => {
@@ -86,100 +87,106 @@ const AlertConfigPage: React.FC = () => {
   }), [alerts, alertRules]);
 
   const alertColumns = useMemo<ColumnDef<IoTAlert, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'severity',
-        header: 'Уровень',
-        size: 140,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={alertSeverityColorMap}
-            label={alertSeverityLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'deviceName',
-        header: 'Устройство',
-        size: 220,
-        cell: ({ row }) => (
-          <div>
-            <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.deviceName}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.ruleName}</p>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'message',
-        header: 'Сообщение',
-        size: 280,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-700 dark:text-neutral-300 text-sm">{getValue<string>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'value',
-        header: 'Значение',
-        size: 100,
-        cell: ({ row }) => (
-          <span className="tabular-nums font-medium text-neutral-900 dark:text-neutral-100">
-            {row.original.value} / {row.original.threshold}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'triggeredAt',
-        header: 'Время',
-        size: 150,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600 text-xs tabular-nums">{formatDateTime(getValue<string>())}</span>
-        ),
-      },
-      {
-        id: 'ACKNOWLEDGED',
-        header: 'Подтверждено',
-        size: 140,
-        cell: ({ row }) => row.original.acknowledgedAt ? (
-          <div className="flex items-center gap-1.5">
-            <CheckCircle size={14} className="text-success-500" />
-            <span className="text-xs text-neutral-600">{row.original.acknowledgedByName}</span>
-          </div>
-        ) : (
-          <Button
-            variant="ghost"
-            size="xs"
-            onClick={(e) => {
-              e.stopPropagation();
-              toast.success(`Оповещение подтверждено: ${row.original.deviceName}`);
-            }}
-          >
-            Подтвердить
-          </Button>
-        ),
-      },
-    ],
+    () => {
+      const alertSeverityLabels = getAlertSeverityLabels();
+      return [
+        {
+          accessorKey: 'severity',
+          header: t('iot.alerts.colSeverity'),
+          size: 140,
+          cell: ({ getValue }) => (
+            <StatusBadge
+              status={getValue<string>()}
+              colorMap={alertSeverityColorMap}
+              label={alertSeverityLabels[getValue<string>()] ?? getValue<string>()}
+            />
+          ),
+        },
+        {
+          accessorKey: 'deviceName',
+          header: t('iot.alerts.colDevice'),
+          size: 220,
+          cell: ({ row }) => (
+            <div>
+              <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]">{row.original.deviceName}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.ruleName}</p>
+            </div>
+          ),
+        },
+        {
+          accessorKey: 'message',
+          header: t('iot.alerts.colMessage'),
+          size: 280,
+          cell: ({ getValue }) => (
+            <span className="text-neutral-700 dark:text-neutral-300 text-sm">{getValue<string>()}</span>
+          ),
+        },
+        {
+          accessorKey: 'value',
+          header: t('iot.alerts.colValue'),
+          size: 100,
+          cell: ({ row }) => (
+            <span className="tabular-nums font-medium text-neutral-900 dark:text-neutral-100">
+              {row.original.value} / {row.original.threshold}
+            </span>
+          ),
+        },
+        {
+          accessorKey: 'triggeredAt',
+          header: t('iot.alerts.colTime'),
+          size: 150,
+          cell: ({ getValue }) => (
+            <span className="text-neutral-600 text-xs tabular-nums">{formatDateTime(getValue<string>())}</span>
+          ),
+        },
+        {
+          id: 'ACKNOWLEDGED',
+          header: t('iot.alerts.colAcknowledged'),
+          size: 140,
+          cell: ({ row }) => row.original.acknowledgedAt ? (
+            <div className="flex items-center gap-1.5">
+              <CheckCircle size={14} className="text-success-500" />
+              <span className="text-xs text-neutral-600">{row.original.acknowledgedByName}</span>
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                toast.success(t('iot.alerts.toastAcknowledged', { device: row.original.deviceName }));
+              }}
+            >
+              {t('iot.alerts.acknowledge')}
+            </Button>
+          ),
+        },
+      ];
+    },
     [],
   );
+
+  const sensorTypeLabels = getSensorTypeLabels();
+  const alertSeverityLabels = getAlertSeverityLabels();
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Оповещения и правила"
-        subtitle={`${alerts.length} оповещений, ${alertRules.length} правил`}
+        title={t('iot.alerts.title')}
+        subtitle={t('iot.alerts.subtitleAlerts', { alertCount: String(alerts.length), ruleCount: String(alertRules.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'IoT мониторинг', href: '/iot/devices' },
-          { label: 'Оповещения' },
+          { label: t('iot.alerts.breadcrumbHome'), href: '/' },
+          { label: t('iot.alerts.breadcrumbIot'), href: '/iot/devices' },
+          { label: t('iot.alerts.breadcrumbAlerts') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => setRuleModalOpen(true)}>
-            Новое правило
+            {t('iot.alerts.newRule')}
           </Button>
         }
         tabs={[
-          { id: 'alerts', label: 'Оповещения', count: alerts.length },
-          { id: 'rules', label: 'Правила', count: alertRules.length },
+          { id: 'alerts', label: t('iot.alerts.tabAlerts'), count: alerts.length },
+          { id: 'rules', label: t('iot.alerts.tabRules'), count: alertRules.length },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -187,20 +194,20 @@ const AlertConfigPage: React.FC = () => {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Bell size={18} />} label="Всего оповещений" value={metrics.total} />
+        <MetricCard icon={<Bell size={18} />} label={t('iot.alerts.metricTotal')} value={metrics.total} />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Не подтверждены"
+          label={t('iot.alerts.metricUnacknowledged')}
           value={metrics.unacknowledged}
-          trend={{ direction: metrics.unacknowledged > 0 ? 'down' : 'neutral', value: metrics.unacknowledged > 0 ? 'Требуют внимания' : 'Все подтверждены' }}
+          trend={{ direction: metrics.unacknowledged > 0 ? 'down' : 'neutral', value: metrics.unacknowledged > 0 ? t('iot.alerts.trendNeedAttention') : t('iot.alerts.trendAllAcknowledged') }}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Критические"
+          label={t('iot.alerts.metricCritical')}
           value={metrics.critical}
-          trend={{ direction: metrics.critical > 0 ? 'down' : 'neutral', value: metrics.critical > 0 ? 'Срочно' : 'Нет' }}
+          trend={{ direction: metrics.critical > 0 ? 'down' : 'neutral', value: metrics.critical > 0 ? t('iot.alerts.trendUrgent') : t('iot.alerts.trendNo') }}
         />
-        <MetricCard icon={<Shield size={18} />} label="Активных правил" value={metrics.activeRules} />
+        <MetricCard icon={<Shield size={18} />} label={t('iot.alerts.metricActiveRules')} value={metrics.activeRules} />
       </div>
 
       {activeTab === 'alerts' ? (
@@ -209,14 +216,14 @@ const AlertConfigPage: React.FC = () => {
             <div className="relative flex-1 max-w-xs">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
               <Input
-                placeholder="Поиск по устройству, сообщению..."
+                placeholder={t('iot.alerts.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
               />
             </div>
             <Select
-              options={severityFilterOptions}
+              options={getSeverityFilterOptions()}
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value)}
               className="w-48"
@@ -230,8 +237,8 @@ const AlertConfigPage: React.FC = () => {
             enableRowSelection
             enableExport
             pageSize={20}
-            emptyTitle="Нет оповещений"
-            emptyDescription="Система мониторинга работает в штатном режиме"
+            emptyTitle={t('iot.alerts.emptyTitle')}
+            emptyDescription={t('iot.alerts.emptyDescription')}
           />
         </>
       ) : (
@@ -247,9 +254,9 @@ const AlertConfigPage: React.FC = () => {
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{rule.name}</p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
                     {sensorTypeLabels[rule.sensorType]} &middot;{' '}
-                    {rule.condition === 'above' && `Выше ${rule.thresholdMax}`}
-                    {rule.condition === 'below' && `Ниже ${rule.thresholdMin}`}
-                    {rule.condition === 'out_of_range' && `Вне диапазона ${rule.thresholdMin}-${rule.thresholdMax}`}
+                    {rule.condition === 'above' && t('iot.alerts.ruleConditionAbove', { value: String(rule.thresholdMax) })}
+                    {rule.condition === 'below' && t('iot.alerts.ruleConditionBelow', { value: String(rule.thresholdMin) })}
+                    {rule.condition === 'out_of_range' && t('iot.alerts.ruleConditionOutOfRange', { min: String(rule.thresholdMin), max: String(rule.thresholdMax) })}
                   </p>
                 </div>
               </div>
@@ -262,7 +269,7 @@ const AlertConfigPage: React.FC = () => {
                 <Button
                   variant="ghost"
                   size="xs"
-                  onClick={() => toast.success(rule.isActive ? 'Правило отключено' : 'Правило включено')}
+                  onClick={() => toast.success(rule.isActive ? t('iot.alerts.toastRuleDisabled') : t('iot.alerts.toastRuleEnabled'))}
                 >
                   {rule.isActive ? <BellOff size={14} /> : <Bell size={14} />}
                 </Button>
@@ -276,48 +283,48 @@ const AlertConfigPage: React.FC = () => {
       <Modal
         open={ruleModalOpen}
         onClose={() => setRuleModalOpen(false)}
-        title="Новое правило оповещения"
-        description="Настройте условия для автоматических оповещений"
+        title={t('iot.alerts.modalTitle')}
+        description={t('iot.alerts.modalDescription')}
         size="lg"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setRuleModalOpen(false)}>Отмена</Button>
+            <Button variant="secondary" onClick={() => setRuleModalOpen(false)}>{t('iot.alerts.modalCancel')}</Button>
             <Button
               onClick={() => {
-                toast.success('Правило оповещения создано');
+                toast.success(t('iot.alerts.toastRuleCreated'));
                 setRuleModalOpen(false);
               }}
             >
-              Создать правило
+              {t('iot.alerts.modalCreate')}
             </Button>
           </>
         }
       >
         <div className="space-y-4">
-          <FormField label="Название правила" required>
-            <Input placeholder="Напр. Перегрев бетона" />
+          <FormField label={t('iot.alerts.labelRuleName')} required>
+            <Input placeholder={t('iot.alerts.placeholderRuleName')} />
           </FormField>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Тип датчика" required>
+            <FormField label={t('iot.alerts.labelSensorType')} required>
               <Select options={Object.entries(sensorTypeLabels).map(([v, l]) => ({ value: v, label: l }))} />
             </FormField>
-            <FormField label="Уровень" required>
+            <FormField label={t('iot.alerts.labelSeverity')} required>
               <Select options={Object.entries(alertSeverityLabels).map(([v, l]) => ({ value: v, label: l }))} />
             </FormField>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Условие" required>
+            <FormField label={t('iot.alerts.labelCondition')} required>
               <Select options={[
-                { value: 'above', label: 'Выше порога' },
-                { value: 'below', label: 'Ниже порога' },
-                { value: 'out_of_range', label: 'Вне диапазона' },
+                { value: 'above', label: t('iot.alerts.conditionAbove') },
+                { value: 'below', label: t('iot.alerts.conditionBelow') },
+                { value: 'out_of_range', label: t('iot.alerts.conditionOutOfRange') },
               ]} />
             </FormField>
-            <FormField label="Пороговое значение" required>
+            <FormField label={t('iot.alerts.labelThreshold')} required>
               <Input type="number" placeholder="25" />
             </FormField>
           </div>
-          <FormField label="Email для уведомлений">
+          <FormField label={t('iot.alerts.labelEmail')}>
             <Input placeholder="email@example.com" />
           </FormField>
         </div>

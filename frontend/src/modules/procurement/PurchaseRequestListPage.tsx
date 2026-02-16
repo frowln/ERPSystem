@@ -1,11 +1,12 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, X } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import {
   StatusBadge,
   purchaseRequestStatusColorMap,
@@ -13,64 +14,131 @@ import {
   purchaseRequestPriorityColorMap,
   purchaseRequestPriorityLabels,
 } from '@/design-system/components/StatusBadge';
-import { Input } from '@/design-system/components/FormField';
+import { Input, Select } from '@/design-system/components/FormField';
 import { procurementApi } from '@/api/procurement';
+import { projectsApi } from '@/api/projects';
 import { formatMoney, formatDate } from '@/lib/format';
-import { guardDemoModeAction, isDemoMode } from '@/lib/demoMode';
+import { guardDemoModeAction } from '@/lib/demoMode';
+import { useAuthStore } from '@/stores/authStore';
 import { t } from '@/i18n';
-import type { PurchaseRequest } from '@/types';
+import type { PurchaseRequest, PurchaseRequestStatus } from '@/types';
 
 type TabId = 'all' | 'my' | 'IN_APPROVAL' | 'IN_WORK' | 'DELIVERED';
+type PurchaseRequestPriority = PurchaseRequest['priority'];
+
+const TAB_STATUS_GROUPS: Record<Exclude<TabId, 'all' | 'my'>, PurchaseRequestStatus[]> = {
+  IN_APPROVAL: ['SUBMITTED', 'IN_APPROVAL'],
+  IN_WORK: ['APPROVED', 'ASSIGNED', 'ORDERED'],
+  DELIVERED: ['DELIVERED', 'CLOSED'],
+};
 
 const PurchaseRequestListPage: React.FC = () => {
   const navigate = useNavigate();
+  const currentUser = useAuthStore((state) => state.user);
+
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [projectFilter, setProjectFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState<PurchaseRequestPriority | ''>('');
 
-  const { data: prData, isLoading } = useQuery({
-    queryKey: ['purchase-requests'],
-    queryFn: () => procurementApi.getPurchaseRequests(),
+  const currentUserId = currentUser?.id;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 350);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [search]);
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects', 'purchase-request-list'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 300, sort: 'name,asc' }),
+  });
+  const projects = projectsData?.content ?? [];
+
+  const tabStatusFilter = useMemo<PurchaseRequestStatus[] | undefined>(() => {
+    if (activeTab === 'IN_APPROVAL') return TAB_STATUS_GROUPS.IN_APPROVAL;
+    if (activeTab === 'IN_WORK') return TAB_STATUS_GROUPS.IN_WORK;
+    if (activeTab === 'DELIVERED') return TAB_STATUS_GROUPS.DELIVERED;
+    return undefined;
+  }, [activeTab]);
+  const tabRequestedByFilter = activeTab === 'my' ? currentUserId : undefined;
+  const listEnabled = activeTab !== 'my' || Boolean(currentUserId);
+
+  const {
+    data: requestsData,
+    isLoading: isRequestsLoading,
+    isError: isRequestsError,
+    refetch: refetchRequests,
+  } = useQuery({
+    queryKey: ['purchase-requests', 'list', activeTab, projectFilter, priorityFilter, debouncedSearch, currentUserId],
+    queryFn: () =>
+      procurementApi.getPurchaseRequests({
+        page: 0,
+        size: 400,
+        sort: 'createdAt,desc',
+        projectId: projectFilter || undefined,
+        priority: priorityFilter || undefined,
+        search: debouncedSearch || undefined,
+        statuses: tabStatusFilter,
+        requestedById: tabRequestedByFilter,
+      }),
+    enabled: listEnabled,
   });
 
-  const requests = useMemo(() => {
-    const content = prData?.content ?? [];
-    if (content.length > 0) return content;
-    return [];
-  }, [prData]);
+  const {
+    data: countersData,
+    refetch: refetchCounters,
+  } = useQuery({
+    queryKey: ['purchase-requests', 'counters', projectFilter, priorityFilter, debouncedSearch, currentUserId],
+    queryFn: () =>
+      procurementApi.getPurchaseRequestCounters({
+        projectId: projectFilter || undefined,
+        priority: priorityFilter || undefined,
+        search: debouncedSearch || undefined,
+        requestedById: currentUserId || undefined,
+      }),
+    placeholderData: (previousData) => previousData,
+  });
 
-  const filteredRequests = useMemo(() => {
-    let filtered = requests;
+  const requests = listEnabled ? (requestsData?.content ?? []) : [];
+  const currentListTotal = requestsData?.totalElements ?? requests.length;
+  const tabCounts = {
+    all: countersData?.all ?? (activeTab === 'all' ? currentListTotal : 0),
+    my: countersData?.my ?? (activeTab === 'my' ? currentListTotal : 0),
+    in_approval: countersData?.inApproval ?? (activeTab === 'IN_APPROVAL' ? currentListTotal : 0),
+    in_work: countersData?.inWork ?? (activeTab === 'IN_WORK' ? currentListTotal : 0),
+    delivered: countersData?.delivered ?? (activeTab === 'DELIVERED' ? currentListTotal : 0),
+  };
 
-    if (activeTab === 'my') {
-      filtered = filtered.filter((r) => r.requestedByName === 'Петрова М.И.');
-    } else if (activeTab === 'IN_APPROVAL') {
-      filtered = filtered.filter((r) => ['SUBMITTED', 'IN_APPROVAL'].includes(r.status));
-    } else if (activeTab === 'IN_WORK') {
-      filtered = filtered.filter((r) => ['APPROVED', 'ASSIGNED', 'ORDERED'].includes(r.status));
-    } else if (activeTab === 'DELIVERED') {
-      filtered = filtered.filter((r) => ['DELIVERED', 'CLOSED'].includes(r.status));
-    }
+  const allLabel = t('common.all');
 
-    if (search) {
-      const lower = search.toLowerCase();
-      filtered = filtered.filter(
-        (r) =>
-          r.name.toLowerCase().includes(lower) ||
-          (r.projectName ?? '').toLowerCase().includes(lower) ||
-          r.requestedByName.toLowerCase().includes(lower),
-      );
-    }
+  const projectOptions = useMemo(
+    () => [
+      { value: '', label: allLabel },
+      ...projects.map((project) => ({ value: project.id, label: project.name })),
+    ],
+    [allLabel, projects],
+  );
 
-    return filtered;
-  }, [requests, activeTab, search]);
+  const priorityOptions = useMemo(
+    () => [
+      { value: '', label: allLabel },
+      { value: 'LOW', label: purchaseRequestPriorityLabels.LOW ?? 'LOW' },
+      { value: 'MEDIUM', label: purchaseRequestPriorityLabels.MEDIUM ?? 'MEDIUM' },
+      { value: 'HIGH', label: purchaseRequestPriorityLabels.HIGH ?? 'HIGH' },
+      { value: 'CRITICAL', label: purchaseRequestPriorityLabels.CRITICAL ?? 'CRITICAL' },
+    ],
+    [allLabel],
+  );
 
-  const tabCounts = useMemo(() => ({
-    all: requests.length,
-    my: requests.filter((r) => r.requestedByName === 'Петрова М.И.').length,
-    in_approval: requests.filter((r) => ['SUBMITTED', 'IN_APPROVAL'].includes(r.status)).length,
-    in_work: requests.filter((r) => ['APPROVED', 'ASSIGNED', 'ORDERED'].includes(r.status)).length,
-    delivered: requests.filter((r) => ['DELIVERED', 'CLOSED'].includes(r.status)).length,
-  }), [requests]);
+  const hasActiveFilters = Boolean(search.trim() || projectFilter || priorityFilter);
+  const isLoading = listEnabled && isRequestsLoading;
+  const isError = listEnabled && isRequestsError;
+  const subtitleCount = listEnabled ? currentListTotal : 0;
 
   const columns = useMemo<ColumnDef<PurchaseRequest, unknown>[]>(
     () => [
@@ -81,7 +149,9 @@ const PurchaseRequestListPage: React.FC = () => {
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.name}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.itemCount} {t('procurement.requestList.items')}</p>
+            <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+              {row.original.itemCount ?? 0} {t('procurement.requestList.itemsSuffix')}
+            </p>
           </div>
         ),
       },
@@ -89,17 +159,13 @@ const PurchaseRequestListPage: React.FC = () => {
         accessorKey: 'requestDate',
         header: t('procurement.requestList.colDate'),
         size: 110,
-        cell: ({ getValue }) => (
-          <span className="tabular-nums">{formatDate(getValue<string>())}</span>
-        ),
+        cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
       },
       {
         accessorKey: 'projectName',
         header: t('procurement.requestList.colProject'),
         size: 180,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600">{getValue<string>()}</span>
-        ),
+        cell: ({ getValue }) => <span className="text-neutral-600">{getValue<string>() || '—'}</span>,
       },
       {
         accessorKey: 'status',
@@ -128,27 +194,21 @@ const PurchaseRequestListPage: React.FC = () => {
       {
         accessorKey: 'requestedByName',
         header: t('procurement.requestList.colRequestedBy'),
-        size: 150,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
-        ),
+        size: 160,
+        cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() || '—'}</span>,
       },
       {
         accessorKey: 'assignedToName',
         header: t('procurement.requestList.colAssignedTo'),
         size: 150,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600">{getValue<string>() ?? '---'}</span>
-        ),
+        cell: ({ getValue }) => <span className="text-neutral-600">{getValue<string>() || '—'}</span>,
       },
       {
         accessorKey: 'totalAmount',
         header: t('procurement.requestList.colAmount'),
         size: 150,
         cell: ({ getValue }) => (
-          <span className="font-medium tabular-nums text-right block">
-            {formatMoney(getValue<number>())}
-          </span>
+          <span className="block text-right font-medium tabular-nums">{formatMoney(getValue<number>())}</span>
         ),
       },
     ],
@@ -156,7 +216,7 @@ const PurchaseRequestListPage: React.FC = () => {
   );
 
   const handleRowClick = useCallback(
-    (pr: PurchaseRequest) => navigate(`/procurement/${pr.id}`),
+    (request: PurchaseRequest) => navigate(`/procurement/${request.id}`),
     [navigate],
   );
 
@@ -164,12 +224,12 @@ const PurchaseRequestListPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={t('procurement.requestList.title')}
-        subtitle={`${requests.length} ${t('procurement.requestList.subtitleRequests')}`}
+        subtitle={`${subtitleCount} ${t('procurement.requestList.subtitleSuffix')}`}
         breadcrumbs={[
           { label: t('procurement.requestList.breadcrumbHome'), href: '/' },
-          { label: t('procurement.requestList.breadcrumbPurchaseRequests') },
+          { label: t('procurement.requestList.breadcrumbProcurement') },
         ]}
-        actions={
+        actions={(
           <div className="flex items-center gap-2">
             <Button
               variant="secondary"
@@ -180,14 +240,14 @@ const PurchaseRequestListPage: React.FC = () => {
             <Button
               iconLeft={<Plus size={16} />}
               onClick={() => {
-                if (guardDemoModeAction('Создание заявки')) return;
+                if (guardDemoModeAction(t('procurement.requestList.newRequest'))) return;
                 navigate('/procurement/new');
               }}
             >
               {t('procurement.requestList.newRequest')}
             </Button>
           </div>
-        }
+        )}
         tabs={[
           { id: 'all', label: t('procurement.requestList.tabAll'), count: tabCounts.all },
           { id: 'my', label: t('procurement.requestList.tabMy'), count: tabCounts.my },
@@ -199,33 +259,72 @@ const PurchaseRequestListPage: React.FC = () => {
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
-      {/* Filters */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="relative flex-1 max-w-xs">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="relative min-w-[240px] flex-1 md:max-w-sm">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
             placeholder={t('procurement.requestList.searchPlaceholder')}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
           />
         </div>
+        <div className="w-full min-w-[180px] sm:w-56">
+          <Select
+            options={projectOptions}
+            value={projectFilter}
+            onChange={(event) => setProjectFilter(event.target.value)}
+          />
+        </div>
+        <div className="w-full min-w-[160px] sm:w-52">
+          <Select
+            options={priorityOptions}
+            value={priorityFilter}
+            onChange={(event) => setPriorityFilter(event.target.value as PurchaseRequestPriority | '')}
+          />
+        </div>
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            iconLeft={<X size={14} />}
+            onClick={() => {
+              setSearch('');
+              setDebouncedSearch('');
+              setProjectFilter('');
+              setPriorityFilter('');
+            }}
+          >
+            {t('common.reset')}
+          </Button>
+        )}
       </div>
 
-      {/* Table */}
-      <DataTable<PurchaseRequest>
-        data={filteredRequests}
-        columns={columns}
-        loading={isLoading}
-        onRowClick={handleRowClick}
-        enableRowSelection
-        enableColumnVisibility
-        enableDensityToggle
-        enableExport
-        pageSize={20}
-        emptyTitle={t('procurement.requestList.emptyTitle')}
-        emptyDescription={t('procurement.requestList.emptyDescription')}
-      />
+      {isError ? (
+        <div className="rounded-xl border border-danger-200 bg-danger-50/30 dark:border-danger-900 dark:bg-danger-950/20">
+          <EmptyState
+            variant="ERROR"
+            actionLabel={t('common.refresh')}
+            onAction={() => {
+              void refetchRequests();
+              void refetchCounters();
+            }}
+          />
+        </div>
+      ) : (
+        <DataTable<PurchaseRequest>
+          data={requests}
+          columns={columns}
+          loading={isLoading}
+          onRowClick={handleRowClick}
+          enableRowSelection
+          enableColumnVisibility
+          enableDensityToggle
+          enableExport
+          pageSize={20}
+          emptyTitle={hasActiveFilters ? t('empty.noResults') : t('procurement.requestList.emptyTitle')}
+          emptyDescription={hasActiveFilters ? t('empty.noResultsDescription') : t('procurement.requestList.emptyDescription')}
+        />
+      )}
     </div>
   );
 };

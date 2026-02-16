@@ -5,6 +5,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 
 type ClashStatus = 'DETECTED' | 'ASSIGNED' | 'RESOLVED' | 'ACCEPTED';
 
@@ -24,20 +25,20 @@ interface ClashCard {
 
 interface BoardColumn { id: ClashStatus; title: string; color: string; headerBg: string; collapsed: boolean; }
 
-const defaultColumns: BoardColumn[] = [
-  { id: 'DETECTED', title: 'Обнаружено', color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
-  { id: 'ASSIGNED', title: 'Назначено', color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'RESOLVED', title: 'Решено', color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'ACCEPTED', title: 'Принято', color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
+const getDefaultColumns = (): BoardColumn[] => [
+  { id: 'DETECTED', title: t('bim.clashBoardColumnDetected'), color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
+  { id: 'ASSIGNED', title: t('bim.clashBoardColumnAssigned'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
+  { id: 'RESOLVED', title: t('bim.clashBoardColumnResolved'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
+  { id: 'ACCEPTED', title: t('bim.clashBoardColumnAccepted'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
 ];
 
-const severityLabels: Record<string, string> = { low: 'Низкий', normal: 'Средний', high: 'Высокий', critical: 'Критический' };
+const getSeverityLabels = (): Record<string, string> => ({ low: t('bim.clashBoardSeverityLow'), normal: t('bim.clashBoardSeverityNormal'), high: t('bim.clashBoardSeverityHigh'), critical: t('bim.clashBoardSeverityCritical') });
 const severityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600', normal: 'bg-blue-100 text-blue-700', high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700' };
 
 const ClashBoardPage: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<ClashCard[]>([]);
-  const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
+  const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -55,12 +56,12 @@ const ClashBoardPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
-      <PageHeader title="Коллизии BIM - Доска" subtitle={`${items.length} коллизий`} breadcrumbs={[{ label: 'Главная', href: '/' }, { label: 'BIM', href: '/bim/clash-detection' }, { label: 'Доска' }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>Фильтры</Button><Button iconLeft={<Plus size={16} />}>Запустить проверку</Button></div>} />
+      <PageHeader title={t('bim.clashBoardTitle')} subtitle={t('bim.clashBoardSubtitle', { count: String(items.length) })} breadcrumbs={[{ label: t('bim.breadcrumbHome'), href: '/' }, { label: t('bim.breadcrumbBim'), href: '/bim/clash-detection' }, { label: t('bim.clashBoardBreadcrumb') }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>{t('bim.clashBoardFilters')}</Button><Button iconLeft={<Plus size={16} />}>{t('bim.clashBoardRunCheck')}</Button></div>} />
       {showFilters && (
         <div className="flex items-center gap-3 mb-4 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 animate-fade-in">
-          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder="Поиск..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
-          <Select options={[{ value: '', label: 'Все статусы' }, ...defaultColumns.map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
-          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>Сбросить</Button>}
+          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder={t('bim.clashBoardSearch')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
+          <Select options={[{ value: '', label: t('bim.clashBoardAllStatuses') }, ...columns.map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
+          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>{t('bim.clashBoardReset')}</Button>}
         </div>
       )}
       <div className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 260px)' }}>
@@ -75,9 +76,9 @@ const ClashBoardPage: React.FC = () => {
               </div>
               {!col.collapsed && (
                 <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[100px]">
-                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">Нет коллизий</p><p className="text-[10px] text-neutral-300 mt-0.5">Перетащите карточку сюда</p></div>) : colItems.map((item) => (
+                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">{t('bim.clashBoardNoClashes')}</p><p className="text-[10px] text-neutral-300 mt-0.5">{t('bim.clashBoardDragHint')}</p></div>) : colItems.map((item) => (
                     <div key={item.id} draggable onDragStart={(e) => onDragStart(e, item.id)} onClick={() => navigate('/bim/clash-detection')} className={cn('bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 cursor-pointer hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-600 transition-all', draggedId === item.id && 'opacity-50 shadow-lg')}>
-                      <div className="flex items-center justify-between mb-1.5"><span className="text-[10px] font-mono text-neutral-400">{item.code}</span><span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-medium', severityColors[item.severity])}>{severityLabels[item.severity]}</span></div>
+                      <div className="flex items-center justify-between mb-1.5"><span className="text-[10px] font-mono text-neutral-400">{item.code}</span><span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-medium', severityColors[item.severity])}>{getSeverityLabels()[item.severity]}</span></div>
                       <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1.5 line-clamp-2">{item.title}</h4>
                       <div className="flex items-center gap-1 mb-1">
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-700">{item.discipline1}</span>

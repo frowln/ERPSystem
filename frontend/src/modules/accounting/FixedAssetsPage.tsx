@@ -10,6 +10,7 @@ import { EmptyState } from '@/design-system/components/EmptyState';
 import { Input, Select } from '@/design-system/components/FormField';
 import { accountingApi, type FixedAsset, type FixedAssetStatus } from '@/api/accounting';
 import { formatMoney, formatDate, formatPercent } from '@/lib/format';
+import { t } from '@/i18n';
 
 type TabId = 'all' | FixedAssetStatus;
 
@@ -19,22 +20,25 @@ const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red
   DISPOSED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  ACTIVE: 'В эксплуатации',
-  DISPOSED: 'Выбыло',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('accounting.faStatusDraft'),
+  ACTIVE: t('accounting.faStatusActive'),
+  DISPOSED: t('accounting.faStatusDisposed'),
+});
 
-const depreciationLabels: Record<string, string> = {
-  LINEAR: 'Линейный',
-  REDUCING_BALANCE: 'Уменьшаемого остатка',
-  SUM_OF_YEARS: 'Суммы чисел лет',
-};
+const getDepreciationLabels = (): Record<string, string> => ({
+  LINEAR: t('accounting.faDeprLinear'),
+  REDUCING_BALANCE: t('accounting.faDeprReducingBalance'),
+  SUM_OF_YEARS: t('accounting.faDeprSumOfYears'),
+});
 
 const FixedAssetsPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [depreciationFilter, setDepreciationFilter] = useState('');
+
+  const statusLabels = getStatusLabels();
+  const depreciationLabels = getDepreciationLabels();
 
   const {
     data,
@@ -96,7 +100,7 @@ const FixedAssetsPage: React.FC = () => {
     () => [
       {
         accessorKey: 'inventoryNumber',
-        header: 'Инв. №',
+        header: t('accounting.faColInventoryNumber'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>
@@ -104,18 +108,18 @@ const FixedAssetsPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('accounting.faColName'),
         size: 280,
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.name}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Код: {row.original.code}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('accounting.faColCode', { code: row.original.code })}</p>
           </div>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('accounting.faColStatus'),
         size: 140,
         cell: ({ row }) => (
           <StatusBadge
@@ -127,7 +131,7 @@ const FixedAssetsPage: React.FC = () => {
       },
       {
         accessorKey: 'purchaseDate',
-        header: 'Дата покупки',
+        header: t('accounting.faColPurchaseDate'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -135,7 +139,7 @@ const FixedAssetsPage: React.FC = () => {
       },
       {
         accessorKey: 'purchaseAmount',
-        header: 'Перв. стоимость',
+        header: t('accounting.faColOriginalCost'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block">{formatMoney(getValue<number>())}</span>
@@ -143,7 +147,7 @@ const FixedAssetsPage: React.FC = () => {
       },
       {
         accessorKey: 'currentValue',
-        header: 'Текущая стоимость',
+        header: t('accounting.faColCurrentValue'),
         size: 170,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block font-medium">{formatMoney(getValue<number>())}</span>
@@ -151,7 +155,7 @@ const FixedAssetsPage: React.FC = () => {
       },
       {
         accessorKey: 'monthlyDepreciation',
-        header: 'Аморт./мес',
+        header: t('accounting.faColMonthlyDepr'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block text-neutral-600">{formatMoney(getValue<number>())}</span>
@@ -159,7 +163,7 @@ const FixedAssetsPage: React.FC = () => {
       },
       {
         id: 'wearPercent',
-        header: 'Износ',
+        header: t('accounting.faColWear'),
         size: 110,
         cell: ({ row }) => {
           const original = row.original.purchaseAmount;
@@ -169,26 +173,26 @@ const FixedAssetsPage: React.FC = () => {
         },
       },
     ],
-    [],
+    [statusLabels],
   );
 
   if (isError && assets.length === 0) {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Основные средства"
-          subtitle="Реестр активов"
+          title={t('accounting.faTitle')}
+          subtitle={t('accounting.faSubtitleRegistry')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия', href: '/accounting' },
-            { label: 'Основные средства' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+            { label: t('accounting.breadcrumbFixedAssets') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить основные средства"
-          description="Проверьте соединение и попробуйте снова"
-          actionLabel="Повторить"
+          title={t('accounting.faErrorTitle')}
+          description={t('accounting.checkConnectionTryAgain')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetch();
           }}
@@ -200,18 +204,18 @@ const FixedAssetsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Основные средства"
-        subtitle={`${assets.length} объектов ОС`}
+        title={t('accounting.faTitle')}
+        subtitle={t('accounting.faSubtitleCount', { count: assets.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия', href: '/accounting' },
-          { label: 'Основные средства' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+          { label: t('accounting.breadcrumbFixedAssets') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: assets.length },
-          { id: 'DRAFT', label: 'Черновики', count: assets.filter((asset) => asset.status === 'DRAFT').length },
-          { id: 'ACTIVE', label: 'В эксплуатации', count: assets.filter((asset) => asset.status === 'ACTIVE').length },
-          { id: 'DISPOSED', label: 'Выбывшие', count: assets.filter((asset) => asset.status === 'DISPOSED').length },
+          { id: 'all', label: t('accounting.faTabAll'), count: assets.length },
+          { id: 'DRAFT', label: t('accounting.faTabDraft'), count: assets.filter((asset) => asset.status === 'DRAFT').length },
+          { id: 'ACTIVE', label: t('accounting.faTabActive'), count: assets.filter((asset) => asset.status === 'ACTIVE').length },
+          { id: 'DISPOSED', label: t('accounting.faTabDisposed'), count: assets.filter((asset) => asset.status === 'DISPOSED').length },
         ]}
         activeTab={activeTab}
         onTabChange={(tabId) => setActiveTab(tabId as TabId)}
@@ -220,22 +224,22 @@ const FixedAssetsPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<Building size={18} />}
-          label="Первоначальная стоимость"
+          label={t('accounting.faMetricOriginalCost')}
           value={formatMoney(totalOriginal)}
         />
         <MetricCard
           icon={<Layers size={18} />}
-          label="Текущая стоимость"
+          label={t('accounting.faMetricCurrentValue')}
           value={formatMoney(totalResidual)}
         />
         <MetricCard
           icon={<Building size={18} />}
-          label="Накопленная амортизация"
+          label={t('accounting.faMetricAccumulatedDepr')}
           value={formatMoney(totalDepreciation)}
         />
         <MetricCard
           icon={<Building size={18} />}
-          label="Амортизация / месяц"
+          label={t('accounting.faMetricMonthlyDepr')}
           value={formatMoney(totalMonthlyDepreciation)}
         />
       </div>
@@ -244,7 +248,7 @@ const FixedAssetsPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, коду, инв. номеру..."
+            placeholder={t('accounting.faSearchPlaceholder')}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
@@ -253,7 +257,7 @@ const FixedAssetsPage: React.FC = () => {
 
         <Select
           options={[
-            { value: '', label: 'Все методы амортизации' },
+            { value: '', label: t('accounting.faAllMethods') },
             ...Object.entries(depreciationLabels).map(([value, label]) => ({ value, label })),
           ]}
           value={depreciationFilter}
@@ -271,8 +275,8 @@ const FixedAssetsPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет основных средств"
-        emptyDescription="Объекты ОС появятся после добавления в реестр"
+        emptyTitle={t('accounting.faEmptyTitle')}
+        emptyDescription={t('accounting.faEmptyDescription')}
       />
     </div>
   );

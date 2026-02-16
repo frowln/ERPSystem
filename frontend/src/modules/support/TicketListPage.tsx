@@ -22,6 +22,7 @@ import { supportApi } from '@/api/support';
 import { formatDate, formatRelativeTime } from '@/lib/format';
 import type { SupportTicket } from './types';
 import { TicketCreateModal } from './TicketCreateModal';
+import { t } from '@/i18n';
 
 const ticketStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   OPEN: 'blue',
@@ -32,14 +33,14 @@ const ticketStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' 
   CLOSED: 'gray',
 };
 
-const ticketStatusLabels: Record<string, string> = {
-  OPEN: 'Открыта',
-  ASSIGNED: 'Назначена',
-  IN_PROGRESS: 'В работе',
-  WAITING_RESPONSE: 'Ожидание ответа',
-  RESOLVED: 'Решена',
-  CLOSED: 'Закрыта',
-};
+const getTicketStatusLabels = (): Record<string, string> => ({
+  OPEN: t('support.colOpen'),
+  ASSIGNED: t('support.colAssigned'),
+  IN_PROGRESS: t('support.colInProgress'),
+  WAITING_RESPONSE: t('support.colWaitingResponse'),
+  RESOLVED: t('support.colResolved'),
+  CLOSED: t('support.colClosed'),
+});
 
 const ticketPriorityColorMap: Record<string, 'gray' | 'blue' | 'orange' | 'red'> = {
   LOW: 'gray',
@@ -48,36 +49,36 @@ const ticketPriorityColorMap: Record<string, 'gray' | 'blue' | 'orange' | 'red'>
   CRITICAL: 'red',
 };
 
-const ticketPriorityLabels: Record<string, string> = {
-  LOW: 'Низкий',
-  MEDIUM: 'Средний',
-  HIGH: 'Высокий',
-  CRITICAL: 'Критический',
-};
+const getTicketPriorityLabels = (): Record<string, string> => ({
+  LOW: t('support.priorityLow'),
+  MEDIUM: t('support.priorityMedium'),
+  HIGH: t('support.priorityHigh'),
+  CRITICAL: t('support.priorityCritical'),
+});
 
-const categoryLabels: Record<string, string> = {
-  TECHNICAL: 'Техническая',
-  ACCESS: 'Доступ',
-  DOCUMENTS: 'Документы',
-  EQUIPMENT: 'Оборудование',
-  SAFETY: 'Безопасность',
-  SCHEDULE: 'График',
-  OTHER: 'Прочее',
-};
+const getCategoryLabels = (): Record<string, string> => ({
+  TECHNICAL: t('support.catTechnical'),
+  ACCESS: t('support.catAccess'),
+  DOCUMENTS: t('support.catDocuments'),
+  EQUIPMENT: t('support.catEquipment'),
+  SAFETY: t('support.catSafety'),
+  SCHEDULE: t('support.catSchedule'),
+  OTHER: t('support.catOther'),
+});
 
 type TabId = 'all' | 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
 
-const priorityFilterOptions = [
-  { value: '', label: 'Все приоритеты' },
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityFilterOptions = () => [
+  { value: '', label: t('support.priorityFilterAll') },
+  { value: 'LOW', label: t('support.priorityLow') },
+  { value: 'MEDIUM', label: t('support.priorityMedium') },
+  { value: 'HIGH', label: t('support.priorityHigh') },
+  { value: 'CRITICAL', label: t('support.priorityCritical') },
 ];
 
 function categoryLabel(category?: string): string {
   if (!category) return '—';
-  if (categoryLabels[category]) return categoryLabels[category];
+  if (getCategoryLabels()[category]) return getCategoryLabels()[category];
   return category;
 }
 
@@ -106,9 +107,9 @@ const TicketListPage: React.FC = () => {
       new Set(tickets.map((ticket) => ticket.category).filter((value): value is string => Boolean(value))),
     ).sort((a, b) => a.localeCompare(b));
 
-    const values = categoriesFromData.length > 0 ? categoriesFromData : Object.keys(categoryLabels);
+    const values = categoriesFromData.length > 0 ? categoriesFromData : Object.keys(getCategoryLabels());
     return [
-      { value: '', label: 'Все категории' },
+      { value: '', label: t('support.categoryFilterAll') },
       ...values.map((value) => ({ value, label: categoryLabel(value) })),
     ];
   }, [tickets]);
@@ -174,7 +175,7 @@ const TicketListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('support.colNumber'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-600 text-xs">{getValue<string>()}</span>
@@ -182,7 +183,7 @@ const TicketListPage: React.FC = () => {
       },
       {
         accessorKey: 'subject',
-        header: 'Тема',
+        header: t('support.colSubject'),
         size: 320,
         cell: ({ row }) => (
           <div>
@@ -193,31 +194,31 @@ const TicketListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('support.colStatus'),
         size: 130,
         cell: ({ row }) => (
           <StatusBadge
             status={row.original.status}
             colorMap={ticketStatusColorMap}
-            label={ticketStatusLabels[row.original.status] ?? row.original.statusDisplayName ?? row.original.status}
+            label={getTicketStatusLabels()[row.original.status] ?? row.original.statusDisplayName ?? row.original.status}
           />
         ),
       },
       {
         accessorKey: 'priority',
-        header: 'Приоритет',
+        header: t('support.colPriority'),
         size: 130,
         cell: ({ row }) => (
           <StatusBadge
             status={row.original.priority}
             colorMap={ticketPriorityColorMap}
-            label={ticketPriorityLabels[row.original.priority] ?? row.original.priorityDisplayName ?? row.original.priority}
+            label={getTicketPriorityLabels()[row.original.priority] ?? row.original.priorityDisplayName ?? row.original.priority}
           />
         ),
       },
       {
         accessorKey: 'requesterName',
-        header: 'Заявитель',
+        header: t('support.colRequester'),
         size: 170,
         cell: ({ row }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{row.original.requesterName ?? row.original.requesterId ?? '—'}</span>
@@ -225,7 +226,7 @@ const TicketListPage: React.FC = () => {
       },
       {
         accessorKey: 'assignedToName',
-        header: 'Исполнитель',
+        header: t('support.colAssigneeCol'),
         size: 170,
         cell: ({ row }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{row.original.assignedToName ?? row.original.assignedToId ?? '—'}</span>
@@ -233,7 +234,7 @@ const TicketListPage: React.FC = () => {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Создана',
+        header: t('support.colCreated'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="text-neutral-600 text-xs">{formatRelativeTime(getValue<string>())}</span>
@@ -241,7 +242,7 @@ const TicketListPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('support.colDueDate'),
         size: 120,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
@@ -270,11 +271,11 @@ const TicketListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Заявки поддержки"
-        subtitle={`${tickets.length} заявок в системе`}
+        title={t('support.listTitle')}
+        subtitle={t('support.listSubtitle', { count: String(tickets.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Поддержка', href: '/support/tickets' },
+          { label: t('support.breadcrumbHome'), href: '/' },
+          { label: t('support.breadcrumbSupport'), href: '/support/tickets' },
         ]}
         actions={(
           <div className="flex items-center gap-2">
@@ -283,19 +284,19 @@ const TicketListPage: React.FC = () => {
               iconLeft={<LayoutGrid size={16} />}
               onClick={() => navigate('/support/tickets/board')}
             >
-              Доска
+              {t('support.btnBoard')}
             </Button>
             <Button iconLeft={<Plus size={16} />} onClick={() => setCreateModalOpen(true)}>
-              Новая заявка
+              {t('support.btnNewRequest')}
             </Button>
           </div>
         )}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'OPEN', label: 'Открытые', count: tabCounts.open },
-          { id: 'IN_PROGRESS', label: 'В работе', count: tabCounts.in_progress },
-          { id: 'RESOLVED', label: 'Решённые', count: tabCounts.resolved },
-          { id: 'CLOSED', label: 'Закрытые', count: tabCounts.closed },
+          { id: 'all', label: t('support.tabAll'), count: tabCounts.all },
+          { id: 'OPEN', label: t('support.tabOpen'), count: tabCounts.open },
+          { id: 'IN_PROGRESS', label: t('support.tabInProgress'), count: tabCounts.in_progress },
+          { id: 'RESOLVED', label: t('support.tabResolved'), count: tabCounts.resolved },
+          { id: 'CLOSED', label: t('support.tabClosed'), count: tabCounts.closed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -304,45 +305,45 @@ const TicketListPage: React.FC = () => {
       {isError && tickets.length === 0 ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить заявки поддержки"
-          description="Проверьте соединение и попробуйте снова"
-          actionLabel="Повторить"
+          title={t('support.errorLoadTickets')}
+          description={t('support.errorLoadTicketsDesc')}
+          actionLabel={t('support.btnRetry')}
           onAction={() => { void refetch(); }}
         />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <MetricCard icon={<Headphones size={18} />} label="Всего заявок" value={metrics.total} />
+            <MetricCard icon={<Headphones size={18} />} label={t('support.metricTotal')} value={metrics.total} />
             <MetricCard
               icon={<Clock size={18} />}
-              label="Открытые"
+              label={t('support.metricOpen')}
               value={metrics.open}
-              trend={{ direction: metrics.open > 3 ? 'up' : 'neutral', value: `${metrics.open} шт.` }}
+              trend={{ direction: metrics.open > 3 ? 'up' : 'neutral', value: t('support.trendItemsCount', { count: String(metrics.open) }) }}
             />
             <MetricCard
               icon={<AlertTriangle size={18} />}
-              label="Критические"
+              label={t('support.metricCriticalList')}
               value={metrics.critical}
               trend={{
                 direction: metrics.critical > 0 ? 'down' : 'neutral',
-                value: metrics.critical > 0 ? 'Требуют внимания' : 'Нет',
+                value: metrics.critical > 0 ? t('support.trendNeedAttention') : t('support.trendNone'),
               }}
             />
-            <MetricCard icon={<CheckCircle size={18} />} label="Решённые" value={metrics.resolved} />
+            <MetricCard icon={<CheckCircle size={18} />} label={t('support.metricResolvedList')} value={metrics.resolved} />
           </div>
 
           <div className="flex items-center gap-3 mb-4">
             <div className="relative flex-1 max-w-xs">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
               <Input
-                placeholder="Поиск по номеру, теме, заявителю..."
+                placeholder={t('support.searchTicketPlaceholder')}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 className="pl-9"
               />
             </div>
             <Select
-              options={priorityFilterOptions}
+              options={getPriorityFilterOptions()}
               value={priorityFilter}
               onChange={(event) => setPriorityFilter(event.target.value)}
               className="w-48"
@@ -365,8 +366,8 @@ const TicketListPage: React.FC = () => {
             enableDensityToggle
             enableExport
             pageSize={20}
-            emptyTitle="Нет заявок поддержки"
-            emptyDescription="Создайте первую заявку для начала работы"
+            emptyTitle={t('support.emptyTickets')}
+            emptyDescription={t('support.emptyTicketsDesc')}
           />
         </>
       )}

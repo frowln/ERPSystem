@@ -11,7 +11,9 @@ import java.util.UUID;
 @Repository
 public interface TicketCategoryRepository extends JpaRepository<TicketCategory, UUID> {
 
-    List<TicketCategory> findByIsActiveTrueAndDeletedFalse();
+    List<TicketCategory> findByOrganizationIdAndIsActiveTrueAndDeletedFalse(UUID organizationId);
 
-    Optional<TicketCategory> findByCodeAndDeletedFalse(String code);
+    Optional<TicketCategory> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
+    Optional<TicketCategory> findByOrganizationIdAndCodeAndDeletedFalse(UUID organizationId, String code);
 }

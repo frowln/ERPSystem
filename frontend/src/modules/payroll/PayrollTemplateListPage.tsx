@@ -11,26 +11,27 @@ import { StatusBadge, type BadgeColor } from '@/design-system/components/StatusB
 import { Input, Select } from '@/design-system/components/FormField';
 import { payrollApi } from './api';
 import { formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PayrollTemplate, PayrollTemplateType } from './types';
 
-const typeLabels: Record<PayrollTemplateType, string> = {
-  SALARY: 'Оклад',
-  HOURLY: 'Почасовая',
-  PIECE_RATE: 'Сдельная',
-  MIXED: 'Смешанная',
-};
+const getTypeLabels = (): Record<PayrollTemplateType, string> => ({
+  SALARY: t('payroll.templateList.typeSalary'),
+  HOURLY: t('payroll.templateList.typeHourly'),
+  PIECE_RATE: t('payroll.templateList.typePieceRate'),
+  MIXED: t('payroll.templateList.typeMixed'),
+});
 
 const activeColorMap: Record<string, BadgeColor> = {
   true: 'green',
   false: 'gray',
 };
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'SALARY', label: 'Оклад' },
-  { value: 'HOURLY', label: 'Почасовая' },
-  { value: 'PIECE_RATE', label: 'Сдельная' },
-  { value: 'MIXED', label: 'Смешанная' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('payroll.templateList.allTypes') },
+  { value: 'SALARY', label: t('payroll.templateList.typeSalary') },
+  { value: 'HOURLY', label: t('payroll.templateList.typeHourly') },
+  { value: 'PIECE_RATE', label: t('payroll.templateList.typePieceRate') },
+  { value: 'MIXED', label: t('payroll.templateList.typeMixed') },
 ];
 
 const PayrollTemplateListPage: React.FC = () => {
@@ -76,11 +77,13 @@ const PayrollTemplateListPage: React.FC = () => {
     return result;
   }, [templates, typeFilter, search]);
 
+  const typeLabels = getTypeLabels();
+
   const columns = useMemo<ColumnDef<PayrollTemplate, unknown>[]>(
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('payroll.templateList.colCode'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -88,7 +91,7 @@ const PayrollTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('payroll.templateList.colName'),
         size: 250,
         cell: ({ getValue }) => (
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>
@@ -96,7 +99,7 @@ const PayrollTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'type',
-        header: 'Тип',
+        header: t('payroll.templateList.colType'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{typeLabels[getValue<PayrollTemplateType>()] ?? getValue<string>()}</span>
@@ -104,7 +107,7 @@ const PayrollTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'baseSalary',
-        header: 'Базовый оклад',
+        header: t('payroll.templateList.colBaseSalary'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -114,7 +117,7 @@ const PayrollTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'hourlyRate',
-        header: 'Часовая ставка',
+        header: t('payroll.templateList.colHourlyRate'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -124,18 +127,18 @@ const PayrollTemplateListPage: React.FC = () => {
       },
       {
         accessorKey: 'isActive',
-        header: 'Статус',
+        header: t('payroll.templateList.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
             status={String(getValue<boolean>())}
             colorMap={activeColorMap}
-            label={getValue<boolean>() ? 'Активен' : 'Неактивен'}
+            label={getValue<boolean>() ? t('payroll.templateList.statusActive') : t('payroll.templateList.statusInactive')}
           />
         ),
       },
     ],
-    [],
+    [typeLabels],
   );
 
   const handleRowClick = useCallback(
@@ -146,20 +149,20 @@ const PayrollTemplateListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Шаблоны расчёта зарплаты"
-        subtitle={`${templates.length} шаблонов в системе`}
+        title={t('payroll.templateList.title')}
+        subtitle={t('payroll.templateList.subtitle', { count: templates.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Зарплата', href: '/payroll' },
-          { label: 'Шаблоны' },
+          { label: t('payroll.templateList.breadcrumbHome'), href: '/' },
+          { label: t('payroll.templateList.breadcrumbPayroll'), href: '/payroll' },
+          { label: t('payroll.templateList.breadcrumbTemplates') },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="secondary" onClick={() => navigate('/payroll/calculate')}>
-              Расчёт зарплаты
+              {t('payroll.templateList.calculatePayroll')}
             </Button>
             <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/payroll/templates/new')}>
-              Новый шаблон
+              {t('payroll.templateList.newTemplate')}
             </Button>
           </div>
         }
@@ -170,14 +173,14 @@ const PayrollTemplateListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по коду, названию..."
+            placeholder={t('payroll.templateList.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={typeFilterOptions}
+          options={getTypeFilterOptions()}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="w-44"
@@ -197,24 +200,24 @@ const PayrollTemplateListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('payroll.templateList.bulkDelete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} шаблон(ов)?`,
-                description: 'Операция необратима. Выбранные шаблоны расчета будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('payroll.templateList.confirmDeleteTitle', { count: ids.length }),
+                description: t('payroll.templateList.confirmDeleteDescription'),
+                confirmLabel: t('payroll.templateList.confirmDeleteBtn'),
+                cancelLabel: t('common.cancel'),
               });
               if (!isConfirmed) return;
               deleteMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет шаблонов"
-        emptyDescription="Создайте первый шаблон расчёта зарплаты"
+        emptyTitle={t('payroll.templateList.emptyTitle')}
+        emptyDescription={t('payroll.templateList.emptyDescription')}
       />
     </div>
   );

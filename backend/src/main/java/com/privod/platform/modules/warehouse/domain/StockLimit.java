@@ -18,12 +18,15 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "stock_limits", indexes = {
+        @Index(name = "idx_sl_org", columnList = "organization_id"),
+        @Index(name = "idx_sl_org_material", columnList = "organization_id, material_id"),
+        @Index(name = "idx_sl_org_location", columnList = "organization_id, warehouse_location_id"),
         @Index(name = "idx_sl_material", columnList = "material_id"),
         @Index(name = "idx_sl_warehouse_location", columnList = "warehouse_location_id"),
         @Index(name = "idx_sl_active", columnList = "is_active")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uq_stock_limit_material_location",
-                columnNames = {"material_id", "warehouse_location_id", "deleted"})
+                columnNames = {"organization_id", "material_id", "warehouse_location_id", "deleted"})
 })
 @Getter
 @Setter
@@ -31,6 +34,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockLimit extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "material_id", nullable = false)
     private UUID materialId;

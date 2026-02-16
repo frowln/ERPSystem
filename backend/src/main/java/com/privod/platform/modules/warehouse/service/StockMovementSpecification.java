@@ -17,6 +17,10 @@ public final class StockMovementSpecification {
         return (root, query, cb) -> cb.equal(root.get("deleted"), false);
     }
 
+    public static Specification<StockMovement> belongsToOrganization(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
+    }
+
     public static Specification<StockMovement> hasStatus(StockMovementStatus status) {
         return (root, query, cb) -> {
             if (status == null) return cb.conjunction();

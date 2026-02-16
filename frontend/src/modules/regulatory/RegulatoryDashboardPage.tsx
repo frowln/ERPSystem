@@ -19,6 +19,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { formatDate } from '@/lib/format';
 import { regulatoryApi } from '@/api/regulatory';
+import { t } from '@/i18n';
 
 interface UpcomingItem {
   id: string;
@@ -71,13 +72,13 @@ const RegulatoryDashboardPage: React.FC = () => {
       if (p.validUntil) {
         const daysLeft = Math.floor((new Date(p.validUntil).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
         if (daysLeft > 0 && daysLeft <= 30) {
-          alerts.push({ id: `perm-${p.id}`, severity: 'CRITICAL', title: `Истекает разрешение ${p.number}`, description: `Срок действия истекает через ${daysLeft} дн., требуется продление.`, dueDate: p.validUntil });
+          alerts.push({ id: `perm-${p.id}`, severity: 'CRITICAL', title: t('regulatory.alertPermitExpiring', { number: p.number }), description: t('regulatory.alertPermitExpiringDesc', { days: String(daysLeft) }), dueDate: p.validUntil });
         }
       }
     });
     licenses.forEach((l) => {
       if (l.status === 'EXPIRING_SOON') {
-        alerts.push({ id: `lic-${l.id}`, severity: 'WARNING', title: `Истекает лицензия ${l.number}`, description: `Лицензия "${l.name}" скоро истекает.`, dueDate: l.validUntil });
+        alerts.push({ id: `lic-${l.id}`, severity: 'WARNING', title: t('regulatory.alertLicenseExpiring', { number: l.number }), description: t('regulatory.alertLicenseExpiringDesc', { name: l.name }), dueDate: l.validUntil });
       }
     });
     return alerts;
@@ -89,7 +90,7 @@ const RegulatoryDashboardPage: React.FC = () => {
       items.push({ id: p.id, type: 'PERMIT', name: `${p.name} ${p.number}`, date: p.validUntil ?? p.issuedDate ?? '', status: p.status, project: p.projectName ?? undefined });
     });
     inspections.filter((i) => i.status === 'SCHEDULED').slice(0, 3).forEach((i) => {
-      items.push({ id: i.id, type: 'INSPECTION', name: i.name ?? 'Проверка', date: i.scheduledDate ?? '', status: i.status, project: i.projectName ?? undefined });
+      items.push({ id: i.id, type: 'INSPECTION', name: i.name ?? t('regulatory.defaultInspectionName'), date: i.scheduledDate ?? '', status: i.status, project: i.projectName ?? undefined });
     });
     return items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(0, 5);
   }, [permits, inspections]);
@@ -102,33 +103,33 @@ const RegulatoryDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Регуляторика и комплаенс"
-        subtitle="Обзор нормативного соответствия"
+        title={t('regulatory.dashboardTitle')}
+        subtitle={t('regulatory.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Регуляторика' },
+          { label: t('regulatory.breadcrumbHome'), href: '/' },
+          { label: t('regulatory.breadcrumbRegulatory') },
         ]}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="secondary" onClick={() => navigate('/regulatory/permits')}>Разрешения</Button>
-            <Button variant="secondary" onClick={() => navigate('/regulatory/licenses')}>Лицензии</Button>
-            <Button variant="secondary" onClick={() => navigate('/regulatory/inspections')}>Проверки</Button>
+            <Button variant="secondary" onClick={() => navigate('/regulatory/permits')}>{t('regulatory.btnPermits')}</Button>
+            <Button variant="secondary" onClick={() => navigate('/regulatory/licenses')}>{t('regulatory.btnLicenses')}</Button>
+            <Button variant="secondary" onClick={() => navigate('/regulatory/inspections')}>{t('regulatory.btnInspections')}</Button>
           </div>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Shield size={18} />} label="Разрешения" value={metricsPermits} trend={{ direction: 'neutral', value: `${permits.filter(p => p.status === 'ACTIVE').length} действующих` }} />
-        <MetricCard icon={<Award size={18} />} label="Лицензии СРО" value={metricsLicenses} trend={{ direction: 'neutral', value: `${licenses.filter(l => l.status === 'ACTIVE').length} действующих` }} />
-        <MetricCard icon={<ClipboardCheck size={18} />} label="Проверки" value={metricsInspections} trend={{ direction: 'neutral', value: `${inspections.filter(i => i.status === 'SCHEDULED').length} запланировано` }} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Требуют внимания" value={metricsAttention} trend={metricsAttention > 0 ? { direction: 'down', value: 'Критические' } : undefined} />
+        <MetricCard icon={<Shield size={18} />} label={t('regulatory.metricPermits')} value={metricsPermits} trend={{ direction: 'neutral', value: t('regulatory.trendActive', { count: String(permits.filter(p => p.status === 'ACTIVE').length) }) }} />
+        <MetricCard icon={<Award size={18} />} label={t('regulatory.metricLicensesSro')} value={metricsLicenses} trend={{ direction: 'neutral', value: t('regulatory.trendActive', { count: String(licenses.filter(l => l.status === 'ACTIVE').length) }) }} />
+        <MetricCard icon={<ClipboardCheck size={18} />} label={t('regulatory.metricInspections')} value={metricsInspections} trend={{ direction: 'neutral', value: t('regulatory.trendScheduled', { count: String(inspections.filter(i => i.status === 'SCHEDULED').length) }) }} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('regulatory.metricAttention')} value={metricsAttention} trend={metricsAttention > 0 ? { direction: 'down', value: t('regulatory.trendCritical') } : undefined} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Compliance alerts */}
         <div className="lg:col-span-2">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Предупреждения комплаенса</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('regulatory.complianceAlerts')}</h3>
             <div className="space-y-3">
               {complianceAlerts.map((alert) => {
                 const styles = severityStyles[alert.severity];
@@ -145,7 +146,7 @@ const RegulatoryDashboardPage: React.FC = () => {
                       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{alert.title}</p>
                       <p className="text-xs text-neutral-600 mt-0.5">{alert.description}</p>
                       {alert.dueDate && (
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 tabular-nums">Срок: {formatDate(alert.dueDate)}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 tabular-nums">{t('regulatory.deadlinePrefix', { date: formatDate(alert.dueDate) })}</p>
                       )}
                     </div>
                   </div>
@@ -158,7 +159,7 @@ const RegulatoryDashboardPage: React.FC = () => {
         {/* Upcoming events */}
         <div>
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Ближайшие события</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('regulatory.upcomingEvents')}</h3>
             <div className="space-y-3">
               {upcomingItems.map((item) => (
                 <div
@@ -200,14 +201,14 @@ const RegulatoryDashboardPage: React.FC = () => {
 
           {/* Summary cards */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mt-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Сводка по проектам</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('regulatory.projectSummary')}</h3>
             <div className="space-y-3">
-              {['ЖК "Солнечный"', 'Мост через р. Вятка', 'ТЦ "Центральный"'].map((project) => (
+              {[t('regulatory.projectSunny'), t('regulatory.projectBridgeLabel'), t('regulatory.projectCentral')].map((project) => (
                 <div key={project} className="flex items-center justify-between p-2">
                   <span className="text-sm text-neutral-700 dark:text-neutral-300">{project}</span>
                   <div className="flex items-center gap-1">
                     <CheckCircle size={14} className="text-success-500" />
-                    <span className="text-xs text-neutral-500 dark:text-neutral-400">Действует</span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('regulatory.statusActive')}</span>
                   </div>
                 </div>
               ))}

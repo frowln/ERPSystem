@@ -36,13 +36,13 @@ const statusFlow = [
   { status: 'HIRED', label: t('recruitment.detail.statusHired') },
 ];
 
-const interviewTypeLabels: Record<string, string> = {
-  phone: 'Телефонное', video: 'Видео', onsite: 'Очное', technical: 'Техническое', hr: 'HR',
-};
+const getInterviewTypeLabels = (): Record<string, string> => ({
+  phone: t('recruitment.detail.interviewTypePhone'), video: t('recruitment.detail.interviewTypeVideo'), onsite: t('recruitment.detail.interviewTypeOnsite'), technical: t('recruitment.detail.interviewTypeTechnical'), hr: t('recruitment.detail.interviewTypeHr'),
+});
 
-const interviewStatusLabels: Record<string, string> = {
-  scheduled: 'Запланировано', in_progress: 'Проходит', completed: 'Завершено', cancelled: 'Отменено', no_show: 'Неявка',
-};
+const getInterviewStatusLabels = (): Record<string, string> => ({
+  scheduled: t('recruitment.detail.interviewStatusScheduled'), in_progress: t('recruitment.detail.interviewStatusInProgress'), completed: t('recruitment.detail.interviewStatusCompleted'), cancelled: t('recruitment.detail.interviewStatusCancelled'), no_show: t('recruitment.detail.interviewStatusNoShow'),
+});
 
 
 const ApplicantDetailPage: React.FC = () => {
@@ -72,26 +72,29 @@ const ApplicantDetailPage: React.FC = () => {
   });
 
   if (isLoading || !applicant) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('recruitment.detail.loading')}</div>;
   }
 
   const a = applicant;
   const interviewList = interviews ?? [];
 
+  const interviewTypeLabels = getInterviewTypeLabels();
+  const interviewStatusLabels = getInterviewStatusLabels();
+
   const statusActions = useMemo(() => {
     switch (a.status) {
-      case 'NEW': return [{ label: 'Начать скрининг', targetStatus: 'SCREENING' }];
+      case 'NEW': return [{ label: t('recruitment.detail.actionStartScreening'), targetStatus: 'SCREENING' }];
       case 'SCREENING': return [
-        { label: 'Пригласить на собеседование', targetStatus: 'INTERVIEW' },
-        { label: 'Отклонить', targetStatus: 'REJECTED' },
+        { label: t('recruitment.detail.actionInviteInterview'), targetStatus: 'INTERVIEW' },
+        { label: t('recruitment.detail.actionReject'), targetStatus: 'REJECTED' },
       ];
       case 'INTERVIEW': return [
-        { label: 'Сделать оффер', targetStatus: 'OFFER' },
-        { label: 'Отклонить', targetStatus: 'REJECTED' },
+        { label: t('recruitment.detail.actionMakeOffer'), targetStatus: 'OFFER' },
+        { label: t('recruitment.detail.actionReject'), targetStatus: 'REJECTED' },
       ];
       case 'OFFER': return [
-        { label: 'Принять на работу', targetStatus: 'HIRED' },
-        { label: 'Кандидат отказался', targetStatus: 'WITHDRAWN' },
+        { label: t('recruitment.detail.actionHire'), targetStatus: 'HIRED' },
+        { label: t('recruitment.detail.actionWithdrawn'), targetStatus: 'WITHDRAWN' },
       ];
       default: return [];
     }
@@ -106,8 +109,8 @@ const ApplicantDetailPage: React.FC = () => {
         subtitle={`${a.number} / ${a.positionName}`}
         backTo="/recruitment/applicants"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Рекрутинг', href: '/recruitment/applicants' },
+          { label: t('recruitment.detail.breadcrumbHome'), href: '/' },
+          { label: t('recruitment.detail.breadcrumbRecruitment'), href: '/recruitment/applicants' },
           { label: a.number },
         ]}
         actions={
@@ -140,7 +143,7 @@ const ApplicantDetailPage: React.FC = () => {
 
       {/* Status flow */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Процесс подбора</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('recruitment.detail.sectionProcess')}</h3>
         <div className="flex items-center gap-2">
           {statusFlow.map((step, idx) => {
             const isCompleted = idx < currentStepIndex;
@@ -176,10 +179,10 @@ const ApplicantDetailPage: React.FC = () => {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Star size={18} />} label="Опыт работы" value={`${a.experienceYears ?? 0} лет`} />
-        <MetricCard icon={<Briefcase size={18} />} label="Ожидаемая ЗП" value={a.expectedSalary ? formatMoney(a.expectedSalary) : '---'} />
-        <MetricCard icon={<Clock size={18} />} label="Собеседований" value={a.interviewCount} />
-        <MetricCard icon={<Calendar size={18} />} label="Дата заявки" value={formatDateLong(a.appliedAt)} />
+        <MetricCard icon={<Star size={18} />} label={t('recruitment.detail.metricExperience')} value={t('recruitment.detail.metricExperienceValue', { years: String(a.experienceYears ?? 0) })} />
+        <MetricCard icon={<Briefcase size={18} />} label={t('recruitment.detail.metricExpectedSalary')} value={a.expectedSalary ? formatMoney(a.expectedSalary) : '---'} />
+        <MetricCard icon={<Clock size={18} />} label={t('recruitment.detail.metricInterviews')} value={a.interviewCount} />
+        <MetricCard icon={<Calendar size={18} />} label={t('recruitment.detail.metricAppliedAt')} value={formatDateLong(a.appliedAt)} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -189,23 +192,23 @@ const ApplicantDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <FileText size={16} className="text-primary-500" />
-              Заметки
+              {t('recruitment.detail.sectionNotes')}
             </h3>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
-              {a.notes ?? 'Заметки не заполнены'}
+              {a.notes ?? t('recruitment.detail.notesEmpty')}
             </div>
           </div>
 
           {/* Interviews */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Собеседования</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('recruitment.detail.sectionInterviews')}</h3>
               <Button variant="secondary" size="sm" onClick={() => navigate(`/recruitment/applicants/${id}/interviews/new`)}>
-                Запланировать
+                {t('recruitment.detail.scheduleInterview')}
               </Button>
             </div>
             {interviewList.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Собеседований пока нет</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('recruitment.detail.noInterviews')}</p>
             ) : (
               <div className="space-y-3">
                 {interviewList.map((interview) => (
@@ -237,7 +240,7 @@ const ApplicantDetailPage: React.FC = () => {
                       )}
                     </div>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
-                      Интервьюер: {interview.interviewerName} | {formatDateLong(interview.scheduledAt)} | {interview.duration} мин.
+                      {t('recruitment.detail.interviewerLabel', { name: interview.interviewerName, date: formatDateLong(interview.scheduledAt), duration: String(interview.duration) })}
                     </p>
                     {interview.feedback && (
                       <p className="text-sm text-neutral-600 mt-2 italic">"{interview.feedback}"</p>
@@ -252,37 +255,37 @@ const ApplicantDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Контакты</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('recruitment.detail.sectionContacts')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="ФИО" value={a.fullName} />
-              <InfoItem icon={<Mail size={15} />} label="Email" value={a.email} />
-              <InfoItem icon={<Phone size={15} />} label="Телефон" value={a.phone ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('recruitment.detail.labelFullName')} value={a.fullName} />
+              <InfoItem icon={<Mail size={15} />} label={t('recruitment.detail.labelEmail')} value={a.email} />
+              <InfoItem icon={<Phone size={15} />} label={t('recruitment.detail.labelPhone')} value={a.phone ?? '---'} />
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('recruitment.detail.sectionDetails')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<Briefcase size={15} />} label="Должность" value={a.positionName} />
-              <InfoItem icon={<Briefcase size={15} />} label="Отдел" value={a.departmentName ?? '---'} />
-              <InfoItem icon={<User size={15} />} label="Рекрутер" value={a.recruiterName ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Источник" value={a.source ?? '---'} />
-              <InfoItem icon={<Calendar size={15} />} label="Подана" value={formatDateLong(a.appliedAt)} />
-              <InfoItem icon={<Calendar size={15} />} label="Обновлено" value={formatDateLong(a.updatedAt)} />
+              <InfoItem icon={<Briefcase size={15} />} label={t('recruitment.detail.labelPosition')} value={a.positionName} />
+              <InfoItem icon={<Briefcase size={15} />} label={t('recruitment.detail.labelDepartment')} value={a.departmentName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('recruitment.detail.labelRecruiter')} value={a.recruiterName ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('recruitment.detail.labelSource')} value={a.source ?? '---'} />
+              <InfoItem icon={<Calendar size={15} />} label={t('recruitment.detail.labelApplied')} value={formatDateLong(a.appliedAt)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('recruitment.detail.labelUpdated')} value={formatDateLong(a.updatedAt)} />
             </div>
           </div>
 
           {/* Actions */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Действия</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('recruitment.detail.sectionActions')}</h3>
             <div className="space-y-2">
               {a.resumeUrl && (
                 <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => window.open(a.resumeUrl, '_blank')}>
-                  Скачать резюме
+                  {t('recruitment.detail.downloadResume')}
                 </Button>
               )}
               <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => window.open(`/api/recruitment/applicants/${id}/export?format=pdf`, '_blank')}>
-                Экспорт в PDF
+                {t('recruitment.detail.exportPdf')}
               </Button>
             </div>
           </div>

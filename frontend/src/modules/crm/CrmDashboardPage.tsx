@@ -12,6 +12,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { crmApi } from '@/api/crm';
 import { formatDate, formatMoneyCompact, formatPercent } from '@/lib/format';
+import { t } from '@/i18n';
 import type { CrmLead, CrmStage, CrmTeam } from './types';
 
 const CrmDashboardPage: React.FC = () => {
@@ -65,26 +66,26 @@ const CrmDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="CRM - Dashboard"
-        subtitle="Обзор продаж и воронки"
+        title={t('crm.dashboard.title')}
+        subtitle={t('crm.dashboard.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'CRM' },
-          { label: 'Dashboard' },
+          { label: t('crm.dashboard.breadcrumbHome'), href: '/' },
+          { label: t('crm.dashboard.breadcrumbCrm') },
+          { label: t('crm.dashboard.breadcrumbDashboard') },
         ]}
         actions={
           <Button iconLeft={<Phone size={16} />} onClick={() => navigate('/crm/leads/new')}>
-            Новый лид
+            {t('crm.dashboard.newLead')}
           </Button>
         }
       />
 
       {/* Key metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<BarChart3 size={18} />} label="Pipeline" value={formatMoneyCompact(metrics.totalPipeline)} />
-        <MetricCard icon={<DollarSign size={18} />} label="Выигранная выручка" value={formatMoneyCompact(metrics.wonRevenue)} />
-        <MetricCard icon={<Users size={18} />} label="Всего лидов" value={metrics.totalLeads} />
-        <MetricCard icon={<Target size={18} />} label="Ср. вероятность" value={formatPercent(metrics.avgProbability)} />
+        <MetricCard icon={<BarChart3 size={18} />} label={t('crm.dashboard.metricPipeline')} value={formatMoneyCompact(metrics.totalPipeline)} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('crm.dashboard.metricWonRevenue')} value={formatMoneyCompact(metrics.wonRevenue)} />
+        <MetricCard icon={<Users size={18} />} label={t('crm.dashboard.metricTotalLeads')} value={metrics.totalLeads} />
+        <MetricCard icon={<Target size={18} />} label={t('crm.dashboard.metricAvgProbability')} value={formatPercent(metrics.avgProbability)} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -95,7 +96,7 @@ const CrmDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
                 <TrendingUp size={16} className="text-primary-500" />
-                Воронка продаж
+                {t('crm.dashboard.salesFunnel')}
               </h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/crm/leads')}>
                 Pipeline
@@ -106,7 +107,7 @@ const CrmDashboardPage: React.FC = () => {
                 <div key={stage.id} className="flex items-center gap-4">
                   <div className="w-28 flex-shrink-0">
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{stage.name}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{stage.leadCount} лидов</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{stage.leadCount} {t('crm.dashboard.leadsUnit')}</p>
                   </div>
                   <div className="flex-1">
                     <div className="h-8 bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden">
@@ -131,9 +132,9 @@ const CrmDashboardPage: React.FC = () => {
           {/* Top leads */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Топ сделки</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('crm.dashboard.topDeals')}</h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/crm/leads')}>
-                Все лиды
+                {t('crm.dashboard.allLeads')}
               </Button>
             </div>
             <div className="space-y-3">
@@ -158,11 +159,11 @@ const CrmDashboardPage: React.FC = () => {
                   </div>
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{lead.name}</p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                    {lead.companyName ?? lead.contactName} | {lead.stageName} | {lead.assignedToName ?? 'Не назначен'}
+                    {lead.companyName ?? lead.contactName} | {lead.stageName} | {lead.assignedToName ?? t('crm.dashboard.notAssigned')}
                   </p>
                   {lead.expectedCloseDate && (
                     <p className="text-xs text-neutral-400 mt-1 flex items-center gap-1">
-                      <Calendar size={12} /> Закрытие: {formatDate(lead.expectedCloseDate)}
+                      <Calendar size={12} /> {t('crm.dashboard.closing')}: {formatDate(lead.expectedCloseDate)}
                     </p>
                   )}
                 </div>
@@ -177,7 +178,7 @@ const CrmDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Users size={16} className="text-primary-500" />
-              Команды
+              {t('crm.dashboard.teams')}
             </h3>
             <div className="space-y-4">
               {teams.map((team) => (
@@ -185,19 +186,19 @@ const CrmDashboardPage: React.FC = () => {
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{team.name}</p>
                   </div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Руководитель: {team.leadName}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">{t('crm.dashboard.teamLead')}: {team.leadName}</p>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div className="text-center p-1.5 bg-neutral-50 dark:bg-neutral-800 rounded">
                       <p className="font-bold text-neutral-700 dark:text-neutral-300">{team.activeLeads}</p>
-                      <p className="text-neutral-500 dark:text-neutral-400">Актив.</p>
+                      <p className="text-neutral-500 dark:text-neutral-400">{t('crm.dashboard.teamActive')}</p>
                     </div>
                     <div className="text-center p-1.5 bg-success-50 rounded">
                       <p className="font-bold text-success-700">{team.wonLeads}</p>
-                      <p className="text-success-600">Выигр.</p>
+                      <p className="text-success-600">{t('crm.dashboard.teamWon')}</p>
                     </div>
                     <div className="text-center p-1.5 bg-primary-50 rounded">
                       <p className="font-bold text-primary-700 tabular-nums">{formatMoneyCompact(team.totalRevenue)}</p>
-                      <p className="text-primary-600">Объём</p>
+                      <p className="text-primary-600">{t('crm.dashboard.teamVolume')}</p>
                     </div>
                   </div>
                 </div>
@@ -209,17 +210,17 @@ const CrmDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Clock size={16} className="text-primary-500" />
-              Быстрые действия
+              {t('crm.dashboard.quickActions')}
             </h3>
             <div className="space-y-2">
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate('/crm/leads')}>
-                Pipeline (воронка)
+                {t('crm.dashboard.quickPipeline')}
               </Button>
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate('/crm/leads/new')}>
-                Новый лид
+                {t('crm.dashboard.newLead')}
               </Button>
               <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => navigate('/crm/leads?view=list')}>
-                Все лиды (список)
+                {t('crm.dashboard.quickAllLeadsList')}
               </Button>
             </div>
           </div>

@@ -199,7 +199,7 @@ const ContractListPage: React.FC = () => {
 
   const handleConfirmBulkCancel = useCallback(() => {
     if (!pendingCancellation || pendingCancellation.ids.length === 0) return;
-    if (guardDemoModeAction('Отмена договоров')) {
+    if (guardDemoModeAction(t('contracts.list.demoCancelContracts'))) {
       setPendingCancellation(null);
       return;
     }
@@ -224,7 +224,7 @@ const ContractListPage: React.FC = () => {
           <Button
             iconLeft={<Plus size={16} />}
             onClick={() => {
-              if (guardDemoModeAction('Создание договора')) return;
+              if (guardDemoModeAction(t('contracts.list.demoCreateContract'))) return;
               navigate('/contracts/new');
             }}
           >

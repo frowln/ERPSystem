@@ -16,19 +16,20 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { submittalsApi } from '@/api/submittals';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { Submittal } from './types';
 import { SubmittalCreateModal } from './SubmittalCreateModal';
 
 type TabId = 'all' | 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'revise';
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'SHOP_DRAWING', label: 'Рабочий чертёж' },
-  { value: 'PRODUCT_DATA', label: 'Данные продукта' },
-  { value: 'SAMPLE', label: 'Образец' },
-  { value: 'TEST_REPORT', label: 'Протокол испытаний' },
-  { value: 'CERTIFICATE', label: 'Сертификат' },
-  { value: 'DESIGN_DATA', label: 'Проектные данные' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('submittals.filterAllTypes') },
+  { value: 'SHOP_DRAWING', label: t('submittals.filterTypeShopDrawing') },
+  { value: 'PRODUCT_DATA', label: t('submittals.filterTypeProductData') },
+  { value: 'SAMPLE', label: t('submittals.filterTypeSample') },
+  { value: 'TEST_REPORT', label: t('submittals.filterTypeTestReport') },
+  { value: 'CERTIFICATE', label: t('submittals.filterTypeCertificate') },
+  { value: 'DESIGN_DATA', label: t('submittals.filterTypeDesignData') },
 ];
 
 const SubmittalListPage: React.FC = () => {
@@ -95,7 +96,7 @@ const SubmittalListPage: React.FC = () => {
       },
       {
         accessorKey: 'title',
-        header: 'Название',
+        header: t('submittals.colTitle'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -106,7 +107,7 @@ const SubmittalListPage: React.FC = () => {
       },
       {
         accessorKey: 'type',
-        header: 'Тип',
+        header: t('submittals.colType'),
         size: 150,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -118,7 +119,7 @@ const SubmittalListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('submittals.colStatus'),
         size: 160,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -130,7 +131,7 @@ const SubmittalListPage: React.FC = () => {
       },
       {
         accessorKey: 'ballInCourt',
-        header: 'У кого мяч',
+        header: t('submittals.colBallInCourt'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -138,7 +139,7 @@ const SubmittalListPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('submittals.colDueDate'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -151,7 +152,7 @@ const SubmittalListPage: React.FC = () => {
         cell: ({ getValue }) => {
           const days = getValue<number>();
           return days != null ? (
-            <span className="text-sm text-neutral-600">{days} дн.</span>
+            <span className="text-sm text-neutral-600">{days} {t('submittals.days')}</span>
           ) : (
             <span className="text-neutral-400">---</span>
           );
@@ -169,23 +170,23 @@ const SubmittalListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Субмиттелы"
-        subtitle={`${submittals.length} субмиттелов в системе`}
+        title={t('submittals.listTitle')}
+        subtitle={t('submittals.listSubtitle', { count: String(submittals.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Субмиттелы' },
+          { label: t('submittals.breadcrumbHome'), href: '/' },
+          { label: t('submittals.breadcrumbSubmittals') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => setCreateModalOpen(true)}>
-            Новый субмиттел
+            {t('submittals.newSubmittal')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'SUBMITTED', label: 'Поданные', count: tabCounts.submitted },
-          { id: 'UNDER_REVIEW', label: 'На рассмотрении', count: tabCounts.under_review },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
-          { id: 'revise', label: 'На доработку', count: tabCounts.revise },
+          { id: 'all', label: t('submittals.tabAll'), count: tabCounts.all },
+          { id: 'SUBMITTED', label: t('submittals.tabSubmitted'), count: tabCounts.submitted },
+          { id: 'UNDER_REVIEW', label: t('submittals.tabUnderReview'), count: tabCounts.under_review },
+          { id: 'APPROVED', label: t('submittals.tabApproved'), count: tabCounts.approved },
+          { id: 'revise', label: t('submittals.tabRevise'), count: tabCounts.revise },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -196,14 +197,14 @@ const SubmittalListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию..."
+            placeholder={t('submittals.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={typeFilterOptions}
+          options={getTypeFilterOptions()}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="w-52"
@@ -221,8 +222,8 @@ const SubmittalListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет субмиттелов"
-        emptyDescription="Создайте первый субмиттел для начала работы"
+        emptyTitle={t('submittals.emptyTitle')}
+        emptyDescription={t('submittals.emptyDescription')}
       />
 
       <SubmittalCreateModal

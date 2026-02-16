@@ -3,17 +3,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { aiApi } from '@/api/ai';
 import type { AiConversation, AiMessage, AiSuggestion } from './types';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const SUGGESTIONS: AiSuggestion[] = [
-  { text: 'Проанализируй бюджет проекта ЖК Солнечный', icon: 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z' },
-  { text: 'Какие риски на текущих проектах?', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z' },
-  { text: 'Сводка по безопасности за неделю', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
-  { text: 'Найди просроченные задачи', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-  { text: 'Статус поставок материалов', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+const getSuggestions = (): AiSuggestion[] => [
+  { text: t('ai.assistant.suggestionBudget'), icon: 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z' },
+  { text: t('ai.assistant.suggestionRisks'), icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z' },
+  { text: t('ai.assistant.suggestionSafety'), icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+  { text: t('ai.assistant.suggestionOverdue'), icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { text: t('ai.assistant.suggestionSupplies'), icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -59,7 +60,7 @@ const ThinkingDots: React.FC = () => (
       <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
       <div className="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
     </div>
-    <span className="text-sm text-neutral-400 ml-2">ИИ-ассистент думает...</span>
+    <span className="text-sm text-neutral-400 ml-2">{t('ai.assistant.thinking')}</span>
   </div>
 );
 
@@ -98,7 +99,7 @@ const AiAssistantPage: React.FC = () => {
   const handleNewConversation = () => {
     const newConv: AiConversation = {
       id: `c-${Date.now()}`,
-      title: 'Новый диалог',
+      title: t('ai.assistant.newConversation'),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       messagesCount: 0,
@@ -197,14 +198,14 @@ const AiAssistantPage: React.FC = () => {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Новый диалог
+              {t('ai.assistant.newDialog')}
             </button>
           </div>
 
           {/* Conversation list */}
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {conversations.length === 0 && (
-              <p className="text-sm text-neutral-400 text-center py-8">Нет диалогов</p>
+              <p className="text-sm text-neutral-400 text-center py-8">{t('ai.assistant.noDialogs')}</p>
             )}
             {conversations.map((conv) => (
               <div
@@ -248,7 +249,7 @@ const AiAssistantPage: React.FC = () => {
                       setEditTitleValue(conv.title);
                     }}
                     className="p-1 rounded hover:bg-neutral-200 text-neutral-400 hover:text-neutral-600"
-                    title="Переименовать"
+                    title={t('ai.assistant.rename')}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -260,7 +261,7 @@ const AiAssistantPage: React.FC = () => {
                       handleDeleteConversation(conv.id);
                     }}
                     className="p-1 rounded hover:bg-danger-100 text-neutral-400 hover:text-danger-600"
-                    title="Удалить"
+                    title={t('ai.assistant.delete')}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -293,9 +294,9 @@ const AiAssistantPage: React.FC = () => {
             </div>
             <div>
               <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                {activeConversation?.title || 'ИИ-ассистент'}
+                {activeConversation?.title || t('ai.assistant.title')}
               </h2>
-              <p className="text-xs text-neutral-400">Строительный помощник на базе ИИ</p>
+              <p className="text-xs text-neutral-400">{t('ai.assistant.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -309,14 +310,14 @@ const AiAssistantPage: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">ИИ-ассистент</h3>
+              <h3 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200 mb-2">{t('ai.assistant.title')}</h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center max-w-md mb-8">
-                Я помогу с анализом проектов, бюджетов, рисков и других данных вашей строительной компании. Задайте вопрос или выберите тему ниже.
+                {t('ai.assistant.welcomeMessage')}
               </p>
 
               {/* Suggestion cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl w-full">
-                {SUGGESTIONS.map((suggestion) => (
+                {getSuggestions().map((suggestion) => (
                   <button
                     key={suggestion.text}
                     onClick={() => handleSuggestionClick(suggestion)}
@@ -398,7 +399,7 @@ const AiAssistantPage: React.FC = () => {
           {/* Suggestion chips above input when messages exist */}
           {messages.length > 0 && !isThinking && (
             <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
-              {SUGGESTIONS.slice(0, 3).map((s) => (
+              {getSuggestions().slice(0, 3).map((s) => (
                 <button
                   key={s.text}
                   onClick={() => handleSuggestionClick(s)}
@@ -417,7 +418,7 @@ const AiAssistantPage: React.FC = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Задайте вопрос ИИ-ассистенту..."
+                placeholder={t('ai.assistant.inputPlaceholder')}
                 rows={1}
                 className="w-full resize-none border border-neutral-300 dark:border-neutral-600 rounded-xl px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 max-h-32"
                 style={{ minHeight: '44px' }}
@@ -435,7 +436,7 @@ const AiAssistantPage: React.FC = () => {
             </button>
           </div>
           <p className="text-xs text-neutral-400 mt-2 text-center">
-            ИИ-ассистент анализирует данные проектов. Ответы носят рекомендательный характер.
+            {t('ai.assistant.disclaimer')}
           </p>
         </div>
       </div>
@@ -448,23 +449,23 @@ const AiAssistantPage: React.FC = () => {
 const generateMockResponse = (question: string): string => {
   const q = question.toLowerCase();
 
-  if (q.includes('риск')) {
-    return `## Обзор рисков по текущим проектам\n\n### Высокий приоритет\n1. **ЖК "Солнечный"** - Задержка поставки металлоконструкций на 2 недели\n   - Влияние: смещение графика монтажа каркаса 3-го этажа\n   - Рекомендация: связаться с поставщиком, рассмотреть альтернативу\n\n2. **Мост через р. Вятка** - Превышение бюджета на земляные работы (+15%)\n   - Причина: обнаружены грунтовые воды выше проектной отметки\n   - Рекомендация: пересмотреть проект водопонижения\n\n### Средний приоритет\n- ТЦ "Центральный" - нехватка квалифицированных сварщиков (3 из 8)\n- ЖК "Новые Горизонты" - истекает срок разрешения на строительство через 45 дней`;
+  if (q.includes(t('ai.assistant.matchRisk'))) {
+    return t('ai.assistant.mockRisks');
   }
 
-  if (q.includes('безопасност')) {
-    return `## Сводка по безопасности за неделю\n**Период:** 08.03.2025 - 15.03.2025\n\n### Статистика\n- Инцидентов: **2** (прошлая неделя: 1)\n- Проверок: **12** из 15 запланированных\n- Нарушений: **8** (устранено: 5)\n- Дней без травм: **23**\n\n### Инциденты\n1. Падение предмета с высоты (ЖК "Солнечный", 10.03) - без пострадавших\n2. Мелкая травма руки (ТЦ "Центральный", 12.03) - оказана первая помощь\n\n### Рекомендации\n- Провести внеплановый инструктаж по работе на высоте\n- Усилить контроль ограждений на объекте ЖК "Солнечный"\n- Обновить запас СИЗ на складе`;
+  if (q.includes(t('ai.assistant.matchSafety'))) {
+    return t('ai.assistant.mockSafety');
   }
 
-  if (q.includes('задач') && q.includes('просроч')) {
-    return `## Просроченные задачи\n\nОбнаружено **14** просроченных задач по 3 проектам:\n\n### ЖК "Солнечный" (7 задач)\n- Монтаж опалубки перекрытия 4 этажа - просрочка 3 дня\n- Приёмка арматуры от поставщика - просрочка 5 дней\n- Оформление акта скрытых работ №12 - просрочка 2 дня\n- Испытание бетона кубиков серии №8 - просрочка 4 дня\n- ещё 3 задачи...\n\n### Мост через р. Вятка (4 задачи)\n- Водопонижение котлована - просрочка 7 дней\n- Геодезическая разбивка опоры №3 - просрочка 2 дня\n- ещё 2 задачи...\n\n### ТЦ "Центральный" (3 задачи)\n- Согласование изменений в проект - просрочка 10 дней\n- ещё 2 задачи...`;
+  if (q.includes(t('ai.assistant.matchTask')) && q.includes(t('ai.assistant.matchOverdue'))) {
+    return t('ai.assistant.mockOverdue');
   }
 
-  if (q.includes('поставк') || q.includes('материал')) {
-    return `## Статус поставок материалов\n\n### Ожидаемые поставки (ближайшие 7 дней)\n| Материал | Поставщик | Объект | Дата | Статус |\n|----------|-----------|--------|------|--------|\n| Арматура A500C d16 | СтальТорг | ЖК Солнечный | 17.03 | В пути |\n| Бетон B25 | БетонСервис | ТЦ Центральный | 18.03 | Подтверждён |\n| Кирпич М150 | СтройКомплект | ЖК НГ | 19.03 | Подтверждён |\n| Щебень фр 5-20 | Промснаб | Мост | 20.03 | Ожидание |\n\n### Проблемные поставки\n- **Металлоконструкции** (ООО "МеталлСтрой") - задержка на 14 дней, новая дата: 28.03\n- **Утеплитель** (ООО "ТеплоДом") - частичная поставка, 60% от заказа\n\n### Склад - критически низкие остатки\n- Цемент М500: осталось на 3 дня работ\n- Электроды: осталось на 2 дня работ`;
+  if (q.includes(t('ai.assistant.matchSupply')) || q.includes(t('ai.assistant.matchMaterial'))) {
+    return t('ai.assistant.mockSupply');
   }
 
-  return `Спасибо за вопрос. Вот что я нашёл по вашему запросу:\n\n### Краткая сводка\nНа текущий момент в системе активно **4 проекта** с общим бюджетом **1.2 млрд ₽**.\n\n### Ключевые показатели\n- Средний прогресс по проектам: **47%**\n- Открытых задач: **156**\n- Активных договоров: **23**\n- Замечаний в работе: **34**\n\nЕсли вам нужна более детальная информация по конкретному аспекту, уточните вопрос.`;
+  return t('ai.assistant.mockDefault');
 };
 
 export default AiAssistantPage;

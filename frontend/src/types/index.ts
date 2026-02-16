@@ -395,19 +395,40 @@ export interface Ks3Document {
 // Purchase Request types
 export type PurchaseRequestStatus = 'DRAFT' | 'SUBMITTED' | 'IN_APPROVAL' | 'APPROVED' | 'REJECTED' | 'ASSIGNED' | 'ORDERED' | 'DELIVERED' | 'CLOSED' | 'CANCELLED';
 
+export interface PurchaseRequestItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unitOfMeasure: string;
+  unitPrice: number;
+  amount: number;
+}
+
 export interface PurchaseRequest {
   id: string;
   name: string;
   requestDate: string;
   projectId: string;
+  contractId?: string;
+  specificationId?: string;
   projectName?: string;
   status: PurchaseRequestStatus;
+  statusDisplayName?: string;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  priorityDisplayName?: string;
+  requestedById?: string;
   requestedByName: string;
+  approvedById?: string;
+  assignedToId?: string;
   assignedToName?: string;
   totalAmount: number;
   itemCount: number;
+  rejectionReason?: string;
+  notes?: string;
+  items?: PurchaseRequestItem[];
   createdAt: string;
+  updatedAt?: string;
+  createdBy?: string;
 }
 
 // Budget

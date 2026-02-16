@@ -13,8 +13,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "contract_legal_templates", indexes = {
+        @Index(name = "idx_legal_template_org", columnList = "organization_id"),
+        @Index(name = "idx_legal_template_org_type", columnList = "organization_id, template_type"),
         @Index(name = "idx_legal_template_type", columnList = "template_type"),
         @Index(name = "idx_legal_template_category", columnList = "category"),
         @Index(name = "idx_legal_template_active", columnList = "is_active"),
@@ -26,6 +30,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContractLegalTemplate extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 300)
     private String name;

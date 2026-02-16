@@ -6,29 +6,30 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { russianDocsApi } from '@/api/russianDocs';
+import { t } from '@/i18n';
 
-const documentTypeOptions = [
-  { value: 'KS2', label: 'КС-2 (Акт выполненных работ)' },
-  { value: 'KS3', label: 'КС-3 (Справка о стоимости)' },
-  { value: 'M29', label: 'М-29 (Отчёт о расходе материалов)' },
-  { value: 'EXECUTIVE_SCHEME', label: 'Исполнительная схема' },
-  { value: 'HIDDEN_WORKS_ACT', label: 'Акт освидетельствования скрытых работ' },
-  { value: 'GENERAL_JOURNAL', label: 'Общий журнал работ' },
-  { value: 'COMMISSIONING_ACT', label: 'Акт ввода в эксплуатацию' },
-  { value: 'PASSPORT', label: 'Паспорт объекта' },
-  { value: 'PROTOCOL', label: 'Протокол испытаний' },
+const getDocumentTypeOptions = () => [
+  { value: 'KS2', label: t('russianDocs.docTypeKs2Full') },
+  { value: 'KS3', label: t('russianDocs.docTypeKs3Full') },
+  { value: 'M29', label: t('russianDocs.docTypeM29Full') },
+  { value: 'EXECUTIVE_SCHEME', label: t('russianDocs.docTypeExecScheme') },
+  { value: 'HIDDEN_WORKS_ACT', label: t('russianDocs.docTypeHiddenWorksAct') },
+  { value: 'GENERAL_JOURNAL', label: t('russianDocs.docTypeGeneralJournal') },
+  { value: 'COMMISSIONING_ACT', label: t('russianDocs.docTypeCommissioningAct') },
+  { value: 'PASSPORT', label: t('russianDocs.docTypePassport') },
+  { value: 'PROTOCOL', label: t('russianDocs.docTypeProtocol') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('russianDocs.projectSolnechny') },
+  { value: '3', label: t('russianDocs.projectBridge') },
+  { value: '6', label: t('russianDocs.projectMall') },
 ];
 
-const contractOptions = [
-  { value: 'c1', label: 'Договор ГП №12-2025' },
-  { value: 'c2', label: 'Договор субподряда №45-2025' },
-  { value: 'c3', label: 'Договор поставки №88-2025' },
+const getContractOptions = () => [
+  { value: 'c1', label: t('russianDocs.contractGP') },
+  { value: 'c2', label: t('russianDocs.contractSubcontract') },
+  { value: 'c3', label: t('russianDocs.contractSupply') },
 ];
 
 const DocumentCreatePage: React.FC = () => {
@@ -66,98 +67,98 @@ const DocumentCreatePage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Новый документ"
-        subtitle="Создание документа исполнительной документации"
+        title={t('russianDocs.docCreateTitle')}
+        subtitle={t('russianDocs.docCreateSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Исп. документация', href: '/russian-docs' },
-          { label: 'Новый документ' },
+          { label: t('russianDocs.breadcrumbHome'), href: '/' },
+          { label: t('russianDocs.breadcrumbExecDocs'), href: '/russian-docs' },
+          { label: t('russianDocs.breadcrumbNewDocument') },
         ]}
         actions={
           <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/russian-docs')}>
-            Назад
+            {t('russianDocs.back')}
           </Button>
         }
       />
 
       <form onSubmit={handleSubmit} className="max-w-3xl">
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 space-y-6">
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Основные данные</h3>
+          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('russianDocs.docCreateMainData')}</h3>
 
-          <FormField label="Тип документа" required>
+          <FormField label={t('russianDocs.docCreateDocType')} required>
             <Select
-              options={documentTypeOptions}
+              options={getDocumentTypeOptions()}
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
-              placeholder="Выберите тип документа"
+              placeholder={t('russianDocs.docCreateSelectDocType')}
             />
           </FormField>
 
-          <FormField label="Наименование" required>
+          <FormField label={t('russianDocs.nameLabel')} required>
             <Input
-              placeholder="Например: Акт выполненных работ за февраль 2026"
+              placeholder={t('russianDocs.docCreateNamePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </FormField>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Проект" required>
+            <FormField label={t('russianDocs.project')} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 value={projectId}
                 onChange={(e) => setProjectId(e.target.value)}
-                placeholder="Выберите проект"
+                placeholder={t('russianDocs.docCreateSelectProject')}
               />
             </FormField>
-            <FormField label="Договор">
+            <FormField label={t('russianDocs.contract')}>
               <Select
-                options={contractOptions}
+                options={getContractOptions()}
                 value={contractId}
                 onChange={(e) => setContractId(e.target.value)}
-                placeholder="Выберите договор"
+                placeholder={t('russianDocs.docCreateSelectContract')}
               />
             </FormField>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <FormField label="Дата документа" required>
+            <FormField label={t('russianDocs.docCreateDocDate')} required>
               <Input type="date" value={documentDate} onChange={(e) => setDocumentDate(e.target.value)} />
             </FormField>
             {needsPeriod && (
               <>
-                <FormField label="Период с">
+                <FormField label={t('russianDocs.docCreatePeriodFrom')}>
                   <Input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
                 </FormField>
-                <FormField label="Период по">
+                <FormField label={t('russianDocs.docCreatePeriodTo')}>
                   <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
                 </FormField>
               </>
             )}
           </div>
 
-          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 pt-4 border-t border-neutral-200 dark:border-neutral-700">Стороны</h3>
+          <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 pt-4 border-t border-neutral-200 dark:border-neutral-700">{t('russianDocs.docCreateParties')}</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label="Заказчик" required>
+            <FormField label={t('russianDocs.customer')} required>
               <Input
-                placeholder="Наименование заказчика"
+                placeholder={t('russianDocs.docCreateCustomerPlaceholder')}
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
               />
             </FormField>
-            <FormField label="Подрядчик" required>
+            <FormField label={t('russianDocs.contractor')} required>
               <Input
-                placeholder="Наименование подрядчика"
+                placeholder={t('russianDocs.docCreateContractorPlaceholder')}
                 value={contractorName}
                 onChange={(e) => setContractorName(e.target.value)}
               />
             </FormField>
           </div>
 
-          <FormField label="Примечания">
+          <FormField label={t('russianDocs.docCreateNotes')}>
             <Textarea
-              placeholder="Дополнительная информация..."
+              placeholder={t('russianDocs.docCreateNotesPlaceholder')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -167,10 +168,10 @@ const DocumentCreatePage: React.FC = () => {
 
         <div className="flex items-center justify-end gap-3 mt-6">
           <Button variant="secondary" onClick={() => navigate('/russian-docs')}>
-            Отмена
+            {t('russianDocs.cancel')}
           </Button>
           <Button type="submit" iconLeft={<Save size={16} />} disabled={!name || !documentType || !projectId}>
-            Создать документ
+            {t('russianDocs.docCreateSubmit')}
           </Button>
         </div>
       </form>

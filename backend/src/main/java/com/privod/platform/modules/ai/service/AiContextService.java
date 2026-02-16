@@ -1,5 +1,6 @@
 package com.privod.platform.modules.ai.service;
 
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.hr.repository.EmployeeRepository;
 import com.privod.platform.modules.project.domain.Project;
@@ -73,49 +74,52 @@ public class AiContextService {
         List<String> contextParts = new ArrayList<>();
 
         try {
+            UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+            List<UUID> activeProjectIds = projectRepository.findActiveProjectIdsByOrganizationId(organizationId);
+
             // Check for summary/dashboard intent first
             if (SUMMARY_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildPlatformSummary());
+                contextParts.add(buildPlatformSummary(organizationId, activeProjectIds));
             }
 
             // Project-related intents
             if (PROJECT_COUNT_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildProjectCountContext());
+                contextParts.add(buildProjectCountContext(organizationId));
             }
             if (PROJECT_LIST_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildProjectListContext());
+                contextParts.add(buildProjectListContext(organizationId));
             }
             if (PROJECT_BUDGET_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildProjectBudgetContext());
+                contextParts.add(buildProjectBudgetContext(organizationId));
             }
             // Search for specific project by name
             Matcher projectSearch = PROJECT_SEARCH_PATTERN.matcher(userMessage);
             if (projectSearch.find()) {
                 String searchTerm = projectSearch.group(2).trim();
                 if (searchTerm.length() >= 2 && !isCommonWord(searchTerm)) {
-                    contextParts.add(buildProjectSearchContext(searchTerm));
+                    contextParts.add(buildProjectSearchContext(searchTerm, organizationId));
                 }
             }
 
             // Task-related intents
             if (TASK_COUNT_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildTaskCountContext());
+                contextParts.add(buildTaskCountContext(activeProjectIds));
             }
             if (TASK_STATUS_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildTaskStatusContext());
+                contextParts.add(buildTaskStatusContext(activeProjectIds));
             }
             if (TASK_OVERDUE_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildOverdueTasksContext());
+                contextParts.add(buildOverdueTasksContext(activeProjectIds));
             }
 
             // Contract-related intents
             if (CONTRACT_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildContractContext());
+                contextParts.add(buildContractContext(organizationId));
             }
 
             // Employee-related intents
             if (EMPLOYEE_PATTERN.matcher(userMessage).find()) {
-                contextParts.add(buildEmployeeContext(userMessage));
+                contextParts.add(buildEmployeeContext(userMessage, organizationId));
             }
 
         } catch (Exception e) {
@@ -133,48 +137,50 @@ public class AiContextService {
     // Context builders
     // ========================================================================
 
-    private String buildPlatformSummary() {
+    private String buildPlatformSummary(UUID organizationId, List<UUID> activeProjectIds) {
         StringBuilder sb = new StringBuilder("СВОДКА ПО ПЛАТФОРМЕ:\n");
 
-        long projectCount = projectRepository.countActiveProjects();
+        long projectCount = projectRepository.countActiveProjectsByOrganizationId(organizationId);
         sb.append("- Всего проектов: ").append(projectCount).append("\n");
 
-        List<Object[]> projectsByStatus = projectRepository.countByStatus();
+        List<Object[]> projectsByStatus = projectRepository.countByStatusAndOrganizationId(organizationId);
         sb.append("- Проекты по статусам: ");
         for (Object[] row : projectsByStatus) {
             sb.append(row[0]).append("=").append(row[1]).append(" ");
         }
         sb.append("\n");
 
-        BigDecimal totalBudget = projectRepository.sumBudgetAmount();
+        BigDecimal totalBudget = projectRepository.sumBudgetAmountByOrganizationId(organizationId);
         if (totalBudget != null) {
             sb.append("- Общий бюджет проектов: ").append(formatMoney(totalBudget)).append(" руб.\n");
         }
 
-        BigDecimal totalContract = projectRepository.sumContractAmount();
+        BigDecimal totalContract = projectRepository.sumContractAmountByOrganizationId(organizationId);
         if (totalContract != null) {
             sb.append("- Общая сумма контрактов: ").append(formatMoney(totalContract)).append(" руб.\n");
         }
 
-        long taskCount = taskRepository.countActiveTasks(null);
+        long taskCount = activeProjectIds.isEmpty() ? 0 : taskRepository.countActiveTasksByProjectIds(activeProjectIds);
         sb.append("- Всего задач: ").append(taskCount).append("\n");
 
-        List<Object[]> tasksByStatus = taskRepository.countByStatusAndProjectId(null);
+        List<Object[]> tasksByStatus = activeProjectIds.isEmpty()
+                ? List.of()
+                : taskRepository.countByStatusAndProjectIdIn(activeProjectIds);
         sb.append("- Задачи по статусам: ");
         for (Object[] row : tasksByStatus) {
             sb.append(row[0]).append("=").append(row[1]).append(" ");
         }
         sb.append("\n");
 
-        long contractCount = contractRepository.countActiveContracts(null);
+        long contractCount = contractRepository.countActiveContractsByOrganizationId(null, organizationId);
         sb.append("- Всего контрактов: ").append(contractCount);
 
         return sb.toString();
     }
 
-    private String buildProjectCountContext() {
-        long count = projectRepository.countActiveProjects();
-        List<Object[]> byStatus = projectRepository.countByStatus();
+    private String buildProjectCountContext(UUID organizationId) {
+        long count = projectRepository.countActiveProjectsByOrganizationId(organizationId);
+        List<Object[]> byStatus = projectRepository.countByStatusAndOrganizationId(organizationId);
 
         StringBuilder sb = new StringBuilder();
         sb.append("КОЛИЧЕСТВО ПРОЕКТОВ: ").append(count).append("\n");
@@ -185,9 +191,9 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildProjectListContext() {
-        Page<Project> projects = projectRepository.findAll(
-                PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt")));
+    private String buildProjectListContext(UUID organizationId) {
+        Page<Project> projects = projectRepository.findByOrganizationIdAndDeletedFalse(
+                organizationId, PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt")));
 
         StringBuilder sb = new StringBuilder("СПИСОК ПРОЕКТОВ (последние 20):\n");
         for (Project p : projects.getContent()) {
@@ -207,17 +213,17 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildProjectBudgetContext() {
-        BigDecimal totalBudget = projectRepository.sumBudgetAmount();
-        BigDecimal totalContract = projectRepository.sumContractAmount();
+    private String buildProjectBudgetContext(UUID organizationId) {
+        BigDecimal totalBudget = projectRepository.sumBudgetAmountByOrganizationId(organizationId);
+        BigDecimal totalContract = projectRepository.sumContractAmountByOrganizationId(organizationId);
 
         StringBuilder sb = new StringBuilder("ФИНАНСОВЫЕ ДАННЫЕ ПРОЕКТОВ:\n");
         sb.append("  - Общий бюджет: ").append(totalBudget != null ? formatMoney(totalBudget) + " руб." : "не указан").append("\n");
         sb.append("  - Общая сумма контрактов: ").append(totalContract != null ? formatMoney(totalContract) + " руб." : "не указана").append("\n");
 
         // Top 10 projects by budget
-        Page<Project> topProjects = projectRepository.findAll(
-                PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "budgetAmount")));
+        Page<Project> topProjects = projectRepository.findByOrganizationIdAndDeletedFalse(
+                organizationId, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "budgetAmount")));
         sb.append("ТОП-10 проектов по бюджету:\n");
         for (Project p : topProjects.getContent()) {
             if (p.getBudgetAmount() != null && p.getBudgetAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -228,9 +234,9 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildProjectSearchContext(String searchTerm) {
-        Page<Project> results = projectRepository.searchByName(
-                searchTerm, PageRequest.of(0, 5));
+    private String buildProjectSearchContext(String searchTerm, UUID organizationId) {
+        Page<Project> results = projectRepository.searchByNameAndOrganizationId(
+                searchTerm, organizationId, PageRequest.of(0, 5));
 
         if (results.isEmpty()) {
             return "Проекты по запросу \"" + searchTerm + "\": не найдены.";
@@ -255,10 +261,14 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildTaskCountContext() {
-        long totalTasks = taskRepository.countActiveTasks(null);
-        List<Object[]> byStatus = taskRepository.countByStatusAndProjectId(null);
-        List<Object[]> byPriority = taskRepository.countByPriorityAndProjectId(null);
+    private String buildTaskCountContext(List<UUID> activeProjectIds) {
+        long totalTasks = activeProjectIds.isEmpty() ? 0 : taskRepository.countActiveTasksByProjectIds(activeProjectIds);
+        List<Object[]> byStatus = activeProjectIds.isEmpty()
+                ? List.of()
+                : taskRepository.countByStatusAndProjectIdIn(activeProjectIds);
+        List<Object[]> byPriority = activeProjectIds.isEmpty()
+                ? List.of()
+                : taskRepository.countByPriorityAndProjectIdIn(activeProjectIds);
 
         StringBuilder sb = new StringBuilder("СТАТИСТИКА ЗАДАЧ:\n");
         sb.append("  Всего задач: ").append(totalTasks).append("\n");
@@ -273,9 +283,13 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildTaskStatusContext() {
-        List<Object[]> byStatus = taskRepository.countByStatusAndProjectId(null);
-        List<Object[]> byAssignee = taskRepository.countByAssigneeAndProjectId(null);
+    private String buildTaskStatusContext(List<UUID> activeProjectIds) {
+        List<Object[]> byStatus = activeProjectIds.isEmpty()
+                ? List.of()
+                : taskRepository.countByStatusAndProjectIdIn(activeProjectIds);
+        List<Object[]> byAssignee = activeProjectIds.isEmpty()
+                ? List.of()
+                : taskRepository.countByAssigneeAndProjectIdIn(activeProjectIds);
 
         StringBuilder sb = new StringBuilder("ЗАДАЧИ ПО СТАТУСАМ:\n");
         for (Object[] row : byStatus) {
@@ -291,11 +305,12 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildOverdueTasksContext() {
-        List<com.privod.platform.modules.task.domain.ProjectTask> overdue =
-                taskRepository.findOverdueTasks(null, LocalDate.now(),
-                        List.of(com.privod.platform.modules.task.domain.TaskStatus.DONE,
-                                com.privod.platform.modules.task.domain.TaskStatus.CANCELLED));
+    private String buildOverdueTasksContext(List<UUID> activeProjectIds) {
+        List<com.privod.platform.modules.task.domain.ProjectTask> overdue = activeProjectIds.isEmpty()
+                ? List.of()
+                : taskRepository.findOverdueTasksByProjectIds(activeProjectIds, LocalDate.now(),
+                List.of(com.privod.platform.modules.task.domain.TaskStatus.DONE,
+                        com.privod.platform.modules.task.domain.TaskStatus.CANCELLED));
 
         StringBuilder sb = new StringBuilder("ПРОСРОЧЕННЫЕ ЗАДАЧИ: " + overdue.size() + "\n");
         int limit = Math.min(overdue.size(), 20);
@@ -316,10 +331,10 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildContractContext() {
-        long contractCount = contractRepository.countActiveContracts(null);
-        BigDecimal totalAmount = contractRepository.sumTotalAmount(null);
-        List<Object[]> byStatus = contractRepository.countByStatusAndProjectId(null);
+    private String buildContractContext(UUID organizationId) {
+        long contractCount = contractRepository.countActiveContractsByOrganizationId(null, organizationId);
+        BigDecimal totalAmount = contractRepository.sumTotalAmountByOrganizationId(null, organizationId);
+        List<Object[]> byStatus = contractRepository.countByStatusAndProjectIdAndOrganizationId(null, organizationId);
 
         StringBuilder sb = new StringBuilder("КОНТРАКТЫ:\n");
         sb.append("  Всего контрактов: ").append(contractCount).append("\n");
@@ -331,7 +346,7 @@ public class AiContextService {
         return sb.toString();
     }
 
-    private String buildEmployeeContext(String userMessage) {
+    private String buildEmployeeContext(String userMessage, UUID organizationId) {
         StringBuilder sb = new StringBuilder("СОТРУДНИКИ:\n");
 
         // Check if searching for specific employee
@@ -341,7 +356,7 @@ public class AiContextService {
 
         if (matcher.find()) {
             String searchTerm = matcher.group(2);
-            var results = employeeRepository.search(searchTerm, PageRequest.of(0, 5));
+            var results = employeeRepository.searchByOrganizationId(organizationId, searchTerm, PageRequest.of(0, 5));
             if (results.isEmpty()) {
                 sb.append("  Сотрудник по запросу \"").append(searchTerm).append("\" не найден.\n");
             } else {
@@ -355,7 +370,7 @@ public class AiContextService {
             }
         } else {
             // General employee stats
-            long totalEmployees = employeeRepository.count();
+            long totalEmployees = employeeRepository.countByOrganizationIdAndDeletedFalse(organizationId);
             sb.append("  Всего сотрудников в системе: ").append(totalEmployees).append("\n");
         }
         return sb.toString();

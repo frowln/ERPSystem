@@ -12,6 +12,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { kepApi } from '@/api/kep';
 import { formatDate } from '@/lib/format';
 import type { KepSigningRequest } from './types';
+import { t } from '@/i18n';
 
 const signingStatusColorMap: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange'> = {
   pending: 'yellow',
@@ -21,13 +22,13 @@ const signingStatusColorMap: Record<string, 'yellow' | 'green' | 'red' | 'gray' 
   cancelled: 'gray',
 };
 
-const signingStatusLabels: Record<string, string> = {
-  pending: 'Ожидает подписания',
-  signed: 'Подписан',
-  rejected: 'Отклонён',
-  expired: 'Просрочен',
-  cancelled: 'Отменён',
-};
+const getSigningStatusLabels = (): Record<string, string> => ({
+  pending: t('kepModule.statusPending'),
+  signed: t('kepModule.statusSigned'),
+  rejected: t('kepModule.statusRejected'),
+  expired: t('kepModule.statusExpired'),
+  cancelled: t('kepModule.statusCancelled'),
+});
 
 const signingPriorityColorMap: Record<string, 'gray' | 'blue' | 'orange' | 'red'> = {
   low: 'gray',
@@ -36,28 +37,28 @@ const signingPriorityColorMap: Record<string, 'gray' | 'blue' | 'orange' | 'red'
   critical: 'red',
 };
 
-const signingPriorityLabels: Record<string, string> = {
-  low: 'Низкий',
-  medium: 'Средний',
-  high: 'Высокий',
-  critical: 'Критический',
-};
+const getSigningPriorityLabels = (): Record<string, string> => ({
+  low: t('kepModule.priorityLow'),
+  medium: t('kepModule.priorityMedium'),
+  high: t('kepModule.priorityHigh'),
+  critical: t('kepModule.priorityCritical'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'PENDING', label: 'Ожидает подписания' },
-  { value: 'SIGNED', label: 'Подписан' },
-  { value: 'REJECTED', label: 'Отклонён' },
-  { value: 'EXPIRED', label: 'Просрочен' },
-  { value: 'CANCELLED', label: 'Отменён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('kepModule.filterAllStatuses') },
+  { value: 'PENDING', label: t('kepModule.filterPending') },
+  { value: 'SIGNED', label: t('kepModule.filterSigned') },
+  { value: 'REJECTED', label: t('kepModule.filterRejected') },
+  { value: 'EXPIRED', label: t('kepModule.filterExpired') },
+  { value: 'CANCELLED', label: t('kepModule.filterCancelled') },
 ];
 
-const priorityFilterOptions = [
-  { value: '', label: 'Все приоритеты' },
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityFilterOptions = () => [
+  { value: '', label: t('kepModule.filterAllPriorities') },
+  { value: 'LOW', label: t('kepModule.priorityLow') },
+  { value: 'MEDIUM', label: t('kepModule.priorityMedium') },
+  { value: 'HIGH', label: t('kepModule.priorityHigh') },
+  { value: 'CRITICAL', label: t('kepModule.priorityCritical') },
 ];
 
 type TabId = 'all' | 'PENDING' | 'SIGNED' | 'REJECTED';
@@ -147,7 +148,7 @@ const KepSigningRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'documentName',
-        header: 'Документ',
+        header: t('kepModule.colDocument'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -158,31 +159,31 @@ const KepSigningRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('kepModule.colStatus'),
         size: 160,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={signingStatusColorMap}
-            label={signingStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getSigningStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'priority',
-        header: 'Приоритет',
+        header: t('kepModule.colPriority'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={signingPriorityColorMap}
-            label={signingPriorityLabels[getValue<string>()] ?? getValue<string>()}
+            label={getSigningPriorityLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'signerName',
-        header: 'Подписант',
+        header: t('kepModule.colSigner'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -190,7 +191,7 @@ const KepSigningRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('kepModule.colDueDate'),
         size: 120,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
@@ -217,7 +218,7 @@ const KepSigningRequestListPage: React.FC = () => {
                   navigate(`/kep/signing-requests/${row.original.id}`);
                 }}
               >
-                Открыть
+                {t('kepModule.openButton')}
               </Button>
             );
           }
@@ -232,7 +233,7 @@ const KepSigningRequestListPage: React.FC = () => {
                   signMutation.mutate({ id: row.original.id, certificateId: 'default' });
                 }}
               >
-                Подписать
+                {t('kepModule.signButton')}
               </Button>
               <Button
                 variant="danger"
@@ -240,10 +241,10 @@ const KepSigningRequestListPage: React.FC = () => {
                 iconLeft={<XCircle size={12} />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  rejectMutation.mutate({ id: row.original.id, reason: 'Отклонено' });
+                  rejectMutation.mutate({ id: row.original.id, reason: t('kepModule.statusRejected') });
                 }}
               >
-                Отклонить
+                {t('kepModule.rejectButton')}
               </Button>
             </div>
           );
@@ -261,18 +262,18 @@ const KepSigningRequestListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Запросы на подписание КЭП"
-        subtitle={`${requests.length} запросов в системе`}
+        title={t('kepModule.title')}
+        subtitle={t('kepModule.subtitle', { count: String(requests.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'КЭП' },
-          { label: 'Запросы на подписание' },
+          { label: t('kepModule.breadcrumbHome'), href: '/' },
+          { label: t('kepModule.breadcrumbKep') },
+          { label: t('kepModule.breadcrumbSigningRequests') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'PENDING', label: 'Ожидающие', count: tabCounts.pending },
-          { id: 'SIGNED', label: 'Подписанные', count: tabCounts.signed },
-          { id: 'REJECTED', label: 'Отклонённые', count: tabCounts.rejected },
+          { id: 'all', label: t('kepModule.tabAll'), count: tabCounts.all },
+          { id: 'PENDING', label: t('kepModule.tabPending'), count: tabCounts.pending },
+          { id: 'SIGNED', label: t('kepModule.tabSigned'), count: tabCounts.signed },
+          { id: 'REJECTED', label: t('kepModule.tabRejected'), count: tabCounts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -282,25 +283,25 @@ const KepSigningRequestListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<FilePen size={18} />}
-          label="Всего запросов"
+          label={t('kepModule.metricTotal')}
           value={metrics.total}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="Ожидают подписания"
+          label={t('kepModule.metricPending')}
           value={metrics.pending}
-          trend={metrics.pending > 0 ? { direction: 'up', value: `${metrics.pending} шт.` } : undefined}
+          trend={metrics.pending > 0 ? { direction: 'up', value: t('kepModule.trendPcs', { count: String(metrics.pending) }) } : undefined}
         />
         <MetricCard
           icon={<CheckCircle size={18} />}
-          label="Подписано"
+          label={t('kepModule.metricSigned')}
           value={metrics.signed}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Отклонено / Просрочено"
+          label={t('kepModule.metricRejectedExpired')}
           value={metrics.rejected + metrics.expired}
-          trend={metrics.rejected + metrics.expired > 0 ? { direction: 'down', value: 'Требуют внимания' } : undefined}
+          trend={metrics.rejected + metrics.expired > 0 ? { direction: 'down', value: t('kepModule.trendNeedAttention') } : undefined}
         />
       </div>
 
@@ -309,20 +310,20 @@ const KepSigningRequestListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, документу..."
+            placeholder={t('kepModule.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-52"
         />
         <Select
-          options={priorityFilterOptions}
+          options={getPriorityFilterOptions()}
           value={priorityFilter}
           onChange={(e) => setPriorityFilter(e.target.value)}
           className="w-44"
@@ -340,8 +341,8 @@ const KepSigningRequestListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет запросов на подписание"
-        emptyDescription="Запросы на подписание КЭП отсутствуют"
+        emptyTitle={t('kepModule.emptyTitle')}
+        emptyDescription={t('kepModule.emptyDescription')}
       />
     </div>
   );

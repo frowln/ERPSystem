@@ -11,6 +11,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { dispatchApi } from '@/api/dispatch';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { DispatchOrder, DispatchStatus } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -24,25 +25,25 @@ const dispatchStatusColorMap: Record<string, 'gray' | 'blue' | 'yellow' | 'orang
   cancelled: 'gray',
 };
 
-const dispatchStatusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  scheduled: 'Запланирован',
-  dispatched: 'Отправлен',
-  in_transit: 'В пути',
-  delivered: 'Доставлен',
-  completed: 'Завершён',
-  cancelled: 'Отменён',
-};
+const getDispatchStatusLabels = (): Record<string, string> => ({
+  draft: t('dispatch.orders.statusDraft'),
+  scheduled: t('dispatch.orders.statusScheduled'),
+  dispatched: t('dispatch.orders.statusDispatched'),
+  in_transit: t('dispatch.orders.statusInTransit'),
+  delivered: t('dispatch.orders.statusDelivered'),
+  completed: t('dispatch.orders.statusCompleted'),
+  cancelled: t('dispatch.orders.statusCancelled'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'SCHEDULED', label: 'Запланирован' },
-  { value: 'DISPATCHED', label: 'Отправлен' },
-  { value: 'IN_TRANSIT', label: 'В пути' },
-  { value: 'DELIVERED', label: 'Доставлен' },
-  { value: 'COMPLETED', label: 'Завершён' },
-  { value: 'CANCELLED', label: 'Отменён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('dispatch.orders.allStatuses') },
+  { value: 'DRAFT', label: t('dispatch.orders.statusDraft') },
+  { value: 'SCHEDULED', label: t('dispatch.orders.statusScheduled') },
+  { value: 'DISPATCHED', label: t('dispatch.orders.statusDispatched') },
+  { value: 'IN_TRANSIT', label: t('dispatch.orders.statusInTransit') },
+  { value: 'DELIVERED', label: t('dispatch.orders.statusDelivered') },
+  { value: 'COMPLETED', label: t('dispatch.orders.statusCompleted') },
+  { value: 'CANCELLED', label: t('dispatch.orders.statusCancelled') },
 ];
 
 const nextStatusMap: Record<string, DispatchStatus> = {
@@ -53,13 +54,13 @@ const nextStatusMap: Record<string, DispatchStatus> = {
   delivered: 'COMPLETED',
 };
 
-const nextStatusLabels: Record<string, string> = {
-  draft: 'Запланировать',
-  scheduled: 'Отправить',
-  dispatched: 'В пути',
-  in_transit: 'Доставлен',
-  delivered: 'Завершить',
-};
+const getNextStatusLabels = (): Record<string, string> => ({
+  draft: t('dispatch.orders.actionSchedule'),
+  scheduled: t('dispatch.orders.actionDispatch'),
+  dispatched: t('dispatch.orders.actionInTransit'),
+  in_transit: t('dispatch.orders.actionDelivered'),
+  delivered: t('dispatch.orders.actionComplete'),
+});
 
 type TabId = 'all' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
 
@@ -126,6 +127,9 @@ const DispatchOrderListPage: React.FC = () => {
     return { total: orders.length, inTransit, scheduled, delivered };
   }, [orders]);
 
+  const dispatchStatusLabels = getDispatchStatusLabels();
+  const nextStatusLabels = getNextStatusLabels();
+
   const columns = useMemo<ColumnDef<DispatchOrder, unknown>[]>(
     () => [
       {
@@ -138,7 +142,7 @@ const DispatchOrderListPage: React.FC = () => {
       },
       {
         accessorKey: 'description',
-        header: 'Описание',
+        header: t('dispatch.orders.colDescription'),
         size: 260,
         cell: ({ row }) => (
           <div>
@@ -149,7 +153,7 @@ const DispatchOrderListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('dispatch.orders.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -161,18 +165,18 @@ const DispatchOrderListPage: React.FC = () => {
       },
       {
         accessorKey: 'vehicleNumber',
-        header: 'ТС / Водитель',
+        header: t('dispatch.orders.colVehicleDriver'),
         size: 160,
         cell: ({ row }) => (
           <div>
             <p className="text-neutral-900 dark:text-neutral-100 text-sm">{row.original.vehicleNumber ?? '---'}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">{row.original.driverName ?? 'Не назначен'}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">{row.original.driverName ?? t('dispatch.orders.notAssigned')}</p>
           </div>
         ),
       },
       {
         accessorKey: 'originLocation',
-        header: 'Маршрут',
+        header: t('dispatch.orders.colRoute'),
         size: 220,
         cell: ({ row }) => (
           <div className="text-xs">
@@ -184,7 +188,7 @@ const DispatchOrderListPage: React.FC = () => {
       },
       {
         accessorKey: 'scheduledDate',
-        header: 'Дата',
+        header: t('dispatch.orders.colDate'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -207,7 +211,7 @@ const DispatchOrderListPage: React.FC = () => {
                   navigate(`/dispatch/orders/${row.original.id}`);
                 }}
               >
-                Открыть
+                {t('dispatch.orders.actionOpen')}
               </Button>
             );
           }
@@ -226,7 +230,7 @@ const DispatchOrderListPage: React.FC = () => {
         },
       },
     ],
-    [navigate, statusMutation],
+    [navigate, statusMutation, dispatchStatusLabels, nextStatusLabels],
   );
 
   const handleRowClick = useCallback(
@@ -237,23 +241,23 @@ const DispatchOrderListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Диспетчерские заявки"
-        subtitle={`${orders.length} заявок в системе`}
+        title={t('dispatch.orders.title')}
+        subtitle={t('dispatch.orders.subtitle', { count: orders.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Диспетчеризация' },
-          { label: 'Заявки' },
+          { label: t('dispatch.orders.breadcrumbHome'), href: '/' },
+          { label: t('dispatch.orders.breadcrumbDispatch') },
+          { label: t('dispatch.orders.breadcrumbOrders') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Новая заявка
+            {t('dispatch.orders.newOrder')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Активные', count: tabCounts.active },
-          { id: 'COMPLETED', label: 'Завершённые', count: tabCounts.completed },
-          { id: 'CANCELLED', label: 'Отменённые', count: tabCounts.cancelled },
+          { id: 'all', label: t('dispatch.orders.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('dispatch.orders.tabActive'), count: tabCounts.active },
+          { id: 'COMPLETED', label: t('dispatch.orders.tabCompleted'), count: tabCounts.completed },
+          { id: 'CANCELLED', label: t('dispatch.orders.tabCancelled'), count: tabCounts.cancelled },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -263,23 +267,23 @@ const DispatchOrderListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<Package size={18} />}
-          label="Всего заявок"
+          label={t('dispatch.orders.metricTotal')}
           value={metrics.total}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="Запланировано"
+          label={t('dispatch.orders.metricScheduled')}
           value={metrics.scheduled}
         />
         <MetricCard
           icon={<Truck size={18} />}
-          label="В пути"
+          label={t('dispatch.orders.metricInTransit')}
           value={metrics.inTransit}
-          trend={metrics.inTransit > 0 ? { direction: 'up', value: `${metrics.inTransit} шт.` } : undefined}
+          trend={metrics.inTransit > 0 ? { direction: 'up', value: `${metrics.inTransit} ${t('dispatch.orders.pcsUnit')}` } : undefined}
         />
         <MetricCard
           icon={<CheckCircle size={18} />}
-          label="Доставлено"
+          label={t('dispatch.orders.metricDelivered')}
           value={metrics.delivered}
         />
       </div>
@@ -289,14 +293,14 @@ const DispatchOrderListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, описанию, ТС..."
+            placeholder={t('dispatch.orders.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -314,8 +318,8 @@ const DispatchOrderListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет диспетчерских заявок"
-        emptyDescription="Создайте первую заявку на перевозку"
+        emptyTitle={t('dispatch.orders.emptyTitle')}
+        emptyDescription={t('dispatch.orders.emptyDescription')}
       />
     </div>
   );

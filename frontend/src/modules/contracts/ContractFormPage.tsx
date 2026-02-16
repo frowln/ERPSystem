@@ -35,22 +35,22 @@ const contractSchema = z.object({
 type ContractFormData = z.input<typeof contractSchema>;
 
 // Mock data — will be replaced by API data
-const partnerOptions = [
-  { value: 'p1', label: 'ООО "СтройМонтаж"' },
-  { value: 'p2', label: 'АО "ЭлектроСтрой"' },
-  { value: 'p3', label: 'ООО "БетонСервис"' },
-  { value: 'p4', label: 'ООО "ПроектГрупп"' },
-  { value: 'p5', label: 'АО "ДорСтрой"' },
-  { value: 'p6', label: 'ООО "КровляПро"' },
-  { value: 'p7', label: 'ПАО "МеталлТрейд"' },
+const getPartnerOptions = () => [
+  { value: 'p1', label: t('common.mockVendors.stroyMontazh') },
+  { value: 'p2', label: t('common.mockVendors.elektroStroy') },
+  { value: 'p3', label: t('common.mockVendors.betonServis') },
+  { value: 'p4', label: t('common.mockVendors.proektGrupp') },
+  { value: 'p5', label: t('common.mockVendors.dorStroy') },
+  { value: 'p6', label: t('common.mockVendors.krovlyaPro') },
+  { value: 'p7', label: t('common.mockVendors.metallTrade') },
 ];
 
 // Mock data — will be replaced by API data
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('common.mockProjects.solnechny') },
+  { value: '2', label: t('common.mockProjects.gorizont') },
+  { value: '3', label: t('common.mockProjects.mostVyatka') },
+  { value: '6', label: t('common.mockProjects.tsentralny') },
 ];
 
 const typeOptions = [
@@ -208,7 +208,7 @@ const ContractFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.contract.labelPartner')} error={errors.partnerId?.message} required>
               <Select
-                options={partnerOptions}
+                options={getPartnerOptions()}
                 placeholder={t('forms.contract.placeholderPartner')}
                 hasError={!!errors.partnerId}
                 {...register('partnerId')}
@@ -216,7 +216,7 @@ const ContractFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.contract.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.dailyLog.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}

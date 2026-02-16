@@ -1,9 +1,12 @@
 package com.privod.platform.modules.safety.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.safety.domain.SafetyViolation;
 import com.privod.platform.modules.safety.domain.ViolationSeverity;
 import com.privod.platform.modules.safety.domain.ViolationStatus;
+import com.privod.platform.modules.safety.repository.SafetyIncidentRepository;
+import com.privod.platform.modules.safety.repository.SafetyInspectionRepository;
 import com.privod.platform.modules.safety.repository.SafetyViolationRepository;
 import com.privod.platform.modules.safety.web.dto.CreateViolationRequest;
 import com.privod.platform.modules.safety.web.dto.ResolveViolationRequest;
@@ -28,24 +31,32 @@ import java.util.UUID;
 @Slf4j
 public class SafetyViolationService {
 
+    private final SafetyInspectionRepository inspectionRepository;
+    private final SafetyIncidentRepository incidentRepository;
     private final SafetyViolationRepository violationRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<ViolationResponse> listAll(Pageable pageable) {
-        return violationRepository.findByDeletedFalse(pageable)
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return violationRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
                 .map(ViolationResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public ViolationResponse getViolation(UUID id) {
-        SafetyViolation violation = getViolationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyViolation violation = getViolationOrThrow(id, organizationId);
         return ViolationResponse.fromEntity(violation);
     }
 
     @Transactional
     public ViolationResponse createViolation(CreateViolationRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateLinkedEntitiesTenant(request.inspectionId(), request.incidentId(), organizationId);
+
         SafetyViolation violation = SafetyViolation.builder()
+                .organizationId(organizationId)
                 .inspectionId(request.inspectionId())
                 .incidentId(request.incidentId())
                 .description(request.description())
@@ -64,7 +75,8 @@ public class SafetyViolationService {
 
     @Transactional
     public ViolationResponse updateViolation(UUID id, CreateViolationRequest request) {
-        SafetyViolation violation = getViolationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyViolation violation = getViolationOrThrow(id, organizationId);
 
         if (request.description() != null) violation.setDescription(request.description());
         if (request.severity() != null) violation.setSeverity(request.severity());
@@ -81,7 +93,8 @@ public class SafetyViolationService {
 
     @Transactional
     public void deleteViolation(UUID id) {
-        SafetyViolation violation = getViolationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyViolation violation = getViolationOrThrow(id, organizationId);
         violation.softDelete();
         violationRepository.save(violation);
         auditService.logDelete("SafetyViolation", id);
@@ -90,7 +103,8 @@ public class SafetyViolationService {
 
     @Transactional
     public ViolationResponse resolveViolation(UUID id, ResolveViolationRequest request) {
-        SafetyViolation violation = getViolationOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyViolation violation = getViolationOrThrow(id, organizationId);
 
         if (violation.getStatus() == ViolationStatus.RESOLVED) {
             throw new IllegalStateException("Нарушение уже устранено");
@@ -111,7 +125,8 @@ public class SafetyViolationService {
 
     @Transactional(readOnly = true)
     public List<ViolationResponse> getOverdueViolations() {
-        return violationRepository.findOverdue()
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return violationRepository.findOverdueByOrganizationId(organizationId)
                 .stream()
                 .map(ViolationResponse::fromEntity)
                 .toList();
@@ -119,24 +134,26 @@ public class SafetyViolationService {
 
     @Transactional(readOnly = true)
     public Page<ViolationResponse> listByStatus(ViolationStatus status, Pageable pageable) {
-        return violationRepository.findByStatusAndDeletedFalse(status, pageable)
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return violationRepository.findByOrganizationIdAndStatusAndDeletedFalse(organizationId, status, pageable)
                 .map(ViolationResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public ViolationDashboardResponse getDashboard() {
-        long totalViolations = violationRepository.countTotal();
-        long overdueViolations = violationRepository.countOverdue();
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        long totalViolations = violationRepository.countTotal(organizationId);
+        long overdueViolations = violationRepository.countOverdue(organizationId);
 
         Map<String, Long> severityCounts = new HashMap<>();
-        for (Object[] row : violationRepository.countBySeverity()) {
+        for (Object[] row : violationRepository.countBySeverity(organizationId)) {
             ViolationSeverity sev = (ViolationSeverity) row[0];
             Long count = (Long) row[1];
             severityCounts.put(sev.name(), count);
         }
 
         Map<String, Long> statusCounts = new HashMap<>();
-        for (Object[] row : violationRepository.countByStatus()) {
+        for (Object[] row : violationRepository.countByStatus(organizationId)) {
             ViolationStatus status = (ViolationStatus) row[0];
             Long count = (Long) row[1];
             statusCounts.put(status.name(), count);
@@ -147,9 +164,22 @@ public class SafetyViolationService {
         );
     }
 
-    private SafetyViolation getViolationOrThrow(UUID id) {
-        return violationRepository.findById(id)
-                .filter(v -> !v.isDeleted())
+    private SafetyViolation getViolationOrThrow(UUID id, UUID organizationId) {
+        return violationRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Нарушение не найдено: " + id));
+    }
+
+    private void validateLinkedEntitiesTenant(UUID inspectionId, UUID incidentId, UUID organizationId) {
+        if (inspectionId == null && incidentId == null) {
+            throw new IllegalArgumentException("Нарушение должно быть связано с проверкой или инцидентом");
+        }
+        if (inspectionId != null) {
+            inspectionRepository.findByIdAndOrganizationIdAndDeletedFalse(inspectionId, organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Проверка не найдена: " + inspectionId));
+        }
+        if (incidentId != null) {
+            incidentRepository.findByIdAndOrganizationIdAndDeletedFalse(incidentId, organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Инцидент не найден: " + incidentId));
+        }
     }
 }

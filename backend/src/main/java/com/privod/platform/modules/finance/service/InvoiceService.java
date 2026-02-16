@@ -1,6 +1,7 @@
 package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.Contract;
 import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.finance.domain.Invoice;
@@ -47,13 +48,23 @@ public class InvoiceService {
     @Transactional(readOnly = true)
     public Page<InvoiceResponse> listInvoices(UUID projectId, InvoiceStatus status,
                                                InvoiceType invoiceType, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Page<Invoice> page;
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             page = invoiceRepository.findByProjectIdAndDeletedFalse(projectId, pageable);
         } else if (status != null) {
-            page = invoiceRepository.findByStatusAndDeletedFalse(status, pageable);
+            List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+            if (projectIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            page = invoiceRepository.findByProjectIdInAndStatusAndDeletedFalse(projectIds, status, pageable);
         } else {
-            page = invoiceRepository.findAll(pageable);
+            List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+            if (projectIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            page = invoiceRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable);
         }
         return enrichInvoicesWithProjectName(page);
     }
@@ -92,12 +103,14 @@ public class InvoiceService {
 
     @Transactional(readOnly = true)
     public InvoiceResponse getInvoice(UUID id) {
-        Invoice invoice = getInvoiceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
         return InvoiceResponse.fromEntity(invoice);
     }
 
     @Transactional
     public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String number = generateInvoiceNumber();
 
         BigDecimal vatRate = request.vatRate() != null ? request.vatRate() : new BigDecimal("20.00");
@@ -116,21 +129,23 @@ public class InvoiceService {
         UUID partnerId = request.partnerId();
         String partnerName = request.partnerName();
         if (request.contractId() != null) {
-            Contract contract = contractRepository.findById(request.contractId())
-                    .filter(c -> !c.isDeleted())
-                    .orElse(null);
-            if (contract != null) {
-                if (projectId == null && contract.getProjectId() != null) {
-                    projectId = contract.getProjectId();
-                }
-                if (partnerId == null && contract.getPartnerId() != null) {
-                    partnerId = contract.getPartnerId();
-                }
-                if (partnerName == null && contract.getPartnerName() != null) {
-                    partnerName = contract.getPartnerName();
-                }
+            Contract contract = contractRepository.findByIdAndOrganizationIdAndDeletedFalse(request.contractId(), organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Договор не найден: " + request.contractId()));
+            if (projectId == null && contract.getProjectId() != null) {
+                projectId = contract.getProjectId();
+            }
+            if (partnerId == null && contract.getPartnerId() != null) {
+                partnerId = contract.getPartnerId();
+            }
+            if (partnerName == null && contract.getPartnerName() != null) {
+                partnerName = contract.getPartnerName();
             }
         }
+
+        if (projectId == null) {
+            throw new IllegalArgumentException("Проект обязателен для счёта");
+        }
+        validateProjectTenant(projectId, organizationId);
 
         Invoice invoice = Invoice.builder()
                 .number(number)
@@ -162,7 +177,8 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceResponse updateInvoice(UUID id, UpdateInvoiceRequest request) {
-        Invoice invoice = getInvoiceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
 
         if (invoice.getStatus() != InvoiceStatus.DRAFT) {
             throw new IllegalStateException("Редактирование счёта возможно только в статусе Черновик");
@@ -175,9 +191,12 @@ public class InvoiceService {
             invoice.setDueDate(request.dueDate());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             invoice.setProjectId(request.projectId());
         }
         if (request.contractId() != null) {
+            contractRepository.findByIdAndOrganizationIdAndDeletedFalse(request.contractId(), organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Договор не найден: " + request.contractId()));
             invoice.setContractId(request.contractId());
         }
         if (request.partnerId() != null) {
@@ -225,7 +244,8 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceResponse sendInvoice(UUID id) {
-        Invoice invoice = getInvoiceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
         InvoiceStatus oldStatus = invoice.getStatus();
 
         if (!invoice.getStatus().canTransitionTo(InvoiceStatus.SENT)) {
@@ -243,7 +263,8 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceResponse registerPayment(UUID id, BigDecimal amount) {
-        Invoice invoice = getInvoiceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
 
         if (invoice.getStatus() == InvoiceStatus.DRAFT
                 || invoice.getStatus() == InvoiceStatus.PAID
@@ -283,7 +304,8 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceResponse markOverdue(UUID id) {
-        Invoice invoice = getInvoiceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
         InvoiceStatus oldStatus = invoice.getStatus();
 
         if (!invoice.getStatus().canTransitionTo(InvoiceStatus.OVERDUE)) {
@@ -302,7 +324,8 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
-        Invoice invoice = getInvoiceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
         InvoiceStatus oldStatus = invoice.getStatus();
 
         if (!invoice.getStatus().canTransitionTo(InvoiceStatus.CANCELLED)) {
@@ -320,6 +343,8 @@ public class InvoiceService {
 
     @Transactional(readOnly = true)
     public InvoiceSummaryResponse getProjectInvoiceSummary(UUID projectId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
         long totalInvoices = invoiceRepository.countByProjectIdAndDeletedFalse(projectId);
         BigDecimal totalIssued = invoiceRepository.sumTotalByProjectIdAndType(projectId, InvoiceType.ISSUED);
         BigDecimal totalReceived = invoiceRepository.sumTotalByProjectIdAndType(projectId, InvoiceType.RECEIVED);
@@ -339,7 +364,8 @@ public class InvoiceService {
 
     @Transactional(readOnly = true)
     public List<InvoiceLineResponse> getInvoiceLines(UUID invoiceId) {
-        getInvoiceOrThrow(invoiceId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInvoiceOrThrow(invoiceId, organizationId);
         return invoiceLineRepository.findByInvoiceIdAndDeletedFalseOrderBySequenceAsc(invoiceId)
                 .stream()
                 .map(InvoiceLineResponse::fromEntity)
@@ -348,7 +374,8 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceLineResponse addInvoiceLine(UUID invoiceId, CreateInvoiceLineRequest request) {
-        getInvoiceOrThrow(invoiceId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInvoiceOrThrow(invoiceId, organizationId);
 
         InvoiceLine line = InvoiceLine.builder()
                 .invoiceId(invoiceId)
@@ -369,7 +396,8 @@ public class InvoiceService {
 
     @Transactional
     public void deleteInvoiceLine(UUID invoiceId, UUID lineId) {
-        getInvoiceOrThrow(invoiceId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInvoiceOrThrow(invoiceId, organizationId);
         InvoiceLine line = invoiceLineRepository.findById(lineId)
                 .filter(l -> !l.isDeleted())
                 .orElseThrow(() -> new EntityNotFoundException("Строка счёта не найдена: " + lineId));
@@ -385,10 +413,25 @@ public class InvoiceService {
         log.info("Строка счёта удалена: {} из счёта {}", lineId, invoiceId);
     }
 
-    private Invoice getInvoiceOrThrow(UUID id) {
-        return invoiceRepository.findById(id)
-                .filter(i -> !i.isDeleted())
+    private Invoice getInvoiceOrThrow(UUID id, UUID organizationId) {
+        Invoice invoice = invoiceRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Счёт не найден: " + id));
+        validateProjectTenant(invoice.getProjectId(), organizationId);
+        return invoice;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .filter(p -> organizationId.equals(p.getOrganizationId()))
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
     }
 
     private String generateInvoiceNumber() {

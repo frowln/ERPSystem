@@ -19,6 +19,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "safety_violations", indexes = {
+        @Index(name = "idx_violation_org", columnList = "organization_id"),
+        @Index(name = "idx_violation_org_inspection", columnList = "organization_id, inspection_id"),
+        @Index(name = "idx_violation_org_incident", columnList = "organization_id, incident_id"),
         @Index(name = "idx_violation_inspection", columnList = "inspection_id"),
         @Index(name = "idx_violation_incident", columnList = "incident_id"),
         @Index(name = "idx_safety_violation_status", columnList = "status"),
@@ -30,6 +33,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SafetyViolation extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "inspection_id")
     private UUID inspectionId;

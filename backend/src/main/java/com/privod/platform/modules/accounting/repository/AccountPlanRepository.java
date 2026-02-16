@@ -14,15 +14,17 @@ import java.util.UUID;
 @Repository
 public interface AccountPlanRepository extends JpaRepository<AccountPlan, UUID> {
 
-    Optional<AccountPlan> findByCodeAndDeletedFalse(String code);
+    Optional<AccountPlan> findByOrganizationIdAndCodeAndDeletedFalse(UUID organizationId, String code);
 
-    Page<AccountPlan> findByDeletedFalse(Pageable pageable);
+    Optional<AccountPlan> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
 
-    Page<AccountPlan> findByAccountTypeAndDeletedFalse(AccountType accountType, Pageable pageable);
+    Page<AccountPlan> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
 
-    List<AccountPlan> findByParentIdAndDeletedFalse(UUID parentId);
+    Page<AccountPlan> findByOrganizationIdAndAccountTypeAndDeletedFalse(UUID organizationId, AccountType accountType, Pageable pageable);
 
-    List<AccountPlan> findByParentIdIsNullAndDeletedFalseOrderByCodeAsc();
+    List<AccountPlan> findByOrganizationIdAndParentIdAndDeletedFalse(UUID organizationId, UUID parentId);
 
-    long countByDeletedFalse();
+    List<AccountPlan> findByOrganizationIdAndParentIdIsNullAndDeletedFalseOrderByCodeAsc(UUID organizationId);
+
+    long countByOrganizationIdAndDeletedFalse(UUID organizationId);
 }

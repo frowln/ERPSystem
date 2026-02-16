@@ -15,27 +15,28 @@ import { useConfirmDialog } from '@/design-system/components/ConfirmDialog/provi
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { accountingApi, type FinancialJournal, type JournalType } from '@/api/accounting';
 import { formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 
-const createJournalSchema = z.object({
+const getCreateJournalSchema = () => z.object({
   code: z
     .string()
     .trim()
-    .min(2, 'Минимум 2 символа')
-    .max(20, 'Максимум 20 символов')
-    .regex(/^[A-Za-z0-9_-]+$/, 'Только латиница, цифры, "_" и "-"'),
-  name: z.string().trim().min(2, 'Минимум 2 символа').max(500, 'Максимум 500 символов'),
+    .min(2, t('accounting.fjValidationCodeMin'))
+    .max(20, t('accounting.fjValidationCodeMax'))
+    .regex(/^[A-Za-z0-9_-]+$/, t('accounting.fjValidationCodeFormat')),
+  name: z.string().trim().min(2, t('accounting.fjValidationNameMin')).max(500, t('accounting.fjValidationNameMax')),
   journalType: z.enum(['BANK', 'CASH', 'SALES', 'PURCHASE', 'GENERAL']),
 });
 
-type CreateJournalFormData = z.input<typeof createJournalSchema>;
+type CreateJournalFormData = z.input<ReturnType<typeof getCreateJournalSchema>>;
 
-const journalTypeLabels: Record<JournalType, string> = {
-  BANK: 'Банковский',
-  CASH: 'Кассовый',
-  SALES: 'Продажи',
-  PURCHASE: 'Закупки',
-  GENERAL: 'Общий',
-};
+const getJournalTypeLabels = (): Record<JournalType, string> => ({
+  BANK: t('accounting.fjTypeBank'),
+  CASH: t('accounting.fjTypeCash'),
+  SALES: t('accounting.fjTypeSales'),
+  PURCHASE: t('accounting.fjTypePurchase'),
+  GENERAL: t('accounting.fjTypeGeneral'),
+});
 
 const statusColorMap: Record<string, 'green' | 'gray' | 'red' | 'yellow' | 'blue'> = {
   active: 'green',
@@ -48,6 +49,9 @@ const FinancialJournalsPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [pendingJournalId, setPendingJournalId] = useState<string | null>(null);
+
+  const createJournalSchema = useMemo(() => getCreateJournalSchema(), []);
+  const journalTypeLabels = getJournalTypeLabels();
 
   const {
     data,
@@ -87,11 +91,11 @@ const FinancialJournalsPage: React.FC = () => {
     onSuccess: (journal) => {
       queryClient.invalidateQueries({ queryKey: ['financial-journals'] });
       queryClient.invalidateQueries({ queryKey: ['financial-journals', 'management'] });
-      toast.success(`Журнал ${journal.code} создан`);
+      toast.success(t('accounting.fjCreateSuccess', { code: journal.code }));
       reset({ code: '', name: '', journalType: 'GENERAL' });
     },
     onError: () => {
-      toast.error('Не удалось создать финансовый журнал');
+      toast.error(t('accounting.fjCreateError'));
     },
   });
 
@@ -106,10 +110,10 @@ const FinancialJournalsPage: React.FC = () => {
     onSuccess: (journal) => {
       queryClient.invalidateQueries({ queryKey: ['financial-journals'] });
       queryClient.invalidateQueries({ queryKey: ['financial-journals', 'management'] });
-      toast.success(journal.active ? `Журнал ${journal.code} активирован` : `Журнал ${journal.code} деактивирован`);
+      toast.success(journal.active ? t('accounting.fjActivateSuccess', { code: journal.code }) : t('accounting.fjDeactivateSuccess', { code: journal.code }));
     },
     onError: () => {
-      toast.error('Не удалось обновить статус журнала');
+      toast.error(t('accounting.fjToggleStatusError'));
     },
     onSettled: () => {
       setPendingJournalId(null);
@@ -139,7 +143,7 @@ const FinancialJournalsPage: React.FC = () => {
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('accounting.fjColCode'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="font-mono text-xs text-neutral-600">{getValue<string>()}</span>
@@ -147,7 +151,7 @@ const FinancialJournalsPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('accounting.fjColName'),
         size: 320,
         cell: ({ getValue }) => (
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>
@@ -155,13 +159,13 @@ const FinancialJournalsPage: React.FC = () => {
       },
       {
         accessorKey: 'journalType',
-        header: 'Тип',
+        header: t('accounting.fjColType'),
         size: 180,
         cell: ({ row }) => row.original.journalTypeDisplayName ?? journalTypeLabels[row.original.journalType],
       },
       {
         accessorKey: 'active',
-        header: 'Статус',
+        header: t('accounting.fjColStatus'),
         size: 120,
         cell: ({ getValue }) => {
           const active = getValue<boolean>();
@@ -169,20 +173,20 @@ const FinancialJournalsPage: React.FC = () => {
             <StatusBadge
               status={active ? 'active' : 'inactive'}
               colorMap={statusColorMap}
-              label={active ? 'Активен' : 'Неактивен'}
+              label={active ? t('accounting.fjStatusActive') : t('accounting.fjStatusInactive')}
             />
           );
         },
       },
       {
         accessorKey: 'createdAt',
-        header: 'Создан',
+        header: t('accounting.fjColCreatedAt'),
         size: 180,
         cell: ({ getValue }) => formatDateTime(getValue<string>()),
       },
       {
         id: 'actions',
-        header: 'Действия',
+        header: t('accounting.fjColActions'),
         size: 170,
         cell: ({ row }) => {
           const journal = row.original;
@@ -195,10 +199,10 @@ const FinancialJournalsPage: React.FC = () => {
               onClick={async () => {
                 if (journal.active) {
                   const isConfirmed = await confirm({
-                    title: `Деактивировать журнал "${journal.code}"?`,
-                    description: 'Проводки останутся доступными, но новые записи будут ограничены.',
-                    confirmLabel: 'Деактивировать',
-                    cancelLabel: 'Отмена',
+                    title: t('accounting.fjDeactivateTitle', { code: journal.code }),
+                    description: t('accounting.fjDeactivateDescription'),
+                    confirmLabel: t('accounting.fjDeactivateConfirm'),
+                    cancelLabel: t('accounting.fjDeactivateCancel'),
                     confirmVariant: 'danger',
                     items: [journal.code],
                   });
@@ -209,32 +213,32 @@ const FinancialJournalsPage: React.FC = () => {
                 toggleStatusMutation.mutate(journal);
               }}
             >
-              {journal.active ? 'Деактивировать' : 'Активировать'}
+              {journal.active ? t('accounting.fjDeactivateButton') : t('accounting.fjActivateButton')}
             </Button>
           );
         },
       },
     ],
-    [confirm, pendingJournalId, toggleStatusMutation],
+    [confirm, journalTypeLabels, pendingJournalId, toggleStatusMutation],
   );
 
   if (isError && journals.length === 0) {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Финансовые журналы"
-          subtitle="Справочник журналов бухгалтерских проводок"
+          title={t('accounting.fjTitle')}
+          subtitle={t('accounting.fjSubtitle')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия', href: '/accounting' },
-            { label: 'Финансовые журналы' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+            { label: t('accounting.breadcrumbFinancialJournals') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить финансовые журналы"
-          description="Проверьте соединение и попробуйте снова"
-          actionLabel="Повторить"
+          title={t('accounting.fjErrorTitle')}
+          description={t('accounting.checkConnectionTryAgain')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetch();
           }}
@@ -246,38 +250,38 @@ const FinancialJournalsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Финансовые журналы"
-        subtitle={`${journals.length} журналов`}
+        title={t('accounting.fjTitle')}
+        subtitle={t('accounting.fjSubtitleCount', { count: journals.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия', href: '/accounting' },
-          { label: 'Финансовые журналы' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+          { label: t('accounting.breadcrumbFinancialJournals') },
         ]}
       />
 
       <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <BookOpen size={16} className="text-primary-600" />
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Создать журнал</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('accounting.fjCreateTitle')}</h2>
         </div>
 
         <form
           className="grid grid-cols-1 lg:grid-cols-4 gap-4"
           onSubmit={handleSubmit((values) => createMutation.mutate(values))}
         >
-          <FormField label="Код" error={errors.code?.message} required>
-            <Input placeholder="Например: GEN" hasError={!!errors.code} {...register('code')} />
+          <FormField label={t('accounting.fjLabelCode')} error={errors.code?.message} required>
+            <Input placeholder={t('accounting.fjPlaceholderCode')} hasError={!!errors.code} {...register('code')} />
           </FormField>
 
-          <FormField label="Наименование" error={errors.name?.message} required>
+          <FormField label={t('accounting.fjLabelName')} error={errors.name?.message} required>
             <Input
-              placeholder="Например: Общий журнал"
+              placeholder={t('accounting.fjPlaceholderName')}
               hasError={!!errors.name}
               {...register('name')}
             />
           </FormField>
 
-          <FormField label="Тип" error={errors.journalType?.message} required>
+          <FormField label={t('accounting.fjLabelType')} error={errors.journalType?.message} required>
             <Select
               options={Object.entries(journalTypeLabels).map(([value, label]) => ({ value, label }))}
               hasError={!!errors.journalType}
@@ -287,7 +291,7 @@ const FinancialJournalsPage: React.FC = () => {
 
           <div className="flex items-end">
             <Button type="submit" iconLeft={<Plus size={16} />} loading={createMutation.isPending} fullWidth>
-              Создать
+              {t('accounting.fjCreateButton')}
             </Button>
           </div>
         </form>
@@ -297,7 +301,7 @@ const FinancialJournalsPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по коду или названию..."
+            placeholder={t('accounting.fjSearchPlaceholder')}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             className="pl-9"
@@ -306,7 +310,7 @@ const FinancialJournalsPage: React.FC = () => {
 
         <Select
           options={[
-            { value: '', label: 'Все типы' },
+            { value: '', label: t('accounting.fjAllTypes') },
             ...Object.entries(journalTypeLabels).map(([value, label]) => ({ value, label })),
           ]}
           value={typeFilter}
@@ -323,8 +327,8 @@ const FinancialJournalsPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет финансовых журналов"
-        emptyDescription="Создайте первый журнал, чтобы формировать проводки"
+        emptyTitle={t('accounting.fjEmptyTitle')}
+        emptyDescription={t('accounting.fjEmptyDescription')}
       />
     </div>
   );

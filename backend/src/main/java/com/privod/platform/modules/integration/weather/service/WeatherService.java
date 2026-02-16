@@ -302,8 +302,6 @@ public class WeatherService {
         JsonNode main = root.path("main");
         JsonNode wind = root.path("wind");
         JsonNode weather = root.path("weather").path(0);
-        JsonNode clouds = root.path("clouds");
-
         return WeatherData.builder()
                 .projectId(projectId)
                 .locationName(root.path("name").asText(""))
@@ -312,16 +310,13 @@ public class WeatherService {
                 .temperature(main.path("temp").asDouble())
                 .feelsLike(main.path("feels_like").asDouble())
                 .humidity(main.path("humidity").asInt())
-                .pressure(main.path("pressure").asInt())
+                .pressure(main.path("pressure").asDouble())
                 .windSpeed(wind.path("speed").asDouble())
                 .windDirection(windDegreesToDirection(wind.path("deg").asInt()))
-                .windGust(wind.has("gust") ? wind.path("gust").asDouble() : null)
                 .weatherCondition(weather.path("main").asText(""))
                 .weatherDescription(weather.path("description").asText(""))
-                .cloudiness(clouds.path("all").asInt())
                 .visibility(root.has("visibility") ? root.path("visibility").asInt() : null)
                 .fetchedAt(Instant.now())
-                .apiProvider(WeatherApiProvider.OPENWEATHERMAP)
                 .build();
     }
 
@@ -348,16 +343,13 @@ public class WeatherService {
                 .temperature(current.path("temp_c").asDouble())
                 .feelsLike(current.path("feelslike_c").asDouble())
                 .humidity(current.path("humidity").asInt())
-                .pressure((int) (current.path("pressure_mb").asDouble()))
+                .pressure(current.path("pressure_mb").asDouble())
                 .windSpeed(current.path("wind_kph").asDouble() / 3.6) // km/h to m/s
                 .windDirection(current.path("wind_dir").asText(""))
-                .windGust(current.has("gust_kph") ? current.path("gust_kph").asDouble() / 3.6 : null)
                 .weatherCondition(condition.path("text").asText(""))
                 .weatherDescription(condition.path("text").asText(""))
-                .cloudiness(current.path("cloud").asInt())
                 .visibility(current.has("vis_km") ? (int) (current.path("vis_km").asDouble() * 1000) : null)
                 .fetchedAt(Instant.now())
-                .apiProvider(WeatherApiProvider.WEATHERAPI)
                 .build();
     }
 
@@ -388,16 +380,13 @@ public class WeatherService {
                 .temperature(fact.path("temp").asDouble())
                 .feelsLike(fact.path("feels_like").asDouble())
                 .humidity(fact.path("humidity").asInt())
-                .pressure(fact.path("pressure_mm").asInt())
+                .pressure(fact.path("pressure_mm").asDouble())
                 .windSpeed(fact.path("wind_speed").asDouble())
                 .windDirection(fact.path("wind_dir").asText(""))
-                .windGust(fact.has("wind_gust") ? fact.path("wind_gust").asDouble() : null)
                 .weatherCondition(fact.path("condition").asText(""))
                 .weatherDescription(fact.path("condition").asText(""))
-                .cloudiness((int) (fact.path("cloudness").asDouble() * 100))
                 .visibility(null)
                 .fetchedAt(Instant.now())
-                .apiProvider(WeatherApiProvider.YANDEX_WEATHER)
                 .build();
     }
 

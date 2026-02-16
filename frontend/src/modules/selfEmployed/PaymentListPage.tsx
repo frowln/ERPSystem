@@ -11,6 +11,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { selfEmployedApi } from './api';
 import { formatMoney, formatDate } from '@/lib/format';
 import type { SelfEmployedPayment, PaymentStatus } from './types';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, string> = {
   DRAFT: 'gray',
@@ -20,21 +21,21 @@ const statusColorMap: Record<string, string> = {
   RECEIPT_ISSUED: 'blue',
 };
 
-const statusLabels: Record<PaymentStatus, string> = {
-  DRAFT: 'Черновик',
-  PENDING: 'Ожидание',
-  PAID: 'Оплачено',
-  CANCELLED: 'Отменено',
-  RECEIPT_ISSUED: 'Чек выдан',
-};
+const getStatusLabels = (): Record<PaymentStatus, string> => ({
+  DRAFT: t('selfEmployed.payments.statusDraft'),
+  PENDING: t('selfEmployed.payments.statusPending'),
+  PAID: t('selfEmployed.payments.statusPaid'),
+  CANCELLED: t('selfEmployed.payments.statusCancelled'),
+  RECEIPT_ISSUED: t('selfEmployed.payments.statusReceiptIssued'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'PENDING', label: 'Ожидание' },
-  { value: 'PAID', label: 'Оплачено' },
-  { value: 'RECEIPT_ISSUED', label: 'Чек выдан' },
-  { value: 'CANCELLED', label: 'Отменено' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('selfEmployed.payments.statusAll') },
+  { value: 'DRAFT', label: t('selfEmployed.payments.statusDraft') },
+  { value: 'PENDING', label: t('selfEmployed.payments.statusPending') },
+  { value: 'PAID', label: t('selfEmployed.payments.statusPaid') },
+  { value: 'RECEIPT_ISSUED', label: t('selfEmployed.payments.statusReceiptIssued') },
+  { value: 'CANCELLED', label: t('selfEmployed.payments.statusCancelled') },
 ];
 
 const PaymentListPage: React.FC = () => {
@@ -77,7 +78,7 @@ const PaymentListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'contractorName',
-        header: 'Исполнитель',
+        header: t('selfEmployed.payments.colContractor'),
         size: 180,
         cell: ({ row }) => (
           <div>
@@ -88,7 +89,7 @@ const PaymentListPage: React.FC = () => {
       },
       {
         accessorKey: 'serviceDescription',
-        header: 'Описание услуги',
+        header: t('selfEmployed.payments.colService'),
         size: 250,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -96,7 +97,7 @@ const PaymentListPage: React.FC = () => {
       },
       {
         accessorKey: 'amount',
-        header: 'Сумма',
+        header: t('selfEmployed.payments.colAmount'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">{formatMoney(getValue<number>())}</span>
@@ -104,7 +105,7 @@ const PaymentListPage: React.FC = () => {
       },
       {
         accessorKey: 'serviceDate',
-        header: 'Дата услуги',
+        header: t('selfEmployed.payments.colServiceDate'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -112,19 +113,19 @@ const PaymentListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('selfEmployed.payments.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={statusColorMap}
-            label={statusLabels[getValue<PaymentStatus>()] ?? getValue<string>()}
+            label={getStatusLabels()[getValue<PaymentStatus>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'receiptNumber',
-        header: 'Номер чека',
+        header: t('selfEmployed.payments.colReceiptNumber'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>() ?? '---'}</span>
@@ -137,17 +138,17 @@ const PaymentListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Выплаты самозанятым"
-        subtitle={`${payments.length} выплат`}
+        title={t('selfEmployed.payments.title')}
+        subtitle={t('selfEmployed.payments.subtitle', { count: String(payments.length) })}
         backTo="/self-employed"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Самозанятые', href: '/self-employed' },
-          { label: 'Выплаты' },
+          { label: t('selfEmployed.payments.breadcrumbHome'), href: '/' },
+          { label: t('selfEmployed.payments.breadcrumbSelfEmployed'), href: '/self-employed' },
+          { label: t('selfEmployed.payments.breadcrumbPayments') },
         ]}
         actions={
           <Button onClick={() => navigate('/self-employed')}>
-            К исполнителям
+            {t('selfEmployed.payments.toContractors')}
           </Button>
         }
       />
@@ -157,14 +158,14 @@ const PaymentListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по исполнителю, описанию..."
+            placeholder={t('selfEmployed.payments.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -179,13 +180,13 @@ const PaymentListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет выплат"
-        emptyDescription="Выплаты самозанятым появятся здесь"
+        emptyTitle={t('selfEmployed.payments.emptyTitle')}
+        emptyDescription={t('selfEmployed.payments.emptyDescription')}
       />
 
       {filtered.length > 0 && (
         <div className="mt-3 flex items-center justify-end px-4 py-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
-          <span className="text-sm text-neutral-500 dark:text-neutral-400 mr-2">Итого:</span>
+          <span className="text-sm text-neutral-500 dark:text-neutral-400 mr-2">{t('selfEmployed.payments.totalLabel')}</span>
           <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 tabular-nums">{formatMoney(totalAmount)}</span>
         </div>
       )}

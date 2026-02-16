@@ -27,6 +27,7 @@ import {
 import { formatDateLong, formatDate } from '@/lib/format';
 import toast from 'react-hot-toast';
 import { regulatoryApi } from '@/api/regulatory';
+import { t } from '@/i18n';
 
 interface LinkedInspection {
   id: string;
@@ -50,23 +51,23 @@ const inspectionStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yell
   cancelled: 'gray',
 };
 
-const inspectionStatusLabels: Record<string, string> = {
-  scheduled: 'Запланирована',
-  in_progress: 'Проводится',
-  passed: 'Пройдена',
-  failed: 'Не пройдена',
-  cancelled: 'Отменена',
-};
+const getInspectionStatusLabels = (): Record<string, string> => ({
+  scheduled: t('regulatory.inspStatusScheduled'),
+  in_progress: t('regulatory.inspStatusInProgress'),
+  passed: t('regulatory.inspStatusPassed'),
+  failed: t('regulatory.inspStatusFailed'),
+  cancelled: t('regulatory.inspStatusCancelled'),
+});
 
-const statusActions: Record<string, { label: string; target: string }[]> = {
-  draft: [{ label: 'Подать', target: 'SUBMITTED' }],
-  submitted: [{ label: 'На рассмотрении', target: 'UNDER_REVIEW' }],
+const getStatusActions = (): Record<string, { label: string; target: string }[]> => ({
+  draft: [{ label: t('regulatory.actionSubmit'), target: 'SUBMITTED' }],
+  submitted: [{ label: t('regulatory.actionUnderReview'), target: 'UNDER_REVIEW' }],
   under_review: [
-    { label: 'Одобрить', target: 'APPROVED' },
-    { label: 'Отклонить', target: 'REJECTED' },
+    { label: t('regulatory.actionApprove'), target: 'APPROVED' },
+    { label: t('regulatory.actionReject'), target: 'REJECTED' },
   ],
-  approved: [{ label: 'Активировать', target: 'ACTIVE' }],
-};
+  approved: [{ label: t('regulatory.actionActivate'), target: 'ACTIVE' }],
+});
 
 const PermitDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,7 +81,7 @@ const PermitDetailPage: React.FC = () => {
   });
 
   if (isLoading || !permit) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('regulatory.loadingText')}</div>;
   }
 
   const linkedInspections: LinkedInspection[] = [];
@@ -105,7 +106,7 @@ const PermitDetailPage: React.FC = () => {
   };
   const [statusOverride, setStatusOverride] = useState<string | null>(null);
   const effectiveStatus = statusOverride ?? p.status;
-  const actions = useMemo(() => statusActions[effectiveStatus] ?? [], [effectiveStatus]);
+  const actions = useMemo(() => getStatusActions()[effectiveStatus] ?? [], [effectiveStatus]);
 
   // Check if permit is expiring soon (within 90 days)
   const expiryDate = new Date(p.expiryDate);
@@ -115,20 +116,20 @@ const PermitDetailPage: React.FC = () => {
 
   const handleStatusChange = (targetStatus: string) => {
     setStatusOverride(targetStatus);
-    toast.success(`Статус разрешения: ${permitStatusLabels[targetStatus] ?? targetStatus}`);
+    toast.success(t('regulatory.statusChanged', { status: permitStatusLabels[targetStatus] ?? targetStatus }));
   };
 
   const handleDelete = async () => {
     const isConfirmed = await confirm({
-      title: 'Удалить разрешение?',
-      description: 'Операция необратима. Разрешение будет удалено.',
-      confirmLabel: 'Удалить разрешение',
-      cancelLabel: 'Отмена',
+      title: t('regulatory.deletePermitTitle'),
+      description: t('regulatory.deletePermitDesc'),
+      confirmLabel: t('regulatory.deletePermitConfirm'),
+      cancelLabel: t('regulatory.deletePermitCancel'),
       items: [p.number],
     });
     if (!isConfirmed) return;
 
-    toast.success('Разрешение удалено');
+    toast.success(t('regulatory.permitDeleted'));
     navigate('/regulatory/permits');
   };
 
@@ -139,8 +140,8 @@ const PermitDetailPage: React.FC = () => {
         subtitle={`${p.projectName} / ${permitTypeLabels[p.type] ?? p.type}`}
         backTo="/regulatory/permits"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Разрешения', href: '/regulatory/permits' },
+          { label: t('regulatory.breadcrumbHome'), href: '/' },
+          { label: t('regulatory.btnPermits'), href: '/regulatory/permits' },
           { label: p.number },
         ]}
         actions={
@@ -155,13 +156,13 @@ const PermitDetailPage: React.FC = () => {
               size="sm"
               iconLeft={<Edit size={14} />}
               onClick={() => {
-                toast('Редактирование доступно в реестре разрешений');
+                toast(t('regulatory.editToast'));
                 navigate('/regulatory/permits');
               }}
             >
-              Редактировать
+              {t('regulatory.btnEdit')}
             </Button>
-            <Button variant="danger" size="sm" iconLeft={<Trash2 size={14} />} onClick={handleDelete}>Удалить</Button>
+            <Button variant="danger" size="sm" iconLeft={<Trash2 size={14} />} onClick={handleDelete}>{t('regulatory.btnDelete')}</Button>
           </div>
         }
       />
@@ -172,7 +173,7 @@ const PermitDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Shield size={16} className="text-primary-500" />
-              Описание разрешения
+              {t('regulatory.sectionDescription')}
             </h3>
             <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">{p.description}</p>
           </div>
@@ -181,7 +182,7 @@ const PermitDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <AlertTriangle size={16} className="text-warning-500" />
-              Условия ({p.conditions.length})
+              {t('regulatory.sectionConditions', { count: String(p.conditions.length) })}
             </h3>
             <div className="space-y-2">
               {p.conditions.map((condition, idx) => (
@@ -197,7 +198,7 @@ const PermitDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <CheckCircle2 size={16} className="text-primary-500" />
-              Связанные проверки ({linkedInspections.length})
+              {t('regulatory.sectionLinkedInspections', { count: String(linkedInspections.length) })}
             </h3>
             <div className="space-y-2">
               {linkedInspections.map((insp) => (
@@ -208,7 +209,7 @@ const PermitDetailPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-neutral-500 dark:text-neutral-400">{insp.result}</span>
-                    <StatusBadge status={insp.status} colorMap={inspectionStatusColorMap} label={inspectionStatusLabels[insp.status] ?? insp.status} />
+                    <StatusBadge status={insp.status} colorMap={inspectionStatusColorMap} label={getInspectionStatusLabels()[insp.status] ?? insp.status} />
                   </div>
                 </div>
               ))}
@@ -219,7 +220,7 @@ const PermitDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Link2 size={15} />
-              Связанные документы ({linkedDocuments.length})
+              {t('regulatory.sectionLinkedDocuments', { count: String(linkedDocuments.length) })}
             </h3>
             <div className="space-y-2">
               {linkedDocuments.map((doc) => (
@@ -238,14 +239,14 @@ const PermitDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('regulatory.sectionDetails')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<Building2 size={15} />} label="Орган выдачи" value={p.issuingAuthority} />
-              <InfoItem icon={<Calendar size={15} />} label="Дата выдачи" value={formatDateLong(p.issuedDate)} />
-              <InfoItem icon={<Calendar size={15} />} label="Срок действия до" value={formatDateLong(p.expiryDate)} />
-              <InfoItem icon={<User size={15} />} label="Ответственный" value={p.responsibleName} />
-              <InfoItem icon={<User size={15} />} label="Контактное лицо" value={p.contactPerson} />
-              <InfoItem icon={<Clock size={15} />} label="Телефон" value={p.contactPhone} />
+              <InfoItem icon={<Building2 size={15} />} label={t('regulatory.labelIssuingAuthority')} value={p.issuingAuthority} />
+              <InfoItem icon={<Calendar size={15} />} label={t('regulatory.labelIssuedDate')} value={formatDateLong(p.issuedDate)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('regulatory.labelValidUntil')} value={formatDateLong(p.expiryDate)} />
+              <InfoItem icon={<User size={15} />} label={t('regulatory.labelResponsible')} value={p.responsibleName} />
+              <InfoItem icon={<User size={15} />} label={t('regulatory.labelContactPerson')} value={p.contactPerson} />
+              <InfoItem icon={<Clock size={15} />} label={t('regulatory.labelPhone')} value={p.contactPhone} />
             </div>
           </div>
 
@@ -254,10 +255,10 @@ const PermitDetailPage: React.FC = () => {
             <div className="bg-warning-50 rounded-xl border border-warning-200 p-6">
               <h3 className="text-sm font-semibold text-warning-800 mb-2 flex items-center gap-2">
                 <AlertTriangle size={15} className="text-warning-600" />
-                Внимание
+                {t('regulatory.warningAttention')}
               </h3>
               <p className="text-sm text-warning-700">
-                Разрешение истекает через {daysUntilExpiry} дн. Необходимо начать процедуру продления.
+                {t('regulatory.warningExpiringDays', { days: String(daysUntilExpiry) })}
               </p>
             </div>
           )}

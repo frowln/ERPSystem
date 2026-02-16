@@ -1,6 +1,7 @@
 package com.privod.platform.modules.contract.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.ApprovalStatus;
 import com.privod.platform.modules.contract.domain.Contract;
 import com.privod.platform.modules.contract.domain.ContractApproval;
@@ -16,6 +17,8 @@ import com.privod.platform.modules.contract.web.dto.ContractResponse;
 import com.privod.platform.modules.contract.web.dto.CreateContractRequest;
 import com.privod.platform.modules.contract.web.dto.RejectContractRequest;
 import com.privod.platform.modules.contract.web.dto.UpdateContractRequest;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +46,17 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final ContractTypeRepository contractTypeRepository;
     private final ContractApprovalRepository contractApprovalRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<ContractResponse> listContracts(String search, ContractStatus status,
                                                  UUID projectId, UUID partnerId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
         Specification<Contract> spec = Specification.where(ContractSpecification.notDeleted())
+                .and(ContractSpecification.belongsToOrganization(organizationId))
                 .and(ContractSpecification.hasStatus(status))
                 .and(ContractSpecification.belongsToProject(projectId))
                 .and(ContractSpecification.hasPartner(partnerId))
@@ -59,12 +67,15 @@ public class ContractService {
 
     @Transactional(readOnly = true)
     public ContractResponse getContract(UUID id) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
         return ContractResponse.fromEntity(contract);
     }
 
     @Transactional
     public ContractResponse createContract(CreateContractRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(request.projectId(), organizationId);
         validateDates(request.plannedStartDate(), request.plannedEndDate());
 
         String number = generateContractNumber();
@@ -75,6 +86,7 @@ public class ContractService {
         BigDecimal totalWithVat = amount.add(vatAmount);
 
         Contract contract = Contract.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .number(number)
                 .contractDate(request.contractDate())
@@ -104,7 +116,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse updateContract(UUID id, UpdateContractRequest request) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.DRAFT && contract.getStatus() != ContractStatus.REJECTED) {
             throw new IllegalStateException(
@@ -124,6 +137,7 @@ public class ContractService {
             contract.setPartnerName(request.partnerName());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             contract.setProjectId(request.projectId());
         }
         if (request.typeId() != null) {
@@ -177,7 +191,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse changeStatus(UUID id, ChangeContractStatusRequest request) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
         ContractStatus oldStatus = contract.getStatus();
         ContractStatus newStatus = request.status();
 
@@ -203,7 +218,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse submitForApproval(UUID id) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.DRAFT && contract.getStatus() != ContractStatus.REJECTED) {
             throw new IllegalStateException(
@@ -235,7 +251,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse approveContract(UUID id, ApproveContractRequest request) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.ON_APPROVAL
                 && contract.getStatus() != ContractStatus.LAWYER_APPROVED
@@ -272,7 +289,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse rejectContract(UUID id, RejectContractRequest request) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.ON_APPROVAL
                 && contract.getStatus() != ContractStatus.LAWYER_APPROVED
@@ -304,7 +322,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse signContract(UUID id) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.APPROVED) {
             throw new IllegalStateException("Подписать можно только согласованный договор");
@@ -322,7 +341,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse activateContract(UUID id) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.SIGNED) {
             throw new IllegalStateException("Активировать можно только подписанный договор");
@@ -341,7 +361,8 @@ public class ContractService {
 
     @Transactional
     public ContractResponse closeContract(UUID id) {
-        Contract contract = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract contract = getContractOrThrow(id, organizationId);
 
         if (contract.getStatus() != ContractStatus.ACTIVE) {
             throw new IllegalStateException("Закрыть можно только действующий договор");
@@ -360,9 +381,11 @@ public class ContractService {
 
     @Transactional
     public ContractResponse createVersion(UUID id, String comment) {
-        Contract original = getContractOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Contract original = getContractOrThrow(id, organizationId);
 
         Contract newVersion = Contract.builder()
+                .organizationId(organizationId)
                 .name(original.getName())
                 .number(original.getNumber() + "-v" + (original.getDocVersion() + 1))
                 .contractDate(original.getContractDate())
@@ -396,17 +419,20 @@ public class ContractService {
 
     @Transactional(readOnly = true)
     public ContractDashboardResponse getDashboardSummary(UUID projectId) {
-        long totalContracts = contractRepository.countActiveContracts(projectId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
+        long totalContracts = contractRepository.countActiveContractsByOrganizationId(projectId, organizationId);
 
         Map<String, Long> statusCounts = new HashMap<>();
-        List<Object[]> statusData = contractRepository.countByStatusAndProjectId(projectId);
+        List<Object[]> statusData = contractRepository.countByStatusAndProjectIdAndOrganizationId(projectId, organizationId);
         for (Object[] row : statusData) {
             ContractStatus status = (ContractStatus) row[0];
             Long count = (Long) row[1];
             statusCounts.put(status.name(), count);
         }
 
-        BigDecimal totalAmount = contractRepository.sumTotalAmount(projectId);
+        BigDecimal totalAmount = contractRepository.sumTotalAmountByOrganizationId(projectId, organizationId);
 
         return new ContractDashboardResponse(
                 totalContracts,
@@ -417,16 +443,16 @@ public class ContractService {
 
     @Transactional(readOnly = true)
     public List<com.privod.platform.modules.contract.web.dto.ContractApprovalResponse> getApprovals(UUID contractId) {
-        getContractOrThrow(contractId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getContractOrThrow(contractId, organizationId);
         return contractApprovalRepository.findByContractIdOrderByCreatedAtAsc(contractId)
                 .stream()
                 .map(com.privod.platform.modules.contract.web.dto.ContractApprovalResponse::fromEntity)
                 .toList();
     }
 
-    private Contract getContractOrThrow(UUID id) {
-        return contractRepository.findById(id)
-                .filter(c -> !c.isDeleted())
+    private Contract getContractOrThrow(UUID id, UUID organizationId) {
+        return contractRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Договор не найден: " + id));
     }
 
@@ -507,5 +533,18 @@ public class ContractService {
         List<ContractApproval> approvals = contractApprovalRepository
                 .findByContractIdOrderByCreatedAtAsc(contractId);
         return approvals.stream().allMatch(a -> a.getStatus() == ApprovalStatus.APPROVED);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !project.getOrganizationId().equals(organizationId)) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
     }
 }

@@ -11,10 +11,15 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface EquipmentInspectionRepository extends JpaRepository<EquipmentInspection, UUID> {
+
+    Optional<EquipmentInspection> findByIdAndDeletedFalse(UUID id);
+
+    Page<EquipmentInspection> findByVehicleIdInAndDeletedFalse(List<UUID> vehicleIds, Pageable pageable);
 
     Page<EquipmentInspection> findByVehicleIdAndDeletedFalse(UUID vehicleId, Pageable pageable);
 
@@ -27,10 +32,23 @@ public interface EquipmentInspectionRepository extends JpaRepository<EquipmentIn
             @Param("type") InspectionType type,
             @Param("date") LocalDate date);
 
+    @Query("SELECT e FROM EquipmentInspection e WHERE e.deleted = false AND e.vehicleId IN :vehicleIds " +
+            "AND e.inspectionType = :type AND e.inspectionDate = :date")
+    List<EquipmentInspection> findByTypeAndDateAndVehicleIds(
+            @Param("type") InspectionType type,
+            @Param("date") LocalDate date,
+            @Param("vehicleIds") List<UUID> vehicleIds);
+
     @Query("SELECT e FROM EquipmentInspection e WHERE e.deleted = false " +
             "AND e.nextInspectionDate IS NOT NULL " +
             "AND e.nextInspectionDate <= :threshold ORDER BY e.nextInspectionDate ASC")
     List<EquipmentInspection> findUpcomingInspections(@Param("threshold") LocalDate threshold);
+
+    @Query("SELECT e FROM EquipmentInspection e WHERE e.deleted = false AND e.vehicleId IN :vehicleIds " +
+            "AND e.nextInspectionDate IS NOT NULL " +
+            "AND e.nextInspectionDate <= :threshold ORDER BY e.nextInspectionDate ASC")
+    List<EquipmentInspection> findUpcomingInspectionsByVehicleIds(@Param("vehicleIds") List<UUID> vehicleIds,
+                                                                  @Param("threshold") LocalDate threshold);
 
     @Query("SELECT e FROM EquipmentInspection e WHERE e.deleted = false " +
             "AND e.vehicleId = :vehicleId " +

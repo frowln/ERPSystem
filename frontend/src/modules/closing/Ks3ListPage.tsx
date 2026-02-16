@@ -13,6 +13,7 @@ import {
 import { Input } from '@/design-system/components/FormField';
 import { closingApi } from '@/api/closing';
 import { formatMoney, formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { Ks3Document, PaginatedResponse } from '@/types';
 
 type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'SIGNED' | 'CLOSED';
@@ -61,7 +62,7 @@ const Ks3ListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: 'Номер',
+        header: t('closing.ks3.colNumber'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -69,7 +70,7 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         id: 'period',
-        header: 'Период',
+        header: t('closing.ks3.colPeriod'),
         size: 180,
         cell: ({ row }) => (
           <span className="text-neutral-700 dark:text-neutral-300 tabular-nums text-xs">
@@ -79,7 +80,7 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('closing.ks3.colName'),
         size: 280,
         cell: ({ getValue }) => (
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>
@@ -87,7 +88,7 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('closing.ks3.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -99,7 +100,7 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalAmount',
-        header: 'Сумма КС-2',
+        header: t('closing.ks3.colKs2Amount'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -109,7 +110,7 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         accessorKey: 'retentionAmount',
-        header: 'Удержание',
+        header: t('closing.ks3.colRetention'),
         size: 140,
         cell: ({ row }) => (
           <span className="tabular-nums text-right block text-warning-600">
@@ -119,7 +120,7 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         accessorKey: 'netAmount',
-        header: 'Итого к оплате',
+        header: t('closing.ks3.colNetAmount'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="font-semibold tabular-nums text-right block text-success-700">
@@ -129,10 +130,10 @@ const Ks3ListPage: React.FC = () => {
       },
       {
         accessorKey: 'ks2Count',
-        header: 'КС-2',
+        header: t('closing.ks3.colKs2Count'),
         size: 70,
         cell: ({ getValue }) => (
-          <span className="text-neutral-600 text-xs">{getValue<number>()} акт</span>
+          <span className="text-neutral-600 text-xs">{getValue<number>()} {t('closing.ks3.actUnit')}</span>
         ),
       },
     ],
@@ -147,18 +148,18 @@ const Ks3ListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Справки КС-3"
-        subtitle={`${documents.length} справок в системе`}
+        title={t('closing.ks3.title')}
+        subtitle={t('closing.ks3.subtitle', { count: documents.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'КС-3' },
+          { label: t('closing.ks3.breadcrumbHome'), href: '/' },
+          { label: t('closing.ks3.breadcrumbKs3') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновик', count: tabCounts.draft },
-          { id: 'SUBMITTED', label: 'Передан', count: tabCounts.submitted },
-          { id: 'SIGNED', label: 'Подписан', count: tabCounts.signed },
-          { id: 'CLOSED', label: 'Закрыт', count: tabCounts.closed },
+          { id: 'all', label: t('closing.ks3.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('closing.ks3.tabDraft'), count: tabCounts.draft },
+          { id: 'SUBMITTED', label: t('closing.ks3.tabSubmitted'), count: tabCounts.submitted },
+          { id: 'SIGNED', label: t('closing.ks3.tabSigned'), count: tabCounts.signed },
+          { id: 'CLOSED', label: t('closing.ks3.tabClosed'), count: tabCounts.closed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -169,7 +170,7 @@ const Ks3ListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию..."
+            placeholder={t('closing.ks3.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -187,8 +188,8 @@ const Ks3ListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет справок КС-3"
-        emptyDescription="Справки КС-3 формируются на основании актов КС-2"
+        emptyTitle={t('closing.ks3.emptyTitle')}
+        emptyDescription={t('closing.ks3.emptyDescription')}
       />
     </div>
   );

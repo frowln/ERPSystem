@@ -23,8 +23,8 @@ public enum PurchaseRequestStatus {
     public boolean canTransitionTo(PurchaseRequestStatus target) {
         return switch (this) {
             case DRAFT -> target == SUBMITTED || target == CANCELLED;
-            case SUBMITTED -> target == IN_APPROVAL || target == CANCELLED;
-            case IN_APPROVAL -> target == APPROVED || target == REJECTED;
+            case SUBMITTED -> target == IN_APPROVAL || target == APPROVED || target == REJECTED || target == CANCELLED;
+            case IN_APPROVAL -> target == APPROVED || target == REJECTED || target == CANCELLED;
             case APPROVED -> target == ASSIGNED || target == CANCELLED;
             case REJECTED -> target == DRAFT;
             case ASSIGNED -> target == ORDERED || target == CANCELLED;

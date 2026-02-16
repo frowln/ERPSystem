@@ -51,19 +51,19 @@ const severityOptions = [
   { value: 'FATAL', label: t('forms.safetyIncident.severityLevels.fatal') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectHorizon') },
+  { value: '3', label: t('mockData.projectBridge') },
+  { value: '6', label: t('mockData.projectCentral') },
 ];
 
-const reporterOptions = [
+const getReporterOptions = () => [
   { value: '', label: t('forms.safetyIncident.reporterNotSpecified') },
-  { value: 'u1', label: 'Иванов И.И.' },
-  { value: 'u2', label: 'Петров П.П.' },
-  { value: 'u3', label: 'Сидоров С.С.' },
-  { value: 'u4', label: 'Козлов К.К.' },
+  { value: 'u1', label: t('mockData.personIvanovII') },
+  { value: 'u2', label: t('mockData.personPetrovPP') },
+  { value: 'u3', label: t('mockData.personSidorovSS') },
+  { value: 'u4', label: t('mockData.personKozlovKK') },
 ];
 
 
@@ -210,7 +210,7 @@ const SafetyIncidentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.safetyIncident.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.safetyIncident.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -218,7 +218,7 @@ const SafetyIncidentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.safetyIncident.labelReportedBy')} error={errors.reportedById?.message}>
               <Select
-                options={reporterOptions}
+                options={getReporterOptions()}
                 placeholder={t('forms.safetyIncident.placeholderReporter')}
                 hasError={!!errors.reportedById}
                 {...register('reportedById')}

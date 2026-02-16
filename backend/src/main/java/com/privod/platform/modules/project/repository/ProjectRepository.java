@@ -20,14 +20,26 @@ public interface ProjectRepository extends JpaRepository<Project, UUID>, JpaSpec
 
     Optional<Project> findByCode(String code);
 
+    Optional<Project> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
     Page<Project> findByStatusAndDeletedFalse(ProjectStatus status, Pageable pageable);
 
     Page<Project> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
+
+    @Query("SELECT p.id FROM Project p WHERE p.deleted = false AND p.organizationId = :organizationId")
+    List<UUID> findAllIdsByOrganizationIdAndDeletedFalse(@Param("organizationId") UUID organizationId);
 
     @Query("SELECT p FROM Project p WHERE p.deleted = false AND " +
             "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(p.code) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Project> searchByName(@Param("search") String search, Pageable pageable);
+
+    @Query("SELECT p FROM Project p WHERE p.deleted = false AND p.organizationId = :organizationId AND " +
+            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(p.code) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<Project> searchByNameAndOrganizationId(@Param("search") String search,
+                                                @Param("organizationId") UUID organizationId,
+                                                Pageable pageable);
 
     @Query("SELECT p.status, COUNT(p) FROM Project p WHERE p.deleted = false GROUP BY p.status")
     List<Object[]> countByStatus();
@@ -69,6 +81,10 @@ public interface ProjectRepository extends JpaRepository<Project, UUID>, JpaSpec
      */
     @Query("SELECT p.id, p.name FROM Project p WHERE p.id IN :ids AND p.deleted = false")
     List<Object[]> findNamesByIds(@Param("ids") List<UUID> ids);
+
+    @Query("SELECT p.id, p.name FROM Project p WHERE p.id IN :ids AND p.deleted = false AND p.organizationId = :organizationId")
+    List<Object[]> findNamesByIdsAndOrganizationId(@Param("ids") List<UUID> ids,
+                                                   @Param("organizationId") UUID organizationId);
 
     @Query(value = "SELECT nextval('project_code_seq')", nativeQuery = true)
     long getNextCodeSequence();

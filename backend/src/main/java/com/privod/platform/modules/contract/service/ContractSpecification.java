@@ -15,6 +15,13 @@ public final class ContractSpecification {
         return (root, query, cb) -> cb.equal(root.get("deleted"), false);
     }
 
+    public static Specification<Contract> belongsToOrganization(UUID organizationId) {
+        return (root, query, cb) -> {
+            if (organizationId == null) return cb.conjunction();
+            return cb.equal(root.get("organizationId"), organizationId);
+        };
+    }
+
     public static Specification<Contract> hasStatus(ContractStatus status) {
         return (root, query, cb) -> {
             if (status == null) return cb.conjunction();

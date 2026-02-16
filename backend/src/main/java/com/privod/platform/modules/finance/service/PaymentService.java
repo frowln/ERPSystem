@@ -1,6 +1,7 @@
 package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.Contract;
 import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.finance.domain.Payment;
@@ -42,13 +43,23 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public Page<PaymentResponse> listPayments(UUID projectId, PaymentStatus status,
                                                PaymentType paymentType, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Page<Payment> page;
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             page = paymentRepository.findByProjectIdAndDeletedFalse(projectId, pageable);
         } else if (status != null) {
-            page = paymentRepository.findByStatusAndDeletedFalse(status, pageable);
+            List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+            if (projectIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            page = paymentRepository.findByProjectIdInAndStatusAndDeletedFalse(projectIds, status, pageable);
         } else {
-            page = paymentRepository.findAll(pageable);
+            List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+            if (projectIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            page = paymentRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable);
         }
         return enrichPaymentsWithProjectName(page);
     }
@@ -87,12 +98,14 @@ public class PaymentService {
 
     @Transactional(readOnly = true)
     public PaymentResponse getPayment(UUID id) {
-        Payment payment = getPaymentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Payment payment = getPaymentOrThrow(id, organizationId);
         return PaymentResponse.fromEntity(payment);
     }
 
     @Transactional
     public PaymentResponse createPayment(CreatePaymentRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String number = generatePaymentNumber();
 
         BigDecimal amount = request.amount();
@@ -104,21 +117,23 @@ public class PaymentService {
         UUID partnerId = request.partnerId();
         String partnerName = request.partnerName();
         if (request.contractId() != null) {
-            Contract contract = contractRepository.findById(request.contractId())
-                    .filter(c -> !c.isDeleted())
-                    .orElse(null);
-            if (contract != null) {
-                if (projectId == null && contract.getProjectId() != null) {
-                    projectId = contract.getProjectId();
-                }
-                if (partnerId == null && contract.getPartnerId() != null) {
-                    partnerId = contract.getPartnerId();
-                }
-                if (partnerName == null && contract.getPartnerName() != null) {
-                    partnerName = contract.getPartnerName();
-                }
+            Contract contract = contractRepository.findByIdAndOrganizationIdAndDeletedFalse(request.contractId(), organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Договор не найден: " + request.contractId()));
+            if (projectId == null && contract.getProjectId() != null) {
+                projectId = contract.getProjectId();
+            }
+            if (partnerId == null && contract.getPartnerId() != null) {
+                partnerId = contract.getPartnerId();
+            }
+            if (partnerName == null && contract.getPartnerName() != null) {
+                partnerName = contract.getPartnerName();
             }
         }
+
+        if (projectId == null) {
+            throw new IllegalArgumentException("Проект обязателен для платежа");
+        }
+        validateProjectTenant(projectId, organizationId);
 
         Payment payment = Payment.builder()
                 .number(number)
@@ -148,7 +163,8 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponse updatePayment(UUID id, UpdatePaymentRequest request) {
-        Payment payment = getPaymentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Payment payment = getPaymentOrThrow(id, organizationId);
 
         if (payment.getStatus() != PaymentStatus.DRAFT) {
             throw new IllegalStateException("Редактирование платежа возможно только в статусе Черновик");
@@ -158,9 +174,12 @@ public class PaymentService {
             payment.setPaymentDate(request.paymentDate());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             payment.setProjectId(request.projectId());
         }
         if (request.contractId() != null) {
+            contractRepository.findByIdAndOrganizationIdAndDeletedFalse(request.contractId(), organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Договор не найден: " + request.contractId()));
             payment.setContractId(request.contractId());
         }
         if (request.partnerId() != null) {
@@ -200,7 +219,8 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponse approvePayment(UUID id) {
-        Payment payment = getPaymentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Payment payment = getPaymentOrThrow(id, organizationId);
         PaymentStatus oldStatus = payment.getStatus();
 
         if (!payment.canTransitionTo(PaymentStatus.APPROVED)) {
@@ -219,7 +239,8 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponse markPaid(UUID id) {
-        Payment payment = getPaymentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Payment payment = getPaymentOrThrow(id, organizationId);
         PaymentStatus oldStatus = payment.getStatus();
 
         if (!payment.canTransitionTo(PaymentStatus.PAID)) {
@@ -239,7 +260,8 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponse cancelPayment(UUID id) {
-        Payment payment = getPaymentOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Payment payment = getPaymentOrThrow(id, organizationId);
         PaymentStatus oldStatus = payment.getStatus();
 
         if (!payment.canTransitionTo(PaymentStatus.CANCELLED)) {
@@ -257,6 +279,8 @@ public class PaymentService {
 
     @Transactional(readOnly = true)
     public PaymentSummaryResponse getProjectPaymentSummary(UUID projectId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
         long totalPayments = paymentRepository.countByProjectIdAndDeletedFalse(projectId);
         BigDecimal totalIncoming = paymentRepository.sumTotalByProjectIdAndType(projectId, PaymentType.INCOMING);
         BigDecimal totalOutgoing = paymentRepository.sumTotalByProjectIdAndType(projectId, PaymentType.OUTGOING);
@@ -272,10 +296,25 @@ public class PaymentService {
         );
     }
 
-    private Payment getPaymentOrThrow(UUID id) {
-        return paymentRepository.findById(id)
-                .filter(p -> !p.isDeleted())
+    private Payment getPaymentOrThrow(UUID id, UUID organizationId) {
+        Payment payment = paymentRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Платёж не найден: " + id));
+        validateProjectTenant(payment.getProjectId(), organizationId);
+        return payment;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .filter(p -> organizationId.equals(p.getOrganizationId()))
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
     }
 
     private String generatePaymentNumber() {

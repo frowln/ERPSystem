@@ -9,6 +9,7 @@ import com.privod.platform.modules.procurement.web.dto.AssignRequest;
 import com.privod.platform.modules.procurement.web.dto.CreatePurchaseRequestItemRequest;
 import com.privod.platform.modules.procurement.web.dto.CreatePurchaseRequestRequest;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestDashboardResponse;
+import com.privod.platform.modules.procurement.web.dto.PurchaseRequestCountersResponse;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestItemResponse;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestListResponse;
 import com.privod.platform.modules.procurement.web.dto.PurchaseRequestResponse;
@@ -26,6 +27,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,11 +37,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/purchase-requests")
+@RequestMapping({"/api/purchase-requests", "/api/procurement/requests"})
 @RequiredArgsConstructor
 @Tag(name = "Закупки", description = "Управление заявками на закупку")
 public class PurchaseRequestController {
@@ -51,13 +57,31 @@ public class PurchaseRequestController {
     public ResponseEntity<ApiResponse<PageResponse<PurchaseRequestListResponse>>> list(
             @RequestParam(required = false) UUID projectId,
             @RequestParam(required = false) PurchaseRequestStatus status,
+            @RequestParam(required = false) String statuses,
             @RequestParam(required = false) PurchaseRequestPriority priority,
             @RequestParam(required = false) UUID assignedToId,
+            @RequestParam(required = false) UUID requestedById,
+            @RequestParam(required = false) String search,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
+        List<PurchaseRequestStatus> resolvedStatuses = resolveStatuses(statuses, status);
         Page<PurchaseRequestListResponse> page = procurementService.listRequests(
-                projectId, status, priority, assignedToId, pageable);
+                projectId, resolvedStatuses, priority, assignedToId, requestedById, search, pageable);
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
+    }
+
+    @GetMapping("/counters")
+    @Operation(summary = "Получить счётчики вкладок заявок на закупку")
+    public ResponseEntity<ApiResponse<PurchaseRequestCountersResponse>> counters(
+            @RequestParam(required = false) UUID projectId,
+            @RequestParam(required = false) PurchaseRequestPriority priority,
+            @RequestParam(required = false) UUID requestedById,
+            @RequestParam(required = false) String search) {
+
+        PurchaseRequestCountersResponse response = procurementService.getRequestCounters(
+                projectId, priority, search, requestedById
+        );
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @GetMapping("/{id}")
@@ -184,11 +208,38 @@ public class PurchaseRequestController {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
-    @GetMapping("/dashboard/summary")
+    @GetMapping({"/dashboard/summary", "/dashboard"})
     @Operation(summary = "Получить сводку по заявкам на закупку")
     public ResponseEntity<ApiResponse<PurchaseRequestDashboardResponse>> getDashboard(
             @RequestParam(required = false) UUID projectId) {
         PurchaseRequestDashboardResponse response = procurementService.getDashboardSummary(projectId);
         return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    private List<PurchaseRequestStatus> resolveStatuses(String statusesRaw, PurchaseRequestStatus singleStatus) {
+        if (StringUtils.hasText(statusesRaw)) {
+            return Arrays.stream(statusesRaw.split(","))
+                    .map(String::trim)
+                    .filter(StringUtils::hasText)
+                    .map(this::parseStatus)
+                    .distinct()
+                    .toList();
+        }
+        if (singleStatus != null) {
+            return List.of(singleStatus);
+        }
+        return List.of();
+    }
+
+    private PurchaseRequestStatus parseStatus(String rawStatus) {
+        try {
+            return PurchaseRequestStatus.valueOf(rawStatus.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Недопустимый статус заявки: " + rawStatus,
+                    ex
+            );
+        }
     }
 }

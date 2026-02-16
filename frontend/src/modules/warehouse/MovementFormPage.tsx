@@ -30,13 +30,13 @@ const movementSchema = z.object({
 
 type MovementFormData = z.input<typeof movementSchema>;
 
-const materialOptions = [
-  { value: 'm1', label: 'Арматура А500С d12 (кг)' },
-  { value: 'm2', label: 'Бетон В25 (м3)' },
-  { value: 'm3', label: 'Кирпич облицовочный (шт)' },
-  { value: 'm4', label: 'Утеплитель Rockwool 100мм (м2)' },
-  { value: 'm5', label: 'Труба ПНД 110мм (м)' },
-  { value: 'm6', label: 'Кабель ВВГнг 3x2.5 (м)' },
+const getMaterialOptions = () => [
+  { value: 'm1', label: t('mockData.materialRebar') },
+  { value: 'm2', label: t('mockData.materialConcrete') },
+  { value: 'm3', label: t('mockData.materialBrick') },
+  { value: 'm4', label: t('mockData.materialInsulation') },
+  { value: 'm5', label: t('mockData.materialPipe') },
+  { value: 'm6', label: t('mockData.materialCable') },
 ];
 
 const movementTypeOptions = [
@@ -48,19 +48,19 @@ const movementTypeOptions = [
   { value: 'WRITE_OFF', label: t('forms.movement.movementTypes.writeOff') },
 ];
 
-const locationOptions = [
-  { value: 'loc1', label: 'Склад А - Основной' },
-  { value: 'loc2', label: 'Склад Б - Вспомогательный' },
-  { value: 'loc3', label: 'Площадка ЖК "Солнечный"' },
-  { value: 'loc4', label: 'Площадка БЦ "Горизонт"' },
-  { value: 'loc5', label: 'Площадка Мост' },
+const getLocationOptions = () => [
+  { value: 'loc1', label: t('mockData.locationWarehouseA') },
+  { value: 'loc2', label: t('mockData.locationWarehouseB') },
+  { value: 'loc3', label: t('mockData.locationSiteSolnechny') },
+  { value: 'loc4', label: t('mockData.locationSiteHorizon') },
+  { value: 'loc5', label: t('mockData.locationSiteBridge') },
 ];
 
-const responsibleOptions = [
-  { value: 'u1', label: 'Иванов А.С.' },
-  { value: 'u2', label: 'Петров В.К.' },
-  { value: 'u3', label: 'Сидоров М.Н.' },
-  { value: 'u4', label: 'Козлов Д.А.' },
+const getResponsibleOptions = () => [
+  { value: 'u1', label: t('mockData.personIvanovAS') },
+  { value: 'u2', label: t('mockData.personPetrovVK') },
+  { value: 'u3', label: t('mockData.personSidorovMN') },
+  { value: 'u4', label: t('mockData.personKozlovDA') },
 ];
 
 const MovementFormPage: React.FC = () => {
@@ -89,7 +89,7 @@ const MovementFormPage: React.FC = () => {
     mutationFn: (data: MovementFormData) => {
       const parsed = movementSchema.parse(data);
       return warehouseApi.createMovement({
-        number: `ПМ-${Date.now()}`,
+        number: `${t('mockData.movementNumberPrefix')}-${Date.now()}`,
         movementDate: parsed.movementDate,
         movementType: parsed.movementType,
         sourceLocation: parsed.sourceLocation,
@@ -130,7 +130,7 @@ const MovementFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.movement.labelMaterial')} error={errors.materialId?.message} required>
               <Select
-                options={materialOptions}
+                options={getMaterialOptions()}
                 placeholder={t('forms.movement.placeholderMaterial')}
                 hasError={!!errors.materialId}
                 {...register('materialId')}
@@ -164,7 +164,7 @@ const MovementFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.movement.labelFrom')} error={errors.sourceLocation?.message}>
               <Select
-                options={locationOptions}
+                options={getLocationOptions()}
                 placeholder={t('forms.movement.placeholderFrom')}
                 hasError={!!errors.sourceLocation}
                 {...register('sourceLocation')}
@@ -172,7 +172,7 @@ const MovementFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.movement.labelTo')} error={errors.destinationLocation?.message}>
               <Select
-                options={locationOptions}
+                options={getLocationOptions()}
                 placeholder={t('forms.movement.placeholderTo')}
                 hasError={!!errors.destinationLocation}
                 {...register('destinationLocation')}
@@ -186,7 +186,7 @@ const MovementFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.movement.labelResponsible')} error={errors.responsiblePerson?.message} required>
               <Select
-                options={responsibleOptions}
+                options={getResponsibleOptions()}
                 placeholder={t('forms.movement.placeholderResponsible')}
                 hasError={!!errors.responsiblePerson}
                 {...register('responsiblePerson')}

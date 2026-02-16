@@ -18,13 +18,14 @@ import { issuesApi } from '@/api/issues';
 import { formatDateTime, formatRelativeTime } from '@/lib/format';
 import type { Issue, IssueComment } from './types';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
-const statusOptions = [
-  { value: 'OPEN', label: 'Открыт' },
-  { value: 'IN_PROGRESS', label: 'В работе' },
-  { value: 'ON_HOLD', label: 'Приостановлен' },
-  { value: 'RESOLVED', label: 'Решён' },
-  { value: 'CLOSED', label: 'Закрыт' },
+const getStatusOptions = () => [
+  { value: 'OPEN', label: t('issuesPage.detail.statusOpen') },
+  { value: 'IN_PROGRESS', label: t('issuesPage.detail.statusInProgress') },
+  { value: 'ON_HOLD', label: t('issuesPage.detail.statusOnHold') },
+  { value: 'RESOLVED', label: t('issuesPage.detail.statusResolved') },
+  { value: 'CLOSED', label: t('issuesPage.detail.statusClosed') },
 ];
 
 const IssueDetailPage: React.FC = () => {
@@ -47,7 +48,7 @@ const IssueDetailPage: React.FC = () => {
   });
 
   if (isLoading || !issue) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.loading')}</div>;
   }
 
   const currentIssue = issue;
@@ -60,18 +61,18 @@ const IssueDetailPage: React.FC = () => {
       id: `local-${Date.now()}`,
       issueId: id ?? currentIssue.id,
       authorId: 'current-user',
-      authorName: 'Вы',
+      authorName: t('issuesPage.detail.you'),
       content: newComment.trim(),
       createdAt: new Date().toISOString(),
     };
     setLocalComments((prev) => [...prev, newLocalComment]);
-    toast.success('Комментарий добавлен');
+    toast.success(t('issuesPage.detail.toastCommentAdded'));
     setNewComment('');
   };
 
   const handleStatusChange = (newStatus: string) => {
     setStatusOverride(newStatus as Issue['status']);
-    toast.success(`Статус замечания: ${issueStatusLabels[newStatus] ?? newStatus}`);
+    toast.success(t('issuesPage.detail.toastStatusChanged', { status: issueStatusLabels[newStatus] ?? newStatus }));
   };
 
   return (
@@ -79,13 +80,13 @@ const IssueDetailPage: React.FC = () => {
       <PageHeader
         title={`${currentIssue.number}: ${currentIssue.title}`}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Замечания', href: '/issues' },
+          { label: t('issuesPage.detail.breadcrumbHome'), href: '/' },
+          { label: t('issuesPage.detail.breadcrumbIssues'), href: '/issues' },
           { label: currentIssue.number },
         ]}
         actions={
           <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/issues')}>
-            Назад к списку
+            {t('issuesPage.detail.backToList')}
           </Button>
         }
       />
@@ -95,16 +96,16 @@ const IssueDetailPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Описание</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t('issuesPage.detail.sectionDescription')}</h3>
             <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
-              {currentIssue.description ?? 'Описание отсутствует'}
+              {currentIssue.description ?? t('issuesPage.detail.noDescription')}
             </p>
           </div>
 
           {/* Resolution */}
           {currentIssue.resolution && (
             <div className="bg-success-50 rounded-xl border border-success-200 p-6">
-              <h3 className="text-sm font-semibold text-success-800 mb-3">Решение</h3>
+              <h3 className="text-sm font-semibold text-success-800 mb-3">{t('issuesPage.detail.sectionResolution')}</h3>
               <p className="text-sm text-success-700">{currentIssue.resolution}</p>
             </div>
           )}
@@ -112,7 +113,7 @@ const IssueDetailPage: React.FC = () => {
           {/* Comments */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-              Комментарии ({currentComments.length})
+              {t('issuesPage.detail.sectionComments')} ({currentComments.length})
             </h3>
 
             <div className="space-y-4 mb-6">
@@ -137,9 +138,9 @@ const IssueDetailPage: React.FC = () => {
 
             {/* Add comment */}
             <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
-              <FormField label="Добавить комментарий">
+              <FormField label={t('issuesPage.detail.addComment')}>
                 <Textarea
-                  placeholder="Введите комментарий..."
+                  placeholder={t('issuesPage.detail.commentPlaceholder')}
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   rows={3}
@@ -152,7 +153,7 @@ const IssueDetailPage: React.FC = () => {
                   onClick={handleAddComment}
                   disabled={!newComment.trim()}
                 >
-                  Отправить
+                  {t('issuesPage.detail.sendButton')}
                 </Button>
               </div>
             </div>
@@ -163,10 +164,10 @@ const IssueDetailPage: React.FC = () => {
         <div className="space-y-4">
           {/* Status card */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Информация</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('issuesPage.detail.sectionInfo')}</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">Статус</span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelStatus')}</span>
                 <StatusBadge
                   status={effectiveStatus}
                   colorMap={issueStatusColorMap}
@@ -174,7 +175,7 @@ const IssueDetailPage: React.FC = () => {
                 />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">Тип</span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelType')}</span>
                 <StatusBadge
                   status={currentIssue.type}
                   colorMap={issueTypeColorMap}
@@ -182,7 +183,7 @@ const IssueDetailPage: React.FC = () => {
                 />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-neutral-500 dark:text-neutral-400">Приоритет</span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelPriority')}</span>
                 <StatusBadge
                   status={currentIssue.priority}
                   colorMap={issuePriorityColorMap}
@@ -194,27 +195,27 @@ const IssueDetailPage: React.FC = () => {
 
           {/* Details card */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('issuesPage.detail.sectionDetails')}</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-2">
                 <User size={14} className="text-neutral-400 mt-0.5" />
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Автор</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelAuthor')}</p>
                   <p className="text-sm text-neutral-900 dark:text-neutral-100">{currentIssue.reportedByName}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Tag size={14} className="text-neutral-400 mt-0.5" />
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Ответственный</p>
-                  <p className="text-sm text-neutral-900 dark:text-neutral-100">{currentIssue.assignedToName ?? 'Не назначен'}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelAssignee')}</p>
+                  <p className="text-sm text-neutral-900 dark:text-neutral-100">{currentIssue.assignedToName ?? t('issuesPage.detail.notAssigned')}</p>
                 </div>
               </div>
               {currentIssue.projectName && (
                 <div className="flex items-start gap-2">
                   <Building2 size={14} className="text-neutral-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Проект</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelProject')}</p>
                     <p className="text-sm text-neutral-900 dark:text-neutral-100">{currentIssue.projectName}</p>
                   </div>
                 </div>
@@ -222,14 +223,14 @@ const IssueDetailPage: React.FC = () => {
               <div className="flex items-start gap-2">
                 <Clock size={14} className="text-neutral-400 mt-0.5" />
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Срок</p>
-                  <p className="text-sm text-neutral-900 dark:text-neutral-100">{currentIssue.dueDate ? formatDateTime(currentIssue.dueDate) : 'Не установлен'}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelDueDate')}</p>
+                  <p className="text-sm text-neutral-900 dark:text-neutral-100">{currentIssue.dueDate ? formatDateTime(currentIssue.dueDate) : t('issuesPage.detail.notSet')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <Clock size={14} className="text-neutral-400 mt-0.5" />
                 <div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Создано</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelCreated')}</p>
                   <p className="text-sm text-neutral-900 dark:text-neutral-100">{formatDateTime(currentIssue.createdAt)}</p>
                 </div>
               </div>
@@ -237,7 +238,7 @@ const IssueDetailPage: React.FC = () => {
                 <div className="flex items-start gap-2 pt-2 border-t border-neutral-100">
                   <Link2 size={14} className="text-neutral-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Связанные документы</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('issuesPage.detail.labelLinkedDocs')}</p>
                     {currentIssue.linkedRfiId && (
                       <p className="text-sm text-primary-600 cursor-pointer hover:underline">RFI: {currentIssue.linkedRfiId}</p>
                     )}
@@ -252,11 +253,11 @@ const IssueDetailPage: React.FC = () => {
 
           {/* Actions card */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Действия</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('issuesPage.detail.sectionActions')}</h3>
             <div className="space-y-3">
-              <FormField label="Изменить статус">
+              <FormField label={t('issuesPage.detail.changeStatus')}>
                 <Select
-                  options={statusOptions}
+                  options={getStatusOptions()}
                   value={effectiveStatus}
                   onChange={(e) => handleStatusChange(e.target.value)}
                 />

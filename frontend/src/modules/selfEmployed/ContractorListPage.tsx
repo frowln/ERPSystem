@@ -11,6 +11,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { selfEmployedApi } from './api';
 import type { SelfEmployedContractor, ContractorStatus, TaxStatus } from './types';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, string> = {
   ACTIVE: 'green',
@@ -19,12 +20,12 @@ const statusColorMap: Record<string, string> = {
   PENDING: 'yellow',
 };
 
-const statusLabels: Record<ContractorStatus, string> = {
-  ACTIVE: 'Активен',
-  INACTIVE: 'Неактивен',
-  BLOCKED: 'Заблокирован',
-  PENDING: 'Ожидание',
-};
+const getStatusLabels = (): Record<ContractorStatus, string> => ({
+  ACTIVE: t('selfEmployed.contractors.statusActive'),
+  INACTIVE: t('selfEmployed.contractors.statusInactive'),
+  BLOCKED: t('selfEmployed.contractors.statusBlocked'),
+  PENDING: t('selfEmployed.contractors.statusPending'),
+});
 
 const taxStatusColorMap: Record<string, string> = {
   REGISTERED: 'green',
@@ -33,19 +34,19 @@ const taxStatusColorMap: Record<string, string> = {
   REVOKED: 'red',
 };
 
-const taxStatusLabels: Record<TaxStatus, string> = {
-  REGISTERED: 'Зарегистрирован',
-  UNREGISTERED: 'Не зарегистрирован',
-  SUSPENDED: 'Приостановлен',
-  REVOKED: 'Аннулирован',
-};
+const getTaxStatusLabels = (): Record<TaxStatus, string> => ({
+  REGISTERED: t('selfEmployed.contractors.taxStatusRegistered'),
+  UNREGISTERED: t('selfEmployed.contractors.taxStatusUnregistered'),
+  SUSPENDED: t('selfEmployed.contractors.taxStatusSuspended'),
+  REVOKED: t('selfEmployed.contractors.taxStatusRevoked'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'ACTIVE', label: 'Активен' },
-  { value: 'INACTIVE', label: 'Неактивен' },
-  { value: 'BLOCKED', label: 'Заблокирован' },
-  { value: 'PENDING', label: 'Ожидание' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('selfEmployed.contractors.statusAll') },
+  { value: 'ACTIVE', label: t('selfEmployed.contractors.statusActive') },
+  { value: 'INACTIVE', label: t('selfEmployed.contractors.statusInactive') },
+  { value: 'BLOCKED', label: t('selfEmployed.contractors.statusBlocked') },
+  { value: 'PENDING', label: t('selfEmployed.contractors.statusPending') },
 ];
 
 const ContractorListPage: React.FC = () => {
@@ -97,7 +98,7 @@ const ContractorListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'fullName',
-        header: 'ФИО',
+        header: t('selfEmployed.contractors.colFullName'),
         size: 250,
         cell: ({ row }) => (
           <div>
@@ -110,7 +111,7 @@ const ContractorListPage: React.FC = () => {
       },
       {
         accessorKey: 'inn',
-        header: 'ИНН',
+        header: t('selfEmployed.contractors.colInn'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-600 text-xs">{getValue<string>()}</span>
@@ -118,7 +119,7 @@ const ContractorListPage: React.FC = () => {
       },
       {
         accessorKey: 'phone',
-        header: 'Телефон',
+        header: t('selfEmployed.contractors.colPhone'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>() ?? '---'}</span>
@@ -134,25 +135,25 @@ const ContractorListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('selfEmployed.contractors.colStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={statusColorMap}
-            label={statusLabels[getValue<ContractorStatus>()] ?? getValue<string>()}
+            label={getStatusLabels()[getValue<ContractorStatus>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'taxStatus',
-        header: 'Статус НПД',
+        header: t('selfEmployed.contractors.colTaxStatus'),
         size: 160,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={taxStatusColorMap}
-            label={taxStatusLabels[getValue<TaxStatus>()] ?? getValue<string>()}
+            label={getTaxStatusLabels()[getValue<TaxStatus>()] ?? getValue<string>()}
           />
         ),
       },
@@ -168,23 +169,23 @@ const ContractorListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Реестр самозанятых"
-        subtitle={`${contractors.length} исполнителей`}
+        title={t('selfEmployed.contractors.title')}
+        subtitle={t('selfEmployed.contractors.subtitle', { count: String(contractors.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Самозанятые', href: '/self-employed' },
-          { label: 'Исполнители' },
+          { label: t('selfEmployed.contractors.breadcrumbHome'), href: '/' },
+          { label: t('selfEmployed.contractors.breadcrumbSelfEmployed'), href: '/self-employed' },
+          { label: t('selfEmployed.contractors.breadcrumbContractors') },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="secondary" onClick={() => navigate('/self-employed/payments')}>
-              Выплаты
+              {t('selfEmployed.contractors.paymentsBtn')}
             </Button>
             <Button variant="secondary" onClick={() => navigate('/self-employed/registries')}>
-              Реестры
+              {t('selfEmployed.contractors.registriesBtn')}
             </Button>
             <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/self-employed/contractors/new')}>
-              Новый исполнитель
+              {t('selfEmployed.contractors.newContractor')}
             </Button>
           </div>
         }
@@ -195,14 +196,14 @@ const ContractorListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по ФИО, ИНН..."
+            placeholder={t('selfEmployed.contractors.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -222,24 +223,24 @@ const ContractorListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('selfEmployed.contractors.bulkDelete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} исполнител(ей)?`,
-                description: 'Операция необратима. Выбранные карточки исполнителей будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('selfEmployed.contractors.deleteConfirmTitle', { count: String(ids.length) }),
+                description: t('selfEmployed.contractors.deleteConfirmDescription'),
+                confirmLabel: t('selfEmployed.contractors.deleteConfirmLabel'),
+                cancelLabel: t('selfEmployed.contractors.deleteConfirmCancel'),
               });
               if (!isConfirmed) return;
               deleteMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет исполнителей"
-        emptyDescription="Добавьте первого самозанятого исполнителя"
+        emptyTitle={t('selfEmployed.contractors.emptyTitle')}
+        emptyDescription={t('selfEmployed.contractors.emptyDescription')}
       />
     </div>
   );

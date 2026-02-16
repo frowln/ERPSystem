@@ -29,14 +29,24 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, UUID>,
             "(:projectId IS NULL OR t.projectId = :projectId) GROUP BY t.status")
     List<Object[]> countByStatusAndProjectId(@Param("projectId") UUID projectId);
 
+    @Query("SELECT t.status, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId IN :projectIds GROUP BY t.status")
+    List<Object[]> countByStatusAndProjectIdIn(@Param("projectIds") List<UUID> projectIds);
+
     @Query("SELECT t.priority, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND " +
             "(:projectId IS NULL OR t.projectId = :projectId) GROUP BY t.priority")
     List<Object[]> countByPriorityAndProjectId(@Param("projectId") UUID projectId);
+
+    @Query("SELECT t.priority, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId IN :projectIds GROUP BY t.priority")
+    List<Object[]> countByPriorityAndProjectIdIn(@Param("projectIds") List<UUID> projectIds);
 
     @Query("SELECT t.assigneeName, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND " +
             "t.assigneeName IS NOT NULL AND " +
             "(:projectId IS NULL OR t.projectId = :projectId) GROUP BY t.assigneeName")
     List<Object[]> countByAssigneeAndProjectId(@Param("projectId") UUID projectId);
+
+    @Query("SELECT t.assigneeName, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND " +
+            "t.assigneeName IS NOT NULL AND t.projectId IN :projectIds GROUP BY t.assigneeName")
+    List<Object[]> countByAssigneeAndProjectIdIn(@Param("projectIds") List<UUID> projectIds);
 
     @Query("SELECT t FROM ProjectTask t WHERE t.deleted = false AND " +
             "(:projectId IS NULL OR t.projectId = :projectId) AND " +
@@ -45,9 +55,19 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, UUID>,
                                        @Param("today") LocalDate today,
                                        @Param("excludeStatuses") List<TaskStatus> excludeStatuses);
 
+    @Query("SELECT t FROM ProjectTask t WHERE t.deleted = false AND " +
+            "t.projectId IN :projectIds AND " +
+            "t.plannedEndDate < :today AND t.status NOT IN :excludeStatuses")
+    List<ProjectTask> findOverdueTasksByProjectIds(@Param("projectIds") List<UUID> projectIds,
+                                                   @Param("today") LocalDate today,
+                                                   @Param("excludeStatuses") List<TaskStatus> excludeStatuses);
+
     @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND " +
             "(:projectId IS NULL OR t.projectId = :projectId)")
     long countActiveTasks(@Param("projectId") UUID projectId);
+
+    @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId IN :projectIds")
+    long countActiveTasksByProjectIds(@Param("projectIds") List<UUID> projectIds);
 
     @Query(value = "SELECT nextval('task_code_seq')", nativeQuery = true)
     long getNextCodeSequence();

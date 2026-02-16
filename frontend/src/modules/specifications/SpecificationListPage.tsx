@@ -14,6 +14,7 @@ import {
 import { Input } from '@/design-system/components/FormField';
 import { specificationsApi } from '@/api/specifications';
 import { formatMoney, formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { Specification } from '@/types';
 
 type TabId = 'all' | 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'ACTIVE';
@@ -61,7 +62,7 @@ const SpecificationListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('specifications.colName'),
         size: 300,
         cell: ({ row }) => (
           <div>
@@ -74,7 +75,7 @@ const SpecificationListPage: React.FC = () => {
       },
       {
         accessorKey: 'projectName',
-        header: 'Проект',
+        header: t('specifications.colProject'),
         size: 200,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>()}</span>
@@ -82,7 +83,7 @@ const SpecificationListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('specifications.colStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -94,7 +95,7 @@ const SpecificationListPage: React.FC = () => {
       },
       {
         accessorKey: 'version',
-        header: 'Версия',
+        header: t('specifications.colVersion'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">v{getValue<number>()}</span>
@@ -102,7 +103,7 @@ const SpecificationListPage: React.FC = () => {
       },
       {
         accessorKey: 'itemCount',
-        header: 'Позиций',
+        header: t('specifications.colItemCount'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{getValue<number>()}</span>
@@ -110,7 +111,7 @@ const SpecificationListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalAmount',
-        header: 'Сумма',
+        header: t('specifications.colAmount'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -120,7 +121,7 @@ const SpecificationListPage: React.FC = () => {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Дата создания',
+        header: t('specifications.colCreatedAt'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -138,23 +139,23 @@ const SpecificationListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Спецификации"
-        subtitle={`${specifications.length} спецификаций в системе`}
+        title={t('specifications.listTitle')}
+        subtitle={t('specifications.listSubtitle', { count: String(specifications.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Спецификации' },
+          { label: t('specifications.breadcrumbHome'), href: '/' },
+          { label: t('specifications.breadcrumbSpecifications') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/specifications/new')}>
-            Новая спецификация
+            {t('specifications.newSpecification')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновик', count: tabCounts.draft },
-          { id: 'IN_REVIEW', label: 'На проверке', count: tabCounts.in_review },
-          { id: 'APPROVED', label: 'Утверждена', count: tabCounts.approved },
-          { id: 'ACTIVE', label: 'Активна', count: tabCounts.active },
+          { id: 'all', label: t('specifications.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('specifications.tabDraft'), count: tabCounts.draft },
+          { id: 'IN_REVIEW', label: t('specifications.tabInReview'), count: tabCounts.in_review },
+          { id: 'APPROVED', label: t('specifications.tabApproved'), count: tabCounts.approved },
+          { id: 'ACTIVE', label: t('specifications.tabActive'), count: tabCounts.active },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -165,7 +166,7 @@ const SpecificationListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, проекту..."
+            placeholder={t('specifications.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -183,8 +184,8 @@ const SpecificationListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет спецификаций"
-        emptyDescription="Создайте первую спецификацию для начала работы"
+        emptyTitle={t('specifications.emptyTitle')}
+        emptyDescription={t('specifications.emptyDescription')}
       />
     </div>
   );

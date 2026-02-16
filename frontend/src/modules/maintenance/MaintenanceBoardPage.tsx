@@ -5,6 +5,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 
 type MntStatus = 'REQUESTED' | 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED';
 
@@ -23,26 +24,27 @@ interface MntCard {
 
 interface BoardColumn { id: MntStatus; title: string; color: string; headerBg: string; collapsed: boolean; }
 
-const defaultColumns: BoardColumn[] = [
-  { id: 'REQUESTED', title: 'Заявка', color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
-  { id: 'SCHEDULED', title: 'Запланировано', color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'IN_PROGRESS', title: 'В работе', color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'COMPLETED', title: 'Завершено', color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
+const getDefaultColumns = (): BoardColumn[] => [
+  { id: 'REQUESTED', title: t('maintenance.boardColumnRequested'), color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
+  { id: 'SCHEDULED', title: t('maintenance.boardColumnScheduled'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
+  { id: 'IN_PROGRESS', title: t('maintenance.boardColumnInProgress'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
+  { id: 'COMPLETED', title: t('maintenance.boardColumnCompleted'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
 ];
 
-const priorityLabels: Record<string, string> = { low: 'Низкий', normal: 'Обычный', high: 'Высокий', critical: 'Критический' };
+const getPriorityLabels = (): Record<string, string> => ({ low: t('maintenance.boardPriorityLow'), normal: t('maintenance.boardPriorityNormal'), high: t('maintenance.boardPriorityHigh'), critical: t('maintenance.boardPriorityCritical') });
 const priorityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600', normal: 'bg-blue-100 text-blue-700', high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700' };
 
 const MaintenanceBoardPage: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<MntCard[]>([]);
-  const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
+  const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverCol, setDragOverCol] = useState<MntStatus | null>(null);
 
+  const priorityLabels = getPriorityLabels();
   const filtered = useMemo(() => { let r = items; if (filterStatus) r = r.filter((i) => i.status === filterStatus); if (searchQuery) { const q = searchQuery.toLowerCase(); r = r.filter((i) => i.title.toLowerCase().includes(q) || i.code.toLowerCase().includes(q) || i.equipmentName.toLowerCase().includes(q)); } return r; }, [items, filterStatus, searchQuery]);
   const byColumn = useMemo(() => { const m: Record<string, MntCard[]> = {}; for (const c of columns) m[c.id] = filtered.filter((i) => i.status === c.id); return m; }, [filtered, columns]);
   const hasFilters = !!(filterStatus || searchQuery);
@@ -52,14 +54,16 @@ const MaintenanceBoardPage: React.FC = () => {
   const onDragEnd = useCallback(() => { setDraggedId(null); setDragOverCol(null); }, []);
   const toggleCol = useCallback((id: MntStatus) => { setColumns((p) => p.map((c) => (c.id === id ? { ...c, collapsed: !c.collapsed } : c))); }, []);
 
+  const allStatusOptions = columns.map((c) => ({ value: c.id, label: c.title }));
+
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
-      <PageHeader title="Обслуживание - Доска" subtitle={`${items.length} заявок`} breadcrumbs={[{ label: 'Главная', href: '/' }, { label: 'Обслуживание', href: '/maintenance/requests' }, { label: 'Доска' }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>Фильтры</Button><Button iconLeft={<Plus size={16} />}>Новая заявка</Button></div>} />
+      <PageHeader title={t('maintenance.boardTitle')} subtitle={t('maintenance.boardRequestsCount', { count: items.length })} breadcrumbs={[{ label: t('maintenance.breadcrumbHome'), href: '/' }, { label: t('maintenance.breadcrumbMaintenance'), href: '/maintenance/requests' }, { label: t('maintenance.boardBreadcrumb') }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>{t('maintenance.boardFilters')}</Button><Button iconLeft={<Plus size={16} />}>{t('maintenance.boardNewRequest')}</Button></div>} />
       {showFilters && (
         <div className="flex items-center gap-3 mb-4 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 animate-fade-in">
-          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder="Поиск..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
-          <Select options={[{ value: '', label: 'Все статусы' }, ...defaultColumns.map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
-          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>Сбросить</Button>}
+          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder={t('maintenance.boardSearch')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
+          <Select options={[{ value: '', label: t('maintenance.filterAllStatuses') }, ...allStatusOptions]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
+          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>{t('maintenance.boardReset')}</Button>}
         </div>
       )}
       <div className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 260px)' }}>
@@ -74,7 +78,7 @@ const MaintenanceBoardPage: React.FC = () => {
               </div>
               {!col.collapsed && (
                 <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[100px]">
-                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">Нет заявок</p><p className="text-[10px] text-neutral-300 mt-0.5">Перетащите карточку сюда</p></div>) : colItems.map((item) => (
+                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">{t('maintenance.boardNoRequests')}</p><p className="text-[10px] text-neutral-300 mt-0.5">{t('maintenance.boardDragHint')}</p></div>) : colItems.map((item) => (
                     <div key={item.id} draggable onDragStart={(e) => onDragStart(e, item.id)} onClick={() => navigate(`/maintenance/requests`)} className={cn('bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 cursor-pointer hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-600 transition-all', draggedId === item.id && 'opacity-50 shadow-lg')}>
                       <div className="flex items-center justify-between mb-1.5"><span className="text-[10px] font-mono text-neutral-400">{item.code}</span><span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-medium', priorityColors[item.priority])}>{priorityLabels[item.priority]}</span></div>
                       <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-2 line-clamp-2">{item.title}</h4>

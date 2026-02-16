@@ -7,57 +7,58 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { EmptyState } from '@/design-system/components/EmptyState';
 import { dataExchangeApi } from '@/api/dataExchange';
+import { t } from '@/i18n';
 import type { FieldMapping, ImportEntityType } from './types';
 
-const entityTypeLabels: Record<string, string> = {
-  PROJECTS: 'Проекты',
-  CONTRACTS: 'Договоры',
-  MATERIALS: 'Материалы',
-  EMPLOYEES: 'Сотрудники',
-  DOCUMENTS: 'Документы',
-  WBS: 'Структура работ',
-  BUDGET_ITEMS: 'Статьи бюджета',
-  INVOICES: 'Счета',
-};
+const getEntityTypeLabels = (): Record<string, string> => ({
+  PROJECTS: t('dataExchange.entityProjects'),
+  CONTRACTS: t('dataExchange.entityContracts'),
+  MATERIALS: t('dataExchange.entityMaterials'),
+  EMPLOYEES: t('dataExchange.entityEmployees'),
+  DOCUMENTS: t('dataExchange.entityDocuments'),
+  WBS: t('dataExchange.entityWbs'),
+  BUDGET_ITEMS: t('dataExchange.entityBudgetItems'),
+  INVOICES: t('dataExchange.entityInvoices'),
+});
 
-const fallbackMappingsByEntity: Record<ImportEntityType, FieldMapping[]> = {
+const getFallbackMappingsByEntity = (): Record<ImportEntityType, FieldMapping[]> => ({
   MATERIALS: [
-    { sourceColumn: 'Наименование', targetField: 'name', isRequired: true },
-    { sourceColumn: 'Код товара', targetField: 'code', isRequired: true },
-    { sourceColumn: 'Категория', targetField: 'category', isRequired: true, transformation: 'LOOKUP' },
-    { sourceColumn: 'Ед. измерения', targetField: 'unitOfMeasure', isRequired: true },
-    { sourceColumn: 'Цена', targetField: 'currentPrice', isRequired: false, transformation: 'PARSE_NUMBER' },
+    { sourceColumn: t('dataExchange.mappingSourceName'), targetField: 'name', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceProductCode'), targetField: 'code', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceCategory'), targetField: 'category', isRequired: true, transformation: 'LOOKUP' },
+    { sourceColumn: t('dataExchange.mappingSourceUnit'), targetField: 'unitOfMeasure', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourcePrice'), targetField: 'currentPrice', isRequired: false, transformation: 'PARSE_NUMBER' },
   ],
   EMPLOYEES: [
-    { sourceColumn: 'ФИО', targetField: 'fullName', isRequired: true },
-    { sourceColumn: 'Табельный номер', targetField: 'employeeNumber', isRequired: true },
-    { sourceColumn: 'Должность', targetField: 'position', isRequired: true },
-    { sourceColumn: 'Подразделение', targetField: 'departmentName', isRequired: false },
-    { sourceColumn: 'Дата приёма', targetField: 'hireDate', isRequired: true, transformation: 'PARSE_DATE' },
-    { sourceColumn: 'Телефон', targetField: 'phone', isRequired: false },
+    { sourceColumn: t('dataExchange.mappingSourceFullName'), targetField: 'fullName', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceTabNumber'), targetField: 'employeeNumber', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourcePosition'), targetField: 'position', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceDepartment'), targetField: 'departmentName', isRequired: false },
+    { sourceColumn: t('dataExchange.mappingSourceHireDate'), targetField: 'hireDate', isRequired: true, transformation: 'PARSE_DATE' },
+    { sourceColumn: t('dataExchange.mappingSourcePhone'), targetField: 'phone', isRequired: false },
     { sourceColumn: 'Email', targetField: 'EMAIL', isRequired: false },
   ],
   CONTRACTS: [
-    { sourceColumn: 'Номер договора', targetField: 'number', isRequired: true },
-    { sourceColumn: 'Наименование', targetField: 'name', isRequired: true },
-    { sourceColumn: 'Контрагент', targetField: 'partnerName', isRequired: true },
-    { sourceColumn: 'Сумма', targetField: 'amount', isRequired: true, transformation: 'PARSE_NUMBER' },
-    { sourceColumn: 'Дата договора', targetField: 'contractDate', isRequired: true, transformation: 'PARSE_DATE' },
+    { sourceColumn: t('dataExchange.mappingSourceContractNumber'), targetField: 'number', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceName'), targetField: 'name', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceContractor'), targetField: 'partnerName', isRequired: true },
+    { sourceColumn: t('dataExchange.mappingSourceAmount'), targetField: 'amount', isRequired: true, transformation: 'PARSE_NUMBER' },
+    { sourceColumn: t('dataExchange.mappingSourceContractDate'), targetField: 'contractDate', isRequired: true, transformation: 'PARSE_DATE' },
   ],
   PROJECTS: [],
   DOCUMENTS: [],
   WBS: [],
   BUDGET_ITEMS: [],
   INVOICES: [],
-};
+});
 
-const transformationLabels: Record<string, string> = {
-  PARSE_DATE: 'Парсинг даты',
-  PARSE_NUMBER: 'Парсинг числа',
-  LOOKUP: 'Справочник',
-  UPPERCASE: 'Верхний регистр',
-  TRIM: 'Обрезка пробелов',
-};
+const getTransformationLabels = (): Record<string, string> => ({
+  PARSE_DATE: t('dataExchange.transformationParseDate'),
+  PARSE_NUMBER: t('dataExchange.transformationParseNumber'),
+  LOOKUP: t('dataExchange.transformationLookup'),
+  UPPERCASE: t('dataExchange.transformationUppercase'),
+  TRIM: t('dataExchange.transformationTrim'),
+});
 
 const MappingConfigPage: React.FC = () => {
   const [selectedEntity, setSelectedEntity] = useState<ImportEntityType>('MATERIALS');
@@ -68,7 +69,7 @@ const MappingConfigPage: React.FC = () => {
     queryFn: () => dataExchangeApi.getFieldMappings(selectedEntity),
   });
 
-  const currentMappings = editedMappings ?? mappings ?? fallbackMappingsByEntity[selectedEntity] ?? [];
+  const currentMappings = editedMappings ?? mappings ?? getFallbackMappingsByEntity()[selectedEntity] ?? [];
 
   const stats = useMemo(() => ({
     total: currentMappings.length,
@@ -99,20 +100,20 @@ const MappingConfigPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Настройка маппинга полей"
-        subtitle="Соответствие колонок импорта и полей системы"
+        title={t('dataExchange.mappingTitle')}
+        subtitle={t('dataExchange.mappingSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обмен данными', href: '/data-exchange' },
-          { label: 'Маппинг' },
+          { label: t('dataExchange.breadcrumbHome'), href: '/' },
+          { label: t('dataExchange.breadcrumbDataExchange'), href: '/data-exchange' },
+          { label: t('dataExchange.breadcrumbMapping') },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="outline" iconLeft={<RefreshCw size={16} />} onClick={() => setEditedMappings(null)}>
-              Сбросить
+              {t('dataExchange.resetButton')}
             </Button>
             <Button iconLeft={<Save size={16} />}>
-              Сохранить
+              {t('dataExchange.saveButton')}
             </Button>
           </div>
         }
@@ -120,13 +121,13 @@ const MappingConfigPage: React.FC = () => {
 
       {/* Entity selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Table2 size={18} />} label="Полей маппинга" value={stats.total} />
-        <MetricCard icon={<Database size={18} />} label="Обязательных" value={stats.required} />
-        <MetricCard icon={<Settings size={18} />} label="С трансформацией" value={stats.withTransformation} />
+        <MetricCard icon={<Table2 size={18} />} label={t('dataExchange.metricMappingFields')} value={stats.total} />
+        <MetricCard icon={<Database size={18} />} label={t('dataExchange.metricRequired')} value={stats.required} />
+        <MetricCard icon={<Settings size={18} />} label={t('dataExchange.metricWithTransformation')} value={stats.withTransformation} />
         <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
-          <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-2">Тип сущности</label>
+          <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-2">{t('dataExchange.entityTypeLabel')}</label>
           <Select
-            options={Object.entries(entityTypeLabels).map(([value, label]) => ({ value, label }))}
+            options={Object.entries(getEntityTypeLabels()).map(([value, label]) => ({ value, label }))}
             value={selectedEntity}
             onChange={(e) => handleEntityChange(e.target.value as ImportEntityType)}
           />
@@ -137,27 +138,27 @@ const MappingConfigPage: React.FC = () => {
       <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-            Маппинг: {entityTypeLabels[selectedEntity]}
+            {t('dataExchange.mappingTableTitle', { entity: getEntityTypeLabels()[selectedEntity] })}
           </h3>
           <Button variant="outline" size="sm" iconLeft={<Plus size={14} />} onClick={handleAddMapping}>
-            Добавить поле
+            {t('dataExchange.addFieldButton')}
           </Button>
         </div>
 
         {currentMappings.length === 0 ? (
           <EmptyState
-            title="Нет настроенного маппинга"
-            description={`Добавьте соответствие полей для типа "${entityTypeLabels[selectedEntity]}"`}
+            title={t('dataExchange.emptyMappingTitle')}
+            description={t('dataExchange.emptyMappingDescription', { entity: getEntityTypeLabels()[selectedEntity] })}
           />
         ) : (
           <div className="space-y-2">
             {/* Header */}
             <div className="grid grid-cols-12 gap-3 px-3 py-2 text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
-              <div className="col-span-3">Колонка файла</div>
+              <div className="col-span-3">{t('dataExchange.headerSourceColumn')}</div>
               <div className="col-span-1 flex justify-center"><ArrowRight size={14} /></div>
-              <div className="col-span-3">Поле системы</div>
-              <div className="col-span-2">Трансформация</div>
-              <div className="col-span-2">Обязательное</div>
+              <div className="col-span-3">{t('dataExchange.headerTargetField')}</div>
+              <div className="col-span-2">{t('dataExchange.headerTransformation')}</div>
+              <div className="col-span-2">{t('dataExchange.headerRequired')}</div>
               <div className="col-span-1"></div>
             </div>
 
@@ -170,7 +171,7 @@ const MappingConfigPage: React.FC = () => {
                   <Input
                     value={mapping.sourceColumn}
                     onChange={(e) => handleUpdateMapping(index, 'sourceColumn', e.target.value)}
-                    placeholder="Название колонки"
+                    placeholder={t('dataExchange.placeholderSourceColumn')}
                     className="text-sm"
                   />
                 </div>
@@ -181,15 +182,15 @@ const MappingConfigPage: React.FC = () => {
                   <Input
                     value={mapping.targetField}
                     onChange={(e) => handleUpdateMapping(index, 'targetField', e.target.value)}
-                    placeholder="Поле в системе"
+                    placeholder={t('dataExchange.placeholderTargetField')}
                     className="text-sm font-mono"
                   />
                 </div>
                 <div className="col-span-2">
                   <Select
                     options={[
-                      { value: '', label: 'Нет' },
-                      ...Object.entries(transformationLabels).map(([value, label]) => ({ value, label })),
+                      { value: '', label: t('dataExchange.transformationNone') },
+                      ...Object.entries(getTransformationLabels()).map(([value, label]) => ({ value, label })),
                     ]}
                     value={mapping.transformation ?? ''}
                     onChange={(e) => handleUpdateMapping(index, 'transformation', e.target.value)}
@@ -204,7 +205,7 @@ const MappingConfigPage: React.FC = () => {
                     className="rounded border-neutral-300 dark:border-neutral-600"
                   />
                   <span className="text-sm text-neutral-600">
-                    {mapping.isRequired ? 'Да' : 'Нет'}
+                    {mapping.isRequired ? t('dataExchange.requiredYes') : t('dataExchange.requiredNo')}
                   </span>
                 </div>
                 <div className="col-span-1 flex justify-end">
@@ -223,12 +224,12 @@ const MappingConfigPage: React.FC = () => {
 
         {/* Help text */}
         <div className="mt-6 rounded-lg bg-blue-50 border border-blue-200 p-4">
-          <h4 className="text-sm font-medium text-blue-800 mb-1">Подсказка</h4>
+          <h4 className="text-sm font-medium text-blue-800 mb-1">{t('dataExchange.helpTitle')}</h4>
           <ul className="text-sm text-blue-700 space-y-1">
-            <li>Колонка файла -- название столбца в загружаемом CSV/XLSX файле</li>
-            <li>Поле системы -- техническое имя поля в базе данных</li>
-            <li>Трансформации: PARSE_DATE конвертирует строки дат, PARSE_NUMBER -- числа, LOOKUP ищет по справочнику</li>
-            <li>Обязательные поля вызовут ошибку при отсутствии значения</li>
+            <li>{t('dataExchange.helpSourceColumn')}</li>
+            <li>{t('dataExchange.helpTargetField')}</li>
+            <li>{t('dataExchange.helpTransformations')}</li>
+            <li>{t('dataExchange.helpRequired')}</li>
           </ul>
         </div>
       </div>

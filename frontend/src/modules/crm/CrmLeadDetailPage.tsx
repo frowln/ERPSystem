@@ -27,19 +27,20 @@ import {
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { formatDateLong, formatMoney, formatMoneyCompact, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { CrmLead, CrmActivity as CrmActivityType } from './types';
 
-const stageFlow = [
-  { status: 'NEW', label: 'Новый' },
-  { status: 'QUALIFIED', label: 'Квалификация' },
-  { status: 'PROPOSITION', label: 'Предложение' },
-  { status: 'NEGOTIATION', label: 'Переговоры' },
-  { status: 'WON', label: 'Выиграно' },
+const getStageFlow = () => [
+  { status: 'NEW', label: t('crm.detail.stageNew') },
+  { status: 'QUALIFIED', label: t('crm.detail.stageQualified') },
+  { status: 'PROPOSITION', label: t('crm.detail.stageProposition') },
+  { status: 'NEGOTIATION', label: t('crm.detail.stageNegotiation') },
+  { status: 'WON', label: t('crm.detail.stageWon') },
 ];
 
-const activityTypeLabels: Record<string, string> = {
-  call: 'Звонок', email: 'Email', meeting: 'Встреча', note: 'Заметка', task: 'Задача', presentation: 'Презентация',
-};
+const getActivityTypeLabels = (): Record<string, string> => ({
+  call: t('crm.detail.activityCall'), email: 'Email', meeting: t('crm.detail.activityMeeting'), note: t('crm.detail.activityNote'), task: t('crm.detail.activityTask'), presentation: t('crm.detail.activityPresentation'),
+});
 
 const activityTypeIcons: Record<string, string> = {
   call: 'text-green-500', email: 'text-blue-500', meeting: 'text-purple-500',
@@ -79,7 +80,7 @@ const CrmLeadDetailPage: React.FC = () => {
       <div className="animate-fade-in flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Загрузка лида...</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('crm.detail.loading')}</p>
         </div>
       </div>
     );
@@ -89,23 +90,25 @@ const CrmLeadDetailPage: React.FC = () => {
 
   const statusActions = useMemo(() => {
     switch (l.status) {
-      case 'NEW': return [{ label: 'Квалифицировать', targetStatus: 'QUALIFIED' }];
+      case 'NEW': return [{ label: t('crm.detail.actionQualify'), targetStatus: 'QUALIFIED' }];
       case 'QUALIFIED': return [
-        { label: 'Подготовить предложение', targetStatus: 'PROPOSITION' },
-        { label: 'Потеряно', targetStatus: 'LOST' },
+        { label: t('crm.detail.actionPrepareProposal'), targetStatus: 'PROPOSITION' },
+        { label: t('crm.detail.actionLost'), targetStatus: 'LOST' },
       ];
       case 'PROPOSITION': return [
-        { label: 'Перейти к переговорам', targetStatus: 'NEGOTIATION' },
-        { label: 'Потеряно', targetStatus: 'LOST' },
+        { label: t('crm.detail.actionGoToNegotiation'), targetStatus: 'NEGOTIATION' },
+        { label: t('crm.detail.actionLost'), targetStatus: 'LOST' },
       ];
       case 'NEGOTIATION': return [
-        { label: 'Выиграно', targetStatus: 'WON' },
-        { label: 'Потеряно', targetStatus: 'LOST' },
+        { label: t('crm.detail.actionWon'), targetStatus: 'WON' },
+        { label: t('crm.detail.actionLost'), targetStatus: 'LOST' },
       ];
       default: return [];
     }
   }, [l.status]);
 
+  const stageFlow = getStageFlow();
+  const activityTypeLabels = getActivityTypeLabels();
   const currentStepIndex = stageFlow.findIndex((s) => s.status === l.status);
 
   const pendingActivities = activityList.filter((a) => !a.isDone);
@@ -118,8 +121,8 @@ const CrmLeadDetailPage: React.FC = () => {
         subtitle={`${l.number} / ${l.companyName ?? l.contactName}`}
         backTo="/crm/leads"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'CRM', href: '/crm/leads' },
+          { label: t('crm.detail.breadcrumbHome'), href: '/' },
+          { label: t('crm.detail.breadcrumbCrm'), href: '/crm/leads' },
           { label: l.number },
         ]}
         actions={
@@ -152,7 +155,7 @@ const CrmLeadDetailPage: React.FC = () => {
 
       {/* Stage flow */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Воронка продаж</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.salesPipeline')}</h3>
         <div className="flex items-center gap-2">
           {stageFlow.map((step, idx) => {
             const isCompleted = idx < currentStepIndex;
@@ -188,10 +191,10 @@ const CrmLeadDetailPage: React.FC = () => {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<DollarSign size={18} />} label="Ожидаемая выручка" value={l.expectedRevenue ? formatMoneyCompact(l.expectedRevenue) : '---'} />
-        <MetricCard icon={<Activity size={18} />} label="Вероятность" value={l.probability != null ? formatPercent(l.probability) : '---'} />
-        <MetricCard icon={<Clock size={18} />} label="Активностей" value={l.activityCount} />
-        <MetricCard icon={<Calendar size={18} />} label="Дата закрытия" value={formatDateLong(l.expectedCloseDate)} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('crm.detail.metricExpectedRevenue')} value={l.expectedRevenue ? formatMoneyCompact(l.expectedRevenue) : '---'} />
+        <MetricCard icon={<Activity size={18} />} label={t('crm.detail.metricProbability')} value={l.probability != null ? formatPercent(l.probability) : '---'} />
+        <MetricCard icon={<Clock size={18} />} label={t('crm.detail.metricActivities')} value={l.activityCount} />
+        <MetricCard icon={<Calendar size={18} />} label={t('crm.detail.metricCloseDate')} value={formatDateLong(l.expectedCloseDate)} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -201,10 +204,10 @@ const CrmLeadDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <FileText size={16} className="text-primary-500" />
-              Описание
+              {t('crm.detail.description')}
             </h3>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
-              {l.description ?? 'Описание не заполнено'}
+              {l.description ?? t('crm.detail.noDescription')}
             </div>
           </div>
 
@@ -213,14 +216,14 @@ const CrmLeadDetailPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
                 <Clock size={16} className="text-warning-500" />
-                Предстоящие действия ({pendingActivities.length})
+                {t('crm.detail.upcomingActivities')} ({pendingActivities.length})
               </h3>
               <Button variant="secondary" size="sm" onClick={() => navigate(`/crm/leads/${id}/activities/new`)}>
-                Запланировать
+                {t('crm.detail.schedule')}
               </Button>
             </div>
             {pendingActivities.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Нет запланированных действий</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('crm.detail.noPendingActivities')}</p>
             ) : (
               <div className="space-y-2">
                 {pendingActivities.map((act) => (
@@ -244,10 +247,10 @@ const CrmLeadDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <CheckCircle size={16} className="text-success-500" />
-              Выполненные действия ({completedActivities.length})
+              {t('crm.detail.completedActivities')} ({completedActivities.length})
             </h3>
             {completedActivities.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Нет выполненных действий</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('crm.detail.noCompletedActivities')}</p>
             ) : (
               <div className="space-y-2">
                 {completedActivities.map((act) => (
@@ -272,38 +275,38 @@ const CrmLeadDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Контакт</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.contact')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Контактное лицо" value={l.contactName} />
-              <InfoItem icon={<Building2 size={15} />} label="Компания" value={l.companyName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('crm.detail.contactPerson')} value={l.contactName} />
+              <InfoItem icon={<Building2 size={15} />} label={t('crm.detail.company')} value={l.companyName ?? '---'} />
               <InfoItem icon={<Mail size={15} />} label="Email" value={l.contactEmail ?? '---'} />
-              <InfoItem icon={<Phone size={15} />} label="Телефон" value={l.contactPhone ?? '---'} />
+              <InfoItem icon={<Phone size={15} />} label={t('crm.detail.phone')} value={l.contactPhone ?? '---'} />
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.details')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Ответственный" value={l.assignedToName ?? '---'} />
-              <InfoItem icon={<User size={15} />} label="Команда" value={l.teamName ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Источник" value={l.source ?? '---'} />
-              <InfoItem icon={<Calendar size={15} />} label="Создано" value={formatDateLong(l.createdAt)} />
-              <InfoItem icon={<Calendar size={15} />} label="Обновлено" value={formatDateLong(l.updatedAt)} />
+              <InfoItem icon={<User size={15} />} label={t('crm.detail.assignee')} value={l.assignedToName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('crm.detail.team')} value={l.teamName ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('crm.detail.source')} value={l.source ?? '---'} />
+              <InfoItem icon={<Calendar size={15} />} label={t('crm.detail.created')} value={formatDateLong(l.createdAt)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('crm.detail.updated')} value={formatDateLong(l.updatedAt)} />
             </div>
           </div>
 
           {/* Financial */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Финансы</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.finances')}</h3>
             <div className="space-y-3">
               <div className="p-3 bg-primary-50 rounded-lg border border-primary-100">
-                <p className="text-xs font-medium text-primary-600 mb-1">Ожидаемая выручка</p>
+                <p className="text-xs font-medium text-primary-600 mb-1">{t('crm.detail.expectedRevenue')}</p>
                 <p className="text-lg font-bold text-primary-700 tabular-nums">
                   {l.expectedRevenue ? formatMoney(l.expectedRevenue) : '---'}
                 </p>
               </div>
               <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-100">
-                <p className="text-xs font-medium text-neutral-600 mb-1">Вероятность закрытия</p>
+                <p className="text-xs font-medium text-neutral-600 mb-1">{t('crm.detail.closeProbability')}</p>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden">
                     <div
@@ -319,13 +322,13 @@ const CrmLeadDetailPage: React.FC = () => {
 
           {/* Actions */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Действия</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.actions')}</h3>
             <div className="space-y-2">
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate(`/crm/leads/${id}/activities/new`)}>
-                Добавить активность
+                {t('crm.detail.addActivity')}
               </Button>
               <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => window.open(`/api/crm/leads/${id}/export?format=pdf`, '_blank')}>
-                Экспорт в PDF
+                {t('crm.detail.exportPdf')}
               </Button>
             </div>
           </div>

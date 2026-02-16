@@ -11,17 +11,22 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface WarehouseLocationRepository extends JpaRepository<WarehouseLocation, UUID>,
         JpaSpecificationExecutor<WarehouseLocation> {
 
+    Optional<WarehouseLocation> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
     Page<WarehouseLocation> findByDeletedFalseAndActiveTrue(Pageable pageable);
 
     Page<WarehouseLocation> findByLocationTypeAndDeletedFalse(WarehouseLocationType locationType, Pageable pageable);
 
     List<WarehouseLocation> findByParentIdAndDeletedFalse(UUID parentId);
+
+    List<WarehouseLocation> findByOrganizationIdAndParentIdAndDeletedFalse(UUID organizationId, UUID parentId);
 
     List<WarehouseLocation> findByProjectIdAndDeletedFalse(UUID projectId);
 
@@ -31,4 +36,6 @@ public interface WarehouseLocationRepository extends JpaRepository<WarehouseLoca
     Page<WarehouseLocation> searchByNameOrCode(@Param("search") String search, Pageable pageable);
 
     boolean existsByCodeAndDeletedFalse(String code);
+
+    boolean existsByOrganizationIdAndCodeAndDeletedFalse(UUID organizationId, String code);
 }

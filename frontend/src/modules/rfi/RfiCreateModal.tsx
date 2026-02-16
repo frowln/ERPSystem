@@ -4,6 +4,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { rfiApi } from '@/api/rfi';
+import { t } from '@/i18n';
 import type { CreateRfiRequest } from './types';
 import toast from 'react-hot-toast';
 
@@ -12,13 +13,14 @@ interface RfiCreateModalProps {
   onClose: () => void;
 }
 
-const priorityOptions = [
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getPriorityOptions = () => [
+  { value: 'LOW', label: t('rfi.modalPriorityLow') },
+  { value: 'MEDIUM', label: t('rfi.modalPriorityMedium') },
+  { value: 'HIGH', label: t('rfi.modalPriorityHigh') },
+  { value: 'CRITICAL', label: t('rfi.modalPriorityCritical') },
 ];
 
+// Mock data -- will be replaced by API data
 const assigneeOptions = [
   { value: 'u1', label: 'Иванов А.С.' },
   { value: 'u2', label: 'Петров В.К.' },
@@ -26,6 +28,7 @@ const assigneeOptions = [
   { value: 'u4', label: 'Козлов Д.А.' },
 ];
 
+// Mock data -- will be replaced by API data
 const projectOptions = [
   { value: '1', label: 'ЖК "Солнечный"' },
   { value: '3', label: 'Мост через р. Вятка' },
@@ -46,7 +49,7 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
     mutationFn: (payload: CreateRfiRequest) => rfiApi.createRfi(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rfis'] });
-      toast.success('RFI создан');
+      toast.success(t('rfi.modalCreateSuccess'));
       setSubject('');
       setQuestion('');
       setPriority('MEDIUM');
@@ -57,7 +60,7 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
       onClose();
     },
     onError: () => {
-      toast.error('Не удалось создать RFI');
+      toast.error(t('rfi.modalCreateError'));
     },
   });
 
@@ -79,32 +82,32 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
     <Modal
       open={open}
       onClose={onClose}
-      title="Новый запрос информации (RFI)"
-      description="Заполните информацию для создания нового RFI"
+      title={t('rfi.modalTitle')}
+      description={t('rfi.modalDescription')}
       size="lg"
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
-            Отмена
+            {t('rfi.modalCancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={!subject || !question} loading={createMutation.isPending}>
-            Создать RFI
+            {t('rfi.modalCreate')}
           </Button>
         </>
       }
     >
       <div className="space-y-4">
-        <FormField label="Тема" required>
+        <FormField label={t('rfi.modalLabelSubject')} required>
           <Input
-            placeholder="Краткое описание запроса"
+            placeholder={t('rfi.modalPlaceholderSubject')}
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
         </FormField>
 
-        <FormField label="Вопрос" required>
+        <FormField label={t('rfi.modalLabelQuestion')} required>
           <Textarea
-            placeholder="Подробно опишите ваш вопрос..."
+            placeholder={t('rfi.modalPlaceholderQuestion')}
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             rows={4}
@@ -112,7 +115,7 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Проект" required>
+          <FormField label={t('rfi.modalLabelProject')} required>
             <Select
               options={projectOptions}
               value={projectId}
@@ -120,26 +123,26 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
             />
           </FormField>
 
-          <FormField label="Приоритет" required>
+          <FormField label={t('rfi.modalLabelPriority')} required>
             <Select
-              options={priorityOptions}
+              options={getPriorityOptions()}
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
             />
           </FormField>
 
-          <FormField label="Ответственный">
+          <FormField label={t('rfi.modalLabelAssignee')}>
             <Select
               options={assigneeOptions}
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
-              placeholder="Выберите ответственного"
+              placeholder={t('rfi.modalPlaceholderAssignee')}
             />
           </FormField>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <FormField label="Срок ответа">
+          <FormField label={t('rfi.modalLabelDueDate')}>
             <Input
               type="date"
               value={dueDate}
@@ -147,9 +150,9 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
             />
           </FormField>
 
-          <FormField label="Раздел спецификации">
+          <FormField label={t('rfi.modalLabelSpecSection')}>
             <Input
-              placeholder="Напр. Раздел КР"
+              placeholder={t('rfi.modalPlaceholderSpecSection')}
               value={specSection}
               onChange={(e) => setSpecSection(e.target.value)}
             />

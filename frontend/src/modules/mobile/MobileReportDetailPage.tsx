@@ -10,6 +10,7 @@ import { mobileApi } from '@/api/mobile';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { guardDemoModeAction } from '@/lib/demoMode';
 import type { PhotoCapture } from './types';
+import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 
 const reportStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow'> = {
@@ -19,12 +20,12 @@ const reportStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow'>
   APPROVED: 'green',
 };
 
-const reportStatusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  SUBMITTED: 'Отправлен',
-  REVIEWED: 'На проверке',
-  APPROVED: 'Утверждён',
-};
+const getReportStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('mobileModule.reportDetail.statusDraft'),
+  SUBMITTED: t('mobileModule.reportDetail.statusSubmitted'),
+  REVIEWED: t('mobileModule.reportDetail.statusReviewed'),
+  APPROVED: t('mobileModule.reportDetail.statusApproved'),
+});
 
 const syncStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange'> = {
   SYNCED: 'green',
@@ -33,12 +34,12 @@ const syncStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 
   OFFLINE: 'gray',
 };
 
-const syncStatusLabels: Record<string, string> = {
-  SYNCED: 'Синхронизировано',
-  PENDING: 'Ожидает синхронизации',
-  ERROR: 'Ошибка синхронизации',
-  OFFLINE: 'Офлайн',
-};
+const getSyncStatusLabels = (): Record<string, string> => ({
+  SYNCED: t('mobileModule.reportDetail.syncSynced'),
+  PENDING: t('mobileModule.reportDetail.syncPending'),
+  ERROR: t('mobileModule.reportDetail.syncError'),
+  OFFLINE: t('mobileModule.reportDetail.syncOffline'),
+});
 
 const MobileReportDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -68,10 +69,10 @@ const MobileReportDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mobile-field-report', id] });
       queryClient.invalidateQueries({ queryKey: ['mobile-field-reports'] });
-      toast.success('Отчёт отправлен на проверку');
+      toast.success(t('mobileModule.reportDetail.submitSuccess'));
     },
     onError: () => {
-      toast.error('Не удалось отправить отчёт');
+      toast.error(t('mobileModule.reportDetail.submitError'));
     },
   });
 
@@ -79,8 +80,8 @@ const MobileReportDetailPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Отчёт не найден"
-          subtitle="Некорректный идентификатор отчёта"
+          title={t('mobileModule.reportDetail.notFoundTitle')}
+          subtitle={t('mobileModule.reportDetail.notFoundSubtitle')}
           backTo="/mobile/reports"
         />
       </div>
@@ -92,25 +93,25 @@ const MobileReportDetailPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title={report?.title ?? 'Отчёт с площадки'}
-        subtitle={report?.number ?? 'Детализация мобильного отчёта'}
+        title={report?.title ?? t('mobileModule.reportDetail.defaultTitle')}
+        subtitle={report?.number ?? t('mobileModule.reportDetail.defaultSubtitle')}
         backTo="/mobile/reports"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Мобильное приложение', href: '/mobile/dashboard' },
-          { label: 'Отчёты', href: '/mobile/reports' },
-          { label: report?.number ?? 'Отчёт' },
+          { label: t('mobileModule.reportDetail.breadcrumbHome'), href: '/' },
+          { label: t('mobileModule.reportDetail.breadcrumbMobile'), href: '/mobile/dashboard' },
+          { label: t('mobileModule.reportDetail.breadcrumbReports'), href: '/mobile/reports' },
+          { label: report?.number ?? t('mobileModule.reportDetail.breadcrumbReport') },
         ]}
         actions={
           report && report.status === 'DRAFT' ? (
             <Button
               loading={submitMutation.isPending}
               onClick={() => {
-                if (guardDemoModeAction('Отправка отчёта')) return;
+                if (guardDemoModeAction(t('mobileModule.reportDetail.demoSubmitAction'))) return;
                 submitMutation.mutate();
               }}
             >
-              Отправить на проверку
+              {t('mobileModule.reportDetail.submitForReview')}
             </Button>
           ) : undefined
         }
@@ -118,13 +119,13 @@ const MobileReportDetailPage: React.FC = () => {
 
       {isError && (
         <div className="mb-4 rounded-xl border border-warning-200 bg-warning-50 p-3 text-sm text-warning-800">
-          Не удалось загрузить детали отчёта. Проверьте подключение или попробуйте позже.
+          {t('mobileModule.reportDetail.loadError')}
         </div>
       )}
 
       {!isLoading && !report && !isError && (
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4 text-sm text-neutral-600">
-          Отчёт не найден или недоступен.
+          {t('mobileModule.reportDetail.notFoundOrUnavailable')}
         </div>
       )}
 
@@ -133,71 +134,71 @@ const MobileReportDetailPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <MetricCard
               icon={<CalendarDays size={18} />}
-              label="Дата отчёта"
+              label={t('mobileModule.reportDetail.reportDate')}
               value={formatDate(report.reportDate)}
             />
             <MetricCard
               icon={<Users size={18} />}
-              label="Рабочих на площадке"
+              label={t('mobileModule.reportDetail.workersOnSite')}
               value={report.workersOnSite ?? '---'}
             />
             <MetricCard
               icon={<FileText size={18} />}
-              label="Фото"
+              label={t('mobileModule.reportDetail.photos')}
               value={reportPhotos.length}
             />
             <MetricCard
               icon={<Cloud size={18} />}
-              label="Погода"
+              label={t('mobileModule.reportDetail.weather')}
               value={report.weatherCondition ?? '---'}
             />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Сводка отчёта</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('mobileModule.reportDetail.reportSummary')}</h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Статус</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelStatus')}</span>
                   <StatusBadge
                     status={report.status}
                     colorMap={reportStatusColorMap}
-                    label={reportStatusLabels[report.status] ?? report.status}
+                    label={getReportStatusLabels()[report.status] ?? report.status}
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Синхронизация</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelSync')}</span>
                   <StatusBadge
                     status={report.syncStatus}
                     colorMap={syncStatusColorMap}
-                    label={syncStatusLabels[report.syncStatus] ?? report.syncStatus}
+                    label={getSyncStatusLabels()[report.syncStatus] ?? report.syncStatus}
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Проект</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelProject')}</span>
                   <span className="text-neutral-900 dark:text-neutral-100">{report.projectName ?? '---'}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Автор</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelAuthor')}</span>
                   <span className="text-neutral-900 dark:text-neutral-100">{report.authorName}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Создан</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelCreated')}</span>
                   <span className="text-neutral-900 dark:text-neutral-100">{formatDateTime(report.createdAt)}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Обновлен</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelUpdated')}</span>
                   <span className="text-neutral-900 dark:text-neutral-100">{formatDateTime(report.updatedAt)}</span>
                 </div>
 
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-neutral-500 dark:text-neutral-400">Локация</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelLocation')}</span>
                   <span className="text-neutral-900 dark:text-neutral-100 text-right inline-flex items-center gap-1">
                     <MapPin size={13} />
                     {report.location ?? '---'}
@@ -205,7 +206,7 @@ const MobileReportDetailPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Температура</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.labelTemperature')}</span>
                   <span className="text-neutral-900 dark:text-neutral-100 inline-flex items-center gap-1">
                     <Thermometer size={13} />
                     {report.temperature != null ? `${report.temperature}°C` : '---'}
@@ -215,15 +216,15 @@ const MobileReportDetailPage: React.FC = () => {
             </div>
 
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Описание работ</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('mobileModule.reportDetail.workDescription')}</h3>
               <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
-                {report.description || 'Описание не заполнено'}
+                {report.description || t('mobileModule.reportDetail.noDescription')}
               </p>
 
               <div className="mt-6 pt-4 border-t border-neutral-200 dark:border-neutral-700">
-                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Фотофиксация</h4>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t('mobileModule.reportDetail.photoDocumentation')}</h4>
                 {reportPhotos.length === 0 ? (
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">Фотографии не добавлены</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportDetail.noPhotos')}</p>
                 ) : (
                   <div className="space-y-2">
                     {reportPhotos.map((photo) => (
@@ -235,7 +236,7 @@ const MobileReportDetailPage: React.FC = () => {
                         <StatusBadge
                           status={photo.syncStatus}
                           colorMap={syncStatusColorMap}
-                          label={syncStatusLabels[photo.syncStatus] ?? photo.syncStatus}
+                          label={getSyncStatusLabels()[photo.syncStatus] ?? photo.syncStatus}
                         />
                       </div>
                     ))}
@@ -247,7 +248,7 @@ const MobileReportDetailPage: React.FC = () => {
 
           <div className="mt-6">
             <Button variant="secondary" onClick={() => navigate('/mobile/reports')}>
-              Вернуться к списку
+              {t('mobileModule.reportDetail.backToList')}
             </Button>
           </div>
         </>

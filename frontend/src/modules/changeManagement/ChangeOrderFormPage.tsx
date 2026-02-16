@@ -69,17 +69,17 @@ const getPriorityOptions = () => [
   { value: 'CRITICAL', label: t('forms.changeOrder.priorities.critical') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('forms.changeOrder.projectSolnechny') },
+  { value: '2', label: t('forms.changeOrder.projectGorizont') },
+  { value: '3', label: t('forms.changeOrder.projectBridge') },
+  { value: '6', label: t('forms.changeOrder.projectCentralny') },
 ];
 
-const contractOptions = [
-  { value: 'con1', label: 'Договор СМР-2024/01' },
-  { value: 'con2', label: 'Договор ПИР-2024/05' },
-  { value: 'con3', label: 'Договор ЭМР-2024/12' },
+const getContractOptions = () => [
+  { value: 'con1', label: t('forms.changeOrder.contractSmr') },
+  { value: 'con2', label: t('forms.changeOrder.contractPir') },
+  { value: 'con3', label: t('forms.changeOrder.contractEmr') },
 ];
 
 const ChangeOrderFormPage: React.FC = () => {
@@ -225,7 +225,7 @@ const ChangeOrderFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.changeOrder.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.changeOrder.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -233,7 +233,7 @@ const ChangeOrderFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.changeOrder.labelContract')} error={errors.contractId?.message} required>
               <Select
-                options={contractOptions}
+                options={getContractOptions()}
                 placeholder={t('forms.changeOrder.placeholderContract')}
                 hasError={!!errors.contractId}
                 {...register('contractId')}

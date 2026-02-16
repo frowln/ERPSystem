@@ -24,6 +24,7 @@ import { Textarea } from '@/design-system/components/FormField';
 import { rfiApi } from '@/api/rfi';
 import { formatDateLong, formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { Rfi, RfiResponse } from './types';
 import toast from 'react-hot-toast';
 
@@ -70,9 +71,9 @@ const RfiDetailPage: React.FC = () => {
 
   const statusActions = useMemo(() => {
     switch (effectiveStatus) {
-      case 'DRAFT': return [{ label: 'Отправить', targetStatus: 'OPEN' as const }];
-      case 'OPEN': return [{ label: 'Ответить (официально)', targetStatus: 'ANSWERED' as const }];
-      case 'ANSWERED': return [{ label: 'Закрыть', targetStatus: 'CLOSED' as const }];
+      case 'DRAFT': return [{ label: t('rfi.actionSend'), targetStatus: 'OPEN' as const }];
+      case 'OPEN': return [{ label: t('rfi.actionAnswer'), targetStatus: 'ANSWERED' as const }];
+      case 'ANSWERED': return [{ label: t('rfi.actionClose'), targetStatus: 'CLOSED' as const }];
       default: return [];
     }
   }, [effectiveStatus]);
@@ -83,13 +84,13 @@ const RfiDetailPage: React.FC = () => {
       id: `local-${Date.now()}`,
       rfiId: id ?? r.id,
       authorId: 'current-user',
-      authorName: 'Вы',
+      authorName: t('rfi.detailYou'),
       content: newResponse.trim(),
       isOfficial: false,
       createdAt: new Date().toISOString(),
     };
     setLocalResponses((prev) => [...prev, response]);
-    toast.success('Ответ добавлен');
+    toast.success(t('rfi.detailResponseAdded'));
     setNewResponse('');
   };
 
@@ -100,8 +101,8 @@ const RfiDetailPage: React.FC = () => {
         subtitle={`${r.number} / ${r.projectName}`}
         backTo="/rfis"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'RFI', href: '/rfis' },
+          { label: t('rfi.breadcrumbHome'), href: '/' },
+          { label: t('rfi.breadcrumbRfi'), href: '/rfis' },
           { label: r.number },
         ]}
         actions={
@@ -125,7 +126,7 @@ const RfiDetailPage: React.FC = () => {
                 size="sm"
                 onClick={() => {
                   setStatusOverride(action.targetStatus);
-                  toast.success(`Статус RFI: ${rfiStatusLabels[action.targetStatus] ?? action.targetStatus}`);
+                  toast.success(t('rfi.statusChangeToast', { status: rfiStatusLabels[action.targetStatus] ?? action.targetStatus }));
                 }}
               >
                 {action.label}
@@ -142,7 +143,7 @@ const RfiDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <MessageSquare size={16} className="text-primary-500" />
-              Вопрос
+              {t('rfi.detailQuestion')}
             </h3>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
               {r.question}
@@ -154,14 +155,14 @@ const RfiDetailPage: React.FC = () => {
             <div className="bg-success-50 rounded-xl border border-success-200 p-6">
               <h3 className="text-sm font-semibold text-success-800 mb-4 flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-success-600" />
-                Официальный ответ
+                {t('rfi.detailOfficialAnswer')}
               </h3>
               <div className="text-sm text-success-900 leading-relaxed whitespace-pre-wrap">
                 {r.answer}
               </div>
               {r.answeredDate && (
                 <p className="text-xs text-success-600 mt-3">
-                  Отвечено: {formatDateLong(r.answeredDate)}
+                  {t('rfi.detailAnsweredAt', { date: formatDateLong(r.answeredDate) })}
                 </p>
               )}
             </div>
@@ -170,7 +171,7 @@ const RfiDetailPage: React.FC = () => {
           {/* Response thread */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-              Обсуждение ({rfiResponses.length})
+              {t('rfi.detailDiscussion', { count: String(rfiResponses.length) })}
             </h3>
 
             <div className="space-y-4 mb-6">
@@ -192,7 +193,7 @@ const RfiDetailPage: React.FC = () => {
                       <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{resp.authorName}</span>
                       {resp.isOfficial && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-600 bg-primary-100 px-1.5 py-0.5 rounded">
-                          Официальный
+                          {t('rfi.detailOfficial')}
                         </span>
                       )}
                     </div>
@@ -206,7 +207,7 @@ const RfiDetailPage: React.FC = () => {
             {/* New response input */}
             <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
               <Textarea
-                placeholder="Написать ответ..."
+                placeholder={t('rfi.detailResponsePlaceholder')}
                 value={newResponse}
                 onChange={(e) => setNewResponse(e.target.value)}
                 rows={3}
@@ -218,7 +219,7 @@ const RfiDetailPage: React.FC = () => {
                   onClick={handleSendResponse}
                   disabled={!newResponse.trim()}
                 >
-                  Отправить
+                  {t('rfi.detailSend')}
                 </Button>
               </div>
             </div>
@@ -229,20 +230,20 @@ const RfiDetailPage: React.FC = () => {
         <div className="space-y-6">
           {/* Details */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('rfi.detailDetails')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Создал" value={r.createdByName} />
-              <InfoItem icon={<User size={15} />} label="Ответственный" value={r.assignedToName ?? '---'} />
-              <InfoItem icon={<Calendar size={15} />} label="Создан" value={formatDateLong(r.createdAt)} />
-              <InfoItem icon={<Clock size={15} />} label="Срок ответа" value={formatDateLong(r.dueDate)} />
-              <InfoItem icon={<FileText size={15} />} label="Раздел" value={r.specSection ?? '---'} />
-              <InfoItem icon={<FileText size={15} />} label="Проект" value={r.projectName ?? '---'} />
+              <InfoItem icon={<User size={15} />} label={t('rfi.detailCreatedBy')} value={r.createdByName} />
+              <InfoItem icon={<User size={15} />} label={t('rfi.detailAssignee')} value={r.assignedToName ?? '---'} />
+              <InfoItem icon={<Calendar size={15} />} label={t('rfi.detailCreatedAt')} value={formatDateLong(r.createdAt)} />
+              <InfoItem icon={<Clock size={15} />} label={t('rfi.detailDueDate')} value={formatDateLong(r.dueDate)} />
+              <InfoItem icon={<FileText size={15} />} label={t('rfi.detailSection')} value={r.specSection ?? '---'} />
+              <InfoItem icon={<FileText size={15} />} label={t('rfi.detailProject')} value={r.projectName ?? '---'} />
             </div>
           </div>
 
           {/* Distribution list */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Список рассылки</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('rfi.detailDistributionList')}</h3>
             {r.distributionList.length > 0 ? (
               <div className="space-y-2">
                 {r.distributionList.map((name, idx) => (
@@ -255,7 +256,7 @@ const RfiDetailPage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Список рассылки пуст</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('rfi.detailDistributionEmpty')}</p>
             )}
           </div>
 
@@ -263,7 +264,7 @@ const RfiDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Link2 size={15} />
-              Связанные документы
+              {t('rfi.detailLinkedDocs')}
             </h3>
             {r.linkedDocumentIds.length > 0 ? (
               <div className="space-y-2">
@@ -275,13 +276,13 @@ const RfiDetailPage: React.FC = () => {
                   >
                     <FileText size={15} className="text-neutral-400" />
                     <span className="text-sm text-primary-600 hover:text-primary-700">
-                      Документ {docId}
+                      {t('rfi.detailDocument', { id: docId })}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Нет связанных документов</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('rfi.detailNoLinkedDocs')}</p>
             )}
           </div>
         </div>

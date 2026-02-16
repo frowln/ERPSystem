@@ -17,6 +17,8 @@ import java.util.UUID;
 public interface MaterialRepository extends JpaRepository<Material, UUID>,
         JpaSpecificationExecutor<Material> {
 
+    Optional<Material> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
     Page<Material> findByDeletedFalseAndActiveTrue(Pageable pageable);
 
     Page<Material> findByCategoryAndDeletedFalse(MaterialCategory category, Pageable pageable);
@@ -29,4 +31,6 @@ public interface MaterialRepository extends JpaRepository<Material, UUID>,
     Page<Material> searchByNameOrCode(@Param("search") String search, Pageable pageable);
 
     boolean existsByCodeAndDeletedFalse(String code);
+
+    boolean existsByOrganizationIdAndCodeAndDeletedFalse(UUID organizationId, String code);
 }

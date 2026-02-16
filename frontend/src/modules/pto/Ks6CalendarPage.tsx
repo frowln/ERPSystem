@@ -8,6 +8,7 @@ import {
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { cn } from '@/lib/cn';
 import { formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 
 // ---------------------------------------------------------------------------
 // Types & constants
@@ -24,12 +25,17 @@ interface Ks6Entry {
   contractor?: string;
 }
 
-const MONTHS_RU = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
+const getMonthsRu = () => [
+  t('pto.ks6MonthJanuary'), t('pto.ks6MonthFebruary'), t('pto.ks6MonthMarch'),
+  t('pto.ks6MonthApril'), t('pto.ks6MonthMay'), t('pto.ks6MonthJune'),
+  t('pto.ks6MonthJuly'), t('pto.ks6MonthAugust'), t('pto.ks6MonthSeptember'),
+  t('pto.ks6MonthOctober'), t('pto.ks6MonthNovember'), t('pto.ks6MonthDecember'),
 ];
 
-const DAYS_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const getDaysRu = () => [
+  t('pto.ks6DayMon'), t('pto.ks6DayTue'), t('pto.ks6DayWed'),
+  t('pto.ks6DayThu'), t('pto.ks6DayFri'), t('pto.ks6DaySat'), t('pto.ks6DaySun'),
+];
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -63,6 +69,12 @@ function volumeIntensity(totalVolume: number): string {
   if (totalVolume < 150) return 'bg-emerald-100';
   if (totalVolume < 300) return 'bg-emerald-200/70';
   return 'bg-emerald-300/60';
+}
+
+function workPlural(count: number): string {
+  if (count === 1) return t('pto.ks6WorkSingular');
+  if (count < 5) return t('pto.ks6WorkFew');
+  return t('pto.ks6WorkMany');
 }
 
 // ---------------------------------------------------------------------------
@@ -128,26 +140,26 @@ const Ks6CalendarPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Журнал КС-6 - Календарь"
-        subtitle="Ежедневный учёт выполненных работ по форме КС-6"
+        title={t('pto.ks6Title')}
+        subtitle={t('pto.ks6Subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'ПТО', href: '/pto/documents' },
-          { label: 'Журнал КС-6' },
+          { label: t('pto.breadcrumbHome'), href: '/' },
+          { label: t('pto.breadcrumbPto'), href: '/pto/documents' },
+          { label: t('pto.breadcrumbKs6') },
         ]}
       />
 
       {/* Legend & stats */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4 text-xs text-neutral-600">
-          <span className="font-medium">Интенсивность работ:</span>
-          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-50 border border-neutral-200 dark:border-neutral-700" /> Низкая</span>
-          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-100 border border-neutral-200 dark:border-neutral-700" /> Средняя</span>
-          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-200/70 border border-neutral-200 dark:border-neutral-700" /> Высокая</span>
-          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-300/60 border border-neutral-200 dark:border-neutral-700" /> Макс.</span>
+          <span className="font-medium">{t('pto.ks6IntensityLabel')}</span>
+          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-50 border border-neutral-200 dark:border-neutral-700" /> {t('pto.ks6IntensityLow')}</span>
+          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-100 border border-neutral-200 dark:border-neutral-700" /> {t('pto.ks6IntensityMedium')}</span>
+          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-200/70 border border-neutral-200 dark:border-neutral-700" /> {t('pto.ks6IntensityHigh')}</span>
+          <span className="flex items-center gap-1"><span className="w-4 h-4 rounded bg-emerald-300/60 border border-neutral-200 dark:border-neutral-700" /> {t('pto.ks6IntensityMax')}</span>
         </div>
         <div className="text-sm text-neutral-600">
-          Записей за месяц: <span className="font-semibold text-neutral-900 dark:text-neutral-100">{monthTotal}</span>
+          {t('pto.ks6MonthEntriesLabel')} <span className="font-semibold text-neutral-900 dark:text-neutral-100">{monthTotal}</span>
         </div>
       </div>
 
@@ -162,7 +174,7 @@ const Ks6CalendarPage: React.FC = () => {
                   <ChevronLeft size={18} />
                 </button>
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 min-w-[180px] text-center">
-                  {MONTHS_RU[month]} {year}
+                  {getMonthsRu()[month]} {year}
                 </h2>
                 <button onClick={() => navigateMonth(1)} className="p-1.5 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
                   <ChevronRight size={18} />
@@ -172,7 +184,7 @@ const Ks6CalendarPage: React.FC = () => {
 
             {/* Day headers */}
             <div className="grid grid-cols-7 border-b border-neutral-100">
-              {DAYS_RU.map((day) => (
+              {getDaysRu().map((day) => (
                 <div key={day} className="px-2 py-2 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                   {day}
                 </div>
@@ -211,7 +223,7 @@ const Ks6CalendarPage: React.FC = () => {
                     {dayEntries.length > 0 && (
                       <div className="mt-0.5">
                         <p className="text-[11px] font-semibold text-emerald-800">
-                          {dayEntries.length} {dayEntries.length === 1 ? 'работа' : dayEntries.length < 5 ? 'работы' : 'работ'}
+                          {dayEntries.length} {workPlural(dayEntries.length)}
                         </p>
                         {dayEntries.slice(0, 2).map((e) => (
                           <p key={e.id} className="text-[10px] text-neutral-600 truncate">
@@ -219,7 +231,7 @@ const Ks6CalendarPage: React.FC = () => {
                           </p>
                         ))}
                         {dayEntries.length > 2 && (
-                          <p className="text-[10px] text-neutral-500 dark:text-neutral-400">+{dayEntries.length - 2} ещё</p>
+                          <p className="text-[10px] text-neutral-500 dark:text-neutral-400">{t('pto.ks6MoreEntries', { count: String(dayEntries.length - 2) })}</p>
                         )}
                       </div>
                     )}
@@ -245,7 +257,7 @@ const Ks6CalendarPage: React.FC = () => {
               {selectedDayEntries.length === 0 ? (
                 <div className="p-6 text-center">
                   <ClipboardList size={32} className="mx-auto text-neutral-300 mb-2" />
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">Нет записей на эту дату</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('pto.ks6NoEntries')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-neutral-100">
@@ -254,20 +266,20 @@ const Ks6CalendarPage: React.FC = () => {
                       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-1">{entry.workType}</p>
                       <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-neutral-600">
                         <div>
-                          <span className="text-neutral-400">Объём: </span>
+                          <span className="text-neutral-400">{t('pto.ks6Volume')} </span>
                           <span className="font-semibold text-neutral-800 dark:text-neutral-200">{formatNumber(entry.volume)} {entry.unit}</span>
                         </div>
                         <div>
-                          <span className="text-neutral-400">Участок: </span>
+                          <span className="text-neutral-400">{t('pto.ks6Section')} </span>
                           <span>{entry.section}</span>
                         </div>
                         <div>
-                          <span className="text-neutral-400">Проект: </span>
+                          <span className="text-neutral-400">{t('pto.ks6Project')} </span>
                           <span className="text-primary-600">{entry.projectName}</span>
                         </div>
                         {entry.contractor && (
                           <div>
-                            <span className="text-neutral-400">Подрядчик: </span>
+                            <span className="text-neutral-400">{t('pto.ks6Contractor')} </span>
                             <span>{entry.contractor}</span>
                           </div>
                         )}
@@ -277,7 +289,7 @@ const Ks6CalendarPage: React.FC = () => {
                   {/* Day summary */}
                   <div className="px-4 py-3 bg-emerald-50">
                     <p className="text-xs font-semibold text-emerald-800">
-                      Итого за день: {selectedDayEntries.length} {selectedDayEntries.length === 1 ? 'работа' : selectedDayEntries.length < 5 ? 'работы' : 'работ'}
+                      {t('pto.ks6DayTotalLabel')} {selectedDayEntries.length} {workPlural(selectedDayEntries.length)}
                     </p>
                   </div>
                 </div>
@@ -286,7 +298,7 @@ const Ks6CalendarPage: React.FC = () => {
           ) : (
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 text-center">
               <ClipboardList size={32} className="mx-auto text-neutral-300 mb-2" />
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Выберите день для просмотра записей КС-6</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('pto.ks6SelectDayHint')}</p>
             </div>
           )}
         </div>

@@ -11,10 +11,17 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FuelRecordRepository extends JpaRepository<FuelRecord, UUID> {
+
+    Optional<FuelRecord> findByIdAndDeletedFalse(UUID id);
+
+    Page<FuelRecord> findByVehicleIdInAndDeletedFalse(List<UUID> vehicleIds, Pageable pageable);
+
+    Page<FuelRecord> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);
 
     Page<FuelRecord> findByVehicleIdAndDeletedFalse(UUID vehicleId, Pageable pageable);
 

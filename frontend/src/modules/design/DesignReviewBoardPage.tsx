@@ -5,6 +5,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 
 type DrStatus = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'REVISION_NEEDED';
 
@@ -25,20 +26,20 @@ interface DrCard {
 
 interface BoardColumn { id: DrStatus; title: string; color: string; headerBg: string; collapsed: boolean; }
 
-const defaultColumns: BoardColumn[] = [
-  { id: 'DRAFT', title: 'Черновик', color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
-  { id: 'UNDER_REVIEW', title: 'На проверке', color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'APPROVED', title: 'Утверждён', color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
-  { id: 'REVISION_NEEDED', title: 'Нужна доработка', color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
+const getDefaultColumns = (): BoardColumn[] => [
+  { id: 'DRAFT', title: t('design.reviewBoardColumnDraft'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
+  { id: 'UNDER_REVIEW', title: t('design.reviewBoardColumnUnderReview'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
+  { id: 'APPROVED', title: t('design.reviewBoardColumnApproved'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
+  { id: 'REVISION_NEEDED', title: t('design.reviewBoardColumnRevisionNeeded'), color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
 ];
 
-const priorityLabels: Record<string, string> = { low: 'Низкий', normal: 'Обычный', high: 'Высокий', critical: 'Критический' };
+const getPriorityLabels = (): Record<string, string> => ({ low: t('design.reviewBoardPriorityLow'), normal: t('design.reviewBoardPriorityNormal'), high: t('design.reviewBoardPriorityHigh'), critical: t('design.reviewBoardPriorityCritical') });
 const priorityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600', normal: 'bg-blue-100 text-blue-700', high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700' };
 
 const DesignReviewBoardPage: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<DrCard[]>([]);
-  const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
+  const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -56,12 +57,12 @@ const DesignReviewBoardPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
-      <PageHeader title="Ревью проектной документации - Доска" subtitle={`${items.length} разделов`} breadcrumbs={[{ label: 'Главная', href: '/' }, { label: 'Проектирование', href: '/design/reviews' }, { label: 'Доска' }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>Фильтры</Button><Button iconLeft={<Plus size={16} />}>Новый раздел</Button></div>} />
+      <PageHeader title={t('design.reviewBoardTitle')} subtitle={t('design.reviewBoardSubtitle', { count: String(items.length) })} breadcrumbs={[{ label: t('design.breadcrumbHome'), href: '/' }, { label: t('design.breadcrumbDesign'), href: '/design/reviews' }, { label: t('design.reviewBoardBreadcrumb') }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>{t('design.reviewBoardFilters')}</Button><Button iconLeft={<Plus size={16} />}>{t('design.reviewBoardNewSection')}</Button></div>} />
       {showFilters && (
         <div className="flex items-center gap-3 mb-4 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 animate-fade-in">
-          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder="Поиск..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
-          <Select options={[{ value: '', label: 'Все статусы' }, ...defaultColumns.map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
-          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>Сбросить</Button>}
+          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder={t('design.reviewBoardSearch')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
+          <Select options={[{ value: '', label: t('design.filterAllStatuses') }, ...getDefaultColumns().map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
+          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>{t('design.reviewBoardReset')}</Button>}
         </div>
       )}
       <div className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 260px)' }}>
@@ -76,14 +77,14 @@ const DesignReviewBoardPage: React.FC = () => {
               </div>
               {!col.collapsed && (
                 <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[100px]">
-                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">Нет разделов</p><p className="text-[10px] text-neutral-300 mt-0.5">Перетащите карточку сюда</p></div>) : colItems.map((item) => (
+                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">{t('design.reviewBoardNoSections')}</p><p className="text-[10px] text-neutral-300 mt-0.5">{t('design.reviewBoardDragHint')}</p></div>) : colItems.map((item) => (
                     <div key={item.id} draggable onDragStart={(e) => onDragStart(e, item.id)} onClick={() => navigate('/design/reviews')} className={cn('bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 cursor-pointer hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-600 transition-all', draggedId === item.id && 'opacity-50 shadow-lg')}>
-                      <div className="flex items-center justify-between mb-1.5"><span className="text-[10px] font-mono text-neutral-400">{item.code}</span><span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-medium', priorityColors[item.priority])}>{priorityLabels[item.priority]}</span></div>
+                      <div className="flex items-center justify-between mb-1.5"><span className="text-[10px] font-mono text-neutral-400">{item.code}</span><span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-medium', priorityColors[item.priority])}>{getPriorityLabels()[item.priority]}</span></div>
                       <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1.5 line-clamp-2">{item.title}</h4>
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 font-medium">{item.designSection}</span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600">{item.version}</span>
-                        {item.commentCount > 0 && <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{item.commentCount} комм.</span>}
+                        {item.commentCount > 0 && <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{item.commentCount} {t('design.reviewBoardCommentsAbbrev')}</span>}
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">{item.projectName}</p>
                       <div className="flex items-center justify-between">

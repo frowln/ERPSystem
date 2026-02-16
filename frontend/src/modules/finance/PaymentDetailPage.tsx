@@ -91,13 +91,13 @@ const PaymentDetailPage: React.FC = () => {
   if (!p) return null;
 
   const handleStatusChange = (targetStatus: string) => {
-    if (guardDemoModeAction('Изменение статуса платежа')) return;
+    if (guardDemoModeAction(t('finance.paymentDetail.demoChangeStatus'))) return;
     setStatusOverride(targetStatus);
     toast.success(t('finance.paymentDetail.toastStatusUpdated', { status: paymentStatusLowerLabels[targetStatus] ?? targetStatus }));
   };
 
   const handleDelete = () => {
-    if (guardDemoModeAction('Удаление платежа')) {
+    if (guardDemoModeAction(t('finance.paymentDetail.demoDeletePayment'))) {
       setDeleteDialogOpen(false);
       return;
     }
@@ -129,7 +129,7 @@ const PaymentDetailPage: React.FC = () => {
               size="sm"
               iconLeft={<Edit size={14} />}
               onClick={() => {
-                if (guardDemoModeAction('Редактирование платежа')) return;
+                if (guardDemoModeAction(t('finance.paymentDetail.demoEditPayment'))) return;
                 toast(t('finance.paymentDetail.toastEditHint'));
                 navigate('/payments/new');
               }}

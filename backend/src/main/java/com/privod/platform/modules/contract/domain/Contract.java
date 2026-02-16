@@ -19,12 +19,15 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contracts", indexes = {
+        @Index(name = "idx_contract_org", columnList = "organization_id"),
+        @Index(name = "idx_contract_org_project", columnList = "organization_id, project_id"),
+        @Index(name = "idx_contract_org_number", columnList = "organization_id, number", unique = true),
         @Index(name = "idx_contract_project", columnList = "project_id"),
         @Index(name = "idx_contract_partner", columnList = "partner_id"),
         @Index(name = "idx_contract_status", columnList = "status"),
         @Index(name = "idx_contract_type", columnList = "type_id"),
         @Index(name = "idx_contract_responsible", columnList = "responsible_id"),
-        @Index(name = "idx_contract_number", columnList = "number", unique = true),
+        @Index(name = "idx_contract_number", columnList = "number"),
         @Index(name = "idx_contract_planned_end", columnList = "planned_end_date")
 })
 @Getter
@@ -34,10 +37,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Contract extends BaseEntity {
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
-    @Column(name = "number", unique = true, length = 50)
+    @Column(name = "number", length = 50)
     private String number;
 
     @Column(name = "contract_date")

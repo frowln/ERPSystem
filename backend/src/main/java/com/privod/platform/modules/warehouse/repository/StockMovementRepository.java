@@ -12,11 +12,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface StockMovementRepository extends JpaRepository<StockMovement, UUID>,
         JpaSpecificationExecutor<StockMovement> {
+
+    Optional<StockMovement> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
 
     Page<StockMovement> findByStatusAndDeletedFalse(StockMovementStatus status, Pageable pageable);
 

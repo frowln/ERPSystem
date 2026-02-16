@@ -20,25 +20,26 @@ import {
 import { Input, Select } from '@/design-system/components/FormField';
 import { maintenanceApi } from '@/api/maintenance';
 import { formatDate, formatMoneyCompact } from '@/lib/format';
+import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import type { MaintenanceRequest } from './types';
 
 type TabId = 'all' | 'NEW' | 'IN_PROGRESS' | 'REPAIRED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'NEW', label: 'Новая' },
-  { value: 'IN_PROGRESS', label: 'В работе' },
-  { value: 'REPAIRED', label: 'Отремонтировано' },
-  { value: 'SCRAP', label: 'Списание' },
-  { value: 'CANCELLED', label: 'Отменена' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('maintenance.filterAllStatuses') },
+  { value: 'NEW', label: t('maintenance.requestStatusNew') },
+  { value: 'IN_PROGRESS', label: t('maintenance.requestStatusInProgress') },
+  { value: 'REPAIRED', label: t('maintenance.requestStatusRepaired') },
+  { value: 'SCRAP', label: t('maintenance.requestStatusScrap') },
+  { value: 'CANCELLED', label: t('maintenance.requestStatusCancelled') },
 ];
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'CORRECTIVE', label: 'Корректирующее' },
-  { value: 'PREVENTIVE', label: 'Превентивное' },
-  { value: 'PREDICTIVE', label: 'Предиктивное' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('maintenance.filterAllTypes') },
+  { value: 'CORRECTIVE', label: t('maintenance.filterCorrective') },
+  { value: 'PREVENTIVE', label: t('maintenance.filterPreventive') },
+  { value: 'PREDICTIVE', label: t('maintenance.filterPredictive') },
 ];
 
 const MaintenanceRequestListPage: React.FC = () => {
@@ -68,10 +69,10 @@ const MaintenanceRequestListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] });
-      toast.success('Заявка(и) удалены');
+      toast.success(t('maintenance.bulkDeleteSuccess'));
     },
     onError: () => {
-      toast.error('Ошибка при удалении');
+      toast.error(t('maintenance.bulkDeleteError'));
     },
   });
 
@@ -115,7 +116,7 @@ const MaintenanceRequestListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('maintenance.colNumber'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -123,7 +124,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Заявка',
+        header: t('maintenance.colRequest'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -134,7 +135,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('maintenance.colStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -146,7 +147,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'priority',
-        header: 'Приоритет',
+        header: t('maintenance.colPriority'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -158,7 +159,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'maintenanceType',
-        header: 'Тип',
+        header: t('maintenance.colType'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -170,7 +171,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'COST',
-        header: 'Стоимость',
+        header: t('maintenance.colCost'),
         size: 130,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -183,7 +184,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'assignedToName',
-        header: 'Исполнитель',
+        header: t('maintenance.colAssignee'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -191,21 +192,21 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         id: 'statusAction',
-        header: 'Действие',
+        header: t('maintenance.colAction'),
         size: 150,
         cell: ({ row }) => {
           const r = row.original;
           if (r.status === 'NEW') {
             return (
               <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ id: r.id, status: 'IN_PROGRESS' }); }}>
-                Начать работу
+                {t('maintenance.actionStartWork')}
               </Button>
             );
           }
           if (r.status === 'IN_PROGRESS') {
             return (
               <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ id: r.id, status: 'REPAIRED' }); }}>
-                Завершить
+                {t('maintenance.actionComplete')}
               </Button>
             );
           }
@@ -214,7 +215,7 @@ const MaintenanceRequestListPage: React.FC = () => {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Дата',
+        header: t('maintenance.colDate'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600 text-xs">{formatDate(getValue<string>())}</span>
@@ -232,47 +233,47 @@ const MaintenanceRequestListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Заявки на обслуживание"
-        subtitle={`${requests.length} заявок`}
+        title={t('maintenance.requestsTitle')}
+        subtitle={t('maintenance.requestsCount', { count: requests.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обслуживание' },
-          { label: 'Заявки' },
+          { label: t('maintenance.breadcrumbHome'), href: '/' },
+          { label: t('maintenance.breadcrumbMaintenance') },
+          { label: t('maintenance.breadcrumbRequests') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/maintenance/requests/new')}>
-            Новая заявка
+            {t('maintenance.newRequest')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'NEW', label: 'Новые', count: tabCounts.new },
-          { id: 'IN_PROGRESS', label: 'В работе', count: tabCounts.in_progress },
-          { id: 'REPAIRED', label: 'Выполнено', count: tabCounts.repaired },
+          { id: 'all', label: t('maintenance.tabAll'), count: tabCounts.all },
+          { id: 'NEW', label: t('maintenance.tabNew'), count: tabCounts.new },
+          { id: 'IN_PROGRESS', label: t('maintenance.tabInProgress'), count: tabCounts.in_progress },
+          { id: 'REPAIRED', label: t('maintenance.tabCompleted'), count: tabCounts.repaired },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Wrench size={18} />} label="Всего заявок" value={metrics.total} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Срочные" value={metrics.urgentCount} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Выполнено" value={metrics.completedCount} />
-        <MetricCard icon={<Clock size={18} />} label="Общие затраты" value={formatMoneyCompact(metrics.totalCost)} />
+        <MetricCard icon={<Wrench size={18} />} label={t('maintenance.metricTotalRequests')} value={metrics.total} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('maintenance.metricUrgent')} value={metrics.urgentCount} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('maintenance.metricCompleted')} value={metrics.completedCount} />
+        <MetricCard icon={<Clock size={18} />} label={t('maintenance.metricTotalCosts')} value={formatMoneyCompact(metrics.totalCost)} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию, оборудованию..."
+            placeholder={t('maintenance.searchRequestPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={typeFilterOptions}
+          options={getTypeFilterOptions()}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="w-48"
@@ -291,24 +292,24 @@ const MaintenanceRequestListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('maintenance.bulkDelete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} заявк(у/и)?`,
-                description: 'Операция необратима. Выбранные заявки будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('maintenance.bulkDeleteConfirmTitle', { count: ids.length }),
+                description: t('maintenance.bulkDeleteConfirmDescription'),
+                confirmLabel: t('maintenance.bulkDeleteConfirmLabel'),
+                cancelLabel: t('maintenance.bulkDeleteCancelLabel'),
               });
               if (!isConfirmed) return;
               deleteRequestMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет заявок на обслуживание"
-        emptyDescription="Создайте первую заявку для начала работы"
+        emptyTitle={t('maintenance.emptyRequestsTitle')}
+        emptyDescription={t('maintenance.emptyRequestsDescription')}
       />
     </div>
   );

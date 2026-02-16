@@ -14,12 +14,12 @@ interface ProjectBudget {
   actual: number;
 }
 
-const projectBudgets: ProjectBudget[] = [
-  { name: 'ЖК "Солнечный"', budget: 85000000, actual: 72000000 },
-  { name: 'БЦ "Горизонт"', budget: 42000000, actual: 38500000 },
-  { name: 'Мост р. Вятка', budget: 120000000, actual: 95000000 },
-  { name: 'Школа N15', budget: 35000000, actual: 32000000 },
-  { name: 'ТЦ "Простор"', budget: 55000000, actual: 61000000 },
+const getProjectBudgets = (): ProjectBudget[] => [
+  { name: t('common.mockProjects.solnechny'), budget: 85000000, actual: 72000000 },
+  { name: t('common.mockProjects.gorizont'), budget: 42000000, actual: 38500000 },
+  { name: t('common.mockProjects.mostVyatkaShort'), budget: 120000000, actual: 95000000 },
+  { name: t('common.mockProjects.school15'), budget: 35000000, actual: 32000000 },
+  { name: t('common.mockProjects.prostor'), budget: 55000000, actual: 61000000 },
 ];
 
 interface ProgressPoint {
@@ -28,18 +28,18 @@ interface ProgressPoint {
   actual: number;
 }
 
-const progressData: ProgressPoint[] = [
-  { month: 'Сен', planned: 5,  actual: 4 },
-  { month: 'Окт', planned: 15, actual: 12 },
-  { month: 'Ноя', planned: 28, actual: 24 },
-  { month: 'Дек', planned: 40, actual: 36 },
-  { month: 'Янв', planned: 52, actual: 48 },
-  { month: 'Фев', planned: 62, actual: 57 },
-  { month: 'Мар', planned: 72, actual: 0 },
-  { month: 'Апр', planned: 80, actual: 0 },
-  { month: 'Май', planned: 88, actual: 0 },
-  { month: 'Июн', planned: 95, actual: 0 },
-  { month: 'Июл', planned: 100, actual: 0 },
+const getProgressData = (): ProgressPoint[] => [
+  { month: t('common.monthsShort.sep'), planned: 5,  actual: 4 },
+  { month: t('common.monthsShort.oct'), planned: 15, actual: 12 },
+  { month: t('common.monthsShort.nov'), planned: 28, actual: 24 },
+  { month: t('common.monthsShort.dec'), planned: 40, actual: 36 },
+  { month: t('common.monthsShort.jan'), planned: 52, actual: 48 },
+  { month: t('common.monthsShort.feb'), planned: 62, actual: 57 },
+  { month: t('common.monthsShort.mar'), planned: 72, actual: 0 },
+  { month: t('common.monthsShort.apr'), planned: 80, actual: 0 },
+  { month: t('common.monthsShort.may'), planned: 88, actual: 0 },
+  { month: t('common.monthsShort.jun'), planned: 95, actual: 0 },
+  { month: t('common.monthsShort.jul'), planned: 100, actual: 0 },
 ];
 
 interface BudgetCategory {
@@ -353,6 +353,8 @@ const PieChart: React.FC<{ data: BudgetCategory[] }> = ({ data }) => {
 
 const ProjectAnalyticsChartPage: React.FC = () => {
   const budgetCategories = getBudgetCategories();
+  const projectBudgets = getProjectBudgets();
+  const progressData = getProgressData();
   const totalBudget = projectBudgets.reduce((s, p) => s + p.budget, 0);
   const totalActual = projectBudgets.reduce((s, p) => s + p.actual, 0);
   const utilization = ((totalActual / totalBudget) * 100).toFixed(1);

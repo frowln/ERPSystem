@@ -17,6 +17,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { portfolioApi } from '@/api/portfolio';
 import { formatDateLong, formatMoney, formatMoneyCompact, formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { Opportunity, OpportunityActivity } from './types';
 import toast from 'react-hot-toast';
 
@@ -29,14 +30,14 @@ const stageColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red'
   LOST: 'red',
 };
 
-const stageLabels: Record<string, string> = {
-  LEAD: 'Лид',
-  QUALIFICATION: 'Квалификация',
-  PROPOSAL: 'Предложение',
-  NEGOTIATION: 'Переговоры',
-  WON: 'Выигран',
-  LOST: 'Проигран',
-};
+const getStageLabels = (): Record<string, string> => ({
+  LEAD: t('portfolio.opportunities.stageLead'),
+  QUALIFICATION: t('portfolio.opportunities.stageQualification'),
+  PROPOSAL: t('portfolio.opportunities.stageProposal'),
+  NEGOTIATION: t('portfolio.opportunities.stageNegotiation'),
+  WON: t('portfolio.opportunities.stageWon'),
+  LOST: t('portfolio.opportunities.stageLost'),
+});
 
 const stageFlow: Opportunity['stage'][] = ['LEAD', 'QUALIFICATION', 'PROPOSAL', 'NEGOTIATION', 'WON'];
 
@@ -48,13 +49,13 @@ const activityTypeIcons: Record<string, React.ReactNode> = {
   TASK: <MessageSquare size={14} />,
 };
 
-const activityTypeLabels: Record<string, string> = {
-  CALL: 'Звонок',
-  MEETING: 'Встреча',
-  EMAIL: 'Email',
-  NOTE: 'Заметка',
-  TASK: 'Задача',
-};
+const getActivityTypeLabels = (): Record<string, string> => ({
+  CALL: t('portfolio.opportunityDetail.activityCall'),
+  MEETING: t('portfolio.opportunityDetail.activityMeeting'),
+  EMAIL: t('portfolio.opportunityDetail.activityEmail'),
+  NOTE: t('portfolio.opportunityDetail.activityNote'),
+  TASK: t('portfolio.opportunityDetail.activityTask'),
+});
 
 const OpportunityDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -72,8 +73,11 @@ const OpportunityDetailPage: React.FC = () => {
     enabled: !!id,
   });
 
+  const stageLabels = getStageLabels();
+  const activityTypeLabels = getActivityTypeLabels();
+
   if (isLoading || !opportunity) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>;
   }
 
   const o = opportunity;
@@ -84,7 +88,7 @@ const OpportunityDetailPage: React.FC = () => {
   const stageActions = useMemo(() => {
     const idx = stageFlow.indexOf(effectiveStage);
     if (idx >= 0 && idx < stageFlow.length - 1) {
-      return [{ label: `Перевести в "${stageLabels[stageFlow[idx + 1]]}"`, targetStage: stageFlow[idx + 1] }];
+      return [{ label: t('portfolio.opportunityDetail.moveToStage', { stage: stageLabels[stageFlow[idx + 1]] }), targetStage: stageFlow[idx + 1] }];
     }
     return [];
   }, [effectiveStage]);
@@ -98,9 +102,9 @@ const OpportunityDetailPage: React.FC = () => {
         subtitle={o.clientName}
         backTo="/portfolio/opportunities"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портфель', href: '/portfolio/opportunities' },
-          { label: 'Возможности', href: '/portfolio/opportunities' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('nav.portfolio'), href: '/portfolio/opportunities' },
+          { label: t('portfolio.opportunities.breadcrumb'), href: '/portfolio/opportunities' },
           { label: o.name.slice(0, 30) + '...' },
         ]}
         actions={
@@ -118,7 +122,7 @@ const OpportunityDetailPage: React.FC = () => {
                 size="sm"
                 onClick={() => {
                   setStageOverride(action.targetStage);
-                  toast.success(`Этап изменен: ${stageLabels[action.targetStage] ?? action.targetStage}`);
+                  toast.success(t('portfolio.opportunityDetail.stageChanged', { stage: stageLabels[action.targetStage] ?? action.targetStage }));
                 }}
               >
                 {action.label}
@@ -161,11 +165,11 @@ const OpportunityDetailPage: React.FC = () => {
           {/* Key metrics */}
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Стоимость проекта</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('portfolio.opportunityDetail.projectValue')}</p>
               <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tabular-nums">{formatMoneyCompact(o.value)}</p>
             </div>
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Вероятность</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('portfolio.opportunityDetail.probability')}</p>
               <div className="flex items-center gap-2">
                 <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tabular-nums">{o.probability}%</p>
                 <div className="flex-1 h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
@@ -174,7 +178,7 @@ const OpportunityDetailPage: React.FC = () => {
               </div>
             </div>
             <div className="bg-primary-50 rounded-xl border border-primary-100 p-4">
-              <p className="text-xs text-primary-600 mb-1">Взвешенная стоимость</p>
+              <p className="text-xs text-primary-600 mb-1">{t('portfolio.opportunityDetail.weightedValue')}</p>
               <p className="text-lg font-bold text-primary-700 tabular-nums">{formatMoneyCompact(o.weightedValue)}</p>
             </div>
           </div>
@@ -183,17 +187,17 @@ const OpportunityDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <FileText size={16} className="text-primary-500" />
-              Описание
+              {t('common.description')}
             </h3>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
-              {o.description ?? 'Описание не заполнено'}
+              {o.description ?? t('portfolio.opportunityDetail.noDescription')}
             </div>
           </div>
 
           {/* Activity timeline */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-              История активности ({acts.length})
+              {t('portfolio.opportunityDetail.activityHistory')} ({acts.length})
             </h3>
             <div className="space-y-4">
               {acts.map((activity, idx) => (
@@ -232,29 +236,29 @@ const OpportunityDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('common.details')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label="Ответственный" value={o.ownerName} />
-              <InfoItem icon={<User size={15} />} label="Клиент" value={o.clientName} />
-              <InfoItem icon={<DollarSign size={15} />} label="Стоимость" value={formatMoney(o.value)} />
-              <InfoItem icon={<DollarSign size={15} />} label="Взвешенная" value={formatMoney(o.weightedValue)} />
-              <InfoItem icon={<Calendar size={15} />} label="Ожид. закрытие" value={formatDateLong(o.expectedCloseDate)} />
-              <InfoItem icon={<FileText size={15} />} label="Источник" value={o.source ?? '---'} />
-              <InfoItem icon={<Calendar size={15} />} label="Создано" value={formatDateLong(o.createdAt)} />
+              <InfoItem icon={<User size={15} />} label={t('portfolio.opportunityDetail.responsible')} value={o.ownerName} />
+              <InfoItem icon={<User size={15} />} label={t('portfolio.opportunityDetail.client')} value={o.clientName} />
+              <InfoItem icon={<DollarSign size={15} />} label={t('portfolio.opportunities.colValue')} value={formatMoney(o.value)} />
+              <InfoItem icon={<DollarSign size={15} />} label={t('portfolio.opportunityDetail.weighted')} value={formatMoney(o.weightedValue)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('portfolio.opportunities.colExpectedClose')} value={formatDateLong(o.expectedCloseDate)} />
+              <InfoItem icon={<FileText size={15} />} label={t('portfolio.opportunityDetail.source')} value={o.source ?? '---'} />
+              <InfoItem icon={<Calendar size={15} />} label={t('portfolio.opportunityDetail.created')} value={formatDateLong(o.createdAt)} />
             </div>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Действия</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('common.actions')}</h3>
             <div className="space-y-2">
-              <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => toast.success('Активность добавлена')}>
-                Добавить активность
+              <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => toast.success(t('portfolio.opportunityDetail.activityAdded'))}>
+                {t('portfolio.opportunityDetail.addActivity')}
               </Button>
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate('/portfolio/tenders')}>
-                Создать тендерное предложение
+                {t('portfolio.opportunityDetail.createBid')}
               </Button>
-              <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => toast.success('Экспорт в PDF запущен')}>
-                Экспорт в PDF
+              <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => toast.success(t('portfolio.opportunityDetail.exportStarted'))}>
+                {t('portfolio.opportunityDetail.exportPdf')}
               </Button>
             </div>
           </div>

@@ -11,6 +11,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { dataExchangeApi } from '@/api/dataExchange';
 import { formatDateTime, formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 import type { ExportJob, ExportFormat, ImportEntityType } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red'> = {
@@ -20,23 +21,23 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   FAILED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  PENDING: 'Ожидание',
-  IN_PROGRESS: 'В процессе',
-  COMPLETED: 'Готов',
-  FAILED: 'Ошибка',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  PENDING: t('dataExchange.statusPending'),
+  IN_PROGRESS: t('dataExchange.statusInProgress'),
+  COMPLETED: t('dataExchange.statusCompleted'),
+  FAILED: t('dataExchange.statusFailed'),
+});
 
-const entityTypeLabels: Record<string, string> = {
-  PROJECTS: 'Проекты',
-  CONTRACTS: 'Договоры',
-  MATERIALS: 'Материалы',
-  EMPLOYEES: 'Сотрудники',
-  DOCUMENTS: 'Документы',
-  WBS: 'Структура работ',
-  BUDGET_ITEMS: 'Статьи бюджета',
-  INVOICES: 'Счета',
-};
+const getEntityTypeLabels = (): Record<string, string> => ({
+  PROJECTS: t('dataExchange.entityProjects'),
+  CONTRACTS: t('dataExchange.entityContracts'),
+  MATERIALS: t('dataExchange.entityMaterials'),
+  EMPLOYEES: t('dataExchange.entityEmployees'),
+  DOCUMENTS: t('dataExchange.entityDocuments'),
+  WBS: t('dataExchange.entityWbs'),
+  BUDGET_ITEMS: t('dataExchange.entityBudgetItems'),
+  INVOICES: t('dataExchange.entityInvoices'),
+});
 
 const formatLabels: Record<string, string> = {
   CSV: 'CSV',
@@ -47,9 +48,9 @@ const formatLabels: Record<string, string> = {
 
 function formatFileSize(bytes: number | undefined): string {
   if (!bytes) return '---';
-  if (bytes < 1024) return `${bytes} Б`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
+  if (bytes < 1024) return t('dataExchange.fileSizeB', { size: String(bytes) });
+  if (bytes < 1024 * 1024) return t('dataExchange.fileSizeKB', { size: (bytes / 1024).toFixed(1) });
+  return t('dataExchange.fileSizeMB', { size: (bytes / (1024 * 1024)).toFixed(1) });
 }
 
 type TabId = 'all' | 'COMPLETED' | 'IN_PROGRESS';
@@ -80,7 +81,7 @@ const ExportJobListPage: React.FC = () => {
       result = result.filter(
         (j) =>
           (j.fileName ?? '').toLowerCase().includes(lower) ||
-          entityTypeLabels[j.entityType]?.toLowerCase().includes(lower),
+          getEntityTypeLabels()[j.entityType]?.toLowerCase().includes(lower),
       );
     }
     return result;
@@ -98,15 +99,15 @@ const ExportJobListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'entityType',
-        header: 'Тип данных',
+        header: t('dataExchange.colDataType'),
         size: 160,
         cell: ({ getValue }) => (
-          <span className="font-medium text-neutral-900 dark:text-neutral-100">{entityTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
+          <span className="font-medium text-neutral-900 dark:text-neutral-100">{getEntityTypeLabels()[getValue<string>()] ?? getValue<string>()}</span>
         ),
       },
       {
         accessorKey: 'format',
-        header: 'Формат',
+        header: t('dataExchange.colFormat'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-xs px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded">{formatLabels[getValue<string>()] ?? getValue<string>()}</span>
@@ -114,19 +115,19 @@ const ExportJobListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('dataExchange.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={statusColorMap}
-            label={statusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'totalRecords',
-        header: 'Записей',
+        header: t('dataExchange.colRecords'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-600 tabular-nums">{formatNumber(getValue<number>())}</span>
@@ -134,7 +135,7 @@ const ExportJobListPage: React.FC = () => {
       },
       {
         accessorKey: 'fileSize',
-        header: 'Размер',
+        header: t('dataExchange.colSize'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{formatFileSize(getValue<number>())}</span>
@@ -142,7 +143,7 @@ const ExportJobListPage: React.FC = () => {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Создан',
+        header: t('dataExchange.colCreated'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm">{formatDateTime(getValue<string>())}</span>
@@ -155,7 +156,7 @@ const ExportJobListPage: React.FC = () => {
         cell: ({ row }) => (
           row.original.status === 'COMPLETED' && row.original.downloadUrl ? (
             <Button variant="outline" size="xs" iconLeft={<Download size={12} />}>
-              Скачать
+              {t('dataExchange.downloadButton')}
             </Button>
           ) : null
         ),
@@ -167,42 +168,42 @@ const ExportJobListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Экспорт данных"
-        subtitle={`${exports.length} задач экспорта`}
+        title={t('dataExchange.exportTitle')}
+        subtitle={t('dataExchange.exportSubtitle', { count: String(exports.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обмен данными', href: '/data-exchange' },
-          { label: 'Экспорт' },
+          { label: t('dataExchange.breadcrumbHome'), href: '/' },
+          { label: t('dataExchange.breadcrumbDataExchange'), href: '/data-exchange' },
+          { label: t('dataExchange.breadcrumbExport') },
         ]}
         actions={
           <Button iconLeft={<Download size={16} />} onClick={() => setCreateModalOpen(true)}>
-            Новый экспорт
+            {t('dataExchange.newExport')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: counts.all },
-          { id: 'COMPLETED', label: 'Готовые', count: counts.completed },
-          { id: 'IN_PROGRESS', label: 'В процессе', count: counts.in_progress },
+          { id: 'all', label: t('dataExchange.tabAll'), count: counts.all },
+          { id: 'COMPLETED', label: t('dataExchange.tabReady'), count: counts.completed },
+          { id: 'IN_PROGRESS', label: t('dataExchange.tabProcessing'), count: counts.in_progress },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileDown size={18} />} label="Всего экспортов" value={counts.all} />
-        <MetricCard icon={<CheckCircle2 size={18} />} label="Готовы к скачиванию" value={counts.completed} />
-        <MetricCard icon={<Clock size={18} />} label="В обработке" value={counts.in_progress} />
-        <MetricCard icon={<FileSpreadsheet size={18} />} label="Всего записей" value={formatNumber(totalRecords)} />
+        <MetricCard icon={<FileDown size={18} />} label={t('dataExchange.metricTotalExports')} value={counts.all} />
+        <MetricCard icon={<CheckCircle2 size={18} />} label={t('dataExchange.metricReadyToDownload')} value={counts.completed} />
+        <MetricCard icon={<Clock size={18} />} label={t('dataExchange.metricInProcessing')} value={counts.in_progress} />
+        <MetricCard icon={<FileSpreadsheet size={18} />} label={t('dataExchange.metricTotalRecords')} value={formatNumber(totalRecords)} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по типу, файлу..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('dataExchange.searchExportPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все форматы' },
+            { value: '', label: t('dataExchange.filterAllFormats') },
             ...Object.entries(formatLabels).map(([value, label]) => ({ value, label })),
           ]}
           value={formatFilter}
@@ -220,27 +221,27 @@ const ExportJobListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет задач экспорта"
-        emptyDescription="Создайте новый экспорт данных"
+        emptyTitle={t('dataExchange.emptyExportTitle')}
+        emptyDescription={t('dataExchange.emptyExportDescription')}
       />
 
       {/* Create Export Modal */}
       <Modal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
-        title="Новый экспорт данных"
+        title={t('dataExchange.newExportModalTitle')}
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Тип данных</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('dataExchange.newExportDataTypeLabel')}</label>
             <Select
-              options={Object.entries(entityTypeLabels).map(([value, label]) => ({ value, label }))}
+              options={Object.entries(getEntityTypeLabels()).map(([value, label]) => ({ value, label }))}
               value={exportEntity}
               onChange={(e) => setExportEntity(e.target.value as ImportEntityType)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Формат файла</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('dataExchange.newExportFormatLabel')}</label>
             <Select
               options={Object.entries(formatLabels).map(([value, label]) => ({ value, label }))}
               value={exportFormat}
@@ -248,14 +249,11 @@ const ExportJobListPage: React.FC = () => {
             />
           </div>
           <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3">
-            <p className="text-sm text-neutral-600">
-              Будет создан файл в формате <strong>{formatLabels[exportFormat]}</strong> с данными типа{' '}
-              <strong>{entityTypeLabels[exportEntity]}</strong>. Файл будет доступен для скачивания после завершения обработки.
-            </p>
+            <p className="text-sm text-neutral-600" dangerouslySetInnerHTML={{ __html: t('dataExchange.newExportDescription', { format: formatLabels[exportFormat], entity: getEntityTypeLabels()[exportEntity] }) }} />
           </div>
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => setCreateModalOpen(false)}>Отмена</Button>
-            <Button onClick={() => setCreateModalOpen(false)}>Создать экспорт</Button>
+            <Button variant="outline" onClick={() => setCreateModalOpen(false)}>{t('dataExchange.newExportCancel')}</Button>
+            <Button onClick={() => setCreateModalOpen(false)}>{t('dataExchange.newExportCreate')}</Button>
           </div>
         </div>
       </Modal>

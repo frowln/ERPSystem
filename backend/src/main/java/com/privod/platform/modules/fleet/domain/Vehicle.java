@@ -19,6 +19,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "vehicles", indexes = {
+        @Index(name = "idx_vehicle_org", columnList = "organization_id"),
+        @Index(name = "idx_vehicle_org_status", columnList = "organization_id, status"),
+        @Index(name = "idx_vehicle_org_project", columnList = "organization_id, current_project_id"),
         @Index(name = "idx_vehicle_code", columnList = "code", unique = true),
         @Index(name = "idx_vehicle_status", columnList = "status"),
         @Index(name = "idx_vehicle_type", columnList = "vehicle_type"),
@@ -33,6 +36,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vehicle extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "code", nullable = false, unique = true, length = 20)
     private String code;

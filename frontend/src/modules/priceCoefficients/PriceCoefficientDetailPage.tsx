@@ -18,6 +18,7 @@ import { StatusBadge, type BadgeColor } from '@/design-system/components/StatusB
 import { Input } from '@/design-system/components/FormField';
 import { priceCoefficientApi } from './api';
 import { formatDate, formatDateLong, formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PriceCoefficient, PriceCoefficientType, PriceCoefficientCalculation } from './types';
 
 const statusColorMap: Record<string, BadgeColor> = {
@@ -27,22 +28,22 @@ const statusColorMap: Record<string, BadgeColor> = {
   EXPIRED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  ACTIVE: 'Активен',
-  INACTIVE: 'Неактивен',
-  DRAFT: 'Черновик',
-  EXPIRED: 'Истёк',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  ACTIVE: t('priceCoefficients.statusActive'),
+  INACTIVE: t('priceCoefficients.statusInactive'),
+  DRAFT: t('priceCoefficients.statusDraft'),
+  EXPIRED: t('priceCoefficients.statusExpired'),
+});
 
-const typeLabels: Record<PriceCoefficientType, string> = {
-  REGIONAL: 'Региональный',
-  SEASONAL: 'Сезонный',
-  MATERIAL: 'Материалы',
-  LABOR: 'Трудозатраты',
-  EQUIPMENT: 'Оборудование',
-  OVERHEAD: 'Накладные',
-  CUSTOM: 'Пользовательский',
-};
+const getTypeLabels = (): Record<PriceCoefficientType, string> => ({
+  REGIONAL: t('priceCoefficients.typeRegional'),
+  SEASONAL: t('priceCoefficients.typeSeasonal'),
+  MATERIAL: t('priceCoefficients.typeMaterial'),
+  LABOR: t('priceCoefficients.typeLabor'),
+  EQUIPMENT: t('priceCoefficients.typeEquipment'),
+  OVERHEAD: t('priceCoefficients.typeOverhead'),
+  CUSTOM: t('priceCoefficients.typeCustom'),
+});
 
 
 const PriceCoefficientDetailPage: React.FC = () => {
@@ -66,7 +67,7 @@ const PriceCoefficientDetailPage: React.FC = () => {
   if (!coefficient) {
     return (
       <div className="animate-fade-in">
-        <div className="flex items-center justify-center h-64 text-neutral-400">Загрузка...</div>
+        <div className="flex items-center justify-center h-64 text-neutral-400">{t('common.loading')}</div>
       </div>
     );
   }
@@ -74,6 +75,8 @@ const PriceCoefficientDetailPage: React.FC = () => {
   const c = coefficient;
   const numericBase = Number(basePrice.replace(/\s/g, '')) || 0;
   const localResult = numericBase > 0 ? numericBase * c.value : 0;
+  const typeLabels = getTypeLabels();
+  const statusLabels = getStatusLabels();
 
   return (
     <div className="animate-fade-in">
@@ -82,8 +85,8 @@ const PriceCoefficientDetailPage: React.FC = () => {
         subtitle={`${c.code} / ${typeLabels[c.type] ?? c.type}`}
         backTo="/price-coefficients"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Ценовые коэффициенты', href: '/price-coefficients' },
+          { label: t('priceCoefficients.breadcrumbHome'), href: '/' },
+          { label: t('priceCoefficients.breadcrumbPriceCoefficients'), href: '/price-coefficients' },
           { label: c.code },
         ]}
         actions={
@@ -100,7 +103,7 @@ const PriceCoefficientDetailPage: React.FC = () => {
               iconLeft={<Edit3 size={14} />}
               onClick={() => navigate(`/price-coefficients/${id}/edit`)}
             >
-              Редактировать
+              {t('priceCoefficients.edit')}
             </Button>
           </div>
         }
@@ -109,16 +112,16 @@ const PriceCoefficientDetailPage: React.FC = () => {
       <div className="space-y-6">
         {/* Key metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard icon={<Hash size={18} />} label="Код" value={c.code} />
-          <MetricCard icon={<Calculator size={18} />} label="Значение" value={c.value.toFixed(4)} />
-          <MetricCard icon={<Calendar size={18} />} label="Действует с" value={formatDate(c.effectiveFrom)} />
-          <MetricCard icon={<Calendar size={18} />} label="Действует до" value={c.effectiveTo ? formatDate(c.effectiveTo) : 'Бессрочно'} />
+          <MetricCard icon={<Hash size={18} />} label={t('priceCoefficients.detailCode')} value={c.code} />
+          <MetricCard icon={<Calculator size={18} />} label={t('priceCoefficients.detailValue')} value={c.value.toFixed(4)} />
+          <MetricCard icon={<Calendar size={18} />} label={t('priceCoefficients.detailEffectiveFrom')} value={formatDate(c.effectiveFrom)} />
+          <MetricCard icon={<Calendar size={18} />} label={t('priceCoefficients.detailEffectiveTo')} value={c.effectiveTo ? formatDate(c.effectiveTo) : t('priceCoefficients.indefinite')} />
         </div>
 
         {/* Info grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Информация о коэффициенте</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('priceCoefficients.detailInfoTitle')}</h3>
 
             {c.description && (
               <p className="text-sm text-neutral-600 leading-relaxed mb-6 pb-6 border-b border-neutral-100">
@@ -127,27 +130,27 @@ const PriceCoefficientDetailPage: React.FC = () => {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
-              <InfoItem icon={<Tag size={15} />} label="Тип" value={typeLabels[c.type] ?? c.type} />
-              <InfoItem icon={<Calculator size={15} />} label="Значение" value={c.value.toFixed(4)} />
-              <InfoItem icon={<Calendar size={15} />} label="Действует с" value={formatDateLong(c.effectiveFrom)} />
-              <InfoItem icon={<Calendar size={15} />} label="Действует до" value={c.effectiveTo ? formatDateLong(c.effectiveTo) : 'Бессрочно'} />
-              {c.projectName && <InfoItem icon={<FolderKanban size={15} />} label="Проект" value={c.projectName} />}
-              {c.contractName && <InfoItem icon={<Building2 size={15} />} label="Договор" value={c.contractName} />}
-              <InfoItem icon={<FileText size={15} />} label="Создан" value={formatDateLong(c.createdAt)} />
-              <InfoItem icon={<FileText size={15} />} label="Обновлён" value={formatDateLong(c.updatedAt)} />
+              <InfoItem icon={<Tag size={15} />} label={t('priceCoefficients.detailType')} value={typeLabels[c.type] ?? c.type} />
+              <InfoItem icon={<Calculator size={15} />} label={t('priceCoefficients.detailValue')} value={c.value.toFixed(4)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('priceCoefficients.detailEffectiveFrom')} value={formatDateLong(c.effectiveFrom)} />
+              <InfoItem icon={<Calendar size={15} />} label={t('priceCoefficients.detailEffectiveTo')} value={c.effectiveTo ? formatDateLong(c.effectiveTo) : t('priceCoefficients.indefinite')} />
+              {c.projectName && <InfoItem icon={<FolderKanban size={15} />} label={t('priceCoefficients.detailProject')} value={c.projectName} />}
+              {c.contractName && <InfoItem icon={<Building2 size={15} />} label={t('priceCoefficients.detailContract')} value={c.contractName} />}
+              <InfoItem icon={<FileText size={15} />} label={t('priceCoefficients.detailCreated')} value={formatDateLong(c.createdAt)} />
+              <InfoItem icon={<FileText size={15} />} label={t('priceCoefficients.detailUpdated')} value={formatDateLong(c.updatedAt)} />
             </div>
           </div>
 
           {/* Calculate price section */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Рассчитать цену</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('priceCoefficients.calculateTitle')}</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">Базовая цена</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">{t('priceCoefficients.basePrice')}</p>
                 <Input
                   type="text"
                   inputMode="numeric"
-                  placeholder="Введите сумму"
+                  placeholder={t('priceCoefficients.basePricePlaceholder')}
                   value={basePrice}
                   onChange={(e) => setBasePrice(e.target.value)}
                 />
@@ -162,27 +165,27 @@ const PriceCoefficientDetailPage: React.FC = () => {
                 disabled={numericBase <= 0}
                 loading={calculateMutation.isPending}
               >
-                Рассчитать
+                {t('priceCoefficients.calculateBtn')}
               </Button>
 
               {numericBase > 0 && (
                 <div className="pt-4 border-t border-neutral-100 space-y-3">
                   <div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Базовая цена</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('priceCoefficients.basePrice')}</p>
                     <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 tabular-nums">{formatMoney(numericBase)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Коэффициент</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('priceCoefficients.coefficientLabel')}</p>
                     <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 tabular-nums">x {c.value.toFixed(4)}</p>
                   </div>
                   <div className="pt-3 border-t border-neutral-100">
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Результат</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('priceCoefficients.resultLabel')}</p>
                     <p className="text-lg font-semibold text-primary-700 tabular-nums">
                       {formatMoney(calcResult?.resultPrice ?? localResult)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Разница</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('priceCoefficients.differenceLabel')}</p>
                     <p className="text-sm font-medium text-warning-600 tabular-nums">
                       +{formatMoney((calcResult?.resultPrice ?? localResult) - numericBase)}
                     </p>

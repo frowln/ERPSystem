@@ -19,6 +19,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { portalApi } from '@/api/portal';
 import { formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { PortalMessage } from './types';
 import toast from 'react-hot-toast';
 
@@ -62,7 +63,7 @@ const PortalMessageListPage: React.FC = () => {
   }), [messages]);
 
   const handleSend = () => {
-    toast.success('Сообщение отправлено');
+    toast.success(t('portal.messages.messageSent'));
     setComposeOpen(false);
     setNewSubject('');
     setNewContent('');
@@ -71,39 +72,39 @@ const PortalMessageListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Сообщения портала"
-        subtitle={`${messages.length} сообщений`}
+        title={t('portal.messages.title')}
+        subtitle={t('portal.messages.subtitle', { count: String(messages.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портал', href: '/portal' },
-          { label: 'Сообщения' },
+          { label: t('portal.messages.breadcrumbHome'), href: '/' },
+          { label: t('portal.messages.breadcrumbPortal'), href: '/portal' },
+          { label: t('portal.messages.breadcrumbMessages') },
         ]}
         actions={
           <Button iconLeft={<Send size={16} />} onClick={() => setComposeOpen(true)}>
-            Новое сообщение
+            {t('portal.messages.newMessage')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'UNREAD', label: 'Непрочитанные', count: tabCounts.unread },
-          { id: 'SENT', label: 'Прочитанные', count: tabCounts.sent },
-          { id: 'ARCHIVED', label: 'Архив', count: tabCounts.archived },
+          { id: 'all', label: t('portal.messages.tabAll'), count: tabCounts.all },
+          { id: 'UNREAD', label: t('portal.messages.tabUnread'), count: tabCounts.unread },
+          { id: 'SENT', label: t('portal.messages.tabRead'), count: tabCounts.sent },
+          { id: 'ARCHIVED', label: t('portal.messages.tabArchived'), count: tabCounts.archived },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<MessageSquare size={18} />} label="Всего сообщений" value={messages.length} />
-        <MetricCard icon={<Mail size={18} />} label="Непрочитанные" value={tabCounts.unread} trend={tabCounts.unread > 0 ? { direction: 'up', value: 'Новые' } : undefined} />
-        <MetricCard icon={<MailOpen size={18} />} label="Прочитанные" value={tabCounts.sent} />
-        <MetricCard icon={<Paperclip size={18} />} label="С вложениями" value={messages.filter((m) => m.hasAttachments).length} />
+        <MetricCard icon={<MessageSquare size={18} />} label={t('portal.messages.metricTotal')} value={messages.length} />
+        <MetricCard icon={<Mail size={18} />} label={t('portal.messages.metricUnread')} value={tabCounts.unread} trend={tabCounts.unread > 0 ? { direction: 'up', value: t('portal.messages.trendNew') } : undefined} />
+        <MetricCard icon={<MailOpen size={18} />} label={t('portal.messages.metricRead')} value={tabCounts.sent} />
+        <MetricCard icon={<Paperclip size={18} />} label={t('portal.messages.metricWithAttachments')} value={messages.filter((m) => m.hasAttachments).length} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по теме, отправителю..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('portal.messages.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -114,7 +115,7 @@ const PortalMessageListPage: React.FC = () => {
             {filteredMessages.length === 0 ? (
               <div className="p-8 text-center">
                 <MessageSquare size={32} className="mx-auto text-neutral-300 mb-2" />
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Нет сообщений</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('portal.messages.noMessages')}</p>
               </div>
             ) : (
               filteredMessages.map((msg) => (
@@ -156,8 +157,8 @@ const PortalMessageListPage: React.FC = () => {
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{selectedMessage.subject}</h2>
                 <div className="flex items-center gap-4 mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-                  <span>От: <span className="font-medium text-neutral-700 dark:text-neutral-300">{selectedMessage.senderName}</span></span>
-                  <span>Кому: <span className="font-medium text-neutral-700 dark:text-neutral-300">{selectedMessage.recipientName}</span></span>
+                  <span>{t('portal.messages.from')} <span className="font-medium text-neutral-700 dark:text-neutral-300">{selectedMessage.senderName}</span></span>
+                  <span>{t('portal.messages.to')} <span className="font-medium text-neutral-700 dark:text-neutral-300">{selectedMessage.recipientName}</span></span>
                 </div>
                 <div className="flex items-center gap-3 mt-2 text-xs text-neutral-400">
                   <Clock size={12} />
@@ -170,7 +171,7 @@ const PortalMessageListPage: React.FC = () => {
                   )}
                   {selectedMessage.hasAttachments && (
                     <span className="flex items-center gap-1 text-primary-500">
-                      <Paperclip size={12} /> Вложения
+                      <Paperclip size={12} /> {t('portal.messages.attachments')}
                     </span>
                   )}
                 </div>
@@ -179,14 +180,14 @@ const PortalMessageListPage: React.FC = () => {
                 <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">{selectedMessage.content}</p>
               </div>
               <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4 mt-6">
-                <Textarea placeholder="Написать ответ..." rows={3} />
+                <Textarea placeholder={t('portal.messages.replyPlaceholder')} rows={3} />
                 <div className="flex justify-end mt-3">
                   <Button
                     size="sm"
                     iconLeft={<Send size={14} />}
-                    onClick={() => toast.success('Ответ отправлен')}
+                    onClick={() => toast.success(t('portal.messages.replySent'))}
                   >
-                    Ответить
+                    {t('portal.messages.reply')}
                   </Button>
                 </div>
               </div>
@@ -194,7 +195,7 @@ const PortalMessageListPage: React.FC = () => {
           ) : (
             <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-neutral-400">
               <MessageSquare size={48} className="mb-3 text-neutral-200" />
-              <p className="text-sm">Выберите сообщение для просмотра</p>
+              <p className="text-sm">{t('portal.messages.selectMessage')}</p>
             </div>
           )}
         </div>
@@ -204,22 +205,22 @@ const PortalMessageListPage: React.FC = () => {
       <Modal
         open={composeOpen}
         onClose={() => setComposeOpen(false)}
-        title="Новое сообщение"
-        description="Отправить сообщение через портал"
+        title={t('portal.messages.composeTitle')}
+        description={t('portal.messages.composeDescription')}
         size="lg"
         footer={
           <>
-            <Button variant="secondary" onClick={() => setComposeOpen(false)}>Отмена</Button>
-            <Button onClick={handleSend} disabled={!newSubject || !newContent}>Отправить</Button>
+            <Button variant="secondary" onClick={() => setComposeOpen(false)}>{t('portal.messages.composeCancel')}</Button>
+            <Button onClick={handleSend} disabled={!newSubject || !newContent}>{t('portal.messages.composeSend')}</Button>
           </>
         }
       >
         <div className="space-y-4">
-          <FormField label="Тема" required>
-            <Input placeholder="Тема сообщения" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} />
+          <FormField label={t('portal.messages.composeSubjectLabel')} required>
+            <Input placeholder={t('portal.messages.composeSubjectPlaceholder')} value={newSubject} onChange={(e) => setNewSubject(e.target.value)} />
           </FormField>
-          <FormField label="Сообщение" required>
-            <Textarea placeholder="Текст сообщения..." value={newContent} onChange={(e) => setNewContent(e.target.value)} rows={6} />
+          <FormField label={t('portal.messages.composeMessageLabel')} required>
+            <Textarea placeholder={t('portal.messages.composeMessagePlaceholder')} value={newContent} onChange={(e) => setNewContent(e.target.value)} rows={6} />
           </FormField>
         </div>
       </Modal>

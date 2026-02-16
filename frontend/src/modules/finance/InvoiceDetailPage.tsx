@@ -100,13 +100,13 @@ const InvoiceDetailPage: React.FC = () => {
   if (!inv) return null;
 
   const handleStatusChange = (targetStatus: string) => {
-    if (guardDemoModeAction('Изменение статуса счета')) return;
+    if (guardDemoModeAction(t('finance.invoiceDetail.demoChangeStatus'))) return;
     setStatusOverride(targetStatus);
     toast.success(t('finance.invoiceDetail.toastStatusUpdated', { status: invoiceStatusLabels[targetStatus] ?? targetStatus }));
   };
 
   const handleDelete = () => {
-    if (guardDemoModeAction('Удаление счета')) {
+    if (guardDemoModeAction(t('finance.invoiceDetail.demoDeleteInvoice'))) {
       setDeleteDialogOpen(false);
       return;
     }
@@ -138,7 +138,7 @@ const InvoiceDetailPage: React.FC = () => {
               size="sm"
               iconLeft={<Edit size={14} />}
               onClick={() => {
-                if (guardDemoModeAction('Редактирование счета')) return;
+                if (guardDemoModeAction(t('finance.invoiceDetail.demoEditInvoice'))) return;
                 toast(t('finance.invoiceDetail.toastEditHint'));
                 navigate('/invoices/new');
               }}

@@ -19,6 +19,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "stock_limit_alerts", indexes = {
+        @Index(name = "idx_sla_org", columnList = "organization_id"),
+        @Index(name = "idx_sla_org_resolved", columnList = "organization_id, is_resolved"),
         @Index(name = "idx_sla_stock_limit", columnList = "stock_limit_id"),
         @Index(name = "idx_sla_material", columnList = "material_id"),
         @Index(name = "idx_sla_limit_type", columnList = "limit_type"),
@@ -31,6 +33,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockLimitAlert extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "stock_limit_id", nullable = false)
     private UUID stockLimitId;

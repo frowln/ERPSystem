@@ -20,56 +20,68 @@ interface TimesheetRecord extends Record<string, unknown> {
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 
-const employees = [
-  'Козлов И.П.',
-  'Петров В.С.',
-  'Сидоров М.Н.',
-  'Морозова А.Д.',
-  'Белов С.М.',
-  'Иванов Д.Н.',
-  'Новикова Е.В.',
-  'Фёдоров А.К.',
+const getEmployees = () => [
+  t('mockData.employeeKozlov'),
+  t('mockData.employeePetrov'),
+  t('mockData.employeeSidorov'),
+  t('mockData.employeeMorozova'),
+  t('mockData.employeeBelov'),
+  t('mockData.employeeIvanovDN'),
+  t('mockData.employeeNovikova'),
+  t('mockData.employeeFedorov'),
 ];
 
-const weeks = ['Нед 1 (03-07)', 'Нед 2 (10-14)', 'Нед 3 (17-21)', 'Нед 4 (24-28)'];
-const timesheetData: TimesheetRecord[] = [
-  // Week 1
-  { id: '1', employee: 'Козлов И.П.', week: 'Нед 1 (03-07)', hours: 42, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '2', employee: 'Петров В.С.', week: 'Нед 1 (03-07)', hours: 40, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '3', employee: 'Сидоров М.Н.', week: 'Нед 1 (03-07)', hours: 45, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  { id: '4', employee: 'Морозова А.Д.', week: 'Нед 1 (03-07)', hours: 38, projectName: 'БЦ "Горизонт"', department: 'Электромонтаж' },
-  { id: '5', employee: 'Белов С.М.', week: 'Нед 1 (03-07)', hours: 40, projectName: 'БЦ "Горизонт"', department: 'Отделка' },
-  { id: '6', employee: 'Иванов Д.Н.', week: 'Нед 1 (03-07)', hours: 36, projectName: 'ЖК "Солнечный"', department: 'Логистика' },
-  { id: '7', employee: 'Новикова Е.В.', week: 'Нед 1 (03-07)', hours: 40, projectName: 'БЦ "Горизонт"', department: 'ПТО' },
-  { id: '8', employee: 'Фёдоров А.К.', week: 'Нед 1 (03-07)', hours: 44, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  // Week 2
-  { id: '9', employee: 'Козлов И.П.', week: 'Нед 2 (10-14)', hours: 44, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '10', employee: 'Петров В.С.', week: 'Нед 2 (10-14)', hours: 40, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '11', employee: 'Сидоров М.Н.', week: 'Нед 2 (10-14)', hours: 48, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  { id: '12', employee: 'Морозова А.Д.', week: 'Нед 2 (10-14)', hours: 40, projectName: 'БЦ "Горизонт"', department: 'Электромонтаж' },
-  { id: '13', employee: 'Белов С.М.', week: 'Нед 2 (10-14)', hours: 42, projectName: 'БЦ "Горизонт"', department: 'Отделка' },
-  { id: '14', employee: 'Иванов Д.Н.', week: 'Нед 2 (10-14)', hours: 40, projectName: 'ЖК "Солнечный"', department: 'Логистика' },
-  { id: '15', employee: 'Новикова Е.В.', week: 'Нед 2 (10-14)', hours: 38, projectName: 'БЦ "Горизонт"', department: 'ПТО' },
-  { id: '16', employee: 'Фёдоров А.К.', week: 'Нед 2 (10-14)', hours: 40, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  // Week 3
-  { id: '17', employee: 'Козлов И.П.', week: 'Нед 3 (17-21)', hours: 40, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '18', employee: 'Петров В.С.', week: 'Нед 3 (17-21)', hours: 44, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '19', employee: 'Сидоров М.Н.', week: 'Нед 3 (17-21)', hours: 40, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  { id: '20', employee: 'Морозова А.Д.', week: 'Нед 3 (17-21)', hours: 42, projectName: 'БЦ "Горизонт"', department: 'Электромонтаж' },
-  { id: '21', employee: 'Белов С.М.', week: 'Нед 3 (17-21)', hours: 40, projectName: 'БЦ "Горизонт"', department: 'Отделка' },
-  { id: '22', employee: 'Иванов Д.Н.', week: 'Нед 3 (17-21)', hours: 40, projectName: 'ЖК "Солнечный"', department: 'Логистика' },
-  { id: '23', employee: 'Новикова Е.В.', week: 'Нед 3 (17-21)', hours: 40, projectName: 'БЦ "Горизонт"', department: 'ПТО' },
-  { id: '24', employee: 'Фёдоров А.К.', week: 'Нед 3 (17-21)', hours: 46, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  // Week 4
-  { id: '25', employee: 'Козлов И.П.', week: 'Нед 4 (24-28)', hours: 43, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '26', employee: 'Петров В.С.', week: 'Нед 4 (24-28)', hours: 41, projectName: 'ЖК "Солнечный"', department: 'Строительство' },
-  { id: '27', employee: 'Сидоров М.Н.', week: 'Нед 4 (24-28)', hours: 44, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-  { id: '28', employee: 'Морозова А.Д.', week: 'Нед 4 (24-28)', hours: 39, projectName: 'БЦ "Горизонт"', department: 'Электромонтаж' },
-  { id: '29', employee: 'Белов С.М.', week: 'Нед 4 (24-28)', hours: 40, projectName: 'БЦ "Горизонт"', department: 'Отделка' },
-  { id: '30', employee: 'Иванов Д.Н.', week: 'Нед 4 (24-28)', hours: 37, projectName: 'ЖК "Солнечный"', department: 'Логистика' },
-  { id: '31', employee: 'Новикова Е.В.', week: 'Нед 4 (24-28)', hours: 41, projectName: 'БЦ "Горизонт"', department: 'ПТО' },
-  { id: '32', employee: 'Фёдоров А.К.', week: 'Нед 4 (24-28)', hours: 45, projectName: 'Мост через р. Вятка', department: 'Строительство' },
-];
+const getWeeks = () => [t('mockData.week1'), t('mockData.week2'), t('mockData.week3'), t('mockData.week4')];
+const getTimesheetData = (): TimesheetRecord[] => {
+  const e = getEmployees();
+  const w = getWeeks();
+  const pSol = t('mockData.projectSolnechny');
+  const pGor = t('mockData.projectGorizont');
+  const pBri = t('mockData.projectBridgeVyatka');
+  const dCon = t('mockData.deptConstruction');
+  const dElc = t('mockData.deptElectrical');
+  const dFin = t('mockData.deptFinishing');
+  const dLog = t('mockData.deptLogistics');
+  const dPto = t('mockData.deptPto');
+  return [
+    // Week 1
+    { id: '1', employee: e[0], week: w[0], hours: 42, projectName: pSol, department: dCon },
+    { id: '2', employee: e[1], week: w[0], hours: 40, projectName: pSol, department: dCon },
+    { id: '3', employee: e[2], week: w[0], hours: 45, projectName: pBri, department: dCon },
+    { id: '4', employee: e[3], week: w[0], hours: 38, projectName: pGor, department: dElc },
+    { id: '5', employee: e[4], week: w[0], hours: 40, projectName: pGor, department: dFin },
+    { id: '6', employee: e[5], week: w[0], hours: 36, projectName: pSol, department: dLog },
+    { id: '7', employee: e[6], week: w[0], hours: 40, projectName: pGor, department: dPto },
+    { id: '8', employee: e[7], week: w[0], hours: 44, projectName: pBri, department: dCon },
+    // Week 2
+    { id: '9', employee: e[0], week: w[1], hours: 44, projectName: pSol, department: dCon },
+    { id: '10', employee: e[1], week: w[1], hours: 40, projectName: pSol, department: dCon },
+    { id: '11', employee: e[2], week: w[1], hours: 48, projectName: pBri, department: dCon },
+    { id: '12', employee: e[3], week: w[1], hours: 40, projectName: pGor, department: dElc },
+    { id: '13', employee: e[4], week: w[1], hours: 42, projectName: pGor, department: dFin },
+    { id: '14', employee: e[5], week: w[1], hours: 40, projectName: pSol, department: dLog },
+    { id: '15', employee: e[6], week: w[1], hours: 38, projectName: pGor, department: dPto },
+    { id: '16', employee: e[7], week: w[1], hours: 40, projectName: pBri, department: dCon },
+    // Week 3
+    { id: '17', employee: e[0], week: w[2], hours: 40, projectName: pSol, department: dCon },
+    { id: '18', employee: e[1], week: w[2], hours: 44, projectName: pSol, department: dCon },
+    { id: '19', employee: e[2], week: w[2], hours: 40, projectName: pBri, department: dCon },
+    { id: '20', employee: e[3], week: w[2], hours: 42, projectName: pGor, department: dElc },
+    { id: '21', employee: e[4], week: w[2], hours: 40, projectName: pGor, department: dFin },
+    { id: '22', employee: e[5], week: w[2], hours: 40, projectName: pSol, department: dLog },
+    { id: '23', employee: e[6], week: w[2], hours: 40, projectName: pGor, department: dPto },
+    { id: '24', employee: e[7], week: w[2], hours: 46, projectName: pBri, department: dCon },
+    // Week 4
+    { id: '25', employee: e[0], week: w[3], hours: 43, projectName: pSol, department: dCon },
+    { id: '26', employee: e[1], week: w[3], hours: 41, projectName: pSol, department: dCon },
+    { id: '27', employee: e[2], week: w[3], hours: 44, projectName: pBri, department: dCon },
+    { id: '28', employee: e[3], week: w[3], hours: 39, projectName: pGor, department: dElc },
+    { id: '29', employee: e[4], week: w[3], hours: 40, projectName: pGor, department: dFin },
+    { id: '30', employee: e[5], week: w[3], hours: 37, projectName: pSol, department: dLog },
+    { id: '31', employee: e[6], week: w[3], hours: 41, projectName: pGor, department: dPto },
+    { id: '32', employee: e[7], week: w[3], hours: 45, projectName: pBri, department: dCon },
+  ];
+};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -77,6 +89,10 @@ const timesheetData: TimesheetRecord[] = [
 
 const TimesheetPivotPage: React.FC = () => {
   const [aggregation, setAggregation] = useState<AggregationType>('sum');
+
+  const employees = getEmployees();
+  const weeks = getWeeks();
+  const timesheetData = getTimesheetData();
 
   const totalHours = timesheetData.reduce((s, d) => s + d.hours, 0);
   const avgPerWeek = totalHours / weeks.length;

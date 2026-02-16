@@ -10,10 +10,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface RegulatoryReportRepository extends JpaRepository<RegulatoryReport, UUID> {
+
+    Optional<RegulatoryReport> findByIdAndDeletedFalse(UUID id);
+
+    Page<RegulatoryReport> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);
 
     Page<RegulatoryReport> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 

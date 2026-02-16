@@ -61,10 +61,10 @@ const getStatusOptions = () => [
 
 const getProjectOptions = () => [
   { value: '', label: t('fleet.createModal.noProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectGorizont') },
+  { value: '3', label: t('mockData.projectBridgeVyatka') },
+  { value: '6', label: t('mockData.projectTsCentralny') },
 ];
 
 export const VehicleCreateModal: React.FC<VehicleCreateModalProps> = ({ open, onClose }) => {
@@ -146,7 +146,7 @@ export const VehicleCreateModal: React.FC<VehicleCreateModalProps> = ({ open, on
       <div className="space-y-4">
         <FormField label={t('fleet.createModal.labelLicensePlate')} error={errors.licensePlate?.message} required>
           <Input
-            placeholder="А123БВ 777"
+            placeholder={t('fleet.createModal.placeholderLicensePlate')}
             hasError={!!errors.licensePlate}
             {...register('licensePlate')}
           />

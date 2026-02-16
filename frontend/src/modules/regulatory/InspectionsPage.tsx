@@ -20,17 +20,18 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { regulatoryApi } from '@/api/regulatory';
 import { formatDate } from '@/lib/format';
 import type { Inspection } from './types';
+import { t } from '@/i18n';
 
 type TabId = 'all' | 'SCHEDULED' | 'PASSED' | 'FAILED';
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'ROSTECHNADZOR', label: 'Ростехнадзор' },
-  { value: 'FIRE_INSPECTION', label: 'Пожарная инспекция' },
-  { value: 'SANITARY', label: 'Роспотребнадзор' },
-  { value: 'ENVIRONMENTAL', label: 'Экологическая' },
-  { value: 'INTERNAL_AUDIT', label: 'Внутренний аудит' },
-  { value: 'CUSTOMER_INSPECTION', label: 'Инспекция заказчика' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('regulatory.inspTypeFilterAll') },
+  { value: 'ROSTECHNADZOR', label: t('regulatory.inspTypeRostechnadzor') },
+  { value: 'FIRE_INSPECTION', label: t('regulatory.inspTypeFireInspection') },
+  { value: 'SANITARY', label: t('regulatory.inspTypeSanitary') },
+  { value: 'ENVIRONMENTAL', label: t('regulatory.inspTypeEnvironmental') },
+  { value: 'INTERNAL_AUDIT', label: t('regulatory.inspTypeInternalAudit') },
+  { value: 'CUSTOMER_INSPECTION', label: t('regulatory.inspTypeCustomerInspection') },
 ];
 
 const InspectionsPage: React.FC = () => {
@@ -75,7 +76,7 @@ const InspectionsPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('regulatory.colNumber'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -83,7 +84,7 @@ const InspectionsPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Проверка',
+        header: t('regulatory.colInspection'),
         size: 260,
         cell: ({ row }) => (
           <div>
@@ -94,7 +95,7 @@ const InspectionsPage: React.FC = () => {
       },
       {
         accessorKey: 'inspectionType',
-        header: 'Тип',
+        header: t('regulatory.colType'),
         size: 160,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -106,7 +107,7 @@ const InspectionsPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('regulatory.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -118,7 +119,7 @@ const InspectionsPage: React.FC = () => {
       },
       {
         accessorKey: 'result',
-        header: 'Результат',
+        header: t('regulatory.colResult'),
         size: 130,
         cell: ({ getValue }) => {
           const result = getValue<string | undefined>();
@@ -134,7 +135,7 @@ const InspectionsPage: React.FC = () => {
       },
       {
         accessorKey: 'scheduledDate',
-        header: 'Дата',
+        header: t('regulatory.colDate'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -142,7 +143,7 @@ const InspectionsPage: React.FC = () => {
       },
       {
         accessorKey: 'inspectorOrganization',
-        header: 'Организация',
+        header: t('regulatory.colOrganization'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300 text-xs">{getValue<string>()}</span>
@@ -160,42 +161,42 @@ const InspectionsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Проверки и инспекции"
-        subtitle={`${inspections.length} проверок в системе`}
+        title={t('regulatory.inspectionsTitle')}
+        subtitle={t('regulatory.inspectionsSubtitle', { count: String(inspections.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Регуляторика', href: '/regulatory' },
-          { label: 'Проверки' },
+          { label: t('regulatory.breadcrumbHome'), href: '/' },
+          { label: t('regulatory.breadcrumbRegulatory'), href: '/regulatory' },
+          { label: t('regulatory.btnInspections') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/regulatory/inspections/new')}>
-            Запланировать проверку
+            {t('regulatory.btnScheduleInspection')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'SCHEDULED', label: 'Запланированные', count: tabCounts.scheduled },
-          { id: 'PASSED', label: 'Пройденные', count: tabCounts.passed },
-          { id: 'FAILED', label: 'Не пройденные', count: tabCounts.failed },
+          { id: 'all', label: t('regulatory.tabAll'), count: tabCounts.all },
+          { id: 'SCHEDULED', label: t('regulatory.tabScheduled'), count: tabCounts.scheduled },
+          { id: 'PASSED', label: t('regulatory.tabPassed'), count: tabCounts.passed },
+          { id: 'FAILED', label: t('regulatory.tabFailed'), count: tabCounts.failed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<ClipboardCheck size={18} />} label="Всего проверок" value={inspections.length} />
-        <MetricCard icon={<Calendar size={18} />} label="Запланировано" value={tabCounts.scheduled} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Пройдено" value={tabCounts.passed} />
-        <MetricCard icon={<XCircle size={18} />} label="Не пройдено" value={tabCounts.failed}
-          trend={tabCounts.failed > 0 ? { direction: 'down', value: 'Требуют корр. мер' } : undefined} />
+        <MetricCard icon={<ClipboardCheck size={18} />} label={t('regulatory.metricTotalInspections')} value={inspections.length} />
+        <MetricCard icon={<Calendar size={18} />} label={t('regulatory.metricScheduledCount')} value={tabCounts.scheduled} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('regulatory.metricPassedCount')} value={tabCounts.passed} />
+        <MetricCard icon={<XCircle size={18} />} label={t('regulatory.metricFailedCount')} value={tabCounts.failed}
+          trend={tabCounts.failed > 0 ? { direction: 'down', value: t('regulatory.trendNeedCorrective') } : undefined} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('regulatory.searchInspectionPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={typeFilterOptions} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-56" />
+        <Select options={getTypeFilterOptions()} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-56" />
       </div>
 
       <DataTable<Inspection>
@@ -208,8 +209,8 @@ const InspectionsPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет проверок"
-        emptyDescription="Запланируйте первую проверку или инспекцию"
+        emptyTitle={t('regulatory.emptyInspections')}
+        emptyDescription={t('regulatory.emptyInspectionsDesc')}
       />
     </div>
   );

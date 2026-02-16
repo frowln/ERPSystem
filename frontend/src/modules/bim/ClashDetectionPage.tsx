@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { bimApi, type Clash } from '@/api/bim';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 
 const severityColorMap: Record<string, 'red' | 'orange' | 'yellow' | 'gray'> = {
   critical: 'red',
@@ -17,12 +18,12 @@ const severityColorMap: Record<string, 'red' | 'orange' | 'yellow' | 'gray'> = {
   minor: 'yellow',
   info: 'gray',
 };
-const severityLabels: Record<string, string> = {
-  critical: 'Критическая',
-  major: 'Серьёзная',
-  minor: 'Незначительная',
-  info: 'Информация',
-};
+const getSeverityLabels = (): Record<string, string> => ({
+  critical: t('bim.severityCritical'),
+  major: t('bim.severityMajor'),
+  minor: t('bim.severityMinor'),
+  info: t('bim.severityInfo'),
+});
 
 const clashStatusColorMap: Record<string, 'red' | 'yellow' | 'blue' | 'green' | 'gray'> = {
   new: 'red',
@@ -31,13 +32,13 @@ const clashStatusColorMap: Record<string, 'red' | 'yellow' | 'blue' | 'green' | 
   approved: 'blue',
   ignored: 'gray',
 };
-const clashStatusLabels: Record<string, string> = {
-  new: 'Новая',
-  in_progress: 'В работе',
-  resolved: 'Устранена',
-  approved: 'Принята',
-  ignored: 'Игнорируется',
-};
+const getClashStatusLabels = (): Record<string, string> => ({
+  new: t('bim.clashStatusNew'),
+  in_progress: t('bim.clashStatusInProgress'),
+  resolved: t('bim.clashStatusResolved'),
+  approved: t('bim.clashStatusApproved'),
+  ignored: t('bim.clashStatusIgnored'),
+});
 
 const ClashDetectionPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -69,16 +70,19 @@ const ClashDetectionPage: React.FC = () => {
   const resolvedCount = clashes.filter((c) => c.status === 'RESOLVED' || c.status === 'APPROVED').length;
   const criticalCount = clashes.filter((c) => c.severity === 'CRITICAL' && c.status !== 'RESOLVED' && c.status !== 'APPROVED' && c.status !== 'IGNORED').length;
 
-  const columns = useMemo<ColumnDef<Clash, unknown>[]>(() => [
+  const columns = useMemo<ColumnDef<Clash, unknown>[]>(() => {
+    const sevLabels = getSeverityLabels();
+    const statusLabels = getClashStatusLabels();
+    return [
     {
       accessorKey: 'code',
-      header: 'Код',
+      header: t('bim.colClashCode'),
       size: 80,
       cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'description',
-      header: 'Описание',
+      header: t('bim.colDescription'),
       size: 280,
       cell: ({ row }) => (
         <div>
@@ -89,23 +93,23 @@ const ClashDetectionPage: React.FC = () => {
     },
     {
       accessorKey: 'severity',
-      header: 'Серьёзность',
+      header: t('bim.colSeverity'),
       size: 130,
       cell: ({ getValue }) => (
-        <StatusBadge status={getValue<string>()} colorMap={severityColorMap} label={severityLabels[getValue<string>()]} />
+        <StatusBadge status={getValue<string>()} colorMap={severityColorMap} label={sevLabels[getValue<string>()]} />
       ),
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('bim.colClashStatus'),
       size: 120,
       cell: ({ getValue }) => (
-        <StatusBadge status={getValue<string>()} colorMap={clashStatusColorMap} label={clashStatusLabels[getValue<string>()]} />
+        <StatusBadge status={getValue<string>()} colorMap={clashStatusColorMap} label={statusLabels[getValue<string>()]} />
       ),
     },
     {
       id: 'disciplines',
-      header: 'Дисциплины',
+      header: t('bim.colDisciplines'),
       size: 120,
       cell: ({ row }) => (
         <span className="text-sm text-neutral-600">{row.original.discipline1} / {row.original.discipline2}</span>
@@ -113,55 +117,55 @@ const ClashDetectionPage: React.FC = () => {
     },
     {
       accessorKey: 'assignedTo',
-      header: 'Ответственный',
+      header: t('bim.colAssignedTo'),
       size: 140,
-      cell: ({ getValue }) => getValue<string>() || <span className="text-neutral-400">Не назначен</span>,
+      cell: ({ getValue }) => getValue<string>() || <span className="text-neutral-400">{t('bim.notAssigned')}</span>,
     },
     {
       accessorKey: 'detectedDate',
-      header: 'Обнаружена',
+      header: t('bim.colDetectedDate'),
       size: 110,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
-  ], []);
+  ]; }, []);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Обнаружение коллизий"
-        subtitle={`${clashes.length} коллизий найдено`}
+        title={t('bim.clashTitle')}
+        subtitle={t('bim.clashSubtitle', { count: String(clashes.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'BIM' },
-          { label: 'Коллизии' },
+          { label: t('bim.breadcrumbHome'), href: '/' },
+          { label: t('bim.breadcrumbBim') },
+          { label: t('bim.breadcrumbClashes') },
         ]}
         actions={
-          <Button variant="secondary" iconLeft={<AlertTriangle size={16} />}>Запустить проверку</Button>
+          <Button variant="secondary" iconLeft={<AlertTriangle size={16} />}>{t('bim.runCheck')}</Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: clashes.length },
-          { id: 'OPEN', label: 'Открытые', count: openCount },
-          { id: 'RESOLVED', label: 'Устранённые', count: resolvedCount },
+          { id: 'all', label: t('bim.tabAll'), count: clashes.length },
+          { id: 'OPEN', label: t('bim.tabOpen'), count: openCount },
+          { id: 'RESOLVED', label: t('bim.tabResolved'), count: resolvedCount },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <MetricCard icon={<AlertTriangle size={18} />} label="Открытых коллизий" value={openCount} />
-        <MetricCard icon={<XCircle size={18} />} label="Критических (открыто)" value={criticalCount} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Устранено" value={resolvedCount} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('bim.metricOpenClashes')} value={openCount} />
+        <MetricCard icon={<XCircle size={18} />} label={t('bim.metricCriticalOpen')} value={criticalCount} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('bim.metricResolved')} value={resolvedCount} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по описанию, коду..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('bim.searchClashPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все серьёзности' },
-            ...Object.entries(severityLabels).map(([v, l]) => ({ value: v, label: l })),
+            { value: '', label: t('bim.filterAllSeverities') },
+            ...Object.entries(getSeverityLabels()).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value)}
@@ -178,8 +182,8 @@ const ClashDetectionPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Коллизий не обнаружено"
-        emptyDescription="Запустите проверку для обнаружения коллизий"
+        emptyTitle={t('bim.emptyClashTitle')}
+        emptyDescription={t('bim.emptyClashDescription')}
       />
     </div>
   );

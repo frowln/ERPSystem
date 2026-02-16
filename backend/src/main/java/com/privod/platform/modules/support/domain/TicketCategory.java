@@ -15,7 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "ticket_categories", indexes = {
-        @Index(name = "idx_ticket_category_code", columnList = "code", unique = true)
+        @Index(name = "idx_ticket_category_org", columnList = "organization_id"),
+        @Index(name = "idx_ticket_category_org_code", columnList = "organization_id, code", unique = true)
 })
 @Getter
 @Setter
@@ -24,7 +25,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TicketCategory extends BaseEntity {
 
-    @Column(name = "code", unique = true, nullable = false, length = 50)
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
+    @Column(name = "code", nullable = false, length = 50)
     private String code;
 
     @Column(name = "name", nullable = false, length = 255)

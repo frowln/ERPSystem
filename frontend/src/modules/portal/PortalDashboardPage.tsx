@@ -15,6 +15,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Button } from '@/design-system/components/Button';
 import { portalApi } from '@/api/portal';
 import { formatRelativeTime, formatPercent, formatMoneyCompact } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PortalProject, PortalDocument, PortalMessage } from './types';
 
 const PortalDashboardPage: React.FC = () => {
@@ -49,34 +50,34 @@ const PortalDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Портал"
-        subtitle="Обзор проектов, документов и коммуникаций"
+        title={t('portal.dashboard.title')}
+        subtitle={t('portal.dashboard.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портал' },
+          { label: t('portal.dashboard.breadcrumbHome'), href: '/' },
+          { label: t('portal.dashboard.breadcrumbPortal') },
         ]}
       />
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FolderOpen size={18} />} label="Доступные проекты" value={metrics.totalProjects} />
-        <MetricCard icon={<FileText size={18} />} label="Общие документы" value={metrics.totalDocuments} />
+        <MetricCard icon={<FolderOpen size={18} />} label={t('portal.dashboard.metricProjects')} value={metrics.totalProjects} />
+        <MetricCard icon={<FileText size={18} />} label={t('portal.dashboard.metricDocuments')} value={metrics.totalDocuments} />
         <MetricCard
           icon={<MessageSquare size={18} />}
-          label="Непрочитанные"
+          label={t('portal.dashboard.metricUnread')}
           value={metrics.unreadMessages}
-          trend={metrics.unreadMessages > 0 ? { direction: 'up', value: 'Новые' } : undefined}
+          trend={metrics.unreadMessages > 0 ? { direction: 'up', value: t('portal.dashboard.trendNew') } : undefined}
         />
-        <MetricCard icon={<Users size={18} />} label="Пользователей портала" value={metrics.activeUsers} />
+        <MetricCard icon={<Users size={18} />} label={t('portal.dashboard.metricUsers')} value={metrics.activeUsers} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Projects summary */}
         <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Проекты</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('portal.dashboard.sectionProjects')}</h3>
             <Button variant="ghost" size="xs" onClick={() => navigate('/portal/projects')}>
-              Все проекты <ArrowRight size={14} className="ml-1" />
+              {t('portal.dashboard.allProjects')} <ArrowRight size={14} className="ml-1" />
             </Button>
           </div>
           <div className="space-y-3">
@@ -93,7 +94,7 @@ const PortalDashboardPage: React.FC = () => {
                 <div className="flex items-center gap-4 flex-shrink-0">
                   <div className="text-right">
                     <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{formatPercent(p.progress)}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">прогресс</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('portal.dashboard.progressLabel')}</p>
                   </div>
                   <div className="w-24 h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full">
                     <div
@@ -103,7 +104,7 @@ const PortalDashboardPage: React.FC = () => {
                   </div>
                   <div className="text-right hidden sm:block">
                     <p className="text-xs font-medium text-neutral-700 dark:text-neutral-300">{formatMoneyCompact(p.spentAmount)}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">из {formatMoneyCompact(p.budget)}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('portal.dashboard.ofBudget', { budget: formatMoneyCompact(p.budget) })}</p>
                   </div>
                 </div>
               </div>
@@ -116,9 +117,9 @@ const PortalDashboardPage: React.FC = () => {
           {/* Recent documents */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Последние документы</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('portal.dashboard.sectionRecentDocs')}</h3>
               <Button variant="ghost" size="xs" onClick={() => navigate('/portal/documents')}>
-                Все <ArrowRight size={14} className="ml-1" />
+                {t('portal.dashboard.allDocs')} <ArrowRight size={14} className="ml-1" />
               </Button>
             </div>
             <div className="space-y-3">
@@ -137,9 +138,9 @@ const PortalDashboardPage: React.FC = () => {
           {/* Recent messages */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Последние сообщения</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('portal.dashboard.sectionRecentMessages')}</h3>
               <Button variant="ghost" size="xs" onClick={() => navigate('/portal/messages')}>
-                Все <ArrowRight size={14} className="ml-1" />
+                {t('portal.dashboard.allMessages')} <ArrowRight size={14} className="ml-1" />
               </Button>
             </div>
             <div className="space-y-3">
@@ -161,16 +162,16 @@ const PortalDashboardPage: React.FC = () => {
 
           {/* Quick actions */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Быстрые действия</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('portal.dashboard.sectionQuickActions')}</h3>
             <div className="space-y-2">
               <Button variant="secondary" className="w-full justify-start" size="sm" onClick={() => navigate('/portal/messages')}>
-                <MessageSquare size={14} className="mr-2" /> Написать сообщение
+                <MessageSquare size={14} className="mr-2" /> {t('portal.dashboard.actionSendMessage')}
               </Button>
               <Button variant="secondary" className="w-full justify-start" size="sm" onClick={() => navigate('/portal/documents')}>
-                <FileText size={14} className="mr-2" /> Просмотреть документы
+                <FileText size={14} className="mr-2" /> {t('portal.dashboard.actionViewDocuments')}
               </Button>
               <Button variant="secondary" className="w-full justify-start" size="sm" onClick={() => navigate('/portal/admin')}>
-                <Activity size={14} className="mr-2" /> Управление доступом
+                <Activity size={14} className="mr-2" /> {t('portal.dashboard.actionManageAccess')}
               </Button>
             </div>
           </div>

@@ -19,17 +19,18 @@ import { regulatoryApi } from '@/api/regulatory';
 import { formatDate } from '@/lib/format';
 import type { RegulatoryPermit } from './types';
 import type { PaginatedResponse } from '@/types';
+import { t } from '@/i18n';
 
 type TabId = 'all' | 'ACTIVE' | 'PENDING' | 'EXPIRED';
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'BUILDING_PERMIT', label: 'Разрешение на строительство' },
-  { value: 'EXCAVATION_PERMIT', label: 'Земляные работы' },
-  { value: 'ROSTECHNADZOR', label: 'Ростехнадзор' },
-  { value: 'FIRE_SAFETY', label: 'Пожарная безопасность' },
-  { value: 'ENVIRONMENTAL_PERMIT', label: 'Экологическое' },
-  { value: 'SANITARY', label: 'Санитарное' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('regulatory.typeFilterAll') },
+  { value: 'BUILDING_PERMIT', label: t('regulatory.typeBuildingPermit') },
+  { value: 'EXCAVATION_PERMIT', label: t('regulatory.typeExcavation') },
+  { value: 'ROSTECHNADZOR', label: t('regulatory.typeRostechnadzor') },
+  { value: 'FIRE_SAFETY', label: t('regulatory.typeFireSafety') },
+  { value: 'ENVIRONMENTAL_PERMIT', label: t('regulatory.typeEnvironmental') },
+  { value: 'SANITARY', label: t('regulatory.typeSanitary') },
 ];
 
 
@@ -86,7 +87,7 @@ const PermitsPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('regulatory.colNumber'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -94,7 +95,7 @@ const PermitsPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('regulatory.colName'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -105,7 +106,7 @@ const PermitsPage: React.FC = () => {
       },
       {
         accessorKey: 'permitType',
-        header: 'Тип',
+        header: t('regulatory.colType'),
         size: 180,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -117,7 +118,7 @@ const PermitsPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('regulatory.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -129,7 +130,7 @@ const PermitsPage: React.FC = () => {
       },
       {
         accessorKey: 'validUntil',
-        header: 'Действует до',
+        header: t('regulatory.colValidUntil'),
         size: 120,
         cell: ({ row }) => {
           const validUntil = row.original.validUntil;
@@ -144,7 +145,7 @@ const PermitsPage: React.FC = () => {
       },
       {
         accessorKey: 'responsibleName',
-        header: 'Ответственный',
+        header: t('regulatory.colResponsible'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -162,43 +163,43 @@ const PermitsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Разрешения и допуски"
-        subtitle={`${permits.length} разрешений в системе`}
+        title={t('regulatory.permitsTitle')}
+        subtitle={t('regulatory.permitsSubtitle', { count: String(permits.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Регуляторика', href: '/regulatory' },
-          { label: 'Разрешения' },
+          { label: t('regulatory.breadcrumbHome'), href: '/' },
+          { label: t('regulatory.breadcrumbRegulatory'), href: '/regulatory' },
+          { label: t('regulatory.btnPermits') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/regulatory/permits/new')}>
-            Новое разрешение
+            {t('regulatory.btnNewPermitFull')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Действующие', count: tabCounts.active },
-          { id: 'PENDING', label: 'На рассмотрении', count: tabCounts.pending },
-          { id: 'EXPIRED', label: 'Истекшие', count: tabCounts.expired },
+          { id: 'all', label: t('regulatory.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('regulatory.tabActive'), count: tabCounts.active },
+          { id: 'PENDING', label: t('regulatory.tabPending'), count: tabCounts.pending },
+          { id: 'EXPIRED', label: t('regulatory.tabExpired'), count: tabCounts.expired },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Shield size={18} />} label="Всего разрешений" value={metrics.total} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Действующие" value={metrics.active} />
-        <MetricCard icon={<Clock size={18} />} label="Истекают в 90 дней" value={metrics.expiringSoon}
-          trend={metrics.expiringSoon > 0 ? { direction: 'down', value: 'Требуют продления' } : undefined} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Истекшие" value={metrics.expired}
-          trend={metrics.expired > 0 ? { direction: 'down', value: 'Требуют обновления' } : undefined} />
+        <MetricCard icon={<Shield size={18} />} label={t('regulatory.metricTotalPermits')} value={metrics.total} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('regulatory.metricActive')} value={metrics.active} />
+        <MetricCard icon={<Clock size={18} />} label={t('regulatory.metricExpiring90')} value={metrics.expiringSoon}
+          trend={metrics.expiringSoon > 0 ? { direction: 'down', value: t('regulatory.trendNeedRenewal') } : undefined} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('regulatory.metricExpired')} value={metrics.expired}
+          trend={metrics.expired > 0 ? { direction: 'down', value: t('regulatory.trendNeedUpdate') } : undefined} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('regulatory.searchPermitPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={typeFilterOptions} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-56" />
+        <Select options={getTypeFilterOptions()} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-56" />
       </div>
 
       <DataTable<RegulatoryPermit>
@@ -211,8 +212,8 @@ const PermitsPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет разрешений"
-        emptyDescription="Добавьте первое разрешение для начала учёта"
+        emptyTitle={t('regulatory.emptyPermits')}
+        emptyDescription={t('regulatory.emptyPermitsDesc')}
       />
     </div>
   );

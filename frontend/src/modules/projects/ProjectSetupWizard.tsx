@@ -3,6 +3,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select, Textarea, Checkbox } from '@/design-system/components/FormField';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
 interface ProjectSetupWizardProps {
   open: boolean;
@@ -20,15 +21,15 @@ interface BudgetLine {
   amount: string;
 }
 
-const projectTypeOptions = [
-  { value: 'RESIDENTIAL', label: 'Жилое строительство' },
-  { value: 'COMMERCIAL', label: 'Коммерческое строительство' },
-  { value: 'INDUSTRIAL', label: 'Промышленное строительство' },
-  { value: 'INFRASTRUCTURE', label: 'Инфраструктура' },
-  { value: 'RENOVATION', label: 'Реконструкция' },
+const getProjectTypeOptions = () => [
+  { value: 'RESIDENTIAL', label: t('projects.types.residential') },
+  { value: 'COMMERCIAL', label: t('projects.types.commercial') },
+  { value: 'INDUSTRIAL', label: t('projects.types.industrial') },
+  { value: 'INFRASTRUCTURE', label: t('projects.types.infrastructure') },
+  { value: 'RENOVATION', label: t('projects.types.renovation') },
 ];
 
-const userOptions = [
+const getUserOptions = () => [
   { value: 'u1', label: 'Иванов А.С.' },
   { value: 'u2', label: 'Петров В.К.' },
   { value: 'u3', label: 'Сидоров М.Н.' },
@@ -37,29 +38,53 @@ const userOptions = [
   { value: 'u6', label: 'Кузнецов И.П.' },
 ];
 
-const roleOptions = [
-  { value: 'pm', label: 'Руководитель проекта' },
-  { value: 'engineer', label: 'Инженер ПТО' },
-  { value: 'foreman', label: 'Прораб' },
-  { value: 'estimator', label: 'Сметчик' },
-  { value: 'SAFETY', label: 'Инженер ОТ' },
-  { value: 'SUPPLY', label: 'Снабженец' },
-  { value: 'accountant', label: 'Бухгалтер проекта' },
+const getRoleOptions = () => [
+  { value: 'pm', label: t('projects.wizard.rolePm') },
+  { value: 'engineer', label: t('projects.wizard.roleEngineer') },
+  { value: 'foreman', label: t('projects.wizard.roleForeman') },
+  { value: 'estimator', label: t('projects.wizard.roleEstimator') },
+  { value: 'SAFETY', label: t('projects.wizard.roleSafety') },
+  { value: 'SUPPLY', label: t('projects.wizard.roleSupply') },
+  { value: 'accountant', label: t('projects.wizard.roleAccountant') },
 ];
 
-const budgetCategories = [
-  'Материалы', 'Работы (собственные)', 'Субподряд', 'Механизмы и оборудование',
-  'Накладные расходы', 'ФОТ', 'Проектирование', 'Прочие',
+const getBudgetCategories = () => [
+  t('projects.wizard.budgetMaterials'),
+  t('projects.wizard.budgetOwnWorks'),
+  t('projects.wizard.budgetSubcontract'),
+  t('projects.wizard.budgetMachinery'),
+  t('projects.wizard.budgetOverhead'),
+  t('projects.wizard.budgetPayroll'),
+  t('projects.wizard.budgetDesign'),
+  t('projects.wizard.budgetOther'),
 ];
 
-const defaultFolders = [
-  'Проектная документация', 'Рабочая документация', 'ИРД', 'Акты и формы',
-  'Переписка', 'Фотоотчёты', 'Исполнительная документация',
+const getDefaultFolders = () => [
+  t('projects.wizard.folderProjectDocs'),
+  t('projects.wizard.folderWorkingDocs'),
+  t('projects.wizard.folderPermits'),
+  t('projects.wizard.folderActsForms'),
+  t('projects.wizard.folderCorrespondence'),
+  t('projects.wizard.folderPhotoReports'),
+  t('projects.wizard.folderAsBuiltDocs'),
 ];
 
-const STEPS = ['Основные данные', 'Команда', 'Бюджет', 'Документы', 'Подтверждение'] as const;
+const getSteps = () => [
+  t('projects.wizard.stepBasicData'),
+  t('projects.wizard.stepTeam'),
+  t('projects.wizard.stepBudget'),
+  t('projects.wizard.stepDocuments'),
+  t('projects.wizard.stepConfirmation'),
+] as const;
 
 export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, onClose }) => {
+  const projectTypeOptions = getProjectTypeOptions();
+  const userOptions = getUserOptions();
+  const roleOptions = getRoleOptions();
+  const budgetCategories = getBudgetCategories();
+  const defaultFolders = getDefaultFolders();
+  const STEPS = getSteps();
+
   const [step, setStep] = useState(0);
   // Step 1
   const [name, setName] = useState('');
@@ -111,7 +136,7 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
   const handleFinish = async () => {
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 1500));
-    toast.success(`Проект "${name}" создан`);
+    toast.success(t('projects.wizard.projectCreated', { name }));
     setSubmitting(false);
     resetAndClose();
   };
@@ -143,20 +168,20 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
     <Modal
       open={open}
       onClose={resetAndClose}
-      title="Настройка нового проекта"
+      title={t('projects.wizard.title')}
       size="xl"
       footer={
         <>
           <Button variant="secondary" onClick={step === 0 ? resetAndClose : () => setStep(step - 1)}>
-            {step === 0 ? 'Отмена' : 'Назад'}
+            {step === 0 ? t('common.cancel') : t('common.back')}
           </Button>
           {step < STEPS.length - 1 ? (
             <Button onClick={() => setStep(step + 1)} disabled={!canNext}>
-              Далее
+              {t('common.next')}
             </Button>
           ) : (
             <Button onClick={handleFinish} loading={submitting}>
-              Создать проект
+              {t('projects.createProject')}
             </Button>
           )}
         </>
@@ -185,32 +210,32 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
       {step === 0 && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <FormField label="Название проекта" required>
-              <Input placeholder='Напр. ЖК "Новые Горизонты"' value={name} onChange={(e) => setName(e.target.value)} />
+            <FormField label={t('projects.projectName')} required>
+              <Input placeholder={t('projects.wizard.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
             </FormField>
-            <FormField label="Код проекта" required>
-              <Input placeholder="Напр. НГ-01" value={code} onChange={(e) => setCode(e.target.value)} />
+            <FormField label={t('projects.projectCode')} required>
+              <Input placeholder={t('projects.wizard.codePlaceholder')} value={code} onChange={(e) => setCode(e.target.value)} />
             </FormField>
           </div>
-          <FormField label="Тип проекта" required>
+          <FormField label={t('projects.projectType')} required>
             <Select
               options={projectTypeOptions}
               value={projectType}
               onChange={(e) => setProjectType(e.target.value)}
-              placeholder="Выберите тип"
+              placeholder={t('projects.wizard.selectType')}
             />
           </FormField>
           <div className="grid grid-cols-2 gap-4">
-            <FormField label="Дата начала" required>
+            <FormField label={t('projects.startDate')} required>
               <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             </FormField>
-            <FormField label="Дата окончания">
+            <FormField label={t('projects.endDate')}>
               <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </FormField>
           </div>
-          <FormField label="Описание">
+          <FormField label={t('common.description')}>
             <Textarea
-              placeholder="Краткое описание проекта..."
+              placeholder={t('projects.wizard.descriptionPlaceholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -231,7 +256,7 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">{roleOptions.find((r) => r.value === m.role)?.label}</p>
                   </div>
                   <button onClick={() => removeMember(m.id)} className="text-xs text-danger-600 hover:underline">
-                    Удалить
+                    {t('common.delete')}
                   </button>
                 </div>
               ))}
@@ -240,25 +265,25 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
 
           <div className="border border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-3">
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="Сотрудник">
+              <FormField label={t('projects.wizard.employee')}>
                 <Select
                   options={userOptions}
                   value={newUserId}
                   onChange={(e) => setNewUserId(e.target.value)}
-                  placeholder="Выберите"
+                  placeholder={t('common.select')}
                 />
               </FormField>
-              <FormField label="Роль">
+              <FormField label={t('projects.wizard.role')}>
                 <Select
                   options={roleOptions}
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value)}
-                  placeholder="Выберите"
+                  placeholder={t('common.select')}
                 />
               </FormField>
             </div>
             <Button variant="secondary" size="sm" onClick={addMember} disabled={!newUserId || !newRole} className="mt-2">
-              Добавить участника
+              {t('projects.wizard.addMember')}
             </Button>
           </div>
         </div>
@@ -267,7 +292,7 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
       {/* Step 3: Budget */}
       {step === 2 && (
         <div className="space-y-4">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Укажите начальный бюджет по категориям (руб.):</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('projects.wizard.budgetHint')}</p>
           <div className="space-y-2">
             {budgetLines.map((line, idx) => (
               <div key={line.category} className="flex items-center gap-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg px-3 py-2">
@@ -284,7 +309,7 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
             ))}
           </div>
           <div className="flex justify-end bg-neutral-100 dark:bg-neutral-800 rounded-lg px-4 py-2">
-            <span className="text-sm font-semibold">Итого: {totalBudget.toLocaleString('ru-RU')} ₽</span>
+            <span className="text-sm font-semibold">{t('projects.wizard.budgetTotal')}: {totalBudget.toLocaleString('ru-RU')} ₽</span>
           </div>
         </div>
       )}
@@ -292,7 +317,7 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
       {/* Step 4: Documents */}
       {step === 3 && (
         <div className="space-y-4">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Выберите папки для создания структуры документооборота:</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('projects.wizard.foldersHint')}</p>
           <div className="space-y-2">
             {defaultFolders.map((folder) => (
               <label
@@ -315,17 +340,17 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
       {/* Step 5: Review & Create */}
       {step === 4 && (
         <div className="space-y-4">
-          <p className="text-sm text-neutral-600">Проверьте параметры нового проекта:</p>
+          <p className="text-sm text-neutral-600">{t('projects.wizard.reviewHint')}</p>
           <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 space-y-3 text-sm">
             <div className="grid grid-cols-2 gap-2">
-              <p><strong>Название:</strong> {name}</p>
-              <p><strong>Код:</strong> {code}</p>
-              <p><strong>Тип:</strong> {projectTypeOptions.find((t) => t.value === projectType)?.label}</p>
-              <p><strong>Начало:</strong> {startDate}</p>
-              {endDate && <p><strong>Окончание:</strong> {endDate}</p>}
+              <p><strong>{t('projects.name')}:</strong> {name}</p>
+              <p><strong>{t('projects.code')}:</strong> {code}</p>
+              <p><strong>{t('projects.type')}:</strong> {projectTypeOptions.find((pt) => pt.value === projectType)?.label}</p>
+              <p><strong>{t('projects.wizard.start')}:</strong> {startDate}</p>
+              {endDate && <p><strong>{t('projects.wizard.end')}:</strong> {endDate}</p>}
             </div>
             <div>
-              <p><strong>Команда:</strong> {members.length} участников</p>
+              <p><strong>{t('projects.team')}:</strong> {members.length} {t('projects.wizard.membersCount')}</p>
               <ul className="ml-4 mt-1 space-y-0.5 text-neutral-600">
                 {members.map((m) => (
                   <li key={m.id}>
@@ -334,12 +359,12 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
                 ))}
               </ul>
             </div>
-            <p><strong>Бюджет:</strong> {totalBudget.toLocaleString('ru-RU')} ₽</p>
-            <p><strong>Папки документов:</strong> {selectedFolders.size} из {defaultFolders.length}</p>
+            <p><strong>{t('projects.budget')}:</strong> {totalBudget.toLocaleString('ru-RU')} ₽</p>
+            <p><strong>{t('projects.wizard.docFolders')}:</strong> {selectedFolders.size} {t('projects.wizard.outOf')} {defaultFolders.length}</p>
           </div>
           <div className="bg-success-50 border border-success-200 rounded-lg p-3">
             <p className="text-sm text-success-800">
-              Проект будет создан со всеми указанными параметрами и будет доступен в списке проектов.
+              {t('projects.wizard.confirmMessage')}
             </p>
           </div>
         </div>

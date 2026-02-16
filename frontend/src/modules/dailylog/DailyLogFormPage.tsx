@@ -45,11 +45,11 @@ const dailyLogSchema = z.object({
 type DailyLogFormData = z.input<typeof dailyLogSchema>;
 
 // Mock data — will be replaced by API data
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('dailyLogPage.projectSolnechny') },
+  { value: '2', label: t('dailyLogPage.projectHorizont') },
+  { value: '3', label: t('dailyLogPage.projectBridge') },
+  { value: '6', label: t('dailyLogPage.projectCentral') },
 ];
 
 const weatherOptions = [
@@ -207,7 +207,7 @@ const DailyLogFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.dailyLog.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={projectOptions}
+                options={getProjectOptions()}
                 placeholder={t('forms.dailyLog.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}

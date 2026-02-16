@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Clock, Calendar, TrendingUp, Search } from 'lucide-react';
@@ -14,6 +14,7 @@ import { Input } from '@/design-system/components/FormField';
 import { hrApi } from '@/api/hr';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { Timesheet } from '@/types';
 
 type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED';
@@ -63,7 +64,7 @@ const TimesheetListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'employeeName',
-        header: 'Сотрудник',
+        header: t('hr.timesheetList.colEmployee'),
         size: 200,
         cell: ({ getValue }) => (
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>
@@ -71,7 +72,7 @@ const TimesheetListPage: React.FC = () => {
       },
       {
         accessorKey: 'projectName',
-        header: 'Проект',
+        header: t('hr.timesheetList.colProject'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>()}</span>
@@ -79,7 +80,7 @@ const TimesheetListPage: React.FC = () => {
       },
       {
         accessorKey: 'workDate',
-        header: 'Дата',
+        header: t('hr.timesheetList.colDate'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -87,7 +88,7 @@ const TimesheetListPage: React.FC = () => {
       },
       {
         accessorKey: 'hoursWorked',
-        header: 'Часы',
+        header: t('hr.timesheetList.colHours'),
         size: 80,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-center block font-medium">{getValue<number>()}</span>
@@ -95,7 +96,7 @@ const TimesheetListPage: React.FC = () => {
       },
       {
         accessorKey: 'overtimeHours',
-        header: 'Переработка',
+        header: t('hr.timesheetList.colOvertime'),
         size: 110,
         cell: ({ getValue }) => {
           const hours = getValue<number>();
@@ -111,7 +112,7 @@ const TimesheetListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('hr.timesheetList.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -128,19 +129,19 @@ const TimesheetListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Табель учёта рабочего времени"
-        subtitle={`${(timesheets ?? []).length} записей`}
+        title={t('hr.timesheetList.title')}
+        subtitle={t('hr.timesheetList.subtitleRecords', { count: String((timesheets ?? []).length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Персонал' },
-          { label: 'Табель' },
+          { label: t('hr.timesheetList.breadcrumbHome'), href: '/' },
+          { label: t('hr.timesheetList.breadcrumbHr') },
+          { label: t('hr.timesheetList.breadcrumbTimesheet') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновик', count: tabCounts.draft },
-          { id: 'SUBMITTED', label: 'Подан', count: tabCounts.submitted },
-          { id: 'APPROVED', label: 'Утверждён', count: tabCounts.approved },
-          { id: 'REJECTED', label: 'Отклонён', count: tabCounts.rejected },
+          { id: 'all', label: t('hr.timesheetList.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('hr.timesheetList.tabDraft'), count: tabCounts.draft },
+          { id: 'SUBMITTED', label: t('hr.timesheetList.tabSubmitted'), count: tabCounts.submitted },
+          { id: 'APPROVED', label: t('hr.timesheetList.tabApproved'), count: tabCounts.approved },
+          { id: 'REJECTED', label: t('hr.timesheetList.tabRejected'), count: tabCounts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -148,9 +149,9 @@ const TimesheetListPage: React.FC = () => {
 
       {/* Weekly summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <MetricCard icon={<Clock size={18} />} label="Всего часов" value={String(totalHours)} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Переработка" value={String(totalOvertime)} trend={totalOvertime > 0 ? { direction: 'up', value: `${((totalOvertime / totalHours) * 100).toFixed(1)}%` } : undefined} />
-        <MetricCard icon={<Calendar size={18} />} label="Записей" value={String(timesheets.length)} />
+        <MetricCard icon={<Clock size={18} />} label={t('hr.timesheetList.metricTotalHours')} value={String(totalHours)} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('hr.timesheetList.metricOvertime')} value={String(totalOvertime)} trend={totalOvertime > 0 ? { direction: 'up', value: `${((totalOvertime / totalHours) * 100).toFixed(1)}%` } : undefined} />
+        <MetricCard icon={<Calendar size={18} />} label={t('hr.timesheetList.metricRecords')} value={String(timesheets.length)} />
       </div>
 
       {/* Filters */}
@@ -158,7 +159,7 @@ const TimesheetListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по сотруднику, проекту..."
+            placeholder={t('hr.timesheetList.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -176,8 +177,8 @@ const TimesheetListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет записей"
-        emptyDescription="Данные табеля отсутствуют"
+        emptyTitle={t('hr.timesheetList.emptyTitle')}
+        emptyDescription={t('hr.timesheetList.emptyDescription')}
       />
     </div>
   );

@@ -18,6 +18,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { supportApi } from '@/api/support';
 import { formatRelativeTime } from '@/lib/format';
 import type { SupportTicket } from './types';
+import { t } from '@/i18n';
 
 const ticketStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   OPEN: 'blue',
@@ -28,14 +29,14 @@ const ticketStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' 
   CLOSED: 'gray',
 };
 
-const ticketStatusLabels: Record<string, string> = {
-  OPEN: 'Открыта',
-  ASSIGNED: 'Назначена',
-  IN_PROGRESS: 'В работе',
-  WAITING_RESPONSE: 'Ожидание ответа',
-  RESOLVED: 'Решена',
-  CLOSED: 'Закрыта',
-};
+const getTicketStatusLabels = (): Record<string, string> => ({
+  OPEN: t('support.colOpen'),
+  ASSIGNED: t('support.colAssigned'),
+  IN_PROGRESS: t('support.colInProgress'),
+  WAITING_RESPONSE: t('support.colWaitingResponse'),
+  RESOLVED: t('support.colResolved'),
+  CLOSED: t('support.colClosed'),
+});
 
 const ticketPriorityColorMap: Record<string, 'gray' | 'blue' | 'orange' | 'red'> = {
   LOW: 'gray',
@@ -44,26 +45,26 @@ const ticketPriorityColorMap: Record<string, 'gray' | 'blue' | 'orange' | 'red'>
   CRITICAL: 'red',
 };
 
-const ticketPriorityLabels: Record<string, string> = {
-  LOW: 'Низкий',
-  MEDIUM: 'Средний',
-  HIGH: 'Высокий',
-  CRITICAL: 'Критический',
-};
+const getTicketPriorityLabels = (): Record<string, string> => ({
+  LOW: t('support.priorityLow'),
+  MEDIUM: t('support.priorityMedium'),
+  HIGH: t('support.priorityHigh'),
+  CRITICAL: t('support.priorityCritical'),
+});
 
-const categoryLabels: Record<string, string> = {
-  TECHNICAL: 'Техническая',
-  ACCESS: 'Доступ',
-  DOCUMENTS: 'Документы',
-  EQUIPMENT: 'Оборудование',
-  SAFETY: 'Безопасность',
-  SCHEDULE: 'График',
-  OTHER: 'Прочее',
-};
+const getCategoryLabels = (): Record<string, string> => ({
+  TECHNICAL: t('support.catTechnical'),
+  ACCESS: t('support.catAccess'),
+  DOCUMENTS: t('support.catDocuments'),
+  EQUIPMENT: t('support.catEquipment'),
+  SAFETY: t('support.catSafety'),
+  SCHEDULE: t('support.catSchedule'),
+  OTHER: t('support.catOther'),
+});
 
 function categoryLabel(value?: string): string {
-  if (!value) return 'Без категории';
-  return categoryLabels[value] ?? value;
+  if (!value) return t('support.catNone');
+  return getCategoryLabels()[value] ?? value;
 }
 
 function averageResolutionHours(tickets: SupportTicket[]): number {
@@ -143,7 +144,7 @@ const SupportDashboardPage: React.FC = () => {
     return Object.entries(counts)
       .map(([category, count]) => ({
         category,
-        label: category === 'UNCATEGORIZED' ? 'Без категории' : categoryLabel(category),
+        label: category === 'UNCATEGORIZED' ? t('support.catUncategorized') : categoryLabel(category),
         count,
       }))
       .sort((a, b) => b.count - a.count);
@@ -163,16 +164,16 @@ const SupportDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Панель поддержки"
-        subtitle="Обзор текущих заявок и SLA-метрик"
+        title={t('support.dashboardTitle')}
+        subtitle={t('support.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Поддержка', href: '/support/tickets' },
-          { label: 'Панель' },
+          { label: t('support.breadcrumbHome'), href: '/' },
+          { label: t('support.breadcrumbSupport'), href: '/support/tickets' },
+          { label: t('support.breadcrumbDashboard') },
         ]}
         actions={(
           <Button onClick={() => navigate('/support/tickets')}>
-            Все заявки
+            {t('support.btnAllTickets')}
           </Button>
         )}
       />
@@ -180,9 +181,9 @@ const SupportDashboardPage: React.FC = () => {
       {showFatalError ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить дашборд поддержки"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('support.errorLoadDashboard')}
+          description={t('support.errorLoadDashboardDesc')}
+          actionLabel={t('support.btnRetry')}
           onAction={() => {
             void Promise.all([refetchTickets(), refetchDashboard()]);
           }}
@@ -190,41 +191,41 @@ const SupportDashboardPage: React.FC = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-            <MetricCard icon={<Headphones size={18} />} label="Всего заявок" value={metrics.total} />
+            <MetricCard icon={<Headphones size={18} />} label={t('support.metricTotalTickets')} value={metrics.total} />
             <MetricCard
               icon={<Clock size={18} />}
-              label="Открытые"
+              label={t('support.metricOpenTickets')}
               value={metrics.openTickets}
-              trend={{ direction: metrics.openTickets > 0 ? 'up' : 'neutral', value: `${metrics.openTickets} шт.` }}
+              trend={{ direction: metrics.openTickets > 0 ? 'up' : 'neutral', value: t('support.trendItemsCount', { count: String(metrics.openTickets) }) }}
             />
             <MetricCard
               icon={<AlertTriangle size={18} />}
-              label="Критические"
+              label={t('support.metricCritical')}
               value={metrics.criticalOpen}
               trend={{
                 direction: metrics.criticalOpen > 0 ? 'down' : 'neutral',
-                value: metrics.criticalOpen > 0 ? 'Требуют внимания' : 'Нет',
+                value: metrics.criticalOpen > 0 ? t('support.trendNeedAttention') : t('support.trendNone'),
               }}
             />
-            <MetricCard icon={<CheckCircle size={18} />} label="Решено сегодня" value={metrics.resolvedToday} />
+            <MetricCard icon={<CheckCircle size={18} />} label={t('support.metricResolvedToday')} value={metrics.resolvedToday} />
             <MetricCard
               icon={<TrendingUp size={18} />}
-              label="Среднее время решения"
-              value={`${metrics.avgResolutionHours} ч`}
+              label={t('support.metricAvgResolution')}
+              value={t('support.avgResolutionValue', { hours: String(metrics.avgResolutionHours) })}
             />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Последние заявки</h3>
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('support.sectionRecentTickets')}</h3>
                 <Button
                   variant="ghost"
                   size="xs"
                   iconRight={<ArrowRight size={14} />}
                   onClick={() => navigate('/support/tickets')}
                 >
-                  Все заявки
+                  {t('support.btnAllTickets')}
                 </Button>
               </div>
 
@@ -241,24 +242,24 @@ const SupportDashboardPage: React.FC = () => {
                         <StatusBadge
                           status={ticket.priority}
                           colorMap={ticketPriorityColorMap}
-                          label={ticketPriorityLabels[ticket.priority] ?? ticket.priority}
+                          label={getTicketPriorityLabels()[ticket.priority] ?? ticket.priority}
                         />
                       </div>
                       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{ticket.subject}</p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                        {(ticket.requesterName ?? ticket.requesterId ?? 'Без автора')} &middot; {formatRelativeTime(ticket.createdAt)}
+                        {(ticket.requesterName ?? ticket.requesterId ?? t('support.noAuthor'))} &middot; {formatRelativeTime(ticket.createdAt)}
                       </p>
                     </div>
                     <StatusBadge
                       status={ticket.status}
                       colorMap={ticketStatusColorMap}
-                      label={ticketStatusLabels[ticket.status] ?? ticket.status}
+                      label={getTicketStatusLabels()[ticket.status] ?? ticket.status}
                     />
                   </div>
                 ))}
 
                 {recentTickets.length === 0 && (
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">Заявок пока нет</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">{t('support.noTicketsYet')}</p>
                 )}
               </div>
             </div>
@@ -266,7 +267,7 @@ const SupportDashboardPage: React.FC = () => {
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <BarChart3 size={16} className="text-neutral-400" />
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Открытые по категориям</h3>
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('support.sectionOpenByCategory')}</h3>
               </div>
 
               <div className="space-y-3">
@@ -286,7 +287,7 @@ const SupportDashboardPage: React.FC = () => {
                 ))}
 
                 {categoryStats.length === 0 && (
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">Нет открытых заявок</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">{t('support.noOpenTickets')}</p>
                 )}
               </div>
             </div>

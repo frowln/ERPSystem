@@ -18,6 +18,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "safety_inspections", indexes = {
+        @Index(name = "idx_inspection_org", columnList = "organization_id"),
+        @Index(name = "idx_inspection_org_project", columnList = "organization_id, project_id"),
         @Index(name = "idx_inspection_date", columnList = "inspection_date"),
         @Index(name = "idx_inspection_project", columnList = "project_id"),
         @Index(name = "idx_inspection_status", columnList = "status"),
@@ -29,6 +31,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SafetyInspection extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "number", unique = true, length = 20)
     private String number;

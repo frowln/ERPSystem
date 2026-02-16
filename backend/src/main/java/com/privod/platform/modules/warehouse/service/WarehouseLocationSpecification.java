@@ -15,6 +15,10 @@ public final class WarehouseLocationSpecification {
         return (root, query, cb) -> cb.equal(root.get("deleted"), false);
     }
 
+    public static Specification<WarehouseLocation> belongsToOrganization(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
+    }
+
     public static Specification<WarehouseLocation> hasLocationType(WarehouseLocationType locationType) {
         return (root, query, cb) -> {
             if (locationType == null) return cb.conjunction();

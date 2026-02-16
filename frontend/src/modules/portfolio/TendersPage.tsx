@@ -12,6 +12,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { portfolioApi } from '@/api/portfolio';
 import { formatDate, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { BidPackage } from './types';
 
 const bidStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
@@ -24,30 +25,32 @@ const bidStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | '
   WITHDRAWN: 'gray',
 };
 
-const bidStatusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  SUBMITTED: 'Подан',
-  UNDER_REVIEW: 'На рассмотрении',
-  SHORTLISTED: 'В шорт-листе',
-  AWARDED: 'Выигран',
-  REJECTED: 'Отклонён',
-  WITHDRAWN: 'Отозван',
-};
+const getBidStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('portfolio.tenders.statusDraft'),
+  SUBMITTED: t('portfolio.tenders.statusSubmitted'),
+  UNDER_REVIEW: t('portfolio.tenders.statusUnderReview'),
+  SHORTLISTED: t('portfolio.tenders.statusShortlisted'),
+  AWARDED: t('portfolio.tenders.statusAwarded'),
+  REJECTED: t('portfolio.tenders.statusRejected'),
+  WITHDRAWN: t('portfolio.tenders.statusWithdrawn'),
+});
 
 type TabId = 'all' | 'ACTIVE' | 'AWARDED' | 'REJECTED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'SUBMITTED', label: 'Подан' },
-  { value: 'UNDER_REVIEW', label: 'На рассмотрении' },
-  { value: 'SHORTLISTED', label: 'В шорт-листе' },
-  { value: 'AWARDED', label: 'Выигран' },
-  { value: 'REJECTED', label: 'Отклонён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('portfolio.tenders.allStatuses') },
+  { value: 'DRAFT', label: t('portfolio.tenders.statusDraft') },
+  { value: 'SUBMITTED', label: t('portfolio.tenders.statusSubmitted') },
+  { value: 'UNDER_REVIEW', label: t('portfolio.tenders.statusUnderReview') },
+  { value: 'SHORTLISTED', label: t('portfolio.tenders.statusShortlisted') },
+  { value: 'AWARDED', label: t('portfolio.tenders.statusAwarded') },
+  { value: 'REJECTED', label: t('portfolio.tenders.statusRejected') },
 ];
 
 const TendersPage: React.FC = () => {
   const navigate = useNavigate();
+  const bidStatusLabels = getBidStatusLabels();
+  const statusFilterOptions = getStatusFilterOptions();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -116,7 +119,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'projectName',
-        header: 'Проект',
+        header: t('portfolio.tenders.colProject'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -127,7 +130,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('common.status'),
         size: 150,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -139,7 +142,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'amount',
-        header: 'Сумма предложения',
+        header: t('portfolio.tenders.colBidAmount'),
         size: 170,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm font-medium text-neutral-900 dark:text-neutral-100">{formatMoneyCompact(getValue<number>())}</span>
@@ -147,7 +150,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'evaluationScore',
-        header: 'Оценка',
+        header: t('portfolio.tenders.colScore'),
         size: 100,
         cell: ({ getValue }) => {
           const score = getValue<number | undefined>();
@@ -164,7 +167,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'responsibleName',
-        header: 'Ответственный',
+        header: t('portfolio.tenders.colResponsible'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -172,7 +175,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'submissionDeadline',
-        header: 'Дедлайн',
+        header: t('portfolio.tenders.colDeadline'),
         size: 120,
         cell: ({ row }) => {
           const deadline = row.original.submissionDeadline;
@@ -189,7 +192,7 @@ const TendersPage: React.FC = () => {
       },
       {
         accessorKey: 'submittedDate',
-        header: 'Подан',
+        header: t('portfolio.tenders.colSubmitted'),
         size: 110,
         cell: ({ getValue }) => {
           const val = getValue<string | undefined>();
@@ -207,40 +210,40 @@ const TendersPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Тендеры"
-        subtitle={`${bids.length} тендерных предложений`}
+        title={t('portfolio.tenders.title')}
+        subtitle={t('portfolio.tenders.subtitle', { count: String(bids.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портфель' },
-          { label: 'Тендеры' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('nav.portfolio') },
+          { label: t('portfolio.tenders.title') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/portfolio/tenders/new')}>
-            Новое предложение
+            {t('portfolio.tenders.newBid')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Активные', count: tabCounts.active },
-          { id: 'AWARDED', label: 'Выигранные', count: tabCounts.awarded },
-          { id: 'REJECTED', label: 'Отклонённые', count: tabCounts.rejected },
+          { id: 'all', label: t('common.all'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('portfolio.tenders.tabActive'), count: tabCounts.active },
+          { id: 'AWARDED', label: t('portfolio.tenders.tabAwarded'), count: tabCounts.awarded },
+          { id: 'REJECTED', label: t('portfolio.tenders.tabRejected'), count: tabCounts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileSearch size={18} />} label="Всего тендеров" value={bids.length} />
-        <MetricCard icon={<DollarSign size={18} />} label="Общий объём" value={formatMoneyCompact(metrics.totalAmount)} />
-        <MetricCard icon={<Award size={18} />} label="Win Rate" value={`${metrics.winRate}%`} />
-        <MetricCard icon={<Clock size={18} />} label="На рассмотрении" value={metrics.pendingCount} subtitle="тендеров" />
+        <MetricCard icon={<FileSearch size={18} />} label={t('portfolio.tenders.totalTenders')} value={bids.length} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('portfolio.tenders.totalVolume')} value={formatMoneyCompact(metrics.totalAmount)} />
+        <MetricCard icon={<Award size={18} />} label={t('portfolio.tenders.winRate')} value={`${metrics.winRate}%`} />
+        <MetricCard icon={<Clock size={18} />} label={t('portfolio.tenders.underReview')} value={metrics.pendingCount} subtitle={t('portfolio.tenders.tendersSubtitle')} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, проекту, клиенту..."
+            placeholder={t('portfolio.tenders.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -263,8 +266,8 @@ const TendersPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет тендерных предложений"
-        emptyDescription="Создайте первое тендерное предложение"
+        emptyTitle={t('portfolio.tenders.emptyTitle')}
+        emptyDescription={t('portfolio.tenders.emptyDescription')}
       />
     </div>
   );

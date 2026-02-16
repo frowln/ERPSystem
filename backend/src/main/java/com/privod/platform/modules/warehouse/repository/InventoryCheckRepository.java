@@ -9,11 +9,14 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface InventoryCheckRepository extends JpaRepository<InventoryCheck, UUID>,
         JpaSpecificationExecutor<InventoryCheck> {
+
+    Optional<InventoryCheck> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
 
     Page<InventoryCheck> findByLocationIdAndDeletedFalse(UUID locationId, Pageable pageable);
 

@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { formatDate } from '@/lib/format';
 import { ptoApi, type PtoDocument as PtoDocumentApi } from '@/api/pto';
+import { t } from '@/i18n';
 
 interface PtoDocument {
   id: string;
@@ -25,15 +26,15 @@ interface PtoDocument {
 }
 
 
-const typeLabels: Record<string, string> = {
-  akt_ov: 'Акт освидетельствования',
-  protocol: 'Протокол испытаний',
-  journal: 'Журнал работ',
-  pppr: 'ППР',
-  scheme: 'Схема операционного контроля',
-  instruction: 'Инструкция',
-  certificate: 'Сертификат/паспорт',
-};
+const getTypeLabels = (): Record<string, string> => ({
+  akt_ov: t('pto.docListTypeAktOv'),
+  protocol: t('pto.docListTypeProtocol'),
+  journal: t('pto.docListTypeJournal'),
+  pppr: t('pto.docListTypePppr'),
+  scheme: t('pto.docListTypeScheme'),
+  instruction: t('pto.docListTypeInstruction'),
+  certificate: t('pto.docListTypeCertificate'),
+});
 
 const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red'> = {
   draft: 'gray',
@@ -42,13 +43,14 @@ const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red
   rejected: 'red',
   archived: 'blue',
 };
-const statusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  in_review: 'На проверке',
-  approved: 'Утверждён',
-  rejected: 'Отклонён',
-  archived: 'В архиве',
-};
+
+const getStatusLabels = (): Record<string, string> => ({
+  draft: t('pto.docListStatusDraft'),
+  in_review: t('pto.docListStatusInReview'),
+  approved: t('pto.docListStatusApproved'),
+  rejected: t('pto.docListStatusRejected'),
+  archived: t('pto.docListStatusArchived'),
+});
 
 const PtoDocumentListPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -93,16 +95,19 @@ const PtoDocumentListPage: React.FC = () => {
     approved: documents.filter((d) => d.status === 'APPROVED').length,
   }), [documents]);
 
+  const typeLabels = getTypeLabels();
+  const statusLabels = getStatusLabels();
+
   const columns = useMemo<ColumnDef<PtoDocument, unknown>[]>(() => [
     {
       accessorKey: 'number',
-      header: '№',
+      header: t('pto.docListColNumber'),
       size: 100,
       cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'title',
-      header: 'Наименование',
+      header: t('pto.docListColTitle'),
       size: 300,
       cell: ({ row }) => (
         <div>
@@ -113,19 +118,19 @@ const PtoDocumentListPage: React.FC = () => {
     },
     {
       accessorKey: 'type',
-      header: 'Тип',
+      header: t('pto.docListColType'),
       size: 180,
       cell: ({ getValue }) => <span className="text-neutral-600">{typeLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
       accessorKey: 'section',
-      header: 'Раздел',
+      header: t('pto.docListColSection'),
       size: 80,
       cell: ({ getValue }) => <span className="font-mono text-xs">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('pto.docListColStatus'),
       size: 130,
       cell: ({ getValue }) => (
         <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()]} />
@@ -133,53 +138,53 @@ const PtoDocumentListPage: React.FC = () => {
     },
     {
       accessorKey: 'author',
-      header: 'Автор',
+      header: t('pto.docListColAuthor'),
       size: 140,
     },
     {
       accessorKey: 'createdDate',
-      header: 'Дата создания',
+      header: t('pto.docListColCreatedDate'),
       size: 120,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
-  ], []);
+  ], [typeLabels, statusLabels]);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Документация ПТО"
-        subtitle={`${documents.length} документов в системе`}
+        title={t('pto.docListTitle')}
+        subtitle={t('pto.docListSubtitle', { count: String(documents.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'ПТО' },
-          { label: 'Документы' },
+          { label: t('pto.breadcrumbHome'), href: '/' },
+          { label: t('pto.breadcrumbPto') },
+          { label: t('pto.breadcrumbDocuments') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>Новый документ</Button>}
+        actions={<Button iconLeft={<Plus size={16} />}>{t('pto.docListNewDocument')}</Button>}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновики', count: tabCounts.draft },
-          { id: 'IN_REVIEW', label: 'На проверке', count: tabCounts.in_review },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
+          { id: 'all', label: t('pto.docListTabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('pto.docListTabDrafts'), count: tabCounts.draft },
+          { id: 'IN_REVIEW', label: t('pto.docListTabInReview'), count: tabCounts.in_review },
+          { id: 'APPROVED', label: t('pto.docListTabApproved'), count: tabCounts.approved },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Всего документов" value={documents.length} />
-        <MetricCard icon={<ClipboardList size={18} />} label="На проверке" value={tabCounts.in_review} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Утверждённых" value={tabCounts.approved} />
-        <MetricCard icon={<FileText size={18} />} label="Черновиков" value={tabCounts.draft} />
+        <MetricCard icon={<FileText size={18} />} label={t('pto.docListMetricTotal')} value={documents.length} />
+        <MetricCard icon={<ClipboardList size={18} />} label={t('pto.docListMetricInReview')} value={tabCounts.in_review} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('pto.docListMetricApproved')} value={tabCounts.approved} />
+        <MetricCard icon={<FileText size={18} />} label={t('pto.docListMetricDrafts')} value={tabCounts.draft} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('pto.docListSearchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все типы' },
+            { value: '', label: t('pto.docListAllTypes') },
             ...Object.entries(typeLabels).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={typeFilter}
@@ -197,8 +202,8 @@ const PtoDocumentListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет документов"
-        emptyDescription="Создайте первый документ ПТО"
+        emptyTitle={t('pto.docListEmptyTitle')}
+        emptyDescription={t('pto.docListEmptyDescription')}
       />
     </div>
   );

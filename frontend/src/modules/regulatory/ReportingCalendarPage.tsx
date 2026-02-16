@@ -12,6 +12,7 @@ import { reportingCalendarApi } from '@/api/reportingCalendar';
 import { formatDate, formatMoney } from '@/lib/format';
 import type { ReportingDeadline, DeadlineStatus, ReportingFrequency } from './types';
 import type { PaginatedResponse } from '@/types';
+import { t } from '@/i18n';
 
 const deadlineStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   upcoming: 'blue',
@@ -22,14 +23,14 @@ const deadlineStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow
   rejected: 'red',
 };
 
-const deadlineStatusLabels: Record<string, string> = {
-  upcoming: 'Предстоит',
-  due_today: 'Сегодня',
-  overdue: 'Просрочен',
-  submitted: 'Отправлен',
-  accepted: 'Принят',
-  rejected: 'Отклонён',
-};
+const getDeadlineStatusLabels = (): Record<string, string> => ({
+  upcoming: t('regulatory.deadlineStatusUpcoming'),
+  due_today: t('regulatory.deadlineStatusDueToday'),
+  overdue: t('regulatory.deadlineStatusOverdue'),
+  submitted: t('regulatory.deadlineStatusSubmitted'),
+  accepted: t('regulatory.deadlineStatusAccepted'),
+  rejected: t('regulatory.deadlineStatusRejected'),
+});
 
 const frequencyColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   daily: 'cyan',
@@ -40,33 +41,33 @@ const frequencyColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | '
   one_time: 'gray',
 };
 
-const frequencyLabels: Record<string, string> = {
-  daily: 'Ежедневно',
-  weekly: 'Еженедельно',
-  monthly: 'Ежемесячно',
-  quarterly: 'Ежеквартально',
-  annually: 'Ежегодно',
-  one_time: 'Разово',
-};
+const getFrequencyLabels = (): Record<string, string> => ({
+  daily: t('regulatory.freqDaily'),
+  weekly: t('regulatory.freqWeekly'),
+  monthly: t('regulatory.freqMonthly'),
+  quarterly: t('regulatory.freqQuarterly'),
+  annually: t('regulatory.freqAnnually'),
+  one_time: t('regulatory.freqOneTime'),
+});
 
-const channelLabels: Record<string, string> = {
-  portal: 'Портал',
-  email: 'Email',
-  paper: 'Бумажный',
-  edo: 'ЭДО',
-  api: 'API',
-};
+const getChannelLabels = (): Record<string, string> => ({
+  portal: t('regulatory.channelPortal'),
+  email: t('regulatory.channelEmail'),
+  paper: t('regulatory.channelPaper'),
+  edo: t('regulatory.channelEdo'),
+  api: t('regulatory.channelApi'),
+});
 
 type TabId = 'all' | 'UPCOMING' | 'OVERDUE' | 'SUBMITTED' | 'ACCEPTED';
 
-const frequencyFilterOptions = [
-  { value: '', label: 'Все периодичности' },
-  { value: 'DAILY', label: 'Ежедневно' },
-  { value: 'WEEKLY', label: 'Еженедельно' },
-  { value: 'MONTHLY', label: 'Ежемесячно' },
-  { value: 'QUARTERLY', label: 'Ежеквартально' },
-  { value: 'ANNUALLY', label: 'Ежегодно' },
-  { value: 'ONE_TIME', label: 'Разово' },
+const getFrequencyFilterOptions = () => [
+  { value: '', label: t('regulatory.freqFilterAll') },
+  { value: 'DAILY', label: t('regulatory.freqDaily') },
+  { value: 'WEEKLY', label: t('regulatory.freqWeekly') },
+  { value: 'MONTHLY', label: t('regulatory.freqMonthly') },
+  { value: 'QUARTERLY', label: t('regulatory.freqQuarterly') },
+  { value: 'ANNUALLY', label: t('regulatory.freqAnnually') },
+  { value: 'ONE_TIME', label: t('regulatory.freqOneTime') },
 ];
 
 
@@ -117,7 +118,7 @@ const ReportingCalendarPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Отчёт',
+        header: t('regulatory.colReport'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -128,31 +129,31 @@ const ReportingCalendarPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('regulatory.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={deadlineStatusColorMap}
-            label={deadlineStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getDeadlineStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'frequency',
-        header: 'Периодичность',
+        header: t('regulatory.colFrequency'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={frequencyColorMap}
-            label={frequencyLabels[getValue<string>()] ?? getValue<string>()}
+            label={getFrequencyLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок сдачи',
+        header: t('regulatory.colDueDate'),
         size: 120,
         cell: ({ row }) => {
           const val = row.original.dueDate;
@@ -167,19 +168,19 @@ const ReportingCalendarPage: React.FC = () => {
       },
       {
         accessorKey: 'responsibleName',
-        header: 'Ответственный',
+        header: t('regulatory.colResponsible'),
         size: 150,
         cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'submissionChannel',
-        header: 'Канал',
+        header: t('regulatory.colChannel'),
         size: 100,
-        cell: ({ getValue }) => <span className="text-neutral-500 dark:text-neutral-400 text-xs">{channelLabels[getValue<string>()] ?? getValue<string>()}</span>,
+        cell: ({ getValue }) => <span className="text-neutral-500 dark:text-neutral-400 text-xs">{getChannelLabels()[getValue<string>()] ?? getValue<string>()}</span>,
       },
       {
         accessorKey: 'penalty',
-        header: 'Штраф',
+        header: t('regulatory.colFine'),
         size: 120,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -192,7 +193,7 @@ const ReportingCalendarPage: React.FC = () => {
       },
       {
         accessorKey: 'nextDueDate',
-        header: 'Следующий срок',
+        header: t('regulatory.colNextDueDate'),
         size: 120,
         cell: ({ getValue }) => {
           const val = getValue<string>();
@@ -206,44 +207,44 @@ const ReportingCalendarPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Календарь отчётности"
-        subtitle={`${deadlines.length} отчётных сроков`}
+        title={t('regulatory.calendarTitle')}
+        subtitle={t('regulatory.calendarSubtitle', { count: String(deadlines.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Регуляторика', href: '/regulatory' },
-          { label: 'Календарь отчётности' },
+          { label: t('regulatory.breadcrumbHome'), href: '/' },
+          { label: t('regulatory.breadcrumbRegulatory'), href: '/regulatory' },
+          { label: t('regulatory.breadcrumbCalendar') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>Добавить срок</Button>
+          <Button iconLeft={<Plus size={16} />}>{t('regulatory.btnAddDeadline')}</Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'UPCOMING', label: 'Предстоящие', count: tabCounts.upcoming },
-          { id: 'OVERDUE', label: 'Просроченные', count: tabCounts.overdue },
-          { id: 'SUBMITTED', label: 'Отправленные', count: tabCounts.submitted },
-          { id: 'ACCEPTED', label: 'Принятые', count: tabCounts.accepted },
+          { id: 'all', label: t('regulatory.tabAll'), count: tabCounts.all },
+          { id: 'UPCOMING', label: t('regulatory.tabUpcoming'), count: tabCounts.upcoming },
+          { id: 'OVERDUE', label: t('regulatory.tabOverdue'), count: tabCounts.overdue },
+          { id: 'SUBMITTED', label: t('regulatory.tabSubmitted'), count: tabCounts.submitted },
+          { id: 'ACCEPTED', label: t('regulatory.tabAccepted'), count: tabCounts.accepted },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<CalendarDays size={18} />} label="Всего сроков" value={metrics.total} />
+        <MetricCard icon={<CalendarDays size={18} />} label={t('regulatory.metricTotalDeadlines')} value={metrics.total} />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Просрочено"
+          label={t('regulatory.metricOverdue')}
           value={metrics.overdue}
-          trend={{ direction: metrics.overdue > 0 ? 'down' : 'neutral', value: metrics.overdue > 0 ? 'Срочно!' : 'Все в срок' }}
+          trend={{ direction: metrics.overdue > 0 ? 'down' : 'neutral', value: metrics.overdue > 0 ? t('regulatory.trendUrgent') : t('regulatory.trendAllOnTime') }}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="Сегодня"
+          label={t('regulatory.metricToday')}
           value={metrics.dueToday}
-          trend={{ direction: metrics.dueToday > 0 ? 'down' : 'neutral', value: metrics.dueToday > 0 ? 'Внимание' : 'Нет' }}
+          trend={{ direction: metrics.dueToday > 0 ? 'down' : 'neutral', value: metrics.dueToday > 0 ? t('regulatory.trendAttention') : t('regulatory.trendNone') }}
         />
         <MetricCard
           icon={<CheckCircle size={18} />}
-          label="Возможные штрафы"
+          label={t('regulatory.metricPotentialFines')}
           value={formatMoney(metrics.totalPenalty)}
         />
       </div>
@@ -251,9 +252,9 @@ const ReportingCalendarPage: React.FC = () => {
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по отчёту, органу, ответственному..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('regulatory.searchReportPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={frequencyFilterOptions} value={frequencyFilter} onChange={(e) => setFrequencyFilter(e.target.value)} className="w-48" />
+        <Select options={getFrequencyFilterOptions()} value={frequencyFilter} onChange={(e) => setFrequencyFilter(e.target.value)} className="w-48" />
       </div>
 
       <DataTable<ReportingDeadline>
@@ -265,8 +266,8 @@ const ReportingCalendarPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет отчётных сроков"
-        emptyDescription="Добавьте сроки сдачи отчётности для контроля"
+        emptyTitle={t('regulatory.emptyDeadlines')}
+        emptyDescription={t('regulatory.emptyDeadlinesDesc')}
       />
     </div>
   );

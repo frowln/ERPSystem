@@ -8,6 +8,7 @@ import { EmptyState } from '@/design-system/components/EmptyState';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { closeoutApi } from '@/api/closeout';
 import { formatDate, formatDateTime } from '@/lib/format';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange'> = {
   DRAFT: 'gray',
@@ -17,13 +18,13 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   REJECTED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  PREPARED: 'Подготовлен',
-  SUBMITTED: 'Передан',
-  ACCEPTED: 'Принят',
-  REJECTED: 'Отклонён',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('closeout.handoverStatusDraft'),
+  PREPARED: t('closeout.handoverStatusPrepared'),
+  SUBMITTED: t('closeout.handoverStatusSubmitted'),
+  ACCEPTED: t('closeout.handoverStatusAccepted'),
+  REJECTED: t('closeout.handoverStatusRejected'),
+});
 
 const HandoverPackageDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,30 +41,32 @@ const HandoverPackageDetailPage: React.FC = () => {
     enabled: Boolean(id),
   });
 
+  const statusLabels = getStatusLabels();
+
   if (!id) {
-    return <EmptyState variant="ERROR" title="Некорректный идентификатор пакета" />;
+    return <EmptyState variant="ERROR" title={t('closeout.handoverDetailInvalidId')} />;
   }
 
   if (isError && !handoverPackage) {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Пакет передачи"
+          title={t('closeout.handoverDetailTitle')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Передача', href: '/closeout/handover' },
+            { label: t('closeout.breadcrumbHome'), href: '/' },
+            { label: t('closeout.breadcrumbHandover'), href: '/closeout/handover' },
           ]}
           actions={(
             <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/closeout/handover')}>
-              Назад к списку
+              {t('closeout.backToList')}
             </Button>
           )}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить пакет передачи"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('closeout.handoverDetailErrorTitle')}
+          description={t('closeout.checkConnection')}
+          actionLabel={t('closeout.retryAction')}
           onAction={() => { void refetch(); }}
         />
       </div>
@@ -73,13 +76,13 @@ const HandoverPackageDetailPage: React.FC = () => {
   if (isLoading && !handoverPackage) {
     return (
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 text-sm text-neutral-500 dark:text-neutral-400">
-        Загрузка пакета передачи...
+        {t('closeout.handoverDetailLoading')}
       </div>
     );
   }
 
   if (!handoverPackage) {
-    return <EmptyState variant="ERROR" title="Пакет передачи не найден" />;
+    return <EmptyState variant="ERROR" title={t('closeout.handoverDetailNotFound')} />;
   }
 
   return (
@@ -88,13 +91,13 @@ const HandoverPackageDetailPage: React.FC = () => {
         title={handoverPackage.packageNumber}
         subtitle={handoverPackage.title}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Передача', href: '/closeout/handover' },
+          { label: t('closeout.breadcrumbHome'), href: '/' },
+          { label: t('closeout.breadcrumbHandover'), href: '/closeout/handover' },
           { label: handoverPackage.packageNumber },
         ]}
         actions={(
           <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/closeout/handover')}>
-            Назад к списку
+            {t('closeout.backToList')}
           </Button>
         )}
       />
@@ -103,7 +106,7 @@ const HandoverPackageDetailPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Статус передачи</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.handoverDetailStatusTitle')}</h3>
               <StatusBadge
                 status={handoverPackage.status}
                 colorMap={statusColorMap}
@@ -111,26 +114,26 @@ const HandoverPackageDetailPage: React.FC = () => {
               />
             </div>
             <p className="text-sm text-neutral-700 dark:text-neutral-300">
-              Документов в пакете: <span className="font-semibold">{handoverPackage.documentCount}</span>
+              {t('closeout.handoverDetailDocCount')} <span className="font-semibold">{handoverPackage.documentCount}</span>
             </p>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">Описание пакета</h3>
-            <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">{handoverPackage.description ?? 'Описание не указано'}</p>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">{t('closeout.handoverDetailDescriptionTitle')}</h3>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">{handoverPackage.description ?? t('closeout.handoverDetailNoDescription')}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 space-y-3">
-            <InfoRow icon={<Package size={14} />} label="Пакет" value={handoverPackage.title} />
-            <InfoRow icon={<Building2 size={14} />} label="Проект" value={handoverPackage.projectName} />
-            <InfoRow icon={<User size={14} />} label="Получатель" value={handoverPackage.recipientName} />
-            <InfoRow icon={<Building2 size={14} />} label="Организация" value={handoverPackage.recipientOrg} />
-            <InfoRow icon={<Calendar size={14} />} label="Дата передачи" value={formatDate(handoverPackage.handoverDate)} />
-            <InfoRow icon={<Calendar size={14} />} label="Дата приёмки" value={formatDate(handoverPackage.acceptedDate)} />
-            <InfoRow icon={<User size={14} />} label="Принял" value={handoverPackage.acceptedByName ?? '—'} />
-            <InfoRow icon={<FileText size={14} />} label="Создан" value={formatDateTime(handoverPackage.createdAt)} />
+            <InfoRow icon={<Package size={14} />} label={t('closeout.handoverDetailPackage')} value={handoverPackage.title} />
+            <InfoRow icon={<Building2 size={14} />} label={t('closeout.handoverDetailProject')} value={handoverPackage.projectName} />
+            <InfoRow icon={<User size={14} />} label={t('closeout.handoverDetailRecipient')} value={handoverPackage.recipientName} />
+            <InfoRow icon={<Building2 size={14} />} label={t('closeout.handoverDetailOrg')} value={handoverPackage.recipientOrg} />
+            <InfoRow icon={<Calendar size={14} />} label={t('closeout.handoverDetailHandoverDate')} value={formatDate(handoverPackage.handoverDate)} />
+            <InfoRow icon={<Calendar size={14} />} label={t('closeout.handoverDetailAcceptedDate')} value={formatDate(handoverPackage.acceptedDate)} />
+            <InfoRow icon={<User size={14} />} label={t('closeout.handoverDetailAcceptedBy')} value={handoverPackage.acceptedByName ?? '\u2014'} />
+            <InfoRow icon={<FileText size={14} />} label={t('closeout.handoverDetailCreatedAt')} value={formatDateTime(handoverPackage.createdAt)} />
           </div>
         </div>
       </div>

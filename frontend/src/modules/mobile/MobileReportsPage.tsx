@@ -13,6 +13,7 @@ import { mobileApi } from '@/api/mobile';
 import { formatDate } from '@/lib/format';
 import type { FieldReport } from './types';
 import { useMobileSubmissionQueue } from './useMobileSubmissionQueue';
+import { t } from '@/i18n';
 
 const reportStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   draft: 'gray',
@@ -21,12 +22,12 @@ const reportStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' 
   approved: 'green',
 };
 
-const reportStatusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  submitted: 'Отправлен',
-  reviewed: 'На проверке',
-  approved: 'Утверждён',
-};
+const getReportStatusLabels = (): Record<string, string> => ({
+  draft: t('mobileModule.reports.statusDraft'),
+  submitted: t('mobileModule.reports.statusSubmitted'),
+  reviewed: t('mobileModule.reports.statusReviewed'),
+  approved: t('mobileModule.reports.statusApproved'),
+});
 
 const syncStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange'> = {
   synced: 'green',
@@ -35,21 +36,21 @@ const syncStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 
   offline: 'gray',
 };
 
-const syncStatusLabels: Record<string, string> = {
-  synced: 'Синхронизирован',
-  pending: 'Ожидает',
-  error: 'Ошибка',
-  offline: 'Офлайн',
-};
+const getSyncStatusLabels = (): Record<string, string> => ({
+  synced: t('mobileModule.reports.syncSynced'),
+  pending: t('mobileModule.reports.syncPending'),
+  error: t('mobileModule.reports.syncError'),
+  offline: t('mobileModule.reports.syncOffline'),
+});
 
 type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'APPROVED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'SUBMITTED', label: 'Отправлен' },
-  { value: 'REVIEWED', label: 'На проверке' },
-  { value: 'APPROVED', label: 'Утверждён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('mobileModule.reports.allStatuses') },
+  { value: 'DRAFT', label: t('mobileModule.reports.statusDraft') },
+  { value: 'SUBMITTED', label: t('mobileModule.reports.statusSubmitted') },
+  { value: 'REVIEWED', label: t('mobileModule.reports.statusReviewed') },
+  { value: 'APPROVED', label: t('mobileModule.reports.statusApproved') },
 ];
 
 const FieldReportListPage: React.FC = () => {
@@ -131,7 +132,7 @@ const FieldReportListPage: React.FC = () => {
       },
       {
         accessorKey: 'title',
-        header: 'Название',
+        header: t('mobileModule.reports.colTitle'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -142,19 +143,19 @@ const FieldReportListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('mobileModule.reports.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={reportStatusColorMap}
-            label={reportStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getReportStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'authorName',
-        header: 'Автор',
+        header: t('mobileModule.reports.colAuthor'),
         size: 140,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -162,7 +163,7 @@ const FieldReportListPage: React.FC = () => {
       },
       {
         accessorKey: 'reportDate',
-        header: 'Дата отчёта',
+        header: t('mobileModule.reports.colReportDate'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -170,7 +171,7 @@ const FieldReportListPage: React.FC = () => {
       },
       {
         accessorKey: 'workersOnSite',
-        header: 'Рабочих',
+        header: t('mobileModule.reports.colWorkers'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{getValue<number>() ?? '---'}</span>
@@ -178,13 +179,13 @@ const FieldReportListPage: React.FC = () => {
       },
       {
         accessorKey: 'syncStatus',
-        header: 'Синхронизация',
+        header: t('mobileModule.reports.colSync'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={syncStatusColorMap}
-            label={syncStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getSyncStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
@@ -200,23 +201,23 @@ const FieldReportListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Полевые отчёты"
-        subtitle={`${reports.length} отчётов с площадок`}
+        title={t('mobileModule.reports.pageTitle')}
+        subtitle={t('mobileModule.reports.pageSubtitle', { count: String(reports.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Мобильное приложение' },
-          { label: 'Отчёты' },
+          { label: t('mobileModule.reports.breadcrumbHome'), href: '/' },
+          { label: t('mobileModule.reports.breadcrumbMobile') },
+          { label: t('mobileModule.reports.breadcrumbReports') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/mobile/reports/new')}>
-            Новый отчёт
+            {t('mobileModule.reports.newReport')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'DRAFT', label: 'Черновики', count: tabCounts.draft },
-          { id: 'SUBMITTED', label: 'На проверке', count: tabCounts.submitted },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
+          { id: 'all', label: t('mobileModule.reports.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('mobileModule.reports.tabDrafts'), count: tabCounts.draft },
+          { id: 'SUBMITTED', label: t('mobileModule.reports.tabReview'), count: tabCounts.submitted },
+          { id: 'APPROVED', label: t('mobileModule.reports.tabApproved'), count: tabCounts.approved },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -224,14 +225,14 @@ const FieldReportListPage: React.FC = () => {
 
       {/* Metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Всего отчётов" value={metrics.total} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Сегодня" value={metrics.todayCount} />
-        <MetricCard icon={<Camera size={18} />} label="Фотографий" value={metrics.photoCount} />
+        <MetricCard icon={<FileText size={18} />} label={t('mobileModule.reports.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('mobileModule.reports.metricToday')} value={metrics.todayCount} />
+        <MetricCard icon={<Camera size={18} />} label={t('mobileModule.reports.metricPhotos')} value={metrics.photoCount} />
         <MetricCard
           icon={<CloudOff size={18} />}
-          label="Ошибки синхронизации"
+          label={t('mobileModule.reports.metricSyncErrors')}
           value={metrics.syncErrors}
-          trend={{ direction: metrics.syncErrors > 0 ? 'down' : 'neutral', value: metrics.syncErrors > 0 ? 'Требуется синхронизация' : 'Все синхронизированы' }}
+          trend={{ direction: metrics.syncErrors > 0 ? 'down' : 'neutral', value: metrics.syncErrors > 0 ? t('mobileModule.reports.syncRequired') : t('mobileModule.reports.allSynced') }}
         />
       </div>
 
@@ -240,14 +241,14 @@ const FieldReportListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию, автору..."
+            placeholder={t('mobileModule.reports.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-48"
@@ -257,11 +258,11 @@ const FieldReportListPage: React.FC = () => {
       {localQueueStats.total > 0 && (
         <div className="mb-4 rounded-xl border border-warning-200 bg-warning-50 px-4 py-3 flex items-center justify-between gap-3">
           <div className="text-sm text-warning-800">
-            Локальная очередь: {localQueueStats.total} отчёт(ов), {localQueueStats.pendingPhotos} фото.
-            {localQueueStats.issues > 0 && ` Проблемных элементов: ${localQueueStats.issues}.`}
+            {t('mobileModule.reports.localQueue', { total: String(localQueueStats.total), photos: String(localQueueStats.pendingPhotos) })}
+            {localQueueStats.issues > 0 && ` ${t('mobileModule.reports.localQueueIssues', { count: String(localQueueStats.issues) })}`}
           </div>
           <Button size="sm" variant="secondary" onClick={() => navigate('/mobile/dashboard')}>
-            Центр синхронизации
+            {t('mobileModule.reports.syncCenter')}
           </Button>
         </div>
       )}
@@ -277,8 +278,8 @@ const FieldReportListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет полевых отчётов"
-        emptyDescription="Создайте первый отчёт с площадки"
+        emptyTitle={t('mobileModule.reports.emptyTitle')}
+        emptyDescription={t('mobileModule.reports.emptyDescription')}
       />
     </div>
   );

@@ -1,9 +1,13 @@
 package com.privod.platform.modules.safety.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.safety.domain.InspectionStatus;
 import com.privod.platform.modules.safety.domain.SafetyInspection;
 import com.privod.platform.modules.safety.domain.SafetyViolation;
+import com.privod.platform.modules.safety.repository.SafetyIncidentRepository;
 import com.privod.platform.modules.safety.repository.SafetyInspectionRepository;
 import com.privod.platform.modules.safety.repository.SafetyViolationRepository;
 import com.privod.platform.modules.safety.web.dto.CreateInspectionRequest;
@@ -28,29 +32,42 @@ import java.util.UUID;
 public class SafetyInspectionService {
 
     private final SafetyInspectionRepository inspectionRepository;
+    private final SafetyIncidentRepository incidentRepository;
     private final SafetyViolationRepository violationRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<InspectionResponse> listInspections(UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (projectId != null) {
-            return inspectionRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+            validateProjectTenant(projectId, organizationId);
+            return inspectionRepository.findByOrganizationIdAndProjectIdAndDeletedFalse(organizationId, projectId, pageable)
                     .map(InspectionResponse::fromEntity);
         }
-        return inspectionRepository.findAll(pageable).map(InspectionResponse::fromEntity);
+        return inspectionRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
+                .map(InspectionResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public InspectionResponse getInspection(UUID id) {
-        SafetyInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyInspection inspection = getInspectionOrThrow(id, organizationId);
         return InspectionResponse.fromEntity(inspection);
     }
 
     @Transactional
     public InspectionResponse createInspection(CreateInspectionRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для проверки");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         String number = generateInspectionNumber();
 
         SafetyInspection inspection = SafetyInspection.builder()
+                .organizationId(organizationId)
                 .number(number)
                 .inspectionDate(request.inspectionDate())
                 .projectId(request.projectId())
@@ -70,12 +87,14 @@ public class SafetyInspectionService {
 
     @Transactional
     public InspectionResponse updateInspection(UUID id, UpdateInspectionRequest request) {
-        SafetyInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyInspection inspection = getInspectionOrThrow(id, organizationId);
 
         if (request.inspectionDate() != null) {
             inspection.setInspectionDate(request.inspectionDate());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             inspection.setProjectId(request.projectId());
         }
         if (request.inspectorId() != null) {
@@ -115,7 +134,8 @@ public class SafetyInspectionService {
 
     @Transactional
     public InspectionResponse startInspection(UUID id) {
-        SafetyInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyInspection inspection = getInspectionOrThrow(id, organizationId);
 
         if (inspection.getStatus() != InspectionStatus.PLANNED) {
             throw new IllegalStateException("Начать можно только запланированную проверку");
@@ -133,7 +153,8 @@ public class SafetyInspectionService {
 
     @Transactional
     public InspectionResponse completeInspection(UUID id) {
-        SafetyInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyInspection inspection = getInspectionOrThrow(id, organizationId);
 
         if (inspection.getStatus() != InspectionStatus.IN_PROGRESS) {
             throw new IllegalStateException("Завершить можно только проверку в процессе выполнения");
@@ -151,7 +172,8 @@ public class SafetyInspectionService {
 
     @Transactional
     public InspectionResponse cancelInspection(UUID id) {
-        SafetyInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyInspection inspection = getInspectionOrThrow(id, organizationId);
 
         if (inspection.getStatus() == InspectionStatus.COMPLETED ||
                 inspection.getStatus() == InspectionStatus.CANCELLED) {
@@ -170,7 +192,8 @@ public class SafetyInspectionService {
 
     @Transactional
     public void deleteInspection(UUID id) {
-        SafetyInspection inspection = getInspectionOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SafetyInspection inspection = getInspectionOrThrow(id, organizationId);
         inspection.softDelete();
         inspectionRepository.save(inspection);
         auditService.logDelete("SafetyInspection", id);
@@ -181,8 +204,9 @@ public class SafetyInspectionService {
 
     @Transactional(readOnly = true)
     public List<ViolationResponse> getInspectionViolations(UUID inspectionId) {
-        getInspectionOrThrow(inspectionId);
-        return violationRepository.findByInspectionIdAndDeletedFalse(inspectionId)
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInspectionOrThrow(inspectionId, organizationId);
+        return violationRepository.findByOrganizationIdAndInspectionIdAndDeletedFalse(organizationId, inspectionId)
                 .stream()
                 .map(ViolationResponse::fromEntity)
                 .toList();
@@ -190,9 +214,15 @@ public class SafetyInspectionService {
 
     @Transactional
     public ViolationResponse addViolationToInspection(UUID inspectionId, CreateViolationRequest request) {
-        getInspectionOrThrow(inspectionId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInspectionOrThrow(inspectionId, organizationId);
+        if (request.incidentId() != null) {
+            incidentRepository.findByIdAndOrganizationIdAndDeletedFalse(request.incidentId(), organizationId)
+                    .orElseThrow(() -> new EntityNotFoundException("Инцидент не найден: " + request.incidentId()));
+        }
 
         SafetyViolation violation = SafetyViolation.builder()
+                .organizationId(organizationId)
                 .inspectionId(inspectionId)
                 .incidentId(request.incidentId())
                 .description(request.description())
@@ -210,10 +240,21 @@ public class SafetyInspectionService {
         return ViolationResponse.fromEntity(violation);
     }
 
-    private SafetyInspection getInspectionOrThrow(UUID id) {
-        return inspectionRepository.findById(id)
-                .filter(i -> !i.isDeleted())
+    private SafetyInspection getInspectionOrThrow(UUID id, UUID organizationId) {
+        return inspectionRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Проверка не найдена: " + id));
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
     }
 
     private String generateInspectionNumber() {

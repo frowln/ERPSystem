@@ -17,13 +17,14 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { crmApi } from '@/api/crm';
 import { formatDate, formatMoneyCompact } from '@/lib/format';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 import type { CrmLead, CrmStage } from './types';
 import type { PaginatedResponse } from '@/types';
 
-const teamFilterOptions = [
-  { value: '', label: 'Все команды' },
-  { value: 'Команда продаж А', label: 'Команда продаж А' },
-  { value: 'Команда продаж Б', label: 'Команда продаж Б' },
+const getTeamFilterOptions = () => [
+  { value: '', label: t('crm.leadList.allTeams') },
+  { value: 'Команда продаж А', label: t('crm.leadList.salesTeamA') },
+  { value: 'Команда продаж Б', label: t('crm.leadList.salesTeamB') },
 ];
 
 const CrmLeadListPage: React.FC = () => {
@@ -38,20 +39,20 @@ const CrmLeadListPage: React.FC = () => {
     mutationFn: (id: string) => crmApi.deleteLead(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
-      toast.success('Лид удалён');
+      toast.success(t('crm.leadList.toastDeleted'));
     },
     onError: () => {
-      toast.error('Ошибка при удалении');
+      toast.error(t('crm.leadList.toastDeleteError'));
     },
   });
 
   const handleDeleteLead = async (e: React.MouseEvent, leadId: string) => {
     e.stopPropagation();
     const isConfirmed = await confirm({
-      title: 'Удалить лид?',
-      description: 'Операция необратима. Лид будет удален из CRM.',
-      confirmLabel: 'Удалить лид',
-      cancelLabel: 'Отмена',
+      title: t('crm.leadList.confirmDeleteTitle'),
+      description: t('crm.leadList.confirmDeleteDescription'),
+      confirmLabel: t('crm.leadList.confirmDeleteConfirm'),
+      cancelLabel: t('common.cancel'),
     });
     if (!isConfirmed) return;
 
@@ -117,12 +118,12 @@ const CrmLeadListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Воронка продаж"
-        subtitle={`${leads.length} лидов`}
+        title={t('crm.leadList.title')}
+        subtitle={`${leads.length} ${t('crm.leadList.leadsCount')}`}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'CRM' },
-          { label: 'Лиды' },
+          { label: t('crm.leadList.breadcrumbHome'), href: '/' },
+          { label: t('crm.leadList.breadcrumbCrm') },
+          { label: t('crm.leadList.breadcrumbLeads') },
         ]}
         actions={
           <div className="flex items-center gap-2">
@@ -137,35 +138,35 @@ const CrmLeadListPage: React.FC = () => {
                 className={`px-3 py-1.5 text-xs font-medium border-l border-neutral-200 dark:border-neutral-700 ${viewMode === 'list' ? 'bg-primary-50 text-primary-700' : 'bg-white dark:bg-neutral-900 text-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
                 onClick={() => setViewMode('list')}
               >
-                Список
+                {t('crm.leadList.viewList')}
               </button>
             </div>
             <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/crm/leads/new')}>
-              Новый лид
+              {t('crm.leadList.newLead')}
             </Button>
           </div>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Users size={18} />} label="Всего лидов" value={metrics.total} />
-        <MetricCard icon={<Target size={18} />} label="Активные" value={metrics.activeLeads} />
-        <MetricCard icon={<DollarSign size={18} />} label="Выигранная выручка" value={formatMoneyCompact(metrics.wonRevenue)} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Конверсия" value={`${metrics.conversionRate}%`} />
+        <MetricCard icon={<Users size={18} />} label={t('crm.leadList.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<Target size={18} />} label={t('crm.leadList.metricActive')} value={metrics.activeLeads} />
+        <MetricCard icon={<DollarSign size={18} />} label={t('crm.leadList.metricWonRevenue')} value={formatMoneyCompact(metrics.wonRevenue)} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('crm.leadList.metricConversion')} value={`${metrics.conversionRate}%`} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию, контакту..."
+            placeholder={t('crm.leadList.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={teamFilterOptions}
+          options={getTeamFilterOptions()}
           value={teamFilter}
           onChange={(e) => setTeamFilter(e.target.value)}
           className="w-52"
@@ -182,7 +183,7 @@ const CrmLeadListPage: React.FC = () => {
                   <div>
                     <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{stage.name}</h3>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                      {stage.leads.length} лидов | {formatMoneyCompact(stage.stageRevenue)}
+                      {stage.leads.length} {t('crm.leadList.leadsCount')} | {formatMoneyCompact(stage.stageRevenue)}
                     </p>
                   </div>
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-neutral-200 text-xs font-bold text-neutral-700 dark:text-neutral-300">
@@ -207,7 +208,7 @@ const CrmLeadListPage: React.FC = () => {
                           <button
                             onClick={(e) => handleDeleteLead(e, lead.id)}
                             className="p-1 text-neutral-300 hover:text-danger-600 hover:bg-danger-50 rounded transition-colors"
-                            title="Удалить"
+                            title={t('common.delete')}
                           >
                             <Trash2 size={12} />
                           </button>
@@ -232,7 +233,7 @@ const CrmLeadListPage: React.FC = () => {
                   ))}
                   {stage.leads.length === 0 && (
                     <div className="text-center py-6">
-                      <p className="text-xs text-neutral-400">Нет лидов</p>
+                      <p className="text-xs text-neutral-400">{t('crm.leadList.noLeads')}</p>
                     </div>
                   )}
                 </div>
@@ -247,13 +248,13 @@ const CrmLeadListPage: React.FC = () => {
             <thead>
               <tr className="bg-neutral-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
                 <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">#</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Лид</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Стадия</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Приоритет</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Выручка</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Вероятность</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Ответственный</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">Закрытие</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colLead')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colStage')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colPriority')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colRevenue')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colProbability')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colAssignee')}</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">{t('crm.leadList.colCloseDate')}</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600"></th>
               </tr>
             </thead>
@@ -295,7 +296,7 @@ const CrmLeadListPage: React.FC = () => {
                     <button
                       onClick={(e) => handleDeleteLead(e, lead.id)}
                       className="p-1.5 text-neutral-400 hover:text-danger-600 hover:bg-danger-50 rounded-md transition-colors"
-                      title="Удалить"
+                      title={t('common.delete')}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -304,7 +305,7 @@ const CrmLeadListPage: React.FC = () => {
               ))}
               {filteredLeads.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-neutral-500 dark:text-neutral-400">Нет лидов</td>
+                  <td colSpan={9} className="px-4 py-12 text-center text-neutral-500 dark:text-neutral-400">{t('crm.leadList.noLeads')}</td>
                 </tr>
               )}
             </tbody>

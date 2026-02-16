@@ -11,30 +11,36 @@ import { FormField, Input, Textarea, Select } from '@/design-system/components/F
 import { EmptyState } from '@/design-system/components/EmptyState';
 import { accountingApi } from '@/api/accounting';
 import { formatDateTime, formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 
-const uuidSchema = z.string().uuid('Неверный формат UUID');
+const getJournalEntrySchema = () => {
+  const uuidSchema = z.string().uuid(t('accounting.validationInvalidUuid'));
 
-const journalEntrySchema = z.object({
-  entryDate: z.string().min(1, 'Укажите дату проводки'),
-  journalId: uuidSchema,
-  periodId: uuidSchema,
-  debitAccountId: uuidSchema,
-  creditAccountId: uuidSchema,
-  description: z.string().min(1, 'Укажите описание').max(500, 'Максимум 500 символов'),
-  amount: z
-    .string()
-    .min(1, 'Укажите сумму')
-    .transform((value) => Number(value.replace(/\s/g, '').replace(',', '.')))
-    .refine((value) => Number.isFinite(value) && value > 0, 'Сумма должна быть больше 0'),
-  documentType: z.string().max(50, 'Максимум 50 символов').optional(),
-  documentId: z
-    .string()
-    .optional()
-    .refine((value) => !value || uuidSchema.safeParse(value).success, 'Неверный UUID документа'),
-  notes: z.string().max(2000, 'Максимум 2000 символов').optional(),
-});
+  return {
+    uuidSchema,
+    schema: z.object({
+      entryDate: z.string().min(1, t('accounting.validationDateRequired')),
+      journalId: uuidSchema,
+      periodId: uuidSchema,
+      debitAccountId: uuidSchema,
+      creditAccountId: uuidSchema,
+      description: z.string().min(1, t('accounting.validationDescriptionRequired')).max(500, t('accounting.validationDescriptionMax')),
+      amount: z
+        .string()
+        .min(1, t('accounting.validationAmountRequired'))
+        .transform((value) => Number(value.replace(/\s/g, '').replace(',', '.')))
+        .refine((value) => Number.isFinite(value) && value > 0, t('accounting.validationAmountPositive')),
+      documentType: z.string().max(50, t('accounting.validationDocTypeMax')).optional(),
+      documentId: z
+        .string()
+        .optional()
+        .refine((value) => !value || uuidSchema.safeParse(value).success, t('accounting.validationInvalidDocUuid')),
+      notes: z.string().max(2000, t('accounting.validationNotesMax')).optional(),
+    }),
+  };
+};
 
-type JournalEntryFormData = z.input<typeof journalEntrySchema>;
+type JournalEntryFormData = z.input<ReturnType<typeof getJournalEntrySchema>['schema']>;
 
 const JOURNAL_ENTRY_DRAFT_KEY = 'accounting:journal-entry:draft:v1';
 
@@ -79,6 +85,8 @@ const JournalEntryFormPage: React.FC = () => {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const { schema: journalEntrySchema } = useMemo(() => getJournalEntrySchema(), []);
 
   const {
     data: existingEntry,
@@ -284,11 +292,11 @@ const JournalEntryFormPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['journal-entries'] });
       queryClient.invalidateQueries({ queryKey: ['accounting-dashboard'] });
       window.localStorage.removeItem(JOURNAL_ENTRY_DRAFT_KEY);
-      toast.success('Проводка создана');
+      toast.success(t('accounting.formCreateSuccess'));
       navigate('/accounting/journal');
     },
     onError: () => {
-      toast.error('Не удалось создать проводку');
+      toast.error(t('accounting.formCreateError'));
     },
   });
 
@@ -311,11 +319,11 @@ const JournalEntryFormPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['journal-entries'] });
       queryClient.invalidateQueries({ queryKey: ['journal-entry', id] });
       queryClient.invalidateQueries({ queryKey: ['accounting-dashboard'] });
-      toast.success('Проводка обновлена');
+      toast.success(t('accounting.formUpdateSuccess'));
       navigate('/accounting/journal');
     },
     onError: () => {
-      toast.error('Не удалось обновить проводку');
+      toast.error(t('accounting.formUpdateError'));
     },
   });
 
@@ -326,10 +334,10 @@ const JournalEntryFormPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounting-periods'] });
-      toast.success('Текущий период открыт');
+      toast.success(t('accounting.formOpenPeriodSuccess'));
     },
     onError: () => {
-      toast.error('Не удалось открыть период');
+      toast.error(t('accounting.formOpenPeriodError'));
     },
   });
 
@@ -339,21 +347,21 @@ const JournalEntryFormPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Проводка"
-          subtitle="Редактирование"
+          title={t('accounting.formTitle')}
+          subtitle={t('accounting.formEditSubtitle')}
           backTo="/accounting/journal"
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия', href: '/accounting' },
-            { label: 'Журнал проводок', href: '/accounting/journal' },
-            { label: 'Редактирование' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+            { label: t('accounting.breadcrumbJournalEntries'), href: '/accounting/journal' },
+            { label: t('accounting.breadcrumbEditing') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Проводка не найдена"
-          description="Возможно, запись была удалена или недоступна"
-          actionLabel="Повторить"
+          title={t('accounting.formNotFoundTitle')}
+          description={t('accounting.formNotFoundDescription')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetchEntry();
           }}
@@ -365,24 +373,24 @@ const JournalEntryFormPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title={isEdit ? 'Редактирование проводки' : 'Новая проводка'}
-        subtitle={isEdit ? existingEntry?.number : 'Создание бухгалтерской проводки'}
+        title={isEdit ? t('accounting.formEditTitle') : t('accounting.formCreateTitle')}
+        subtitle={isEdit ? existingEntry?.number : t('accounting.formCreateSubtitle')}
         backTo="/accounting/journal"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия', href: '/accounting' },
-          { label: 'Журнал проводок', href: '/accounting/journal' },
-          { label: isEdit ? 'Редактирование' : 'Создание' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting'), href: '/accounting' },
+          { label: t('accounting.breadcrumbJournalEntries'), href: '/accounting/journal' },
+          { label: isEdit ? t('accounting.breadcrumbEditing') : t('accounting.breadcrumbCreating') },
         ]}
       />
 
       {!canSubmit && !entryLoading && (
         <div className="bg-warning-50 border border-warning-200 text-warning-800 rounded-xl p-4 mb-6 text-sm">
-          Для создания проводки нужны справочники: план счетов, периоды и финансовые журналы.
+          {t('accounting.formRequiredHint')}
           <div className="mt-2 flex flex-wrap gap-2">
             {(periodOptions.length === 0 || periodsError) && (
               <Button size="sm" variant="secondary" onClick={() => { void refetchPeriods(); }}>
-                Обновить периоды
+                {t('accounting.formRefreshPeriods')}
               </Button>
             )}
             {openPeriods.length === 0 && (
@@ -394,20 +402,20 @@ const JournalEntryFormPage: React.FC = () => {
                   openCurrentPeriodMutation.mutate();
                 }}
               >
-                Открыть текущий период
+                {t('accounting.formOpenCurrentPeriod')}
               </Button>
             )}
             {(journalOptions.length === 0 || journalsError) && (
               <>
                 <Button size="sm" variant="secondary" onClick={() => { void refetchJournals(); }}>
-                  Обновить журналы
+                  {t('accounting.formRefreshJournals')}
                 </Button>
                 <Button
                   size="sm"
                   variant="secondary"
                   onClick={() => navigate('/accounting/journals')}
                 >
-                  Управлять журналами
+                  {t('accounting.formManageJournals')}
                 </Button>
               </>
             )}
@@ -419,14 +427,14 @@ const JournalEntryFormPage: React.FC = () => {
         <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl p-4 mb-6 text-sm flex items-center justify-between gap-3">
           <p className="text-neutral-700 dark:text-neutral-300">
             {restoredDraftAt
-              ? `Черновик восстановлен (${formatDateTime(new Date(restoredDraftAt).toISOString())}).`
-              : 'Автосохранение черновика включено.'}
+              ? t('accounting.formDraftRestored', { date: formatDateTime(new Date(restoredDraftAt).toISOString()) })
+              : t('accounting.formDraftAutoSave')}
             {lastDraftSavedAt
-              ? ` Последнее сохранение: ${formatDateTime(new Date(lastDraftSavedAt).toISOString())}.`
+              ? t('accounting.formDraftLastSaved', { date: formatDateTime(new Date(lastDraftSavedAt).toISOString()) })
               : ''}
           </p>
           <Button size="sm" variant="secondary" type="button" onClick={clearDraft}>
-            Очистить черновик
+            {t('accounting.formClearDraft')}
           </Button>
         </div>
       )}
@@ -442,21 +450,21 @@ const JournalEntryFormPage: React.FC = () => {
         className="max-w-4xl"
       >
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">Основная информация</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('accounting.formSectionBasic')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FormField label="Дата проводки" error={errors.entryDate?.message} required>
+            <FormField label={t('accounting.formLabelEntryDate')} error={errors.entryDate?.message} required>
               <Input type="date" hasError={!!errors.entryDate} {...register('entryDate')} />
             </FormField>
 
             <FormField
-              label="Период"
+              label={t('accounting.formLabelPeriod')}
               error={errors.periodId?.message}
-              hint={openPeriods.length === 0 ? 'Нет открытых периодов. Создайте период выше.' : undefined}
+              hint={openPeriods.length === 0 ? t('accounting.formHintNoOpenPeriods') : undefined}
               required
             >
               <Select
                 options={periodOptions}
-                placeholder="Выберите период"
+                placeholder={t('accounting.formPlaceholderPeriod')}
                 hasError={!!errors.periodId}
                 {...register('periodId')}
               />
@@ -464,23 +472,23 @@ const JournalEntryFormPage: React.FC = () => {
 
             <div className="sm:col-span-2">
               <FormField
-                label="Финансовый журнал"
+                label={t('accounting.formLabelJournal')}
                 error={errors.journalId?.message}
-                hint="Выберите журнал из справочника"
+                hint={t('accounting.formHintJournal')}
                 required
               >
                 <Select
                   options={journalOptions}
-                  placeholder="Выберите финансовый журнал"
+                  placeholder={t('accounting.formPlaceholderJournal')}
                   hasError={!!errors.journalId}
                   {...register('journalId')}
                 />
               </FormField>
             </div>
 
-            <FormField label="Описание операции" error={errors.description?.message} required className="sm:col-span-2">
+            <FormField label={t('accounting.formLabelDescription')} error={errors.description?.message} required className="sm:col-span-2">
               <Input
-                placeholder="Например: Поступление материалов от поставщика"
+                placeholder={t('accounting.formPlaceholderDescription')}
                 hasError={!!errors.description}
                 {...register('description')}
               />
@@ -489,27 +497,27 @@ const JournalEntryFormPage: React.FC = () => {
         </section>
 
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">Счета и сумма</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('accounting.formSectionAccountsAmount')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FormField label="Дебет" error={errors.debitAccountId?.message} required>
+            <FormField label={t('accounting.formLabelDebit')} error={errors.debitAccountId?.message} required>
               <Select
                 options={accountOptions}
-                placeholder="Выберите счёт дебета"
+                placeholder={t('accounting.formPlaceholderDebit')}
                 hasError={!!errors.debitAccountId}
                 {...register('debitAccountId')}
               />
             </FormField>
 
-            <FormField label="Кредит" error={errors.creditAccountId?.message} required>
+            <FormField label={t('accounting.formLabelCredit')} error={errors.creditAccountId?.message} required>
               <Select
                 options={accountOptions}
-                placeholder="Выберите счёт кредита"
+                placeholder={t('accounting.formPlaceholderCredit')}
                 hasError={!!errors.creditAccountId}
                 {...register('creditAccountId')}
               />
             </FormField>
 
-            <FormField label="Сумма" error={errors.amount?.message} required>
+            <FormField label={t('accounting.formLabelAmount')} error={errors.amount?.message} required>
               <Input
                 type="text"
                 inputMode="decimal"
@@ -519,17 +527,17 @@ const JournalEntryFormPage: React.FC = () => {
               />
             </FormField>
 
-            <FormField label="Тип документа" error={errors.documentType?.message}>
+            <FormField label={t('accounting.formLabelDocType')} error={errors.documentType?.message}>
               <Input
-                placeholder="Например: УПД, ПП, Счёт"
+                placeholder={t('accounting.formPlaceholderDocType')}
                 hasError={!!errors.documentType}
                 {...register('documentType')}
               />
             </FormField>
 
-            <FormField label="UUID документа" error={errors.documentId?.message} className="sm:col-span-2">
+            <FormField label={t('accounting.formLabelDocUuid')} error={errors.documentId?.message} className="sm:col-span-2">
               <Input
-                placeholder="Необязательно"
+                placeholder={t('accounting.formPlaceholderDocUuid')}
                 hasError={!!errors.documentId}
                 {...register('documentId')}
               />
@@ -538,17 +546,17 @@ const JournalEntryFormPage: React.FC = () => {
 
           {numericAmount > 0 && (
             <div className="mt-4 pt-4 border-t border-neutral-100">
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Предпросмотр суммы</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('accounting.formAmountPreview')}</p>
               <p className="text-sm font-semibold text-primary-700 tabular-nums">{formatMoney(numericAmount)}</p>
             </div>
           )}
         </section>
 
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">Комментарий</h2>
-          <FormField label="Заметки" error={errors.notes?.message}>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('accounting.formSectionComment')}</h2>
+          <FormField label={t('accounting.formLabelNotes')} error={errors.notes?.message}>
             <Textarea
-              placeholder="Дополнительная информация"
+              placeholder={t('accounting.formPlaceholderNotes')}
               rows={3}
               hasError={!!errors.notes}
               {...register('notes')}
@@ -558,10 +566,10 @@ const JournalEntryFormPage: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <Button type="submit" loading={isSubmitting} disabled={!canSubmit || entryLoading}>
-            {isEdit ? 'Сохранить изменения' : 'Создать проводку'}
+            {isEdit ? t('accounting.formSaveChanges') : t('accounting.formCreateEntry')}
           </Button>
           <Button type="button" variant="secondary" onClick={() => navigate('/accounting/journal')}>
-            Назад
+            {t('accounting.formBack')}
           </Button>
         </div>
       </form>

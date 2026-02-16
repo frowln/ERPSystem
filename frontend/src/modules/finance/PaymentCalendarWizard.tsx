@@ -10,10 +10,10 @@ interface PaymentCalendarWizardProps {
   onClose: () => void;
 }
 
-const projectOptions = [
-  { value: 'p1', label: 'ЖК "Новые Горизонты" (НГ-01)' },
-  { value: 'p2', label: 'БЦ "Центральный" (БЦ-02)' },
-  { value: 'p3', label: 'Склад "Логистик Парк" (СЛП-03)' },
+const getProjectOptions = () => [
+  { value: 'p1', label: t('mockData.projectNovyeGorizonty') },
+  { value: 'p2', label: t('mockData.projectBcCentralny') },
+  { value: 'p3', label: t('mockData.projectSkladLogistik') },
 ];
 
 const frequencyOptions = [
@@ -123,7 +123,7 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
         <div className="space-y-4">
           <FormField label={t('finance.paymentCalendar.labelProject')} required>
             <Select
-              options={projectOptions}
+              options={getProjectOptions()}
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               placeholder={t('finance.paymentCalendar.selectProject')}
@@ -213,7 +213,7 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
       {step === 3 && (
         <div className="space-y-4">
           <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 space-y-2 text-sm">
-            <p><strong>{t('finance.paymentCalendar.summaryProject')}:</strong> {projectOptions.find((o) => o.value === projectId)?.label}</p>
+            <p><strong>{t('finance.paymentCalendar.summaryProject')}:</strong> {getProjectOptions().find((o) => o.value === projectId)?.label}</p>
             <p><strong>{t('finance.paymentCalendar.summaryPeriod')}:</strong> {startDate} - {endDate}</p>
             <p><strong>{t('finance.paymentCalendar.summaryFrequency')}:</strong> {frequencyOptions.find((o) => o.value === frequency)?.label}</p>
             <p><strong>{t('finance.paymentCalendar.summaryPayments')}:</strong> {0}</p>

@@ -12,10 +12,21 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSpecificationExecutor<Contract> {
+
+    Optional<Contract> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
+    Optional<Contract> findByOrganizationIdAndNumberAndDeletedFalse(UUID organizationId, String number);
+
+    Page<Contract> findByOrganizationIdAndProjectIdAndDeletedFalse(UUID organizationId, UUID projectId, Pageable pageable);
+
+    Page<Contract> findByOrganizationIdAndStatusAndDeletedFalse(UUID organizationId, ContractStatus status, Pageable pageable);
+
+    Page<Contract> findByOrganizationIdAndPartnerIdAndDeletedFalse(UUID organizationId, UUID partnerId, Pageable pageable);
 
     Page<Contract> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
@@ -39,13 +50,28 @@ public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSp
             "(:projectId IS NULL OR c.projectId = :projectId) GROUP BY c.status")
     List<Object[]> countByStatusAndProjectId(@Param("projectId") UUID projectId);
 
+    @Query("SELECT c.status, COUNT(c) FROM Contract c WHERE c.deleted = false AND c.organizationId = :organizationId AND " +
+            "(:projectId IS NULL OR c.projectId = :projectId) GROUP BY c.status")
+    List<Object[]> countByStatusAndProjectIdAndOrganizationId(@Param("projectId") UUID projectId,
+                                                               @Param("organizationId") UUID organizationId);
+
     @Query("SELECT COUNT(c) FROM Contract c WHERE c.deleted = false AND " +
             "(:projectId IS NULL OR c.projectId = :projectId)")
     long countActiveContracts(@Param("projectId") UUID projectId);
 
+    @Query("SELECT COUNT(c) FROM Contract c WHERE c.deleted = false AND c.organizationId = :organizationId AND " +
+            "(:projectId IS NULL OR c.projectId = :projectId)")
+    long countActiveContractsByOrganizationId(@Param("projectId") UUID projectId,
+                                              @Param("organizationId") UUID organizationId);
+
     @Query("SELECT COALESCE(SUM(c.amount), 0) FROM Contract c WHERE c.deleted = false AND " +
             "c.status <> 'CANCELLED' AND (:projectId IS NULL OR c.projectId = :projectId)")
     BigDecimal sumTotalAmount(@Param("projectId") UUID projectId);
+
+    @Query("SELECT COALESCE(SUM(c.amount), 0) FROM Contract c WHERE c.deleted = false AND c.organizationId = :organizationId AND " +
+            "c.status <> 'CANCELLED' AND (:projectId IS NULL OR c.projectId = :projectId)")
+    BigDecimal sumTotalAmountByOrganizationId(@Param("projectId") UUID projectId,
+                                              @Param("organizationId") UUID organizationId);
 
     /**
      * Sum contract amounts for a project filtered by contract type codes.
@@ -59,6 +85,14 @@ public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSp
     BigDecimal sumAmountByProjectIdAndTypeCodes(@Param("projectId") UUID projectId,
                                                  @Param("typeCodes") List<String> typeCodes);
 
+    @Query(value = "SELECT COALESCE(SUM(c.amount), 0) FROM contracts c " +
+            "JOIN contract_types ct ON c.type_id = ct.id " +
+            "WHERE c.organization_id = :organizationId AND c.project_id = :projectId AND ct.code IN :typeCodes " +
+            "AND c.status <> 'CANCELLED' AND c.deleted = false", nativeQuery = true)
+    BigDecimal sumAmountByProjectIdAndTypeCodesAndOrganizationId(@Param("projectId") UUID projectId,
+                                                                  @Param("typeCodes") List<String> typeCodes,
+                                                                  @Param("organizationId") UUID organizationId);
+
     /**
      * Sum totalWithVat for a project filtered by contract type codes.
      * Only includes non-deleted, non-cancelled contracts.
@@ -70,6 +104,14 @@ public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSp
             "AND c.status <> 'CANCELLED' AND c.deleted = false", nativeQuery = true)
     BigDecimal sumTotalWithVatByProjectIdAndTypeCodes(@Param("projectId") UUID projectId,
                                                        @Param("typeCodes") List<String> typeCodes);
+
+    @Query(value = "SELECT COALESCE(SUM(c.total_with_vat), 0) FROM contracts c " +
+            "JOIN contract_types ct ON c.type_id = ct.id " +
+            "WHERE c.organization_id = :organizationId AND c.project_id = :projectId AND ct.code IN :typeCodes " +
+            "AND c.status <> 'CANCELLED' AND c.deleted = false", nativeQuery = true)
+    BigDecimal sumTotalWithVatByProjectIdAndTypeCodesAndOrganizationId(@Param("projectId") UUID projectId,
+                                                                        @Param("typeCodes") List<String> typeCodes,
+                                                                        @Param("organizationId") UUID organizationId);
 
     @Query(value = "SELECT nextval('contract_number_seq')", nativeQuery = true)
     long getNextNumberSequence();

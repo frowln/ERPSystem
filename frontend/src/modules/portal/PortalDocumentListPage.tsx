@@ -9,17 +9,18 @@ import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { portalApi } from '@/api/portal';
 import { formatDate, formatRelativeTime, formatFileSize } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PortalDocument } from './types';
 import toast from 'react-hot-toast';
 
-const categoryLabels: Record<string, string> = {
-  act: 'Акт', drawing: 'Чертёж', specification: 'Спецификация', contract: 'Договор',
-  estimate: 'Смета', permit: 'Разрешение', report: 'Отчёт', photo: 'Фото', other: 'Прочее',
-};
+const getCategoryLabels = (): Record<string, string> => ({
+  act: t('portal.documents.categoryAct'), drawing: t('portal.documents.categoryDrawing'), specification: t('portal.documents.categorySpecification'), contract: t('portal.documents.categoryContract'),
+  estimate: t('portal.documents.categoryEstimate'), permit: t('portal.documents.categoryPermit'), report: t('portal.documents.categoryReport'), photo: t('portal.documents.categoryPhoto'), other: t('portal.documents.categoryOther'),
+});
 
-const categoryFilterOptions = [
-  { value: '', label: 'Все категории' },
-  ...Object.entries(categoryLabels).map(([v, l]) => ({ value: v, label: l })),
+const getCategoryFilterOptions = () => [
+  { value: '', label: t('portal.documents.categoryAll') },
+  ...Object.entries(getCategoryLabels()).map(([v, l]) => ({ value: v, label: l })),
 ];
 
 const getFileIcon = (fileName: string) => {
@@ -65,16 +66,18 @@ const PortalDocumentListPage: React.FC = () => {
   }), [documents]);
 
   const handleDownload = useCallback((doc: PortalDocument) => {
-    toast.success(`Загрузка файла начата: ${doc.fileName}`);
+    toast.success(t('portal.documents.downloadStarted', { fileName: doc.fileName }));
   }, []);
 
-  const columns = useMemo<ColumnDef<PortalDocument, unknown>[]>(() => [
+  const columns = useMemo<ColumnDef<PortalDocument, unknown>[]>(() => {
+    const categoryLabels = getCategoryLabels();
+    return [
     {
       accessorKey: 'fileName', header: '', size: 40,
       cell: ({ row }) => getFileIcon(row.original.fileName),
     },
     {
-      accessorKey: 'title', header: 'Название', size: 280,
+      accessorKey: 'title', header: t('portal.documents.colTitle'), size: 280,
       cell: ({ row }) => (
         <div>
           <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[260px]">{row.original.title}</p>
@@ -83,64 +86,65 @@ const PortalDocumentListPage: React.FC = () => {
       ),
     },
     {
-      accessorKey: 'category', header: 'Категория', size: 130,
+      accessorKey: 'category', header: t('portal.documents.colCategory'), size: 130,
       cell: ({ getValue }) => <span className="text-sm text-neutral-700 dark:text-neutral-300">{categoryLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
-      accessorKey: 'projectName', header: 'Проект', size: 180,
+      accessorKey: 'projectName', header: t('portal.documents.colProject'), size: 180,
       cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300 truncate">{getValue<string>()}</span>,
     },
     {
-      accessorKey: 'uploadedByName', header: 'Загрузил', size: 140,
+      accessorKey: 'uploadedByName', header: t('portal.documents.colUploadedBy'), size: 140,
       cell: ({ getValue }) => <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>,
     },
     {
-      accessorKey: 'version', header: 'Версия', size: 80,
+      accessorKey: 'version', header: t('portal.documents.colVersion'), size: 80,
       cell: ({ getValue }) => <span className="text-neutral-500 dark:text-neutral-400 tabular-nums">v{getValue<number>()}</span>,
     },
     {
-      accessorKey: 'fileSize', header: 'Размер', size: 100,
+      accessorKey: 'fileSize', header: t('portal.documents.colSize'), size: 100,
       cell: ({ getValue }) => <span className="text-neutral-500 dark:text-neutral-400 tabular-nums">{formatFileSize(getValue<number>())}</span>,
     },
     {
-      accessorKey: 'sharedAt', header: 'Дата', size: 110,
+      accessorKey: 'sharedAt', header: t('portal.documents.colDate'), size: 110,
       cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span>,
     },
     {
       id: 'actions', header: '', size: 90,
       cell: ({ row }) => (
         <Button variant="ghost" size="xs" iconLeft={<Download size={14} />} onClick={(e) => { e.stopPropagation(); handleDownload(row.original); }}>
-          Скачать
+          {t('portal.documents.download')}
         </Button>
       ),
     },
-  ], [handleDownload]);
+  ];
+  }, [handleDownload]);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Документы портала"
-        subtitle={`${documents.length} документов доступно`}
+        title={t('portal.documents.title')}
+        subtitle={t('portal.documents.subtitle', { count: String(documents.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портал', href: '/portal' },
-          { label: 'Документы' },
+          { label: t('portal.documents.breadcrumbHome'), href: '/' },
+          { label: t('portal.documents.breadcrumbPortal'), href: '/portal' },
+          { label: t('portal.documents.breadcrumbDocuments') },
         ]}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FileText size={18} />} label="Всего документов" value={metrics.total} />
-        <MetricCard icon={<Download size={18} />} label="Общий размер" value={formatFileSize(metrics.totalSize)} />
-        <MetricCard icon={<Clock size={18} />} label="За последнюю неделю" value={metrics.recentCount} />
-        <MetricCard icon={<FileText size={18} />} label="Проектов" value={metrics.projectCount} />
+        <MetricCard icon={<FileText size={18} />} label={t('portal.documents.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<Download size={18} />} label={t('portal.documents.metricSize')} value={formatFileSize(metrics.totalSize)} />
+        <MetricCard icon={<Clock size={18} />} label={t('portal.documents.metricRecentWeek')} value={metrics.recentCount} />
+        <MetricCard icon={<FileText size={18} />} label={t('portal.documents.metricProjects')} value={metrics.projectCount} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по названию, файлу..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('portal.documents.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select options={categoryFilterOptions} value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-48" />
+        <Select options={getCategoryFilterOptions()} value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-48" />
       </div>
 
       <DataTable<PortalDocument>
@@ -152,8 +156,8 @@ const PortalDocumentListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет доступных документов"
-        emptyDescription="Документы появятся после предоставления доступа к проектам"
+        emptyTitle={t('portal.documents.emptyTitle')}
+        emptyDescription={t('portal.documents.emptyDescription')}
       />
     </div>
   );

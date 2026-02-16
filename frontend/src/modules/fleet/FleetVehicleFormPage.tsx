@@ -66,10 +66,10 @@ const fuelTypeOptions = [
 
 const projectOptions = [
   { value: '', label: t('forms.fleetVehicle.noProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+  { value: '1', label: t('mockData.projectSolnechny') },
+  { value: '2', label: t('mockData.projectGorizont') },
+  { value: '3', label: t('mockData.projectBridgeVyatka') },
+  { value: '6', label: t('mockData.projectTsCentralny') },
 ];
 
 const FleetVehicleFormPage: React.FC = () => {
@@ -193,7 +193,7 @@ const FleetVehicleFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.fleetVehicle.labelLicensePlate')} error={errors.licensePlate?.message} required>
               <Input
-                placeholder="А123БВ777"
+                placeholder={t('forms.fleetVehicle.placeholderLicensePlate')}
                 hasError={!!errors.licensePlate}
                 {...register('licensePlate')}
               />

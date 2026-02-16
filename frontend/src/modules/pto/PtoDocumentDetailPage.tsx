@@ -26,6 +26,7 @@ import {
 import { formatDateLong, formatDateTime } from '@/lib/format';
 import toast from 'react-hot-toast';
 import { ptoApi } from '@/api/pto';
+import { t } from '@/i18n';
 
 interface Signature {
   id: string;
@@ -58,21 +59,21 @@ interface PtoDocument {
 }
 
 
-const statusActions: Record<string, { label: string; target: string }[]> = {
-  draft: [{ label: 'На проверку', target: 'IN_REVIEW' }],
+const getStatusActions = (): Record<string, { label: string; target: string }[]> => ({
+  draft: [{ label: t('pto.docDetailActionReview'), target: 'IN_REVIEW' }],
   in_review: [
-    { label: 'На подписание', target: 'ON_SIGNING' },
-    { label: 'Отклонить', target: 'REJECTED' },
+    { label: t('pto.docDetailActionSigning'), target: 'ON_SIGNING' },
+    { label: t('pto.docDetailActionReject'), target: 'REJECTED' },
   ],
-  on_signing: [{ label: 'Подписан', target: 'SIGNED' }],
-  rejected: [{ label: 'На доработку', target: 'DRAFT' }],
-};
+  on_signing: [{ label: t('pto.docDetailActionSigned'), target: 'SIGNED' }],
+  rejected: [{ label: t('pto.docDetailActionRevise'), target: 'DRAFT' }],
+});
 
-const signatureStatusLabels: Record<string, string> = {
-  signed: 'Подписано',
-  pending: 'Ожидает подписи',
-  rejected: 'Отклонено',
-};
+const getSignatureStatusLabels = (): Record<string, string> => ({
+  signed: t('pto.docDetailSignedStatus'),
+  pending: t('pto.docDetailPendingStatus'),
+  rejected: t('pto.docDetailRejectedStatus'),
+});
 
 const PtoDocumentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -86,7 +87,7 @@ const PtoDocumentDetailPage: React.FC = () => {
   });
 
   if (docLoading || !rawDoc) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">Загрузка...</div>;
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('pto.docDetailLoading')}</div>;
   }
 
   const d: PtoDocument = {
@@ -107,25 +108,27 @@ const PtoDocumentDetailPage: React.FC = () => {
   const approvalHistory: ApprovalEntry[] = (rawDoc as any).approvalHistory ?? [];
   const [statusOverride, setStatusOverride] = useState<string | null>(null);
   const effectiveStatus = statusOverride ?? d.status;
+  const statusActions = getStatusActions();
+  const signatureStatusLabels = getSignatureStatusLabels();
   const actions = useMemo(() => statusActions[effectiveStatus] ?? [], [effectiveStatus]);
 
   const handleStatusChange = (targetStatus: string) => {
     setStatusOverride(targetStatus);
-    toast.success(`Статус документа: ${russianDocStatusLabels[targetStatus] ?? targetStatus}`);
+    toast.success(t('pto.docDetailStatusToast', { status: russianDocStatusLabels[targetStatus] ?? targetStatus }));
   };
 
   const handleDelete = async () => {
     const isConfirmed = await confirm({
-      title: 'Удалить документ ПТО?',
-      description: 'Операция необратима. Документ будет удален.',
-      confirmLabel: 'Удалить документ',
-      cancelLabel: 'Отмена',
+      title: t('pto.docDetailDeleteConfirmTitle'),
+      description: t('pto.docDetailDeleteConfirmDescription'),
+      confirmLabel: t('pto.docDetailDeleteConfirmLabel'),
+      cancelLabel: t('pto.docDetailDeleteCancel'),
       items: [d.number],
     });
     if (!isConfirmed) {
       return;
     }
-    toast.success('Документ удален');
+    toast.success(t('pto.docDetailDeleteSuccess'));
     navigate('/pto/documents');
   };
 
@@ -136,8 +139,8 @@ const PtoDocumentDetailPage: React.FC = () => {
         subtitle={`${d.projectName} / ${russianDocTypeLabels[d.type] ?? d.type}`}
         backTo="/pto/documents"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Документы ПТО', href: '/pto/documents' },
+          { label: t('pto.breadcrumbHome'), href: '/' },
+          { label: t('pto.docDetailBreadcrumbDocuments'), href: '/pto/documents' },
           { label: d.number },
         ]}
         actions={
@@ -152,13 +155,13 @@ const PtoDocumentDetailPage: React.FC = () => {
               size="sm"
               iconLeft={<Edit size={14} />}
               onClick={() => {
-                toast('Редактирование доступно в списке документов ПТО');
+                toast(t('pto.docDetailEditHint'));
                 navigate('/pto/documents');
               }}
             >
-              Редактировать
+              {t('pto.docDetailEdit')}
             </Button>
-            <Button variant="danger" size="sm" iconLeft={<Trash2 size={14} />} onClick={handleDelete}>Удалить</Button>
+            <Button variant="danger" size="sm" iconLeft={<Trash2 size={14} />} onClick={handleDelete}>{t('pto.docDetailDelete')}</Button>
           </div>
         }
       />
@@ -175,7 +178,7 @@ const PtoDocumentDetailPage: React.FC = () => {
 
           {/* Content */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Содержание</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('pto.docDetailContent')}</h3>
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg border border-neutral-200 dark:border-neutral-700">
               {d.content}
             </div>
@@ -185,7 +188,7 @@ const PtoDocumentDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <PenTool size={16} className="text-primary-500" />
-              Подписи ({signatures.length})
+              {t('pto.docDetailSignatures', { count: String(signatures.length) })}
             </h3>
             <div className="space-y-3">
               {signatures.map((sig) => (
@@ -212,7 +215,7 @@ const PtoDocumentDetailPage: React.FC = () => {
 
           {/* Approval history */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">История согласования</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('pto.docDetailApprovalHistory')}</h3>
             <div className="space-y-3">
               {approvalHistory.map((entry) => (
                 <div key={entry.id} className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
@@ -233,13 +236,13 @@ const PtoDocumentDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детали</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('pto.docDetailSidebarTitle')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<Hash size={15} />} label="Номер" value={d.number} />
-              <InfoItem icon={<FileText size={15} />} label="Объект" value={d.objectName} />
-              <InfoItem icon={<User size={15} />} label="Создал" value={d.createdByName} />
-              <InfoItem icon={<Calendar size={15} />} label="Создан" value={formatDateLong(d.createdAt)} />
-              <InfoItem icon={<Clock size={15} />} label="Обновлён" value={formatDateLong(d.updatedAt)} />
+              <InfoItem icon={<Hash size={15} />} label={t('pto.docDetailNumber')} value={d.number} />
+              <InfoItem icon={<FileText size={15} />} label={t('pto.docDetailObject')} value={d.objectName} />
+              <InfoItem icon={<User size={15} />} label={t('pto.docDetailCreatedBy')} value={d.createdByName} />
+              <InfoItem icon={<Calendar size={15} />} label={t('pto.docDetailCreatedAt')} value={formatDateLong(d.createdAt)} />
+              <InfoItem icon={<Clock size={15} />} label={t('pto.docDetailUpdatedAt')} value={formatDateLong(d.updatedAt)} />
             </div>
           </div>
         </div>

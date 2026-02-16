@@ -18,7 +18,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "stock_movements", indexes = {
-        @Index(name = "idx_sm_number", columnList = "number", unique = true),
+        @Index(name = "idx_sm_org", columnList = "organization_id"),
+        @Index(name = "idx_sm_org_status", columnList = "organization_id, status"),
+        @Index(name = "idx_sm_org_number", columnList = "organization_id, number", unique = true),
+        @Index(name = "idx_sm_org_project", columnList = "organization_id, project_id"),
+        @Index(name = "idx_sm_number", columnList = "number"),
         @Index(name = "idx_sm_date", columnList = "movement_date"),
         @Index(name = "idx_sm_type", columnList = "movement_type"),
         @Index(name = "idx_sm_status", columnList = "status"),
@@ -35,7 +39,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class StockMovement extends BaseEntity {
 
-    @Column(name = "number", unique = true, length = 50)
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
+    @Column(name = "number", length = 50)
     private String number;
 
     @Column(name = "movement_date", nullable = false)

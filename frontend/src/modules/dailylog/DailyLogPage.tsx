@@ -14,9 +14,10 @@ import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/format';
 import toast from 'react-hot-toast';
 import { dailyLogApi } from '@/api/dailylog';
+import { t } from '@/i18n';
 import type { DailyLog, DailyLogEntry, WeatherInfo } from '@/api/dailylog';
 const logStatusColorMap: Record<string, 'gray' | 'yellow' | 'green' | 'red'> = { draft: 'gray', submitted: 'yellow', approved: 'green', rejected: 'red' };
-const logStatusLabels: Record<string, string> = { draft: 'Черновик', submitted: 'Отправлен', approved: 'Утверждён', rejected: 'Отклонён' };
+const getLogStatusLabels = (): Record<string, string> => ({ draft: t('dailyLogPage.statusDraft'), submitted: t('dailyLogPage.statusSubmitted'), approved: t('dailyLogPage.statusApproved'), rejected: t('dailyLogPage.statusRejected') });
 
 const entryTypeIcons: Record<string, React.ElementType> = {
   work: HardHat,
@@ -26,14 +27,14 @@ const entryTypeIcons: Record<string, React.ElementType> = {
   incident: AlertTriangle,
   note: StickyNote,
 };
-const entryTypeLabels: Record<string, string> = {
-  work: 'Работы',
-  material: 'Материалы',
-  equipment: 'Техника',
-  personnel: 'Персонал',
-  incident: 'Инцидент',
-  note: 'Примечание',
-};
+const getEntryTypeLabels = (): Record<string, string> => ({
+  work: t('dailyLogPage.entryTypeWork'),
+  material: t('dailyLogPage.entryTypeMaterial'),
+  equipment: t('dailyLogPage.entryTypeEquipment'),
+  personnel: t('dailyLogPage.entryTypePersonnel'),
+  incident: t('dailyLogPage.entryTypeIncident'),
+  note: t('dailyLogPage.entryTypeNote'),
+});
 const entryTypeColors: Record<string, string> = {
   work: 'bg-primary-50 text-primary-600',
   material: 'bg-success-50 text-success-600',
@@ -51,21 +52,21 @@ const weatherIcons: Record<string, React.ElementType> = {
   fog: Cloud,
   wind: Wind,
 };
-const weatherLabels: Record<string, string> = {
-  clear: 'Ясно',
-  cloudy: 'Облачно',
-  rain: 'Дождь',
-  snow: 'Снег',
-  fog: 'Туман',
-  wind: 'Ветрено',
-};
+const getWeatherLabels = (): Record<string, string> => ({
+  clear: t('dailyLogPage.weatherClear'),
+  cloudy: t('dailyLogPage.weatherCloudy'),
+  rain: t('dailyLogPage.weatherRain'),
+  snow: t('dailyLogPage.weatherSnow'),
+  fog: t('dailyLogPage.weatherFog'),
+  wind: t('dailyLogPage.weatherWindy'),
+});
 
 
 const WeatherCard: React.FC<{ weather: WeatherInfo }> = ({ weather }) => {
   const WIcon = weatherIcons[weather.condition] ?? Cloud;
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-      <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">Погода</p>
+      <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">{t('dailyLogPage.weather')}</p>
       <div className="flex items-center gap-4">
         <WIcon size={32} className="text-primary-400" />
         <div className="grid grid-cols-2 gap-x-6 gap-y-1">
@@ -75,11 +76,11 @@ const WeatherCard: React.FC<{ weather: WeatherInfo }> = ({ weather }) => {
           </div>
           <div className="flex items-center gap-1.5 text-sm">
             <Wind size={14} className="text-neutral-400" />
-            <span className="text-neutral-700 dark:text-neutral-300">{weather.windSpeed} м/с</span>
+            <span className="text-neutral-700 dark:text-neutral-300">{weather.windSpeed} {t('dailyLogPage.windSpeedUnit')}</span>
           </div>
           <div className="flex items-center gap-1.5 text-sm">
             <Cloud size={14} className="text-neutral-400" />
-            <span className="text-neutral-700 dark:text-neutral-300">{weatherLabels[weather.condition]}</span>
+            <span className="text-neutral-700 dark:text-neutral-300">{getWeatherLabels()[weather.condition]}</span>
           </div>
           <div className="flex items-center gap-1.5 text-sm">
             <Droplets size={14} className="text-neutral-400" />
@@ -109,14 +110,14 @@ const DailyLogPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Журнал работ (КС-6)"
-          subtitle="Загрузка..."
+          title={t('dailyLogPage.title')}
+          subtitle={t('dailyLogPage.loading')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Журнал работ' },
+            { label: t('dailyLogPage.breadcrumbHome'), href: '/' },
+            { label: t('dailyLogPage.breadcrumbDailyLog') },
           ]}
         />
-        <div className="flex items-center justify-center h-64 text-neutral-400">Загрузка данных...</div>
+        <div className="flex items-center justify-center h-64 text-neutral-400">{t('dailyLogPage.loadingData')}</div>
       </div>
     );
   }
@@ -125,19 +126,19 @@ const DailyLogPage: React.FC = () => {
     mutationFn: (id: string) => dailyLogApi.deleteDailyLog(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['daily-logs'] });
-      toast.success('Журнал работ удалён');
+      toast.success(t('dailyLogPage.deleteSuccess'));
     },
     onError: () => {
-      toast.error('Ошибка при удалении');
+      toast.error(t('dailyLogPage.deleteError'));
     },
   });
 
   const handleDeleteLog = async () => {
     const isConfirmed = await confirm({
-      title: 'Удалить журнал работ?',
-      description: 'Операция необратима. Текущий журнал будет удален.',
-      confirmLabel: 'Удалить журнал',
-      cancelLabel: 'Отмена',
+      title: t('dailyLogPage.deleteConfirmTitle'),
+      description: t('dailyLogPage.deleteConfirmDescription'),
+      confirmLabel: t('dailyLogPage.deleteConfirmButton'),
+      cancelLabel: t('dailyLogPage.deleteCancel'),
       items: [formatDate(log.date)],
     });
     if (!isConfirmed) return;
@@ -160,25 +161,25 @@ const DailyLogPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Журнал работ (КС-6)"
+        title={t('dailyLogPage.title')}
         subtitle={`${log.projectName} | ${formatDate(selectedDate)}`}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Журнал работ' },
+          { label: t('dailyLogPage.breadcrumbHome'), href: '/' },
+          { label: t('dailyLogPage.breadcrumbDailyLog') },
         ]}
         actions={
           <div className="flex gap-2">
             {log.status === 'DRAFT' && (
               <>
-                <Button variant="secondary" iconLeft={<Plus size={16} />}>Добавить запись</Button>
-                <Button variant="success" iconLeft={<Send size={16} />}>Отправить</Button>
+                <Button variant="secondary" iconLeft={<Plus size={16} />}>{t('dailyLogPage.addEntry')}</Button>
+                <Button variant="success" iconLeft={<Send size={16} />}>{t('dailyLogPage.submit')}</Button>
               </>
             )}
             {log.status === 'SUBMITTED' && (
-              <Button variant="success" iconLeft={<CheckCircle2 size={16} />}>Утвердить</Button>
+              <Button variant="success" iconLeft={<CheckCircle2 size={16} />}>{t('dailyLogPage.approve')}</Button>
             )}
             <Button variant="danger" iconLeft={<Trash2 size={16} />} onClick={handleDeleteLog}>
-              Удалить
+              {t('dailyLogPage.delete')}
             </Button>
           </div>
         }
@@ -206,18 +207,18 @@ const DailyLogPage: React.FC = () => {
 
         <Select
           options={[
-            { value: '1', label: 'ЖК "Солнечный"' },
-            { value: '3', label: 'Мост через р. Вятка' },
-            { value: '6', label: 'ТЦ "Центральный"' },
+            { value: '1', label: t('dailyLogPage.projectSolnechny') },
+            { value: '3', label: t('dailyLogPage.projectBridge') },
+            { value: '6', label: t('dailyLogPage.projectCentral') },
           ]}
           value={selectedProject}
           onChange={(e) => setSelectedProject(e.target.value)}
           className="w-56"
         />
 
-        <StatusBadge status={log.status} colorMap={logStatusColorMap} label={logStatusLabels[log.status]} size="md" />
+        <StatusBadge status={log.status} colorMap={logStatusColorMap} label={getLogStatusLabels()[log.status]} size="md" />
 
-        <span className="text-xs text-neutral-500 dark:text-neutral-400 ml-auto">Автор: {log.authorName}</span>
+        <span className="text-xs text-neutral-500 dark:text-neutral-400 ml-auto">{t('dailyLogPage.author')}: {log.authorName}</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -231,7 +232,7 @@ const DailyLogPage: React.FC = () => {
                   <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center', entryTypeColors[type])}>
                     <Icon size={14} />
                   </div>
-                  <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{entryTypeLabels[type]}</h3>
+                  <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{getEntryTypeLabels()[type]}</h3>
                   <span className="text-xs text-neutral-400 ml-1">{entries.length}</span>
                 </div>
                 <div className="divide-y divide-neutral-100">
@@ -244,17 +245,17 @@ const DailyLogPage: React.FC = () => {
                           <div className="flex gap-4 mt-1">
                             {entry.quantity != null && (
                               <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                Объём: <span className="font-medium">{entry.quantity} {entry.unit}</span>
+                                {t('dailyLogPage.volume')}: <span className="font-medium">{entry.quantity} {entry.unit}</span>
                               </span>
                             )}
                             {entry.workerCount != null && (
                               <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                Рабочих: <span className="font-medium">{entry.workerCount}</span>
+                                {t('dailyLogPage.workers')}: <span className="font-medium">{entry.workerCount}</span>
                               </span>
                             )}
                             {entry.responsibleName && (
                               <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                Ответственный: <span className="font-medium">{entry.responsibleName}</span>
+                                {t('dailyLogPage.responsible')}: <span className="font-medium">{entry.responsibleName}</span>
                               </span>
                             )}
                           </div>
@@ -275,8 +276,8 @@ const DailyLogPage: React.FC = () => {
           {/* Photo gallery */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Фотоотчёт</p>
-              <Button size="xs" variant="ghost" iconLeft={<Camera size={13} />}>Добавить</Button>
+              <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('dailyLogPage.photoReport')}</p>
+              <Button size="xs" variant="ghost" iconLeft={<Camera size={13} />}>{t('dailyLogPage.addPhoto')}</Button>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {log.photos.map((photo) => (
@@ -290,13 +291,13 @@ const DailyLogPage: React.FC = () => {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-neutral-400 mt-2 text-center">{log.photos.length} фото</p>
+            <p className="text-xs text-neutral-400 mt-2 text-center">{log.photos.length} {t('dailyLogPage.photosCount')}</p>
           </div>
 
           {/* Notes */}
           {log.notes && (
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2">Примечания</p>
+              <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2">{t('dailyLogPage.notes')}</p>
               <p className="text-sm text-neutral-700 dark:text-neutral-300">{log.notes}</p>
             </div>
           )}

@@ -19,22 +19,23 @@ import {
 } from './draftStore';
 import type { CreateFieldReportRequest } from './types';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
-const projectOptions = [
-  { value: '', label: 'Выберите проект' },
+const getProjectOptions = () => [
+  { value: '', label: t('mobileModule.reportNew.selectProject') },
   { value: '1', label: 'ЖК "Солнечный"' },
   { value: '3', label: 'Мост через р. Вятка' },
   { value: '6', label: 'ТЦ "Центральный"' },
 ];
 
-const weatherOptions = [
-  { value: '', label: 'Выберите погоду' },
-  { value: 'Ясно', label: 'Ясно' },
-  { value: 'Облачно', label: 'Облачно' },
-  { value: 'Дождь', label: 'Дождь' },
-  { value: 'Снег', label: 'Снег' },
-  { value: 'Мороз', label: 'Мороз' },
-  { value: 'Ветер', label: 'Сильный ветер' },
+const getWeatherOptions = () => [
+  { value: '', label: t('mobileModule.reportNew.selectWeather') },
+  { value: 'Ясно', label: t('mobileModule.reportNew.weatherClear') },
+  { value: 'Облачно', label: t('mobileModule.reportNew.weatherCloudy') },
+  { value: 'Дождь', label: t('mobileModule.reportNew.weatherRain') },
+  { value: 'Снег', label: t('mobileModule.reportNew.weatherSnow') },
+  { value: 'Мороз', label: t('mobileModule.reportNew.weatherFrost') },
+  { value: 'Ветер', label: t('mobileModule.reportNew.weatherWind') },
 ];
 
 const parseOptionalNumber = (value: string): number | undefined => {
@@ -90,11 +91,11 @@ const FieldReportCreatePage: React.FC = () => {
         if (!isMounted) return;
         setPhotos(restoredPhotos);
         if (restoredPhotos.length !== draft.photos.length) {
-          toast.error('Часть фото из черновика не удалось восстановить');
+          toast.error(t('mobileModule.reportNew.toastPhotoRestorePartial'));
         }
       } catch {
         if (isMounted) {
-          toast.error('Не удалось восстановить фото из локального хранилища');
+          toast.error(t('mobileModule.reportNew.toastPhotoRestoreFailed'));
         }
       } finally {
         if (isMounted) {
@@ -119,7 +120,7 @@ const FieldReportCreatePage: React.FC = () => {
       setPhotos((prev) => [...prev, ...selectedFiles]);
       setPhotoRefs((prev) => [...prev, ...refs]);
     } catch {
-      toast.error('Не удалось сохранить фото локально. Повторите попытку');
+      toast.error(t('mobileModule.reportNew.toastPhotoSaveFailed'));
     } finally {
       e.target.value = '';
     }
@@ -134,7 +135,7 @@ const FieldReportCreatePage: React.FC = () => {
     try {
       await removeStoredMobilePhotoFiles([refToDelete]);
     } catch {
-      toast.error('Не удалось удалить локальный файл фото');
+      toast.error(t('mobileModule.reportNew.toastPhotoDeleteFailed'));
     }
   };
 
@@ -208,7 +209,7 @@ const FieldReportCreatePage: React.FC = () => {
 
   const handleSaveDraft = async () => {
     if (!isValid || isSubmitting) return;
-    if (guardDemoModeAction('Сохранение черновика')) return;
+    if (guardDemoModeAction(t('mobileModule.reportNew.demoSaveDraft'))) return;
 
     setIsSubmitting(true);
     const payload = buildPayload();
@@ -231,11 +232,11 @@ const FieldReportCreatePage: React.FC = () => {
         remoteId: nextRemoteDraftId,
         savedAt: new Date().toISOString(),
       });
-      toast.success(navigator.onLine ? 'Черновик отчета сохранен' : 'Черновик сохранен локально');
+      toast.success(navigator.onLine ? t('mobileModule.reportNew.toastDraftSaved') : t('mobileModule.reportNew.toastDraftSavedLocally'));
       navigate('/mobile/reports');
     } catch {
       saveMobileReportDraft({ ...draftSnapshot, savedAt: new Date().toISOString() });
-      toast.error('Сервер недоступен. Черновик сохранен локально');
+      toast.error(t('mobileModule.reportNew.toastServerUnavailable'));
       navigate('/mobile/reports');
     } finally {
       setIsSubmitting(false);
@@ -244,7 +245,7 @@ const FieldReportCreatePage: React.FC = () => {
 
   const handleSubmitReport = async () => {
     if (!isValid || isSubmitting) return;
-    if (guardDemoModeAction('Отправка отчёта')) return;
+    if (guardDemoModeAction(t('mobileModule.reportNew.demoSubmitReport'))) return;
 
     setIsSubmitting(true);
     const payload = buildPayload();
@@ -258,7 +259,7 @@ const FieldReportCreatePage: React.FC = () => {
     try {
       if (!navigator.onLine) {
         enqueueSubmission();
-        toast.success('Отчёт добавлен в очередь синхронизации');
+        toast.success(t('mobileModule.reportNew.toastQueuedForSync'));
         navigate('/mobile/reports');
         return;
       }
@@ -280,13 +281,13 @@ const FieldReportCreatePage: React.FC = () => {
       try {
         await removeStoredMobilePhotoFiles(photoRefs);
       } catch {
-        toast.error('Отчёт отправлен, но локальные фото не удалось очистить');
+        toast.error(t('mobileModule.reportNew.toastSubmittedPhotoCleanupFailed'));
       }
-      toast.success('Полевой отчет отправлен');
+      toast.success(t('mobileModule.reportNew.toastReportSubmitted'));
       navigate('/mobile/reports');
     } catch {
       enqueueSubmission();
-      toast.error('Не удалось отправить. Отчёт помещен в очередь синхронизации');
+      toast.error(t('mobileModule.reportNew.toastSubmitFailedQueued'));
       navigate('/mobile/reports');
     } finally {
       setIsSubmitting(false);
@@ -298,13 +299,13 @@ const FieldReportCreatePage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Новый полевой отчёт"
-        subtitle="Заполните данные с площадки"
+        title={t('mobileModule.reportNew.pageTitle')}
+        subtitle={t('mobileModule.reportNew.pageSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Мобильное приложение' },
-          { label: 'Отчёты', href: '/mobile/reports' },
-          { label: 'Новый отчёт' },
+          { label: t('mobileModule.reportNew.breadcrumbHome'), href: '/' },
+          { label: t('mobileModule.reportNew.breadcrumbMobile') },
+          { label: t('mobileModule.reportNew.breadcrumbReports'), href: '/mobile/reports' },
+          { label: t('mobileModule.reportNew.breadcrumbNew') },
         ]}
         actions={
           <Button
@@ -313,15 +314,15 @@ const FieldReportCreatePage: React.FC = () => {
             onClick={() => navigate('/mobile/reports')}
             disabled={isSubmitting}
           >
-            Назад к списку
+            {t('mobileModule.reportNew.backToList')}
           </Button>
         }
       />
 
       {restoredDraftAt && (
         <div className="max-w-3xl mb-4 rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-800">
-          Восстановлен черновик от {formatDateTime(restoredDraftAt)}.
-          {restoredPhotoCount > 0 && ` Восстановлено фото: ${restoredPhotoCount}.`}
+          {t('mobileModule.reportNew.draftRestoredAt', { date: formatDateTime(restoredDraftAt) })}
+          {restoredPhotoCount > 0 && ` ${t('mobileModule.reportNew.draftRestoredPhotos', { count: String(restoredPhotoCount) })}`}
         </div>
       )}
 
@@ -329,19 +330,19 @@ const FieldReportCreatePage: React.FC = () => {
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 space-y-6">
           {/* Basic info */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Основная информация</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('mobileModule.reportNew.sectionBasicInfo')}</h3>
             <div className="space-y-4">
-              <FormField label="Заголовок отчёта" required>
+              <FormField label={t('mobileModule.reportNew.labelTitle')} required>
                 <Input
-                  placeholder="Напр. Дневной отчёт - бетонирование секции 3"
+                  placeholder={t('mobileModule.reportNew.placeholderTitle')}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </FormField>
 
-              <FormField label="Описание" required>
+              <FormField label={t('mobileModule.reportNew.labelDescription')} required>
                 <Textarea
-                  placeholder="Опишите выполненные работы, результаты осмотра..."
+                  placeholder={t('mobileModule.reportNew.placeholderDescription')}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={5}
@@ -349,15 +350,15 @@ const FieldReportCreatePage: React.FC = () => {
               </FormField>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField label="Проект" required>
+                <FormField label={t('mobileModule.reportNew.labelProject')} required>
                   <Select
-                    options={projectOptions}
+                    options={getProjectOptions()}
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
                   />
                 </FormField>
 
-                <FormField label="Дата отчёта" required>
+                <FormField label={t('mobileModule.reportNew.labelReportDate')} required>
                   <Input
                     type="date"
                     value={reportDate}
@@ -372,30 +373,30 @@ const FieldReportCreatePage: React.FC = () => {
           <div className="border-t border-neutral-200 dark:border-neutral-700 pt-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <MapPin size={16} className="text-neutral-400" />
-              Условия на площадке
+              {t('mobileModule.reportNew.sectionSiteConditions')}
             </h3>
             <div className="space-y-4">
-              <FormField label="Расположение">
+              <FormField label={t('mobileModule.reportNew.labelLocation')}>
                 <Input
-                  placeholder="Напр. Секция 3, этаж 2, ось А-Б"
+                  placeholder={t('mobileModule.reportNew.placeholderLocation')}
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />
               </FormField>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <FormField label="Погода">
+                <FormField label={t('mobileModule.reportNew.labelWeather')}>
                   <div className="flex items-center gap-2">
                     <Cloud size={16} className="text-neutral-400 flex-shrink-0" />
                     <Select
-                      options={weatherOptions}
+                      options={getWeatherOptions()}
                       value={weatherCondition}
                       onChange={(e) => setWeatherCondition(e.target.value)}
                     />
                   </div>
                 </FormField>
 
-                <FormField label="Температура, °C">
+                <FormField label={t('mobileModule.reportNew.labelTemperature')}>
                   <div className="flex items-center gap-2">
                     <Thermometer size={16} className="text-neutral-400 flex-shrink-0" />
                     <Input
@@ -407,7 +408,7 @@ const FieldReportCreatePage: React.FC = () => {
                   </div>
                 </FormField>
 
-                <FormField label="Рабочих на площадке">
+                <FormField label={t('mobileModule.reportNew.labelWorkersOnSite')}>
                   <div className="flex items-center gap-2">
                     <Users size={16} className="text-neutral-400 flex-shrink-0" />
                     <Input
@@ -426,7 +427,7 @@ const FieldReportCreatePage: React.FC = () => {
           <div className="border-t border-neutral-200 dark:border-neutral-700 pt-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Camera size={16} className="text-neutral-400" />
-              Фотофиксация
+              {t('mobileModule.reportNew.sectionPhotoDocumentation')}
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
@@ -449,7 +450,7 @@ const FieldReportCreatePage: React.FC = () => {
 
               <label className="aspect-square border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary-400 hover:bg-primary-50 transition-colors">
                 <Camera size={20} className="text-neutral-400 mb-1" />
-                <span className="text-xs text-neutral-500 dark:text-neutral-400">Добавить фото</span>
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportNew.addPhoto')}</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -460,20 +461,20 @@ const FieldReportCreatePage: React.FC = () => {
               </label>
             </div>
             {isRestoringPhotos && (
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">Восстанавливаем фото из локального хранилища...</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('mobileModule.reportNew.restoringPhotos')}</p>
             )}
           </div>
 
           {/* Actions */}
           <div className="border-t border-neutral-200 dark:border-neutral-700 pt-6 flex items-center justify-end gap-3">
             <Button variant="secondary" onClick={() => navigate('/mobile/reports')} disabled={isSubmitting}>
-              Отмена
+              {t('common.cancel')}
             </Button>
             <Button variant="secondary" onClick={handleSaveDraft} disabled={!isValid || isSubmitting}>
-              Сохранить черновик
+              {t('mobileModule.reportNew.saveDraft')}
             </Button>
             <Button onClick={handleSubmitReport} disabled={!isValid} loading={isSubmitting}>
-              Отправить отчёт
+              {t('mobileModule.reportNew.submitReport')}
             </Button>
           </div>
         </div>

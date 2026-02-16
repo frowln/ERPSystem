@@ -15,7 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "knowledge_base", indexes = {
-        @Index(name = "idx_kb_code", columnList = "code", unique = true),
+        @Index(name = "idx_kb_org", columnList = "organization_id"),
+        @Index(name = "idx_kb_org_code", columnList = "organization_id, code", unique = true),
         @Index(name = "idx_kb_category", columnList = "category_id"),
         @Index(name = "idx_kb_published", columnList = "is_published")
 })
@@ -26,7 +27,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class KnowledgeBase extends BaseEntity {
 
-    @Column(name = "code", unique = true, length = 50)
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
+    @Column(name = "code", length = 50)
     private String code;
 
     @Column(name = "title", nullable = false, length = 500)

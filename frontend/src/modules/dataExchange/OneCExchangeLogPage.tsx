@@ -9,6 +9,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { onecApi } from '@/api/onec';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { OneCExchangeLog } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -20,39 +21,39 @@ const exchangeStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow
   partial: 'orange',
 };
 
-const exchangeStatusLabels: Record<string, string> = {
-  pending: 'Ожидает',
-  in_progress: 'Выполняется',
-  completed: 'Завершён',
-  failed: 'Ошибка',
-  partial: 'Частично',
-};
+const getExchangeStatusLabels = (): Record<string, string> => ({
+  pending: t('dataExchange.exchangeStatusPending'),
+  in_progress: t('dataExchange.exchangeStatusInProgress'),
+  completed: t('dataExchange.exchangeStatusCompleted'),
+  failed: t('dataExchange.exchangeStatusFailed'),
+  partial: t('dataExchange.exchangeStatusPartial'),
+});
 
-const directionLabels: Record<string, string> = {
-  import: 'Импорт',
-  export: 'Экспорт',
-  bidirectional: 'Двусторонний',
-};
+const getDirectionLabels = (): Record<string, string> => ({
+  import: t('dataExchange.directionImport'),
+  export: t('dataExchange.directionExport'),
+  bidirectional: t('dataExchange.directionBidirectional'),
+});
 
-const entityTypeLabels: Record<string, string> = {
-  contracts: 'Договоры',
-  invoices: 'Счета',
-  payments: 'Платежи',
-  materials: 'Материалы',
-  employees: 'Сотрудники',
-  cost_items: 'Статьи затрат',
-  organizations: 'Организации',
-};
+const getEntityTypeLabels = (): Record<string, string> => ({
+  contracts: t('dataExchange.onecEntityContracts'),
+  invoices: t('dataExchange.onecEntityInvoices'),
+  payments: t('dataExchange.onecEntityPayments'),
+  materials: t('dataExchange.onecEntityMaterials'),
+  employees: t('dataExchange.onecEntityEmployees'),
+  cost_items: t('dataExchange.onecEntityCostItems'),
+  organizations: t('dataExchange.onecEntityOrganizations'),
+});
 
 type TabId = 'all' | 'COMPLETED' | 'FAILED' | 'PARTIAL';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'PENDING', label: 'Ожидает' },
-  { value: 'IN_PROGRESS', label: 'Выполняется' },
-  { value: 'COMPLETED', label: 'Завершён' },
-  { value: 'FAILED', label: 'Ошибка' },
-  { value: 'PARTIAL', label: 'Частично' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('dataExchange.logFilterAllStatuses') },
+  { value: 'PENDING', label: t('dataExchange.logFilterPending') },
+  { value: 'IN_PROGRESS', label: t('dataExchange.logFilterInProgress') },
+  { value: 'COMPLETED', label: t('dataExchange.logFilterCompleted') },
+  { value: 'FAILED', label: t('dataExchange.logFilterFailed') },
+  { value: 'PARTIAL', label: t('dataExchange.logFilterPartial') },
 ];
 
 
@@ -97,43 +98,43 @@ const OneCExchangeLogPage: React.FC = () => {
     () => [
       {
         accessorKey: 'startedAt',
-        header: 'Время',
+        header: t('dataExchange.colTime'),
         size: 150,
         cell: ({ getValue }) => <span className="tabular-nums text-neutral-700 dark:text-neutral-300 text-xs">{formatDate(getValue<string>())}</span>,
       },
       {
         accessorKey: 'configName',
-        header: 'Подключение',
+        header: t('dataExchange.colConnectionLog'),
         size: 200,
         cell: ({ getValue }) => <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('dataExchange.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={exchangeStatusColorMap}
-            label={exchangeStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getExchangeStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'direction',
-        header: 'Направление',
+        header: t('dataExchange.colDirectionLog'),
         size: 130,
-        cell: ({ getValue }) => <span className="text-neutral-600 text-xs">{directionLabels[getValue<string>()] ?? getValue<string>()}</span>,
+        cell: ({ getValue }) => <span className="text-neutral-600 text-xs">{getDirectionLabels()[getValue<string>()] ?? getValue<string>()}</span>,
       },
       {
         accessorKey: 'entityType',
-        header: 'Тип данных',
+        header: t('dataExchange.colDataTypeLog'),
         size: 130,
-        cell: ({ getValue }) => <span className="text-neutral-600">{entityTypeLabels[getValue<string>()] ?? getValue<string>()}</span>,
+        cell: ({ getValue }) => <span className="text-neutral-600">{getEntityTypeLabels()[getValue<string>()] ?? getValue<string>()}</span>,
       },
       {
         id: 'progress',
-        header: 'Обработано',
+        header: t('dataExchange.colProcessed'),
         size: 120,
         cell: ({ row }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{row.original.processedRecords}/{row.original.totalRecords}</span>
@@ -141,7 +142,7 @@ const OneCExchangeLogPage: React.FC = () => {
       },
       {
         accessorKey: 'errorCount',
-        header: 'Ошибки',
+        header: t('dataExchange.colErrors'),
         size: 80,
         cell: ({ getValue }) => {
           const val = getValue<number>();
@@ -150,16 +151,16 @@ const OneCExchangeLogPage: React.FC = () => {
       },
       {
         accessorKey: 'duration',
-        header: 'Время (сек)',
+        header: t('dataExchange.colDuration'),
         size: 100,
         cell: ({ getValue }) => {
           const val = getValue<number>();
-          return val ? <span className="tabular-nums text-neutral-500 dark:text-neutral-400">{val} с</span> : <span className="text-neutral-400">---</span>;
+          return val ? <span className="tabular-nums text-neutral-500 dark:text-neutral-400">{val} {t('dataExchange.secondsAbbrev')}</span> : <span className="text-neutral-400">---</span>;
         },
       },
       {
         accessorKey: 'triggeredByName',
-        header: 'Инициатор',
+        header: t('dataExchange.colInitiator'),
         size: 140,
         cell: ({ getValue }) => <span className="text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>,
       },
@@ -170,39 +171,39 @@ const OneCExchangeLogPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Журнал обмена 1С"
-        subtitle={`${logs.length} записей`}
+        title={t('dataExchange.exchangeLogTitle')}
+        subtitle={t('dataExchange.exchangeLogSubtitle', { count: String(logs.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обмен данными', href: '/data-exchange' },
-          { label: 'Журнал обмена 1С' },
+          { label: t('dataExchange.breadcrumbHome'), href: '/' },
+          { label: t('dataExchange.breadcrumbDataExchange'), href: '/data-exchange' },
+          { label: t('dataExchange.breadcrumbExchangeLog') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'COMPLETED', label: 'Успешные', count: tabCounts.completed },
-          { id: 'FAILED', label: 'Ошибки', count: tabCounts.failed },
-          { id: 'PARTIAL', label: 'Частичные', count: tabCounts.partial },
+          { id: 'all', label: t('dataExchange.tabAll'), count: tabCounts.all },
+          { id: 'COMPLETED', label: t('dataExchange.tabSuccessful'), count: tabCounts.completed },
+          { id: 'FAILED', label: t('dataExchange.tabErrors'), count: tabCounts.failed },
+          { id: 'PARTIAL', label: t('dataExchange.tabPartial'), count: tabCounts.partial },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<ArrowUpDown size={18} />} label="Всего обменов" value={metrics.total} />
-        <MetricCard icon={<Activity size={18} />} label="Записей обработано" value={metrics.totalRecords} />
+        <MetricCard icon={<ArrowUpDown size={18} />} label={t('dataExchange.metricTotalExchanges')} value={metrics.total} />
+        <MetricCard icon={<Activity size={18} />} label={t('dataExchange.metricRecordsProcessed')} value={metrics.totalRecords} />
         <MetricCard
           icon={<XCircle size={18} />}
-          label="Ошибки"
+          label={t('dataExchange.metricErrors')}
           value={metrics.totalErrors}
-          trend={{ direction: metrics.totalErrors > 0 ? 'down' : 'neutral', value: metrics.totalErrors > 0 ? 'Требуют внимания' : 'Нет ошибок' }}
+          trend={{ direction: metrics.totalErrors > 0 ? 'down' : 'neutral', value: metrics.totalErrors > 0 ? t('dataExchange.trendNeedAttention') : t('dataExchange.trendNoErrors') }}
         />
-        <MetricCard icon={<Clock size={18} />} label="Среднее время" value={`${metrics.avgDuration.toFixed(0)} с`} />
+        <MetricCard icon={<Clock size={18} />} label={t('dataExchange.metricAvgTime')} value={`${metrics.avgDuration.toFixed(0)} ${t('dataExchange.secondsAbbrev')}`} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по подключению, инициатору..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('dataExchange.searchLogPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -214,8 +215,8 @@ const OneCExchangeLogPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет записей обмена"
-        emptyDescription="Записи появятся после первой синхронизации с 1С"
+        emptyTitle={t('dataExchange.emptyLogTitle')}
+        emptyDescription={t('dataExchange.emptyLogDescription')}
       />
     </div>
   );

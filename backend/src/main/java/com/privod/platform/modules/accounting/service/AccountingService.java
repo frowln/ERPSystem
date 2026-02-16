@@ -45,17 +45,19 @@ public class AccountingService {
 
     @Transactional(readOnly = true)
     public Page<AccountPlanResponse> listAccountPlans(AccountType type, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (type != null) {
-            return accountPlanRepository.findByAccountTypeAndDeletedFalse(type, pageable)
+            return accountPlanRepository.findByOrganizationIdAndAccountTypeAndDeletedFalse(organizationId, type, pageable)
                     .map(AccountPlanResponse::fromEntity);
         }
-        return accountPlanRepository.findByDeletedFalse(pageable)
+        return accountPlanRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
                 .map(AccountPlanResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public AccountPlanResponse getAccountPlan(UUID id) {
-        AccountPlan plan = getAccountPlanOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        AccountPlan plan = getAccountPlanOrThrow(id, organizationId);
         return AccountPlanResponse.fromEntity(plan);
     }
 
@@ -142,8 +144,8 @@ public class AccountingService {
             throw new IllegalStateException("Невозможно создать проводку в закрытом периоде");
         }
 
-        getAccountPlanOrThrow(request.debitAccountId());
-        getAccountPlanOrThrow(request.creditAccountId());
+        getAccountPlanOrThrow(request.debitAccountId(), organizationId);
+        getAccountPlanOrThrow(request.creditAccountId(), organizationId);
         getFinancialJournalOrThrow(request.journalId(), organizationId);
 
         AccountEntry entry = AccountEntry.builder()
@@ -173,8 +175,14 @@ public class AccountingService {
         AccountEntry entry = accountEntryRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Проводка не найдена: " + id));
 
-        if (request.debitAccountId() != null) entry.setDebitAccountId(request.debitAccountId());
-        if (request.creditAccountId() != null) entry.setCreditAccountId(request.creditAccountId());
+        if (request.debitAccountId() != null) {
+            getAccountPlanOrThrow(request.debitAccountId(), organizationId);
+            entry.setDebitAccountId(request.debitAccountId());
+        }
+        if (request.creditAccountId() != null) {
+            getAccountPlanOrThrow(request.creditAccountId(), organizationId);
+            entry.setCreditAccountId(request.creditAccountId());
+        }
         if (request.amount() != null) entry.setAmount(request.amount());
         if (request.entryDate() != null) entry.setEntryDate(request.entryDate());
         if (request.description() != null) entry.setDescription(request.description());
@@ -238,9 +246,8 @@ public class AccountingService {
 
     // === Private helpers ===
 
-    private AccountPlan getAccountPlanOrThrow(UUID id) {
-        return accountPlanRepository.findById(id)
-                .filter(p -> !p.isDeleted())
+    private AccountPlan getAccountPlanOrThrow(UUID id, UUID organizationId) {
+        return accountPlanRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Счёт не найден: " + id));
     }
 

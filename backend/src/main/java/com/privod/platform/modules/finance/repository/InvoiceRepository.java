@@ -13,14 +13,21 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpecificationExecutor<Invoice> {
 
+    Optional<Invoice> findByIdAndDeletedFalse(UUID id);
+
     Page<Invoice> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
+    Page<Invoice> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);
+
     Page<Invoice> findByStatusAndDeletedFalse(InvoiceStatus status, Pageable pageable);
+
+    Page<Invoice> findByProjectIdInAndStatusAndDeletedFalse(List<UUID> projectIds, InvoiceStatus status, Pageable pageable);
 
     List<Invoice> findByContractIdAndDeletedFalse(UUID contractId);
 

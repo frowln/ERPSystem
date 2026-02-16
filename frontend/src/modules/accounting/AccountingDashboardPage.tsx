@@ -19,6 +19,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { EmptyState } from '@/design-system/components/EmptyState';
 import { accountingApi, type JournalEntry } from '@/api/accounting';
 import { formatMoney, formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 
 const AccountingDashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const AccountingDashboardPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '№',
+        header: t('accounting.colNumber'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>
@@ -60,7 +61,7 @@ const AccountingDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'entryDate',
-        header: 'Дата',
+        header: t('accounting.colDate'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -68,7 +69,7 @@ const AccountingDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'description',
-        header: 'Описание',
+        header: t('accounting.colDescription'),
         size: 360,
         cell: ({ getValue }) => (
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>
@@ -76,7 +77,7 @@ const AccountingDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'debitAccountId',
-        header: 'Дебет',
+        header: t('accounting.colDebit'),
         size: 220,
         cell: ({ getValue }) => {
           const accountId = getValue<string>();
@@ -89,7 +90,7 @@ const AccountingDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'creditAccountId',
-        header: 'Кредит',
+        header: t('accounting.colCredit'),
         size: 220,
         cell: ({ getValue }) => {
           const accountId = getValue<string>();
@@ -102,7 +103,7 @@ const AccountingDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'amount',
-        header: 'Сумма',
+        header: t('accounting.colAmount'),
         size: 170,
         cell: ({ getValue }) => (
           <span className="tabular-nums font-medium text-right block">
@@ -112,9 +113,9 @@ const AccountingDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'createdBy',
-        header: 'Автор',
+        header: t('accounting.colAuthor'),
         size: 140,
-        cell: ({ getValue }) => getValue<string>() || 'Система',
+        cell: ({ getValue }) => getValue<string>() || t('accounting.system'),
       },
     ],
     [accountById],
@@ -124,18 +125,18 @@ const AccountingDashboardPage: React.FC = () => {
     return (
       <div className="animate-fade-in">
         <PageHeader
-          title="Бухгалтерия"
-          subtitle="Сводка по бухгалтерскому учёту"
+          title={t('accounting.dashboardTitle')}
+          subtitle={t('accounting.dashboardSubtitle')}
           breadcrumbs={[
-            { label: 'Главная', href: '/' },
-            { label: 'Бухгалтерия' },
+            { label: t('accounting.breadcrumbHome'), href: '/' },
+            { label: t('accounting.breadcrumbAccounting') },
           ]}
         />
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить данные бухгалтерии"
-          description="Проверьте соединение и попробуйте снова"
-          actionLabel="Повторить"
+          title={t('accounting.dashboardErrorTitle')}
+          description={t('accounting.checkConnectionTryAgain')}
+          actionLabel={t('accounting.retry')}
           onAction={() => {
             void refetch();
           }}
@@ -147,11 +148,11 @@ const AccountingDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Бухгалтерия"
-        subtitle="Сводка по бухгалтерскому учёту"
+        title={t('accounting.dashboardTitle')}
+        subtitle={t('accounting.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Бухгалтерия' },
+          { label: t('accounting.breadcrumbHome'), href: '/' },
+          { label: t('accounting.breadcrumbAccounting') },
         ]}
         actions={
           <div className="flex gap-2">
@@ -160,20 +161,20 @@ const AccountingDashboardPage: React.FC = () => {
               iconLeft={<BookOpen size={16} />}
               onClick={() => navigate('/accounting/chart')}
             >
-              План счетов
+              {t('accounting.dashboardChartOfAccounts')}
             </Button>
             <Button
               variant="secondary"
               iconLeft={<FolderTree size={16} />}
               onClick={() => navigate('/accounting/journals')}
             >
-              Фин. журналы
+              {t('accounting.dashboardFinJournals')}
             </Button>
             <Button
               iconLeft={<ArrowRight size={16} />}
               onClick={() => navigate('/accounting/journal')}
             >
-              Журнал проводок
+              {t('accounting.dashboardJournalEntries')}
             </Button>
           </div>
         }
@@ -182,44 +183,44 @@ const AccountingDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<Wallet size={18} />}
-          label="Всего счетов"
+          label={t('accounting.metricTotalAccounts')}
           value={dashboard?.totalAccounts ?? 0}
-          subtitle="план счетов"
+          subtitle={t('accounting.metricTotalAccountsSub')}
         />
         <MetricCard
           icon={<Scale size={18} />}
-          label="Проводок"
+          label={t('accounting.metricEntries')}
           value={dashboard?.entriesCount ?? 0}
-          subtitle="в системе"
+          subtitle={t('accounting.metricEntriesSub')}
         />
         <MetricCard
           icon={<CalendarDays size={18} />}
-          label="Открытые периоды"
+          label={t('accounting.metricOpenPeriods')}
           value={dashboard?.openPeriodsCount ?? 0}
-          subtitle="учётные периоды"
+          subtitle={t('accounting.metricOpenPeriodsSub')}
         />
         <MetricCard
           icon={<Boxes size={18} />}
-          label="Текущая стоимость ОС"
+          label={t('accounting.metricFixedAssetsValue')}
           value={formatMoney(dashboard?.fixedAssetsCurrentValue ?? 0)}
-          subtitle={`${dashboard?.fixedAssetsCount ?? 0} объектов`}
+          subtitle={t('accounting.metricFixedAssetsValueSub', { count: dashboard?.fixedAssetsCount ?? 0 })}
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-          <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Структура плана счетов</h3>
+          <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">{t('accounting.chartStructureTitle')}</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Активные</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.chartActive')}</span>
               <span className="text-sm font-medium tabular-nums">{dashboard?.activeAccounts ?? 0}</span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Пассивные</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.chartPassive')}</span>
               <span className="text-sm font-medium tabular-nums">{dashboard?.passiveAccounts ?? 0}</span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Активно-пассивные</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.chartActivePassive')}</span>
               <span className="text-sm font-medium tabular-nums">
                 {dashboard?.activePassiveAccounts ?? 0}
               </span>
@@ -228,30 +229,30 @@ const AccountingDashboardPage: React.FC = () => {
         </div>
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-          <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Оборот последних 20 проводок</h3>
+          <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">{t('accounting.turnoverTitle')}</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Сумма</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.turnoverAmount')}</span>
               <span className="text-sm font-medium tabular-nums">
                 {formatMoney(dashboard?.entriesTotalAmount ?? 0)}
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Записей</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.turnoverRecords')}</span>
               <span className="text-sm font-medium tabular-nums">{entries.length}</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-          <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Основные средства</h3>
+          <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">{t('accounting.fixedAssetsSummaryTitle')}</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Объектов</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.fixedAssetsSummaryObjects')}</span>
               <span className="text-sm font-medium tabular-nums">{dashboard?.fixedAssetsCount ?? 0}</span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-neutral-700 dark:text-neutral-300">Текущая стоимость</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300">{t('accounting.fixedAssetsSummaryCurrentValue')}</span>
               <span className="text-sm font-medium tabular-nums">
                 {formatMoney(dashboard?.fixedAssetsCurrentValue ?? 0)}
               </span>
@@ -263,7 +264,7 @@ const AccountingDashboardPage: React.FC = () => {
       <div className="mb-2">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
           <Layers size={18} />
-          Последние проводки
+          {t('accounting.recentEntriesTitle')}
         </h2>
       </div>
 
@@ -274,8 +275,8 @@ const AccountingDashboardPage: React.FC = () => {
         enableExport
         pageSize={10}
         onRowClick={(entry) => navigate(`/accounting/journal/${entry.id}`)}
-        emptyTitle="Нет проводок"
-        emptyDescription="Проводки появятся после первой операции"
+        emptyTitle={t('accounting.dashboardEmptyTitle')}
+        emptyDescription={t('accounting.dashboardEmptyDescription')}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 
 type DlStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED';
 
@@ -23,16 +24,16 @@ interface DlCard {
 
 interface BoardColumn { id: DlStatus; title: string; color: string; headerBg: string; collapsed: boolean; }
 
-const defaultColumns: BoardColumn[] = [
-  { id: 'DRAFT', title: 'Черновик', color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
-  { id: 'SUBMITTED', title: 'На проверке', color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'APPROVED', title: 'Утверждён', color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
+const getDefaultColumns = (): BoardColumn[] => [
+  { id: 'DRAFT', title: t('dailyLogBoard.columnDraft'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
+  { id: 'SUBMITTED', title: t('dailyLogBoard.columnSubmitted'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
+  { id: 'APPROVED', title: t('dailyLogBoard.columnApproved'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
 ];
 
 const DailyLogBoardPage: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<DlCard[]>([]);
-  const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
+  const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -50,12 +51,12 @@ const DailyLogBoardPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
-      <PageHeader title="Журнал работ - Доска" subtitle={`${items.length} записей`} breadcrumbs={[{ label: 'Главная', href: '/' }, { label: 'Журнал работ', href: '/daily-log' }, { label: 'Доска' }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>Фильтры</Button><Button iconLeft={<Plus size={16} />}>Новая запись</Button></div>} />
+      <PageHeader title={t('dailyLogBoard.title')} subtitle={t('dailyLogBoard.subtitle', { count: String(items.length) })} breadcrumbs={[{ label: t('dailyLogBoard.breadcrumbHome'), href: '/' }, { label: t('dailyLogBoard.breadcrumbDailyLog'), href: '/daily-log' }, { label: t('dailyLogBoard.breadcrumbBoard') }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>{t('dailyLogBoard.filters')}</Button><Button iconLeft={<Plus size={16} />}>{t('dailyLogBoard.newEntry')}</Button></div>} />
       {showFilters && (
         <div className="flex items-center gap-3 mb-4 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 animate-fade-in">
-          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder="Поиск..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
-          <Select options={[{ value: '', label: 'Все статусы' }, ...defaultColumns.map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
-          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>Сбросить</Button>}
+          <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder={t('dailyLogBoard.searchPlaceholder')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>
+          <Select options={[{ value: '', label: t('dailyLogBoard.allStatuses') }, ...columns.map((c) => ({ value: c.id, label: c.title }))]} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-48" />
+          {hasFilters && <Button variant="ghost" size="sm" iconLeft={<X size={14} />} onClick={() => { setSearchQuery(''); setFilterStatus(''); }}>{t('dailyLogBoard.reset')}</Button>}
         </div>
       )}
       <div className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 260px)' }}>
@@ -70,14 +71,14 @@ const DailyLogBoardPage: React.FC = () => {
               </div>
               {!col.collapsed && (
                 <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[100px]">
-                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">Нет записей</p><p className="text-[10px] text-neutral-300 mt-0.5">Перетащите карточку сюда</p></div>) : colItems.map((item) => (
+                  {colItems.length === 0 ? (<div className="flex flex-col items-center justify-center py-8 text-center"><p className="text-xs text-neutral-400">{t('dailyLogBoard.noEntries')}</p><p className="text-[10px] text-neutral-300 mt-0.5">{t('dailyLogBoard.dragHint')}</p></div>) : colItems.map((item) => (
                     <div key={item.id} draggable onDragStart={(e) => onDragStart(e, item.id)} onClick={() => navigate('/daily-log')} className={cn('bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 cursor-pointer hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-600 transition-all', draggedId === item.id && 'opacity-50 shadow-lg')}>
                       <div className="flex items-center justify-between mb-1.5"><span className="text-[10px] font-mono text-neutral-400">{item.code}</span><span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">{item.logDate}</span></div>
                       <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1.5 line-clamp-1">{item.projectName}</h4>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{item.weather}</p>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-[10px] text-neutral-600">&#128119; {item.workersCount} чел.</span>
-                        <span className="text-[10px] text-neutral-600">&#128663; {item.equipmentCount} ед.</span>
+                        <span className="text-[10px] text-neutral-600">&#128119; {item.workersCount} {t('dailyLogBoard.personsAbbrev')}</span>
+                        <span className="text-[10px] text-neutral-600">&#128663; {item.equipmentCount} {t('dailyLogBoard.unitsAbbrev')}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-[10px] font-bold">{item.authorName.charAt(0)}</div>

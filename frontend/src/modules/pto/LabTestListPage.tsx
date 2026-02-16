@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { formatDate } from '@/lib/format';
 import { ptoApi } from '@/api/pto';
+import { t } from '@/i18n';
 
 interface LabTest {
   id: string;
@@ -27,15 +28,15 @@ interface LabTest {
 }
 
 
-const testTypeLabels: Record<string, string> = {
-  compression: 'Прочность на сжатие',
-  tensile: 'Прочность на растяжение',
-  density: 'Плотность',
-  moisture: 'Влажность',
-  granulometry: 'Гранулометрия',
-  chemical: 'Химический анализ',
-  weld: 'Контроль сварных швов',
-};
+const getTestTypeLabels = (): Record<string, string> => ({
+  compression: t('pto.labTestTypeCompression'),
+  tensile: t('pto.labTestTypeTensile'),
+  density: t('pto.labTestTypeDensity'),
+  moisture: t('pto.labTestTypeMoisture'),
+  granulometry: t('pto.labTestTypeGranulometry'),
+  chemical: t('pto.labTestTypeChemical'),
+  weld: t('pto.labTestTypeWeld'),
+});
 
 const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray'> = {
   pending: 'yellow',
@@ -43,12 +44,13 @@ const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray'> = {
   completed: 'green',
   cancelled: 'gray',
 };
-const statusLabels: Record<string, string> = {
-  pending: 'Ожидает',
-  in_progress: 'В процессе',
-  completed: 'Завершён',
-  cancelled: 'Отменён',
-};
+
+const getStatusLabels = (): Record<string, string> => ({
+  pending: t('pto.labTestStatusPending'),
+  in_progress: t('pto.labTestStatusInProgress'),
+  completed: t('pto.labTestStatusCompleted'),
+  cancelled: t('pto.labTestStatusCancelled'),
+});
 
 const resultColorMap: Record<string, 'green' | 'red' | 'yellow' | 'gray'> = {
   passed: 'green',
@@ -56,12 +58,13 @@ const resultColorMap: Record<string, 'green' | 'red' | 'yellow' | 'gray'> = {
   conditional: 'yellow',
   pending: 'gray',
 };
-const resultLabels: Record<string, string> = {
-  passed: 'Годен',
-  failed: 'Не годен',
-  conditional: 'Условно годен',
-  pending: 'Ожидает',
-};
+
+const getResultLabels = (): Record<string, string> => ({
+  passed: t('pto.labTestResultPassed'),
+  failed: t('pto.labTestResultFailed'),
+  conditional: t('pto.labTestResultConditional'),
+  pending: t('pto.labTestResultPending'),
+});
 
 const LabTestListPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -104,101 +107,105 @@ const LabTestListPage: React.FC = () => {
   const passedCount = tests.filter((t) => t.result === 'PASSED').length;
   const failedCount = tests.filter((t) => t.result === 'FAILED').length;
 
+  const testTypeLabels = getTestTypeLabels();
+  const statusLabels = getStatusLabels();
+  const resultLabels = getResultLabels();
+
   const columns = useMemo<ColumnDef<LabTest, unknown>[]>(() => [
     {
       accessorKey: 'number',
-      header: '№',
+      header: t('pto.labTestColNumber'),
       size: 100,
       cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'MATERIAL',
-      header: 'Материал',
+      header: t('pto.labTestColMaterial'),
       size: 200,
       cell: ({ row }) => (
         <div>
           <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.material}</p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Партия: {row.original.batchNumber}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('pto.labTestColBatchLabel')} {row.original.batchNumber}</p>
         </div>
       ),
     },
     {
       accessorKey: 'testType',
-      header: 'Тип испытания',
+      header: t('pto.labTestColTestType'),
       size: 180,
       cell: ({ getValue }) => <span className="text-neutral-600">{testTypeLabels[getValue<string>()] ?? getValue<string>()}</span>,
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('pto.labTestColStatus'),
       size: 120,
       cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()]} />,
     },
     {
       accessorKey: 'result',
-      header: 'Результат',
+      header: t('pto.labTestColResult'),
       size: 130,
       cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={resultColorMap} label={resultLabels[getValue<string>()]} />,
     },
     {
       accessorKey: 'standard',
-      header: 'Стандарт',
+      header: t('pto.labTestColStandard'),
       size: 160,
       cell: ({ getValue }) => <span className="text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'sampleDate',
-      header: 'Дата отбора',
+      header: t('pto.labTestColSampleDate'),
       size: 110,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
     {
       accessorKey: 'resultDate',
-      header: 'Дата результата',
+      header: t('pto.labTestColResultDate'),
       size: 120,
       cell: ({ getValue }) => {
         const value = getValue<string | null>();
         return <span className="tabular-nums">{value ? formatDate(value) : '---'}</span>;
       },
     },
-  ], []);
+  ], [testTypeLabels, statusLabels, resultLabels]);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Лабораторные испытания"
-        subtitle={`${tests.length} испытаний`}
+        title={t('pto.labTestTitle')}
+        subtitle={t('pto.labTestSubtitle', { count: String(tests.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'ПТО' },
-          { label: 'Лабораторные испытания' },
+          { label: t('pto.breadcrumbHome'), href: '/' },
+          { label: t('pto.breadcrumbPto') },
+          { label: t('pto.breadcrumbLabTests') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>Новое испытание</Button>}
+        actions={<Button iconLeft={<Plus size={16} />}>{t('pto.labTestNewTest')}</Button>}
         tabs={[
-          { id: 'all', label: 'Все', count: tests.length },
-          { id: 'PENDING', label: 'Ожидают' },
-          { id: 'IN_PROGRESS', label: 'В процессе' },
-          { id: 'COMPLETED', label: 'Завершённые' },
+          { id: 'all', label: t('pto.labTestTabAll'), count: tests.length },
+          { id: 'PENDING', label: t('pto.labTestTabPending') },
+          { id: 'IN_PROGRESS', label: t('pto.labTestTabInProgress') },
+          { id: 'COMPLETED', label: t('pto.labTestTabCompleted') },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<FlaskConical size={18} />} label="Всего испытаний" value={tests.length} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Годных" value={passedCount} />
-        <MetricCard icon={<XCircle size={18} />} label="Не годных" value={failedCount} />
-        <MetricCard icon={<FlaskConical size={18} />} label="В процессе" value={tests.filter((t) => t.status === 'IN_PROGRESS').length} />
+        <MetricCard icon={<FlaskConical size={18} />} label={t('pto.labTestMetricTotal')} value={tests.length} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('pto.labTestMetricPassed')} value={passedCount} />
+        <MetricCard icon={<XCircle size={18} />} label={t('pto.labTestMetricFailed')} value={failedCount} />
+        <MetricCard icon={<FlaskConical size={18} />} label={t('pto.labTestMetricInProgress')} value={tests.filter((t) => t.status === 'IN_PROGRESS').length} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по материалу, партии..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('pto.labTestSearchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select
           options={[
-            { value: '', label: 'Все типы' },
+            { value: '', label: t('pto.labTestAllTypes') },
             ...Object.entries(testTypeLabels).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={typeFilter}
@@ -216,8 +223,8 @@ const LabTestListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет испытаний"
-        emptyDescription="Создайте первое лабораторное испытание"
+        emptyTitle={t('pto.labTestEmptyTitle')}
+        emptyDescription={t('pto.labTestEmptyDescription')}
       />
     </div>
   );

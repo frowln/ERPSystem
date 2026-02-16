@@ -1,6 +1,11 @@
 package com.privod.platform.modules.regulatory.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.regulatory.domain.RegulatoryReport;
 import com.privod.platform.modules.regulatory.domain.ReportStatus;
 import com.privod.platform.modules.regulatory.repository.RegulatoryReportRepository;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,25 +30,42 @@ import java.util.UUID;
 public class RegulatoryReportService {
 
     private final RegulatoryReportRepository reportRepository;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<RegulatoryReportResponse> listReports(UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             return reportRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
                     .map(RegulatoryReportResponse::fromEntity);
         }
-        return reportRepository.findAll(pageable).map(RegulatoryReportResponse::fromEntity);
+        List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+        if (projectIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return reportRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable)
+                .map(RegulatoryReportResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public RegulatoryReportResponse getReport(UUID id) {
-        RegulatoryReport report = getReportOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        RegulatoryReport report = getReportOrThrow(id, organizationId);
         return RegulatoryReportResponse.fromEntity(report);
     }
 
     @Transactional
     public RegulatoryReportResponse createReport(CreateRegulatoryReportRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для отчёта");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         String code = generateReportCode();
 
         RegulatoryReport report = RegulatoryReport.builder()
@@ -55,7 +78,7 @@ public class RegulatoryReportService {
                 .status(ReportStatus.DRAFT)
                 .submittedToOrgan(request.submittedToOrgan())
                 .fileUrl(request.fileUrl())
-                .preparedById(request.preparedById())
+                .preparedById(currentUserId)
                 .build();
 
         report = reportRepository.save(report);
@@ -68,9 +91,11 @@ public class RegulatoryReportService {
 
     @Transactional
     public RegulatoryReportResponse updateReport(UUID id, UpdateRegulatoryReportRequest request) {
-        RegulatoryReport report = getReportOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        RegulatoryReport report = getReportOrThrow(id, organizationId);
 
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             report.setProjectId(request.projectId());
         }
         if (request.reportType() != null) {
@@ -98,9 +123,11 @@ public class RegulatoryReportService {
             report.setFileUrl(request.fileUrl());
         }
         if (request.preparedById() != null) {
+            validateUserTenant(request.preparedById(), organizationId);
             report.setPreparedById(request.preparedById());
         }
         if (request.submittedById() != null) {
+            validateUserTenant(request.submittedById(), organizationId);
             report.setSubmittedById(request.submittedById());
         }
 
@@ -113,7 +140,9 @@ public class RegulatoryReportService {
 
     @Transactional
     public RegulatoryReportResponse submitReport(UUID id, UUID submittedById) {
-        RegulatoryReport report = getReportOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        RegulatoryReport report = getReportOrThrow(id, organizationId);
 
         if (report.getStatus() != ReportStatus.DRAFT && report.getStatus() != ReportStatus.PREPARED) {
             throw new IllegalStateException(
@@ -124,7 +153,7 @@ public class RegulatoryReportService {
         ReportStatus oldStatus = report.getStatus();
         report.setStatus(ReportStatus.SUBMITTED);
         report.setSubmittedAt(Instant.now());
-        report.setSubmittedById(submittedById);
+        report.setSubmittedById(currentUserId);
 
         report = reportRepository.save(report);
         auditService.logStatusChange("RegulatoryReport", report.getId(),
@@ -136,7 +165,8 @@ public class RegulatoryReportService {
 
     @Transactional
     public RegulatoryReportResponse acceptReport(UUID id) {
-        RegulatoryReport report = getReportOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        RegulatoryReport report = getReportOrThrow(id, organizationId);
 
         if (report.getStatus() != ReportStatus.SUBMITTED) {
             throw new IllegalStateException(
@@ -157,7 +187,8 @@ public class RegulatoryReportService {
 
     @Transactional
     public RegulatoryReportResponse rejectReport(UUID id, String reason) {
-        RegulatoryReport report = getReportOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        RegulatoryReport report = getReportOrThrow(id, organizationId);
 
         if (report.getStatus() != ReportStatus.SUBMITTED) {
             throw new IllegalStateException(
@@ -179,17 +210,46 @@ public class RegulatoryReportService {
 
     @Transactional
     public void deleteReport(UUID id) {
-        RegulatoryReport report = getReportOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        RegulatoryReport report = getReportOrThrow(id, organizationId);
         report.softDelete();
         reportRepository.save(report);
         auditService.logDelete("RegulatoryReport", id);
         log.info("Regulatory report deleted: {} ({})", report.getCode(), id);
     }
 
-    private RegulatoryReport getReportOrThrow(UUID id) {
-        return reportRepository.findById(id)
-                .filter(r -> !r.isDeleted())
+    private RegulatoryReport getReportOrThrow(UUID id, UUID organizationId) {
+        RegulatoryReport report = reportRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Регуляторный отчёт не найден: " + id));
+        validateProjectTenant(report.getProjectId(), organizationId);
+        return report;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        User user = userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+        if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
+            throw new EntityNotFoundException("Пользователь не найден: " + userId);
+        }
     }
 
     private String generateReportCode() {

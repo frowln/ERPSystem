@@ -12,6 +12,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { closeoutApi } from '@/api/closeout';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { HandoverPackage, HandoverStatus } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange'> = {
@@ -22,13 +23,13 @@ const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red
   REJECTED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  DRAFT: 'Черновик',
-  PREPARED: 'Подготовлен',
-  SUBMITTED: 'Передан',
-  ACCEPTED: 'Принят',
-  REJECTED: 'Отклонён',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  DRAFT: t('closeout.handoverStatusDraft'),
+  PREPARED: t('closeout.handoverStatusPrepared'),
+  SUBMITTED: t('closeout.handoverStatusSubmitted'),
+  ACCEPTED: t('closeout.handoverStatusAccepted'),
+  REJECTED: t('closeout.handoverStatusRejected'),
+});
 
 type TabId = 'all' | 'SUBMITTED' | 'ACCEPTED' | 'REJECTED';
 
@@ -73,11 +74,13 @@ const HandoverPackageListPage: React.FC = () => {
 
   const totalDocs = useMemo(() => packages.reduce((sum, p) => sum + p.documentCount, 0), [packages]);
 
+  const statusLabels = getStatusLabels();
+
   const columns = useMemo<ColumnDef<HandoverPackage, unknown>[]>(
     () => [
       {
         accessorKey: 'packageNumber',
-        header: '\u2116',
+        header: t('closeout.handoverListColNumber'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -85,7 +88,7 @@ const HandoverPackageListPage: React.FC = () => {
       },
       {
         accessorKey: 'title',
-        header: 'Пакет документов',
+        header: t('closeout.handoverListColPackage'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -96,7 +99,7 @@ const HandoverPackageListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('closeout.handoverListColStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -108,7 +111,7 @@ const HandoverPackageListPage: React.FC = () => {
       },
       {
         accessorKey: 'recipientName',
-        header: 'Получатель',
+        header: t('closeout.handoverListColRecipient'),
         size: 180,
         cell: ({ row }) => (
           <div>
@@ -119,7 +122,7 @@ const HandoverPackageListPage: React.FC = () => {
       },
       {
         accessorKey: 'documentCount',
-        header: 'Документов',
+        header: t('closeout.handoverListColDocCount'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-600">{getValue<number>()}</span>
@@ -127,7 +130,7 @@ const HandoverPackageListPage: React.FC = () => {
       },
       {
         accessorKey: 'handoverDate',
-        header: 'Дата передачи',
+        header: t('closeout.handoverListColHandoverDate'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -143,12 +146,12 @@ const HandoverPackageListPage: React.FC = () => {
             size="xs"
             onClick={(e) => { e.stopPropagation(); navigate(`/closeout/handover/${row.original.id}`); }}
           >
-            Открыть
+            {t('closeout.openAction')}
           </Button>
         ),
       },
     ],
-    [navigate],
+    [navigate, statusLabels],
   );
 
   const handleRowClick = useCallback(
@@ -159,23 +162,23 @@ const HandoverPackageListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Передача документации"
-        subtitle={`${packages.length} пакетов в системе`}
+        title={t('closeout.handoverListTitle')}
+        subtitle={t('closeout.handoverListSubtitle', { count: String(packages.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Завершение', href: '/closeout' },
-          { label: 'Передача' },
+          { label: t('closeout.breadcrumbHome'), href: '/' },
+          { label: t('closeout.breadcrumbCloseout'), href: '/closeout' },
+          { label: t('closeout.breadcrumbHandover') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Новый пакет
+            {t('closeout.handoverListNewPackage')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: counts.all },
-          { id: 'SUBMITTED', label: 'Переданные', count: counts.submitted },
-          { id: 'ACCEPTED', label: 'Принятые', count: counts.accepted },
-          { id: 'REJECTED', label: 'Отклонённые', count: counts.rejected },
+          { id: 'all', label: t('closeout.handoverListTabAll'), count: counts.all },
+          { id: 'SUBMITTED', label: t('closeout.handoverListTabSubmitted'), count: counts.submitted },
+          { id: 'ACCEPTED', label: t('closeout.handoverListTabAccepted'), count: counts.accepted },
+          { id: 'REJECTED', label: t('closeout.handoverListTabRejected'), count: counts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -184,28 +187,28 @@ const HandoverPackageListPage: React.FC = () => {
       {isError && packages.length === 0 ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить пакеты передачи"
-          description="Проверьте соединение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('closeout.handoverListErrorTitle')}
+          description={t('closeout.checkConnection')}
+          actionLabel={t('closeout.retryAction')}
           onAction={() => { void refetch(); }}
         />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <MetricCard icon={<Package size={18} />} label="Всего пакетов" value={counts.all} />
-            <MetricCard icon={<Send size={18} />} label="Передано" value={counts.submitted} subtitle="ожидают приёмки" />
-            <MetricCard icon={<CheckCircle2 size={18} />} label="Принято" value={counts.accepted} />
-            <MetricCard icon={<FileText size={18} />} label="Всего документов" value={totalDocs} />
+            <MetricCard icon={<Package size={18} />} label={t('closeout.handoverListMetricTotal')} value={counts.all} />
+            <MetricCard icon={<Send size={18} />} label={t('closeout.handoverListMetricSubmitted')} value={counts.submitted} subtitle={t('closeout.handoverListMetricSubmittedSubtitle')} />
+            <MetricCard icon={<CheckCircle2 size={18} />} label={t('closeout.handoverListMetricAccepted')} value={counts.accepted} />
+            <MetricCard icon={<FileText size={18} />} label={t('closeout.handoverListMetricTotalDocs')} value={totalDocs} />
           </div>
 
           <div className="flex items-center gap-3 mb-4">
             <div className="relative flex-1 max-w-xs">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-              <Input placeholder="Поиск по номеру, названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+              <Input placeholder={t('closeout.handoverListSearchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
             </div>
             <Select
               options={[
-                { value: '', label: 'Все статусы' },
+                { value: '', label: t('closeout.handoverListAllStatuses') },
                 ...Object.entries(statusLabels).map(([value, label]) => ({ value, label })),
               ]}
               value={statusFilter}
@@ -224,8 +227,8 @@ const HandoverPackageListPage: React.FC = () => {
             enableDensityToggle
             enableExport
             pageSize={20}
-            emptyTitle="Нет пакетов передачи"
-            emptyDescription="Создайте первый пакет документов для передачи"
+            emptyTitle={t('closeout.handoverListEmptyTitle')}
+            emptyDescription={t('closeout.handoverListEmptyDescription')}
           />
         </>
       )}

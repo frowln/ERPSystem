@@ -17,9 +17,12 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "warehouse_locations", indexes = {
+        @Index(name = "idx_wh_location_org", columnList = "organization_id"),
+        @Index(name = "idx_wh_location_org_code", columnList = "organization_id, code", unique = true),
+        @Index(name = "idx_wh_location_org_project", columnList = "organization_id, project_id"),
         @Index(name = "idx_wh_location_type", columnList = "location_type"),
         @Index(name = "idx_wh_location_project", columnList = "project_id"),
-        @Index(name = "idx_wh_location_code", columnList = "code", unique = true),
+        @Index(name = "idx_wh_location_code", columnList = "code"),
         @Index(name = "idx_wh_location_parent", columnList = "parent_id"),
         @Index(name = "idx_wh_location_responsible", columnList = "responsible_id")
 })
@@ -30,10 +33,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class WarehouseLocation extends BaseEntity {
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
-    @Column(name = "code", unique = true, length = 50)
+    @Column(name = "code", length = 50)
     private String code;
 
     @Enumerated(EnumType.STRING)

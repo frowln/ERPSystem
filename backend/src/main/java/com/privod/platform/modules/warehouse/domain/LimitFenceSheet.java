@@ -24,6 +24,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "limit_fence_sheets", indexes = {
+        @Index(name = "idx_lfs_org", columnList = "organization_id"),
+        @Index(name = "idx_lfs_org_project", columnList = "organization_id, project_id"),
+        @Index(name = "idx_lfs_org_sheet", columnList = "organization_id, sheet_number", unique = true),
         @Index(name = "idx_lfs_project", columnList = "project_id"),
         @Index(name = "idx_lfs_material", columnList = "material_id"),
         @Index(name = "idx_lfs_status", columnList = "status"),
@@ -36,7 +39,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LimitFenceSheet extends BaseEntity {
 
-    @Column(name = "sheet_number", nullable = false, unique = true, length = 50)
+    @Column(name = "sheet_number", nullable = false, length = 50)
     private String sheetNumber;
 
     @Column(name = "project_id", nullable = false)
@@ -82,7 +85,7 @@ public class LimitFenceSheet extends BaseEntity {
     @Builder.Default
     private LimitFenceSheetStatus status = LimitFenceSheetStatus.ACTIVE;
 
-    @Column(name = "organization_id")
+    @Column(name = "organization_id", nullable = false)
     private UUID organizationId;
 
     @Column(name = "notes", columnDefinition = "TEXT")

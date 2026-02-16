@@ -11,6 +11,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { dispatchApi } from '@/api/dispatch';
 import { formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 import type { DispatchRoute } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -19,15 +20,15 @@ const routeActiveColorMap: Record<string, 'green' | 'gray'> = {
   false: 'gray',
 };
 
-const routeActiveLabels: Record<string, string> = {
-  true: 'Активен',
-  false: 'Неактивен',
-};
+const getRouteActiveLabels = (): Record<string, string> => ({
+  true: t('dispatch.routes.statusActive'),
+  false: t('dispatch.routes.statusInactive'),
+});
 
-const activeFilterOptions = [
-  { value: '', label: 'Все маршруты' },
-  { value: 'true', label: 'Активные' },
-  { value: 'false', label: 'Неактивные' },
+const getActiveFilterOptions = () => [
+  { value: '', label: t('dispatch.routes.allRoutes') },
+  { value: 'true', label: t('dispatch.routes.filterActive') },
+  { value: 'false', label: t('dispatch.routes.filterInactive') },
 ];
 
 
@@ -70,11 +71,13 @@ const DispatchRouteListPage: React.FC = () => {
   const totalDistance = useMemo(() => routes.reduce((s, r) => s + r.distance, 0), [routes]);
   const totalActiveOrders = useMemo(() => routes.reduce((s, r) => s + r.activeOrderCount, 0), [routes]);
 
+  const routeActiveLabels = getRouteActiveLabels();
+
   const columns = useMemo<ColumnDef<DispatchRoute, unknown>[]>(
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('dispatch.routes.colCode'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -82,7 +85,7 @@ const DispatchRouteListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('dispatch.routes.colName'),
         size: 250,
         cell: ({ row }) => (
           <div>
@@ -93,7 +96,7 @@ const DispatchRouteListPage: React.FC = () => {
       },
       {
         accessorKey: 'originLocation',
-        header: 'Маршрут',
+        header: t('dispatch.routes.colRoute'),
         size: 220,
         cell: ({ row }) => (
           <div className="text-xs">
@@ -105,7 +108,7 @@ const DispatchRouteListPage: React.FC = () => {
       },
       {
         accessorKey: 'isActive',
-        header: 'Статус',
+        header: t('dispatch.routes.colStatus'),
         size: 110,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -117,15 +120,15 @@ const DispatchRouteListPage: React.FC = () => {
       },
       {
         accessorKey: 'distance',
-        header: 'Расстояние',
+        header: t('dispatch.routes.colDistance'),
         size: 110,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatNumber(getValue<number>())} км</span>
+          <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatNumber(getValue<number>())} {t('dispatch.routes.kmUnit')}</span>
         ),
       },
       {
         accessorKey: 'estimatedDuration',
-        header: 'Время',
+        header: t('dispatch.routes.colTime'),
         size: 100,
         cell: ({ getValue }) => {
           const minutes = getValue<number>();
@@ -133,14 +136,14 @@ const DispatchRouteListPage: React.FC = () => {
           const mins = minutes % 60;
           return (
             <span className="tabular-nums text-neutral-700 dark:text-neutral-300">
-              {hours > 0 ? `${hours} ч ` : ''}{mins} мин
+              {hours > 0 ? `${hours} ${t('dispatch.routes.hourUnit')} ` : ''}{mins} {t('dispatch.routes.minUnit')}
             </span>
           );
         },
       },
       {
         accessorKey: 'activeOrderCount',
-        header: 'Заявок',
+        header: t('dispatch.routes.colOrders'),
         size: 90,
         cell: ({ getValue }) => {
           const count = getValue<number>();
@@ -152,7 +155,7 @@ const DispatchRouteListPage: React.FC = () => {
         },
       },
     ],
-    [],
+    [routeActiveLabels],
   );
 
   const handleRowClick = useCallback(
@@ -163,16 +166,16 @@ const DispatchRouteListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Маршруты доставки"
-        subtitle={`${routes.length} маршрутов в системе`}
+        title={t('dispatch.routes.title')}
+        subtitle={t('dispatch.routes.subtitle', { count: routes.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Диспетчеризация' },
-          { label: 'Маршруты' },
+          { label: t('dispatch.routes.breadcrumbHome'), href: '/' },
+          { label: t('dispatch.routes.breadcrumbDispatch') },
+          { label: t('dispatch.routes.breadcrumbRoutes') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Новый маршрут
+            {t('dispatch.routes.newRoute')}
           </Button>
         }
       />
@@ -181,17 +184,17 @@ const DispatchRouteListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <MetricCard
           icon={<Route size={18} />}
-          label="Активных маршрутов"
+          label={t('dispatch.routes.metricActiveRoutes')}
           value={`${activeCount} / ${routes.length}`}
         />
         <MetricCard
           icon={<MapPin size={18} />}
-          label="Общая протяжённость"
-          value={`${formatNumber(totalDistance)} км`}
+          label={t('dispatch.routes.metricTotalDistance')}
+          value={`${formatNumber(totalDistance)} ${t('dispatch.routes.kmUnit')}`}
         />
         <MetricCard
           icon={<Truck size={18} />}
-          label="Активных заявок"
+          label={t('dispatch.routes.metricActiveOrders')}
           value={totalActiveOrders}
         />
       </div>
@@ -201,14 +204,14 @@ const DispatchRouteListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, коду..."
+            placeholder={t('dispatch.routes.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={activeFilterOptions}
+          options={getActiveFilterOptions()}
           value={activeFilter}
           onChange={(e) => setActiveFilter(e.target.value)}
           className="w-44"
@@ -225,8 +228,8 @@ const DispatchRouteListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет маршрутов"
-        emptyDescription="Создайте первый маршрут доставки"
+        emptyTitle={t('dispatch.routes.emptyTitle')}
+        emptyDescription={t('dispatch.routes.emptyDescription')}
       />
     </div>
   );

@@ -17,14 +17,15 @@ import { regulatoryApi } from '@/api/regulatory';
 import { formatDate, formatMoney } from '@/lib/format';
 import type { License } from './types';
 import type { PaginatedResponse } from '@/types';
+import { t } from '@/i18n';
 
-const licenseTypeLabels: Record<string, string> = {
-  sro_construction: 'СРО Строительство',
-  sro_design: 'СРО Проектирование',
-  sro_engineering: 'СРО Инженерные изыскания',
-  special_permit: 'Спецразрешение',
-  other: 'Прочее',
-};
+const getLicenseTypeLabels = (): Record<string, string> => ({
+  sro_construction: t('regulatory.licTypeSroConstruction'),
+  sro_design: t('regulatory.licTypeSroDesign'),
+  sro_engineering: t('regulatory.licTypeSroEngineering'),
+  special_permit: t('regulatory.licTypeSpecialPermit'),
+  other: t('regulatory.licTypeOther'),
+});
 
 type TabId = 'all' | 'ACTIVE' | 'EXPIRING_SOON' | 'EXPIRED';
 
@@ -67,7 +68,7 @@ const LicensesPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('regulatory.colNumber'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -75,7 +76,7 @@ const LicensesPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('regulatory.colName'),
         size: 260,
         cell: ({ row }) => (
           <div>
@@ -86,15 +87,15 @@ const LicensesPage: React.FC = () => {
       },
       {
         accessorKey: 'licenseType',
-        header: 'Тип',
+        header: t('regulatory.colType'),
         size: 160,
         cell: ({ getValue }) => (
-          <span className="text-sm text-neutral-700 dark:text-neutral-300">{licenseTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
+          <span className="text-sm text-neutral-700 dark:text-neutral-300">{getLicenseTypeLabels()[getValue<string>()] ?? getValue<string>()}</span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('regulatory.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -106,7 +107,7 @@ const LicensesPage: React.FC = () => {
       },
       {
         accessorKey: 'validUntil',
-        header: 'Действует до',
+        header: t('regulatory.colValidUntil'),
         size: 120,
         cell: ({ row }) => {
           const date = row.original.validUntil;
@@ -120,7 +121,7 @@ const LicensesPage: React.FC = () => {
       },
       {
         accessorKey: 'maxContractAmount',
-        header: 'Макс. сумма договора',
+        header: t('regulatory.colMaxContractAmount'),
         size: 150,
         cell: ({ getValue }) => {
           const val = getValue<number | undefined>();
@@ -129,7 +130,7 @@ const LicensesPage: React.FC = () => {
       },
       {
         accessorKey: 'responsibleName',
-        header: 'Ответственный',
+        header: t('regulatory.colResponsible'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -147,40 +148,40 @@ const LicensesPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Лицензии и допуски СРО"
-        subtitle={`${licenses.length} лицензий в системе`}
+        title={t('regulatory.licensesTitle')}
+        subtitle={t('regulatory.licensesSubtitle', { count: String(licenses.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Регуляторика', href: '/regulatory' },
-          { label: 'Лицензии' },
+          { label: t('regulatory.breadcrumbHome'), href: '/' },
+          { label: t('regulatory.breadcrumbRegulatory'), href: '/regulatory' },
+          { label: t('regulatory.btnLicenses') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/regulatory/licenses/new')}>
-            Добавить лицензию
+            {t('regulatory.btnAddLicense')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Действующие', count: tabCounts.active },
-          { id: 'EXPIRING_SOON', label: 'Истекающие', count: tabCounts.expiring_soon },
-          { id: 'EXPIRED', label: 'Истекшие', count: tabCounts.expired },
+          { id: 'all', label: t('regulatory.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('regulatory.metricActiveLicenses'), count: tabCounts.active },
+          { id: 'EXPIRING_SOON', label: t('regulatory.tabExpiringSoon'), count: tabCounts.expiring_soon },
+          { id: 'EXPIRED', label: t('regulatory.tabExpired'), count: tabCounts.expired },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Award size={18} />} label="Всего лицензий" value={licenses.length} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Действующие" value={tabCounts.active} />
-        <MetricCard icon={<Clock size={18} />} label="Истекающие" value={tabCounts.expiring_soon}
-          trend={tabCounts.expiring_soon > 0 ? { direction: 'down', value: 'Требуют продления' } : undefined} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Истекшие" value={tabCounts.expired} />
+        <MetricCard icon={<Award size={18} />} label={t('regulatory.metricTotalLicenses')} value={licenses.length} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('regulatory.metricActiveLicenses')} value={tabCounts.active} />
+        <MetricCard icon={<Clock size={18} />} label={t('regulatory.metricExpiringLicenses')} value={tabCounts.expiring_soon}
+          trend={tabCounts.expiring_soon > 0 ? { direction: 'down', value: t('regulatory.trendNeedRenewal') } : undefined} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('regulatory.metricExpiredLicenses')} value={tabCounts.expired} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по номеру, названию, организации..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('regulatory.searchLicensePlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -194,8 +195,8 @@ const LicensesPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет лицензий"
-        emptyDescription="Добавьте первую лицензию или допуск СРО"
+        emptyTitle={t('regulatory.emptyLicenses')}
+        emptyDescription={t('regulatory.emptyLicensesDesc')}
       />
     </div>
   );

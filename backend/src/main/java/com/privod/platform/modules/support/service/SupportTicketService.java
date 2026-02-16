@@ -1,6 +1,9 @@
 package com.privod.platform.modules.support.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.support.domain.SupportTicket;
 import com.privod.platform.modules.support.domain.TicketComment;
 import com.privod.platform.modules.support.domain.TicketPriority;
@@ -34,35 +37,45 @@ public class SupportTicketService {
 
     private final SupportTicketRepository ticketRepository;
     private final TicketCommentRepository commentRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<SupportTicketResponse> listTickets(TicketStatus status, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (status != null) {
-            return ticketRepository.findByStatusAndDeletedFalse(status, pageable)
+            return ticketRepository.findByOrganizationIdAndStatusAndDeletedFalse(organizationId, status, pageable)
                     .map(SupportTicketResponse::fromEntity);
         }
-        return ticketRepository.findAll(pageable).map(SupportTicketResponse::fromEntity);
+        return ticketRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
+                .map(SupportTicketResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public SupportTicketResponse getTicket(UUID id) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
         return SupportTicketResponse.fromEntity(ticket);
     }
 
     @Transactional
     public SupportTicketResponse createTicket(CreateSupportTicketRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        UUID reporterId = currentUserId;
+        validateUserTenant(reporterId, organizationId);
+
         String code = generateTicketCode();
 
         SupportTicket ticket = SupportTicket.builder()
+                .organizationId(organizationId)
                 .code(code)
                 .subject(request.subject())
                 .description(request.description())
                 .category(request.category())
                 .priority(request.priority() != null ? request.priority() : TicketPriority.MEDIUM)
                 .status(TicketStatus.OPEN)
-                .reporterId(request.reporterId())
+                .reporterId(reporterId)
                 .dueDate(request.dueDate())
                 .build();
 
@@ -76,7 +89,8 @@ public class SupportTicketService {
 
     @Transactional
     public SupportTicketResponse updateTicket(UUID id, UpdateSupportTicketRequest request) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
 
         if (request.subject() != null) {
             ticket.setSubject(request.subject());
@@ -94,6 +108,7 @@ public class SupportTicketService {
             ticket.setStatus(request.status());
         }
         if (request.assigneeId() != null) {
+            validateUserTenant(request.assigneeId(), organizationId);
             ticket.setAssigneeId(request.assigneeId());
         }
         if (request.dueDate() != null) {
@@ -112,7 +127,9 @@ public class SupportTicketService {
 
     @Transactional
     public SupportTicketResponse assignTicket(UUID id, UUID assigneeId) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
+        validateUserTenant(assigneeId, organizationId);
 
         TicketStatus oldStatus = ticket.getStatus();
         ticket.setAssigneeId(assigneeId);
@@ -128,7 +145,8 @@ public class SupportTicketService {
 
     @Transactional
     public SupportTicketResponse startProgress(UUID id) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
 
         if (ticket.getStatus() != TicketStatus.ASSIGNED && ticket.getStatus() != TicketStatus.OPEN) {
             throw new IllegalStateException(
@@ -149,7 +167,8 @@ public class SupportTicketService {
 
     @Transactional
     public SupportTicketResponse resolveTicket(UUID id) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
 
         if (ticket.getStatus() == TicketStatus.RESOLVED || ticket.getStatus() == TicketStatus.CLOSED) {
             throw new IllegalStateException(
@@ -171,7 +190,8 @@ public class SupportTicketService {
 
     @Transactional
     public SupportTicketResponse closeTicket(UUID id) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
 
         if (ticket.getStatus() != TicketStatus.RESOLVED) {
             throw new IllegalStateException(
@@ -192,7 +212,8 @@ public class SupportTicketService {
 
     @Transactional
     public void deleteTicket(UUID id) {
-        SupportTicket ticket = getTicketOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        SupportTicket ticket = getTicketOrThrow(id, organizationId);
         ticket.softDelete();
         ticketRepository.save(ticket);
         auditService.logDelete("SupportTicket", id);
@@ -203,7 +224,8 @@ public class SupportTicketService {
 
     @Transactional(readOnly = true)
     public List<TicketCommentResponse> getTicketComments(UUID ticketId) {
-        getTicketOrThrow(ticketId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getTicketOrThrow(ticketId, organizationId);
         return commentRepository.findByTicketIdAndDeletedFalseOrderByCreatedAtDesc(ticketId)
                 .stream()
                 .map(TicketCommentResponse::fromEntity)
@@ -212,11 +234,14 @@ public class SupportTicketService {
 
     @Transactional
     public TicketCommentResponse addComment(UUID ticketId, CreateTicketCommentRequest request) {
-        getTicketOrThrow(ticketId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        getTicketOrThrow(ticketId, organizationId);
+        validateUserTenant(currentUserId, organizationId);
 
         TicketComment comment = TicketComment.builder()
                 .ticketId(ticketId)
-                .authorId(request.authorId())
+                .authorId(currentUserId)
                 .content(request.content())
                 .isInternal(request.isInternal())
                 .attachmentUrls(request.attachmentUrls())
@@ -233,18 +258,19 @@ public class SupportTicketService {
 
     @Transactional(readOnly = true)
     public TicketDashboardResponse getDashboard() {
-        long totalTickets = ticketRepository.countTotal();
-        long openTickets = ticketRepository.countOpen();
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        long totalTickets = ticketRepository.countTotalByOrganizationId(organizationId);
+        long openTickets = ticketRepository.countOpenByOrganizationId(organizationId);
 
         Map<String, Long> statusCounts = new HashMap<>();
-        for (Object[] row : ticketRepository.countByStatus()) {
+        for (Object[] row : ticketRepository.countByStatusAndOrganizationId(organizationId)) {
             TicketStatus status = (TicketStatus) row[0];
             Long count = (Long) row[1];
             statusCounts.put(status.name(), count);
         }
 
         Map<String, Long> priorityCounts = new HashMap<>();
-        for (Object[] row : ticketRepository.countByPriority()) {
+        for (Object[] row : ticketRepository.countByPriorityAndOrganizationId(organizationId)) {
             TicketPriority priority = (TicketPriority) row[0];
             Long count = (Long) row[1];
             priorityCounts.put(priority.name(), count);
@@ -254,21 +280,32 @@ public class SupportTicketService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SupportTicketResponse> getMyTickets(UUID reporterId, Pageable pageable) {
-        return ticketRepository.findByReporterIdAndDeletedFalse(reporterId, pageable)
+    public Page<SupportTicketResponse> getMyTickets(Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        return ticketRepository.findByOrganizationIdAndReporterIdAndDeletedFalse(organizationId, currentUserId, pageable)
                 .map(SupportTicketResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
-    public Page<SupportTicketResponse> getAssignedTickets(UUID assigneeId, Pageable pageable) {
-        return ticketRepository.findByAssigneeIdAndDeletedFalse(assigneeId, pageable)
+    public Page<SupportTicketResponse> getAssignedTickets(Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        return ticketRepository.findByOrganizationIdAndAssigneeIdAndDeletedFalse(organizationId, currentUserId, pageable)
                 .map(SupportTicketResponse::fromEntity);
     }
 
-    private SupportTicket getTicketOrThrow(UUID id) {
-        return ticketRepository.findById(id)
-                .filter(t -> !t.isDeleted())
+    private SupportTicket getTicketOrThrow(UUID id, UUID organizationId) {
+        return ticketRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Заявка не найдена: " + id));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        User user = userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+        if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
+            throw new EntityNotFoundException("Пользователь не найден: " + userId);
+        }
     }
 
     private String generateTicketCode() {

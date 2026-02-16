@@ -38,14 +38,14 @@ const applicantSchema = z.object({
 
 type ApplicantFormData = z.input<typeof applicantSchema>;
 
-const positionOptions = [
-  { value: 'pos1', label: 'Инженер-строитель' },
-  { value: 'pos2', label: 'Прораб' },
-  { value: 'pos3', label: 'Архитектор' },
-  { value: 'pos4', label: 'Сметчик' },
-  { value: 'pos5', label: 'Инженер ПТО' },
-  { value: 'pos6', label: 'Менеджер по снабжению' },
-  { value: 'pos7', label: 'Бухгалтер' },
+const getPositionOptions = () => [
+  { value: 'pos1', label: t('recruitment.form.positionEngineer') },
+  { value: 'pos2', label: t('recruitment.form.positionForeman') },
+  { value: 'pos3', label: t('recruitment.form.positionArchitect') },
+  { value: 'pos4', label: t('recruitment.form.positionEstimator') },
+  { value: 'pos5', label: t('recruitment.form.positionPtoEngineer') },
+  { value: 'pos6', label: t('recruitment.form.positionSupplyManager') },
+  { value: 'pos7', label: t('recruitment.form.positionAccountant') },
 ];
 
 const statusOptions = [
@@ -173,14 +173,14 @@ const ApplicantFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.applicant.labelLastName')} error={errors.lastName?.message} required>
               <Input
-                placeholder="Иванов"
+                placeholder={t('forms.applicant.placeholderLastName')}
                 hasError={!!errors.lastName}
                 {...register('lastName')}
               />
             </FormField>
             <FormField label={t('forms.applicant.labelFirstName')} error={errors.firstName?.message} required>
               <Input
-                placeholder="Иван"
+                placeholder={t('forms.applicant.placeholderFirstName')}
                 hasError={!!errors.firstName}
                 {...register('firstName')}
               />
@@ -208,7 +208,7 @@ const ApplicantFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.applicant.labelPosition')} error={errors.positionId?.message} required>
               <Select
-                options={positionOptions}
+                options={getPositionOptions()}
                 placeholder={t('forms.applicant.placeholderPosition')}
                 hasError={!!errors.positionId}
                 {...register('positionId')}

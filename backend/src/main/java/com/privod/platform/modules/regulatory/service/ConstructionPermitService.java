@@ -1,6 +1,9 @@
 package com.privod.platform.modules.regulatory.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.regulatory.domain.ConstructionPermit;
 import com.privod.platform.modules.regulatory.domain.PermitStatus;
 import com.privod.platform.modules.regulatory.repository.ConstructionPermitRepository;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,25 +26,40 @@ import java.util.UUID;
 public class ConstructionPermitService {
 
     private final ConstructionPermitRepository permitRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<ConstructionPermitResponse> listPermits(UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             return permitRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
                     .map(ConstructionPermitResponse::fromEntity);
         }
-        return permitRepository.findAll(pageable).map(ConstructionPermitResponse::fromEntity);
+        List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+        if (projectIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return permitRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable)
+                .map(ConstructionPermitResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public ConstructionPermitResponse getPermit(UUID id) {
-        ConstructionPermit permit = getPermitOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        ConstructionPermit permit = getPermitOrThrow(id, organizationId);
         return ConstructionPermitResponse.fromEntity(permit);
     }
 
     @Transactional
     public ConstructionPermitResponse createPermit(CreateConstructionPermitRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для разрешения");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         ConstructionPermit permit = ConstructionPermit.builder()
                 .projectId(request.projectId())
                 .permitNumber(request.permitNumber())
@@ -62,9 +81,13 @@ public class ConstructionPermitService {
 
     @Transactional
     public ConstructionPermitResponse updatePermit(UUID id, CreateConstructionPermitRequest request) {
-        ConstructionPermit permit = getPermitOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        ConstructionPermit permit = getPermitOrThrow(id, organizationId);
 
-        if (request.projectId() != null) permit.setProjectId(request.projectId());
+        if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
+            permit.setProjectId(request.projectId());
+        }
         if (request.permitNumber() != null) permit.setPermitNumber(request.permitNumber());
         if (request.issuedBy() != null) permit.setIssuedBy(request.issuedBy());
         if (request.issuedDate() != null) permit.setIssuedDate(request.issuedDate());
@@ -82,7 +105,8 @@ public class ConstructionPermitService {
 
     @Transactional
     public void deletePermit(UUID id) {
-        ConstructionPermit permit = getPermitOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        ConstructionPermit permit = getPermitOrThrow(id, organizationId);
         permit.softDelete();
         permitRepository.save(permit);
         auditService.logDelete("ConstructionPermit", id);
@@ -91,7 +115,8 @@ public class ConstructionPermitService {
 
     @Transactional
     public ConstructionPermitResponse suspendPermit(UUID id) {
-        ConstructionPermit permit = getPermitOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        ConstructionPermit permit = getPermitOrThrow(id, organizationId);
 
         if (permit.getStatus() != PermitStatus.ACTIVE) {
             throw new IllegalStateException(
@@ -112,7 +137,8 @@ public class ConstructionPermitService {
 
     @Transactional
     public ConstructionPermitResponse revokePermit(UUID id) {
-        ConstructionPermit permit = getPermitOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        ConstructionPermit permit = getPermitOrThrow(id, organizationId);
 
         if (permit.getStatus() == PermitStatus.REVOKED) {
             throw new IllegalStateException("Разрешение уже отозвано");
@@ -129,9 +155,26 @@ public class ConstructionPermitService {
         return ConstructionPermitResponse.fromEntity(permit);
     }
 
-    private ConstructionPermit getPermitOrThrow(UUID id) {
-        return permitRepository.findById(id)
-                .filter(p -> !p.isDeleted())
+    private ConstructionPermit getPermitOrThrow(UUID id, UUID organizationId) {
+        ConstructionPermit permit = permitRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Разрешение на строительство не найдено: " + id));
+        validateProjectTenant(permit.getProjectId(), organizationId);
+        return permit;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
     }
 }

@@ -11,6 +11,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { taxRiskApi } from './api';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { TaxRiskAssessment, RiskLevel, TaxRiskStatus } from './types';
 
 const riskLevelColorMap: Record<string, string> = {
@@ -20,12 +21,12 @@ const riskLevelColorMap: Record<string, string> = {
   CRITICAL: 'red',
 };
 
-const riskLevelLabels: Record<RiskLevel, string> = {
-  LOW: 'Низкий',
-  MEDIUM: 'Средний',
-  HIGH: 'Высокий',
-  CRITICAL: 'Критический',
-};
+const getRiskLevelLabels = (): Record<RiskLevel, string> => ({
+  LOW: t('taxRisk.riskLow'),
+  MEDIUM: t('taxRisk.riskMedium'),
+  HIGH: t('taxRisk.riskHigh'),
+  CRITICAL: t('taxRisk.riskCritical'),
+});
 
 const statusColorMap: Record<string, string> = {
   DRAFT: 'gray',
@@ -34,27 +35,27 @@ const statusColorMap: Record<string, string> = {
   REVIEWED: 'green',
 };
 
-const statusLabels: Record<TaxRiskStatus, string> = {
-  DRAFT: 'Черновик',
-  IN_PROGRESS: 'В работе',
-  COMPLETED: 'Завершена',
-  REVIEWED: 'Проверена',
-};
+const getStatusLabels = (): Record<TaxRiskStatus, string> => ({
+  DRAFT: t('taxRisk.statusDraft'),
+  IN_PROGRESS: t('taxRisk.statusInProgress'),
+  COMPLETED: t('taxRisk.statusCompleted'),
+  REVIEWED: t('taxRisk.statusReviewed'),
+});
 
-const riskFilterOptions = [
-  { value: '', label: 'Все уровни' },
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
+const getRiskFilterOptions = () => [
+  { value: '', label: t('taxRisk.filterAllLevels') },
+  { value: 'LOW', label: t('taxRisk.riskLow') },
+  { value: 'MEDIUM', label: t('taxRisk.riskMedium') },
+  { value: 'HIGH', label: t('taxRisk.riskHigh') },
+  { value: 'CRITICAL', label: t('taxRisk.riskCritical') },
 ];
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'IN_PROGRESS', label: 'В работе' },
-  { value: 'COMPLETED', label: 'Завершена' },
-  { value: 'REVIEWED', label: 'Проверена' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('taxRisk.filterAllStatuses') },
+  { value: 'DRAFT', label: t('taxRisk.statusDraft') },
+  { value: 'IN_PROGRESS', label: t('taxRisk.statusInProgress') },
+  { value: 'COMPLETED', label: t('taxRisk.statusCompleted') },
+  { value: 'REVIEWED', label: t('taxRisk.statusReviewed') },
 ];
 
 const TaxRiskListPage: React.FC = () => {
@@ -85,6 +86,9 @@ const TaxRiskListPage: React.FC = () => {
     ? assessmentsData.content
     : [];
 
+  const riskLevelLabels = getRiskLevelLabels();
+  const statusLabels = getStatusLabels();
+
   const filtered = useMemo(() => {
     let result = assessments;
     if (riskFilter) {
@@ -108,7 +112,7 @@ const TaxRiskListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('taxRisk.colName'),
         size: 300,
         cell: ({ row }) => (
           <div>
@@ -121,7 +125,7 @@ const TaxRiskListPage: React.FC = () => {
       },
       {
         accessorKey: 'assessmentDate',
-        header: 'Дата оценки',
+        header: t('taxRisk.colAssessmentDate'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -129,7 +133,7 @@ const TaxRiskListPage: React.FC = () => {
       },
       {
         accessorKey: 'riskLevel',
-        header: 'Уровень риска',
+        header: t('taxRisk.colRiskLevel'),
         size: 150,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -141,7 +145,7 @@ const TaxRiskListPage: React.FC = () => {
       },
       {
         accessorKey: 'overallScore',
-        header: 'Балл',
+        header: t('taxRisk.colScore'),
         size: 100,
         cell: ({ getValue }) => {
           const score = getValue<number>();
@@ -153,7 +157,7 @@ const TaxRiskListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('taxRisk.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -164,7 +168,7 @@ const TaxRiskListPage: React.FC = () => {
         ),
       },
     ],
-    [],
+    [riskLevelLabels, statusLabels],
   );
 
   const handleRowClick = useCallback(
@@ -175,15 +179,15 @@ const TaxRiskListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Оценка налоговых рисков"
-        subtitle={`${assessments.length} оценок в системе`}
+        title={t('taxRisk.title')}
+        subtitle={t('taxRisk.assessmentsCount', { count: assessments.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Налоговые риски' },
+          { label: t('taxRisk.breadcrumbHome'), href: '/' },
+          { label: t('taxRisk.breadcrumbTaxRisks') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/tax-risk/new')}>
-            Новая оценка
+            {t('taxRisk.newAssessment')}
           </Button>
         }
       />
@@ -193,20 +197,20 @@ const TaxRiskListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, проекту..."
+            placeholder={t('taxRisk.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={riskFilterOptions}
+          options={getRiskFilterOptions()}
           value={riskFilter}
           onChange={(e) => setRiskFilter(e.target.value)}
           className="w-44"
         />
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -226,24 +230,24 @@ const TaxRiskListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('common.delete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} оценк(у/и)?`,
-                description: 'Операция необратима. Выбранные оценки будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('taxRisk.bulkDeleteTitle', { count: ids.length }),
+                description: t('taxRisk.bulkDeleteDescription'),
+                confirmLabel: t('common.delete'),
+                cancelLabel: t('common.cancel'),
               });
               if (!isConfirmed) return;
               deleteMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет оценок"
-        emptyDescription="Создайте первую оценку налоговых рисков"
+        emptyTitle={t('taxRisk.emptyTitle')}
+        emptyDescription={t('taxRisk.emptyDescription')}
       />
     </div>
   );

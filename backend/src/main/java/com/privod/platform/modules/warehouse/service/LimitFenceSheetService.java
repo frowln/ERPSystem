@@ -1,6 +1,9 @@
 package com.privod.platform.modules.warehouse.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.warehouse.domain.LimitFenceSheet;
 import com.privod.platform.modules.warehouse.domain.LimitFenceSheetStatus;
 import com.privod.platform.modules.warehouse.repository.LimitFenceSheetRepository;
@@ -24,12 +27,18 @@ import java.util.UUID;
 public class LimitFenceSheetService {
 
     private final LimitFenceSheetRepository sheetRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<LimitFenceSheet> listSheets(LimitFenceSheetStatus status, UUID projectId,
                                              UUID materialId, Pageable pageable) {
-        Specification<LimitFenceSheet> spec = Specification.where(notDeleted());
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
+        Specification<LimitFenceSheet> spec = Specification.where(notDeleted())
+                .and(belongsToOrganization(organizationId));
         if (status != null) {
             spec = spec.and((root, q, cb) -> cb.equal(root.get("status"), status));
         }
@@ -44,16 +53,24 @@ public class LimitFenceSheetService {
 
     @Transactional(readOnly = true)
     public LimitFenceSheet getSheet(UUID id) {
-        return getSheetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return getSheetOrThrow(id, organizationId);
     }
 
     @Transactional(readOnly = true)
     public BigDecimal getRemainingLimit(UUID projectId, UUID materialId) {
-        return sheetRepository.sumRemainingLimitByProjectAndMaterial(projectId, materialId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+        return sheetRepository.sumRemainingLimitByProjectAndMaterialAndOrganizationId(projectId, materialId, organizationId);
     }
 
     @Transactional
     public LimitFenceSheet createSheet(LimitFenceSheet sheet) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(sheet.getProjectId(), organizationId);
+        validateUserTenant(sheet.getResponsibleId(), organizationId);
+
+        sheet.setOrganizationId(organizationId);
         sheet.setStatus(LimitFenceSheetStatus.ACTIVE);
         if (sheet.getIssuedQuantity() == null) sheet.setIssuedQuantity(BigDecimal.ZERO);
         if (sheet.getReturnedQuantity() == null) sheet.setReturnedQuantity(BigDecimal.ZERO);
@@ -67,7 +84,8 @@ public class LimitFenceSheetService {
 
     @Transactional
     public LimitFenceSheet updateSheet(UUID id, LimitFenceSheet updates) {
-        LimitFenceSheet sheet = getSheetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        LimitFenceSheet sheet = getSheetOrThrow(id, organizationId);
         if (sheet.getStatus() != LimitFenceSheetStatus.ACTIVE) {
             throw new IllegalStateException("Редактирование ЛЗВ возможно только в активном статусе");
         }
@@ -76,7 +94,10 @@ public class LimitFenceSheetService {
         if (updates.getPeriodStart() != null) sheet.setPeriodStart(updates.getPeriodStart());
         if (updates.getPeriodEnd() != null) sheet.setPeriodEnd(updates.getPeriodEnd());
         if (updates.getWarehouseId() != null) sheet.setWarehouseId(updates.getWarehouseId());
-        if (updates.getResponsibleId() != null) sheet.setResponsibleId(updates.getResponsibleId());
+        if (updates.getResponsibleId() != null) {
+            validateUserTenant(updates.getResponsibleId(), organizationId);
+            sheet.setResponsibleId(updates.getResponsibleId());
+        }
         if (updates.getNotes() != null) sheet.setNotes(updates.getNotes());
 
         sheet = sheetRepository.save(sheet);
@@ -87,7 +108,8 @@ public class LimitFenceSheetService {
 
     @Transactional
     public LimitFenceSheet issueBySheet(UUID id, BigDecimal quantity) {
-        LimitFenceSheet sheet = getSheetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        LimitFenceSheet sheet = getSheetOrThrow(id, organizationId);
         if (sheet.getStatus() != LimitFenceSheetStatus.ACTIVE) {
             throw new IllegalStateException("Выдача возможна только по активной ЛЗВ");
         }
@@ -120,7 +142,8 @@ public class LimitFenceSheetService {
 
     @Transactional
     public LimitFenceSheet returnBySheet(UUID id, BigDecimal quantity) {
-        LimitFenceSheet sheet = getSheetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        LimitFenceSheet sheet = getSheetOrThrow(id, organizationId);
         if (sheet.getStatus() == LimitFenceSheetStatus.CLOSED
                 || sheet.getStatus() == LimitFenceSheetStatus.CANCELLED) {
             throw new IllegalStateException("Возврат невозможен для закрытой/отменённой ЛЗВ");
@@ -140,7 +163,8 @@ public class LimitFenceSheetService {
 
     @Transactional
     public LimitFenceSheet closeSheet(UUID id) {
-        LimitFenceSheet sheet = getSheetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        LimitFenceSheet sheet = getSheetOrThrow(id, organizationId);
         if (sheet.getStatus() == LimitFenceSheetStatus.CLOSED
                 || sheet.getStatus() == LimitFenceSheetStatus.CANCELLED) {
             throw new IllegalStateException("ЛЗВ уже закрыта или отменена");
@@ -156,7 +180,8 @@ public class LimitFenceSheetService {
 
     @Transactional
     public void deleteSheet(UUID id) {
-        LimitFenceSheet sheet = getSheetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        LimitFenceSheet sheet = getSheetOrThrow(id, organizationId);
         if (sheet.getIssuedQuantity().compareTo(BigDecimal.ZERO) > 0) {
             throw new IllegalStateException("Невозможно удалить ЛЗВ с проведёнными выдачами");
         }
@@ -168,18 +193,38 @@ public class LimitFenceSheetService {
 
     @Transactional(readOnly = true)
     public List<LimitFenceSheet> findExpiredSheets() {
-        return sheetRepository.findActiveByDate(LocalDate.now()).stream()
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return sheetRepository.findActiveByDateAndOrganizationId(LocalDate.now(), organizationId).stream()
                 .filter(s -> s.getPeriodEnd().isBefore(LocalDate.now()))
                 .toList();
     }
 
-    private LimitFenceSheet getSheetOrThrow(UUID id) {
-        return sheetRepository.findById(id)
-                .filter(s -> !s.isDeleted())
+    private LimitFenceSheet getSheetOrThrow(UUID id, UUID organizationId) {
+        return sheetRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Лимитно-заборная ведомость не найдена: " + id));
     }
 
     private static Specification<LimitFenceSheet> notDeleted() {
         return (root, query, cb) -> cb.isFalse(root.get("deleted"));
+    }
+
+    private static Specification<LimitFenceSheet> belongsToOrganization(UUID organizationId) {
+        return (root, query, cb) -> cb.equal(root.get("organizationId"), organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+        projectRepository.findByIdAndOrganizationIdAndDeletedFalse(projectId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
     }
 }

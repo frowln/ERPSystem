@@ -17,6 +17,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { taxRiskApi } from './api';
 import { formatDate, formatDateLong } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { TaxRiskAssessment, RiskLevel, TaxRiskStatus, TaxRiskFactor, TaxRiskMitigation } from './types';
 
 type StatusBadgeColor = 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan';
@@ -28,12 +29,12 @@ const riskLevelColorMap: Record<string, StatusBadgeColor> = {
   CRITICAL: 'red',
 };
 
-const riskLevelLabels: Record<RiskLevel, string> = {
-  LOW: 'Низкий',
-  MEDIUM: 'Средний',
-  HIGH: 'Высокий',
-  CRITICAL: 'Критический',
-};
+const getRiskLevelLabels = (): Record<RiskLevel, string> => ({
+  LOW: t('taxRisk.riskLow'),
+  MEDIUM: t('taxRisk.riskMedium'),
+  HIGH: t('taxRisk.riskHigh'),
+  CRITICAL: t('taxRisk.riskCritical'),
+});
 
 const statusColorMap: Record<string, StatusBadgeColor> = {
   DRAFT: 'gray',
@@ -42,12 +43,12 @@ const statusColorMap: Record<string, StatusBadgeColor> = {
   REVIEWED: 'green',
 };
 
-const statusLabels: Record<TaxRiskStatus, string> = {
-  DRAFT: 'Черновик',
-  IN_PROGRESS: 'В работе',
-  COMPLETED: 'Завершена',
-  REVIEWED: 'Проверена',
-};
+const getStatusLabels = (): Record<TaxRiskStatus, string> => ({
+  DRAFT: t('taxRisk.statusDraft'),
+  IN_PROGRESS: t('taxRisk.statusInProgress'),
+  COMPLETED: t('taxRisk.statusCompleted'),
+  REVIEWED: t('taxRisk.statusReviewed'),
+});
 
 const mitigationStatusColorMap: Record<string, StatusBadgeColor> = {
   PLANNED: 'gray',
@@ -56,12 +57,12 @@ const mitigationStatusColorMap: Record<string, StatusBadgeColor> = {
   OVERDUE: 'red',
 };
 
-const mitigationStatusLabels: Record<string, string> = {
-  PLANNED: 'Запланировано',
-  IN_PROGRESS: 'В работе',
-  COMPLETED: 'Выполнено',
-  OVERDUE: 'Просрочено',
-};
+const getMitigationStatusLabels = (): Record<string, string> => ({
+  PLANNED: t('taxRisk.mitigationPlanned'),
+  IN_PROGRESS: t('taxRisk.mitigationInProgress'),
+  COMPLETED: t('taxRisk.mitigationCompleted'),
+  OVERDUE: t('taxRisk.mitigationOverdue'),
+});
 type DetailTab = 'overview' | 'factors' | 'mitigations';
 
 
@@ -79,12 +80,15 @@ const TaxRiskDetailPage: React.FC = () => {
   if (!assessment) {
     return (
       <div className="animate-fade-in">
-        <div className="flex items-center justify-center h-64 text-neutral-400">Загрузка...</div>
+        <div className="flex items-center justify-center h-64 text-neutral-400">{t('common.loading')}</div>
       </div>
     );
   }
 
   const a = assessment;
+  const riskLevelLabels = getRiskLevelLabels();
+  const statusLabels = getStatusLabels();
+  const mitigationStatusLabels = getMitigationStatusLabels();
 
   const scoreColor = a.overallScore >= 75 ? 'text-danger-600' : a.overallScore >= 50 ? 'text-warning-600' : a.overallScore >= 25 ? 'text-yellow-600' : 'text-success-600';
   const scoreBg = a.overallScore >= 75 ? 'bg-danger-50' : a.overallScore >= 50 ? 'bg-warning-50' : a.overallScore >= 25 ? 'bg-yellow-50' : 'bg-success-50';
@@ -93,11 +97,11 @@ const TaxRiskDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={a.name}
-        subtitle={a.projectName ?? 'Оценка налоговых рисков'}
+        subtitle={a.projectName ?? t('taxRisk.assessmentSubtitle')}
         backTo="/tax-risk"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Налоговые риски', href: '/tax-risk' },
+          { label: t('taxRisk.breadcrumbHome'), href: '/' },
+          { label: t('taxRisk.breadcrumbTaxRisks'), href: '/tax-risk' },
           { label: a.name },
         ]}
         actions={
@@ -120,14 +124,14 @@ const TaxRiskDetailPage: React.FC = () => {
               iconLeft={<Edit3 size={14} />}
               onClick={() => navigate(`/tax-risk/${id}/edit`)}
             >
-              Редактировать
+              {t('common.edit')}
             </Button>
           </div>
         }
         tabs={[
-          { id: 'overview', label: 'Обзор' },
-          { id: 'factors', label: 'Факторы риска' },
-          { id: 'mitigations', label: 'Мероприятия' },
+          { id: 'overview', label: t('taxRisk.tabOverview') },
+          { id: 'factors', label: t('taxRisk.tabFactors') },
+          { id: 'mitigations', label: t('taxRisk.tabMitigations') },
         ]}
         activeTab={activeTab}
         onTabChange={(tab) => setActiveTab(tab as DetailTab)}
@@ -137,16 +141,16 @@ const TaxRiskDetailPage: React.FC = () => {
         <div className="space-y-6">
           {/* Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <MetricCard icon={<AlertTriangle size={18} />} label="Уровень риска" value={riskLevelLabels[a.riskLevel]} />
-            <MetricCard icon={<Target size={18} />} label="Общий балл" value={`${a.overallScore}/100`} />
-            <MetricCard icon={<Calendar size={18} />} label="Дата оценки" value={formatDate(a.assessmentDate)} />
-            <MetricCard icon={<Shield size={18} />} label="Факторов" value={String(a.factors.length)} />
+            <MetricCard icon={<AlertTriangle size={18} />} label={t('taxRisk.metricRiskLevel')} value={riskLevelLabels[a.riskLevel]} />
+            <MetricCard icon={<Target size={18} />} label={t('taxRisk.metricOverallScore')} value={`${a.overallScore}/100`} />
+            <MetricCard icon={<Calendar size={18} />} label={t('taxRisk.metricAssessmentDate')} value={formatDate(a.assessmentDate)} />
+            <MetricCard icon={<Shield size={18} />} label={t('taxRisk.metricFactors')} value={String(a.factors.length)} />
           </div>
 
           {/* Score visualization */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Информация об оценке</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('taxRisk.assessmentInfo')}</h3>
 
               {a.description && (
                 <p className="text-sm text-neutral-600 leading-relaxed mb-6 pb-6 border-b border-neutral-100">
@@ -155,19 +159,19 @@ const TaxRiskDetailPage: React.FC = () => {
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
-                <InfoItem icon={<Calendar size={15} />} label="Дата оценки" value={formatDateLong(a.assessmentDate)} />
-                {a.assessorName && <InfoItem icon={<User size={15} />} label="Оценщик" value={a.assessorName} />}
-                {a.projectName && <InfoItem icon={<FileText size={15} />} label="Проект" value={a.projectName} />}
-                <InfoItem icon={<FileText size={15} />} label="Создано" value={formatDateLong(a.createdAt)} />
+                <InfoItem icon={<Calendar size={15} />} label={t('taxRisk.metricAssessmentDate')} value={formatDateLong(a.assessmentDate)} />
+                {a.assessorName && <InfoItem icon={<User size={15} />} label={t('taxRisk.labelAssessor')} value={a.assessorName} />}
+                {a.projectName && <InfoItem icon={<FileText size={15} />} label={t('taxRisk.labelProject')} value={a.projectName} />}
+                <InfoItem icon={<FileText size={15} />} label={t('taxRisk.labelCreated')} value={formatDateLong(a.createdAt)} />
               </div>
             </div>
 
             {/* Score card */}
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Оценка риска</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('taxRisk.riskScore')}</h3>
               <div className={cn('rounded-xl p-6 text-center mb-4', scoreBg)}>
                 <p className={cn('text-5xl font-bold tabular-nums', scoreColor)}>{a.overallScore}</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">из 100</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('taxRisk.outOf100')}</p>
               </div>
               {/* Score bar */}
               <div className="w-full h-3 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden mb-3">
@@ -180,10 +184,10 @@ const TaxRiskDetailPage: React.FC = () => {
                 />
               </div>
               <div className="flex justify-between text-xs text-neutral-400">
-                <span>Низкий</span>
-                <span>Средний</span>
-                <span>Высокий</span>
-                <span>Крит.</span>
+                <span>{t('taxRisk.scaleLow')}</span>
+                <span>{t('taxRisk.scaleMedium')}</span>
+                <span>{t('taxRisk.scaleHigh')}</span>
+                <span>{t('taxRisk.scaleCritical')}</span>
               </div>
             </div>
           </div>
@@ -193,16 +197,16 @@ const TaxRiskDetailPage: React.FC = () => {
       {activeTab === 'factors' && (
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
           <div className="px-5 py-4 border-b border-neutral-100">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Факторы риска ({a.factors.length})</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('taxRisk.factorsTitle', { count: a.factors.length })}</h3>
           </div>
           <table className="w-full">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50 dark:bg-neutral-800">
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Фактор</th>
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Категория</th>
-                <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Вес</th>
-                <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Балл</th>
-                <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Взвешенный</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thFactor')}</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thCategory')}</th>
+                <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thWeight')}</th>
+                <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thScore')}</th>
+                <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thWeighted')}</th>
               </tr>
             </thead>
             <tbody>
@@ -225,7 +229,7 @@ const TaxRiskDetailPage: React.FC = () => {
             </tbody>
             <tfoot>
               <tr className="bg-neutral-50 dark:bg-neutral-800 font-semibold">
-                <td className="px-5 py-3 text-sm text-neutral-900 dark:text-neutral-100" colSpan={2}>Итого</td>
+                <td className="px-5 py-3 text-sm text-neutral-900 dark:text-neutral-100" colSpan={2}>{t('taxRisk.total')}</td>
                 <td className="px-5 py-3 text-sm text-neutral-900 dark:text-neutral-100 tabular-nums text-right">100%</td>
                 <td className="px-5 py-3 text-sm text-neutral-900 dark:text-neutral-100 tabular-nums text-right">---</td>
                 <td className="px-5 py-3 text-sm text-neutral-900 dark:text-neutral-100 tabular-nums text-right">{a.overallScore.toFixed(1)}</td>
@@ -238,16 +242,16 @@ const TaxRiskDetailPage: React.FC = () => {
       {activeTab === 'mitigations' && (
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
           <div className="px-5 py-4 border-b border-neutral-100">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Мероприятия по снижению рисков ({a.mitigations.length})</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('taxRisk.mitigationsTitle', { count: a.mitigations.length })}</h3>
           </div>
           <table className="w-full">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50 dark:bg-neutral-800">
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Мероприятие</th>
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Фактор</th>
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Ответственный</th>
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Срок</th>
-                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Статус</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thMitigation')}</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thFactor')}</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thResponsible')}</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thDeadline')}</th>
+                <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('taxRisk.thStatus')}</th>
               </tr>
             </thead>
             <tbody>

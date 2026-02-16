@@ -34,11 +34,11 @@ interface ChangeEventCreateModalProps {
   onClose: () => void;
 }
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
+const getProjectOptions = () => [
+  { value: '1', label: t('changeManagement.eventCreate.projectSolnechny') },
+  { value: '2', label: t('changeManagement.eventCreate.projectGorizont') },
+  { value: '3', label: t('changeManagement.eventCreate.projectBridge') },
+  { value: '6', label: t('changeManagement.eventCreate.projectCentralny') },
 ];
 
 const getSourceOptions = () => [
@@ -130,7 +130,7 @@ export const ChangeEventCreateModal: React.FC<ChangeEventCreateModalProps> = ({ 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('changeManagement.eventCreate.labelProject')} error={errors.projectId?.message} required>
             <Select
-              options={projectOptions}
+              options={getProjectOptions()}
               placeholder={t('changeManagement.eventCreate.placeholderProject')}
               hasError={!!errors.projectId}
               {...register('projectId')}

@@ -11,6 +11,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
 import { designApi } from '@/api/design';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { DesignSection } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -23,14 +24,14 @@ const versionStatusColorMap: Record<string, 'gray' | 'yellow' | 'green' | 'purpl
   archived: 'blue',
 };
 
-const versionStatusLabels: Record<string, string> = {
-  draft: 'Черновик',
-  in_review: 'На проверке',
-  approved: 'Утверждён',
-  superseded: 'Замещён',
-  rejected: 'Отклонён',
-  archived: 'В архиве',
-};
+const getVersionStatusLabels = (): Record<string, string> => ({
+  draft: t('design.versionStatusDraft'),
+  in_review: t('design.versionStatusInReview'),
+  approved: t('design.versionStatusApproved'),
+  superseded: t('design.versionStatusSuperseded'),
+  rejected: t('design.versionStatusRejected'),
+  archived: t('design.versionStatusArchived'),
+});
 
 const DesignSectionListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ const DesignSectionListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('design.colCode'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="font-mono font-medium text-primary-600">{getValue<string>()}</span>
@@ -69,7 +70,7 @@ const DesignSectionListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Наименование',
+        header: t('design.colName'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -80,7 +81,7 @@ const DesignSectionListPage: React.FC = () => {
       },
       {
         accessorKey: 'leadDesignerName',
-        header: 'Главный проектировщик',
+        header: t('design.colLeadDesigner'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -88,7 +89,7 @@ const DesignSectionListPage: React.FC = () => {
       },
       {
         accessorKey: 'versionCount',
-        header: 'Версий',
+        header: t('design.colVersionCount'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600">{getValue<number>()}</span>
@@ -96,7 +97,7 @@ const DesignSectionListPage: React.FC = () => {
       },
       {
         accessorKey: 'latestVersion',
-        header: 'Последняя',
+        header: t('design.colLatestVersion'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -104,7 +105,7 @@ const DesignSectionListPage: React.FC = () => {
       },
       {
         accessorKey: 'latestVersionStatus',
-        header: 'Статус',
+        header: t('design.colStatus'),
         size: 130,
         cell: ({ getValue }) => {
           const status = getValue<string>();
@@ -113,14 +114,14 @@ const DesignSectionListPage: React.FC = () => {
             <StatusBadge
               status={status}
               colorMap={versionStatusColorMap}
-              label={versionStatusLabels[status] ?? status}
+              label={getVersionStatusLabels()[status] ?? status}
             />
           );
         },
       },
       {
         accessorKey: 'updatedAt',
-        header: 'Обновлено',
+        header: t('design.colUpdatedAt'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -138,16 +139,16 @@ const DesignSectionListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Разделы проектной документации"
-        subtitle={`${sections.length} разделов в системе`}
+        title={t('design.sectionsTitle')}
+        subtitle={t('design.sectionsSubtitle', { count: String(sections.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Проектирование' },
-          { label: 'Разделы' },
+          { label: t('design.breadcrumbHome'), href: '/' },
+          { label: t('design.breadcrumbDesign') },
+          { label: t('design.breadcrumbSections') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />}>
-            Новый раздел
+            {t('design.newSection')}
           </Button>
         }
       />
@@ -156,12 +157,12 @@ const DesignSectionListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <MetricCard
           icon={<FolderTree size={18} />}
-          label="Всего разделов"
+          label={t('design.metricTotalSections')}
           value={sections.length}
         />
         <MetricCard
           icon={<Layers size={18} />}
-          label="Всего версий"
+          label={t('design.metricTotalVersions')}
           value={totalVersions}
         />
       </div>
@@ -171,7 +172,7 @@ const DesignSectionListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по коду, названию, проекту..."
+            placeholder={t('design.searchSectionPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -189,8 +190,8 @@ const DesignSectionListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет разделов"
-        emptyDescription="Создайте первый раздел проектной документации"
+        emptyTitle={t('design.emptySectionsTitle')}
+        emptyDescription={t('design.emptySectionsDescription')}
       />
     </div>
   );

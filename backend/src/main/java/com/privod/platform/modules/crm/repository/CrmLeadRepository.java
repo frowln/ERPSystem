@@ -12,11 +12,22 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface CrmLeadRepository extends JpaRepository<CrmLead, UUID>,
         JpaSpecificationExecutor<CrmLead> {
+
+    Optional<CrmLead> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
+    Page<CrmLead> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
+
+    Page<CrmLead> findByOrganizationIdAndStatusAndDeletedFalse(UUID organizationId, LeadStatus status, Pageable pageable);
+
+    Page<CrmLead> findByOrganizationIdAndStageIdAndDeletedFalse(UUID organizationId, UUID stageId, Pageable pageable);
+
+    Page<CrmLead> findByOrganizationIdAndAssignedToIdAndDeletedFalse(UUID organizationId, UUID assignedToId, Pageable pageable);
 
     Page<CrmLead> findByStatusAndDeletedFalse(LeadStatus status, Pageable pageable);
 
@@ -30,26 +41,53 @@ public interface CrmLeadRepository extends JpaRepository<CrmLead, UUID>,
             "LOWER(l.companyName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<CrmLead> search(@Param("search") String search, Pageable pageable);
 
+    @Query("SELECT l FROM CrmLead l WHERE l.deleted = false AND l.organizationId = :organizationId AND " +
+            "(LOWER(l.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(l.partnerName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(l.companyName) LIKE LOWER(CONCAT('%', :search, '%')))")
+    Page<CrmLead> searchByOrganizationId(@Param("search") String search,
+                                         @Param("organizationId") UUID organizationId,
+                                         Pageable pageable);
+
     long countByStatusAndDeletedFalse(LeadStatus status);
 
     @Query("SELECT l.status, COUNT(l) FROM CrmLead l WHERE l.deleted = false GROUP BY l.status")
     List<Object[]> countByStatus();
 
+    @Query("SELECT l.status, COUNT(l) FROM CrmLead l WHERE l.deleted = false AND l.organizationId = :organizationId GROUP BY l.status")
+    List<Object[]> countByStatusAndOrganizationId(@Param("organizationId") UUID organizationId);
+
     @Query("SELECT l.stageId, COUNT(l) FROM CrmLead l WHERE l.deleted = false AND " +
             "l.status NOT IN ('WON', 'LOST') GROUP BY l.stageId")
     List<Object[]> countByStage();
+
+    @Query("SELECT l.stageId, COUNT(l) FROM CrmLead l WHERE l.deleted = false AND l.organizationId = :organizationId AND " +
+            "l.status NOT IN ('WON', 'LOST') GROUP BY l.stageId")
+    List<Object[]> countByStageAndOrganizationId(@Param("organizationId") UUID organizationId);
 
     @Query("SELECT COALESCE(SUM(l.expectedRevenue), 0) FROM CrmLead l WHERE l.deleted = false " +
             "AND l.status NOT IN ('WON', 'LOST')")
     BigDecimal sumPipelineRevenue();
 
+    @Query("SELECT COALESCE(SUM(l.expectedRevenue), 0) FROM CrmLead l WHERE l.deleted = false " +
+            "AND l.organizationId = :organizationId AND l.status NOT IN ('WON', 'LOST')")
+    BigDecimal sumPipelineRevenueByOrganizationId(@Param("organizationId") UUID organizationId);
+
     @Query("SELECT COALESCE(SUM(l.expectedRevenue * l.probability / 100.0), 0) FROM CrmLead l " +
             "WHERE l.deleted = false AND l.status NOT IN ('WON', 'LOST')")
     BigDecimal sumWeightedPipelineRevenue();
 
+    @Query("SELECT COALESCE(SUM(l.expectedRevenue * l.probability / 100.0), 0) FROM CrmLead l " +
+            "WHERE l.deleted = false AND l.organizationId = :organizationId AND l.status NOT IN ('WON', 'LOST')")
+    BigDecimal sumWeightedPipelineRevenueByOrganizationId(@Param("organizationId") UUID organizationId);
+
     @Query("SELECT COALESCE(SUM(l.expectedRevenue), 0) FROM CrmLead l WHERE l.deleted = false " +
             "AND l.status = 'WON'")
     BigDecimal sumWonRevenue();
+
+    @Query("SELECT COALESCE(SUM(l.expectedRevenue), 0) FROM CrmLead l WHERE l.deleted = false " +
+            "AND l.organizationId = :organizationId AND l.status = 'WON'")
+    BigDecimal sumWonRevenueByOrganizationId(@Param("organizationId") UUID organizationId);
 
     long countByAssignedToIdAndStatusAndDeletedFalse(UUID assignedToId, LeadStatus status);
 }

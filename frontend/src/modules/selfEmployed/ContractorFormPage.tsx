@@ -114,13 +114,13 @@ const ContractorFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.contractor.sectionPersonal')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.contractor.labelFullName')} error={errors.fullName?.message} required className="sm:col-span-2">
-              <Input placeholder="Козлов Андрей Павлович" hasError={!!errors.fullName} {...register('fullName')} />
+              <Input placeholder={t('forms.contractor.placeholderFullName')} hasError={!!errors.fullName} {...register('fullName')} />
             </FormField>
             <FormField label={t('forms.contractor.labelInn')} error={errors.inn?.message} required>
               <Input placeholder="773456789012" maxLength={12} hasError={!!errors.inn} {...register('inn')} />
             </FormField>
             <FormField label={t('forms.contractor.labelSpecialization')} error={errors.specialization?.message}>
-              <Input placeholder="Электромонтаж" hasError={!!errors.specialization} {...register('specialization')} />
+              <Input placeholder={t('forms.contractor.placeholderSpecialization')} hasError={!!errors.specialization} {...register('specialization')} />
             </FormField>
             <FormField label={t('forms.contractor.labelPhone')} error={errors.phone?.message}>
               <Input placeholder="+7 (903) 123-45-67" hasError={!!errors.phone} {...register('phone')} />
@@ -141,7 +141,7 @@ const ContractorFormPage: React.FC = () => {
               <Input placeholder="044525225" maxLength={9} hasError={!!errors.bankBik} {...register('bankBik')} />
             </FormField>
             <FormField label={t('forms.contractor.labelBankName')} error={errors.bankName?.message} className="sm:col-span-2">
-              <Input placeholder="ПАО Сбербанк" hasError={!!errors.bankName} {...register('bankName')} />
+              <Input placeholder={t('forms.contractor.placeholderBankName')} hasError={!!errors.bankName} {...register('bankName')} />
             </FormField>
           </div>
         </section>

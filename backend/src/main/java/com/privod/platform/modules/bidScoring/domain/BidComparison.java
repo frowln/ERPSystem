@@ -18,6 +18,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "bid_comparisons", indexes = {
+        @Index(name = "idx_bid_comparison_org", columnList = "organization_id"),
+        @Index(name = "idx_bid_comparison_org_project", columnList = "organization_id, project_id"),
         @Index(name = "idx_bid_comparison_project", columnList = "project_id"),
         @Index(name = "idx_bid_comparison_status", columnList = "status"),
         @Index(name = "idx_bid_comparison_created_by", columnList = "created_by_id")
@@ -28,6 +30,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BidComparison extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "project_id", nullable = false)
     private UUID projectId;

@@ -20,6 +20,8 @@ import java.util.UUID;
 public interface WarehouseOrderRepository extends JpaRepository<WarehouseOrder, UUID>,
         JpaSpecificationExecutor<WarehouseOrder> {
 
+    Optional<WarehouseOrder> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
     Optional<WarehouseOrder> findByOrderNumberAndDeletedFalse(String orderNumber);
 
     Page<WarehouseOrder> findByStatusAndDeletedFalse(WarehouseOrderStatus status, Pageable pageable);

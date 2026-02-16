@@ -158,7 +158,7 @@ const IssueListPage: React.FC = () => {
       },
       {
         accessorKey: 'assignedToName',
-        header: 'Ответственный',
+        header: t('issues.list.colAssignee'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -166,7 +166,7 @@ const IssueListPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('issues.list.colDueDate'),
         size: 120,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
@@ -190,11 +190,11 @@ const IssueListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Замечания и проблемы"
-        subtitle={`${issues.length} замечаний в системе`}
+        title={t('issues.list.title')}
+        subtitle={t('issues.list.subtitle', { count: String(issues.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Замечания' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('issues.list.breadcrumbIssues') },
         ]}
         actions={
           <div className="flex items-center gap-2">
@@ -221,20 +221,20 @@ const IssueListPage: React.FC = () => {
             <Button
               iconLeft={<Plus size={16} />}
               onClick={() => {
-                toast('Создание замечания доступно в карточке PM / Issue');
+                toast(t('issues.list.createHint'));
                 navigate('/pm/issues');
               }}
             >
-              Новое замечание
+              {t('issues.list.newIssue')}
             </Button>
           </div>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'OPEN', label: 'Открытые', count: tabCounts.open },
-          { id: 'IN_PROGRESS', label: 'В работе', count: tabCounts.in_progress },
-          { id: 'RESOLVED', label: 'Решённые', count: tabCounts.resolved },
-          { id: 'CLOSED', label: 'Закрытые', count: tabCounts.closed },
+          { id: 'all', label: t('issuesPage.list.tabAll'), count: tabCounts.all },
+          { id: 'OPEN', label: t('issuesPage.list.tabOpen'), count: tabCounts.open },
+          { id: 'IN_PROGRESS', label: t('issuesPage.list.tabInProgress'), count: tabCounts.in_progress },
+          { id: 'RESOLVED', label: t('issuesPage.list.tabResolved'), count: tabCounts.resolved },
+          { id: 'CLOSED', label: t('issuesPage.list.tabClosed'), count: tabCounts.closed },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -245,7 +245,7 @@ const IssueListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, названию..."
+            placeholder={t('issuesPage.list.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -266,29 +266,29 @@ const IssueListPage: React.FC = () => {
           pageSize={20}
           bulkActions={[
             {
-              label: 'Удалить',
+              label: t('issuesPage.list.bulkDelete'),
               icon: <Trash2 size={13} />,
               variant: 'danger',
               onClick: async (rows) => {
                 const ids = rows.map((r) => r.id);
                 const isConfirmed = await confirm({
-                  title: `Удалить ${ids.length} замечани(е/я)?`,
-                  description: 'Операция необратима. Выбранные замечания будут удалены.',
-                  confirmLabel: 'Удалить',
-                  cancelLabel: 'Отмена',
+                  title: t('issuesPage.list.confirmDeleteTitle', { count: String(ids.length) }),
+                  description: t('issuesPage.list.confirmDeleteDescription'),
+                  confirmLabel: t('issuesPage.list.confirmDeleteLabel'),
+                  cancelLabel: t('issuesPage.list.confirmDeleteCancel'),
                 });
                 if (!isConfirmed) return;
                 deleteIssueMutation.mutate(ids);
               },
             },
           ]}
-          emptyTitle="Нет замечаний"
-          emptyDescription="Система замечаний пуста"
+          emptyTitle={t('issuesPage.list.emptyTitle')}
+          emptyDescription={t('issuesPage.list.emptyDescription')}
         />
       ) : (
         /* Kanban view */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {kanbanColumns.map((col) => {
+          {getKanbanColumns().map((col) => {
             const colIssues = issues.filter((i) => i.status === col.status);
             return (
               <div key={col.status} className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3">

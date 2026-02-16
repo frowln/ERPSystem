@@ -12,14 +12,21 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface BudgetRepository extends JpaRepository<Budget, UUID>, JpaSpecificationExecutor<Budget> {
 
+    Optional<Budget> findByIdAndDeletedFalse(UUID id);
+
     Page<Budget> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
+    Page<Budget> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);
+
     Page<Budget> findByStatusAndDeletedFalse(BudgetStatus status, Pageable pageable);
+
+    Page<Budget> findByProjectIdInAndStatusAndDeletedFalse(List<UUID> projectIds, BudgetStatus status, Pageable pageable);
 
     List<Budget> findByProjectIdAndDeletedFalseOrderByCreatedAtDesc(UUID projectId);
 

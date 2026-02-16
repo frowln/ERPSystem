@@ -17,6 +17,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { monteCarloApi } from './api';
 import { formatDate, formatDateLong, formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 import type { MonteCarloSimulation, SimulationStatus, SimulationTask } from './types';
 
 type BadgeColor = 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan';
@@ -28,12 +29,12 @@ const statusColorMap: Record<SimulationStatus, BadgeColor> = {
   FAILED: 'red',
 };
 
-const statusLabels: Record<SimulationStatus, string> = {
-  DRAFT: 'Черновик',
-  RUNNING: 'Выполняется',
-  COMPLETED: 'Завершена',
-  FAILED: 'Ошибка',
-};
+const getStatusLabels = (): Record<SimulationStatus, string> => ({
+  DRAFT: t('monteCarlo.statusDraft'),
+  RUNNING: t('monteCarlo.statusRunning'),
+  COMPLETED: t('monteCarlo.statusCompleted'),
+  FAILED: t('monteCarlo.statusFailed'),
+});
 type DetailTab = 'results' | 'tasks';
 
 
@@ -57,10 +58,12 @@ const SimulationDetailPage: React.FC = () => {
     },
   });
 
+  const statusLabels = getStatusLabels();
+
   if (!simulation) {
     return (
       <div className="animate-fade-in">
-        <div className="flex items-center justify-center h-64 text-neutral-400">Загрузка...</div>
+        <div className="flex items-center justify-center h-64 text-neutral-400">{t('common.loading')}</div>
       </div>
     );
   }
@@ -72,11 +75,11 @@ const SimulationDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={s.name}
-        subtitle={s.projectName ?? 'Симуляция Монте-Карло'}
+        subtitle={s.projectName ?? t('monteCarlo.monteCarloSimulation')}
         backTo="/monte-carlo"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Монте-Карло', href: '/monte-carlo' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('monteCarlo.breadcrumb'), href: '/monte-carlo' },
           { label: s.name },
         ]}
         actions={
@@ -95,7 +98,7 @@ const SimulationDetailPage: React.FC = () => {
                 onClick={() => runMutation.mutate()}
                 loading={runMutation.isPending}
               >
-                {s.status === 'COMPLETED' ? 'Перезапустить' : 'Запустить'}
+                {s.status === 'COMPLETED' ? t('monteCarlo.rerun') : t('monteCarlo.run')}
               </Button>
             )}
             <Button
@@ -104,13 +107,13 @@ const SimulationDetailPage: React.FC = () => {
               iconLeft={<Edit3 size={14} />}
               onClick={() => navigate(`/monte-carlo/${id}/edit`)}
             >
-              Редактировать
+              {t('common.edit')}
             </Button>
           </div>
         }
         tabs={[
-          { id: 'results', label: 'Результаты' },
-          { id: 'tasks', label: `Задачи (${s.tasks.length})` },
+          { id: 'results', label: t('monteCarlo.tabResults') },
+          { id: 'tasks', label: `${t('monteCarlo.tabTasks')} (${s.tasks.length})` },
         ]}
         activeTab={activeTab}
         onTabChange={(tab) => setActiveTab(tab as DetailTab)}
@@ -123,33 +126,33 @@ const SimulationDetailPage: React.FC = () => {
               {/* P-values */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase tracking-wider font-semibold">P50 (вероятные)</p>
-                  <p className="text-3xl font-bold text-success-600 tabular-nums">{r.p50Duration} дн.</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase tracking-wider font-semibold">{t('monteCarlo.p50Label')}</p>
+                  <p className="text-3xl font-bold text-success-600 tabular-nums">{r.p50Duration} {t('monteCarlo.days')}</p>
                   {r.p50Date && <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{formatDate(r.p50Date)}</p>}
                 </div>
                 <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase tracking-wider font-semibold">P85 (уверенные)</p>
-                  <p className="text-3xl font-bold text-warning-600 tabular-nums">{r.p85Duration} дн.</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase tracking-wider font-semibold">{t('monteCarlo.p85Label')}</p>
+                  <p className="text-3xl font-bold text-warning-600 tabular-nums">{r.p85Duration} {t('monteCarlo.days')}</p>
                   {r.p85Date && <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{formatDate(r.p85Date)}</p>}
                 </div>
                 <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase tracking-wider font-semibold">P95 (гарантированные)</p>
-                  <p className="text-3xl font-bold text-danger-600 tabular-nums">{r.p95Duration} дн.</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 uppercase tracking-wider font-semibold">{t('monteCarlo.p95Label')}</p>
+                  <p className="text-3xl font-bold text-danger-600 tabular-nums">{r.p95Duration} {t('monteCarlo.days')}</p>
                   {r.p95Date && <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{formatDate(r.p95Date)}</p>}
                 </div>
               </div>
 
               {/* Statistics */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MetricCard icon={<BarChart3 size={18} />} label="Среднее" value={`${r.meanDuration} дн.`} />
-                <MetricCard icon={<Activity size={18} />} label="Ст. отклонение" value={`${r.standardDeviation} дн.`} />
-                <MetricCard icon={<TrendingUp size={18} />} label="Мин / Макс" value={`${r.minDuration} / ${r.maxDuration}`} />
-                <MetricCard icon={<Target size={18} />} label="Итераций" value={formatNumber(r.completedIterations)} />
+                <MetricCard icon={<BarChart3 size={18} />} label={t('monteCarlo.mean')} value={`${r.meanDuration} ${t('monteCarlo.days')}`} />
+                <MetricCard icon={<Activity size={18} />} label={t('monteCarlo.stdDeviation')} value={`${r.standardDeviation} ${t('monteCarlo.days')}`} />
+                <MetricCard icon={<TrendingUp size={18} />} label={t('monteCarlo.minMax')} value={`${r.minDuration} / ${r.maxDuration}`} />
+                <MetricCard icon={<Target size={18} />} label={t('monteCarlo.iterations')} value={formatNumber(r.completedIterations)} />
               </div>
 
               {/* Visual range */}
               <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Диапазон длительности</h3>
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('monteCarlo.durationRange')}</h3>
                 <div className="relative h-12 bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden">
                   {/* Range visualization */}
                   <div
@@ -183,24 +186,24 @@ const SimulationDetailPage: React.FC = () => {
                   />
                 </div>
                 <div className="flex justify-between mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-                  <span>{r.minDuration} дн.</span>
+                  <span>{r.minDuration} {t('monteCarlo.days')}</span>
                   <div className="flex gap-4">
                     <span className="text-success-600 font-medium">P50: {r.p50Duration}</span>
                     <span className="text-warning-600 font-medium">P85: {r.p85Duration}</span>
                     <span className="text-danger-600 font-medium">P95: {r.p95Duration}</span>
                   </div>
-                  <span>{r.maxDuration} дн.</span>
+                  <span>{r.maxDuration} {t('monteCarlo.days')}</span>
                 </div>
               </div>
 
               {/* Info */}
               <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Параметры симуляции</h3>
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('monteCarlo.simulationParams')}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
-                  <InfoItem icon={<Target size={15} />} label="Итераций" value={formatNumber(s.iterations)} />
-                  <InfoItem icon={<BarChart3 size={15} />} label="Уровень доверия" value={`${s.confidenceLevel}%`} />
-                  <InfoItem icon={<Clock size={15} />} label="Задач в модели" value={String(s.tasks.length)} />
-                  <InfoItem icon={<Calendar size={15} />} label="Рассчитано" value={r.calculatedAt ? formatDateLong(r.calculatedAt) : '---'} />
+                  <InfoItem icon={<Target size={15} />} label={t('monteCarlo.iterations')} value={formatNumber(s.iterations)} />
+                  <InfoItem icon={<BarChart3 size={15} />} label={t('monteCarlo.confidenceLevel')} value={`${s.confidenceLevel}%`} />
+                  <InfoItem icon={<Clock size={15} />} label={t('monteCarlo.tasksInModel')} value={String(s.tasks.length)} />
+                  <InfoItem icon={<Calendar size={15} />} label={t('monteCarlo.calculatedAt')} value={r.calculatedAt ? formatDateLong(r.calculatedAt) : '---'} />
                 </div>
                 {s.description && (
                   <p className="text-sm text-neutral-600 leading-relaxed mt-5 pt-5 border-t border-neutral-100">
@@ -212,9 +215,9 @@ const SimulationDetailPage: React.FC = () => {
           ) : (
             <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-12 flex flex-col items-center justify-center text-center">
               <Play size={48} className="text-neutral-300 mb-4" />
-              <h3 className="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Запустите симуляцию</h3>
+              <h3 className="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">{t('monteCarlo.runSimulation')}</h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-md">
-                Добавьте задачи и запустите моделирование для получения результатов.
+                {t('monteCarlo.runSimulationHint')}
               </p>
             </div>
           )}
@@ -224,30 +227,30 @@ const SimulationDetailPage: React.FC = () => {
       {activeTab === 'tasks' && (
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
           <div className="px-5 py-4 border-b border-neutral-100">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Задачи модели ({s.tasks.length})</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('monteCarlo.modelTasks')} ({s.tasks.length})</h3>
           </div>
           {s.tasks.length > 0 ? (
             <table className="w-full">
               <thead>
                 <tr className="border-b border-neutral-100 bg-neutral-50 dark:bg-neutral-800">
-                  <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Задача</th>
-                  <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Оптимист.</th>
-                  <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Наиболее вер.</th>
-                  <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Пессимист.</th>
-                  <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Предшественники</th>
+                  <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('monteCarlo.colTask')}</th>
+                  <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('monteCarlo.colOptimistic')}</th>
+                  <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('monteCarlo.colMostLikely')}</th>
+                  <th className="px-5 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('monteCarlo.colPessimistic')}</th>
+                  <th className="px-5 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('monteCarlo.colPredecessors')}</th>
                 </tr>
               </thead>
               <tbody>
-                {s.tasks.map((t: SimulationTask) => {
-                  const predecessorNames = t.predecessors
+                {s.tasks.map((task: SimulationTask) => {
+                  const predecessorNames = task.predecessors
                     ?.map((pid) => s.tasks.find((st) => st.id === pid)?.name ?? pid)
                     .join(', ');
                   return (
-                    <tr key={t.id} className="border-b border-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                      <td className="px-5 py-3 text-sm font-medium text-neutral-900 dark:text-neutral-100">{t.name}</td>
-                      <td className="px-5 py-3 text-sm tabular-nums text-right text-success-600">{t.optimisticDuration} дн.</td>
-                      <td className="px-5 py-3 text-sm tabular-nums text-right text-neutral-700 dark:text-neutral-300 font-medium">{t.mostLikelyDuration} дн.</td>
-                      <td className="px-5 py-3 text-sm tabular-nums text-right text-danger-600">{t.pessimisticDuration} дн.</td>
+                    <tr key={task.id} className="border-b border-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                      <td className="px-5 py-3 text-sm font-medium text-neutral-900 dark:text-neutral-100">{task.name}</td>
+                      <td className="px-5 py-3 text-sm tabular-nums text-right text-success-600">{task.optimisticDuration} {t('monteCarlo.days')}</td>
+                      <td className="px-5 py-3 text-sm tabular-nums text-right text-neutral-700 dark:text-neutral-300 font-medium">{task.mostLikelyDuration} {t('monteCarlo.days')}</td>
+                      <td className="px-5 py-3 text-sm tabular-nums text-right text-danger-600">{task.pessimisticDuration} {t('monteCarlo.days')}</td>
                       <td className="px-5 py-3 text-sm text-neutral-500 dark:text-neutral-400">{predecessorNames || '---'}</td>
                     </tr>
                   );
@@ -256,7 +259,7 @@ const SimulationDetailPage: React.FC = () => {
             </table>
           ) : (
             <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
-              <p className="text-sm">Задачи ещё не добавлены</p>
+              <p className="text-sm">{t('monteCarlo.noTasksYet')}</p>
             </div>
           )}
         </div>

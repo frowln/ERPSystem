@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -40,4 +41,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.deleted = false")
     Page<User> findAllActive(Pageable pageable);
+
+    @Query("SELECT u.id, u.firstName, u.lastName FROM User u WHERE u.id IN :ids AND u.deleted = false")
+    List<Object[]> findNamesByIds(@Param("ids") List<UUID> ids);
+
+    @Query("SELECT u.id, u.firstName, u.lastName FROM User u WHERE u.id IN :ids AND u.deleted = false AND u.organizationId = :organizationId")
+    List<Object[]> findNamesByIdsAndOrganizationId(@Param("ids") List<UUID> ids,
+                                                   @Param("organizationId") UUID organizationId);
 }

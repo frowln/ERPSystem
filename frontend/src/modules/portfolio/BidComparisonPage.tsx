@@ -8,6 +8,7 @@ import { Select } from '@/design-system/components/FormField';
 import { portfolioApi } from '@/api/portfolio';
 import { formatMoney, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
 import type { BidComparison } from './types';
 
 const recommendationColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
@@ -16,23 +17,25 @@ const recommendationColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow
   NOT_RECOMMENDED: 'red',
 };
 
-const recommendationLabels: Record<string, string> = {
-  RECOMMENDED: 'Рекомендуется',
-  ACCEPTABLE: 'Допустимо',
-  NOT_RECOMMENDED: 'Не рекомендуется',
-};
+const getRecommendationLabels = (): Record<string, string> => ({
+  RECOMMENDED: t('portfolio.bidComparison.recommended'),
+  ACCEPTABLE: t('portfolio.bidComparison.acceptable'),
+  NOT_RECOMMENDED: t('portfolio.bidComparison.notRecommended'),
+});
 
-const criteriaLabels: Record<string, string> = {
-  technicalScore: 'Техническое',
-  financialScore: 'Финансовое',
-  experienceScore: 'Опыт',
-  qualityScore: 'Качество',
-  timelineScore: 'Сроки',
-};
+const getCriteriaLabels = (): Record<string, string> => ({
+  technicalScore: t('portfolio.bidComparison.technical'),
+  financialScore: t('portfolio.bidComparison.financial'),
+  experienceScore: t('portfolio.bidComparison.experience'),
+  qualityScore: t('portfolio.bidComparison.quality'),
+  timelineScore: t('portfolio.bidComparison.timeline'),
+});
 
 const criteriaKeys = ['technicalScore', 'financialScore', 'experienceScore', 'qualityScore', 'timelineScore'] as const;
 
 const BidComparisonPage: React.FC = () => {
+  const recommendationLabels = getRecommendationLabels();
+  const criteriaLabels = getCriteriaLabels();
   const [selectedBid, setSelectedBid] = useState('bp-1');
 
   const { data: comparisons } = useQuery({
@@ -56,20 +59,20 @@ const BidComparisonPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Сравнение предложений"
-        subtitle="Анализ и ранжирование тендерных предложений"
+        title={t('portfolio.bidComparison.title')}
+        subtitle={t('portfolio.bidComparison.subtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Портфель' },
-          { label: 'Сравнение предложений' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('nav.portfolio') },
+          { label: t('portfolio.bidComparison.title') },
         ]}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Scale size={18} />} label="Участников" value={metrics.totalBidders} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Средняя цена" value={formatMoneyCompact(metrics.avgPrice)} />
-        <MetricCard label="Разброс цен" value={`${formatMoneyCompact(metrics.minPrice)} - ${formatMoneyCompact(metrics.maxPrice)}`} />
-        <MetricCard icon={<Award size={18} />} label="Рекомендовано" value={metrics.recommended} subtitle="участников" />
+        <MetricCard icon={<Scale size={18} />} label={t('portfolio.bidComparison.bidders')} value={metrics.totalBidders} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('portfolio.bidComparison.avgPrice')} value={formatMoneyCompact(metrics.avgPrice)} />
+        <MetricCard label={t('portfolio.bidComparison.priceRange')} value={`${formatMoneyCompact(metrics.minPrice)} - ${formatMoneyCompact(metrics.maxPrice)}`} />
+        <MetricCard icon={<Award size={18} />} label={t('portfolio.bidComparison.recommendedLabel')} value={metrics.recommended} subtitle={t('portfolio.bidComparison.biddersSubtitle')} />
       </div>
 
       {/* Ranking cards */}
@@ -102,11 +105,11 @@ const BidComparisonPage: React.FC = () => {
             </div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Цена предложения</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('portfolio.bidComparison.bidPrice')}</p>
                 <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tabular-nums">{formatMoneyCompact(bid.totalPrice)}</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Итоговый балл</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('portfolio.bidComparison.totalScore')}</p>
                 <p className={cn(
                   'text-2xl font-bold tabular-nums',
                   bid.weightedTotal >= 80 ? 'text-success-600' : bid.weightedTotal >= 70 ? 'text-warning-600' : 'text-danger-600',
@@ -141,21 +144,21 @@ const BidComparisonPage: React.FC = () => {
 
       {/* Full comparison table */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Детальное сравнение</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('portfolio.bidComparison.detailedComparison')}</h3>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
-                <th className="px-3 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Место</th>
-                <th className="px-3 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Подрядчик</th>
-                <th className="px-3 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Цена</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Техн.</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Фин.</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Опыт</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Кач-во</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Сроки</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Итого</th>
-                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">Рекомендация</th>
+                <th className="px-3 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colRank')}</th>
+                <th className="px-3 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colContractor')}</th>
+                <th className="px-3 py-2.5 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colPrice')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colTechnical')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colFinancial')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colExperience')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colQuality')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colTimeline')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colTotal')}</th>
+                <th className="px-3 py-2.5 text-center text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase">{t('portfolio.bidComparison.colRecommendation')}</th>
               </tr>
             </thead>
             <tbody>
@@ -206,7 +209,7 @@ const BidComparisonPage: React.FC = () => {
 
       {/* Price comparison bar chart */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mt-6">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Сравнение цен предложений</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('portfolio.bidComparison.priceComparison')}</h3>
         <div className="space-y-3">
           {sortedBids.map((bid) => {
             const maxPrice = Math.max(...sortedBids.map((b) => b.totalPrice));

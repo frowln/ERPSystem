@@ -10,6 +10,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { designApi } from '@/api/design';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 import type { DesignReview } from './types';
 import type { PaginatedResponse } from '@/types';
 
@@ -21,21 +22,21 @@ const reviewStatusColorMap: Record<string, 'gray' | 'yellow' | 'green' | 'red' |
   revision_requested: 'orange',
 };
 
-const reviewStatusLabels: Record<string, string> = {
-  pending: 'Ожидает',
-  in_progress: 'В процессе',
-  approved: 'Утверждён',
-  rejected: 'Отклонён',
-  revision_requested: 'На доработку',
-};
+const getReviewStatusLabels = (): Record<string, string> => ({
+  pending: t('design.statusPending'),
+  in_progress: t('design.statusInProgress'),
+  approved: t('design.statusApproved'),
+  rejected: t('design.statusRejected'),
+  revision_requested: t('design.statusRevisionRequested'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'PENDING', label: 'Ожидает' },
-  { value: 'IN_PROGRESS', label: 'В процессе' },
-  { value: 'APPROVED', label: 'Утверждён' },
-  { value: 'REJECTED', label: 'Отклонён' },
-  { value: 'REVISION_REQUESTED', label: 'На доработку' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('design.filterAllStatuses') },
+  { value: 'PENDING', label: t('design.statusPending') },
+  { value: 'IN_PROGRESS', label: t('design.statusInProgress') },
+  { value: 'APPROVED', label: t('design.statusApproved') },
+  { value: 'REJECTED', label: t('design.statusRejected') },
+  { value: 'REVISION_REQUESTED', label: t('design.statusRevisionRequested') },
 ];
 
 type TabId = 'all' | 'PENDING' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED';
@@ -97,7 +98,7 @@ const DesignReviewPage: React.FC = () => {
     () => [
       {
         accessorKey: 'number',
-        header: '\u2116',
+        header: t('design.colNumber'),
         size: 90,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -105,32 +106,32 @@ const DesignReviewPage: React.FC = () => {
       },
       {
         accessorKey: 'versionTitle',
-        header: 'Документ',
+        header: t('design.colDocument'),
         size: 280,
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[260px]">{row.original.versionTitle}</p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-              Версия {row.original.versionNumber} | {row.original.projectName}
+              {t('design.versionLabel', { version: row.original.versionNumber })} | {row.original.projectName}
             </p>
           </div>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('design.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={reviewStatusColorMap}
-            label={reviewStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getReviewStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'reviewerName',
-        header: 'Проверяющий',
+        header: t('design.colReviewer'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span>
@@ -138,7 +139,7 @@ const DesignReviewPage: React.FC = () => {
       },
       {
         accessorKey: 'markupCount',
-        header: 'Замечания',
+        header: t('design.colMarkups'),
         size: 110,
         cell: ({ getValue }) => {
           const count = getValue<number>();
@@ -154,7 +155,7 @@ const DesignReviewPage: React.FC = () => {
       },
       {
         accessorKey: 'dueDate',
-        header: 'Срок',
+        header: t('design.colDueDate'),
         size: 120,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
@@ -180,7 +181,7 @@ const DesignReviewPage: React.FC = () => {
               navigate(`/design/reviews/${row.original.id}`);
             }}
           >
-            Открыть
+            {t('design.openAction')}
           </button>
         ),
       },
@@ -196,19 +197,19 @@ const DesignReviewPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Проверки проектной документации"
-        subtitle={`${reviews.length} проверок в системе`}
+        title={t('design.reviewsTitle')}
+        subtitle={t('design.reviewsSubtitle', { count: String(reviews.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Проектирование' },
-          { label: 'Проверки' },
+          { label: t('design.breadcrumbHome'), href: '/' },
+          { label: t('design.breadcrumbDesign') },
+          { label: t('design.breadcrumbReviews') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'PENDING', label: 'Ожидающие', count: tabCounts.pending },
-          { id: 'IN_PROGRESS', label: 'В процессе', count: tabCounts.in_progress },
-          { id: 'APPROVED', label: 'Утверждённые', count: tabCounts.approved },
-          { id: 'REJECTED', label: 'Отклонённые', count: tabCounts.rejected },
+          { id: 'all', label: t('design.tabAll'), count: tabCounts.all },
+          { id: 'PENDING', label: t('design.tabPending'), count: tabCounts.pending },
+          { id: 'IN_PROGRESS', label: t('design.tabInProgress'), count: tabCounts.in_progress },
+          { id: 'APPROVED', label: t('design.tabApproved'), count: tabCounts.approved },
+          { id: 'REJECTED', label: t('design.tabRejected'), count: tabCounts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -218,22 +219,22 @@ const DesignReviewPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<ClipboardCheck size={18} />}
-          label="Всего проверок"
+          label={t('design.metricTotalReviews')}
           value={metrics.total}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="В процессе"
+          label={t('design.metricInProgress')}
           value={metrics.pending}
         />
         <MetricCard
           icon={<CheckCircle size={18} />}
-          label="Утверждено"
+          label={t('design.metricApproved')}
           value={metrics.approved}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Всего замечаний"
+          label={t('design.metricTotalMarkups')}
           value={metrics.totalMarkups}
         />
       </div>
@@ -243,14 +244,14 @@ const DesignReviewPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по номеру, документу..."
+            placeholder={t('design.searchReviewPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -268,8 +269,8 @@ const DesignReviewPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет проверок"
-        emptyDescription="Проверки проектной документации отсутствуют"
+        emptyTitle={t('design.emptyReviewsTitle')}
+        emptyDescription={t('design.emptyReviewsDescription')}
       />
     </div>
   );

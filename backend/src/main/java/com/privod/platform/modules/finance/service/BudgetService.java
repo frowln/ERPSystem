@@ -1,6 +1,7 @@
 package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.finance.domain.Budget;
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.BudgetStatus;
@@ -41,13 +42,23 @@ public class BudgetService {
 
     @Transactional(readOnly = true)
     public Page<BudgetResponse> listBudgets(UUID projectId, BudgetStatus status, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Page<Budget> page;
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             page = budgetRepository.findByProjectIdAndDeletedFalse(projectId, pageable);
         } else if (status != null) {
-            page = budgetRepository.findByStatusAndDeletedFalse(status, pageable);
+            List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+            if (projectIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            page = budgetRepository.findByProjectIdInAndStatusAndDeletedFalse(projectIds, status, pageable);
         } else {
-            page = budgetRepository.findAll(pageable);
+            List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+            if (projectIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            page = budgetRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable);
         }
         return enrichBudgetsWithProjectName(page);
     }
@@ -86,12 +97,19 @@ public class BudgetService {
 
     @Transactional(readOnly = true)
     public BudgetResponse getBudget(UUID id) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
         return BudgetResponse.fromEntity(budget);
     }
 
     @Transactional
     public BudgetResponse createBudget(CreateBudgetRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для бюджета");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         BigDecimal plannedRevenue = request.plannedRevenue() != null ? request.plannedRevenue() : BigDecimal.ZERO;
         BigDecimal plannedCost = request.plannedCost() != null ? request.plannedCost() : BigDecimal.ZERO;
         BigDecimal plannedMargin = request.plannedMargin() != null
@@ -118,7 +136,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponse updateBudget(UUID id, UpdateBudgetRequest request) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
 
         if (budget.getStatus() != BudgetStatus.DRAFT) {
             throw new IllegalStateException("Редактирование бюджета возможно только в статусе Черновик");
@@ -128,6 +147,7 @@ public class BudgetService {
             budget.setName(request.name());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             budget.setProjectId(request.projectId());
         }
         if (request.contractId() != null) {
@@ -155,7 +175,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponse approveBudget(UUID id) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
         BudgetStatus oldStatus = budget.getStatus();
 
         if (!budget.canTransitionTo(BudgetStatus.APPROVED)) {
@@ -173,7 +194,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponse activateBudget(UUID id) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
         BudgetStatus oldStatus = budget.getStatus();
 
         if (!budget.canTransitionTo(BudgetStatus.ACTIVE)) {
@@ -191,7 +213,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponse freezeBudget(UUID id) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
         BudgetStatus oldStatus = budget.getStatus();
 
         if (!budget.canTransitionTo(BudgetStatus.FROZEN)) {
@@ -209,7 +232,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponse closeBudget(UUID id) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
         BudgetStatus oldStatus = budget.getStatus();
 
         if (!budget.canTransitionTo(BudgetStatus.CLOSED)) {
@@ -227,7 +251,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetResponse recalculateActuals(UUID id) {
-        Budget budget = getBudgetOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(id, organizationId);
 
         List<BudgetItem> items = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(id);
 
@@ -246,6 +271,8 @@ public class BudgetService {
 
     @Transactional(readOnly = true)
     public BudgetSummaryResponse getProjectBudgetSummary(UUID projectId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
         long totalBudgets = budgetRepository.countByProjectIdAndDeletedFalse(projectId);
         BigDecimal totalPlannedRevenue = budgetRepository.sumPlannedRevenueByProjectId(projectId);
         BigDecimal totalPlannedCost = budgetRepository.sumPlannedCostByProjectId(projectId);
@@ -265,7 +292,8 @@ public class BudgetService {
 
     @Transactional(readOnly = true)
     public List<BudgetItemResponse> getBudgetItems(UUID budgetId) {
-        getBudgetOrThrow(budgetId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getBudgetOrThrow(budgetId, organizationId);
         return budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId)
                 .stream()
                 .map(BudgetItemResponse::fromEntity)
@@ -274,7 +302,8 @@ public class BudgetService {
 
     @Transactional
     public BudgetItemResponse addBudgetItem(UUID budgetId, CreateBudgetItemRequest request) {
-        getBudgetOrThrow(budgetId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getBudgetOrThrow(budgetId, organizationId);
 
         BudgetItem item = BudgetItem.builder()
                 .budgetId(budgetId)
@@ -295,7 +324,8 @@ public class BudgetService {
 
     @Transactional
     public void deleteBudgetItem(UUID budgetId, UUID itemId) {
-        getBudgetOrThrow(budgetId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getBudgetOrThrow(budgetId, organizationId);
         BudgetItem item = budgetItemRepository.findById(itemId)
                 .filter(i -> !i.isDeleted())
                 .orElseThrow(() -> new EntityNotFoundException("Статья бюджета не найдена: " + itemId));
@@ -311,9 +341,24 @@ public class BudgetService {
         log.info("Статья бюджета удалена: {} из бюджета {}", itemId, budgetId);
     }
 
-    private Budget getBudgetOrThrow(UUID id) {
-        return budgetRepository.findById(id)
-                .filter(b -> !b.isDeleted())
+    private Budget getBudgetOrThrow(UUID id, UUID organizationId) {
+        Budget budget = budgetRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Бюджет не найден: " + id));
+        validateProjectTenant(budget.getProjectId(), organizationId);
+        return budget;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .filter(p -> organizationId.equals(p.getOrganizationId()))
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
     }
 }

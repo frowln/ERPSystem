@@ -14,6 +14,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { maintenanceApi } from '@/api/maintenance';
 import { formatDate, formatMoneyCompact } from '@/lib/format';
+import { t } from '@/i18n';
 import type { MaintenanceRequest, MaintenanceTeam, PreventiveSchedule } from './types';
 
 const MaintenanceDashboardPage: React.FC = () => {
@@ -56,26 +57,26 @@ const MaintenanceDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Обслуживание - Dashboard"
-        subtitle="Обзор технического обслуживания"
+        title={t('maintenance.dashboardTitle')}
+        subtitle={t('maintenance.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Обслуживание' },
-          { label: 'Dashboard' },
+          { label: t('maintenance.breadcrumbHome'), href: '/' },
+          { label: t('maintenance.breadcrumbMaintenance') },
+          { label: t('maintenance.dashboardBreadcrumb') },
         ]}
         actions={
           <Button iconLeft={<Wrench size={16} />} onClick={() => navigate('/maintenance/requests/new')}>
-            Новая заявка
+            {t('maintenance.newRequest')}
           </Button>
         }
       />
 
       {/* Key metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Wrench size={18} />} label="Активные заявки" value={metrics.activeRequests} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Срочные" value={metrics.urgentRequests} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Затраты (тек.)" value={formatMoneyCompact(metrics.totalCost)} />
-        <MetricCard icon={<Users size={18} />} label="Специалистов" value={metrics.totalTeamMembers} />
+        <MetricCard icon={<Wrench size={18} />} label={t('maintenance.metricActiveRequests')} value={metrics.activeRequests} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('maintenance.metricUrgent')} value={metrics.urgentRequests} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('maintenance.metricCostsCurrent')} value={formatMoneyCompact(metrics.totalCost)} />
+        <MetricCard icon={<Users size={18} />} label={t('maintenance.metricSpecialists')} value={metrics.totalTeamMembers} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -83,9 +84,9 @@ const MaintenanceDashboardPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Активные заявки</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('maintenance.activeRequestsTitle')}</h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/maintenance/requests')}>
-                Все заявки
+                {t('maintenance.allRequestsButton')}
               </Button>
             </div>
             <div className="space-y-3">
@@ -117,12 +118,12 @@ const MaintenanceDashboardPage: React.FC = () => {
                   </div>
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{request.name}</p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                    {request.equipmentName} | {request.assignedToName ?? 'Не назначено'} | {formatDate(request.scheduledDate)}
+                    {request.equipmentName} | {request.assignedToName ?? t('maintenance.notAssigned')} | {formatDate(request.scheduledDate)}
                   </p>
                 </div>
               ))}
               {requests.filter((r) => r.status === 'NEW' || r.status === 'IN_PROGRESS').length === 0 && (
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">Нет активных заявок</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center py-4">{t('maintenance.noActiveRequests')}</p>
               )}
             </div>
           </div>
@@ -132,7 +133,7 @@ const MaintenanceDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
                 <Calendar size={16} className="text-primary-500" />
-                Плановое ТО
+                {t('maintenance.preventiveMaintenanceTitle')}
               </h3>
             </div>
             <div className="space-y-3">
@@ -141,7 +142,7 @@ const MaintenanceDashboardPage: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{schedule.equipmentName}</p>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                      {schedule.name} | {schedule.teamName ?? '---'} | {schedule.estimatedDuration} ч.
+                      {schedule.name} | {schedule.teamName ?? '---'} | {schedule.estimatedDuration} {t('maintenance.hoursAbbrev')}
                     </p>
                   </div>
                   <div className="text-right">
@@ -159,7 +160,7 @@ const MaintenanceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Users size={16} className="text-primary-500" />
-              Бригады
+              {t('maintenance.teamsTitle')}
             </h3>
             <div className="space-y-4">
               {teamList.map((team) => (
@@ -168,14 +169,14 @@ const MaintenanceDashboardPage: React.FC = () => {
                     <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{team.name}</p>
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${team.isActive ? 'bg-success-50 text-success-700' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${team.isActive ? 'bg-success-500' : 'bg-neutral-400'}`} />
-                      {team.isActive ? 'Активна' : 'Неактивна'}
+                      {team.isActive ? t('maintenance.teamActive') : t('maintenance.teamInactive')}
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Руководитель: {team.leadName}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">{t('maintenance.teamLead', { name: team.leadName })}</p>
                   <div className="flex items-center gap-4 text-xs">
-                    <span className="text-neutral-600"><Users size={12} className="inline mr-1" />{team.memberCount} чел.</span>
-                    <span className="text-warning-600"><Clock size={12} className="inline mr-1" />{team.activeRequests} акт.</span>
-                    <span className="text-success-600"><CheckCircle size={12} className="inline mr-1" />{team.completedRequests} вып.</span>
+                    <span className="text-neutral-600"><Users size={12} className="inline mr-1" />{t('maintenance.teamMembersCount', { count: team.memberCount })}</span>
+                    <span className="text-warning-600"><Clock size={12} className="inline mr-1" />{t('maintenance.teamActiveCount', { count: team.activeRequests })}</span>
+                    <span className="text-success-600"><CheckCircle size={12} className="inline mr-1" />{t('maintenance.teamCompletedCount', { count: team.completedRequests })}</span>
                   </div>
                 </div>
               ))}
@@ -186,17 +187,17 @@ const MaintenanceDashboardPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <Settings size={16} className="text-primary-500" />
-              Быстрые действия
+              {t('maintenance.quickActionsTitle')}
             </h3>
             <div className="space-y-2">
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate('/maintenance/requests')}>
-                Все заявки
+                {t('maintenance.quickAllRequests')}
               </Button>
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate('/maintenance/equipment')}>
-                Оборудование
+                {t('maintenance.quickEquipment')}
               </Button>
               <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => navigate('/maintenance/requests/new')}>
-                Создать заявку
+                {t('maintenance.quickCreateRequest')}
               </Button>
             </div>
           </div>

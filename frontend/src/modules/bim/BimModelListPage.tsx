@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input } from '@/design-system/components/FormField';
 import { bimApi, type BimModel } from '@/api/bim';
 import { formatDate } from '@/lib/format';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red'> = {
   active: 'green',
@@ -18,13 +19,13 @@ const statusColorMap: Record<string, 'green' | 'yellow' | 'blue' | 'gray' | 'red
   archived: 'gray',
   error: 'red',
 };
-const statusLabels: Record<string, string> = {
-  active: 'Активная',
-  processing: 'Обработка',
-  review: 'На проверке',
-  archived: 'В архиве',
-  error: 'Ошибка',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  active: t('bim.statusActive'),
+  processing: t('bim.statusProcessing'),
+  review: t('bim.statusReview'),
+  archived: t('bim.statusArchived'),
+  error: t('bim.statusError'),
+});
 
 const BimModelListPage: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -56,10 +57,12 @@ const BimModelListPage: React.FC = () => {
     review: models.filter((m) => m.status === 'REVIEW').length,
   }), [models]);
 
-  const columns = useMemo<ColumnDef<BimModel, unknown>[]>(() => [
+  const columns = useMemo<ColumnDef<BimModel, unknown>[]>(() => {
+    const stLabels = getStatusLabels();
+    return [
     {
       accessorKey: 'name',
-      header: 'Название модели',
+      header: t('bim.colModelName'),
       size: 280,
       cell: ({ row }) => (
         <div>
@@ -70,7 +73,7 @@ const BimModelListPage: React.FC = () => {
     },
     {
       accessorKey: 'format',
-      header: 'Формат',
+      header: t('bim.colFormat'),
       size: 80,
       cell: ({ getValue }) => (
         <span className="font-mono text-xs bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded">{getValue<string>()}</span>
@@ -78,33 +81,33 @@ const BimModelListPage: React.FC = () => {
     },
     {
       accessorKey: 'version',
-      header: 'Версия',
+      header: t('bim.colVersion'),
       size: 80,
       cell: ({ getValue }) => <span className="text-neutral-600 text-sm">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'uploadDate',
-      header: 'Дата загрузки',
+      header: t('bim.colUploadDate'),
       size: 120,
       cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span>,
     },
     {
       accessorKey: 'fileSize',
-      header: 'Размер',
+      header: t('bim.colSize'),
       size: 100,
       cell: ({ getValue }) => <span className="tabular-nums text-neutral-600">{getValue<string>()}</span>,
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('bim.colStatus'),
       size: 120,
       cell: ({ getValue }) => (
-        <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={statusLabels[getValue<string>()]} />
+        <StatusBadge status={getValue<string>()} colorMap={statusColorMap} label={stLabels[getValue<string>()]} />
       ),
     },
     {
       accessorKey: 'uploadedBy',
-      header: 'Загрузил',
+      header: t('bim.colUploadedBy'),
       size: 140,
     },
     {
@@ -117,51 +120,51 @@ const BimModelListPage: React.FC = () => {
         </button>
       ),
     },
-  ], []);
+  ]; }, []);
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="BIM Модели"
-        subtitle={`${models.length} моделей в системе`}
+        title={t('bim.modelsTitle')}
+        subtitle={t('bim.modelsSubtitle', { count: String(models.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'BIM' },
-          { label: 'Модели' },
+          { label: t('bim.breadcrumbHome'), href: '/' },
+          { label: t('bim.breadcrumbBim') },
+          { label: t('bim.breadcrumbModels') },
         ]}
         actions={
           <Button iconLeft={<Upload size={16} />}>
-            Загрузить модель
+            {t('bim.uploadModel')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Активные', count: tabCounts.active },
-          { id: 'PROCESSING', label: 'Обработка', count: tabCounts.processing },
-          { id: 'REVIEW', label: 'На проверке', count: tabCounts.review },
+          { id: 'all', label: t('bim.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('bim.tabActive'), count: tabCounts.active },
+          { id: 'PROCESSING', label: t('bim.tabProcessing'), count: tabCounts.processing },
+          { id: 'REVIEW', label: t('bim.tabReview'), count: tabCounts.review },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Box size={18} />} label="Всего моделей" value={models.length} />
-        <MetricCard icon={<Box size={18} />} label="Активных" value={tabCounts.active} />
-        <MetricCard icon={<Box size={18} />} label="На обработке" value={tabCounts.processing} />
-        <MetricCard icon={<Box size={18} />} label="На проверке" value={tabCounts.review} />
+        <MetricCard icon={<Box size={18} />} label={t('bim.metricTotalModels')} value={models.length} />
+        <MetricCard icon={<Box size={18} />} label={t('bim.metricActive')} value={tabCounts.active} />
+        <MetricCard icon={<Box size={18} />} label={t('bim.metricProcessing')} value={tabCounts.processing} />
+        <MetricCard icon={<Box size={18} />} label={t('bim.metricReview')} value={tabCounts.review} />
       </div>
 
       {/* 3D Viewer placeholder */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-8 mb-6 flex flex-col items-center justify-center min-h-[200px]">
         <Box size={48} className="text-neutral-300 mb-3" />
-        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">3D Просмотрщик</p>
-        <p className="text-xs text-neutral-400 mt-1">Выберите модель для просмотра в 3D</p>
+        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">{t('bim.viewer3dTitle')}</p>
+        <p className="text-xs text-neutral-400 mt-1">{t('bim.viewer3dHint')}</p>
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-          <Input placeholder="Поиск по названию..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder={t('bim.searchModelPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
       </div>
 
@@ -174,8 +177,8 @@ const BimModelListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет моделей"
-        emptyDescription="Загрузите первую BIM модель"
+        emptyTitle={t('bim.emptyModelsTitle')}
+        emptyDescription={t('bim.emptyModelsDescription')}
       />
     </div>
   );

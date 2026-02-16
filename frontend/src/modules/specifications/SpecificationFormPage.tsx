@@ -168,7 +168,7 @@ const SpecificationFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.common.basicInfo')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.specification.labelCode')} error={errors.code?.message} required>
-              <Input placeholder="СП-001" hasError={!!errors.code} {...register('code')} />
+              <Input placeholder={t('forms.specification.placeholderCode')} hasError={!!errors.code} {...register('code')} />
             </FormField>
             <FormField label={t('forms.specification.labelProject')} error={errors.projectId?.message} required>
               <Select
@@ -212,7 +212,7 @@ const SpecificationFormPage: React.FC = () => {
                 <div className="col-span-2">
                   <FormField label={index === 0 ? t('forms.specification.labelProductCode') : undefined}>
                     <Input
-                      placeholder="Код"
+                      placeholder={t('forms.specification.placeholderProductCode')}
                       value={item.productCode}
                       onChange={(e) => updateLineItem(index, 'productCode', e.target.value)}
                     />
@@ -232,7 +232,7 @@ const SpecificationFormPage: React.FC = () => {
                 <div className="col-span-1">
                   <FormField label={index === 0 ? t('forms.specification.labelUnit') : undefined}>
                     <Input
-                      placeholder="шт"
+                      placeholder={t('forms.specification.placeholderUnit')}
                       value={item.unitOfMeasure}
                       onChange={(e) => updateLineItem(index, 'unitOfMeasure', e.target.value)}
                     />

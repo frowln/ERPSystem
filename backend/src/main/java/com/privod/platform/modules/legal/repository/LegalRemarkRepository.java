@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface LegalRemarkRepository extends JpaRepository<LegalRemark, UUID> {
+
+    Optional<LegalRemark> findByIdAndDeletedFalse(UUID id);
 
     List<LegalRemark> findByCaseIdAndDeletedFalseOrderByRemarkDateDesc(UUID caseId);
 

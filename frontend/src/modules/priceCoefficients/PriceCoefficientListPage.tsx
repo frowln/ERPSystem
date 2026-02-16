@@ -11,6 +11,7 @@ import { StatusBadge, type BadgeColor } from '@/design-system/components/StatusB
 import { Input, Select } from '@/design-system/components/FormField';
 import { priceCoefficientApi } from './api';
 import { formatDate, formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 import type { PriceCoefficient, PriceCoefficientType, PriceCoefficientStatus } from './types';
 
 const statusColorMap: Record<string, string> = {
@@ -20,40 +21,40 @@ const statusColorMap: Record<string, string> = {
   EXPIRED: 'red',
 };
 
-const statusLabels: Record<string, string> = {
-  ACTIVE: 'Активен',
-  INACTIVE: 'Неактивен',
-  DRAFT: 'Черновик',
-  EXPIRED: 'Истёк',
-};
+const getStatusLabels = (): Record<string, string> => ({
+  ACTIVE: t('priceCoefficients.statusActive'),
+  INACTIVE: t('priceCoefficients.statusInactive'),
+  DRAFT: t('priceCoefficients.statusDraft'),
+  EXPIRED: t('priceCoefficients.statusExpired'),
+});
 
-const typeLabels: Record<PriceCoefficientType, string> = {
-  REGIONAL: 'Региональный',
-  SEASONAL: 'Сезонный',
-  MATERIAL: 'Материалы',
-  LABOR: 'Трудозатраты',
-  EQUIPMENT: 'Оборудование',
-  OVERHEAD: 'Накладные',
-  CUSTOM: 'Пользовательский',
-};
+const getTypeLabels = (): Record<PriceCoefficientType, string> => ({
+  REGIONAL: t('priceCoefficients.typeRegional'),
+  SEASONAL: t('priceCoefficients.typeSeasonal'),
+  MATERIAL: t('priceCoefficients.typeMaterial'),
+  LABOR: t('priceCoefficients.typeLabor'),
+  EQUIPMENT: t('priceCoefficients.typeEquipment'),
+  OVERHEAD: t('priceCoefficients.typeOverhead'),
+  CUSTOM: t('priceCoefficients.typeCustom'),
+});
 
-const typeFilterOptions = [
-  { value: '', label: 'Все типы' },
-  { value: 'REGIONAL', label: 'Региональный' },
-  { value: 'SEASONAL', label: 'Сезонный' },
-  { value: 'MATERIAL', label: 'Материалы' },
-  { value: 'LABOR', label: 'Трудозатраты' },
-  { value: 'EQUIPMENT', label: 'Оборудование' },
-  { value: 'OVERHEAD', label: 'Накладные' },
-  { value: 'CUSTOM', label: 'Пользовательский' },
+const getTypeFilterOptions = () => [
+  { value: '', label: t('priceCoefficients.allTypes') },
+  { value: 'REGIONAL', label: t('priceCoefficients.typeRegional') },
+  { value: 'SEASONAL', label: t('priceCoefficients.typeSeasonal') },
+  { value: 'MATERIAL', label: t('priceCoefficients.typeMaterial') },
+  { value: 'LABOR', label: t('priceCoefficients.typeLabor') },
+  { value: 'EQUIPMENT', label: t('priceCoefficients.typeEquipment') },
+  { value: 'OVERHEAD', label: t('priceCoefficients.typeOverhead') },
+  { value: 'CUSTOM', label: t('priceCoefficients.typeCustom') },
 ];
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'ACTIVE', label: 'Активен' },
-  { value: 'INACTIVE', label: 'Неактивен' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'EXPIRED', label: 'Истёк' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('priceCoefficients.allStatuses') },
+  { value: 'ACTIVE', label: t('priceCoefficients.statusActive') },
+  { value: 'INACTIVE', label: t('priceCoefficients.statusInactive') },
+  { value: 'DRAFT', label: t('priceCoefficients.statusDraft') },
+  { value: 'EXPIRED', label: t('priceCoefficients.statusExpired') },
 ];
 
 const PriceCoefficientListPage: React.FC = () => {
@@ -105,11 +106,14 @@ const PriceCoefficientListPage: React.FC = () => {
     return result;
   }, [coefficients, typeFilter, statusFilter, search]);
 
+  const typeLabels = getTypeLabels();
+  const statusLabels = getStatusLabels();
+
   const columns = useMemo<ColumnDef<PriceCoefficient, unknown>[]>(
     () => [
       {
         accessorKey: 'code',
-        header: 'Код',
+        header: t('priceCoefficients.colCode'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -117,7 +121,7 @@ const PriceCoefficientListPage: React.FC = () => {
       },
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('priceCoefficients.colName'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -130,7 +134,7 @@ const PriceCoefficientListPage: React.FC = () => {
       },
       {
         accessorKey: 'type',
-        header: 'Тип',
+        header: t('priceCoefficients.colType'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{typeLabels[getValue<PriceCoefficientType>()] ?? getValue<string>()}</span>
@@ -138,7 +142,7 @@ const PriceCoefficientListPage: React.FC = () => {
       },
       {
         accessorKey: 'value',
-        header: 'Значение',
+        header: t('priceCoefficients.colValue'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">{getValue<number>().toFixed(4)}</span>
@@ -146,7 +150,7 @@ const PriceCoefficientListPage: React.FC = () => {
       },
       {
         accessorKey: 'effectiveFrom',
-        header: 'Действует с',
+        header: t('priceCoefficients.colEffectiveFrom'),
         size: 130,
         cell: ({ getValue }) => (
           <span className="tabular-nums">{formatDate(getValue<string>())}</span>
@@ -154,15 +158,15 @@ const PriceCoefficientListPage: React.FC = () => {
       },
       {
         accessorKey: 'effectiveTo',
-        header: 'Действует до',
+        header: t('priceCoefficients.colEffectiveTo'),
         size: 130,
         cell: ({ getValue }) => (
-          <span className="tabular-nums">{getValue<string>() ? formatDate(getValue<string>()) : 'Бессрочно'}</span>
+          <span className="tabular-nums">{getValue<string>() ? formatDate(getValue<string>()) : t('priceCoefficients.indefinite')}</span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('priceCoefficients.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -173,7 +177,7 @@ const PriceCoefficientListPage: React.FC = () => {
         ),
       },
     ],
-    [],
+    [typeLabels, statusLabels],
   );
 
   const handleRowClick = useCallback(
@@ -184,15 +188,15 @@ const PriceCoefficientListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Ценовые коэффициенты"
-        subtitle={`${coefficients.length} коэффициентов в системе`}
+        title={t('priceCoefficients.listTitle')}
+        subtitle={t('priceCoefficients.listSubtitle', { count: coefficients.length })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Ценовые коэффициенты' },
+          { label: t('priceCoefficients.breadcrumbHome'), href: '/' },
+          { label: t('priceCoefficients.breadcrumbPriceCoefficients') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/price-coefficients/new')}>
-            Новый коэффициент
+            {t('priceCoefficients.newCoefficient')}
           </Button>
         }
       />
@@ -202,20 +206,20 @@ const PriceCoefficientListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по коду, названию..."
+            placeholder={t('priceCoefficients.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={typeFilterOptions}
+          options={getTypeFilterOptions()}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="w-48"
         />
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -235,24 +239,24 @@ const PriceCoefficientListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('priceCoefficients.bulkDelete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} коэффициент(ов)?`,
-                description: 'Операция необратима. Выбранные коэффициенты будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('priceCoefficients.confirmDeleteTitle', { count: ids.length }),
+                description: t('priceCoefficients.confirmDeleteDescription'),
+                confirmLabel: t('priceCoefficients.confirmDeleteBtn'),
+                cancelLabel: t('common.cancel'),
               });
               if (!isConfirmed) return;
               deleteMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет коэффициентов"
-        emptyDescription="Создайте первый ценовой коэффициент"
+        emptyTitle={t('priceCoefficients.emptyTitle')}
+        emptyDescription={t('priceCoefficients.emptyDescription')}
       />
     </div>
   );

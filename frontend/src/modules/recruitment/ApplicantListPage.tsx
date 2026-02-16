@@ -19,27 +19,28 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { recruitmentApi } from '@/api/recruitment';
 import { formatDate } from '@/lib/format';
 import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 import type { Applicant } from './types';
 
 type TabId = 'all' | 'NEW' | 'SCREENING' | 'INTERVIEW' | 'OFFER' | 'HIRED';
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'NEW', label: 'Новый' },
-  { value: 'SCREENING', label: 'Скрининг' },
-  { value: 'INTERVIEW', label: 'Собеседование' },
-  { value: 'OFFER', label: 'Оффер' },
-  { value: 'HIRED', label: 'Принят' },
-  { value: 'REJECTED', label: 'Отклонён' },
-  { value: 'WITHDRAWN', label: 'Отозван' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('recruitment.list.statusAllStatuses') },
+  { value: 'NEW', label: t('recruitment.list.statusNew') },
+  { value: 'SCREENING', label: t('recruitment.list.statusScreening') },
+  { value: 'INTERVIEW', label: t('recruitment.list.statusInterview') },
+  { value: 'OFFER', label: t('recruitment.list.statusOffer') },
+  { value: 'HIRED', label: t('recruitment.list.statusHired') },
+  { value: 'REJECTED', label: t('recruitment.list.statusRejected') },
+  { value: 'WITHDRAWN', label: t('recruitment.list.statusWithdrawn') },
 ];
 
-const priorityFilterOptions = [
-  { value: '', label: 'Все приоритеты' },
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
-  { value: 'HIGH', label: 'Высокий' },
-  { value: 'URGENT', label: 'Срочный' },
+const getPriorityFilterOptions = () => [
+  { value: '', label: t('recruitment.list.priorityAll') },
+  { value: 'LOW', label: t('recruitment.list.priorityLow') },
+  { value: 'MEDIUM', label: t('recruitment.list.priorityMedium') },
+  { value: 'HIGH', label: t('recruitment.list.priorityHigh') },
+  { value: 'URGENT', label: t('recruitment.list.priorityUrgent') },
 ];
 
 
@@ -59,10 +60,10 @@ const ApplicantListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applicants'] });
-      toast.success('Кандидат(ы) удалены');
+      toast.success(t('recruitment.list.deleteSuccess'));
     },
     onError: () => {
-      toast.error('Ошибка при удалении');
+      toast.error(t('recruitment.list.deleteError'));
     },
   });
 
@@ -125,7 +126,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'fullName',
-        header: 'Кандидат',
+        header: t('recruitment.list.colCandidate'),
         size: 250,
         cell: ({ row }) => (
           <div>
@@ -136,7 +137,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'positionName',
-        header: 'Должность',
+        header: t('recruitment.list.colPosition'),
         size: 180,
         cell: ({ row }) => (
           <div>
@@ -149,7 +150,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('recruitment.list.colStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -161,7 +162,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'priority',
-        header: 'Приоритет',
+        header: t('recruitment.list.colPriority'),
         size: 120,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -173,7 +174,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'experienceYears',
-        header: 'Опыт (лет)',
+        header: t('recruitment.list.colExperience'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">{getValue<number>() ?? '---'}</span>
@@ -181,7 +182,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'recruiterName',
-        header: 'Рекрутер',
+        header: t('recruitment.list.colRecruiter'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="text-neutral-700 dark:text-neutral-300">{getValue<string>() ?? '---'}</span>
@@ -189,7 +190,7 @@ const ApplicantListPage: React.FC = () => {
       },
       {
         accessorKey: 'appliedAt',
-        header: 'Дата заявки',
+        header: t('recruitment.list.colAppliedAt'),
         size: 110,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600 text-xs">{formatDate(getValue<string>())}</span>
@@ -207,49 +208,49 @@ const ApplicantListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Кандидаты"
-        subtitle={`${applicants.length} кандидатов`}
+        title={t('recruitment.list.title')}
+        subtitle={t('recruitment.list.subtitle', { count: String(applicants.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Рекрутинг' },
-          { label: 'Кандидаты' },
+          { label: t('recruitment.list.breadcrumbHome'), href: '/' },
+          { label: t('recruitment.list.breadcrumbRecruitment') },
+          { label: t('recruitment.list.breadcrumbApplicants') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/recruitment/applicants/new')}>
-            Новый кандидат
+            {t('recruitment.list.newApplicant')}
           </Button>
         }
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'NEW', label: 'Новые', count: tabCounts.new },
-          { id: 'SCREENING', label: 'Скрининг', count: tabCounts.screening },
-          { id: 'INTERVIEW', label: 'Собеседование', count: tabCounts.interview },
-          { id: 'OFFER', label: 'Оффер', count: tabCounts.offer },
-          { id: 'HIRED', label: 'Приняты', count: tabCounts.hired },
+          { id: 'all', label: t('recruitment.list.tabAll'), count: tabCounts.all },
+          { id: 'NEW', label: t('recruitment.list.tabNew'), count: tabCounts.new },
+          { id: 'SCREENING', label: t('recruitment.list.tabScreening'), count: tabCounts.screening },
+          { id: 'INTERVIEW', label: t('recruitment.list.tabInterview'), count: tabCounts.interview },
+          { id: 'OFFER', label: t('recruitment.list.tabOffer'), count: tabCounts.offer },
+          { id: 'HIRED', label: t('recruitment.list.tabHired'), count: tabCounts.hired },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Users size={18} />} label="Всего кандидатов" value={metrics.total} />
-        <MetricCard icon={<Clock size={18} />} label="В процессе" value={metrics.inProgress} />
-        <MetricCard icon={<UserCheck size={18} />} label="Принято" value={metrics.hired} />
-        <MetricCard icon={<Star size={18} />} label="Ср. опыт (лет)" value={metrics.avgExperience} />
+        <MetricCard icon={<Users size={18} />} label={t('recruitment.list.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<Clock size={18} />} label={t('recruitment.list.metricInProgress')} value={metrics.inProgress} />
+        <MetricCard icon={<UserCheck size={18} />} label={t('recruitment.list.metricHired')} value={metrics.hired} />
+        <MetricCard icon={<Star size={18} />} label={t('recruitment.list.metricAvgExperience')} value={metrics.avgExperience} />
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по имени, должности, email..."
+            placeholder={t('recruitment.list.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={priorityFilterOptions}
+          options={getPriorityFilterOptions()}
           value={priorityFilter}
           onChange={(e) => setPriorityFilter(e.target.value)}
           className="w-48"
@@ -268,24 +269,24 @@ const ApplicantListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('recruitment.list.bulkDelete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} кандидат(ов)?`,
-                description: 'Операция необратима. Выбранные карточки кандидатов будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('recruitment.list.deleteConfirmTitle', { count: String(ids.length) }),
+                description: t('recruitment.list.deleteConfirmDescription'),
+                confirmLabel: t('recruitment.list.deleteConfirmLabel'),
+                cancelLabel: t('recruitment.list.deleteConfirmCancel'),
               });
               if (!isConfirmed) return;
               deleteApplicantMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет кандидатов"
-        emptyDescription="Добавьте первого кандидата для начала работы"
+        emptyTitle={t('recruitment.list.emptyTitle')}
+        emptyDescription={t('recruitment.list.emptyDescription')}
       />
     </div>
   );

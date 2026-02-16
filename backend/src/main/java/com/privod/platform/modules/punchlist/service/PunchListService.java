@@ -1,6 +1,9 @@
 package com.privod.platform.modules.punchlist.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.punchlist.domain.PunchItem;
 import com.privod.platform.modules.punchlist.domain.PunchItemComment;
 import com.privod.platform.modules.punchlist.domain.PunchItemStatus;
@@ -15,6 +18,8 @@ import com.privod.platform.modules.punchlist.web.dto.CreatePunchListRequest;
 import com.privod.platform.modules.punchlist.web.dto.PunchItemCommentResponse;
 import com.privod.platform.modules.punchlist.web.dto.PunchItemResponse;
 import com.privod.platform.modules.punchlist.web.dto.PunchListResponse;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,34 +40,51 @@ public class PunchListService {
     private final PunchListRepository punchListRepository;
     private final PunchItemRepository punchItemRepository;
     private final PunchItemCommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     // ---- Punch List CRUD ----
 
     @Transactional(readOnly = true)
     public Page<PunchListResponse> listPunchLists(UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (projectId != null) {
+            validateProjectTenant(projectId, organizationId);
             return punchListRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
                     .map(PunchListResponse::fromEntity);
         }
-        return punchListRepository.findAll(pageable).map(PunchListResponse::fromEntity);
+        List<UUID> projectIds = getOrganizationProjectIds(organizationId);
+        if (projectIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return punchListRepository.findByProjectIdInAndDeletedFalse(projectIds, pageable)
+                .map(PunchListResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public PunchListResponse getPunchList(UUID id) {
-        PunchList punchList = getPunchListOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchList punchList = getPunchListOrThrow(id, organizationId);
         return PunchListResponse.fromEntity(punchList);
     }
 
     @Transactional
     public PunchListResponse createPunchList(CreatePunchListRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        if (request.projectId() == null) {
+            throw new IllegalArgumentException("Проект обязателен для списка замечаний");
+        }
+        validateProjectTenant(request.projectId(), organizationId);
+
         String code = generatePunchListCode();
 
         PunchList punchList = PunchList.builder()
                 .code(code)
                 .projectId(request.projectId())
                 .name(request.name())
-                .createdById(request.createdById())
+                .createdById(currentUserId)
                 .dueDate(request.dueDate())
                 .status(PunchListStatus.OPEN)
                 .completionPercent(0)
@@ -79,7 +101,8 @@ public class PunchListService {
 
     @Transactional
     public PunchListResponse updatePunchList(UUID id, CreatePunchListRequest request) {
-        PunchList punchList = getPunchListOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchList punchList = getPunchListOrThrow(id, organizationId);
 
         if (request.name() != null) punchList.setName(request.name());
         if (request.dueDate() != null) punchList.setDueDate(request.dueDate());
@@ -94,7 +117,8 @@ public class PunchListService {
 
     @Transactional
     public void deletePunchList(UUID id) {
-        PunchList punchList = getPunchListOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchList punchList = getPunchListOrThrow(id, organizationId);
         punchList.softDelete();
         punchListRepository.save(punchList);
         auditService.logDelete("PunchList", id);
@@ -103,7 +127,8 @@ public class PunchListService {
 
     @Transactional
     public PunchListResponse completePunchList(UUID id) {
-        PunchList punchList = getPunchListOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchList punchList = getPunchListOrThrow(id, organizationId);
 
         if (punchList.getStatus() == PunchListStatus.COMPLETED) {
             throw new IllegalStateException("Список замечаний уже завершён");
@@ -125,7 +150,8 @@ public class PunchListService {
 
     @Transactional(readOnly = true)
     public List<PunchItemResponse> getPunchListItems(UUID punchListId) {
-        getPunchListOrThrow(punchListId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getPunchListOrThrow(punchListId, organizationId);
         return punchItemRepository.findByPunchListIdAndDeletedFalse(punchListId)
                 .stream()
                 .map(PunchItemResponse::fromEntity)
@@ -134,7 +160,9 @@ public class PunchListService {
 
     @Transactional
     public PunchItemResponse addItem(UUID punchListId, CreatePunchItemRequest request) {
-        PunchList punchList = getPunchListOrThrow(punchListId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchList punchList = getPunchListOrThrow(punchListId, organizationId);
+        validateUserTenant(request.assignedToId(), organizationId);
 
         int nextNumber = punchItemRepository.getMaxNumberForList(punchListId) + 1;
 
@@ -159,7 +187,7 @@ public class PunchListService {
             punchList.setStatus(PunchListStatus.IN_PROGRESS);
             punchListRepository.save(punchList);
         }
-        recalculateCompletion(punchListId);
+        recalculateCompletion(punchListId, organizationId);
 
         log.info("Punch item #{} added to list {} ({})", nextNumber, punchListId, item.getId());
         return PunchItemResponse.fromEntity(item);
@@ -167,7 +195,8 @@ public class PunchListService {
 
     @Transactional
     public PunchItemResponse fixItem(UUID itemId) {
-        PunchItem item = getItemOrThrow(itemId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchItem item = getItemOrThrow(itemId, organizationId);
 
         if (item.getStatus() != PunchItemStatus.OPEN && item.getStatus() != PunchItemStatus.IN_PROGRESS) {
             throw new IllegalStateException(
@@ -182,7 +211,7 @@ public class PunchListService {
         item = punchItemRepository.save(item);
         auditService.logStatusChange("PunchItem", item.getId(),
                 oldStatus.name(), PunchItemStatus.FIXED.name());
-        recalculateCompletion(item.getPunchListId());
+        recalculateCompletion(item.getPunchListId(), organizationId);
 
         log.info("Punch item fixed: #{} ({})", item.getNumber(), item.getId());
         return PunchItemResponse.fromEntity(item);
@@ -190,7 +219,9 @@ public class PunchListService {
 
     @Transactional
     public PunchItemResponse verifyItem(UUID itemId, UUID verifiedById) {
-        PunchItem item = getItemOrThrow(itemId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        PunchItem item = getItemOrThrow(itemId, organizationId);
 
         if (item.getStatus() != PunchItemStatus.FIXED) {
             throw new IllegalStateException(
@@ -200,13 +231,13 @@ public class PunchListService {
 
         PunchItemStatus oldStatus = item.getStatus();
         item.setStatus(PunchItemStatus.VERIFIED);
-        item.setVerifiedById(verifiedById);
+        item.setVerifiedById(currentUserId);
         item.setVerifiedAt(Instant.now());
 
         item = punchItemRepository.save(item);
         auditService.logStatusChange("PunchItem", item.getId(),
                 oldStatus.name(), PunchItemStatus.VERIFIED.name());
-        recalculateCompletion(item.getPunchListId());
+        recalculateCompletion(item.getPunchListId(), organizationId);
 
         log.info("Punch item verified: #{} ({})", item.getNumber(), item.getId());
         return PunchItemResponse.fromEntity(item);
@@ -214,7 +245,8 @@ public class PunchListService {
 
     @Transactional
     public PunchItemResponse closeItem(UUID itemId) {
-        PunchItem item = getItemOrThrow(itemId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchItem item = getItemOrThrow(itemId, organizationId);
 
         if (item.getStatus() != PunchItemStatus.VERIFIED) {
             throw new IllegalStateException(
@@ -228,7 +260,7 @@ public class PunchListService {
         item = punchItemRepository.save(item);
         auditService.logStatusChange("PunchItem", item.getId(),
                 oldStatus.name(), PunchItemStatus.CLOSED.name());
-        recalculateCompletion(item.getPunchListId());
+        recalculateCompletion(item.getPunchListId(), organizationId);
 
         log.info("Punch item closed: #{} ({})", item.getNumber(), item.getId());
         return PunchItemResponse.fromEntity(item);
@@ -236,11 +268,12 @@ public class PunchListService {
 
     @Transactional
     public void deleteItem(UUID itemId) {
-        PunchItem item = getItemOrThrow(itemId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        PunchItem item = getItemOrThrow(itemId, organizationId);
         item.softDelete();
         punchItemRepository.save(item);
         auditService.logDelete("PunchItem", itemId);
-        recalculateCompletion(item.getPunchListId());
+        recalculateCompletion(item.getPunchListId(), organizationId);
         log.info("Punch item deleted: #{} ({})", item.getNumber(), itemId);
     }
 
@@ -248,7 +281,8 @@ public class PunchListService {
 
     @Transactional(readOnly = true)
     public List<PunchItemCommentResponse> getItemComments(UUID itemId) {
-        getItemOrThrow(itemId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getItemOrThrow(itemId, organizationId);
         return commentRepository.findByPunchItemIdAndDeletedFalseOrderByCreatedAtDesc(itemId)
                 .stream()
                 .map(PunchItemCommentResponse::fromEntity)
@@ -257,11 +291,13 @@ public class PunchListService {
 
     @Transactional
     public PunchItemCommentResponse addComment(UUID itemId, CreatePunchItemCommentRequest request) {
-        getItemOrThrow(itemId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        getItemOrThrow(itemId, organizationId);
 
         PunchItemComment comment = PunchItemComment.builder()
                 .punchItemId(itemId)
-                .authorId(request.authorId())
+                .authorId(currentUserId)
                 .content(request.content())
                 .attachmentUrl(request.attachmentUrl())
                 .build();
@@ -275,28 +311,57 @@ public class PunchListService {
 
     // ---- Helpers ----
 
-    private void recalculateCompletion(UUID punchListId) {
+    private void recalculateCompletion(UUID punchListId, UUID organizationId) {
         long total = punchItemRepository.countByPunchListId(punchListId);
         if (total == 0) return;
 
         long completed = punchItemRepository.countCompletedByPunchListId(punchListId);
         int percent = (int) ((completed * 100) / total);
 
-        PunchList punchList = getPunchListOrThrow(punchListId);
+        PunchList punchList = getPunchListOrThrow(punchListId, organizationId);
         punchList.setCompletionPercent(percent);
         punchListRepository.save(punchList);
     }
 
-    private PunchList getPunchListOrThrow(UUID id) {
-        return punchListRepository.findById(id)
-                .filter(pl -> !pl.isDeleted())
+    private PunchList getPunchListOrThrow(UUID id, UUID organizationId) {
+        PunchList punchList = punchListRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Список замечаний не найден: " + id));
+        validateProjectTenant(punchList.getProjectId(), organizationId);
+        return punchList;
     }
 
-    private PunchItem getItemOrThrow(UUID id) {
-        return punchItemRepository.findById(id)
-                .filter(i -> !i.isDeleted())
+    private PunchItem getItemOrThrow(UUID id, UUID organizationId) {
+        PunchItem item = punchItemRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Замечание не найдено: " + id));
+        getPunchListOrThrow(item.getPunchListId(), organizationId);
+        return item;
+    }
+
+    private List<UUID> getOrganizationProjectIds(UUID organizationId) {
+        return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            throw new EntityNotFoundException("Проект не найден: null");
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        User user = userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+        if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
+            throw new EntityNotFoundException("Пользователь не найден: " + userId);
+        }
     }
 
     private String generatePunchListCode() {

@@ -351,7 +351,7 @@ const PermissionsPage: React.FC = () => {
                           <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{rule.name}</p>
                           <span className="text-[10px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 px-1.5 py-0.5 rounded">{rule.modelName}</span>
                         </div>
-                        <Button size="xs" variant="ghost" iconLeft={<Trash2 size={13} />} aria-label="Удалить правило" />
+                        <Button size="xs" variant="ghost" iconLeft={<Trash2 size={13} />} aria-label={t('mockData.ariaDeleteRule')} />
                       </div>
                       <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 font-mono text-xs text-neutral-600 mb-3">
                         {rule.domainFilter}

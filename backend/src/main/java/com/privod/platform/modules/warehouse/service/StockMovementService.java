@@ -1,6 +1,10 @@
 package com.privod.platform.modules.warehouse.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.procurement.repository.PurchaseRequestRepository;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.warehouse.domain.Material;
 import com.privod.platform.modules.warehouse.domain.StockEntry;
 import com.privod.platform.modules.warehouse.domain.StockMovement;
@@ -11,6 +15,7 @@ import com.privod.platform.modules.warehouse.repository.MaterialRepository;
 import com.privod.platform.modules.warehouse.repository.StockEntryRepository;
 import com.privod.platform.modules.warehouse.repository.StockMovementLineRepository;
 import com.privod.platform.modules.warehouse.repository.StockMovementRepository;
+import com.privod.platform.modules.warehouse.repository.WarehouseLocationRepository;
 import com.privod.platform.modules.warehouse.web.dto.CreateStockMovementLineRequest;
 import com.privod.platform.modules.warehouse.web.dto.CreateStockMovementRequest;
 import com.privod.platform.modules.warehouse.web.dto.StockMovementLineResponse;
@@ -39,13 +44,21 @@ public class StockMovementService {
     private final StockMovementLineRepository lineRepository;
     private final StockEntryRepository stockEntryRepository;
     private final MaterialRepository materialRepository;
+    private final WarehouseLocationRepository warehouseLocationRepository;
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
+    private final PurchaseRequestRepository purchaseRequestRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<StockMovementResponse> listMovements(StockMovementStatus status, StockMovementType movementType,
                                                       UUID projectId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
         Specification<StockMovement> spec = Specification
-                .where(StockMovementSpecification.notDeleted())
+                .where(StockMovementSpecification.belongsToOrganization(organizationId))
+                .and(StockMovementSpecification.notDeleted())
                 .and(StockMovementSpecification.hasStatus(status))
                 .and(StockMovementSpecification.hasMovementType(movementType))
                 .and(StockMovementSpecification.belongsToProject(projectId));
@@ -59,13 +72,16 @@ public class StockMovementService {
 
     @Transactional(readOnly = true)
     public StockMovementResponse getMovement(UUID id) {
-        StockMovement movement = getMovementOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(id, organizationId);
         List<StockMovementLineResponse> lines = getMovementLines(id);
         return StockMovementResponse.fromEntity(movement, lines);
     }
 
     @Transactional(readOnly = true)
     public List<StockMovementLineResponse> getMovementLines(UUID movementId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getMovementOrThrow(movementId, organizationId);
         return lineRepository.findByMovementIdAndDeletedFalseOrderBySequenceAsc(movementId)
                 .stream()
                 .map(StockMovementLineResponse::fromEntity)
@@ -74,11 +90,16 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementResponse createMovement(CreateStockMovementRequest request) {
-        validateMovementLocations(request.movementType(), request.sourceLocationId(), request.destinationLocationId());
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateMovementLocations(request.movementType(), request.sourceLocationId(), request.destinationLocationId(), organizationId);
+        validateProjectTenant(request.projectId(), organizationId);
+        validateUserTenant(request.responsibleId(), organizationId);
+        validatePurchaseRequestTenant(request.purchaseRequestId(), organizationId);
 
         String number = generateMovementNumber();
 
         StockMovement movement = StockMovement.builder()
+                .organizationId(organizationId)
                 .number(number)
                 .movementDate(request.movementDate())
                 .movementType(request.movementType())
@@ -102,7 +123,8 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementResponse updateMovement(UUID id, UpdateStockMovementRequest request) {
-        StockMovement movement = getMovementOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(id, organizationId);
 
         if (movement.getStatus() != StockMovementStatus.DRAFT) {
             throw new IllegalStateException("Редактирование движения возможно только в статусе Черновик");
@@ -115,21 +137,26 @@ public class StockMovementService {
             movement.setMovementType(request.movementType());
         }
         if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
             movement.setProjectId(request.projectId());
         }
         if (request.sourceLocationId() != null) {
+            validateLocationTenant(request.sourceLocationId(), organizationId);
             movement.setSourceLocationId(request.sourceLocationId());
         }
         if (request.destinationLocationId() != null) {
+            validateLocationTenant(request.destinationLocationId(), organizationId);
             movement.setDestinationLocationId(request.destinationLocationId());
         }
         if (request.purchaseRequestId() != null) {
+            validatePurchaseRequestTenant(request.purchaseRequestId(), organizationId);
             movement.setPurchaseRequestId(request.purchaseRequestId());
         }
         if (request.m29Id() != null) {
             movement.setM29Id(request.m29Id());
         }
         if (request.responsibleId() != null) {
+            validateUserTenant(request.responsibleId(), organizationId);
             movement.setResponsibleId(request.responsibleId());
         }
         if (request.responsibleName() != null) {
@@ -138,6 +165,12 @@ public class StockMovementService {
         if (request.notes() != null) {
             movement.setNotes(request.notes());
         }
+        validateMovementLocations(
+                movement.getMovementType(),
+                movement.getSourceLocationId(),
+                movement.getDestinationLocationId(),
+                organizationId
+        );
 
         movement = movementRepository.save(movement);
         auditService.logUpdate("StockMovement", movement.getId(), "multiple", null, null);
@@ -149,14 +182,14 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementLineResponse addLine(UUID movementId, CreateStockMovementLineRequest request) {
-        StockMovement movement = getMovementOrThrow(movementId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(movementId, organizationId);
 
         if (movement.getStatus() != StockMovementStatus.DRAFT) {
             throw new IllegalStateException("Добавление строк возможно только в статусе Черновик");
         }
 
-        Material material = materialRepository.findById(request.materialId())
-                .filter(m -> !m.isDeleted())
+        Material material = materialRepository.findByIdAndOrganizationIdAndDeletedFalse(request.materialId(), organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Материал не найден: " + request.materialId()));
 
         StockMovementLine line = StockMovementLine.builder()
@@ -180,7 +213,8 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementResponse confirmMovement(UUID id) {
-        StockMovement movement = getMovementOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(id, organizationId);
 
         if (!movement.canTransitionTo(StockMovementStatus.CONFIRMED)) {
             throw new IllegalStateException(
@@ -205,7 +239,11 @@ public class StockMovementService {
 
             for (StockMovementLine line : lines) {
                 StockEntry stockEntry = stockEntryRepository
-                        .findByMaterialIdAndLocationIdAndDeletedFalse(line.getMaterialId(), sourceLocationId)
+                        .findByMaterialIdAndLocationIdAndOrganizationIdAndDeletedFalse(
+                                line.getMaterialId(),
+                                sourceLocationId,
+                                organizationId
+                        )
                         .orElse(null);
 
                 BigDecimal available = stockEntry != null ? stockEntry.getAvailableQuantity() : BigDecimal.ZERO;
@@ -229,7 +267,8 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementResponse executeMovement(UUID id) {
-        StockMovement movement = getMovementOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(id, organizationId);
 
         if (!movement.canTransitionTo(StockMovementStatus.DONE)) {
             throw new IllegalStateException(
@@ -240,7 +279,7 @@ public class StockMovementService {
         List<StockMovementLine> lines = lineRepository.findByMovementIdAndDeletedFalseOrderBySequenceAsc(id);
 
         for (StockMovementLine line : lines) {
-            applyStockMovementLine(movement, line);
+            applyStockMovementLine(movement, line, organizationId);
         }
 
         StockMovementStatus oldStatus = movement.getStatus();
@@ -256,7 +295,8 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementResponse cancelMovement(UUID id) {
-        StockMovement movement = getMovementOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(id, organizationId);
 
         if (!movement.canTransitionTo(StockMovementStatus.CANCELLED)) {
             throw new IllegalStateException(
@@ -268,7 +308,7 @@ public class StockMovementService {
         if (movement.getStatus() == StockMovementStatus.DONE) {
             List<StockMovementLine> lines = lineRepository.findByMovementIdAndDeletedFalseOrderBySequenceAsc(id);
             for (StockMovementLine line : lines) {
-                reverseStockMovementLine(movement, line);
+                reverseStockMovementLine(movement, line, organizationId);
             }
             log.info("Stock movement reversed: {} ({})", movement.getNumber(), movement.getId());
         }
@@ -286,8 +326,12 @@ public class StockMovementService {
     @Transactional(readOnly = true)
     public Page<StockMovementResponse> getMovementHistory(UUID locationId, LocalDate dateFrom,
                                                             LocalDate dateTo, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateLocationTenant(locationId, organizationId);
+
         Specification<StockMovement> spec = Specification
-                .where(StockMovementSpecification.notDeleted())
+                .where(StockMovementSpecification.belongsToOrganization(organizationId))
+                .and(StockMovementSpecification.notDeleted())
                 .and(StockMovementSpecification.hasLocation(locationId))
                 .and(StockMovementSpecification.dateRange(dateFrom, dateTo));
 
@@ -301,7 +345,13 @@ public class StockMovementService {
     @Transactional
     public StockMovementResponse createReceiptFromPurchase(UUID purchaseRequestId, UUID destinationLocationId,
                                                             UUID responsibleId, String responsibleName) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validatePurchaseRequestTenant(purchaseRequestId, organizationId);
+        validateLocationTenant(destinationLocationId, organizationId);
+        validateUserTenant(responsibleId, organizationId);
+
         StockMovement movement = StockMovement.builder()
+                .organizationId(organizationId)
                 .number(generateMovementNumber())
                 .movementDate(LocalDate.now())
                 .movementType(StockMovementType.RECEIPT)
@@ -323,7 +373,8 @@ public class StockMovementService {
 
     @Transactional
     public void deleteMovement(UUID id) {
-        StockMovement movement = getMovementOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        StockMovement movement = getMovementOrThrow(id, organizationId);
 
         if (movement.getStatus() != StockMovementStatus.DRAFT) {
             throw new IllegalStateException("Удалить можно только движение в статусе Черновик");
@@ -338,44 +389,44 @@ public class StockMovementService {
 
     // ---------- Private helpers ----------
 
-    private void applyStockMovementLine(StockMovement movement, StockMovementLine line) {
+    private void applyStockMovementLine(StockMovement movement, StockMovementLine line, UUID organizationId) {
         switch (movement.getMovementType()) {
-            case RECEIPT, RETURN -> addStock(movement.getDestinationLocationId(), line);
-            case ISSUE, WRITE_OFF -> subtractStock(movement.getSourceLocationId(), line);
+            case RECEIPT, RETURN -> addStock(movement.getDestinationLocationId(), line, organizationId);
+            case ISSUE, WRITE_OFF -> subtractStock(movement.getSourceLocationId(), line, organizationId);
             case TRANSFER -> {
-                subtractStock(movement.getSourceLocationId(), line);
-                addStock(movement.getDestinationLocationId(), line);
+                subtractStock(movement.getSourceLocationId(), line, organizationId);
+                addStock(movement.getDestinationLocationId(), line, organizationId);
             }
             case ADJUSTMENT -> {
                 if (movement.getDestinationLocationId() != null) {
-                    adjustStock(movement.getDestinationLocationId(), line);
+                    adjustStock(movement.getDestinationLocationId(), line, organizationId);
                 } else if (movement.getSourceLocationId() != null) {
-                    adjustStock(movement.getSourceLocationId(), line);
+                    adjustStock(movement.getSourceLocationId(), line, organizationId);
                 }
             }
         }
     }
 
-    private void reverseStockMovementLine(StockMovement movement, StockMovementLine line) {
+    private void reverseStockMovementLine(StockMovement movement, StockMovementLine line, UUID organizationId) {
         switch (movement.getMovementType()) {
-            case RECEIPT, RETURN -> subtractStock(movement.getDestinationLocationId(), line);
-            case ISSUE, WRITE_OFF -> addStock(movement.getSourceLocationId(), line);
+            case RECEIPT, RETURN -> subtractStock(movement.getDestinationLocationId(), line, organizationId);
+            case ISSUE, WRITE_OFF -> addStock(movement.getSourceLocationId(), line, organizationId);
             case TRANSFER -> {
-                addStock(movement.getSourceLocationId(), line);
-                subtractStock(movement.getDestinationLocationId(), line);
+                addStock(movement.getSourceLocationId(), line, organizationId);
+                subtractStock(movement.getDestinationLocationId(), line, organizationId);
             }
             case ADJUSTMENT -> {
                 if (movement.getDestinationLocationId() != null) {
-                    reverseAdjustStock(movement.getDestinationLocationId(), line);
+                    reverseAdjustStock(movement.getDestinationLocationId(), line, organizationId);
                 } else if (movement.getSourceLocationId() != null) {
-                    reverseAdjustStock(movement.getSourceLocationId(), line);
+                    reverseAdjustStock(movement.getSourceLocationId(), line, organizationId);
                 }
             }
         }
     }
 
-    private void addStock(UUID locationId, StockMovementLine line) {
-        StockEntry entry = getOrCreateStockEntry(locationId, line.getMaterialId(), line.getMaterialName());
+    private void addStock(UUID locationId, StockMovementLine line, UUID organizationId) {
+        StockEntry entry = getOrCreateStockEntry(locationId, line.getMaterialId(), line.getMaterialName(), organizationId);
         entry.setQuantity(entry.getQuantity().add(line.getQuantity()));
         if (line.getUnitPrice() != null) {
             entry.setLastPricePerUnit(line.getUnitPrice());
@@ -384,9 +435,9 @@ public class StockMovementService {
         stockEntryRepository.save(entry);
     }
 
-    private void subtractStock(UUID locationId, StockMovementLine line) {
+    private void subtractStock(UUID locationId, StockMovementLine line, UUID organizationId) {
         StockEntry entry = stockEntryRepository
-                .findByMaterialIdAndLocationIdAndDeletedFalse(line.getMaterialId(), locationId)
+                .findByMaterialIdAndLocationIdAndOrganizationIdAndDeletedFalse(line.getMaterialId(), locationId, organizationId)
                 .orElseThrow(() -> new IllegalStateException(
                         String.format("Остаток материала '%s' не найден на складе", line.getMaterialName())));
 
@@ -401,8 +452,8 @@ public class StockMovementService {
         stockEntryRepository.save(entry);
     }
 
-    private void adjustStock(UUID locationId, StockMovementLine line) {
-        StockEntry entry = getOrCreateStockEntry(locationId, line.getMaterialId(), line.getMaterialName());
+    private void adjustStock(UUID locationId, StockMovementLine line, UUID organizationId) {
+        StockEntry entry = getOrCreateStockEntry(locationId, line.getMaterialId(), line.getMaterialName(), organizationId);
         entry.setQuantity(line.getQuantity()); // Set to exact quantity for adjustment
         if (line.getUnitPrice() != null) {
             entry.setLastPricePerUnit(line.getUnitPrice());
@@ -411,18 +462,19 @@ public class StockMovementService {
         stockEntryRepository.save(entry);
     }
 
-    private void reverseAdjustStock(UUID locationId, StockMovementLine line) {
+    private void reverseAdjustStock(UUID locationId, StockMovementLine line, UUID organizationId) {
         // For adjustment reversal, we cannot fully reverse since we lost the old quantity.
         // Log a warning - this is a best-effort reversal.
-        log.warn("Adjustment reversal for material {} at location {} - manual review recommended",
-                line.getMaterialName(), locationId);
+        log.warn("Adjustment reversal for material {} at location {} for org {} - manual review recommended",
+                line.getMaterialName(), locationId, organizationId);
     }
 
-    private StockEntry getOrCreateStockEntry(UUID locationId, UUID materialId, String materialName) {
+    private StockEntry getOrCreateStockEntry(UUID locationId, UUID materialId, String materialName, UUID organizationId) {
         return stockEntryRepository
-                .findByMaterialIdAndLocationIdAndDeletedFalse(materialId, locationId)
+                .findByMaterialIdAndLocationIdAndOrganizationIdAndDeletedFalse(materialId, locationId, organizationId)
                 .orElseGet(() -> {
                     StockEntry newEntry = StockEntry.builder()
+                            .organizationId(organizationId)
                             .materialId(materialId)
                             .materialName(materialName)
                             .locationId(locationId)
@@ -435,39 +487,80 @@ public class StockMovementService {
                 });
     }
 
-    private void validateMovementLocations(StockMovementType type, UUID sourceId, UUID destinationId) {
+    private void validateMovementLocations(StockMovementType type, UUID sourceId, UUID destinationId, UUID organizationId) {
         switch (type) {
             case RECEIPT, RETURN -> {
                 if (destinationId == null) {
                     throw new IllegalArgumentException("Для прихода/возврата необходимо указать склад назначения");
                 }
+                validateLocationTenant(destinationId, organizationId);
             }
             case ISSUE, WRITE_OFF -> {
                 if (sourceId == null) {
                     throw new IllegalArgumentException("Для расхода/списания необходимо указать склад-источник");
                 }
+                validateLocationTenant(sourceId, organizationId);
             }
             case TRANSFER -> {
                 if (sourceId == null || destinationId == null) {
                     throw new IllegalArgumentException("Для перемещения необходимо указать оба склада");
                 }
+                validateLocationTenant(sourceId, organizationId);
+                validateLocationTenant(destinationId, organizationId);
             }
             case ADJUSTMENT -> {
                 if (sourceId == null && destinationId == null) {
                     throw new IllegalArgumentException("Для корректировки необходимо указать хотя бы один склад");
                 }
+                if (sourceId != null) {
+                    validateLocationTenant(sourceId, organizationId);
+                }
+                if (destinationId != null) {
+                    validateLocationTenant(destinationId, organizationId);
+                }
             }
         }
     }
 
-    StockMovement getMovementOrThrow(UUID id) {
-        return movementRepository.findById(id)
-                .filter(m -> !m.isDeleted())
+    StockMovement getMovementOrThrow(UUID id, UUID organizationId) {
+        return movementRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Движение не найдено: " + id));
     }
 
     private String generateMovementNumber() {
         long seq = movementRepository.getNextNumberSequence();
         return String.format("MOV-%05d", seq);
+    }
+
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+        projectRepository.findByIdAndOrganizationIdAndDeletedFalse(projectId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+    }
+
+    private void validateLocationTenant(UUID locationId, UUID organizationId) {
+        if (locationId == null) {
+            return;
+        }
+        warehouseLocationRepository.findByIdAndOrganizationIdAndDeletedFalse(locationId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Складская локация не найдена: " + locationId));
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+    }
+
+    private void validatePurchaseRequestTenant(UUID purchaseRequestId, UUID organizationId) {
+        if (purchaseRequestId == null) {
+            return;
+        }
+        purchaseRequestRepository.findByIdAndOrganizationIdAndDeletedFalse(purchaseRequestId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Заявка на закупку не найдена: " + purchaseRequestId));
     }
 }

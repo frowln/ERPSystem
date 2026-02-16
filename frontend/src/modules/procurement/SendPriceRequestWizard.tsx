@@ -21,17 +21,26 @@ interface Material {
 interface Supplier {
   id: string;
   name: string;
-  email: string;
-  categories: string[];
+  email?: string;
+  categories?: string[];
 }
 
 
 const getSteps = () => [
-  t('procurement.sendPriceRequest.stepMaterials'),
-  t('procurement.sendPriceRequest.stepSuppliers'),
-  t('procurement.sendPriceRequest.stepParameters'),
-  t('procurement.sendPriceRequest.stepSend'),
+  t('procurement.sendPriceRequest.step1'),
+  t('procurement.sendPriceRequest.step2'),
+  t('procurement.sendPriceRequest.step3'),
+  t('procurement.sendPriceRequest.step4'),
 ];
+
+const parsePositiveQuantity = (value: string | undefined): number => {
+  const normalized = (value ?? '').trim().replace(',', '.');
+  if (!normalized) {
+    return 0;
+  }
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+};
 
 export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ open, onClose }) => {
   const { data: allMaterials = [] } = useQuery({
@@ -77,6 +86,12 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
   const suppliers = allSuppliers.filter((s) => selectedSuppliers.has(s.id));
 
   const handleFinish = async () => {
+    const hasInvalidQuantities = [...selectedMaterials].some((materialId) => parsePositiveQuantity(quantities[materialId]) <= 0);
+    if (hasInvalidQuantities) {
+      toast.error(t('procurement.sendPriceRequest.toastInvalidQuantity'));
+      return;
+    }
+
     setSubmitting(true);
     try {
       await procurementApi.sendPriceRequests({
@@ -87,10 +102,10 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
         deliveryAddress: deliveryAddress || undefined,
         message: message || undefined,
       });
-      toast.success(`${t('procurement.sendPriceRequest.toastSent')}: ${suppliers.length} ${t('procurement.sendPriceRequest.toastSuppliers')}`);
+      toast.success(t('procurement.sendPriceRequest.toastSuccess', { count: String(suppliers.length) }));
       resetAndClose();
     } catch {
-      toast.error(t('procurement.sendPriceRequest.toastSent'));
+      toast.error(t('procurement.sendPriceRequest.toastError'));
     } finally {
       setSubmitting(false);
     }
@@ -109,7 +124,7 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
 
   const canNext =
     step === 0
-      ? selectedMaterials.size > 0 && [...selectedMaterials].every((id) => quantities[id])
+      ? selectedMaterials.size > 0 && [...selectedMaterials].every((id) => parsePositiveQuantity(quantities[id]) > 0)
       : step === 1
         ? selectedSuppliers.size > 0
         : step === 2
@@ -127,15 +142,15 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
       footer={
         <>
           <Button variant="secondary" onClick={step === 0 ? resetAndClose : () => setStep(step - 1)}>
-            {step === 0 ? t('procurement.sendPriceRequest.cancel') : t('procurement.sendPriceRequest.back')}
+            {step === 0 ? t('procurement.sendPriceRequest.btnCancel') : t('procurement.sendPriceRequest.btnBack')}
           </Button>
           {step < STEPS.length - 1 ? (
             <Button onClick={() => setStep(step + 1)} disabled={!canNext}>
-              {t('procurement.sendPriceRequest.next')}
+              {t('procurement.sendPriceRequest.btnNext')}
             </Button>
           ) : (
             <Button onClick={handleFinish} loading={submitting}>
-              {t('procurement.sendPriceRequest.sendRequests')}
+              {t('procurement.sendPriceRequest.btnSend')}
             </Button>
           )}
         </>
@@ -163,7 +178,7 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
       {/* Step 1: Select materials */}
       {step === 0 && (
         <div className="space-y-3">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.selectMaterialsHint')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.step1Hint')}</p>
           <div className="space-y-2">
             {allMaterials.map((mat) => (
               <div key={mat.id} className="flex items-center gap-3 border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2.5">
@@ -172,7 +187,7 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
                 <Input
                   type="number"
                   className="w-24"
-                  placeholder={t('procurement.sendPriceRequest.quantityPlaceholder')}
+                  placeholder={t('procurement.sendPriceRequest.placeholderQuantity')}
                   value={quantities[mat.id] || ''}
                   onChange={(e) => setQuantities({ ...quantities, [mat.id]: e.target.value })}
                   disabled={!selectedMaterials.has(mat.id)}
@@ -187,27 +202,33 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
       {/* Step 2: Select suppliers */}
       {step === 1 && (
         <div className="space-y-3">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.selectSuppliersHint')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.step2Hint')}</p>
           <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg divide-y divide-neutral-100">
             {allSuppliers.map((sup) => (
               <label key={sup.id} className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer">
                 <Checkbox checked={selectedSuppliers.has(sup.id)} onChange={() => toggleSupplier(sup.id)} />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{sup.name}</p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{sup.email}</p>
+                  {!!sup.email && (
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{sup.email}</p>
+                  )}
                 </div>
-                <div className="flex gap-1">
-                  {sup.categories.map((cat) => (
-                    <span key={cat} className="text-xs bg-neutral-100 dark:bg-neutral-800 text-neutral-600 px-2 py-0.5 rounded">
-                      {cat}
-                    </span>
-                  ))}
-                </div>
+                {(sup.categories?.length ?? 0) > 0 && (
+                  <div className="flex gap-1">
+                    {(sup.categories ?? []).map((cat) => (
+                      <span key={cat} className="text-xs bg-neutral-100 dark:bg-neutral-800 text-neutral-600 px-2 py-0.5 rounded">
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </label>
             ))}
           </div>
           {selectedSuppliers.size > 0 && (
-            <p className="text-sm text-primary-600">{t('procurement.sendPriceRequest.selectedSuppliers')}: {selectedSuppliers.size}</p>
+            <p className="text-sm text-primary-600">
+              {t('procurement.sendPriceRequest.selectedSuppliersCount', { count: String(selectedSuppliers.size) })}
+            </p>
           )}
         </div>
       )}
@@ -215,19 +236,19 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
       {/* Step 3: Set deadline, message */}
       {step === 2 && (
         <div className="space-y-4">
-          <FormField label={t('procurement.sendPriceRequest.deadlineLabel')} required>
+          <FormField label={t('procurement.sendPriceRequest.labelDeadline')} required>
             <Input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
           </FormField>
-          <FormField label={t('procurement.sendPriceRequest.deliveryAddressLabel')}>
+          <FormField label={t('procurement.sendPriceRequest.labelDeliveryAddress')}>
             <Input
-              placeholder={t('procurement.sendPriceRequest.deliveryAddressPlaceholder')}
+              placeholder={t('procurement.sendPriceRequest.placeholderAddress')}
               value={deliveryAddress}
               onChange={(e) => setDeliveryAddress(e.target.value)}
             />
           </FormField>
-          <FormField label={t('procurement.sendPriceRequest.messageLabel')}>
+          <FormField label={t('procurement.sendPriceRequest.labelMessage')}>
             <Textarea
-              placeholder={t('procurement.sendPriceRequest.messagePlaceholder')}
+              placeholder={t('procurement.sendPriceRequest.placeholderMessage')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
@@ -255,7 +276,10 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
               <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.reviewSuppliers')} ({suppliers.length})</p>
               <ul className="mt-1 space-y-1">
                 {suppliers.map((s) => (
-                  <li key={s.id} className="text-sm">{s.name} ({s.email})</li>
+                  <li key={s.id} className="text-sm">
+                    {s.name}
+                    {s.email ? ` (${s.email})` : ''}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -265,7 +289,7 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
             </div>
             {deliveryAddress && (
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.reviewDeliveryAddress')}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('procurement.sendPriceRequest.reviewAddress')}</p>
                 <p className="text-sm">{deliveryAddress}</p>
               </div>
             )}
@@ -278,7 +302,7 @@ export const SendPriceRequestWizard: React.FC<SendPriceRequestWizardProps> = ({ 
           </div>
           <div className="bg-primary-50 border border-primary-200 rounded-lg p-3">
             <p className="text-sm text-primary-800">
-              {t('procurement.sendPriceRequest.sendConfirmation', { count: String(suppliers.length) })}
+              {t('procurement.sendPriceRequest.sendNotice', { count: String(suppliers.length) })}
             </p>
           </div>
         </div>

@@ -19,6 +19,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "support_tickets", indexes = {
+        @Index(name = "idx_support_ticket_org", columnList = "organization_id"),
+        @Index(name = "idx_support_ticket_org_status", columnList = "organization_id, status"),
         @Index(name = "idx_support_ticket_status", columnList = "status"),
         @Index(name = "idx_support_ticket_priority", columnList = "priority"),
         @Index(name = "idx_support_ticket_reporter", columnList = "reporter_id"),
@@ -31,6 +33,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SupportTicket extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "code", unique = true, length = 50)
     private String code;

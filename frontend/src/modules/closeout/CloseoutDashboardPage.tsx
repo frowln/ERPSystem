@@ -18,6 +18,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { closeoutApi } from '@/api/closeout';
 import { formatPercent, formatMoney } from '@/lib/format';
+import { t } from '@/i18n';
 import type { CommissioningChecklist, WarrantyClaim, HandoverPackage } from './types';
 
 const checklistStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange'> = {
@@ -28,13 +29,13 @@ const checklistStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yello
   ON_HOLD: 'orange',
 };
 
-const checklistStatusLabels: Record<string, string> = {
-  NOT_STARTED: 'Не начат',
-  IN_PROGRESS: 'В процессе',
-  COMPLETED: 'Завершён',
-  FAILED: 'Не пройден',
-  ON_HOLD: 'Приостановлен',
-};
+const getChecklistStatusLabels = (): Record<string, string> => ({
+  NOT_STARTED: t('closeout.commStatusNotStarted'),
+  IN_PROGRESS: t('closeout.commStatusInProgress'),
+  COMPLETED: t('closeout.commStatusCompleted'),
+  FAILED: t('closeout.commStatusFailed'),
+  ON_HOLD: t('closeout.commStatusOnHold'),
+});
 
 const warrantyStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange' | 'cyan'> = {
   OPEN: 'yellow',
@@ -46,15 +47,15 @@ const warrantyStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow
   CLOSED: 'gray',
 };
 
-const warrantyStatusLabels: Record<string, string> = {
-  OPEN: 'Открыта',
-  IN_REVIEW: 'На рассмотрении',
-  APPROVED: 'Одобрена',
-  IN_REPAIR: 'В ремонте',
-  RESOLVED: 'Устранена',
-  REJECTED: 'Отклонена',
-  CLOSED: 'Закрыта',
-};
+const getWarrantyStatusLabels = (): Record<string, string> => ({
+  OPEN: t('closeout.warrantyStatusOpen'),
+  IN_REVIEW: t('closeout.warrantyStatusInReview'),
+  APPROVED: t('closeout.warrantyStatusApproved'),
+  IN_REPAIR: t('closeout.warrantyStatusInRepair'),
+  RESOLVED: t('closeout.warrantyStatusResolved'),
+  REJECTED: t('closeout.warrantyStatusRejected'),
+  CLOSED: t('closeout.warrantyStatusClosed'),
+});
 
 const CloseoutDashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -106,22 +107,25 @@ const CloseoutDashboardPage: React.FC = () => {
     };
   }, [checklists, claims, packages, commData]);
 
+  const checklistStatusLabels = getChecklistStatusLabels();
+  const warrantyStatusLabels = getWarrantyStatusLabels();
+
   const commColumns = useMemo<ColumnDef<CommissioningChecklist, unknown>[]>(
     () => [
       {
         accessorKey: 'checklistNumber',
-        header: '\u2116',
+        header: t('closeout.dashboardColNumber'),
         size: 120,
         cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'systemName',
-        header: 'Система',
+        header: t('closeout.dashboardColSystem'),
         size: 220,
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('closeout.dashboardColStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -133,7 +137,7 @@ const CloseoutDashboardPage: React.FC = () => {
       },
       {
         id: 'progress',
-        header: 'Прогресс',
+        header: t('closeout.dashboardColProgress'),
         size: 130,
         cell: ({ row }) => {
           const progressPercent = row.original.totalItems > 0
@@ -143,26 +147,26 @@ const CloseoutDashboardPage: React.FC = () => {
         },
       },
     ],
-    [],
+    [checklistStatusLabels],
   );
 
   const claimColumns = useMemo<ColumnDef<WarrantyClaim, unknown>[]>(
     () => [
       {
         accessorKey: 'claimNumber',
-        header: '\u2116',
+        header: t('closeout.dashboardColClaimNumber'),
         size: 120,
         cell: ({ getValue }) => <span className="font-mono text-xs text-neutral-500 dark:text-neutral-400">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'title',
-        header: 'Дефект',
+        header: t('closeout.dashboardColDefect'),
         size: 260,
         cell: ({ getValue }) => <span className="truncate max-w-[240px] block">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('closeout.dashboardColClaimStatus'),
         size: 140,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -174,12 +178,12 @@ const CloseoutDashboardPage: React.FC = () => {
       },
       {
         accessorKey: 'estimatedCost',
-        header: 'Оценка',
+        header: t('closeout.dashboardColEstimate'),
         size: 130,
         cell: ({ getValue }) => <span className="tabular-nums">{formatMoney(getValue<number>())}</span>,
       },
     ],
-    [],
+    [warrantyStatusLabels],
   );
 
   const isFatal = checklists.length === 0 && claims.length === 0 && packages.length === 0
@@ -188,20 +192,20 @@ const CloseoutDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Завершение и сдача объектов"
-        subtitle="Обзор пусконаладки, передачи и гарантийных обязательств"
+        title={t('closeout.dashboardTitle')}
+        subtitle={t('closeout.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Завершение' },
+          { label: t('closeout.breadcrumbHome'), href: '/' },
+          { label: t('closeout.breadcrumbCloseout') },
         ]}
       />
 
       {isFatal ? (
         <EmptyState
           variant="ERROR"
-          title="Не удалось загрузить данные завершения"
-          description="Проверьте подключение и повторите попытку"
-          actionLabel="Повторить"
+          title={t('closeout.dashboardErrorTitle')}
+          description={t('closeout.dashboardErrorDesc')}
+          actionLabel={t('closeout.retryAction')}
           onAction={() => {
             void Promise.all([
               refetchCommissioning(),
@@ -213,16 +217,16 @@ const CloseoutDashboardPage: React.FC = () => {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-            <MetricCard icon={<ClipboardCheck size={18} />} label="Всего чек-листов" value={metrics.totalChecklists} />
-            <MetricCard icon={<CheckCircle2 size={18} />} label="Пусконаладка завершена" value={metrics.completedChecklists} />
-            <MetricCard icon={<Package size={18} />} label="Пакетов на передаче" value={metrics.pendingPackages} subtitle="ожидают приёмки" />
+            <MetricCard icon={<ClipboardCheck size={18} />} label={t('closeout.dashboardMetricTotalChecklists')} value={metrics.totalChecklists} />
+            <MetricCard icon={<CheckCircle2 size={18} />} label={t('closeout.dashboardMetricCompletedCommissioning')} value={metrics.completedChecklists} />
+            <MetricCard icon={<Package size={18} />} label={t('closeout.dashboardMetricPendingPackages')} value={metrics.pendingPackages} subtitle={t('closeout.dashboardMetricPendingSubtitle')} />
             <MetricCard
               icon={<ShieldAlert size={18} />}
-              label="Открытые обращения"
+              label={t('closeout.dashboardMetricOpenClaims')}
               value={metrics.openClaims}
-              trend={{ direction: metrics.openClaims > 2 ? 'up' : 'neutral', value: `${metrics.openClaims} шт.` }}
+              trend={{ direction: metrics.openClaims > 2 ? 'up' : 'neutral', value: t('closeout.dashboardPiecesUnit', { count: String(metrics.openClaims) }) }}
             />
-            <MetricCard icon={<TrendingUp size={18} />} label="Стоимость ремонтов" value={formatMoney(metrics.totalWarrantyCost)} />
+            <MetricCard icon={<TrendingUp size={18} />} label={t('closeout.dashboardMetricRepairCost')} value={formatMoney(metrics.totalWarrantyCost)} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -234,8 +238,8 @@ const CloseoutDashboardPage: React.FC = () => {
                 <ClipboardCheck size={20} className="text-primary-600" />
                 <ArrowRight size={16} className="text-neutral-400" />
               </div>
-              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Пусконаладочные работы</h3>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Чек-листы проверки инженерных систем</p>
+              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.dashboardCommissioningCard')}</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('closeout.dashboardCommissioningCardDesc')}</p>
             </button>
 
             <button
@@ -246,8 +250,8 @@ const CloseoutDashboardPage: React.FC = () => {
                 <Package size={20} className="text-primary-600" />
                 <ArrowRight size={16} className="text-neutral-400" />
               </div>
-              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Передача документации</h3>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Пакеты исполнительной документации</p>
+              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.dashboardHandoverCard')}</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('closeout.dashboardHandoverCardDesc')}</p>
             </button>
 
             <button
@@ -258,16 +262,16 @@ const CloseoutDashboardPage: React.FC = () => {
                 <ShieldAlert size={20} className="text-primary-600" />
                 <ArrowRight size={16} className="text-neutral-400" />
               </div>
-              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">Гарантийные обращения</h3>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Отслеживание дефектов и ремонтов</p>
+              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.dashboardWarrantyCard')}</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('closeout.dashboardWarrantyCardDesc')}</p>
             </button>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Последние проверки</h3>
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.dashboardRecentChecks')}</h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/closeout/commissioning')}>
-                Все проверки
+                {t('closeout.dashboardAllChecks')}
               </Button>
             </div>
             <DataTable<CommissioningChecklist>
@@ -275,16 +279,16 @@ const CloseoutDashboardPage: React.FC = () => {
               columns={commColumns}
               onRowClick={(checklist) => navigate(`/closeout/commissioning/${checklist.id}`)}
               pageSize={5}
-              emptyTitle="Нет проверок"
-              emptyDescription="Пока не создано ни одного чек-листа"
+              emptyTitle={t('closeout.dashboardEmptyChecks')}
+              emptyDescription={t('closeout.dashboardEmptyChecksDesc')}
             />
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Активные гарантийные обращения</h3>
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('closeout.dashboardActiveWarranty')}</h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/closeout/warranty')}>
-                Все обращения
+                {t('closeout.dashboardAllClaims')}
               </Button>
             </div>
             <DataTable<WarrantyClaim>
@@ -292,8 +296,8 @@ const CloseoutDashboardPage: React.FC = () => {
               columns={claimColumns}
               onRowClick={(claim) => navigate(`/closeout/warranty/${claim.id}`)}
               pageSize={5}
-              emptyTitle="Нет обращений"
-              emptyDescription="Активные обращения отсутствуют"
+              emptyTitle={t('closeout.dashboardEmptyClaims')}
+              emptyDescription={t('closeout.dashboardEmptyClaimsDesc')}
             />
           </div>
         </>

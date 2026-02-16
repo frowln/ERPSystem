@@ -19,6 +19,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { formatDate, formatPercent } from '@/lib/format';
 import { punchlistApi } from '@/api/punchlist';
+import { t } from '@/i18n';
 
 interface PunchListSummary {
   id: string;
@@ -106,30 +107,30 @@ const PunchlistDashboardPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Панель Punch List"
-        subtitle="Сводка по перечням замечаний"
+        title={t('punchlist.dashboardTitle')}
+        subtitle={t('punchlist.dashboardSubtitle')}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Punch List' },
+          { label: t('punchlist.breadcrumbHome'), href: '/' },
+          { label: t('punchlist.breadcrumbPunchList') },
         ]}
         actions={
           <div className="flex items-center gap-2">
             <Button variant="secondary" onClick={() => navigate('/punchlist/items')}>
-              Все замечания
+              {t('punchlist.btnAllItems')}
             </Button>
             <Button onClick={() => navigate('/punchlist/new')}>
-              Новый перечень
+              {t('punchlist.btnNewList')}
             </Button>
           </div>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<ListChecks size={18} />} label="Всего замечаний" value={totalItems} />
-        <MetricCard icon={<Clock size={18} />} label="Открытые" value={totalOpen}
-          trend={totalOpen > 0 ? { direction: 'neutral', value: `${totalOpen} шт.` } : undefined} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Закрытые" value={totalClosed} />
-        <MetricCard icon={<TrendingUp size={18} />} label="Общая готовность" value={formatPercent(overallCompletion)} />
+        <MetricCard icon={<ListChecks size={18} />} label={t('punchlist.metricTotalItems')} value={totalItems} />
+        <MetricCard icon={<Clock size={18} />} label={t('punchlist.metricOpenItems')} value={totalOpen}
+          trend={totalOpen > 0 ? { direction: 'neutral', value: t('punchlist.trendItemsCount', { count: String(totalOpen) }) } : undefined} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('punchlist.metricClosedItems')} value={totalClosed} />
+        <MetricCard icon={<TrendingUp size={18} />} label={t('punchlist.metricOverallCompletion')} value={formatPercent(overallCompletion)} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -137,7 +138,7 @@ const PunchlistDashboardPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Перечни замечаний</h3>
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('punchlist.sectionPunchLists')}</h3>
             </div>
             <div className="space-y-4">
               {punchLists.map((pl) => (
@@ -164,10 +165,10 @@ const PunchlistDashboardPage: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-4 mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-                    <span>Всего: {pl.totalItems}</span>
-                    <span>Открыто: {pl.openItems}</span>
-                    <span>Закрыто: {pl.closedItems}</span>
-                    {pl.dueDate && <span className="tabular-nums">Срок: {formatDate(pl.dueDate)}</span>}
+                    <span>{t('punchlist.plTotal', { count: String(pl.totalItems) })}</span>
+                    <span>{t('punchlist.plOpenCount', { count: String(pl.openItems) })}</span>
+                    <span>{t('punchlist.plClosedCount', { count: String(pl.closedItems) })}</span>
+                    {pl.dueDate && <span className="tabular-nums">{t('punchlist.plDueDate', { date: formatDate(pl.dueDate) })}</span>}
                   </div>
                 </div>
               ))}
@@ -177,9 +178,9 @@ const PunchlistDashboardPage: React.FC = () => {
           {/* Recent items */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">Последние замечания</h3>
+              <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">{t('punchlist.sectionRecentItems')}</h3>
               <Button variant="ghost" size="xs" onClick={() => navigate('/punchlist/items')}>
-                Все замечания
+                {t('punchlist.btnAllItems')}
               </Button>
             </div>
             <div className="space-y-3">
@@ -209,7 +210,7 @@ const PunchlistDashboardPage: React.FC = () => {
         {/* Category breakdown */}
         <div>
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">По категориям</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionByCategory')}</h3>
             <div className="space-y-3">
               {categories.map((cat) => {
                 const total = cat.open + cat.closed;
@@ -218,7 +219,7 @@ const PunchlistDashboardPage: React.FC = () => {
                   <div key={cat.category} className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{cat.label}</span>
-                      <span className="text-xs text-neutral-500 dark:text-neutral-400">{cat.open + cat.closed} шт.</span>
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('punchlist.catItemsCount', { count: String(cat.open + cat.closed) })}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1.5 bg-neutral-200 rounded-full overflow-hidden">
@@ -227,8 +228,8 @@ const PunchlistDashboardPage: React.FC = () => {
                       <span className="text-xs tabular-nums text-neutral-500 dark:text-neutral-400 w-8 text-right">{Math.round(pct)}%</span>
                     </div>
                     <div className="flex gap-3 mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                      <span>Открыто: {cat.open}</span>
-                      <span>Закрыто: {cat.closed}</span>
+                      <span>{t('punchlist.catOpen', { count: String(cat.open) })}</span>
+                      <span>{t('punchlist.catClosed', { count: String(cat.closed) })}</span>
                     </div>
                   </div>
                 );
@@ -238,20 +239,20 @@ const PunchlistDashboardPage: React.FC = () => {
 
           {/* Alerts */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mt-6">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Предупреждения</h3>
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('punchlist.sectionAlerts')}</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3 p-3 bg-danger-50 rounded-lg">
                 <AlertTriangle size={16} className="text-danger-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-danger-800">2 критических замечания</p>
-                  <p className="text-xs text-danger-600 mt-0.5">PI-003, PI-005 требуют срочного устранения</p>
+                  <p className="text-sm font-medium text-danger-800">{t('punchlist.alertCritical', { count: '2' })}</p>
+                  <p className="text-xs text-danger-600 mt-0.5">{t('punchlist.alertCriticalDesc')}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 p-3 bg-warning-50 rounded-lg">
                 <Clock size={16} className="text-warning-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-warning-800">1 замечание просрочено</p>
-                  <p className="text-xs text-warning-600 mt-0.5">PI-003 -- срок истёк 14.02.2026</p>
+                  <p className="text-sm font-medium text-warning-800">{t('punchlist.alertOverdue', { count: '1' })}</p>
+                  <p className="text-xs text-warning-600 mt-0.5">{t('punchlist.alertOverdueDesc')}</p>
                 </div>
               </div>
             </div>

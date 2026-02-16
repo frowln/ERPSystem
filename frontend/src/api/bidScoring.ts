@@ -1,67 +1,124 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
 
-export type BidComparisonStatus = 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-export type BidCriteriaType = 'PRICE' | 'TECHNICAL' | 'EXPERIENCE' | 'TIMELINE' | 'QUALITY' | 'SAFETY' | 'CUSTOM';
+export type BidComparisonStatus = 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED' | 'APPROVED';
+export type BidCriteriaType = 'PRICE' | 'QUALITY' | 'DELIVERY' | 'EXPERIENCE' | 'FINANCIAL' | 'TECHNICAL' | 'CUSTOM';
 
 export interface BidComparison {
   id: string;
-  number: string;
-  title: string;
-  description: string;
-  status: BidComparisonStatus;
   projectId: string;
-  projectName: string;
-  purchaseRequestId?: string;
-  bidderCount: number;
-  criteriaCount: number;
-  winnerName?: string;
-  createdBy: string;
+  title: string;
+  description?: string;
+  status: BidComparisonStatus;
+  statusDisplayName?: string;
+  rfqNumber?: string;
+  category?: string;
+  createdById?: string;
+  approvedById?: string;
+  approvedAt?: string;
+  winnerVendorId?: string;
+  winnerJustification?: string;
   createdAt: string;
-  completedAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
 }
 
 export interface BidCriteria {
   id: string;
-  comparisonId: string;
+  bidComparisonId: string;
+  criteriaType?: BidCriteriaType;
+  criteriaTypeDisplayName?: string;
   name: string;
-  type: BidCriteriaType;
-  weight: number;
   description?: string;
-  minScore: number;
+  weight: number;
   maxScore: number;
-  sortOrder: number;
+  sortOrder?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface BidScore {
   id: string;
-  comparisonId: string;
+  bidComparisonId: string;
   criteriaId: string;
-  bidderName: string;
-  bidderOrganization: string;
+  vendorId: string;
+  vendorName?: string;
   score: number;
-  normalizedScore: number;
-  comment?: string;
-  evaluatedBy: string;
-  evaluatedAt: string;
+  weightedScore: number;
+  comments?: string;
+  scoredById?: string;
+  scoredAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface BidderSummary {
-  bidderName: string;
-  bidderOrganization: string;
+export interface VendorRanking {
+  vendorId: string;
+  vendorName: string;
   totalWeightedScore: number;
-  rank: number;
-  scores: BidScore[];
 }
 
 export interface BidComparisonFilters extends PaginationParams {
   status?: BidComparisonStatus;
   projectId?: string;
-  search?: string;
+}
+
+export interface CreateBidComparisonPayload {
+  projectId: string;
+  title: string;
+  description?: string;
+  rfqNumber?: string;
+  category?: string;
+  createdById?: string;
+}
+
+export interface UpdateBidComparisonPayload {
+  title?: string;
+  description?: string;
+  rfqNumber?: string;
+  category?: string;
+  winnerVendorId?: string;
+  winnerJustification?: string;
+}
+
+export interface CreateBidCriteriaPayload {
+  bidComparisonId: string;
+  criteriaType?: BidCriteriaType;
+  name: string;
+  description?: string;
+  weight: number;
+  maxScore?: number;
+  sortOrder?: number;
+}
+
+export interface UpdateBidCriteriaPayload {
+  criteriaType?: BidCriteriaType;
+  name?: string;
+  description?: string;
+  weight?: number;
+  maxScore?: number;
+  sortOrder?: number;
+}
+
+export interface CreateBidScorePayload {
+  bidComparisonId: string;
+  criteriaId: string;
+  vendorId: string;
+  vendorName?: string;
+  score: number;
+  comments?: string;
+  scoredById?: string;
+}
+
+export interface UpdateBidScorePayload {
+  score: number;
+  comments?: string;
+  vendorName?: string;
+  scoredById?: string;
 }
 
 export const bidScoringApi = {
-  // Bid Comparisons
+  // Bid comparisons
   getComparisons: async (params?: BidComparisonFilters): Promise<PaginatedResponse<BidComparison>> => {
     const response = await apiClient.get<PaginatedResponse<BidComparison>>('/bid-scoring/comparisons', { params });
     return response.data;
@@ -72,13 +129,30 @@ export const bidScoringApi = {
     return response.data;
   },
 
-  createComparison: async (data: Partial<BidComparison>): Promise<BidComparison> => {
+  createComparison: async (data: CreateBidComparisonPayload): Promise<BidComparison> => {
     const response = await apiClient.post<BidComparison>('/bid-scoring/comparisons', data);
     return response.data;
   },
 
-  updateComparison: async (id: string, data: Partial<BidComparison>): Promise<BidComparison> => {
+  updateComparison: async (id: string, data: UpdateBidComparisonPayload): Promise<BidComparison> => {
     const response = await apiClient.put<BidComparison>(`/bid-scoring/comparisons/${id}`, data);
+    return response.data;
+  },
+
+  startComparison: async (id: string): Promise<BidComparison> => {
+    const response = await apiClient.post<BidComparison>(`/bid-scoring/comparisons/${id}/start`);
+    return response.data;
+  },
+
+  completeComparison: async (id: string): Promise<BidComparison> => {
+    const response = await apiClient.post<BidComparison>(`/bid-scoring/comparisons/${id}/complete`);
+    return response.data;
+  },
+
+  approveComparison: async (id: string, approvedById?: string): Promise<BidComparison> => {
+    const response = await apiClient.post<BidComparison>(`/bid-scoring/comparisons/${id}/approve`, null, {
+      params: approvedById ? { approvedById } : undefined,
+    });
     return response.data;
   },
 
@@ -86,49 +160,59 @@ export const bidScoringApi = {
     await apiClient.delete(`/bid-scoring/comparisons/${id}`);
   },
 
-  completeComparison: async (id: string, winnerId: string): Promise<BidComparison> => {
-    const response = await apiClient.post<BidComparison>(`/bid-scoring/comparisons/${id}/complete`, { winnerId });
-    return response.data;
-  },
-
-  // Bid Criteria
+  // Criteria
   getCriteria: async (comparisonId: string): Promise<BidCriteria[]> => {
     const response = await apiClient.get<BidCriteria[]>(`/bid-scoring/comparisons/${comparisonId}/criteria`);
     return response.data;
   },
 
-  createCriteria: async (comparisonId: string, data: Partial<BidCriteria>): Promise<BidCriteria> => {
-    const response = await apiClient.post<BidCriteria>(`/bid-scoring/comparisons/${comparisonId}/criteria`, data);
+  createCriteria: async (data: CreateBidCriteriaPayload): Promise<BidCriteria> => {
+    const response = await apiClient.post<BidCriteria>('/bid-scoring/criteria', data);
     return response.data;
   },
 
-  updateCriteria: async (comparisonId: string, criteriaId: string, data: Partial<BidCriteria>): Promise<BidCriteria> => {
-    const response = await apiClient.put<BidCriteria>(`/bid-scoring/comparisons/${comparisonId}/criteria/${criteriaId}`, data);
+  updateCriteria: async (criteriaId: string, data: UpdateBidCriteriaPayload): Promise<BidCriteria> => {
+    const response = await apiClient.put<BidCriteria>(`/bid-scoring/criteria/${criteriaId}`, data);
     return response.data;
   },
 
-  deleteCriteria: async (comparisonId: string, criteriaId: string): Promise<void> => {
-    await apiClient.delete(`/bid-scoring/comparisons/${comparisonId}/criteria/${criteriaId}`);
+  deleteCriteria: async (criteriaId: string): Promise<void> => {
+    await apiClient.delete(`/bid-scoring/criteria/${criteriaId}`);
   },
 
-  // Bid Scores
+  // Scores
   getScores: async (comparisonId: string): Promise<BidScore[]> => {
     const response = await apiClient.get<BidScore[]>(`/bid-scoring/comparisons/${comparisonId}/scores`);
     return response.data;
   },
 
-  submitScore: async (comparisonId: string, data: Partial<BidScore>): Promise<BidScore> => {
-    const response = await apiClient.post<BidScore>(`/bid-scoring/comparisons/${comparisonId}/scores`, data);
+  getVendorScores: async (comparisonId: string, vendorId: string): Promise<BidScore[]> => {
+    const response = await apiClient.get<BidScore[]>(`/bid-scoring/comparisons/${comparisonId}/scores/vendor/${vendorId}`);
     return response.data;
   },
 
-  updateScore: async (comparisonId: string, scoreId: string, data: Partial<BidScore>): Promise<BidScore> => {
-    const response = await apiClient.put<BidScore>(`/bid-scoring/comparisons/${comparisonId}/scores/${scoreId}`, data);
+  createScore: async (data: CreateBidScorePayload): Promise<BidScore> => {
+    const response = await apiClient.post<BidScore>('/bid-scoring/scores', data);
     return response.data;
   },
 
-  getBidderSummaries: async (comparisonId: string): Promise<BidderSummary[]> => {
-    const response = await apiClient.get<BidderSummary[]>(`/bid-scoring/comparisons/${comparisonId}/summary`);
+  updateScore: async (scoreId: string, data: UpdateBidScorePayload): Promise<BidScore> => {
+    const response = await apiClient.put<BidScore>(`/bid-scoring/scores/${scoreId}`, data);
+    return response.data;
+  },
+
+  deleteScore: async (scoreId: string): Promise<void> => {
+    await apiClient.delete(`/bid-scoring/scores/${scoreId}`);
+  },
+
+  // Ranking
+  getRanking: async (comparisonId: string): Promise<VendorRanking[]> => {
+    const response = await apiClient.get<VendorRanking[]>(`/bid-scoring/comparisons/${comparisonId}/ranking`);
+    return response.data;
+  },
+
+  getWinner: async (comparisonId: string): Promise<VendorRanking> => {
+    const response = await apiClient.get<VendorRanking>(`/bid-scoring/comparisons/${comparisonId}/winner`);
     return response.data;
   },
 };

@@ -11,6 +11,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { selfEmployedApi } from './api';
 import { formatMoney, formatDate } from '@/lib/format';
 import type { SelfEmployedRegistry, RegistryStatus } from './types';
+import { t } from '@/i18n';
 
 const statusColorMap: Record<string, string> = {
   DRAFT: 'gray',
@@ -19,19 +20,19 @@ const statusColorMap: Record<string, string> = {
   APPROVED: 'green',
 };
 
-const statusLabels: Record<RegistryStatus, string> = {
-  DRAFT: 'Черновик',
-  IN_PROGRESS: 'В работе',
-  COMPLETED: 'Завершён',
-  APPROVED: 'Утверждён',
-};
+const getStatusLabels = (): Record<RegistryStatus, string> => ({
+  DRAFT: t('selfEmployed.registries.statusDraft'),
+  IN_PROGRESS: t('selfEmployed.registries.statusInProgress'),
+  COMPLETED: t('selfEmployed.registries.statusCompleted'),
+  APPROVED: t('selfEmployed.registries.statusApproved'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'IN_PROGRESS', label: 'В работе' },
-  { value: 'COMPLETED', label: 'Завершён' },
-  { value: 'APPROVED', label: 'Утверждён' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('selfEmployed.registries.statusAll') },
+  { value: 'DRAFT', label: t('selfEmployed.registries.statusDraft') },
+  { value: 'IN_PROGRESS', label: t('selfEmployed.registries.statusInProgress') },
+  { value: 'COMPLETED', label: t('selfEmployed.registries.statusCompleted') },
+  { value: 'APPROVED', label: t('selfEmployed.registries.statusApproved') },
 ];
 
 const RegistryListPage: React.FC = () => {
@@ -68,7 +69,7 @@ const RegistryListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('selfEmployed.registries.colName'),
         size: 280,
         cell: ({ getValue }) => (
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{getValue<string>()}</span>
@@ -76,7 +77,7 @@ const RegistryListPage: React.FC = () => {
       },
       {
         accessorKey: 'projectName',
-        header: 'Проект',
+        header: t('selfEmployed.registries.colProject'),
         size: 200,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>() ?? '---'}</span>
@@ -84,7 +85,7 @@ const RegistryListPage: React.FC = () => {
       },
       {
         accessorKey: 'periodStart',
-        header: 'Период',
+        header: t('selfEmployed.registries.colPeriod'),
         size: 200,
         cell: ({ row }) => (
           <span className="tabular-nums text-neutral-600">
@@ -94,7 +95,7 @@ const RegistryListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalAmount',
-        header: 'Сумма',
+        header: t('selfEmployed.registries.colAmount'),
         size: 160,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">{formatMoney(getValue<number>())}</span>
@@ -102,7 +103,7 @@ const RegistryListPage: React.FC = () => {
       },
       {
         accessorKey: 'totalPayments',
-        header: 'Выплат',
+        header: t('selfEmployed.registries.colPayments'),
         size: 100,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600">{getValue<number>()}</span>
@@ -110,13 +111,13 @@ const RegistryListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('selfEmployed.registries.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={statusColorMap}
-            label={statusLabels[getValue<RegistryStatus>()] ?? getValue<string>()}
+            label={getStatusLabels()[getValue<RegistryStatus>()] ?? getValue<string>()}
           />
         ),
       },
@@ -127,17 +128,17 @@ const RegistryListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Реестры выплат"
-        subtitle={`${registries.length} реестров`}
+        title={t('selfEmployed.registries.title')}
+        subtitle={t('selfEmployed.registries.subtitle', { count: String(registries.length) })}
         backTo="/self-employed"
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Самозанятые', href: '/self-employed' },
-          { label: 'Реестры' },
+          { label: t('selfEmployed.registries.breadcrumbHome'), href: '/' },
+          { label: t('selfEmployed.registries.breadcrumbSelfEmployed'), href: '/self-employed' },
+          { label: t('selfEmployed.registries.breadcrumbRegistries') },
         ]}
         actions={
           <Button onClick={() => navigate('/self-employed')}>
-            К исполнителям
+            {t('selfEmployed.registries.toContractors')}
           </Button>
         }
       />
@@ -147,14 +148,14 @@ const RegistryListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, проекту..."
+            placeholder={t('selfEmployed.registries.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-44"
@@ -169,8 +170,8 @@ const RegistryListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет реестров"
-        emptyDescription="Реестры выплат самозанятым появятся здесь"
+        emptyTitle={t('selfEmployed.registries.emptyTitle')}
+        emptyDescription={t('selfEmployed.registries.emptyDescription')}
       />
     </div>
   );

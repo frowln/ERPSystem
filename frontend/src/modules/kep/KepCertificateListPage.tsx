@@ -101,7 +101,7 @@ const KepCertificateListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'serialNumber',
-        header: 'Серийный номер',
+        header: t('kep.certificates.colSerialNumber'),
         size: 150,
         cell: ({ getValue }) => (
           <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{getValue<string>()}</span>
@@ -109,7 +109,7 @@ const KepCertificateListPage: React.FC = () => {
       },
       {
         accessorKey: 'ownerName',
-        header: 'Владелец',
+        header: t('kep.certificates.colOwner'),
         size: 200,
         cell: ({ row }) => (
           <div>
@@ -120,7 +120,7 @@ const KepCertificateListPage: React.FC = () => {
       },
       {
         accessorKey: 'issuerName',
-        header: 'Издатель',
+        header: t('kep.certificates.colIssuer'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="text-neutral-600">{getValue<string>()}</span>
@@ -128,19 +128,19 @@ const KepCertificateListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('kep.certificates.colStatus'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
             status={getValue<string>()}
             colorMap={certStatusColorMap}
-            label={certStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={getCertStatusLabels()[getValue<string>()] ?? getValue<string>()}
           />
         ),
       },
       {
         accessorKey: 'validFrom',
-        header: 'Действует с',
+        header: t('kep.certificates.colValidFrom'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{formatDate(getValue<string>())}</span>
@@ -148,7 +148,7 @@ const KepCertificateListPage: React.FC = () => {
       },
       {
         accessorKey: 'validTo',
-        header: 'Действует до',
+        header: t('kep.certificates.colValidTo'),
         size: 120,
         cell: ({ row }) => {
           const validTo = row.original.validTo;
@@ -172,7 +172,7 @@ const KepCertificateListPage: React.FC = () => {
               navigate(`/kep/certificates/${row.original.id}`);
             }}
           >
-            Открыть
+            {t('kep.certificates.openButton')}
           </button>
         ),
       },
@@ -188,18 +188,18 @@ const KepCertificateListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Сертификаты КЭП"
-        subtitle={`${certificates.length} сертификатов в системе`}
+        title={t('kep.certificates.title')}
+        subtitle={t('kep.certificates.subtitle', { count: String(certificates.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'КЭП' },
-          { label: 'Сертификаты' },
+          { label: t('kep.certificates.breadcrumbHome'), href: '/' },
+          { label: t('kep.certificates.breadcrumbKep') },
+          { label: t('kep.certificates.breadcrumbCertificates') },
         ]}
         tabs={[
-          { id: 'all', label: 'Все', count: tabCounts.all },
-          { id: 'ACTIVE', label: 'Действующие', count: tabCounts.active },
-          { id: 'EXPIRING_SOON', label: 'Истекающие', count: tabCounts.expiring_soon },
-          { id: 'EXPIRED', label: 'Недействительные', count: tabCounts.expired },
+          { id: 'all', label: t('kep.certificates.tabAll'), count: tabCounts.all },
+          { id: 'ACTIVE', label: t('kep.certificates.tabActive'), count: tabCounts.active },
+          { id: 'EXPIRING_SOON', label: t('kep.certificates.tabExpiring'), count: tabCounts.expiring_soon },
+          { id: 'EXPIRED', label: t('kep.certificates.tabExpired'), count: tabCounts.expired },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -209,25 +209,25 @@ const KepCertificateListPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard
           icon={<KeyRound size={18} />}
-          label="Всего сертификатов"
+          label={t('kep.certificates.metricTotal')}
           value={metrics.total}
         />
         <MetricCard
           icon={<ShieldCheck size={18} />}
-          label="Действующие"
+          label={t('kep.certificates.metricActive')}
           value={metrics.active}
         />
         <MetricCard
           icon={<Clock size={18} />}
-          label="Истекающие"
+          label={t('kep.certificates.metricExpiring')}
           value={metrics.expiring}
-          trend={metrics.expiring > 0 ? { direction: 'down', value: 'Требуют продления' } : undefined}
+          trend={metrics.expiring > 0 ? { direction: 'down', value: t('kep.certificates.trendNeedRenewal') } : undefined}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
-          label="Истёкшие"
+          label={t('kep.certificates.metricExpired')}
           value={metrics.expired}
-          trend={metrics.expired > 0 ? { direction: 'down', value: 'Требуют замены' } : undefined}
+          trend={metrics.expired > 0 ? { direction: 'down', value: t('kep.certificates.trendNeedReplacement') } : undefined}
         />
       </div>
 
@@ -236,14 +236,14 @@ const KepCertificateListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по владельцу, серийному номеру..."
+            placeholder={t('kep.certificates.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
           />
         </div>
         <Select
-          options={statusFilterOptions}
+          options={getStatusFilterOptions()}
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="w-48"
@@ -261,8 +261,8 @@ const KepCertificateListPage: React.FC = () => {
         enableDensityToggle
         enableExport
         pageSize={20}
-        emptyTitle="Нет сертификатов КЭП"
-        emptyDescription="Сертификаты электронной подписи не найдены"
+        emptyTitle={t('kep.certificates.emptyTitle')}
+        emptyDescription={t('kep.certificates.emptyDescription')}
       />
     </div>
   );

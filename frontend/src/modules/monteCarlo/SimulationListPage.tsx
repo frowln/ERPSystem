@@ -11,6 +11,7 @@ import { StatusBadge, type BadgeColor } from '@/design-system/components/StatusB
 import { Input, Select } from '@/design-system/components/FormField';
 import { monteCarloApi } from './api';
 import { formatNumber } from '@/lib/format';
+import { t } from '@/i18n';
 import type { MonteCarloSimulation, SimulationStatus } from './types';
 
 const statusColorMap: Record<string, BadgeColor> = {
@@ -20,25 +21,27 @@ const statusColorMap: Record<string, BadgeColor> = {
   FAILED: 'red',
 };
 
-const statusLabels: Record<SimulationStatus, string> = {
-  DRAFT: 'Черновик',
-  RUNNING: 'Выполняется',
-  COMPLETED: 'Завершена',
-  FAILED: 'Ошибка',
-};
+const getStatusLabels = (): Record<SimulationStatus, string> => ({
+  DRAFT: t('monteCarlo.statusDraft'),
+  RUNNING: t('monteCarlo.statusRunning'),
+  COMPLETED: t('monteCarlo.statusCompleted'),
+  FAILED: t('monteCarlo.statusFailed'),
+});
 
-const statusFilterOptions = [
-  { value: '', label: 'Все статусы' },
-  { value: 'DRAFT', label: 'Черновик' },
-  { value: 'RUNNING', label: 'Выполняется' },
-  { value: 'COMPLETED', label: 'Завершена' },
-  { value: 'FAILED', label: 'Ошибка' },
+const getStatusFilterOptions = () => [
+  { value: '', label: t('monteCarlo.allStatuses') },
+  { value: 'DRAFT', label: t('monteCarlo.statusDraft') },
+  { value: 'RUNNING', label: t('monteCarlo.statusRunning') },
+  { value: 'COMPLETED', label: t('monteCarlo.statusCompleted') },
+  { value: 'FAILED', label: t('monteCarlo.statusFailed') },
 ];
 
 const SimulationListPage: React.FC = () => {
   const navigate = useNavigate();
   const confirm = useConfirmDialog();
   const queryClient = useQueryClient();
+  const statusLabels = getStatusLabels();
+  const statusFilterOptions = getStatusFilterOptions();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -82,7 +85,7 @@ const SimulationListPage: React.FC = () => {
     () => [
       {
         accessorKey: 'name',
-        header: 'Название',
+        header: t('monteCarlo.colName'),
         size: 280,
         cell: ({ row }) => (
           <div>
@@ -95,7 +98,7 @@ const SimulationListPage: React.FC = () => {
       },
       {
         accessorKey: 'status',
-        header: 'Статус',
+        header: t('common.status'),
         size: 130,
         cell: ({ getValue }) => (
           <StatusBadge
@@ -107,7 +110,7 @@ const SimulationListPage: React.FC = () => {
       },
       {
         accessorKey: 'iterations',
-        header: 'Итераций',
+        header: t('monteCarlo.iterations'),
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-neutral-600">{formatNumber(getValue<number>())}</span>
@@ -115,7 +118,7 @@ const SimulationListPage: React.FC = () => {
       },
       {
         id: 'p50',
-        header: 'P50 (дней)',
+        header: t('monteCarlo.colP50'),
         size: 110,
         cell: ({ row }) => (
           <span className="tabular-nums font-medium text-success-600">
@@ -125,7 +128,7 @@ const SimulationListPage: React.FC = () => {
       },
       {
         id: 'p85',
-        header: 'P85 (дней)',
+        header: t('monteCarlo.colP85'),
         size: 110,
         cell: ({ row }) => (
           <span className="tabular-nums font-medium text-warning-600">
@@ -135,7 +138,7 @@ const SimulationListPage: React.FC = () => {
       },
       {
         id: 'p95',
-        header: 'P95 (дней)',
+        header: t('monteCarlo.colP95'),
         size: 110,
         cell: ({ row }) => (
           <span className="tabular-nums font-medium text-danger-600">
@@ -155,15 +158,15 @@ const SimulationListPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Симуляции Монте-Карло"
-        subtitle={`${simulations.length} симуляций`}
+        title={t('monteCarlo.title')}
+        subtitle={t('monteCarlo.subtitle', { count: String(simulations.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Монте-Карло' },
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('monteCarlo.breadcrumb') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/monte-carlo/new')}>
-            Новая симуляция
+            {t('monteCarlo.newSimulation')}
           </Button>
         }
       />
@@ -173,7 +176,7 @@ const SimulationListPage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по названию, проекту..."
+            placeholder={t('monteCarlo.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -200,24 +203,24 @@ const SimulationListPage: React.FC = () => {
         pageSize={20}
         bulkActions={[
           {
-            label: 'Удалить',
+            label: t('common.delete'),
             icon: <Trash2 size={13} />,
             variant: 'danger',
             onClick: async (rows) => {
               const ids = rows.map((r) => r.id);
               const isConfirmed = await confirm({
-                title: `Удалить ${ids.length} симуляци(ю/й)?`,
-                description: 'Операция необратима. Выбранные симуляции будут удалены.',
-                confirmLabel: 'Удалить',
-                cancelLabel: 'Отмена',
+                title: t('monteCarlo.deleteTitle', { count: String(ids.length) }),
+                description: t('monteCarlo.deleteDescription'),
+                confirmLabel: t('common.delete'),
+                cancelLabel: t('common.cancel'),
               });
               if (!isConfirmed) return;
               deleteMutation.mutate(ids);
             },
           },
         ]}
-        emptyTitle="Нет симуляций"
-        emptyDescription="Создайте первую симуляцию Монте-Карло"
+        emptyTitle={t('monteCarlo.emptyTitle')}
+        emptyDescription={t('monteCarlo.emptyDescription')}
       />
     </div>
   );

@@ -1,6 +1,9 @@
 package com.privod.platform.modules.fleet.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.fleet.domain.AssignmentStatus;
 import com.privod.platform.modules.fleet.domain.Vehicle;
 import com.privod.platform.modules.fleet.domain.VehicleAssignment;
@@ -13,13 +16,13 @@ import com.privod.platform.modules.fleet.web.dto.CreateVehicleRequest;
 import com.privod.platform.modules.fleet.web.dto.UpdateVehicleRequest;
 import com.privod.platform.modules.fleet.web.dto.VehicleAssignmentResponse;
 import com.privod.platform.modules.fleet.web.dto.VehicleResponse;
+import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,38 +40,47 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final VehicleAssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<VehicleResponse> listVehicles(String search, VehicleStatus status,
                                                VehicleType vehicleType, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (search != null && !search.isBlank()) {
-            return vehicleRepository.searchVehicles(search.trim(), pageable)
+            return vehicleRepository.searchVehiclesByOrganizationId(search.trim(), organizationId, pageable)
                     .map(VehicleResponse::fromEntity);
         }
         if (status != null) {
-            return vehicleRepository.findByStatusAndDeletedFalse(status, pageable)
+            return vehicleRepository.findByOrganizationIdAndStatusAndDeletedFalse(organizationId, status, pageable)
                     .map(VehicleResponse::fromEntity);
         }
         if (vehicleType != null) {
-            return vehicleRepository.findByVehicleTypeAndDeletedFalse(vehicleType, pageable)
+            return vehicleRepository.findByOrganizationIdAndVehicleTypeAndDeletedFalse(organizationId, vehicleType, pageable)
                     .map(VehicleResponse::fromEntity);
         }
-        return vehicleRepository.findByDeletedFalse(pageable)
+        return vehicleRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
                 .map(VehicleResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public VehicleResponse getVehicle(UUID id) {
-        Vehicle vehicle = getVehicleOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(id, organizationId);
         return VehicleResponse.fromEntity(vehicle);
     }
 
     @Transactional
     public VehicleResponse createVehicle(CreateVehicleRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(request.currentProjectId(), organizationId);
+        validateUserTenant(request.responsibleId(), organizationId);
+
         String code = generateVehicleCode();
 
         Vehicle vehicle = Vehicle.builder()
+                .organizationId(organizationId)
                 .code(code)
                 .licensePlate(request.licensePlate())
                 .make(request.make())
@@ -103,7 +115,8 @@ public class VehicleService {
 
     @Transactional
     public VehicleResponse updateVehicle(UUID id, UpdateVehicleRequest request) {
-        Vehicle vehicle = getVehicleOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(id, organizationId);
 
         if (request.licensePlate() != null) vehicle.setLicensePlate(request.licensePlate());
         if (request.make() != null) vehicle.setMake(request.make());
@@ -112,7 +125,10 @@ public class VehicleService {
         if (request.vin() != null) vehicle.setVin(request.vin());
         if (request.vehicleType() != null) vehicle.setVehicleType(request.vehicleType());
         if (request.currentLocationId() != null) vehicle.setCurrentLocationId(request.currentLocationId());
-        if (request.responsibleId() != null) vehicle.setResponsibleId(request.responsibleId());
+        if (request.responsibleId() != null) {
+            validateUserTenant(request.responsibleId(), organizationId);
+            vehicle.setResponsibleId(request.responsibleId());
+        }
         if (request.purchaseDate() != null) vehicle.setPurchaseDate(request.purchaseDate());
         if (request.purchasePrice() != null) vehicle.setPurchasePrice(request.purchasePrice());
         if (request.currentValue() != null) vehicle.setCurrentValue(request.currentValue());
@@ -134,7 +150,8 @@ public class VehicleService {
 
     @Transactional
     public void deleteVehicle(UUID id) {
-        Vehicle vehicle = getVehicleOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(id, organizationId);
 
         if (vehicle.getStatus() == VehicleStatus.IN_USE) {
             throw new IllegalStateException("Нельзя удалить технику, которая находится в использовании");
@@ -149,7 +166,10 @@ public class VehicleService {
 
     @Transactional
     public VehicleAssignmentResponse assignToProject(UUID vehicleId, AssignVehicleRequest request) {
-        Vehicle vehicle = getVehicleOrThrow(vehicleId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(vehicleId, organizationId);
+        validateProjectTenant(request.projectId(), organizationId);
+        validateUserTenant(request.operatorId(), organizationId);
 
         if (vehicle.getStatus() != VehicleStatus.AVAILABLE) {
             throw new IllegalStateException(
@@ -161,7 +181,7 @@ public class VehicleService {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
         }
 
-        UUID assignedById = getCurrentUserId();
+        UUID assignedById = SecurityUtils.requireCurrentUserId();
 
         VehicleAssignment assignment = VehicleAssignment.builder()
                 .vehicleId(vehicleId)
@@ -191,7 +211,8 @@ public class VehicleService {
 
     @Transactional
     public VehicleAssignmentResponse returnFromProject(UUID vehicleId) {
-        Vehicle vehicle = getVehicleOrThrow(vehicleId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(vehicleId, organizationId);
 
         if (vehicle.getStatus() != VehicleStatus.IN_USE) {
             throw new IllegalStateException(
@@ -227,37 +248,43 @@ public class VehicleService {
 
     @Transactional(readOnly = true)
     public List<VehicleResponse> getAvailableVehicles() {
-        return vehicleRepository.findAvailableVehicles().stream()
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return vehicleRepository.findAvailableVehiclesByOrganizationId(organizationId).stream()
                 .map(VehicleResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<VehicleResponse> getVehiclesByProject(UUID projectId) {
-        return vehicleRepository.findByCurrentProjectIdAndDeletedFalse(projectId).stream()
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+        return vehicleRepository.findByOrganizationIdAndCurrentProjectIdAndDeletedFalse(organizationId, projectId).stream()
                 .map(VehicleResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<VehicleResponse> getExpiringInsurance(int daysAhead) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         LocalDate threshold = LocalDate.now().plusDays(daysAhead);
-        return vehicleRepository.findByInsuranceExpiringBefore(threshold).stream()
+        return vehicleRepository.findByInsuranceExpiringBeforeAndOrganizationId(threshold, organizationId).stream()
                 .map(VehicleResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<VehicleResponse> getExpiringTechInspection(int daysAhead) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         LocalDate threshold = LocalDate.now().plusDays(daysAhead);
-        return vehicleRepository.findByTechInspectionExpiringBefore(threshold).stream()
+        return vehicleRepository.findByTechInspectionExpiringBeforeAndOrganizationId(threshold, organizationId).stream()
                 .map(VehicleResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public BigDecimal calculateDepreciation(UUID vehicleId) {
-        Vehicle vehicle = getVehicleOrThrow(vehicleId);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(vehicleId, organizationId);
 
         if (vehicle.getPurchasePrice() == null || vehicle.getDepreciationRate() == null
                 || vehicle.getPurchaseDate() == null) {
@@ -286,13 +313,14 @@ public class VehicleService {
 
     @Transactional(readOnly = true)
     public Page<VehicleAssignmentResponse> getVehicleAssignments(UUID vehicleId, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getVehicleOrThrow(vehicleId, organizationId);
         return assignmentRepository.findByVehicleIdAndDeletedFalse(vehicleId, pageable)
                 .map(VehicleAssignmentResponse::fromEntity);
     }
 
-    Vehicle getVehicleOrThrow(UUID id) {
-        return vehicleRepository.findById(id)
-                .filter(v -> !v.isDeleted())
+    Vehicle getVehicleOrThrow(UUID id, UUID organizationId) {
+        return vehicleRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)
                 .orElseThrow(() -> new EntityNotFoundException("Техника не найдена: " + id));
     }
 
@@ -301,7 +329,26 @@ public class VehicleService {
         return String.format("VEH-%05d", seq);
     }
 
-    private UUID getCurrentUserId() {
-        return com.privod.platform.infrastructure.security.SecurityUtils.getCurrentUserId().orElse(null);
+    private void validateProjectTenant(UUID projectId, UUID organizationId) {
+        if (projectId == null) {
+            return;
+        }
+        Project project = projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+        if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
+            throw new EntityNotFoundException("Проект не найден: " + projectId);
+        }
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        User user = userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+        if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
+            throw new EntityNotFoundException("Пользователь не найден: " + userId);
+        }
     }
 }

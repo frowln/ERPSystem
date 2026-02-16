@@ -1,6 +1,8 @@
 package com.privod.platform.modules.fleet.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.fleet.domain.MaintenanceRecord;
 import com.privod.platform.modules.fleet.domain.MaintenanceStatus;
 import com.privod.platform.modules.fleet.domain.Vehicle;
@@ -31,37 +33,48 @@ public class FleetMaintenanceService {
 
     private final MaintenanceRecordRepository maintenanceRepository;
     private final VehicleRepository vehicleRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
     public Page<MaintenanceRecordResponse> listMaintenance(UUID vehicleId,
                                                             MaintenanceStatus status,
                                                             Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         if (vehicleId != null) {
+            getVehicleOrThrow(vehicleId, organizationId);
             return maintenanceRepository.findByVehicleIdAndDeletedFalse(vehicleId, pageable)
                     .map(MaintenanceRecordResponse::fromEntity);
         }
         if (status != null) {
-            return maintenanceRepository.findByStatusAndDeletedFalse(status, pageable)
+            List<UUID> vehicleIds = getOrganizationVehicleIds(organizationId);
+            if (vehicleIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            return maintenanceRepository.findByVehicleIdInAndStatusAndDeletedFalse(vehicleIds, status, pageable)
                     .map(MaintenanceRecordResponse::fromEntity);
         }
-        return maintenanceRepository.findAll(pageable)
+        List<UUID> vehicleIds = getOrganizationVehicleIds(organizationId);
+        if (vehicleIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return maintenanceRepository.findByVehicleIdInAndDeletedFalse(vehicleIds, pageable)
                 .map(MaintenanceRecordResponse::fromEntity);
     }
 
     @Transactional(readOnly = true)
     public MaintenanceRecordResponse getMaintenance(UUID id) {
-        MaintenanceRecord record = getMaintenanceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        MaintenanceRecord record = getMaintenanceOrThrow(id, organizationId);
         return MaintenanceRecordResponse.fromEntity(record);
     }
 
     @Transactional
     public MaintenanceRecordResponse schedule(CreateMaintenanceRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         // Verify vehicle exists
-        vehicleRepository.findById(request.vehicleId())
-                .filter(v -> !v.isDeleted())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Техника не найдена: " + request.vehicleId()));
+        getVehicleOrThrow(request.vehicleId(), organizationId);
+        validateUserTenant(request.performedById(), organizationId);
 
         if (request.endDate() != null && request.endDate().isBefore(request.startDate())) {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
@@ -94,7 +107,8 @@ public class FleetMaintenanceService {
 
     @Transactional
     public MaintenanceRecordResponse updateMaintenance(UUID id, UpdateMaintenanceRequest request) {
-        MaintenanceRecord record = getMaintenanceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        MaintenanceRecord record = getMaintenanceOrThrow(id, organizationId);
 
         if (record.getStatus() == MaintenanceStatus.COMPLETED || record.getStatus() == MaintenanceStatus.CANCELLED) {
             throw new IllegalStateException("Нельзя редактировать завершённую или отменённую запись обслуживания");
@@ -105,7 +119,10 @@ public class FleetMaintenanceService {
         if (request.startDate() != null) record.setStartDate(request.startDate());
         if (request.endDate() != null) record.setEndDate(request.endDate());
         if (request.cost() != null) record.setCost(request.cost());
-        if (request.performedById() != null) record.setPerformedById(request.performedById());
+        if (request.performedById() != null) {
+            validateUserTenant(request.performedById(), organizationId);
+            record.setPerformedById(request.performedById());
+        }
         if (request.vendor() != null) record.setVendor(request.vendor());
         if (request.mileageAtService() != null) record.setMileageAtService(request.mileageAtService());
         if (request.hoursAtService() != null) record.setHoursAtService(request.hoursAtService());
@@ -122,7 +139,8 @@ public class FleetMaintenanceService {
 
     @Transactional
     public MaintenanceRecordResponse startMaintenance(UUID id) {
-        MaintenanceRecord record = getMaintenanceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        MaintenanceRecord record = getMaintenanceOrThrow(id, organizationId);
 
         if (record.getStatus() != MaintenanceStatus.PLANNED) {
             throw new IllegalStateException("Начать можно только запланированное обслуживание");
@@ -132,8 +150,7 @@ public class FleetMaintenanceService {
         record = maintenanceRepository.save(record);
 
         // Update vehicle status to MAINTENANCE
-        Vehicle vehicle = vehicleRepository.findById(record.getVehicleId())
-                .filter(v -> !v.isDeleted())
+        Vehicle vehicle = vehicleRepository.findByIdAndOrganizationIdAndDeletedFalse(record.getVehicleId(), organizationId)
                 .orElse(null);
         if (vehicle != null) {
             VehicleStatus oldStatus = vehicle.getStatus();
@@ -152,7 +169,8 @@ public class FleetMaintenanceService {
 
     @Transactional
     public MaintenanceRecordResponse completeMaintenance(UUID id) {
-        MaintenanceRecord record = getMaintenanceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        MaintenanceRecord record = getMaintenanceOrThrow(id, organizationId);
 
         if (record.getStatus() != MaintenanceStatus.IN_PROGRESS) {
             throw new IllegalStateException("Завершить можно только обслуживание в работе");
@@ -163,8 +181,7 @@ public class FleetMaintenanceService {
         record = maintenanceRepository.save(record);
 
         // Update vehicle status back to AVAILABLE
-        Vehicle vehicle = vehicleRepository.findById(record.getVehicleId())
-                .filter(v -> !v.isDeleted())
+        Vehicle vehicle = vehicleRepository.findByIdAndOrganizationIdAndDeletedFalse(record.getVehicleId(), organizationId)
                 .orElse(null);
         if (vehicle != null && vehicle.getStatus() == VehicleStatus.MAINTENANCE) {
             vehicle.setStatus(VehicleStatus.AVAILABLE);
@@ -182,7 +199,8 @@ public class FleetMaintenanceService {
 
     @Transactional
     public MaintenanceRecordResponse cancelMaintenance(UUID id) {
-        MaintenanceRecord record = getMaintenanceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        MaintenanceRecord record = getMaintenanceOrThrow(id, organizationId);
 
         if (record.getStatus() == MaintenanceStatus.COMPLETED) {
             throw new IllegalStateException("Нельзя отменить завершённое обслуживание");
@@ -194,8 +212,7 @@ public class FleetMaintenanceService {
 
         // If vehicle was in maintenance, restore to available
         if (oldStatus == MaintenanceStatus.IN_PROGRESS) {
-            Vehicle vehicle = vehicleRepository.findById(record.getVehicleId())
-                    .filter(v -> !v.isDeleted())
+            Vehicle vehicle = vehicleRepository.findByIdAndOrganizationIdAndDeletedFalse(record.getVehicleId(), organizationId)
                     .orElse(null);
             if (vehicle != null && vehicle.getStatus() == VehicleStatus.MAINTENANCE) {
                 vehicle.setStatus(VehicleStatus.AVAILABLE);
@@ -214,7 +231,8 @@ public class FleetMaintenanceService {
 
     @Transactional
     public void deleteMaintenance(UUID id) {
-        MaintenanceRecord record = getMaintenanceOrThrow(id);
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        MaintenanceRecord record = getMaintenanceOrThrow(id, organizationId);
         record.softDelete();
         maintenanceRepository.save(record);
         auditService.logDelete("MaintenanceRecord", id);
@@ -223,14 +241,21 @@ public class FleetMaintenanceService {
 
     @Transactional(readOnly = true)
     public List<MaintenanceRecordResponse> getUpcomingMaintenance(int daysAhead) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         LocalDate threshold = LocalDate.now().plusDays(daysAhead);
-        return maintenanceRepository.findUpcomingMaintenance(threshold).stream()
+        List<UUID> vehicleIds = getOrganizationVehicleIds(organizationId);
+        if (vehicleIds.isEmpty()) {
+            return List.of();
+        }
+        return maintenanceRepository.findUpcomingMaintenanceByVehicleIds(vehicleIds, threshold).stream()
                 .map(MaintenanceRecordResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<MaintenanceRecordResponse> getMaintenanceHistory(UUID vehicleId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getVehicleOrThrow(vehicleId, organizationId);
         return maintenanceRepository.findByVehicleIdAndDeletedFalseOrderByStartDateDesc(vehicleId).stream()
                 .map(MaintenanceRecordResponse::fromEntity)
                 .toList();
@@ -238,18 +263,35 @@ public class FleetMaintenanceService {
 
     @Transactional(readOnly = true)
     public MaintenanceCostResponse getMaintenanceCosts(UUID vehicleId) {
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .filter(v -> !v.isDeleted())
-                .orElseThrow(() -> new EntityNotFoundException("Техника не найдена: " + vehicleId));
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Vehicle vehicle = getVehicleOrThrow(vehicleId, organizationId);
 
         BigDecimal totalCost = maintenanceRepository.sumCostByVehicleId(vehicleId);
 
         return new MaintenanceCostResponse(vehicleId, vehicle.getCode(), totalCost);
     }
 
-    private MaintenanceRecord getMaintenanceOrThrow(UUID id) {
-        return maintenanceRepository.findById(id)
-                .filter(r -> !r.isDeleted())
+    private MaintenanceRecord getMaintenanceOrThrow(UUID id, UUID organizationId) {
+        MaintenanceRecord record = maintenanceRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Запись обслуживания не найдена: " + id));
+        getVehicleOrThrow(record.getVehicleId(), organizationId);
+        return record;
+    }
+
+    private Vehicle getVehicleOrThrow(UUID vehicleId, UUID organizationId) {
+        return vehicleRepository.findByIdAndOrganizationIdAndDeletedFalse(vehicleId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Техника не найдена: " + vehicleId));
+    }
+
+    private List<UUID> getOrganizationVehicleIds(UUID organizationId) {
+        return vehicleRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void validateUserTenant(UUID userId, UUID organizationId) {
+        if (userId == null) {
+            return;
+        }
+        userRepository.findByIdAndOrganizationIdAndDeletedFalse(userId, organizationId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
     }
 }

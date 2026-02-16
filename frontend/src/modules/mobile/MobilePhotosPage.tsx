@@ -11,6 +11,7 @@ import { formatDate, formatDateTime } from '@/lib/format';
 import type { PhotoCapture } from './types';
 import { useMobileSubmissionQueue } from './useMobileSubmissionQueue';
 import { mobileApi } from '@/api/mobile';
+import { t } from '@/i18n';
 
 const syncStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red'> = {
   synced: 'green',
@@ -19,12 +20,12 @@ const syncStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 
   offline: 'gray',
 };
 
-const syncStatusLabels: Record<string, string> = {
-  synced: 'Синхронизирован',
-  pending: 'Ожидает',
-  error: 'Ошибка',
-  offline: 'Офлайн',
-};
+const getSyncStatusLabels = (): Record<string, string> => ({
+  synced: t('mobileModule.photos.syncSynced'),
+  pending: t('mobileModule.photos.syncPending'),
+  error: t('mobileModule.photos.syncError'),
+  offline: t('mobileModule.photos.syncOffline'),
+});
 
 const PhotoCapturePage: React.FC = () => {
   const navigate = useNavigate();
@@ -78,31 +79,31 @@ const PhotoCapturePage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Фото с площадки"
-        subtitle={`${photos.length} фотографий`}
+        title={t('mobileModule.photos.pageTitle')}
+        subtitle={t('mobileModule.photos.pageSubtitle', { count: String(photos.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Мобильное приложение' },
-          { label: 'Фото' },
+          { label: t('mobileModule.photos.breadcrumbHome'), href: '/' },
+          { label: t('mobileModule.photos.breadcrumbMobile') },
+          { label: t('mobileModule.photos.breadcrumbPhotos') },
         ]}
         actions={
           <Button iconLeft={<Download size={16} />}>
-            Скачать выбранные
+            {t('mobileModule.photos.downloadSelected')}
           </Button>
         }
       />
 
       {/* Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Camera size={18} />} label="Всего фото" value={metrics.total} />
-        <MetricCard icon={<Camera size={18} />} label="Синхронизировано" value={metrics.synced} />
+        <MetricCard icon={<Camera size={18} />} label={t('mobileModule.photos.metricTotal')} value={metrics.total} />
+        <MetricCard icon={<Camera size={18} />} label={t('mobileModule.photos.metricSynced')} value={metrics.synced} />
         <MetricCard
           icon={<Camera size={18} />}
-          label="Ожидают загрузки"
+          label={t('mobileModule.photos.metricPendingUpload')}
           value={metrics.pending}
-          trend={{ direction: metrics.pending > 0 ? 'down' : 'neutral', value: metrics.pending > 0 ? 'Требуется синхронизация' : 'Все загружены' }}
+          trend={{ direction: metrics.pending > 0 ? 'down' : 'neutral', value: metrics.pending > 0 ? t('mobileModule.photos.syncRequired') : t('mobileModule.photos.allUploaded') }}
         />
-        <MetricCard icon={<MapPin size={18} />} label="С геометкой" value={metrics.withGps} />
+        <MetricCard icon={<MapPin size={18} />} label={t('mobileModule.photos.metricWithGps')} value={metrics.withGps} />
       </div>
 
       {/* Filters */}
@@ -110,7 +111,7 @@ const PhotoCapturePage: React.FC = () => {
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
-            placeholder="Поиск по подписи, файлу, автору..."
+            placeholder={t('mobileModule.photos.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -118,8 +119,8 @@ const PhotoCapturePage: React.FC = () => {
         </div>
         <Select
           options={[
-            { value: '', label: 'Все статусы' },
-            ...Object.entries(syncStatusLabels).map(([v, l]) => ({ value: v, label: l })),
+            { value: '', label: t('mobileModule.photos.allStatuses') },
+            ...Object.entries(getSyncStatusLabels()).map(([v, l]) => ({ value: v, label: l })),
           ]}
           value={syncFilter}
           onChange={(e) => setSyncFilter(e.target.value)}
@@ -130,11 +131,11 @@ const PhotoCapturePage: React.FC = () => {
       {localQueueStats.reports > 0 && (
         <div className="mb-6 rounded-xl border border-warning-200 bg-warning-50 px-4 py-3 flex items-center justify-between gap-3">
           <p className="text-sm text-warning-800">
-            В локальной очереди: {localQueueStats.photos} фото из {localQueueStats.reports} отчёт(ов).
-            {localQueueStats.issues > 0 && ` Проблемных элементов: ${localQueueStats.issues}.`}
+            {t('mobileModule.photos.localQueue', { photos: String(localQueueStats.photos), reports: String(localQueueStats.reports) })}
+            {localQueueStats.issues > 0 && ` ${t('mobileModule.photos.localQueueIssues', { count: String(localQueueStats.issues) })}`}
           </p>
           <Button size="sm" variant="secondary" onClick={() => navigate('/mobile/dashboard')}>
-            Центр синхронизации
+            {t('mobileModule.photos.syncCenter')}
           </Button>
         </div>
       )}
@@ -153,7 +154,7 @@ const PhotoCapturePage: React.FC = () => {
                 <StatusBadge
                   status={photo.syncStatus}
                   colorMap={syncStatusColorMap}
-                  label={syncStatusLabels[photo.syncStatus]}
+                  label={getSyncStatusLabels()[photo.syncStatus]}
                 />
               </div>
               {photo.gpsLatitude && (
@@ -187,8 +188,8 @@ const PhotoCapturePage: React.FC = () => {
       {filteredPhotos.length === 0 && (
         <div className="text-center py-16">
           <Camera size={48} className="mx-auto text-neutral-300 mb-4" />
-          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Нет фотографий</p>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Фотографии с площадки будут отображаться здесь</p>
+          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('mobileModule.photos.emptyTitle')}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{t('mobileModule.photos.emptyDescription')}</p>
         </div>
       )}
     </div>

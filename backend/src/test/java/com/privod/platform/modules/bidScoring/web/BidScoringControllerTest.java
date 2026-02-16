@@ -11,7 +11,8 @@ import com.privod.platform.modules.bidScoring.web.dto.BidCriteriaResponse;
 import com.privod.platform.modules.bidScoring.web.dto.BidScoreResponse;
 import com.privod.platform.modules.bidScoring.web.dto.CreateBidComparisonRequest;
 import com.privod.platform.modules.bidScoring.web.dto.CreateBidCriteriaRequest;
-import com.privod.platform.modules.bidScoring.web.dto.CreateBidScoreRequest;
+import com.privod.platform.modules.bidScoring.web.dto.UpdateBidCriteriaRequest;
+import com.privod.platform.modules.bidScoring.web.dto.UpdateBidScoreRequest;
 import com.privod.platform.modules.bidScoring.web.dto.VendorTotalScoreResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -237,6 +238,29 @@ class BidScoringControllerTest {
                 .andExpect(jsonPath("$.success", is(true)));
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("PUT /api/bid-scoring/criteria/{id} - should update criteria")
+    void shouldUpdateCriteria() throws Exception {
+        UpdateBidCriteriaRequest request = new UpdateBidCriteriaRequest(
+                CriteriaType.QUALITY, "Quality Updated", "Desc",
+                new BigDecimal("35"), 10, 2);
+
+        BidCriteriaResponse response = new BidCriteriaResponse(
+                criteriaId, comparisonId, CriteriaType.QUALITY, "Качество",
+                "Quality Updated", "Desc", new BigDecimal("35"), 10, 2,
+                Instant.now(), Instant.now());
+        when(bidScoringService.updateCriteria(eq(criteriaId), any(UpdateBidCriteriaRequest.class))).thenReturn(response);
+
+        mockMvc.perform(put("/api/bid-scoring/criteria/{id}", criteriaId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data.id", is(criteriaId.toString())));
+    }
+
     // ======================== BidScore Endpoints ========================
 
     @Test
@@ -255,6 +279,33 @@ class BidScoringControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.data", hasSize(1)));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("PUT /api/bid-scoring/scores/{id} - should update score")
+    void shouldUpdateScore() throws Exception {
+        UpdateBidScoreRequest request = new UpdateBidScoreRequest(
+                new BigDecimal("9"),
+                "Updated comment",
+                "Vendor A",
+                UUID.randomUUID()
+        );
+
+        BidScoreResponse scoreResponse = new BidScoreResponse(
+                scoreId, comparisonId, criteriaId, vendorId, "Vendor A",
+                new BigDecimal("9"), new BigDecimal("36"), "Updated comment",
+                UUID.randomUUID(), Instant.now(),
+                Instant.now(), Instant.now());
+        when(bidScoringService.updateScore(eq(scoreId), any(UpdateBidScoreRequest.class))).thenReturn(scoreResponse);
+
+        mockMvc.perform(put("/api/bid-scoring/scores/{id}", scoreId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data.id", is(scoreId.toString())));
     }
 
     @Test

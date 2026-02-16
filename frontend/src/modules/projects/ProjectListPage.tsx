@@ -187,7 +187,7 @@ const ProjectListPage: React.FC = () => {
 
   const handleConfirmBulkCancel = useCallback(() => {
     if (!pendingCancellation || pendingCancellation.ids.length === 0) return;
-    if (guardDemoModeAction('Отмена проектов')) {
+    if (guardDemoModeAction(t('projects.demoCancelProjects'))) {
       setPendingCancellation(null);
       return;
     }
@@ -212,7 +212,7 @@ const ProjectListPage: React.FC = () => {
           <Button
             iconLeft={<Plus size={16} />}
             onClick={() => {
-              if (guardDemoModeAction('Создание проекта')) return;
+              if (guardDemoModeAction(t('projects.demoCreateProject'))) return;
               navigate('/projects/new');
             }}
           >

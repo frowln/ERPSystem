@@ -1,5 +1,6 @@
 package com.privod.platform.modules.analytics.service;
 
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.analytics.web.dto.FinancialSummary;
 import com.privod.platform.modules.analytics.web.dto.HrMetricsSummary;
 import com.privod.platform.modules.analytics.web.dto.ProcurementStatusSummary;
@@ -13,6 +14,7 @@ import com.privod.platform.modules.project.domain.ProjectStatus;
 import com.privod.platform.modules.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +35,11 @@ public class AnalyticsDataService {
 
     @Transactional(readOnly = true)
     public ProjectStatusSummary getProjectStatusSummary() {
-        long totalProjects = projectRepository.countActiveProjects();
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        long totalProjects = projectRepository.countActiveProjectsByOrganizationId(organizationId);
 
         Map<String, Long> byStatus = new HashMap<>();
-        List<Object[]> statusData = projectRepository.countByStatus();
+        List<Object[]> statusData = projectRepository.countByStatusAndOrganizationId(organizationId);
         long activeProjects = 0;
         long completedProjects = 0;
         for (Object[] row : statusData) {
@@ -51,7 +54,7 @@ public class AnalyticsDataService {
             }
         }
 
-        long overdueProjects = countOverdueProjects();
+        long overdueProjects = countOverdueProjects(organizationId);
 
         return new ProjectStatusSummary(
                 totalProjects,
@@ -64,8 +67,9 @@ public class AnalyticsDataService {
 
     @Transactional(readOnly = true)
     public FinancialSummary getFinancialSummary(UUID projectId) {
-        BigDecimal totalBudget = projectRepository.sumBudgetAmount();
-        BigDecimal totalContract = projectRepository.sumContractAmount();
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        BigDecimal totalBudget = projectRepository.sumBudgetAmountByOrganizationId(organizationId);
+        BigDecimal totalContract = projectRepository.sumContractAmountByOrganizationId(organizationId);
 
         if (totalBudget == null) totalBudget = BigDecimal.ZERO;
         if (totalContract == null) totalContract = BigDecimal.ZERO;
@@ -158,8 +162,9 @@ public class AnalyticsDataService {
 
     @Transactional(readOnly = true)
     public List<ProjectTimelineEntry> getProjectTimeline() {
-        return projectRepository.findAll().stream()
-                .filter(p -> !p.isDeleted())
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return projectRepository.findByOrganizationIdAndDeletedFalse(organizationId, Pageable.unpaged())
+                .stream()
                 .map(this::toTimelineEntry)
                 .toList();
     }
@@ -191,10 +196,10 @@ public class AnalyticsDataService {
         );
     }
 
-    private long countOverdueProjects() {
+    private long countOverdueProjects(UUID organizationId) {
         LocalDate today = LocalDate.now();
-        return projectRepository.findAll().stream()
-                .filter(p -> !p.isDeleted())
+        return projectRepository.findByOrganizationIdAndDeletedFalse(organizationId, Pageable.unpaged())
+                .stream()
                 .filter(p -> p.getStatus() == ProjectStatus.IN_PROGRESS)
                 .filter(p -> p.getPlannedEndDate() != null && p.getPlannedEndDate().isBefore(today))
                 .count();

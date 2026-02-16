@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +10,9 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { procurementApi } from '@/api/procurement';
+import { projectsApi } from '@/api/projects';
 import { formatMoney } from '@/lib/format';
+import { useAuthStore } from '@/stores/authStore';
 import { t } from '@/i18n';
 
 const purchaseRequestSchema = z.object({
@@ -32,13 +34,6 @@ interface MaterialItem {
   estimatedPrice: string;
 }
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
 const getPriorityOptions = () => [
   { value: 'LOW', label: t('forms.purchaseRequest.priorities.low') },
   { value: 'MEDIUM', label: t('forms.purchaseRequest.priorities.medium') },
@@ -46,35 +41,58 @@ const getPriorityOptions = () => [
   { value: 'CRITICAL', label: t('forms.purchaseRequest.priorities.critical') },
 ];
 
-const materialOptions = [
-  { value: 'm1', label: 'Арматура А500С d12' },
-  { value: 'm2', label: 'Бетон В25' },
-  { value: 'm3', label: 'Кирпич облицовочный' },
-  { value: 'm4', label: 'Утеплитель Rockwool 100мм' },
-  { value: 'm5', label: 'Труба ПНД 110мм' },
-  { value: 'm6', label: 'Кабель ВВГнг 3x2.5' },
-  { value: 'm7', label: 'Цемент М500' },
-  { value: 'm8', label: 'Песок строительный' },
+const getUnitOptions = () => [
+  { value: 'шт', label: t('forms.purchaseRequest.units.pcs') },
+  { value: 'м', label: t('forms.purchaseRequest.units.m') },
+  { value: 'м2', label: t('forms.purchaseRequest.units.m2') },
+  { value: 'м3', label: t('forms.purchaseRequest.units.m3') },
+  { value: 'кг', label: t('forms.purchaseRequest.units.kg') },
+  { value: 'т', label: t('forms.purchaseRequest.units.t') },
+  { value: 'л', label: t('forms.purchaseRequest.units.l') },
+  { value: 'упак', label: t('forms.purchaseRequest.units.pack') },
 ];
 
-const unitOptions = [
-  { value: 'шт', label: 'шт' },
-  { value: 'м', label: 'м' },
-  { value: 'м2', label: 'м2' },
-  { value: 'м3', label: 'м3' },
-  { value: 'кг', label: 'кг' },
-  { value: 'т', label: 'т' },
-  { value: 'л', label: 'л' },
-  { value: 'упак', label: 'упак' },
-];
+const toNumber = (value: string): number => {
+  const normalized = value.replace(',', '.').trim();
+  if (!normalized) {
+    return 0;
+  }
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
 
 const PurchaseRequestFormPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const currentUser = useAuthStore((state) => state.user);
 
   const [items, setItems] = useState<MaterialItem[]>([
     { materialId: '', quantity: '', unit: 'шт', estimatedPrice: '' },
   ]);
+
+  const { data: projectsResponse, isLoading: isProjectsLoading } = useQuery({
+    queryKey: ['projects', 'purchase-request-form'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 300, sort: 'name,asc' }),
+  });
+  const projects = projectsResponse?.content ?? [];
+
+  const { data: materials = [], isLoading: isMaterialsLoading } = useQuery({
+    queryKey: ['procurement-materials'],
+    queryFn: procurementApi.getMaterials,
+  });
+
+  const projectOptions = useMemo(
+    () => projects.map((project) => ({ value: project.id, label: project.name })),
+    [projects],
+  );
+  const materialOptions = useMemo(
+    () => materials.map((material) => ({ value: material.id, label: material.name })),
+    [materials],
+  );
+  const materialById = useMemo(
+    () => new Map(materials.map((material) => [material.id, material])),
+    [materials],
+  );
 
   const {
     register,
@@ -107,32 +125,108 @@ const PurchaseRequestFormPage: React.FC = () => {
     setItems(updated);
   };
 
-  const totalEstimated = items.reduce((sum, item) => {
-    const qty = Number(item.quantity) || 0;
-    const price = Number(item.estimatedPrice) || 0;
-    return sum + qty * price;
-  }, 0);
+  const setItemMaterial = (index: number, materialId: string) => {
+    setItems((prev) => {
+      const next = [...prev];
+      const material = materialById.get(materialId);
+      next[index] = {
+        ...next[index],
+        materialId,
+        unit: material?.unit ?? next[index].unit,
+      };
+      return next;
+    });
+  };
+
+  const totalEstimated = useMemo(
+    () => items.reduce((sum, item) => sum + (toNumber(item.quantity) * toNumber(item.estimatedPrice)), 0),
+    [items],
+  );
 
   const createMutation = useMutation({
-    mutationFn: (data: PurchaseRequestFormData) => {
-      return procurementApi.createPurchaseRequest({
-        name: `${t('forms.purchaseRequest.requestNamePrefix')} ${data.requestDate}`,
-        requestDate: data.requestDate,
-        projectId: data.projectId,
-        status: 'DRAFT',
-        priority: data.priority,
-        requestedByName: t('forms.purchaseRequest.currentUser'),
-        totalAmount: totalEstimated,
-        itemCount: items.length,
+    mutationFn: async (data: PurchaseRequestFormData) => {
+      const parsed = purchaseRequestSchema.parse(data);
+      const filledItems = items
+        .map((item, index) => ({
+          row: index + 1,
+          materialId: item.materialId.trim(),
+          quantity: item.quantity.trim(),
+          unit: item.unit.trim(),
+          estimatedPrice: item.estimatedPrice.trim(),
+        }))
+        .filter((item) => item.materialId || item.quantity || item.estimatedPrice);
+
+      if (filledItems.length === 0) {
+        throw new Error(t('forms.purchaseRequest.validation.atLeastOneItem'));
+      }
+
+      const itemPayloads = filledItems.map((item, index) => {
+        if (!item.materialId) {
+          throw new Error(`${t('forms.purchaseRequest.validation.itemMaterialRequired')} ${item.row}`);
+        }
+
+        const quantity = toNumber(item.quantity);
+        if (quantity <= 0) {
+          throw new Error(`${t('forms.purchaseRequest.validation.itemQuantityPositive')} ${item.row}`);
+        }
+
+        if (!item.unit) {
+          throw new Error(`${t('forms.purchaseRequest.validation.itemUnitRequired')} ${item.row}`);
+        }
+
+        let unitPrice: number | undefined;
+        if (item.estimatedPrice) {
+          const parsedPrice = toNumber(item.estimatedPrice);
+          if (parsedPrice <= 0) {
+            throw new Error(`${t('forms.purchaseRequest.validation.itemPricePositive')} ${item.row}`);
+          }
+          unitPrice = parsedPrice;
+        }
+
+        return {
+          sequence: index + 1,
+          name: materialById.get(item.materialId)?.name ?? item.materialId,
+          quantity,
+          unitOfMeasure: item.unit,
+          unitPrice,
+        };
       });
+
+      const requesterName = currentUser?.fullName?.trim()
+        || `${currentUser?.firstName ?? ''} ${currentUser?.lastName ?? ''}`.trim()
+        || currentUser?.email
+        || t('forms.purchaseRequest.currentUser');
+
+      const neededByLine = `${t('forms.purchaseRequest.labelNeededByDate')}: ${parsed.neededByDate}`;
+      const trimmedNotes = parsed.notes?.trim() ?? '';
+      const maxNotesLength = 5000;
+      const maxFreeTextLength = Math.max(0, maxNotesLength - neededByLine.length - (trimmedNotes ? 1 : 0));
+      const limitedNotes = trimmedNotes ? trimmedNotes.slice(0, maxFreeTextLength) : '';
+      const requestNotes = limitedNotes ? `${limitedNotes}\n${neededByLine}` : neededByLine;
+
+      const request = await procurementApi.createPurchaseRequest({
+        requestDate: parsed.requestDate,
+        projectId: parsed.projectId,
+        priority: parsed.priority,
+        requestedById: currentUser?.id,
+        requestedByName: requesterName,
+        notes: requestNotes || undefined,
+      });
+
+      for (const itemPayload of itemPayloads) {
+        await procurementApi.addPurchaseRequestItem(request.id, itemPayload);
+      }
+
+      return request;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purchaseRequests'] });
+    onSuccess: (request) => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
       toast.success(t('forms.purchaseRequest.createSuccess'));
-      navigate('/procurement');
+      navigate(`/procurement/${request.id}`);
     },
-    onError: () => {
-      toast.error(t('forms.purchaseRequest.createError'));
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : t('forms.purchaseRequest.createError');
+      toast.error(message);
     },
   });
 
@@ -161,12 +255,17 @@ const PurchaseRequestFormPage: React.FC = () => {
               <Input type="date" hasError={!!errors.requestDate} {...register('requestDate')} />
             </FormField>
             <FormField label={t('forms.purchaseRequest.labelProject')} error={errors.projectId?.message} required>
-              <Select
-                options={projectOptions}
-                placeholder={t('forms.purchaseRequest.placeholderProject')}
-                hasError={!!errors.projectId}
-                {...register('projectId')}
-              />
+              {!isProjectsLoading && projectOptions.length === 0 ? (
+                <Input placeholder="UUID" hasError={!!errors.projectId} {...register('projectId')} />
+              ) : (
+                <Select
+                  options={projectOptions}
+                  placeholder={isProjectsLoading ? t('common.loading') : t('forms.purchaseRequest.placeholderProject')}
+                  hasError={!!errors.projectId}
+                  disabled={isProjectsLoading}
+                  {...register('projectId')}
+                />
+              )}
             </FormField>
             <FormField label={t('forms.purchaseRequest.labelNeededByDate')} error={errors.neededByDate?.message} required>
               <Input type="date" hasError={!!errors.neededByDate} {...register('neededByDate')} />
@@ -189,19 +288,28 @@ const PurchaseRequestFormPage: React.FC = () => {
               <div key={index} className="grid grid-cols-12 gap-3 items-end p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
                 <div className="col-span-4">
                   <FormField label={index === 0 ? t('forms.purchaseRequest.labelMaterial') : undefined}>
-                    <Select
-                      options={materialOptions}
-                      placeholder={t('forms.purchaseRequest.placeholderMaterial')}
-                      value={item.materialId}
-                      onChange={(e) => updateItem(index, 'materialId', e.target.value)}
-                    />
+                    {!isMaterialsLoading && materialOptions.length === 0 ? (
+                      <Input
+                        placeholder={t('forms.purchaseRequest.placeholderMaterial')}
+                        value={item.materialId}
+                        onChange={(e) => updateItem(index, 'materialId', e.target.value)}
+                      />
+                    ) : (
+                      <Select
+                        options={materialOptions}
+                        placeholder={isMaterialsLoading ? t('common.loading') : t('forms.purchaseRequest.placeholderMaterial')}
+                        value={item.materialId}
+                        onChange={(e) => setItemMaterial(index, e.target.value)}
+                        disabled={isMaterialsLoading}
+                      />
+                    )}
                   </FormField>
                 </div>
                 <div className="col-span-2">
                   <FormField label={index === 0 ? t('forms.purchaseRequest.labelQuantity') : undefined}>
                     <Input
                       type="text"
-                      inputMode="numeric"
+                      inputMode="decimal"
                       placeholder="0"
                       value={item.quantity}
                       onChange={(e) => updateItem(index, 'quantity', e.target.value)}
@@ -211,7 +319,7 @@ const PurchaseRequestFormPage: React.FC = () => {
                 <div className="col-span-2">
                   <FormField label={index === 0 ? t('forms.purchaseRequest.labelUnitOfMeasure') : undefined}>
                     <Select
-                      options={unitOptions}
+                      options={getUnitOptions()}
                       value={item.unit}
                       onChange={(e) => updateItem(index, 'unit', e.target.value)}
                     />
@@ -221,7 +329,7 @@ const PurchaseRequestFormPage: React.FC = () => {
                   <FormField label={index === 0 ? t('forms.purchaseRequest.labelEstimatedPrice') : undefined}>
                     <Input
                       type="text"
-                      inputMode="numeric"
+                      inputMode="decimal"
                       placeholder="0"
                       value={item.estimatedPrice}
                       onChange={(e) => updateItem(index, 'estimatedPrice', e.target.value)}

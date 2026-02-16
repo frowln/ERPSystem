@@ -11,8 +11,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "crm_stages", indexes = {
+        @Index(name = "idx_crm_stage_org", columnList = "organization_id"),
         @Index(name = "idx_crm_stage_sequence", columnList = "sequence"),
         @Index(name = "idx_crm_stage_closed", columnList = "is_closed"),
         @Index(name = "idx_crm_stage_won", columnList = "is_won")
@@ -23,6 +26,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrmStage extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 200)
     private String name;
