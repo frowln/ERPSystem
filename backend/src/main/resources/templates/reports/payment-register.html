@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Реестр платежей'">Реестр платежей</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 landscape; margin: 12mm 10mm 12mm 10mm; }
+        .summary-cards { overflow: hidden; margin-bottom: 14pt; }
+        .summary-card { float: left; width: 23%; margin-right: 2%; border: 1px solid #ccc;
+                        padding: 6pt 8pt; text-align: center; }
+        .summary-card:last-child { margin-right: 0; }
+        .summary-card .card-value { font-size: 14pt; font-weight: bold; color: #1a365d; }
+        .summary-card .card-label { font-size: 7pt; color: #666; text-transform: uppercase; }
+        .status-paid { color: #16a34a; font-weight: bold; }
+        .status-pending { color: #ca8a04; font-weight: bold; }
+        .status-overdue { color: #dc2626; font-weight: bold; }
+        .status-cancelled { color: #666; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">РЕЕСТР ПЛАТЕЖЕЙ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Filter info ────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Период:</td>
+        <td>
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${reportDate} ?: '—'">31.01.2026</td>
+    </tr>
+    <tr th:if="${contractorFilter != null}">
+        <td class="label">Контрагент:</td>
+        <td colspan="3" th:text="${contractorFilter}">—</td>
+    </tr>
+</table>
+
+<!-- ── Summary cards ──────────────────────────────────────────────────────── -->
+<div class="summary-cards">
+    <div class="summary-card">
+        <div class="card-value" th:text="${totalPayments} ?: '0'">0</div>
+        <div class="card-label">Всего платежей</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-value" th:text="${totalAmount != null} ? ${#numbers.formatDecimal(totalAmount, 1, 2)} : '0.00'">0.00</div>
+        <div class="card-label">Общая сумма, руб.</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-value status-paid" th:text="${paidAmount != null} ? ${#numbers.formatDecimal(paidAmount, 1, 2)} : '0.00'">0.00</div>
+        <div class="card-label">Оплачено, руб.</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-value status-pending" th:text="${pendingAmount != null} ? ${#numbers.formatDecimal(pendingAmount, 1, 2)} : '0.00'">0.00</div>
+        <div class="card-label">К оплате, руб.</div>
+    </div>
+</div>
+
+<!-- ── Payments table ─────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:8%;">Номер п/п</th>
+            <th style="width:7%;">Дата п/п</th>
+            <th style="width:15%;">Контрагент</th>
+            <th style="width:12%;">Назначение платежа</th>
+            <th style="width:8%;">Договор</th>
+            <th style="width:10%;">Сумма, руб.</th>
+            <th style="width:5%;">НДС, %</th>
+            <th style="width:9%;">В т.ч. НДС, руб.</th>
+            <th style="width:7%;">Статус</th>
+            <th style="width:7%;">Дата<br/>оплаты</th>
+            <th style="width:8%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="pay, iter : ${payments}" th:if="${payments != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${pay.paymentNumber}">П-001</td>
+            <td class="center" th:text="${pay.paymentDate}">15.01.2026</td>
+            <td th:text="${pay.counterparty}">ООО «Поставщик»</td>
+            <td th:text="${pay.purpose}">Оплата за материалы</td>
+            <td class="center" th:text="${pay.contractNumber} ?: '—'">Д-001</td>
+            <td class="number" th:text="${#numbers.formatDecimal(pay.amount, 1, 2)}">325 000.00</td>
+            <td class="center" th:text="${pay.vatRate}">20</td>
+            <td class="number" th:text="${#numbers.formatDecimal(pay.vatAmount, 1, 2)}">65 000.00</td>
+            <td class="center">
+                <span th:if="${pay.status == 'PAID'}" class="status-paid">Оплачен</span>
+                <span th:if="${pay.status == 'PENDING'}" class="status-pending">Ожидает</span>
+                <span th:if="${pay.status == 'OVERDUE'}" class="status-overdue">Просрочен</span>
+                <span th:if="${pay.status == 'CANCELLED'}" class="status-cancelled">Отменён</span>
+            </td>
+            <td class="center" th:text="${pay.paidDate} ?: '—'">15.01.2026</td>
+            <td class="text-small" th:text="${pay.note} ?: ''"></td>
+        </tr>
+        <tr th:if="${payments == null or payments.isEmpty()}">
+            <td class="center" colspan="12">Платежи за указанный период отсутствуют</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${payments != null and !payments.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="6" class="text-right">Итого:</td>
+            <td class="number" th:text="${totalAmount != null} ? ${#numbers.formatDecimal(totalAmount, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td class="number" th:text="${totalVatAmount != null} ? ${#numbers.formatDecimal(totalVatAmount, 1, 2)} : '0.00'">0.00</td>
+            <td colspan="3"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Бухгалтер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Проверил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Главный бухгалтер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

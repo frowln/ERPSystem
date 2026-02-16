@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Локальная смета'">Локальная смета</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .approval-block { overflow: hidden; margin-bottom: 12pt; }
+        .approval-left { float: left; width: 48%; }
+        .approval-right { float: right; width: 48%; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 120pt; }
+        .section-row td { background-color: #e8e8e8; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- ── Approval block ─────────────────────────────────────────────────────── -->
+<div class="approval-block">
+    <div class="approval-left">
+        <p class="text-small text-muted">СОГЛАСОВАНО</p>
+        <div class="signature-line"></div>
+        <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        <p class="mt-4">"<span class="underline" style="min-width:30pt;"></span>"
+            <span class="underline" style="min-width:80pt;"></span> 20<span class="underline" style="min-width:20pt;"></span> г.
+        </p>
+    </div>
+    <div class="approval-right text-right">
+        <p class="text-small text-muted">УТВЕРЖДАЮ</p>
+        <div class="signature-line"></div>
+        <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        <p class="mt-4">"<span class="underline" style="min-width:30pt;"></span>"
+            <span class="underline" style="min-width:80pt;"></span> 20<span class="underline" style="min-width:20pt;"></span> г.
+        </p>
+    </div>
+</div>
+
+<!-- ── Title ──────────────────────────────────────────────────────────────── -->
+<div class="report-header" style="border-bottom: none;">
+    <div class="report-title">ЛОКАЛЬНАЯ СМЕТА №
+        <span th:text="${estimateNumber} ?: '—'">ЛС-001</span>
+    </div>
+    <div class="report-subtitle" th:text="${estimateName} ?: ''">
+        на общестроительные работы
+    </div>
+</div>
+
+<!-- ── Meta information ───────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Стройка:</td>
+        <td colspan="3" th:text="${constructionName} ?: '—'">Жилой комплекс «Панорама»</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Основание:</td>
+        <td colspan="3" th:text="${basis} ?: '—'">Проектная документация шифр 123-АР</td>
+    </tr>
+    <tr>
+        <td class="label">Сметная стоимость:</td>
+        <td th:text="${totalCost != null} ? ${#numbers.formatDecimal(totalCost, 1, 2)} + ' руб.' : '—'">5 000 000.00 руб.</td>
+        <td class="label">Нормативная трудоёмкость:</td>
+        <td th:text="${totalLabor} ?: '—'">1 250 чел.-ч</td>
+    </tr>
+    <tr>
+        <td class="label">Составлена в ценах:</td>
+        <td colspan="3" th:text="${priceBase} ?: 'текущих'">текущих (на 01.01.2026)</td>
+    </tr>
+</table>
+
+<!-- ── Estimate items table ───────────────────────────────────────────────── -->
+<table class="gost-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№<br/>п/п</th>
+            <th style="width:8%;">Обосно-<br/>вание</th>
+            <th style="width:25%;">Наименование работ<br/>и затрат</th>
+            <th style="width:6%;">Ед.<br/>изм.</th>
+            <th style="width:8%;">Кол-во</th>
+            <th style="width:10%;">Стоимость<br/>единицы,<br/>руб.</th>
+            <th style="width:12%;">Общая<br/>стоимость,<br/>руб.</th>
+            <th style="width:8%;">В т.ч.<br/>ОЗП,<br/>руб.</th>
+            <th style="width:8%;">В т.ч.<br/>ЭМ,<br/>руб.</th>
+            <th style="width:10%;">Трудо-<br/>затраты,<br/>чел.-ч</th>
+        </tr>
+        <tr>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Section headers and items */-->
+        <tr th:each="item : ${estimateItems}" th:if="${estimateItems != null}">
+            <!--/* Section header row */-->
+            <td th:if="${item.isSection}" colspan="10" class="left"
+                style="background-color:#e8e8e8; font-weight:bold;"
+                th:text="${item.name}">Раздел 1. Земляные работы</td>
+            <!--/* Regular item row */-->
+            <td th:unless="${item.isSection}" th:text="${item.lineNumber}">1</td>
+            <td th:unless="${item.isSection}" th:text="${item.justification} ?: '—'">ТЕР-01-01-001</td>
+            <td th:unless="${item.isSection}" class="left" th:text="${item.name}">Разработка грунта</td>
+            <td th:unless="${item.isSection}" th:text="${item.unit}">м3</td>
+            <td th:unless="${item.isSection}" class="right" th:text="${#numbers.formatDecimal(item.quantity, 1, 2)}">150.00</td>
+            <td th:unless="${item.isSection}" class="right" th:text="${#numbers.formatDecimal(item.unitCost, 1, 2)}">850.00</td>
+            <td th:unless="${item.isSection}" class="right" th:text="${#numbers.formatDecimal(item.totalCost, 1, 2)}">127 500.00</td>
+            <td th:unless="${item.isSection}" class="right" th:text="${item.laborCost != null} ? ${#numbers.formatDecimal(item.laborCost, 1, 2)} : '—'">45 000.00</td>
+            <td th:unless="${item.isSection}" class="right" th:text="${item.machineryCost != null} ? ${#numbers.formatDecimal(item.machineryCost, 1, 2)} : '—'">30 000.00</td>
+            <td th:unless="${item.isSection}" class="right" th:text="${item.laborHours != null} ? ${#numbers.formatDecimal(item.laborHours, 1, 1)} : '—'">75.0</td>
+        </tr>
+        <tr th:if="${estimateItems == null or estimateItems.isEmpty()}">
+            <td>1</td><td>—</td><td class="left">—</td><td>—</td><td class="right">0.00</td>
+            <td class="right">0.00</td><td class="right">0.00</td><td class="right">0.00</td>
+            <td class="right">0.00</td><td class="right">0.0</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Totals summary ─────────────────────────────────────────────────────── -->
+<table class="data-table" style="width:60%; margin-left:auto;">
+    <tbody>
+        <tr>
+            <td style="width:60%;">Итого прямые затраты:</td>
+            <td class="number" th:text="${directCost != null} ? ${#numbers.formatDecimal(directCost, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+        <tr>
+            <td>Накладные расходы:</td>
+            <td class="number" th:text="${overheadCost != null} ? ${#numbers.formatDecimal(overheadCost, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+        <tr>
+            <td>Сметная прибыль:</td>
+            <td class="number" th:text="${estimateProfit != null} ? ${#numbers.formatDecimal(estimateProfit, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+        <tr class="total-row">
+            <td>Итого по смете:</td>
+            <td class="number" th:text="${subtotal != null} ? ${#numbers.formatDecimal(subtotal, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+        <tr>
+            <td>НДС (<span th:text="${vatRate} ?: '20'">20</span>%):</td>
+            <td class="number" th:text="${vatAmount != null} ? ${#numbers.formatDecimal(vatAmount, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+        <tr class="total-row">
+            <td style="font-size:11pt;">ВСЕГО по смете с НДС:</td>
+            <td class="number" style="font-size:11pt;" th:text="${totalCost != null} ? ${#numbers.formatDecimal(totalCost, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Инженер-сметчик</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Проверил:</p>
+            <p th:text="${checkedBy} ?: '________________________'">Главный инженер проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

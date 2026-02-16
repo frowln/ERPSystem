@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Daily Construction Log'">Daily Log</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .weather-box {
+            border: 1px solid #ccc;
+            padding: 6pt 10pt;
+            display: inline-block;
+            margin-right: 10pt;
+            vertical-align: top;
+            min-width: 80pt;
+            text-align: center;
+        }
+        .weather-box .weather-value {
+            font-size: 14pt;
+            font-weight: bold;
+        }
+        .weather-box .weather-label {
+            font-size: 8pt;
+            color: #555;
+        }
+        .section { margin-bottom: 14pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Organization'">Privod Construction</div>
+    <div class="report-title">Daily Construction Log</div>
+    <div class="report-subtitle"
+         th:text="(${projectName} ?: 'Project') + ' | ' + (${logDate} ?: '—')">Project | 01.02.2026</div>
+</div>
+
+<!-- ── Log details ────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Date:</td>
+        <td th:text="${logDate} ?: '—'">01.02.2026</td>
+        <td class="label">Day of Week:</td>
+        <td th:text="${dayOfWeek} ?: '—'">Monday</td>
+    </tr>
+    <tr>
+        <td class="label">Project:</td>
+        <td th:text="${projectName} ?: '—'">Highway Overpass</td>
+        <td class="label">Log #:</td>
+        <td th:text="${logNumber} ?: '—'">DL-045</td>
+    </tr>
+    <tr>
+        <td class="label">Shift:</td>
+        <td th:text="${shift} ?: 'Day (08:00 - 18:00)'">Day (08:00 - 18:00)</td>
+        <td class="label">Prepared By:</td>
+        <td th:text="${preparedBy} ?: '—'">Site Engineer</td>
+    </tr>
+</table>
+
+<!-- ── Weather conditions ─────────────────────────────────────────────────── -->
+<div class="section">
+    <h2>Weather Conditions</h2>
+    <div>
+        <div class="weather-box">
+            <div class="weather-value" th:text="${temperature} ?: '—'">5</div>
+            <div class="weather-label">Temp (C)</div>
+        </div>
+        <div class="weather-box">
+            <div class="weather-value" th:text="${humidity} ?: '—'">65</div>
+            <div class="weather-label">Humidity (%)</div>
+        </div>
+        <div class="weather-box">
+            <div class="weather-value" th:text="${windSpeed} ?: '—'">12</div>
+            <div class="weather-label">Wind (km/h)</div>
+        </div>
+        <div class="weather-box">
+            <div class="weather-value" th:text="${weatherCondition} ?: '—'">Cloudy</div>
+            <div class="weather-label">Conditions</div>
+        </div>
+    </div>
+    <p class="mt-4 text-small" th:if="${weatherNotes != null}" th:text="${weatherNotes}">
+        Light rain in the afternoon; work paused for 30 minutes.
+    </p>
+</div>
+
+<!-- ── Work performed ─────────────────────────────────────────────────────── -->
+<div class="section">
+    <h2>Work Performed</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">#</th>
+                <th style="width:25%;">Activity / Zone</th>
+                <th style="width:35%;">Description</th>
+                <th style="width:15%;">Crew</th>
+                <th style="width:10%;">Hours</th>
+                <th style="width:10%;">% Complete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="work, iter : ${workPerformed}" th:if="${workPerformed != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${work.activity}">Foundation - Zone A</td>
+                <td th:text="${work.description}">Poured concrete for footings F1-F4</td>
+                <td class="center" th:text="${work.crewName}">Crew B</td>
+                <td class="center" th:text="${work.hours}">8</td>
+                <td class="center" th:text="${work.percentComplete + '%'}">75%</td>
+            </tr>
+            <tr th:if="${workPerformed == null or workPerformed.isEmpty()}">
+                <td colspan="6" class="center text-muted">No work activities recorded</td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${workSummary != null}" th:text="${workSummary}" class="mt-4">
+        Overall good progress. Foundation work is on track.
+    </p>
+</div>
+
+<!-- ── Workforce ──────────────────────────────────────────────────────────── -->
+<div class="section no-break">
+    <h2>Workforce</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:30%;">Trade / Role</th>
+                <th style="width:15%;">Count</th>
+                <th style="width:15%;">Hours</th>
+                <th style="width:40%;">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="wf : ${workforce}" th:if="${workforce != null}">
+                <td th:text="${wf.trade}">Concrete Workers</td>
+                <td class="center" th:text="${wf.count}">12</td>
+                <td class="center" th:text="${wf.hours}">8</td>
+                <td th:text="${wf.notes} ?: ''"></td>
+            </tr>
+            <tr th:if="${workforce == null or workforce.isEmpty()}">
+                <td colspan="4" class="center text-muted">No workforce data</td>
+            </tr>
+        </tbody>
+        <tfoot th:if="${workforce != null and !workforce.isEmpty()}">
+            <tr class="total-row">
+                <td class="text-bold">Total</td>
+                <td class="center" th:text="${totalWorkers} ?: '0'">45</td>
+                <td class="center" th:text="${totalManHours} ?: '0'">360</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- ── Equipment ──────────────────────────────────────────────────────────── -->
+<div class="section no-break">
+    <h2>Equipment on Site</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:30%;">Equipment</th>
+                <th style="width:15%;">Quantity</th>
+                <th style="width:15%;">Hours Used</th>
+                <th style="width:15%;">Status</th>
+                <th style="width:25%;">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="eq : ${equipment}" th:if="${equipment != null}">
+                <td th:text="${eq.name}">Excavator CAT 320</td>
+                <td class="center" th:text="${eq.quantity}">2</td>
+                <td class="center" th:text="${eq.hoursUsed}">7</td>
+                <td class="center" th:text="${eq.status}">Active</td>
+                <td th:text="${eq.notes} ?: ''"></td>
+            </tr>
+            <tr th:if="${equipment == null or equipment.isEmpty()}">
+                <td colspan="5" class="center text-muted">No equipment records</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Materials received ─────────────────────────────────────────────────── -->
+<div class="section no-break">
+    <h2>Materials Received</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">#</th>
+                <th style="width:30%;">Material</th>
+                <th style="width:15%;">Quantity</th>
+                <th style="width:10%;">Unit</th>
+                <th style="width:20%;">Supplier</th>
+                <th style="width:20%;">Delivery Note #</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="mat, iter : ${materials}" th:if="${materials != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${mat.name}">Ready-mix concrete B25</td>
+                <td class="center" th:text="${mat.quantity}">24</td>
+                <td class="center" th:text="${mat.unit}">m3</td>
+                <td th:text="${mat.supplier}">BetonMix LLC</td>
+                <td th:text="${mat.deliveryNote} ?: '—'">DN-00456</td>
+            </tr>
+            <tr th:if="${materials == null or materials.isEmpty()}">
+                <td colspan="6" class="center text-muted">No materials received today</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Incidents and delays ───────────────────────────────────────────────── -->
+<div class="section no-break">
+    <h2>Incidents / Delays / Issues</h2>
+    <table class="data-table" th:if="${incidents != null and !incidents.isEmpty()}">
+        <thead>
+            <tr>
+                <th style="width:5%;">#</th>
+                <th style="width:15%;">Type</th>
+                <th style="width:40%;">Description</th>
+                <th style="width:15%;">Impact (hours)</th>
+                <th style="width:25%;">Action Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="inc, iter : ${incidents}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${inc.type}">Delay</td>
+                <td th:text="${inc.description}">Concrete delivery delayed by 2 hours</td>
+                <td class="center" th:text="${inc.impactHours}">2</td>
+                <td th:text="${inc.actionTaken}">Extended shift</td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${incidents == null or incidents.isEmpty()}" class="text-muted">
+        No incidents or delays reported.
+    </p>
+</div>
+
+<!-- ── General notes ──────────────────────────────────────────────────────── -->
+<div class="section" th:if="${generalNotes != null}">
+    <h2>General Notes</h2>
+    <p th:text="${generalNotes}">All activities proceeding as planned. No safety concerns.</p>
+</div>
+
+<!-- ── Signature ──────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Prepared By:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Site Engineer</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(signature, date)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Reviewed By:</p>
+            <p th:text="${reviewedBy} ?: '________________________'">Project Manager</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(signature, date)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

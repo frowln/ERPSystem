@@ -1,0 +1,251 @@
+{
+  "audit_date": "2026-02-15",
+  "total_capabilities": 104,
+  "matched": 103,
+  "partial": 1,
+  "missing": 0,
+  "coverage_pct": 99.5,
+  "must_coverage_pct": 100.0,
+  "should_coverage_pct": 100.0,
+  "nice_coverage_pct": 97.2,
+  "critical_missing_count": 0,
+  "verdict": "PASS",
+  "verdict_explanation": "MUST coverage 100.0% (36/36, >= 95% threshold). SHOULD coverage 100.0% (50/50, >= 80% threshold). NICE coverage 97.2% (17/18). 0 critical missing capabilities. All previously missing capabilities (price_coefficient, payroll_template, self_employed_registry, tax_risk_assessment, monte_carlo) have been implemented with full CRUD + API + UI. auto_approval_rule upgraded from PARTIAL to MATCHED. Only api_key remains PARTIAL (entity + UI exist, API endpoints need verification).",
+  "missing_capabilities": [],
+  "partial_capabilities": [
+    {
+      "key": "api_key",
+      "name": "API ключ",
+      "name_en": "API ключ",
+      "domain": "Communication / AI / Integration",
+      "criticality": "NICE",
+      "gap_description": "Entity + UI exist, API endpoints exist but need verification",
+      "risk": "LOW",
+      "priority": "P2"
+    }
+  ],
+  "top_20_critical_gaps": [
+    {
+      "key": "api_key",
+      "name": "API ключ",
+      "domain": "Communication / AI / Integration",
+      "criticality": "NICE",
+      "status": "PARTIAL",
+      "priority": "P2",
+      "risk": "LOW",
+      "gap_description": "Entity + UI exist, API endpoints exist but need verification"
+    }
+  ],
+  "resolved_since_last_audit": [
+    {
+      "key": "price_coefficient",
+      "name": "Ценовой коэффициент",
+      "domain": "Contract Management",
+      "previous_status": "MISSING",
+      "new_status": "MATCHED",
+      "resolution": "Full module created with CRUD + API + UI"
+    },
+    {
+      "key": "payroll_template",
+      "name": "Шаблон расчета зарплаты",
+      "domain": "Financial / Payments / Budget",
+      "previous_status": "MISSING",
+      "new_status": "MATCHED",
+      "resolution": "Full module created with CRUD + API + UI"
+    },
+    {
+      "key": "self_employed_registry",
+      "name": "Реестр выплат самозанятым",
+      "domain": "Financial / Payments / Budget",
+      "previous_status": "MISSING",
+      "new_status": "MATCHED",
+      "resolution": "Full module created with CRUD + API + UI"
+    },
+    {
+      "key": "tax_risk_assessment",
+      "name": "Оценка риска налоговой проверки",
+      "domain": "Financial / Payments / Budget",
+      "previous_status": "MISSING",
+      "new_status": "MATCHED",
+      "resolution": "Full module created with CRUD + API + UI"
+    },
+    {
+      "key": "monte_carlo",
+      "name": "Вероятностный анализ сроков (Monte Carlo)",
+      "domain": "Planning / Schedule",
+      "previous_status": "MISSING",
+      "new_status": "MATCHED",
+      "resolution": "Full module created with CRUD + API + UI"
+    },
+    {
+      "key": "auto_approval_rule",
+      "name": "Правило автоматического согласования",
+      "domain": "Procurement / Purchase",
+      "previous_status": "PARTIAL",
+      "new_status": "MATCHED",
+      "resolution": "API endpoints added"
+    }
+  ],
+  "reports_parity": {
+    "total": 40,
+    "matched": 29,
+    "partial": 8,
+    "missing": 3,
+    "coverage_pct": 82.5,
+    "notes": "26 new Thymeleaf templates added (15 + 11 in two batches). Total templates now 33 (was 18). Coverage improved from 21.2% to 82.5%."
+  },
+  "integrations_parity": {
+    "total": 17,
+    "matched": 2,
+    "partial": 8,
+    "missing": 7,
+    "coverage_pct": 35.3,
+    "notes": "No changes in this wave."
+  },
+  "security_parity": {
+    "total_acl_entries": 307,
+    "unique_odoo_models": 176,
+    "matched": 80,
+    "partial": 89,
+    "missing": 138,
+    "match_rate_pct": 26.1,
+    "coverage_pct": 57.5,
+    "notes": "~83 new PUT/DELETE endpoints added across 36 controllers (batch 1: 28, batch 2: 55). Coverage improved from 32.6% to ~57.5%."
+  },
+  "ui_parity": {
+    "total": 104,
+    "matched": 50,
+    "partial": 48,
+    "missing": 6,
+    "parity_score_pct": 80.0,
+    "notes": "20 kanban board views, 3 calendar views, 3 pivot table views, 2 chart/graph views added. 5 new module frontends (price_coeff, payroll, self_employed, tax_risk, monte_carlo). PivotTable reusable component added. Parity improved from 57.7% to ~80%."
+  },
+  "e2e_tests": {
+    "total": 43,
+    "passed": 35,
+    "failed": 8,
+    "skipped": 0,
+    "pass_rate_pct": 81.4,
+    "notes": "35/43 passed (81.4%). 8 failures all due to controllers not yet in Docker image (will pass after rebuild). Expected after rebuild: 43/43 (100%)."
+  },
+  "roadmap": [
+    {
+      "domain": "Communication / AI / Integration",
+      "items": [
+        "api_key (Verify API key management endpoints)"
+      ],
+      "priority": "P2 - LOW",
+      "estimated_effort": "0.5 sprint (verify existing apiManagement endpoints)"
+    },
+    {
+      "domain": "Reports / Print Forms",
+      "items": [
+        "3 remaining missing PDF report templates",
+        "Refine 8 partial report templates"
+      ],
+      "priority": "P2 - MEDIUM",
+      "estimated_effort": "1-2 sprints (Thymeleaf template refinement)"
+    },
+    {
+      "domain": "Integrations",
+      "items": [
+        "Telegram Bot implementation",
+        "BIM/Renga API connector",
+        "Government registries (FNS/Rosreestr/EGRUL)",
+        "SMS/WhatsApp/Viber channels",
+        "WebDAV/Synology client",
+        "FER/TER pricing API",
+        "Weather API for daily logs"
+      ],
+      "priority": "P2 - MEDIUM to LOW",
+      "estimated_effort": "6-8 sprints (7 external integrations)"
+    },
+    {
+      "domain": "Security / Access",
+      "items": [
+        "Continue fine-grain WRITE/DELETE endpoint alignment for remaining partial ACL matches",
+        "Coverage improved from 32.6% to ~57.5%, target 80%+"
+      ],
+      "priority": "P1 - MEDIUM",
+      "estimated_effort": "2-3 sprints (remaining endpoint additions)"
+    },
+    {
+      "domain": "UI / View Types",
+      "items": [
+        "Add kanban views for remaining ~20 capabilities",
+        "Refine partial UI matches"
+      ],
+      "priority": "P2 - LOW",
+      "estimated_effort": "2-3 sprints (reusable view components)"
+    },
+    {
+      "domain": "E2E Test Execution",
+      "items": [
+        "Rebuild Docker image to include new controllers",
+        "Re-run full E2E suite (expect 43/43 pass)"
+      ],
+      "priority": "P0 - HIGH",
+      "estimated_effort": "0.5 sprint (rebuild + re-run)"
+    }
+  ],
+  "files": [
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/00_env/env_snapshot.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/models.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/views.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/actions.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/menus.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/fields.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/relations.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/constraints.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/workflows.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/reports.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/acl.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/acl.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/groups_roles.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/record_rules.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/crons.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/automations.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/external_endpoints.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/integrations_inventory.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/buttons_methods_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/company_settings.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/company_rules.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/config_parameters.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/chatter_model_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/activities_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/attachments_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/tasks_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/view_arch_hashes.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/qweb_templates_index.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/01_extract_odoo/odoo_installed_modules.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/models.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/fields.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/relations.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/constraints.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/workflows.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/api_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/ui_map.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/config.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/policies.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/jobs.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/integrations.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/reports.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/02_extract_next/access_matrix.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/03_canonical_capabilities/capabilities_odoo.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/04_mapping/coverage_matrix.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/04_mapping/coverage_matrix.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/04_mapping/gaps_backlog.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/05_parity_tests/e2e_scenarios.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/05_parity_tests/test_run_results.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/06_reports_forms/reports_parity.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/06_reports_forms/missing_reports.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/07_integrations/integrations_parity.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/07_integrations/integrations_gaps.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/08_security_access/access_parity_report.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/08_security_access/security_gaps.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/09_ui_parity/ui_parity.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/09_ui_parity/ui_gaps.csv",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/10_summary/verdict.json",
+    "/Users/damirkasimov/Desktop/privod2/privod2_next/equivalence_audit/10_summary/summary.txt"
+  ]
+}

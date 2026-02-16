@@ -1,0 +1,660 @@
+{
+  "integrations": [
+    {
+      "name": "1C Enterprise",
+      "type": "ERP Integration",
+      "modules": [
+        "construction_1c_integration",
+        "construction_integrations_enhanced"
+      ],
+      "files": [
+        "construction_1c_integration/__manifest__.py",
+        "construction_1c_integration/tests/__init__.py",
+        "construction_1c_integration/tests/test_1c_integration.py",
+        "construction_1c_integration/tests/test_api_endpoints.py",
+        "construction_1c_integration/models/sync_config.py",
+        "construction_1c_integration/models/one_c_exchange_log.py",
+        "construction_1c_integration/controllers/one_c_controller.py",
+        "construction_1c_integration/services/one_c_import.py",
+        "construction_1c_integration/services/one_c_export.py",
+        "construction_integrations_enhanced/__manifest__.py",
+        "construction_integrations_enhanced/models/onec_enhanced.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "OpenAI",
+      "type": "AI Integration",
+      "modules": [
+        "construction_ai",
+        "construction_ai_assistant",
+        "construction_analytics"
+      ],
+      "files": [
+        "construction_ai/__manifest__.py",
+        "construction_ai/models/ai_assistant.py",
+        "construction_ai/models/res_config_settings.py",
+        "construction_ai/controllers/ai_chat.py",
+        "construction_ai_assistant/__manifest__.py",
+        "construction_ai_assistant/models/ai_service.py",
+        "construction_ai_assistant/models/ai_conversation.py",
+        "construction_ai_assistant/models/ai_assistant_config.py",
+        "construction_analytics/models/ml_computer_vision_quality.py"
+      ],
+      "endpoints": [
+        "https://api.openai.com/v1"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "GIS",
+      "type": "Geospatial Integration",
+      "modules": [
+        "construction_analytics",
+        "construction_api",
+        "construction_base",
+        "construction_bim",
+        "construction_certificates",
+        "construction_demo",
+        "construction_design",
+        "construction_edo_generator",
+        "construction_ens",
+        "construction_finance",
+        "construction_hr_russian",
+        "construction_integration",
+        "construction_integrations_enhanced",
+        "construction_journals",
+        "construction_logistics",
+        "construction_lrv",
+        "construction_maintenance_integration",
+        "construction_material_analogs",
+        "construction_mobile",
+        "construction_monthly_schedule",
+        "construction_ocr",
+        "construction_ops",
+        "construction_procurement",
+        "construction_pto",
+        "construction_purchase_integration",
+        "construction_rbac",
+        "construction_reports",
+        "construction_reservation",
+        "construction_russian_accounting",
+        "construction_russian_documents",
+        "construction_security",
+        "construction_stock",
+        "construction_stock_integration",
+        "construction_stock_limits",
+        "construction_theme",
+        "construction_tolerance",
+        "construction_ui_improvements"
+      ],
+      "files": [
+        "construction_analytics/models/analytics_dashboard.py",
+        "construction_analytics/models/__init__.py",
+        "construction_analytics/models/logistics_optimization.py",
+        "construction_api/controllers/health_controller.py",
+        "construction_base/hooks.py",
+        "construction_base/__init__.py",
+        "construction_base/tests/test_stock_service.py",
+        "construction_base/services/stock_service.py",
+        "construction_bim/__manifest__.py",
+        "construction_bim/models/gis_sync.py",
+        "construction_bim/models/__init__.py",
+        "construction_certificates/hooks.py",
+        "construction_certificates/__init__.py",
+        "construction_demo/__init__.py",
+        "construction_demo/__manifest__.py",
+        "construction_demo/tests/test_demo.py",
+        "construction_demo/data/demo_create_invoices.py",
+        "construction_design/__manifest__.py",
+        "construction_design/tests/test_design.py",
+        "construction_design/models/design_review.py",
+        "construction_design/models/specification_transfer.py",
+        "construction_edo_generator/tests/test_edo_generator.py",
+        "construction_edo_generator/models/edo_document.py",
+        "construction_ens/hooks.py",
+        "construction_ens/__init__.py",
+        "construction_finance/hooks.py",
+        "construction_finance/__manifest__.py",
+        "construction_finance/models/payment_register.py",
+        "construction_finance/models/customer_reports.py",
+        "construction_finance/models/contractor_reports.py",
+        "construction_finance/models/invoice_registry.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/bank_document_registry.py",
+        "construction_finance/wizards/payment_register_create_wizard.py",
+        "construction_finance/wizards/payment_approve_wizard.py",
+        "construction_finance/wizards/__init__.py",
+        "construction_finance/wizards/payment_planning_wizard.py",
+        "construction_hr_russian/__manifest__.py",
+        "construction_hr_russian/models/__init__.py",
+        "construction_hr_russian/models/hr_russian_dashboard.py",
+        "construction_hr_russian/models/self_employed_registry.py",
+        "construction_integration/__manifest__.py",
+        "construction_integration/tests/test_integration.py",
+        "construction_integration/models/__init__.py",
+        "construction_integration/models/government_registry_integration.py",
+        "construction_integrations_enhanced/models/fns_integration.py",
+        "construction_integrations_enhanced/models/egrul_integration.py",
+        "construction_journals/hooks.py",
+        "construction_journals/__init__.py",
+        "construction_logistics/hooks.py",
+        "construction_logistics/__manifest__.py",
+        "construction_logistics/tests/__init__.py",
+        "construction_logistics/tests/test_logistics.py",
+        "construction_logistics/models/__init__.py",
+        "construction_logistics/models/logistics_dashboard.py",
+        "construction_lrv/hooks.py",
+        "construction_lrv/__init__.py",
+        "construction_maintenance_integration/models/equipment_utilization.py",
+        "construction_material_analogs/hooks.py",
+        "construction_material_analogs/__init__.py",
+        "construction_mobile/models/mobile_push.py",
+        "construction_mobile/controllers/mobile_controller.py",
+        "construction_monthly_schedule/hooks.py",
+        "construction_monthly_schedule/__init__.py",
+        "construction_ocr/tests/test_construction_ocr.py",
+        "construction_ops/__manifest__.py",
+        "construction_ops/models/__init__.py",
+        "construction_ops/models/technical_spec_registry.py",
+        "construction_ops/models/ops_dashboard.py",
+        "construction_ops/models/technical_spec.py",
+        "construction_procurement/hooks.py",
+        "construction_procurement/__init__.py",
+        "construction_pto/models/hidden_work_act.py",
+        "construction_pto/models/ks11.py",
+        "construction_purchase_integration/tests/test_construction_purchase_integration.py",
+        "construction_rbac/tests/test_construction_rbac.py",
+        "construction_reports/tests/test_construction_reports.py",
+        "construction_reservation/tests/test_construction_reservation.py",
+        "construction_russian_accounting/models/tax_accounting.py",
+        "construction_russian_documents/models/invoice_extended.py",
+        "construction_security/tests/test_construction_security.py",
+        "construction_stock/hooks.py",
+        "construction_stock/__init__.py",
+        "construction_stock/__manifest__.py",
+        "construction_stock/tests/test_stock.py",
+        "construction_stock/models/inventory_registry.py",
+        "construction_stock/models/__init__.py",
+        "construction_stock/models/warehouse_discrepancy.py",
+        "construction_stock/models/receipt_registry.py",
+        "construction_stock/models/stock_dashboard.py",
+        "construction_stock/models/writeoff_registry.py",
+        "construction_stock/models/transfer_registry.py",
+        "construction_stock_integration/tests/test_stock_integration.py",
+        "construction_stock_limits/tests/test_stock_limits.py",
+        "construction_theme/tests/test_theme.py",
+        "construction_tolerance/hooks.py",
+        "construction_tolerance/__init__.py",
+        "construction_tolerance/tests/test_tolerance.py",
+        "construction_ui_improvements/tests/test_ui_improvements.py"
+      ],
+      "endpoints": [
+        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party",
+        "https://api-fns.ru/api/egr?inn={inn}&key={api_key}",
+        "https://cleaner.dadata.ru/api/v1/clean/address",
+        "https://rosreestr.gov.ru/api/online/fir_object/{cadastral_number}"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "IoT",
+      "type": "IoT Integration",
+      "modules": [
+        "construction_api",
+        "construction_base",
+        "construction_dispatch",
+        "construction_iot"
+      ],
+      "files": [
+        "construction_api/controllers/__init__.py",
+        "construction_api/controllers/api_v2_iot_bim.py",
+        "construction_base/tests/test_notification_log.py",
+        "construction_base/models/notification_log.py",
+        "construction_base/controllers/__init__.py",
+        "construction_base/controllers/rest_api_iot.py",
+        "construction_dispatch/models/dispatch_order.py",
+        "construction_iot/__manifest__.py",
+        "construction_iot/tests/__init__.py",
+        "construction_iot/tests/test_iot.py",
+        "construction_iot/models/digital_twin.py",
+        "construction_iot/models/iot_device.py",
+        "construction_iot/models/iot_alert.py",
+        "construction_iot/models/__init__.py",
+        "construction_iot/models/iot_equipment.py",
+        "construction_iot/models/iot_telemetry.py",
+        "construction_iot/models/construction_project_iot.py",
+        "construction_iot/controllers/__init__.py",
+        "construction_iot/controllers/iot_telemetry_controller.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "Fleet Management",
+      "type": "Fleet Integration",
+      "modules": [
+        "construction_api",
+        "construction_demo",
+        "construction_fleet_integration",
+        "construction_maintenance_integration",
+        "construction_russian_documents"
+      ],
+      "files": [
+        "construction_api/controllers/api_v2_operations.py",
+        "construction_api/controllers/api_v2_controller.py",
+        "construction_demo/__manifest__.py",
+        "construction_fleet_integration/__manifest__.py",
+        "construction_fleet_integration/tests/test_fleet_integration.py",
+        "construction_fleet_integration/tests/__init__.py",
+        "construction_fleet_integration/models/vehicle_assignment.py",
+        "construction_fleet_integration/models/construction_project.py",
+        "construction_fleet_integration/models/__init__.py",
+        "construction_fleet_integration/models/fleet_vehicle.py",
+        "construction_fleet_integration/models/fuel_consumption.py",
+        "construction_fleet_integration/models/gps_tracking.py",
+        "construction_fleet_integration/models/equipment_control.py",
+        "construction_maintenance_integration/__manifest__.py",
+        "construction_russian_documents/models/ttn.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "OpenID Connect",
+      "type": "Auth Integration",
+      "modules": [
+        "construction_auth_oidc",
+        "construction_finance",
+        "construction_security"
+      ],
+      "files": [
+        "construction_auth_oidc/__manifest__.py",
+        "construction_auth_oidc/tests/__init__.py",
+        "construction_auth_oidc/tests/test_auth_oidc.py",
+        "construction_auth_oidc/models/oidc_provider.py",
+        "construction_auth_oidc/models/oidc_auth_log.py",
+        "construction_auth_oidc/models/__init__.py",
+        "construction_auth_oidc/models/res_users.py",
+        "construction_auth_oidc/models/res_config_settings.py",
+        "construction_auth_oidc/controllers/main.py",
+        "construction_finance/models/alfa_api.py",
+        "construction_security/__manifest__.py",
+        "construction_security/models/sso_config.py"
+      ],
+      "endpoints": [
+        "https://baas.alfabank.ru/oidc/token"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "IFC (BIM)",
+      "type": "BIM Format",
+      "modules": [
+        "construction_base",
+        "construction_bim"
+      ],
+      "files": [
+        "construction_base/controllers/rest_api_bim.py",
+        "construction_bim/__manifest__.py",
+        "construction_bim/tests/test_bim.py",
+        "construction_bim/models/bim_viewer.py",
+        "construction_bim/models/renga_integration.py",
+        "construction_bim/models/bim_quantity_takeoff.py",
+        "construction_bim/models/__init__.py",
+        "construction_bim/models/ifc_import.py",
+        "construction_bim/models/nanocad_integration.py",
+        "construction_bim/models/bim_model.py",
+        "construction_bim/models/bim_spec_linking.py",
+        "construction_bim/controllers/bim_viewer_controller.py",
+        "construction_bim/controllers/bim_controller.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "Renga",
+      "type": "BIM Integration",
+      "modules": [
+        "construction_bim"
+      ],
+      "files": [
+        "construction_bim/models/renga_integration.py",
+        "construction_bim/models/__init__.py"
+      ],
+      "endpoints": [
+        "https://api.rengabim.ru/v1/projects/{renga_project_id}/model",
+        "https://api.rengabim.ru/v1/projects/{renga_project_id}/model/update"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "NanoCAD",
+      "type": "CAD Integration",
+      "modules": [
+        "construction_bim"
+      ],
+      "files": [
+        "construction_bim/models/__init__.py",
+        "construction_bim/models/nanocad_integration.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "CRM",
+      "type": "CRM Integration",
+      "modules": [
+        "construction_crm_integration",
+        "construction_integration",
+        "construction_theme"
+      ],
+      "files": [
+        "construction_crm_integration/__manifest__.py",
+        "construction_crm_integration/tests/__init__.py",
+        "construction_crm_integration/tests/test_crm_integration.py",
+        "construction_crm_integration/models/construction_project.py",
+        "construction_crm_integration/models/__init__.py",
+        "construction_crm_integration/models/crm_lead.py",
+        "construction_integration/__manifest__.py",
+        "construction_theme/__manifest__.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "Synology NAS",
+      "type": "Storage Integration",
+      "modules": [
+        "construction_documents"
+      ],
+      "files": [
+        "construction_documents/__manifest__.py",
+        "construction_documents/models/synology_config.py",
+        "construction_documents/models/document_folder.py",
+        "construction_documents/models/__init__.py",
+        "construction_documents/models/webdav_client.py",
+        "construction_documents/models/synology_file_station_client.py",
+        "construction_documents/controllers/nas_controller.py"
+      ],
+      "endpoints": [
+        "http://192.168.31.38:5001"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "WebDAV",
+      "type": "Storage Integration",
+      "modules": [
+        "construction_documents"
+      ],
+      "files": [
+        "construction_documents/__manifest__.py",
+        "construction_documents/models/webdav_client.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "EDO",
+      "type": "Electronic Document Exchange",
+      "modules": [
+        "construction_documents",
+        "construction_edo_generator",
+        "construction_finance"
+      ],
+      "files": [
+        "construction_documents/models/pto_documents.py",
+        "construction_edo_generator/__manifest__.py",
+        "construction_edo_generator/tests/test_edo_generator.py",
+        "construction_edo_generator/tests/__init__.py",
+        "construction_edo_generator/models/account_move.py",
+        "construction_edo_generator/models/edo_document.py",
+        "construction_edo_generator/models/__init__.py",
+        "construction_edo_generator/models/res_company.py",
+        "construction_edo_generator/models/res_config_settings.py",
+        "construction_edo_generator/models/res_partner.py",
+        "construction_edo_generator/wizards/edo_upd_wizard.py",
+        "construction_edo_generator/wizards/__init__.py",
+        "construction_finance/hooks.py",
+        "construction_finance/__manifest__.py",
+        "construction_finance/models/edo_providers.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/sbp_payment_export_wizard.py",
+        "construction_finance/models/edo_integration.py"
+      ],
+      "endpoints": [
+        "https://diadoc-api.kontur.ru",
+        "https://online.sbis.ru/service/",
+        "http://online.sbis.ru/Edo/SendDocument",
+        "http://schemas.xmlsoap.org/soap/envelope/",
+        "http://online.sbis.ru/Edo"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "SBIS (EDO)",
+      "type": "EDO Integration",
+      "modules": [
+        "construction_edi_sbis",
+        "construction_edo_generator",
+        "construction_finance"
+      ],
+      "files": [
+        "construction_edi_sbis/__manifest__.py",
+        "construction_edi_sbis/tests/test_edi_sbis.py",
+        "construction_edi_sbis/tests/__init__.py",
+        "construction_edi_sbis/models/edi_sbis_partner_mapping.py",
+        "construction_edi_sbis/models/edi_sbis_exchange_log.py",
+        "construction_edi_sbis/models/edi_sbis_document.py",
+        "construction_edi_sbis/models/__init__.py",
+        "construction_edi_sbis/models/edi_sbis_config.py",
+        "construction_edi_sbis/wizards/__init__.py",
+        "construction_edi_sbis/wizards/edi_sbis_send_wizard.py",
+        "construction_edi_sbis/services/sbis_api_client.py",
+        "construction_edi_sbis/services/__init__.py",
+        "construction_edo_generator/models/edo_document.py",
+        "construction_edo_generator/models/res_company.py",
+        "construction_edo_generator/models/res_config_settings.py",
+        "construction_edo_generator/models/res_partner.py",
+        "construction_edo_generator/wizards/edo_upd_wizard.py",
+        "construction_finance/models/edo_providers.py",
+        "construction_finance/models/edo_integration.py"
+      ],
+      "endpoints": [
+        "https://online.sbis.ru",
+        "https://online.sbis.ru/service/",
+        "http://online.sbis.ru/Edo/SendDocument",
+        "http://online.sbis.ru/Edo"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "Bank API",
+      "type": "Financial Integration",
+      "modules": [
+        "construction_finance",
+        "construction_integrations_enhanced"
+      ],
+      "files": [
+        "construction_finance/__manifest__.py",
+        "construction_finance/models/bank_api_alfa.py",
+        "construction_finance/models/bank_api_tochka.py",
+        "construction_finance/models/bank_api_enhanced.py",
+        "construction_finance/models/bank_api_sberbank.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/bank_api_tinkoff.py",
+        "construction_finance/models/bank_api_vtb.py",
+        "construction_finance/models/sberbank_api.py",
+        "construction_integrations_enhanced/models/bank_api.py",
+        "construction_integrations_enhanced/models/__init__.py"
+      ],
+      "endpoints": [
+        "https://enter.tochka.com/connect/token",
+        "https://developer.sberbank.ru/doc/v1/",
+        "https://api.sberbank.ru/ru/prod"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "Acquiring/Payment",
+      "type": "Payment Integration",
+      "modules": [
+        "construction_finance"
+      ],
+      "files": [
+        "construction_finance/__manifest__.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/acquiring_payment.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "Alfa-Bank",
+      "type": "Bank Integration",
+      "modules": [
+        "construction_finance",
+        "construction_integrations_enhanced"
+      ],
+      "files": [
+        "construction_finance/models/bank_api_alfa.py",
+        "construction_finance/models/bank_api_enhanced.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/alfa_api.py",
+        "construction_integrations_enhanced/models/bank_api.py"
+      ],
+      "endpoints": [
+        "https://alfadeveloper.ru/",
+        "https://baas.alfabank.ru/api/v1",
+        "https://baas.alfabank.ru/oidc/token"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "Tochka Bank",
+      "type": "Bank Integration",
+      "modules": [
+        "construction_finance",
+        "construction_integrations_enhanced"
+      ],
+      "files": [
+        "construction_finance/models/bank_api_tochka.py",
+        "construction_finance/models/bank_api_enhanced.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/acquiring_payment.py",
+        "construction_finance/controllers/sbp_webhook.py",
+        "construction_integrations_enhanced/models/bank_api.py"
+      ],
+      "endpoints": [
+        "https://enter.tochka.com/connect/token"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "Sberbank",
+      "type": "Bank Integration",
+      "modules": [
+        "construction_finance",
+        "construction_integration",
+        "construction_integrations_enhanced"
+      ],
+      "files": [
+        "construction_finance/models/bank_api_enhanced.py",
+        "construction_finance/models/bank_api_sberbank.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/sberbank_api.py",
+        "construction_integration/models/government_registry_integration.py",
+        "construction_integrations_enhanced/models/bank_api.py"
+      ],
+      "endpoints": [
+        "https://developer.sberbank.ru/doc/v1/",
+        "https://api.sberbank.ru/ru/prod"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "Tinkoff",
+      "type": "Bank Integration",
+      "modules": [
+        "construction_finance"
+      ],
+      "files": [
+        "construction_finance/models/bank_api_enhanced.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/bank_api_tinkoff.py",
+        "construction_finance/models/tinkoff_api.py"
+      ],
+      "endpoints": [
+        "https://www.tinkoff.ru/kassa/dev/payments/",
+        "https://business.tinkoff.ru/openapi/api/v1",
+        "https://securepay.tinkoff.ru/v2"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "VTB",
+      "type": "Bank Integration",
+      "modules": [
+        "construction_finance",
+        "construction_integrations_enhanced"
+      ],
+      "files": [
+        "construction_finance/models/bank_api_enhanced.py",
+        "construction_finance/models/__init__.py",
+        "construction_finance/models/bank_api_vtb.py",
+        "construction_finance/models/vtb_api.py",
+        "construction_integrations_enhanced/models/bank_api.py"
+      ],
+      "endpoints": [
+        "https://developer.vtb.ru/",
+        "https://epa.api.vtb.ru/openapi/rb/v2",
+        "https://epa.api.vtb.ru/openapi/oauth2/token"
+      ],
+      "api_methods": []
+    },
+    {
+      "name": "PWA",
+      "type": "Mobile/Web",
+      "modules": [
+        "construction_mobile",
+        "construction_pwa",
+        "construction_theme"
+      ],
+      "files": [
+        "construction_mobile/__manifest__.py",
+        "construction_pwa/__manifest__.py",
+        "construction_pwa/tests/__init__.py",
+        "construction_pwa/tests/test_pwa.py",
+        "construction_pwa/models/sync_log.py",
+        "construction_pwa/models/sync_config.py",
+        "construction_pwa/controllers/pwa_controller.py",
+        "construction_pwa/controllers/__init__.py",
+        "construction_theme/__manifest__.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    },
+    {
+      "name": "OCR",
+      "type": "Document Recognition",
+      "modules": [
+        "construction_ocr",
+        "construction_procurement"
+      ],
+      "files": [
+        "construction_ocr/__manifest__.py",
+        "construction_ocr/tests/__init__.py",
+        "construction_ocr/tests/test_construction_ocr.py",
+        "construction_ocr/models/__init__.py",
+        "construction_ocr/models/construction_project_ocr.py",
+        "construction_ocr/models/document_recognition.py",
+        "construction_procurement/models/upd.py"
+      ],
+      "endpoints": [],
+      "api_methods": []
+    }
+  ],
+  "total_count": 23
+}

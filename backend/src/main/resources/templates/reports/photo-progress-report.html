@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Фотоотчет о ходе работ'">Фотоотчет</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .photo-entry { page-break-inside: avoid; margin-bottom: 16pt; border: 1px solid #ccc; padding: 8pt; }
+        .photo-row { overflow: hidden; margin-bottom: 8pt; }
+        .photo-cell { float: left; width: 48%; margin-right: 2%; text-align: center; }
+        .photo-cell img { max-width: 100%; max-height: 200pt; border: 1px solid #ddd; }
+        .photo-label { font-size: 8pt; color: #555; margin-top: 2pt; text-align: center; }
+        .entry-header { background-color: #f0f0f0; padding: 4pt 6pt; margin-bottom: 6pt; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ФОТООТЧЕТ О ХОДЕ РАБОТ</div>
+    <div class="report-subtitle" th:text="${reportSubtitle} ?: ''"></div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер отчета:</td>
+        <td th:text="${documentNumber} ?: '—'">001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Отчетный период:</td>
+        <td colspan="3">
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Составил:</td>
+        <td colspan="3" th:text="${preparedBy} ?: '—'">Иванов И.И.</td>
+    </tr>
+</table>
+
+<!-- ── Photo entries ─────────────────────────────────────────────────────── -->
+<div th:each="entry, iter : ${photoEntries}" th:if="${photoEntries != null}" class="photo-entry">
+    <div class="entry-header">
+        <span th:text="${iter.count}">1</span>.
+        <span th:text="${entry.location} ?: 'Локация не указана'">Этаж 3, секция А</span>
+        &mdash;
+        <span th:text="${entry.date} ?: '—'">15.01.2026</span>
+    </div>
+    <div class="photo-row">
+        <div class="photo-cell">
+            <div th:if="${entry.beforeImageUrl != null}">
+                <img th:src="${entry.beforeImageUrl}" alt="До"/>
+            </div>
+            <div th:if="${entry.beforeImageUrl == null}" class="photo-placeholder">Фото ДО</div>
+            <div class="photo-label">ДО</div>
+        </div>
+        <div class="photo-cell">
+            <div th:if="${entry.afterImageUrl != null}">
+                <img th:src="${entry.afterImageUrl}" alt="После"/>
+            </div>
+            <div th:if="${entry.afterImageUrl == null}" class="photo-placeholder">Фото ПОСЛЕ</div>
+            <div class="photo-label">ПОСЛЕ</div>
+        </div>
+    </div>
+    <p><span class="text-bold">Описание: </span><span th:text="${entry.description} ?: '—'">Выполнены штукатурные работы</span></p>
+    <p th:if="${entry.workType != null}"><span class="text-bold">Вид работ: </span><span th:text="${entry.workType}">Штукатурные работы</span></p>
+    <p th:if="${entry.completionPercent != null}"><span class="text-bold">Готовность: </span><span th:text="${entry.completionPercent}">75</span>%</p>
+</div>
+
+<!--/* Placeholder when no entries */-->
+<div th:if="${photoEntries == null or photoEntries.isEmpty()}" class="photo-entry">
+    <div class="entry-header">1. Локация не указана &mdash; —</div>
+    <div class="photo-row">
+        <div class="photo-cell">
+            <div class="photo-placeholder">Фото ДО</div>
+            <div class="photo-label">ДО</div>
+        </div>
+        <div class="photo-cell">
+            <div class="photo-placeholder">Фото ПОСЛЕ</div>
+            <div class="photo-label">ПОСЛЕ</div>
+        </div>
+    </div>
+    <p><span class="text-bold">Описание: </span>—</p>
+</div>
+
+<!-- ── Summary ───────────────────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h3>Сводка</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Всего позиций:</td>
+            <td th:text="${totalEntries} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Комментарии:</td>
+            <td th:text="${summaryComments} ?: '—'">—</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedByPosition} ?: '________________________'">Инженер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Проверил:</p>
+            <p th:text="${reviewedByPosition} ?: '________________________'">Начальник участка</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

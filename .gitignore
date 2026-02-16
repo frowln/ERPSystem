@@ -1,0 +1,50 @@
+# ========================================
+# PRIVOD NEXT — Git Ignore
+# ========================================
+
+# --- Java / Gradle ---
+backend/.gradle/
+backend/build/
+backend/out/
+backend/bin/
+*.class
+*.jar
+*.war
+*.ear
+backend/gradle/wrapper/gradle-wrapper.jar
+
+# --- Node / Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+*.tsbuildinfo
+
+# --- IDE ---
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
+*.log
+docker-compose.override.yml
+
+# --- Environment ---
+.env
+.env.*
+!.env.example
+
+# --- Generated artifacts (can be regenerated) ---
+# migration/artifacts/*.json  # Keep these — they are our migration source of truth

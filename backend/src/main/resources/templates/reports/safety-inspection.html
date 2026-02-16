@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Safety Inspection Report'">Safety Inspection</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .severity-critical { color: #dc2626; font-weight: bold; }
+        .severity-high     { color: #ea580c; font-weight: bold; }
+        .severity-medium   { color: #ca8a04; }
+        .severity-low      { color: #16a34a; }
+        .finding-row td { vertical-align: top; }
+        .photos-container { margin: 8pt 0; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Organization'">Privod Construction</div>
+    <div class="report-title">Safety Inspection Report</div>
+    <div class="report-subtitle" th:text="'Inspection #' + (${inspectionNumber} ?: '—')">Inspection #SI-001</div>
+</div>
+
+<!-- ── Inspection details ─────────────────────────────────────────────────── -->
+<h2>Inspection Details</h2>
+<table class="info-grid">
+    <tr>
+        <td class="label">Inspection ID:</td>
+        <td th:text="${inspectionId} ?: '—'">SI-001</td>
+        <td class="label">Date:</td>
+        <td th:text="${inspectionDate} ?: '—'">01.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Project:</td>
+        <td th:text="${projectName} ?: '—'">Highway Overpass</td>
+        <td class="label">Location / Zone:</td>
+        <td th:text="${inspectionZone} ?: '—'">Zone B - Foundation</td>
+    </tr>
+    <tr>
+        <td class="label">Inspector:</td>
+        <td th:text="${inspectorName} ?: '—'">Alexey Sidorov</td>
+        <td class="label">Inspector Title:</td>
+        <td th:text="${inspectorTitle} ?: '—'">HSE Officer</td>
+    </tr>
+    <tr>
+        <td class="label">Weather:</td>
+        <td th:text="${weather} ?: '—'">Cloudy, 5C</td>
+        <td class="label">Overall Rating:</td>
+        <td>
+            <span class="badge"
+                  th:if="${overallRating != null}"
+                  th:classappend="${overallRating == 'Satisfactory' ? 'badge-low' : (overallRating == 'Needs Improvement' ? 'badge-medium' : 'badge-critical')}"
+                  th:text="${overallRating}">Satisfactory</span>
+            <span th:if="${overallRating == null}">—</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Inspection Type:</td>
+        <td colspan="3" th:text="${inspectionType} ?: 'Routine'">Routine</td>
+    </tr>
+</table>
+
+<!-- ── Findings ───────────────────────────────────────────────────────────── -->
+<h2>Findings</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">#</th>
+            <th style="width:12%;">Severity</th>
+            <th style="width:18%;">Category</th>
+            <th style="width:35%;">Description</th>
+            <th style="width:15%;">Location</th>
+            <th style="width:15%;">Due Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="finding-row" th:each="finding, iter : ${findings}" th:if="${findings != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center">
+                <span class="badge"
+                      th:classappend="${finding.severity == 'Critical' ? 'badge-critical' : (finding.severity == 'High' ? 'badge-high' : (finding.severity == 'Medium' ? 'badge-medium' : 'badge-low'))}"
+                      th:text="${finding.severity}">High</span>
+            </td>
+            <td th:text="${finding.category}">Fall Protection</td>
+            <td th:text="${finding.description}">Missing guardrails on 3rd floor perimeter</td>
+            <td th:text="${finding.location}">Building A, 3rd floor</td>
+            <td class="center" th:text="${finding.dueDate}">2026-02-10</td>
+        </tr>
+        <tr th:if="${findings == null or findings.isEmpty()}">
+            <td colspan="6" class="center text-muted">No findings recorded</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Summary statistics ─────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${findings != null and !findings.isEmpty()}">
+    <h3>Findings Summary</h3>
+    <table class="info-grid" style="width:50%;">
+        <tr>
+            <td class="label">Total Findings:</td>
+            <td th:text="${totalFindings} ?: ${#lists.size(findings)}">5</td>
+        </tr>
+        <tr>
+            <td class="label severity-critical">Critical:</td>
+            <td th:text="${criticalCount} ?: '0'">1</td>
+        </tr>
+        <tr>
+            <td class="label severity-high">High:</td>
+            <td th:text="${highCount} ?: '0'">2</td>
+        </tr>
+        <tr>
+            <td class="label severity-medium">Medium:</td>
+            <td th:text="${mediumCount} ?: '0'">1</td>
+        </tr>
+        <tr>
+            <td class="label severity-low">Low:</td>
+            <td th:text="${lowCount} ?: '0'">1</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Photos ─────────────────────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h2>Photo Evidence</h2>
+    <div class="photos-container" th:if="${photos != null and !photos.isEmpty()}">
+        <div th:each="photo : ${photos}" style="display:inline-block; margin:4pt; vertical-align:top;">
+            <img th:src="${photo.url}" style="width:160pt; height:120pt; object-fit:cover; border:1px solid #ccc;"/>
+            <p class="text-small text-center" th:text="${photo.caption} ?: ''">Finding #1</p>
+        </div>
+    </div>
+    <div th:if="${photos == null or photos.isEmpty()}" class="photos-container">
+        <div class="photo-placeholder">Photo 1</div>
+        <div class="photo-placeholder">Photo 2</div>
+        <div class="photo-placeholder">Photo 3</div>
+    </div>
+</div>
+
+<!-- ── Corrective actions ─────────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h2>Corrective Actions Required</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">#</th>
+                <th style="width:30%;">Action</th>
+                <th style="width:20%;">Responsible</th>
+                <th style="width:15%;">Priority</th>
+                <th style="width:15%;">Deadline</th>
+                <th style="width:15%;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="action, iter : ${correctiveActions}" th:if="${correctiveActions != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${action.description}">Install guardrails</td>
+                <td th:text="${action.responsible}">Site Foreman</td>
+                <td class="center">
+                    <span class="badge"
+                          th:classappend="${action.priority == 'Immediate' ? 'badge-critical' : (action.priority == 'High' ? 'badge-high' : 'badge-medium')}"
+                          th:text="${action.priority}">Immediate</span>
+                </td>
+                <td class="center" th:text="${action.deadline}">2026-02-05</td>
+                <td class="center" th:text="${action.status}">Pending</td>
+            </tr>
+            <tr th:if="${correctiveActions == null or correctiveActions.isEmpty()}">
+                <td colspan="6" class="center text-muted">No corrective actions required</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Inspector signature ────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Inspector:</p>
+            <p th:text="${inspectorName} ?: '________________________'">Alexey Sidorov</p>
+            <p th:text="${inspectorTitle} ?: ''">HSE Officer</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(signature, date)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Site Manager:</p>
+            <p th:text="${siteManager} ?: '________________________'">Site Manager</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(signature, date)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

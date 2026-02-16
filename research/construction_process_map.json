@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-02-13",
+  "model": "construction_company_end_to_end",
+  "phases": [
+    {
+      "id": "phase_feasibility",
+      "name": "Стратегия, feasibility, бюджет класса 5-4",
+      "anchors": ["RIBA Stage 0-1", "CMAA pre-design"],
+      "key_outputs": ["business case", "initial budget", "risk register", "brief"],
+      "erp_capabilities": ["CRM/opportunity", "estimate_classification", "portfolio_budgeting", "risk_register", "document_register"]
+    },
+    {
+      "id": "phase_design",
+      "name": "Проектирование (ПД/РД), сметы, экспертиза",
+      "anchors": ["GrK art 48", "Gov Decree 87", "GrK art 49"],
+      "key_outputs": ["project documentation sections", "working documentation", "expertise package", "baseline estimate class 3-2"],
+      "erp_capabilities": ["cde_versioning", "design_sections_catalog", "estimate_versions", "requirements_traceability", "expertise_management"]
+    },
+    {
+      "id": "phase_permits",
+      "name": "Разрешение на строительство",
+      "anchors": ["GrK art 51"],
+      "key_outputs": ["building permit package"],
+      "erp_capabilities": ["permit_tracking", "stakeholder_signoffs", "audit_trail"]
+    },
+    {
+      "id": "phase_procurement",
+      "name": "Снабжение, закупки, склад, логистика",
+      "anchors": ["CMAA procurement"],
+      "key_outputs": ["MR/RFQ/PO", "receiving", "inventory", "M-2", "M-29"],
+      "erp_capabilities": ["procurement_workflow", "supplier_mgmt", "warehouse_mgmt", "powers_of_attorney_M2", "materials_norm_vs_fact_M29"]
+    },
+    {
+      "id": "phase_construction",
+      "name": "Строительство, контроль, журналы, QA/QC, HSE",
+      "anchors": ["GrK art 53-54", "Minstroy order 1026/pr", "SP 48.13330"],
+      "key_outputs": ["general journal", "as-built documentation", "inspections", "punch list", "daily logs"],
+      "erp_capabilities": ["field_mobile_offline", "journals_registry", "inspection_checklists", "nonconformance", "hse_incidents", "immutable_audit"]
+    },
+    {
+      "id": "phase_acting_finance",
+      "name": "Актирование, расчеты, выручка по мере готовности, ЭДО",
+      "anchors": ["KS-2/KS-6a reference", "PBU 2/2008 -> FASB 9/2025", "FNS UPD formats"],
+      "key_outputs": ["KS-2/KS-3/KS-6a", "UPD", "progress billing", "EAC/ETC forecasts"],
+      "erp_capabilities": ["measurement_to_acting", "progress_revenue_recognition", "edi_upd_xml", "cost_forecasting_evm", "cashflow"]
+    },
+    {
+      "id": "phase_commissioning",
+      "name": "Ввод в эксплуатацию и передача",
+      "anchors": ["GrK art 55", "CMAA post-construction"],
+      "key_outputs": ["commissioning package", "handover docs", "warranties"],
+      "erp_capabilities": ["handover_checklists", "asset_register", "warranty_management", "closeout_packaging"]
+    }
+  ],
+  "roles": [
+    {"id": "role_ceo", "name": "Генеральный директор / собственник", "focus": "портфель, маржа, риски, политика лимитов"},
+    {"id": "role_cdo", "name": "Директор по строительству", "focus": "ресурсы, сроки, стандарты"},
+    {"id": "role_cfo", "name": "Финансовый директор", "focus": "бюджеты, лимиты, ДДС, себестоимость"},
+    {"id": "role_pm", "name": "Руководитель проекта / PM", "focus": "baseline, change orders, коммуникации, claims"},
+    {"id": "role_planner", "name": "Планировщик / Scheduler", "focus": "графики, критический путь, что-если"},
+    {"id": "role_qs", "name": "Cost engineer / QS / сметчик", "focus": "BOQ/ВОР → сметы → бюджет → отклонения"},
+    {"id": "role_pto", "name": "ПТО / инженер ПТО", "focus": "ППР, планирование, задания, ИД, закрытие"},
+    {"id": "role_foreman", "name": "Прораб / начальник участка", "focus": "производство, люди/техника, заявки МТР, ежедневные отчёты"},
+    {"id": "role_surveyor", "name": "Геодезист", "focus": "разбивка, исполнительные съёмки/схемы"},
+    {"id": "role_procurement", "name": "Снабженец / закупщик", "focus": "тендеры, КП, поставщики, графики поставок"},
+    {"id": "role_logist", "name": "Логист", "focus": "маршруты, окна разгрузки, транспорт"},
+    {"id": "role_warehouse", "name": "Кладовщик", "focus": "приёмка, хранение, выдача, инвентаризация"},
+    {"id": "role_qaqc", "name": "QA/QC инженер", "focus": "входной контроль, инспекции, чек-листы, НК"},
+    {"id": "role_hse", "name": "HSE / ОТиПБ", "focus": "допуски, инструктажи, инциденты, предписания"},
+    {"id": "role_technadzor", "name": "Стройконтроль / технадзор", "focus": "подтверждение качества/объёмов, приёмка"},
+    {"id": "role_lawyer", "name": "Юрист", "focus": "договорная работа, претензии, гарантии"},
+    {"id": "role_accountant", "name": "Бухгалтерия", "focus": "первичка, взаиморасчёты, налоги, закрытие периода"},
+    {"id": "role_hr", "name": "Кадры / зарплата", "focus": "табели, начисления, командировки, пропуска"}
+  ],
+  "cross_cutting_principles": [
+    "Единая структура кодирования: Проект → Объект → Захватка → WBS → Work package → Cost code → Ресурс",
+    "Версии и базовые линии: Budget baseline v1/v2/v3, Schedule baseline vs current vs forecast",
+    "Разделение прав: видит/создаёт/утверждает/подписывает + журнал изменений",
+    "CDE-мышление: все документы имеют состояния WIP → Shared → Published → Archived (ISO 19650)",
+    "Immutable audit trail для критичных артефактов"
+  ]
+}

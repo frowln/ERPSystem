@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Ведомость дефектов'">Ведомость дефектов</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 12mm 15mm 12mm; }
+        .summary-strip { overflow: hidden; margin-bottom: 12pt; border: 1px solid #ccc; padding: 6pt 8pt; }
+        .summary-strip .stat-item { float: left; width: 19%; text-align: center; border-right: 1px solid #ccc; }
+        .summary-strip .stat-item:last-child { border-right: none; }
+        .stat-val { font-size: 14pt; font-weight: bold; }
+        .stat-lbl { font-size: 7pt; color: #666; text-transform: uppercase; }
+        .priority-critical { color: #fff; background-color: #dc2626; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+        .priority-high { color: #fff; background-color: #ea580c; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+        .priority-medium { color: #fff; background-color: #ca8a04; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+        .priority-low { color: #fff; background-color: #16a34a; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+        .status-open { color: #dc2626; font-weight: bold; }
+        .status-inprogress { color: #ca8a04; font-weight: bold; }
+        .status-resolved { color: #16a34a; font-weight: bold; }
+        .status-verified { color: #2563eb; font-weight: bold; }
+        .photo-row { margin-top: 4pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ВЕДОМОСТЬ ДЕФЕКТОВ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Meta ────────────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер ведомости:</td>
+        <td th:text="${punchListNumber} ?: '—'">ВД-001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${reportDate} ?: '—'">31.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1, секция 2</td>
+    </tr>
+    <tr>
+        <td class="label">Вид контроля:</td>
+        <td th:text="${inspectionType} ?: '—'">Строительный контроль</td>
+        <td class="label">Инспектор:</td>
+        <td th:text="${inspector} ?: '—'">Иванов И.И.</td>
+    </tr>
+</table>
+
+<!-- ── Summary strip ──────────────────────────────────────────────────────── -->
+<div class="summary-strip">
+    <div class="stat-item">
+        <div class="stat-val" th:text="${totalDefects} ?: '0'">0</div>
+        <div class="stat-lbl">Всего</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val status-open" th:text="${openDefects} ?: '0'">0</div>
+        <div class="stat-lbl">Открыто</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val status-inprogress" th:text="${inProgressDefects} ?: '0'">0</div>
+        <div class="stat-lbl">В работе</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val status-resolved" th:text="${resolvedDefects} ?: '0'">0</div>
+        <div class="stat-lbl">Устранено</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val status-verified" th:text="${verifiedDefects} ?: '0'">0</div>
+        <div class="stat-lbl">Подтверждено</div>
+    </div>
+</div>
+
+<!-- ── Defects table ──────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:8%;">Код</th>
+            <th style="width:22%;">Описание дефекта</th>
+            <th style="width:12%;">Местоположение</th>
+            <th style="width:8%;">Приоритет</th>
+            <th style="width:10%;">Ответственный</th>
+            <th style="width:8%;">Срок<br/>устранения</th>
+            <th style="width:8%;">Факт.<br/>дата</th>
+            <th style="width:8%;">Статус</th>
+            <th style="width:12%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="defect, iter : ${defects}" th:if="${defects != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${defect.code}">Д-001</td>
+            <td th:text="${defect.description}">Трещина в стене</td>
+            <td th:text="${defect.location}">Этаж 3, кв. 12</td>
+            <td class="center">
+                <span th:if="${defect.priority == 'CRITICAL'}" class="priority-critical">Крит.</span>
+                <span th:if="${defect.priority == 'HIGH'}" class="priority-high">Выс.</span>
+                <span th:if="${defect.priority == 'MEDIUM'}" class="priority-medium">Сред.</span>
+                <span th:if="${defect.priority == 'LOW'}" class="priority-low">Низк.</span>
+            </td>
+            <td class="text-small" th:text="${defect.responsible}">ООО «Подрядчик»</td>
+            <td class="center" th:text="${defect.deadline}">15.02.2026</td>
+            <td class="center" th:text="${defect.resolvedDate} ?: '—'">—</td>
+            <td class="center">
+                <span th:if="${defect.status == 'OPEN'}" class="status-open">Открыт</span>
+                <span th:if="${defect.status == 'IN_PROGRESS'}" class="status-inprogress">В работе</span>
+                <span th:if="${defect.status == 'RESOLVED'}" class="status-resolved">Устранён</span>
+                <span th:if="${defect.status == 'VERIFIED'}" class="status-verified">Подтв.</span>
+            </td>
+            <td class="text-small" th:text="${defect.note} ?: ''"></td>
+        </tr>
+        <tr th:if="${defects == null or defects.isEmpty()}">
+            <td class="center" colspan="10">Дефекты не обнаружены</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Photo placeholders ─────────────────────────────────────────────────── -->
+<div class="mt-16 no-break" th:if="${defects != null and !defects.isEmpty()}">
+    <h3>Фотоматериалы</h3>
+    <div th:each="defect : ${defects}" th:if="${defect.hasPhotos}" class="mb-8">
+        <p class="text-bold" th:text="'Дефект ' + ${defect.code} + ': ' + ${defect.description}">Дефект Д-001</p>
+        <div class="photo-row">
+            <div class="photo-placeholder">Фото 1</div>
+            <div class="photo-placeholder">Фото 2</div>
+        </div>
+    </div>
+    <p th:if="${defects.stream().noneMatch(d -> d.hasPhotos)}" class="text-muted">
+        Фотоматериалы отсутствуют.
+    </p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил (инспектор):</p>
+            <p th:text="${inspector} ?: '________________________'">Инженер строительного контроля</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Принял к исполнению:</p>
+            <p th:text="${contractorRepresentative} ?: '________________________'">Представитель подрядчика</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Распределение накладных расходов'">Распределение накладных расходов</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 landscape; margin: 12mm 10mm 12mm 10mm; }
+        .total-overhead { font-size: 14pt; font-weight: bold; color: #1a365d; }
+        .pct-bar { display: inline-block; height: 10pt; background-color: #2563eb; vertical-align: middle; }
+        .pct-bar-bg { display: inline-block; width: 80pt; height: 10pt; background-color: #e5e7eb;
+                      vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">РАСПРЕДЕЛЕНИЕ НАКЛАДНЫХ РАСХОДОВ</div>
+    <div class="report-subtitle">
+        Период: <span th:text="${periodFrom} ?: '—'">01.01.2026</span> —
+        <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+    </div>
+</div>
+
+<!-- ── Report metadata ────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер документа:</td>
+        <td th:text="${documentNumber} ?: '—'">НР-001</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${reportDate} ?: '—'">05.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Метод распределения:</td>
+        <td th:text="${allocationMethod} ?: '—'">Пропорционально прямым затратам</td>
+        <td class="label">Общая сумма накладных:</td>
+        <td class="total-overhead"
+            th:text="${totalOverhead != null} ? ${#numbers.formatDecimal(totalOverhead, 1, 2)} + ' руб.' : '—'">3 500 000.00 руб.</td>
+    </tr>
+</table>
+
+<!-- ── Overhead categories ────────────────────────────────────────────────── -->
+<h2>Структура накладных расходов</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:35%;">Статья расходов</th>
+            <th style="width:15%;">Счёт</th>
+            <th style="width:20%;">Сумма, руб.</th>
+            <th style="width:10%;">Доля, %</th>
+            <th style="width:15%;">Распределение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="cat, iter : ${categories}" th:if="${categories != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${cat.name}">Аренда офиса</td>
+            <td class="center" th:text="${cat.account} ?: '—'">26.01</td>
+            <td class="number" th:text="${#numbers.formatDecimal(cat.amount, 1, 2)}">500 000.00</td>
+            <td class="center" th:text="${#numbers.formatDecimal(cat.percentage, 1, 1)} + '%'">14.3%</td>
+            <td>
+                <div class="pct-bar-bg">
+                    <div class="pct-bar" th:style="'width:' + ${cat.percentage * 0.8} + 'pt;'"></div>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${categories == null or categories.isEmpty()}">
+            <td colspan="6" class="center text-muted">Нет данных</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${categories != null and !categories.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="3" class="text-right">Итого:</td>
+            <td class="number" th:text="${totalOverhead != null} ? ${#numbers.formatDecimal(totalOverhead, 1, 2)} : '0.00'">0.00</td>
+            <td class="center">100%</td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Allocation by project/department ───────────────────────────────────── -->
+<div class="page-break"></div>
+<h2>Распределение по проектам / подразделениям</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:25%;">Проект / Подразделение</th>
+            <th style="width:15%;">Прямые затраты,<br/>руб.</th>
+            <th style="width:10%;">Доля в<br/>прямых, %</th>
+            <th style="width:15%;">Распределённые<br/>накладные, руб.</th>
+            <th style="width:10%;">Коэфф.<br/>накладных, %</th>
+            <th style="width:20%;">Всего затрат,<br/>руб.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="alloc, iter : ${allocations}" th:if="${allocations != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${alloc.name}">ЖК «Панорама» — Корпус 1</td>
+            <td class="number" th:text="${#numbers.formatDecimal(alloc.directCosts, 1, 2)}">5 000 000.00</td>
+            <td class="center" th:text="${#numbers.formatDecimal(alloc.directShare, 1, 1)} + '%'">35.7%</td>
+            <td class="number" th:text="${#numbers.formatDecimal(alloc.allocatedOverhead, 1, 2)}">1 250 000.00</td>
+            <td class="center" th:text="${#numbers.formatDecimal(alloc.overheadRate, 1, 1)} + '%'">25.0%</td>
+            <td class="number" style="font-weight:bold;"
+                th:text="${#numbers.formatDecimal(alloc.totalCosts, 1, 2)}">6 250 000.00</td>
+        </tr>
+        <tr th:if="${allocations == null or allocations.isEmpty()}">
+            <td colspan="7" class="center text-muted">Нет данных для распределения</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${allocations != null and !allocations.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="2" class="text-right">Итого:</td>
+            <td class="number" th:text="${totalDirectCosts != null} ? ${#numbers.formatDecimal(totalDirectCosts, 1, 2)} : '0.00'">0.00</td>
+            <td class="center">100%</td>
+            <td class="number" th:text="${totalOverhead != null} ? ${#numbers.formatDecimal(totalOverhead, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td class="number" th:text="${grandTotal != null} ? ${#numbers.formatDecimal(grandTotal, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Экономист</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Утвердил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Финансовый директор</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

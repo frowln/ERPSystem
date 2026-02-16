@@ -1,0 +1,4 @@
+#!/bin/sh
+# Gradle wrapper stub — download actual gradlew on first build
+# In Docker, Gradle is available in the build image
+exec gradle "$@"

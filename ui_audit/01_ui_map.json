@@ -1,0 +1,134 @@
+{
+  "audit_scope": {
+    "frontend": "frontend/src",
+    "router_file": "frontend/src/routes/index.tsx",
+    "runtime_url": "http://localhost:13000",
+    "api_url": "http://localhost:8080",
+    "route_count_detected": 306
+  },
+  "navigation_modules": [
+    {
+      "id": "home",
+      "title": "Главная",
+      "key_routes": ["/"]
+    },
+    {
+      "id": "projects",
+      "title": "Проекты",
+      "key_routes": ["/projects", "/contracts", "/estimates", "/specifications", "/specifications/analogs"]
+    },
+    {
+      "id": "pm",
+      "title": "Управление проектами",
+      "key_routes": ["/pm/rfis", "/pm/submittals", "/pm/issues", "/change-management/orders", "/planning/gantt", "/workflow/templates", "/workflow/designer"]
+    },
+    {
+      "id": "documents",
+      "title": "Документы",
+      "key_routes": ["/documents", "/cde/documents", "/pto/documents", "/russian-docs/list", "/data-exchange/import"]
+    },
+    {
+      "id": "finance",
+      "title": "Финансы",
+      "key_routes": ["/budgets", "/invoices", "/payments", "/cash-flow", "/accounting", "/cost-management/commitments", "/procurement"]
+    },
+    {
+      "id": "supply",
+      "title": "Снабжение",
+      "key_routes": ["/warehouse/locations", "/warehouse/materials", "/warehouse/movements", "/warehouse/inventory", "/operations/work-orders", "/dispatch/orders"]
+    },
+    {
+      "id": "hr",
+      "title": "Кадры",
+      "key_routes": ["/employees", "/timesheets", "/recruitment/applicants", "/leave/requests", "/payroll", "/self-employed"]
+    },
+    {
+      "id": "quality",
+      "title": "Качество",
+      "key_routes": ["/quality", "/punchlist/items", "/regulatory/permits", "/quality/tolerance-checks"]
+    },
+    {
+      "id": "equipment",
+      "title": "Техника",
+      "key_routes": ["/fleet", "/fleet/maintenance", "/fleet/fuel", "/iot/devices", "/maintenance/requests"]
+    },
+    {
+      "id": "site",
+      "title": "Стройплощадка",
+      "key_routes": ["/daily-log", "/ks2", "/ks3", "/m29", "/bim/models", "/mobile/reports"]
+    },
+    {
+      "id": "closeout",
+      "title": "Завершение",
+      "key_routes": ["/closeout/commissioning", "/closeout/handover", "/closeout/warranty", "/support/tickets"]
+    },
+    {
+      "id": "analytics",
+      "title": "Аналитика",
+      "key_routes": ["/analytics", "/reports", "/kpi", "/monitoring"]
+    },
+    {
+      "id": "settings",
+      "title": "Настройки",
+      "key_routes": ["/settings", "/admin/users", "/admin/permissions", "/admin/integrations", "/notifications"]
+    }
+  ],
+  "route_inventory_signals": {
+    "board_routes": 20,
+    "form_routes": 35,
+    "detail_routes": 70,
+    "legacy_alias_routes": [
+      "/russian-docs",
+      "/issues",
+      "/change-management/events/new",
+      "/portfolio/tenders/new"
+    ],
+    "known_wrong_links_in_code": [
+      "/workflows"
+    ]
+  },
+  "critical_happy_paths": [
+    {
+      "name": "Проект -> Закупка -> Склад -> Платеж",
+      "steps": [
+        "/projects/new",
+        "/procurement/new",
+        "/warehouse/movements/new",
+        "/payments/new"
+      ],
+      "status_in_ui": "reachable_with_stub_auth",
+      "risk": "api_proxy_misconfigured_in_dev_login_flow"
+    },
+    {
+      "name": "Договор -> Согласование -> Актирование",
+      "steps": [
+        "/contracts/new",
+        "/workflow/templates",
+        "/ks2",
+        "/ks3"
+      ],
+      "status_in_ui": "reachable",
+      "risk": "workflow_navigation_uses_obsolete_/workflows_path"
+    },
+    {
+      "name": "Качество -> Замечания -> Регуляторика",
+      "steps": [
+        "/quality",
+        "/punchlist/items",
+        "/regulatory/permits"
+      ],
+      "status_in_ui": "reachable",
+      "risk": "mobile_overflow_on_data_tables"
+    },
+    {
+      "name": "Полевой отчёт (mobile web)",
+      "steps": [
+        "/mobile/reports",
+        "/mobile/reports/new",
+        "/mobile/photos"
+      ],
+      "status_in_ui": "reachable",
+      "risk": "draft_submission_is_toast_only_no_persistence"
+    }
+  ]
+}

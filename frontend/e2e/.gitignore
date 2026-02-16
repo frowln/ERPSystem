@@ -1,0 +1,7 @@
+# Playwright auth state (contains tokens - must not be committed)
+.auth/
+
+# Test results
+test-results/
+playwright-report/
+blob-report/

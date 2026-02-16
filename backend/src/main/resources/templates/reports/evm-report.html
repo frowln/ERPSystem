@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Отчёт по освоенному объёму (EVM)'">EVM-отчёт</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .metric-cards { overflow: hidden; margin-bottom: 14pt; }
+        .metric-card { float: left; width: 22%; margin-right: 2%; border: 1px solid #ccc;
+                       padding: 6pt 8pt; text-align: center; margin-bottom: 8pt; }
+        .metric-card:nth-child(4n) { margin-right: 0; }
+        .metric-card .card-value { font-size: 14pt; font-weight: bold; }
+        .metric-card .card-label { font-size: 7pt; color: #666; text-transform: uppercase; }
+        .value-good { color: #16a34a; }
+        .value-warning { color: #ca8a04; }
+        .value-bad { color: #dc2626; }
+        .chart-placeholder { border: 2px dashed #ccc; height: 200pt; text-align: center;
+                             line-height: 200pt; color: #999; font-size: 10pt; margin: 12pt 0;
+                             background-color: #fafafa; }
+        .variance-positive { color: #16a34a; }
+        .variance-negative { color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ОТЧЁТ ПО ОСВОЕННОМУ ОБЪЁМУ (EVM)</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Report metadata ────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер отчёта:</td>
+        <td th:text="${reportNumber} ?: '—'">EVM-001</td>
+        <td class="label">Дата отчёта:</td>
+        <td th:text="${reportDate} ?: '—'">31.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Отчётная дата (data date):</td>
+        <td th:text="${dataDate} ?: '—'">31.01.2026</td>
+        <td class="label">Процент завершения:</td>
+        <td th:text="${completionPercent != null} ? ${completionPercent} + '%' : '—'">45%</td>
+    </tr>
+    <tr>
+        <td class="label">Бюджет при завершении (BAC):</td>
+        <td th:text="${bac != null} ? ${#numbers.formatDecimal(bac, 1, 2)} + ' руб.' : '—'">100 000 000.00 руб.</td>
+        <td class="label">Руководитель проекта:</td>
+        <td th:text="${projectManager} ?: '—'">Иванов И.И.</td>
+    </tr>
+</table>
+
+<!-- ── Key EVM metrics ────────────────────────────────────────────────────── -->
+<h2>Ключевые показатели EVM</h2>
+<div class="metric-cards">
+    <div class="metric-card">
+        <div class="card-value" th:text="${pv != null} ? ${#numbers.formatDecimal(pv, 1, 0)} : '—'">45 000 000</div>
+        <div class="card-label">PV (Плановый объём)</div>
+    </div>
+    <div class="metric-card">
+        <div class="card-value" th:text="${ev != null} ? ${#numbers.formatDecimal(ev, 1, 0)} : '—'">42 000 000</div>
+        <div class="card-label">EV (Освоенный объём)</div>
+    </div>
+    <div class="metric-card">
+        <div class="card-value" th:text="${ac != null} ? ${#numbers.formatDecimal(ac, 1, 0)} : '—'">44 000 000</div>
+        <div class="card-label">AC (Факт. затраты)</div>
+    </div>
+    <div class="metric-card">
+        <div class="card-value"
+             th:classappend="${eac != null and eac > bac} ? 'value-bad' : 'value-good'"
+             th:text="${eac != null} ? ${#numbers.formatDecimal(eac, 1, 0)} : '—'">105 000 000</div>
+        <div class="card-label">EAC (Прогноз при заверш.)</div>
+    </div>
+</div>
+
+<!-- ── Performance indices ────────────────────────────────────────────────── -->
+<div class="metric-cards">
+    <div class="metric-card">
+        <div class="card-value"
+             th:classappend="${spi != null and spi >= 1.0} ? 'value-good' : (${spi != null and spi >= 0.9} ? 'value-warning' : 'value-bad')"
+             th:text="${spi != null} ? ${#numbers.formatDecimal(spi, 1, 2)} : '—'">0.93</div>
+        <div class="card-label">SPI (Индекс сроков)</div>
+    </div>
+    <div class="metric-card">
+        <div class="card-value"
+             th:classappend="${cpi != null and cpi >= 1.0} ? 'value-good' : (${cpi != null and cpi >= 0.9} ? 'value-warning' : 'value-bad')"
+             th:text="${cpi != null} ? ${#numbers.formatDecimal(cpi, 1, 2)} : '—'">0.95</div>
+        <div class="card-label">CPI (Индекс затрат)</div>
+    </div>
+    <div class="metric-card">
+        <div class="card-value"
+             th:classappend="${sv != null and sv >= 0} ? 'variance-positive' : 'variance-negative'"
+             th:text="${sv != null} ? ${#numbers.formatDecimal(sv, 1, 0)} : '—'">-3 000 000</div>
+        <div class="card-label">SV (Откл. по срокам)</div>
+    </div>
+    <div class="metric-card">
+        <div class="card-value"
+             th:classappend="${cv != null and cv >= 0} ? 'variance-positive' : 'variance-negative'"
+             th:text="${cv != null} ? ${#numbers.formatDecimal(cv, 1, 0)} : '—'">-2 000 000</div>
+        <div class="card-label">CV (Откл. по затратам)</div>
+    </div>
+</div>
+
+<!-- ── S-Curve chart placeholder ──────────────────────────────────────────── -->
+<div class="chart-placeholder">
+    <!--/* In production, this is replaced by a server-rendered chart image */-->
+    <span th:if="${sCurveImageUrl != null}">
+        <img th:src="${sCurveImageUrl}" style="width:100%; height:100%; object-fit:contain;"/>
+    </span>
+    <span th:if="${sCurveImageUrl == null}">[S-кривая: PV / EV / AC — генерируется сервером]</span>
+</div>
+
+<!-- ── WBS breakdown ──────────────────────────────────────────────────────── -->
+<h2>Детализация по элементам WBS</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:7%;">Код WBS</th>
+            <th style="width:20%;">Наименование</th>
+            <th style="width:10%;">PV,<br/>тыс. руб.</th>
+            <th style="width:10%;">EV,<br/>тыс. руб.</th>
+            <th style="width:10%;">AC,<br/>тыс. руб.</th>
+            <th style="width:7%;">SPI</th>
+            <th style="width:7%;">CPI</th>
+            <th style="width:10%;">SV,<br/>тыс. руб.</th>
+            <th style="width:10%;">CV,<br/>тыс. руб.</th>
+            <th style="width:4%;">%</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="wbs, iter : ${wbsItems}" th:if="${wbsItems != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${wbs.code}">1.1</td>
+            <td th:text="${wbs.name}">Фундамент</td>
+            <td class="number" th:text="${#numbers.formatDecimal(wbs.pv / 1000, 1, 0)}">15 000</td>
+            <td class="number" th:text="${#numbers.formatDecimal(wbs.ev / 1000, 1, 0)}">14 500</td>
+            <td class="number" th:text="${#numbers.formatDecimal(wbs.ac / 1000, 1, 0)}">15 200</td>
+            <td class="center"
+                th:classappend="${wbs.spi >= 1.0} ? 'value-good' : (${wbs.spi >= 0.9} ? 'value-warning' : 'value-bad')"
+                th:text="${#numbers.formatDecimal(wbs.spi, 1, 2)}">0.97</td>
+            <td class="center"
+                th:classappend="${wbs.cpi >= 1.0} ? 'value-good' : (${wbs.cpi >= 0.9} ? 'value-warning' : 'value-bad')"
+                th:text="${#numbers.formatDecimal(wbs.cpi, 1, 2)}">0.95</td>
+            <td class="number" th:classappend="${wbs.sv >= 0} ? 'variance-positive' : 'variance-negative'"
+                th:text="${#numbers.formatDecimal(wbs.sv / 1000, 1, 0)}">-500</td>
+            <td class="number" th:classappend="${wbs.cv >= 0} ? 'variance-positive' : 'variance-negative'"
+                th:text="${#numbers.formatDecimal(wbs.cv / 1000, 1, 0)}">-700</td>
+            <td class="center" th:text="${wbs.completion} + '%'">97%</td>
+        </tr>
+        <tr th:if="${wbsItems == null or wbsItems.isEmpty()}">
+            <td colspan="11" class="center text-muted">Нет данных по WBS</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${wbsItems != null and !wbsItems.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="3" class="text-right">Итого по проекту:</td>
+            <td class="number" th:text="${pv != null} ? ${#numbers.formatDecimal(pv / 1000, 1, 0)} : '0'">0</td>
+            <td class="number" th:text="${ev != null} ? ${#numbers.formatDecimal(ev / 1000, 1, 0)} : '0'">0</td>
+            <td class="number" th:text="${ac != null} ? ${#numbers.formatDecimal(ac / 1000, 1, 0)} : '0'">0</td>
+            <td class="center" th:text="${spi != null} ? ${#numbers.formatDecimal(spi, 1, 2)} : '—'">—</td>
+            <td class="center" th:text="${cpi != null} ? ${#numbers.formatDecimal(cpi, 1, 2)} : '—'">—</td>
+            <td class="number" th:text="${sv != null} ? ${#numbers.formatDecimal(sv / 1000, 1, 0)} : '0'">0</td>
+            <td class="number" th:text="${cv != null} ? ${#numbers.formatDecimal(cv / 1000, 1, 0)} : '0'">0</td>
+            <td class="center" th:text="${completionPercent != null} ? ${completionPercent} + '%' : '—'">—</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Forecast section ───────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h2>Прогнозные показатели</h2>
+    <table class="info-grid" style="width:60%;">
+        <tr>
+            <td class="label">EAC (Прогноз при завершении):</td>
+            <td th:text="${eac != null} ? ${#numbers.formatDecimal(eac, 1, 2)} + ' руб.' : '—'">105 000 000.00 руб.</td>
+        </tr>
+        <tr>
+            <td class="label">ETC (Остаток затрат):</td>
+            <td th:text="${etc != null} ? ${#numbers.formatDecimal(etc, 1, 2)} + ' руб.' : '—'">61 000 000.00 руб.</td>
+        </tr>
+        <tr>
+            <td class="label">VAC (Откл. при завершении):</td>
+            <td th:classappend="${vac != null and vac >= 0} ? 'variance-positive' : 'variance-negative'"
+                th:text="${vac != null} ? ${#numbers.formatDecimal(vac, 1, 2)} + ' руб.' : '—'">-5 000 000.00 руб.</td>
+        </tr>
+        <tr>
+            <td class="label">TCPI (Индекс необх. эффективн.):</td>
+            <td th:text="${tcpi != null} ? ${#numbers.formatDecimal(tcpi, 1, 2)} : '—'">1.04</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Commentary ─────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${commentary != null}">
+    <h3>Комментарий руководителя проекта</h3>
+    <p th:text="${commentary}">Проект отстаёт от графика на 7%. Принятые меры...</p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Плановик</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Руководитель проекта:</p>
+            <p th:text="${projectManager} ?: '________________________'">РП</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

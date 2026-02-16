@@ -1,0 +1,11 @@
+export { default as DocumentListPage } from './DocumentListPage';
+export { default as DocumentCreatePage } from './DocumentCreatePage';
+export { default as DocumentDetailPage } from './DocumentDetailPage';
+export { default as FormKs2Page } from './FormKs2Page';
+export { default as FormKs3Page } from './FormKs3Page';
+export { default as RussianDocListPage } from './RussianDocListPage';
+export { default as Ks2GeneratorPage } from './Ks2GeneratorPage';
+export { default as Ks3GeneratorPage } from './Ks3GeneratorPage';
+export { default as SbisDocumentsPage } from './SbisDocumentsPage';
+export { default as EdoDocumentsPage } from './EdoDocumentsPage';
+export * from './types';

@@ -1,0 +1,191 @@
+package com.privod.platform.modules.messaging.service;
+
+import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.modules.messaging.domain.CallParticipant;
+import com.privod.platform.modules.messaging.domain.CallParticipantStatus;
+import com.privod.platform.modules.messaging.domain.CallSession;
+import com.privod.platform.modules.messaging.domain.CallStatus;
+import com.privod.platform.modules.messaging.repository.CallParticipantRepository;
+import com.privod.platform.modules.messaging.repository.CallSessionRepository;
+import com.privod.platform.modules.messaging.web.dto.CallParticipantResponse;
+import com.privod.platform.modules.messaging.web.dto.CallSessionResponse;
+import com.privod.platform.modules.messaging.web.dto.CreateCallRequest;
+import com.privod.platform.modules.messaging.web.dto.EndCallRequest;
+import com.privod.platform.modules.messaging.web.dto.JoinCallRequest;
+import com.privod.platform.modules.messaging.web.dto.LeaveCallRequest;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class CallSessionService {
+
+    private final CallSessionRepository callSessionRepository;
+    private final CallParticipantRepository callParticipantRepository;
+    private final AuditService auditService;
+
+    @Transactional
+    public CallSessionResponse createCall(CreateCallRequest request) {
+        CallSession session = CallSession.builder()
+                .title(request.title())
+                .projectId(request.projectId())
+                .channelId(request.channelId())
+                .initiatorId(request.initiatorId())
+                .initiatorName(request.initiatorName())
+                .callType(request.callType())
+                .status(CallStatus.RINGING)
+                .signalingKey("call-" + UUID.randomUUID())
+                .metadataJson(request.metadataJson())
+                .build();
+        session = callSessionRepository.save(session);
+
+        List<CallParticipant> participants = new ArrayList<>();
+        participants.add(CallParticipant.builder()
+                .callSessionId(session.getId())
+                .userId(request.initiatorId())
+                .userName(request.initiatorName())
+                .participantStatus(CallParticipantStatus.JOINED)
+                .joinedAt(Instant.now())
+                .build());
+
+        if (request.inviteeIds() != null) {
+            for (UUID inviteeId : request.inviteeIds()) {
+                if (inviteeId == null || inviteeId.equals(request.initiatorId())) {
+                    continue;
+                }
+                participants.add(CallParticipant.builder()
+                        .callSessionId(session.getId())
+                        .userId(inviteeId)
+                        .participantStatus(CallParticipantStatus.INVITED)
+                        .build());
+            }
+        }
+        callParticipantRepository.saveAll(participants);
+        auditService.logCreate("CallSession", session.getId());
+
+        log.info("Создан {} звонок {} (sessionId={})", request.callType(), request.title(), session.getId());
+        return toResponse(session);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CallSessionResponse> listCalls(UUID projectId, UUID channelId) {
+        List<CallSession> sessions;
+        if (projectId != null) {
+            sessions = callSessionRepository.findTop100ByProjectIdAndDeletedFalseOrderByCreatedAtDesc(projectId);
+        } else if (channelId != null) {
+            sessions = callSessionRepository.findTop100ByChannelIdAndDeletedFalseOrderByCreatedAtDesc(channelId);
+        } else {
+            sessions = callSessionRepository.findTop100ByDeletedFalseOrderByCreatedAtDesc();
+        }
+        return sessions.stream().map(this::toResponse).toList();
+    }
+
+    @Transactional
+    public CallSessionResponse joinCall(UUID callId, JoinCallRequest request) {
+        CallSession session = getSessionOrThrow(callId);
+        if (session.getStatus() == CallStatus.ENDED || session.getStatus() == CallStatus.CANCELLED) {
+            throw new IllegalStateException("Нельзя присоединиться к завершённому звонку");
+        }
+        if (session.getStatus() == CallStatus.RINGING) {
+            session.setStatus(CallStatus.ACTIVE);
+            if (session.getStartedAt() == null) {
+                session.setStartedAt(Instant.now());
+            }
+        }
+
+        CallParticipant participant = callParticipantRepository
+                .findByCallSessionIdAndUserIdAndDeletedFalse(callId, request.userId())
+                .orElseGet(() -> CallParticipant.builder()
+                        .callSessionId(callId)
+                        .userId(request.userId())
+                        .build());
+
+        participant.setUserName(request.userName());
+        participant.setParticipantStatus(CallParticipantStatus.JOINED);
+        participant.setJoinedAt(Instant.now());
+        participant.setIsMuted(request.muted() != null ? request.muted() : false);
+        participant.setIsVideoEnabled(request.videoEnabled() != null ? request.videoEnabled() : true);
+
+        callParticipantRepository.save(participant);
+        callSessionRepository.save(session);
+        auditService.logUpdate("CallSession", session.getId(), "join", null, request.userId().toString());
+
+        return toResponse(session);
+    }
+
+    @Transactional
+    public CallSessionResponse leaveCall(UUID callId, LeaveCallRequest request) {
+        CallSession session = getSessionOrThrow(callId);
+        CallParticipant participant = callParticipantRepository
+                .findByCallSessionIdAndUserIdAndDeletedFalse(callId, request.userId())
+                .orElseThrow(() -> new EntityNotFoundException("Участник звонка не найден"));
+
+        participant.setParticipantStatus(CallParticipantStatus.LEFT);
+        participant.setLeftAt(Instant.now());
+        callParticipantRepository.save(participant);
+
+        long joined = callParticipantRepository.countByCallSessionIdAndParticipantStatusAndDeletedFalse(
+                callId, CallParticipantStatus.JOINED);
+        if (joined == 0 && session.getStatus() != CallStatus.ENDED) {
+            finishSession(session, CallStatus.ENDED);
+        } else {
+            callSessionRepository.save(session);
+        }
+
+        auditService.logUpdate("CallSession", session.getId(), "leave", null, request.userId().toString());
+        return toResponse(session);
+    }
+
+    @Transactional
+    public CallSessionResponse endCall(UUID callId, EndCallRequest request) {
+        CallSession session = getSessionOrThrow(callId);
+        finishSession(session, CallStatus.ENDED);
+        auditService.logStatusChange("CallSession", session.getId(), session.getStatus().name(), CallStatus.ENDED.name());
+        log.info("Звонок завершён {}, user={}", session.getId(), request.endedByUserId());
+        return toResponse(session);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CallSessionResponse> listActiveCalls() {
+        return callSessionRepository.findByStatusAndDeletedFalse(CallStatus.ACTIVE)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private void finishSession(CallSession session, CallStatus targetStatus) {
+        if (session.getStartedAt() == null) {
+            session.setStartedAt(Instant.now());
+        }
+        Instant endedAt = Instant.now();
+        session.setEndedAt(endedAt);
+        session.setStatus(targetStatus);
+        long duration = Duration.between(session.getStartedAt(), endedAt).getSeconds();
+        session.setDurationSeconds((int) Math.max(0, duration));
+        callSessionRepository.save(session);
+    }
+
+    private CallSession getSessionOrThrow(UUID id) {
+        return callSessionRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException("Сессия звонка не найдена: " + id));
+    }
+
+    private CallSessionResponse toResponse(CallSession session) {
+        List<CallParticipantResponse> participants = callParticipantRepository
+                .findByCallSessionIdAndDeletedFalse(session.getId())
+                .stream()
+                .map(CallParticipantResponse::fromEntity)
+                .toList();
+        return CallSessionResponse.fromEntity(session, participants);
+    }
+}

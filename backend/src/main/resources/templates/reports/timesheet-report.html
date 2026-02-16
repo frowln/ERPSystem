@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Табель учёта рабочего времени'">Табель учёта рабочего времени</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 landscape; margin: 10mm 8mm 10mm 8mm; }
+        .day-cell { width: 18pt; text-align: center; font-size: 7pt; padding: 2pt 1pt; }
+        .day-header { background-color: #e8e8e8; font-weight: bold; font-size: 7pt; }
+        .weekend { background-color: #fee2e2; }
+        .holiday { background-color: #fef3c7; }
+        .overtime { color: #dc2626; font-weight: bold; }
+        .total-hours { font-weight: bold; background-color: #f0f9ff; }
+        table.timesheet-table { width: 100%; border-collapse: collapse; font-size: 8pt; }
+        table.timesheet-table th, table.timesheet-table td {
+            border: 1px solid #333; padding: 2pt 3pt; text-align: center; vertical-align: middle;
+        }
+        table.timesheet-table th { background-color: #e8e8e8; font-size: 7pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ТАБЕЛЬ УЧЁТА РАБОЧЕГО ВРЕМЕНИ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Metadata ───────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер документа:</td>
+        <td th:text="${documentNumber} ?: '—'">Т-001</td>
+        <td class="label">Период:</td>
+        <td th:text="${period} ?: '—'">Январь 2026</td>
+    </tr>
+    <tr>
+        <td class="label">Подразделение:</td>
+        <td th:text="${department} ?: '—'">Участок №3</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${reportDate} ?: '—'">01.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Норма часов:</td>
+        <td th:text="${normHours} ?: '—'">176</td>
+        <td class="label">Рабочих дней:</td>
+        <td th:text="${workingDays} ?: '—'">22</td>
+    </tr>
+</table>
+
+<!-- ── Timesheet table ────────────────────────────────────────────────────── -->
+<table class="timesheet-table">
+    <thead>
+        <tr>
+            <th style="width:4%;" rowspan="2">№</th>
+            <th style="width:12%;" rowspan="2">ФИО</th>
+            <th style="width:8%;" rowspan="2">Должность</th>
+            <th style="width:5%;" rowspan="2">Таб.<br/>номер</th>
+            <!--/* Day columns generated from dayHeaders list */-->
+            <th class="day-cell day-header" th:each="day : ${dayHeaders}"
+                th:text="${day.number}" th:classappend="${day.weekend} ? 'weekend' : ''">1</th>
+            <th style="width:5%;" rowspan="2">Всего<br/>дней</th>
+            <th style="width:5%;" rowspan="2">Всего<br/>часов</th>
+            <th style="width:5%;" rowspan="2">Сверх-<br/>урочн.</th>
+            <th style="width:5%;" rowspan="2">Ночные</th>
+        </tr>
+        <tr>
+            <!--/* Day of week abbreviations */-->
+            <th class="day-cell day-header" th:each="day : ${dayHeaders}"
+                th:text="${day.weekday}" th:classappend="${day.weekend} ? 'weekend' : ''"
+                style="font-size:6pt;">Пн</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="emp, iter : ${employees}" th:if="${employees != null}">
+            <td th:text="${iter.count}">1</td>
+            <td style="text-align:left; font-size:7pt;" th:text="${emp.fullName}">Иванов И.И.</td>
+            <td style="text-align:left; font-size:7pt;" th:text="${emp.position}">Монтажник</td>
+            <td th:text="${emp.tabNumber}">001</td>
+            <!--/* Daily hours */-->
+            <td class="day-cell" th:each="hours : ${emp.dailyHours}"
+                th:text="${hours.value} ?: ''"
+                th:classappend="${hours.weekend ? 'weekend' : ''} + ' ' + ${hours.overtime ? 'overtime' : ''}">8</td>
+            <td class="total-hours" th:text="${emp.totalDays}">22</td>
+            <td class="total-hours" th:text="${emp.totalHours}">176</td>
+            <td th:text="${emp.overtimeHours} ?: '0'">0</td>
+            <td th:text="${emp.nightHours} ?: '0'">0</td>
+        </tr>
+        <tr th:if="${employees == null or employees.isEmpty()}">
+            <td colspan="35" class="center text-muted">Нет данных по сотрудникам</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${employees != null and !employees.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="4" class="text-right">Итого по подразделению:</td>
+            <td class="day-cell" th:each="dayTotal : ${dailyTotals}"
+                th:text="${dayTotal} ?: ''">—</td>
+            <td class="total-hours" th:text="${grandTotalDays} ?: '0'">0</td>
+            <td class="total-hours" th:text="${grandTotalHours} ?: '0'">0</td>
+            <td th:text="${grandOvertimeHours} ?: '0'">0</td>
+            <td th:text="${grandNightHours} ?: '0'">0</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Legend ──────────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Условные обозначения</h3>
+    <table class="info-grid" style="width:60%; font-size:8pt;">
+        <tr><td class="label" style="width:10%;">Я</td><td>Явка (рабочий день)</td></tr>
+        <tr><td class="label">В</td><td>Выходной</td></tr>
+        <tr><td class="label">Б</td><td>Больничный лист</td></tr>
+        <tr><td class="label">О</td><td>Отпуск</td></tr>
+        <tr><td class="label">К</td><td>Командировка</td></tr>
+        <tr><td class="label">НН</td><td>Неявка по невыясненным причинам</td></tr>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Табельщик:</p>
+            <p th:text="${timekeeperName} ?: '________________________'">Сидорова А.В.</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Руководитель подразделения:</p>
+            <p th:text="${managerName} ?: '________________________'">Петров П.П.</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

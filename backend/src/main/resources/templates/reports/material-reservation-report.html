@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Отчет о резервировании материалов'">Резервирование материалов</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .status-active { color: #16a34a; font-weight: bold; }
+        .status-expired { color: #dc2626; font-weight: bold; }
+        .status-partial { color: #ca8a04; font-weight: bold; }
+        .status-released { color: #666; font-weight: bold; }
+        .expiring-soon { background-color: #fff3cd; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ОТЧЕТ О РЕЗЕРВИРОВАНИИ МАТЕРИАЛОВ</div>
+    <div class="report-subtitle" th:text="${reportSubtitle} ?: ''"></div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер отчета:</td>
+        <td th:text="${documentNumber} ?: '—'">РМ-001</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Организация:</td>
+        <td colspan="3" th:text="${organizationName} ?: '—'">ООО Строитель</td>
+    </tr>
+</table>
+
+<!-- ── Reservations table ────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:8%;">Номер<br/>резерва</th>
+            <th style="width:18%;">Наименование<br/>материала</th>
+            <th style="width:5%;">Ед.<br/>изм.</th>
+            <th style="width:8%;">Кол-во<br/>зарезерв.</th>
+            <th style="width:10%;">Склад</th>
+            <th style="width:12%;">Проект /<br/>Объект</th>
+            <th style="width:8%;">Дата<br/>резерва</th>
+            <th style="width:8%;">Срок до</th>
+            <th style="width:9%;">Статус</th>
+            <th style="width:10%;">Ответственный</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over reservations */-->
+        <tr th:each="item, iter : ${reservations}" th:if="${reservations != null}"
+            th:classappend="${item.expiringSoon} ? 'expiring-soon' : ''">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${item.reservationNumber} ?: '—'">РЕЗ-001</td>
+            <td th:text="${item.materialName}">Арматура A500C d12</td>
+            <td class="center" th:text="${item.unit} ?: '—'">т</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.quantity, 1, 2)}">25.00</td>
+            <td th:text="${item.warehouseName} ?: '—'">Центральный склад</td>
+            <td th:text="${item.projectName} ?: '—'">Корпус 1</td>
+            <td class="center" th:text="${item.reservationDate} ?: '—'">01.01.2026</td>
+            <td class="center" th:text="${item.expiryDate} ?: '—'">31.01.2026</td>
+            <td class="center">
+                <span th:if="${item.status == 'ACTIVE'}" class="status-active">Активен</span>
+                <span th:if="${item.status == 'EXPIRED'}" class="status-expired">Истек</span>
+                <span th:if="${item.status == 'PARTIAL'}" class="status-partial">Частично</span>
+                <span th:if="${item.status == 'RELEASED'}" class="status-released">Снят</span>
+            </td>
+            <td th:text="${item.responsiblePerson} ?: '—'">Иванов И.И.</td>
+        </tr>
+        <!--/* Placeholder when no data */-->
+        <tr th:if="${reservations == null or reservations.isEmpty()}">
+            <td class="center">1</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="center">—</td>
+            <td class="number">0.00</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Summary by warehouse ──────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${warehouseSummary != null and !warehouseSummary.isEmpty()}">
+    <h3>Сводка по складам</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:30%;">Склад</th>
+                <th style="width:15%;">Всего резервов</th>
+                <th style="width:15%;">Активных</th>
+                <th style="width:15%;">Истекших</th>
+                <th style="width:20%;">Стоимость резервов,<br/>руб.</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="wh, iter : ${warehouseSummary}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${wh.warehouseName}">Центральный склад</td>
+                <td class="center" th:text="${wh.totalReservations}">0</td>
+                <td class="center" th:text="${wh.activeCount}">0</td>
+                <td class="center" th:text="${wh.expiredCount}">0</td>
+                <td class="number" th:text="${wh.totalValue != null} ? ${#numbers.formatDecimal(wh.totalValue, 1, 2)} : '0.00'">0.00</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Summary ───────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Итого</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Всего резервов:</td>
+            <td th:text="${totalReservations} ?: '0'">0</td>
+            <td class="label">Активных:</td>
+            <td th:text="${activeCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Истекших:</td>
+            <td th:text="${expiredCount} ?: '0'">0</td>
+            <td class="label">Истекают в течение 7 дней:</td>
+            <td th:text="${expiringSoonCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Общая стоимость резервов:</td>
+            <td colspan="3" th:text="${totalReservationValue != null} ? ${#numbers.formatDecimal(totalReservationValue, 1, 2)} + ' руб.' : '0.00 руб.'">0.00 руб.</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Начальник отдела снабжения:</p>
+            <p th:text="${supplyManager} ?: '________________________'">Начальник ОМТС</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Заведующий складом:</p>
+            <p th:text="${warehouseManager} ?: '________________________'">Заведующий складом</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

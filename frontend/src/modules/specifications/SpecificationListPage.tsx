@@ -1,0 +1,193 @@
+import React, { useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { type ColumnDef } from '@tanstack/react-table';
+import { Plus, Search } from 'lucide-react';
+import { PageHeader } from '@/design-system/components/PageHeader';
+import { Button } from '@/design-system/components/Button';
+import { DataTable } from '@/design-system/components/DataTable';
+import {
+  StatusBadge,
+  specificationStatusColorMap,
+  specificationStatusLabels,
+} from '@/design-system/components/StatusBadge';
+import { Input } from '@/design-system/components/FormField';
+import { specificationsApi } from '@/api/specifications';
+import { formatMoney, formatDate } from '@/lib/format';
+import type { Specification } from '@/types';
+
+type TabId = 'all' | 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'ACTIVE';
+
+const SpecificationListPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabId>('all');
+  const [search, setSearch] = useState('');
+
+  const { data: specsData, isLoading } = useQuery({
+    queryKey: ['specifications'],
+    queryFn: () => specificationsApi.getSpecifications(),
+  });
+
+  const specifications = specsData?.content ?? [];
+
+  const filteredSpecs = useMemo(() => {
+    let filtered = specifications;
+
+    if (activeTab !== 'all') {
+      filtered = filtered.filter((s) => s.status === activeTab);
+    }
+
+    if (search) {
+      const lower = search.toLowerCase();
+      filtered = filtered.filter(
+        (s) =>
+          s.name.toLowerCase().includes(lower) ||
+          (s.projectName ?? '').toLowerCase().includes(lower),
+      );
+    }
+
+    return filtered;
+  }, [specifications, activeTab, search]);
+
+  const tabCounts = useMemo(() => ({
+    all: specifications.length,
+    draft: specifications.filter((s) => s.status === 'DRAFT').length,
+    in_review: specifications.filter((s) => s.status === 'IN_REVIEW').length,
+    approved: specifications.filter((s) => s.status === 'APPROVED').length,
+    active: specifications.filter((s) => s.status === 'ACTIVE').length,
+  }), [specifications]);
+
+  const columns = useMemo<ColumnDef<Specification, unknown>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: 'Название',
+        size: 300,
+        cell: ({ row }) => (
+          <div>
+            <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.name}</p>
+            {row.original.notes && (
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate max-w-[280px]">{row.original.notes}</p>
+            )}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'projectName',
+        header: 'Проект',
+        size: 200,
+        cell: ({ getValue }) => (
+          <span className="text-neutral-600">{getValue<string>()}</span>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: 'Статус',
+        size: 140,
+        cell: ({ getValue }) => (
+          <StatusBadge
+            status={getValue<string>()}
+            colorMap={specificationStatusColorMap}
+            label={specificationStatusLabels[getValue<string>()] ?? getValue<string>()}
+          />
+        ),
+      },
+      {
+        accessorKey: 'version',
+        header: 'Версия',
+        size: 80,
+        cell: ({ getValue }) => (
+          <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">v{getValue<number>()}</span>
+        ),
+      },
+      {
+        accessorKey: 'itemCount',
+        header: 'Позиций',
+        size: 100,
+        cell: ({ getValue }) => (
+          <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{getValue<number>()}</span>
+        ),
+      },
+      {
+        accessorKey: 'totalAmount',
+        header: 'Сумма',
+        size: 180,
+        cell: ({ getValue }) => (
+          <span className="font-medium tabular-nums text-right block">
+            {formatMoney(getValue<number>())}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'createdAt',
+        header: 'Дата создания',
+        size: 130,
+        cell: ({ getValue }) => (
+          <span className="tabular-nums">{formatDate(getValue<string>())}</span>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const handleRowClick = useCallback(
+    (spec: Specification) => navigate(`/specifications/${spec.id}`),
+    [navigate],
+  );
+
+  return (
+    <div className="animate-fade-in">
+      <PageHeader
+        title="Спецификации"
+        subtitle={`${specifications.length} спецификаций в системе`}
+        breadcrumbs={[
+          { label: 'Главная', href: '/' },
+          { label: 'Спецификации' },
+        ]}
+        actions={
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/specifications/new')}>
+            Новая спецификация
+          </Button>
+        }
+        tabs={[
+          { id: 'all', label: 'Все', count: tabCounts.all },
+          { id: 'DRAFT', label: 'Черновик', count: tabCounts.draft },
+          { id: 'IN_REVIEW', label: 'На проверке', count: tabCounts.in_review },
+          { id: 'APPROVED', label: 'Утверждена', count: tabCounts.approved },
+          { id: 'ACTIVE', label: 'Активна', count: tabCounts.active },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(id) => setActiveTab(id as TabId)}
+      />
+
+      {/* Filters */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="relative flex-1 max-w-xs">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+          <Input
+            placeholder="Поиск по названию, проекту..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      <DataTable<Specification>
+        data={filteredSpecs}
+        columns={columns}
+        loading={isLoading}
+        onRowClick={handleRowClick}
+        enableColumnVisibility
+        enableDensityToggle
+        enableExport
+        pageSize={20}
+        emptyTitle="Нет спецификаций"
+        emptyDescription="Создайте первую спецификацию для начала работы"
+      />
+    </div>
+  );
+};
+
+export default SpecificationListPage;

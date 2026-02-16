@@ -1,0 +1,251 @@
+{
+  "timestamp": "2026-02-14T13:32:40Z",
+  "odoo": {
+    "container": {
+      "image": "privod2-odoo",
+      "ports": {
+        "8069/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "8069"
+          }
+        ]
+      },
+      "env": [
+        "ODOO_RC=/etc/odoo/odoo.conf"
+      ],
+      "created": "2026-02-10T10:01:24.851517802Z",
+      "status": "running"
+    },
+    "database": {
+      "image": "postgres:15-alpine",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "5434"
+          }
+        ]
+      },
+      "env": [
+        "POSTGRES_DB=postgres",
+        "POSTGRES_USER=odoo",
+        "POSTGRES_PASSWORD=odoo"
+      ],
+      "created": "2026-02-13T15:12:00.683166131Z",
+      "status": "running"
+    }
+  },
+  "next": {
+    "backend": {
+      "image": "privod_next-backend",
+      "ports": {
+        "5005/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "15005"
+          }
+        ],
+        "8080/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "18080"
+          }
+        ]
+      },
+      "env": [
+        "SPRING_DATASOURCE_USERNAME=privod",
+        "APP_JWT_SECRET=xk8Pq2mN7vR4tY9wA3cF6hJ0lBnE5sG8dI1oU4zK7mX2pQ9rT6yW3aD0fH5jL",
+        "APP_STORAGE_ENDPOINT=http://minio:9000",
+        "APP_STORAGE_SECRET_KEY=minio_dev",
+        "SPRING_JPA_HIBERNATE_DDL_AUTO=update",
+        "SPRING_JPA_SHOW_SQL=false",
+        "SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false",
+        "SPRING_PROFILES_ACTIVE=dev",
+        "SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/privod2",
+        "APP_STORAGE_BUCKET=privod-uploads",
+        "APP_STORAGE_ACCESS_KEY=minio",
+        "SPRING_DATA_REDIS_HOST=redis",
+        "JAVA_OPTS=-Xms512m -Xmx1g -XX:+UseG1GC -XX:+UseStringDeduplication -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+        "SPRING_DATA_REDIS_PORT=6379",
+        "SPRING_MAIL_PORT=1025",
+        "APP_JWT_EXPIRATION_MS=86400000",
+        "SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=false",
+        "SPRING_DATASOURCE_PASSWORD=privod_dev",
+        "SPRING_MAIL_HOST=mailhog",
+        "JAVA_HOME=/opt/java/openjdk",
+        "JAVA_VERSION=jdk-21.0.10+7"
+      ],
+      "created": "2026-02-14T11:08:33.162914632Z",
+      "status": "running"
+    },
+    "frontend": {
+      "image": "privod_next-frontend",
+      "ports": {
+        "3000/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "13000"
+          }
+        ]
+      },
+      "env": [
+        "VITE_API_URL=http://localhost:18080",
+        "NODE_ENV=development",
+        "NODE_VERSION=22.22.0"
+      ],
+      "created": "2026-02-14T00:48:58.9103945Z",
+      "status": "running"
+    },
+    "database": {
+      "image": "postgres:16-alpine",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "15432"
+          }
+        ]
+      },
+      "created": "2026-02-13T23:08:30.628652878Z",
+      "status": "running"
+    }
+  },
+  "docker_images": [
+    {
+      "repo": "privod_next-backend",
+      "tag": "latest",
+      "id": "0c22a8b45156",
+      "size": "615MB"
+    },
+    {
+      "repo": "privod_next-frontend",
+      "tag": "latest",
+      "id": "59493a5b6785",
+      "size": "986MB"
+    },
+    {
+      "repo": "kpi-backend",
+      "tag": "latest",
+      "id": "275c86f9c18f",
+      "size": "770MB"
+    },
+    {
+      "repo": "kpi-frontend",
+      "tag": "latest",
+      "id": "acc7efb63aa4",
+      "size": "900MB"
+    },
+    {
+      "repo": "carmate-backend",
+      "tag": "latest",
+      "id": "b717dc664bc9",
+      "size": "527MB"
+    },
+    {
+      "repo": "carmate-frontend",
+      "tag": "latest",
+      "id": "0f1ae0e478af",
+      "size": "92.6MB"
+    },
+    {
+      "repo": "privod2-odoo",
+      "tag": "latest",
+      "id": "30d4587a52d0",
+      "size": "3.53GB"
+    },
+    {
+      "repo": "redis",
+      "tag": "7-alpine",
+      "id": "02f2cc4882f8",
+      "size": "61.4MB"
+    },
+    {
+      "repo": "postgres",
+      "tag": "15-alpine",
+      "id": "1d1095b05031",
+      "size": "386MB"
+    },
+    {
+      "repo": "postgres",
+      "tag": "16-alpine",
+      "id": "4327b9fd2955",
+      "size": "388MB"
+    },
+    {
+      "repo": "minio/minio",
+      "tag": "latest",
+      "id": "14cea493d9a3",
+      "size": "228MB"
+    },
+    {
+      "repo": "minio/mc",
+      "tag": "latest",
+      "id": "a7fe349ef4bd",
+      "size": "112MB"
+    },
+    {
+      "repo": "registry.k8s.io/kube-apiserver",
+      "tag": "v1.30.5",
+      "id": "7746ea55ad74",
+      "size": "146MB"
+    },
+    {
+      "repo": "registry.k8s.io/kube-controller-manager",
+      "tag": "v1.30.5",
+      "id": "bbd15d267294",
+      "size": "139MB"
+    },
+    {
+      "repo": "registry.k8s.io/kube-scheduler",
+      "tag": "v1.30.5",
+      "id": "62c91756a3c9",
+      "size": "81.4MB"
+    },
+    {
+      "repo": "registry.k8s.io/kube-proxy",
+      "tag": "v1.30.5",
+      "id": "fa20f91153b9",
+      "size": "117MB"
+    },
+    {
+      "repo": "registry.k8s.io/coredns/coredns",
+      "tag": "v1.11.3",
+      "id": "9caabbf6238b",
+      "size": "81.8MB"
+    },
+    {
+      "repo": "registry.k8s.io/pause",
+      "tag": "3.9",
+      "id": "7031c1b28338",
+      "size": "786kB"
+    },
+    {
+      "repo": "mailhog/mailhog",
+      "tag": "latest",
+      "id": "8d76a3d4ffa3",
+      "size": "572MB"
+    },
+    {
+      "repo": "registry.k8s.io/etcd",
+      "tag": "3.5.15-0",
+      "id": "a6dc63e6e8cf",
+      "size": "66.5MB"
+    }
+  ],
+  "verification": {
+    "odoo_db_accessible": true,
+    "odoo_http": "http://localhost:8069",
+    "next_backend_health": "UP",
+    "next_backend_url": "http://localhost:18080",
+    "next_frontend_url": "http://localhost:13000",
+    "next_frontend_http_code": 200,
+    "next_startup_time_seconds": 77.138,
+    "fixes_applied": [
+      "ProcurementStockLimitRepository: renamed findByActiveTrueAndDeletedFalse to findAllActiveNotDeleted with @Query",
+      "ProcurementMaterialAnalogRepository: added findByApprovedTrueAndDeletedFalse with @Query",
+      "SystemEvent: renamed idx_event_type to idx_sys_event_type to avoid duplicate with CalendarEvent",
+      "JVM heap increased to 2G, ddl-auto set to none for startup"
+    ]
+  }
+}

@@ -1,0 +1,4421 @@
+{
+  "external_api_calls": [
+    {
+      "file": "construction_ai_assistant/models/ai_service.py",
+      "module": "construction_ai_assistant",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 138,
+      "context": "response = http_requests.post("
+    },
+    {
+      "file": "construction_api/models/webhook.py",
+      "module": "construction_api",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 126,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_bim/models/renga_integration.py",
+      "module": "construction_bim",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 38,
+      "context": "response = requests.get(url, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_bim/models/renga_integration.py",
+      "module": "construction_bim",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 116,
+      "context": "response = requests.post(url, json=export_data, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_daily_log/models/daily_log.py",
+      "module": "construction_daily_log",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 388,
+      "context": "response = requests.get(url, params=params, timeout=10)"
+    },
+    {
+      "file": "construction_daily_log/models/daily_log.py",
+      "module": "construction_daily_log",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 452,
+      "context": "response = requests.get(url, params=params, timeout=15)"
+    },
+    {
+      "file": "construction_daily_log/models/daily_log.py",
+      "module": "construction_daily_log",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 510,
+      "context": "response = requests.get(url, params=params, timeout=15)"
+    },
+    {
+      "file": "construction_devops/models/observability_config.py",
+      "module": "construction_devops",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 107,
+      "context": "response = requests.get(f\"{self.elasticsearch_url}/_cluster/health\", timeout=5)"
+    },
+    {
+      "file": "construction_devops/models/observability_config.py",
+      "module": "construction_devops",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 117,
+      "context": "response = requests.get(f\"{self.prometheus_url}/api/v1/status/config\", timeout=5)"
+    },
+    {
+      "file": "construction_devops/models/observability_config.py",
+      "module": "construction_devops",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 127,
+      "context": "response = requests.get(f\"{self.jaeger_url}/api/services\", timeout=5)"
+    },
+    {
+      "file": "construction_documents/models/webdav_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.put(",
+      "line": 185,
+      "context": "response = requests.put("
+    },
+    {
+      "file": "construction_documents/models/webdav_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 206,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_documents/models/webdav_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.delete(",
+      "line": 229,
+      "context": "response = requests.delete("
+    },
+    {
+      "file": "construction_documents/models/webdav_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.head(",
+      "line": 271,
+      "context": "response = requests.head("
+    },
+    {
+      "file": "construction_documents/models/webdav_client.py",
+      "module": "construction_documents",
+      "library": "urllib",
+      "method": "urllib.parse",
+      "line": 6,
+      "context": "from urllib.parse import urljoin, quote, unquote"
+    },
+    {
+      "file": "construction_documents/models/synology_file_station_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 58,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_documents/models/synology_file_station_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 100,
+      "context": "auth_response = requests.get("
+    },
+    {
+      "file": "construction_documents/models/synology_file_station_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 181,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_documents/models/synology_file_station_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 189,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_documents/models/synology_file_station_client.py",
+      "module": "construction_documents",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 370,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_documents/models/synology_file_station_client.py",
+      "module": "construction_documents",
+      "library": "urllib",
+      "method": "urllib.parse",
+      "line": 7,
+      "context": "from urllib.parse import urljoin"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 304,
+      "context": "resp = requests.post("
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 350,
+      "context": "response = requests.post(url, headers=headers, json=data, timeout=30)"
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 402,
+      "context": "response = requests.post(api_url, data=soap_body, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_estimate/models/fer_ter_integration.py",
+      "module": "construction_estimate",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 218,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/bank_api_tochka.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 204,
+      "context": "response = requests.post(token_url, data=payload, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 146,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 165,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 184,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 225,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 255,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 285,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 359,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 377,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 395,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_finance/models/bank_api_enhanced.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 524,
+      "context": "resp = requests.get(url, headers=self._generic_api_headers(), params=params, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 116,
+      "context": "response = requests.get(url, headers=headers, params=params, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 184,
+      "context": "response = requests.post(url, json=payload, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 209,
+      "context": "response = requests.get(url, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 278,
+      "context": "response = requests.post(url, json=payload, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 332,
+      "context": "response = requests.post(url, json=payload, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 374,
+      "context": "response = requests.post(url, json=payload, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 411,
+      "context": "response = requests.post(url, json=payload, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 443,
+      "context": "response = requests.get(url, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 471,
+      "context": "response = requests.get(url, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/vtb_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 54,
+      "context": "response = requests.post(url, data=data, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/alfa_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 54,
+      "context": "response = requests.post(url, data=data, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 55,
+      "context": "response = requests.post(url, data=data, auth=auth, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 114,
+      "context": "response = requests.get(url, headers=headers, params=params, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 180,
+      "context": "response = requests.post(url, json=payload, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 231,
+      "context": "response = requests.post(url, json=payload, headers=headers, timeout=60)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 258,
+      "context": "response = requests.get(url, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 284,
+      "context": "response = requests.get(url, headers=headers, timeout=30)"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 327,
+      "context": "response = requests.get(url, headers=headers, params=params, timeout=30)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 150,
+      "context": "response = requests.get(url, timeout=10)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 172,
+      "context": "response = requests.get(url, headers=headers, timeout=10)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 188,
+      "context": "response = requests.get(url, timeout=10)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 223,
+      "context": "response = requests.post(url, data=payload, timeout=10)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 244,
+      "context": "response = requests.get(url, headers=headers, timeout=10)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 522,
+      "context": "response = requests.post(url, json=payload, timeout=15)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 568,
+      "context": "response = requests.post(url, json=payload, headers=headers, timeout=15)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 605,
+      "context": "response = requests.get(url, params=params, timeout=15)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 681,
+      "context": "response = requests.post(url, data=payload, timeout=15)"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 724,
+      "context": "response = requests.post(url, json=payload, headers=headers, timeout=15)"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 159,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 184,
+      "context": "response = requests.get(test_url, params=params, timeout=API_TIMEOUT)"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 199,
+      "context": "response = requests.get(api_url, timeout=API_TIMEOUT)"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 226,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 256,
+      "context": "response = requests.get(test_url, timeout=API_TIMEOUT)"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 268,
+      "context": "response = requests.get(self.api_url, timeout=API_TIMEOUT)"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 401,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 525,
+      "context": "response = requests.get(egr_url, params=params, timeout=API_TIMEOUT)"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 657,
+      "context": "response = requests.post("
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 793,
+      "context": "response = requests.get(fir_url, headers=headers, timeout=API_TIMEOUT)"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/bank_api.py",
+      "module": "construction_integrations_enhanced",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 96,
+      "context": "response = requests.get("
+    },
+    {
+      "file": "construction_integrations_enhanced/models/fns_integration.py",
+      "module": "construction_integrations_enhanced",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 92,
+      "context": "response = requests.post(url, data=data, timeout=30)"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/rosreestr_integration.py",
+      "module": "construction_integrations_enhanced",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 33,
+      "context": "response = requests.get(url, timeout=30)"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/rosreestr_integration.py",
+      "module": "construction_integrations_enhanced",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 63,
+      "context": "response = requests.get(url, timeout=30)"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/rosreestr_integration.py",
+      "module": "construction_integrations_enhanced",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 93,
+      "context": "response = requests.get(url, params=params, timeout=30)"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/egrul_integration.py",
+      "module": "construction_integrations_enhanced",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 36,
+      "context": "response = requests.post(url, data=data, timeout=30)"
+    },
+    {
+      "file": "construction_kep/services/crypto_service.py",
+      "module": "construction_kep",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 71,
+      "context": "#   resp = requests.post("
+    },
+    {
+      "file": "construction_kep/services/crypto_service.py",
+      "module": "construction_kep",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 251,
+      "context": "#   resp = requests.post("
+    },
+    {
+      "file": "construction_kep/services/crypto_service.py",
+      "module": "construction_kep",
+      "library": "requests",
+      "method": "requests.post(",
+      "line": 305,
+      "context": "#   resp = requests.post("
+    },
+    {
+      "file": "construction_kep/services/crypto_service.py",
+      "module": "construction_kep",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 362,
+      "context": "#   resp = requests.get(f'{self._config.api_endpoint}/health')"
+    },
+    {
+      "file": "construction_mfa/models/totp_impl.py",
+      "module": "construction_mfa",
+      "library": "urllib",
+      "method": "urllib.parse",
+      "line": 131,
+      "context": "label = urllib.parse.quote(f'{issuer}:{user_login}', safe=':')"
+    },
+    {
+      "file": "construction_mfa/models/totp_impl.py",
+      "module": "construction_mfa",
+      "library": "urllib",
+      "method": "urllib.parse",
+      "line": 132,
+      "context": "params = urllib.parse.urlencode({"
+    },
+    {
+      "file": "construction_support/models/system_health.py",
+      "module": "construction_support",
+      "library": "requests",
+      "method": "requests.get(",
+      "line": 100,
+      "context": "response = requests.get('http://localhost:8069/web/health', timeout=5)"
+    },
+    {
+      "file": "construction_theme/controllers/webmanifest.py",
+      "module": "construction_theme",
+      "library": "urllib",
+      "method": "urllib.parse",
+      "line": 3,
+      "context": "from urllib.parse import unquote, urlencode"
+    }
+  ],
+  "xmlrpc_jsonrpc": [
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "type": "jsonrpc",
+      "line": 32,
+      "context": "@http.route('/construction_ai/chat', type='jsonrpc', auth='user', methods=['POST'])"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "type": "jsonrpc",
+      "line": 81,
+      "context": "@http.route('/construction_ai/analyze', type='jsonrpc', auth='user', methods=['POST'])"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "type": "jsonrpc",
+      "line": 123,
+      "context": "@http.route('/construction_ai/suggest_tasks', type='jsonrpc', auth='user', methods=['POST'])"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "type": "jsonrpc",
+      "line": 171,
+      "context": "@http.route('/construction_ai/summarize', type='jsonrpc', auth='user', methods=['POST'])"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "type": "jsonrpc",
+      "line": 209,
+      "context": "@http.route('/construction_ai/create_task', type='jsonrpc', auth='user', methods=['POST'])"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "type": "jsonrpc",
+      "line": 49,
+      "context": "'jsonrpc': '2.0',"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "type": "jsonrpc",
+      "line": 119,
+      "context": "'jsonrpc': '2.0',"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "type": "jsonrpc",
+      "line": 144,
+      "context": "'jsonrpc': '2.0',"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "type": "jsonrpc",
+      "line": 191,
+      "context": "'jsonrpc': '2.0',"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "type": "jsonrpc",
+      "line": 242,
+      "context": "'jsonrpc': '2.0',"
+    },
+    {
+      "file": "construction_integrations_enhanced/__manifest__.py",
+      "module": "construction_integrations_enhanced",
+      "type": "xmlrpc",
+      "line": 26,
+      "context": "'python': ['requests', 'xmlrpc'],"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py",
+      "module": "construction_integrations_enhanced",
+      "type": "xmlrpc",
+      "line": 113,
+      "context": "common = xmlrpc.client.ServerProxy(f'{url}/common')"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py",
+      "module": "construction_integrations_enhanced",
+      "type": "xmlrpc",
+      "line": 139,
+      "context": "models = xmlrpc.client.ServerProxy(f'{url}/object')"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py",
+      "module": "construction_integrations_enhanced",
+      "type": "xmlrpc.ServerProxy",
+      "line": 113,
+      "context": "common = xmlrpc.client.ServerProxy(f'{url}/common')"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py",
+      "module": "construction_integrations_enhanced",
+      "type": "xmlrpc.ServerProxy",
+      "line": 139,
+      "context": "models = xmlrpc.client.ServerProxy(f'{url}/object')"
+    }
+  ],
+  "controller_routes": [
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "route": "/construction/1c/export",
+      "method_name": "export_to_1c",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "route": "/construction/1c/import",
+      "method_name": "import_from_1c",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "route": "/api/1c/partners/sync",
+      "method_name": "sync_partners",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "route": "/api/1c/documents/sync",
+      "method_name": "sync_documents",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "route": "/api/1c/nomenclature/sync",
+      "method_name": "sync_nomenclature",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "route": "/api/1c/changes",
+      "method_name": "get_changes",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_ai/controllers/ai_chat.py",
+      "module": "construction_ai",
+      "route": "/construction_ai/chat_legacy",
+      "method_name": "construction_ai_chat",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "route": "/construction_ai/chat",
+      "method_name": "ai_chat",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "jsonrpc"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "route": "/construction_ai/analyze",
+      "method_name": "ai_analyze",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "jsonrpc"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "route": "/construction_ai/suggest_tasks",
+      "method_name": "ai_suggest_tasks",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "jsonrpc"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "route": "/construction_ai/summarize",
+      "method_name": "ai_summarize",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "jsonrpc"
+    },
+    {
+      "file": "construction_ai_assistant/controllers/ai_controller.py",
+      "module": "construction_ai_assistant",
+      "route": "/construction_ai/create_task",
+      "method_name": "ai_create_task",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "jsonrpc"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/projects",
+      "method_name": "list_projects",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/projects/<int:record_id>",
+      "method_name": "get_project",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/contracts",
+      "method_name": "list_contracts",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/contracts/<int:record_id>",
+      "method_name": "get_contract",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/ks2",
+      "method_name": "list_ks2",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/ks2/<int:record_id>",
+      "method_name": "get_ks2",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/ks3",
+      "method_name": "list_ks3",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_projects.py",
+      "module": "construction_api",
+      "route": "/api/v2/ks3/<int:record_id>",
+      "method_name": "get_ks3",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/metrics_controller.py",
+      "module": "construction_api",
+      "route": "/metrics",
+      "method_name": "prometheus_metrics",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_controller.py",
+      "module": "construction_api",
+      "route": "/api/v1/projects",
+      "method_name": "get_projects",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_controller.py",
+      "module": "construction_api",
+      "route": "/api/v1/projects/<int:project_id>",
+      "method_name": "get_project",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_controller.py",
+      "module": "construction_api",
+      "route": "/api/v1/purchase_requests",
+      "method_name": "get_purchase_requests",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_specifications.py",
+      "module": "construction_api",
+      "route": "/api/v2/spec_items",
+      "method_name": "list_spec_items",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_specifications.py",
+      "module": "construction_api",
+      "route": "/api/v2/estimates",
+      "method_name": "list_estimates",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_specifications.py",
+      "module": "construction_api",
+      "route": "/api/v2/documents",
+      "method_name": "list_documents",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_specifications.py",
+      "module": "construction_api",
+      "route": "/api/v2/specifications",
+      "method_name": "list_specifications",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_specifications.py",
+      "module": "construction_api",
+      "route": "/api/v2/specifications/<int:record_id>",
+      "method_name": "get_specification",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/maintenance_requests",
+      "method_name": "list_maintenance_requests",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/maintenance_requests/<int:record_id>",
+      "method_name": "get_maintenance_request",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/vehicle_assignments",
+      "method_name": "list_vehicle_assignments",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/audit_checklists",
+      "method_name": "list_audit_checklists",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/audit_checklists/<int:record_id>",
+      "method_name": "get_audit_checklist",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/journal_entries",
+      "method_name": "list_journal_entries",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/employee_qualifications",
+      "method_name": "list_qualifications",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/tasks",
+      "method_name": "list_tasks",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_operations.py",
+      "module": "construction_api",
+      "route": "/api/v2/tasks/<int:record_id>",
+      "method_name": "get_task",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_iot_bim.py",
+      "module": "construction_api",
+      "route": "/api/v2/iot_equipment",
+      "method_name": "list_iot_equipment",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_iot_bim.py",
+      "module": "construction_api",
+      "route": "/api/v2/iot_equipment/<int:record_id>",
+      "method_name": "get_iot_equipment",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_iot_bim.py",
+      "module": "construction_api",
+      "route": "/api/v2/bim_models",
+      "method_name": "list_bim_models",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_iot_bim.py",
+      "module": "construction_api",
+      "route": "/api/v2/bim_models/<int:record_id>",
+      "method_name": "get_bim_model",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_safety.py",
+      "module": "construction_api",
+      "route": "/api/v2/safety_incidents",
+      "method_name": "list_incidents",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_safety.py",
+      "module": "construction_api",
+      "route": "/api/v2/safety_incidents/<int:record_id>",
+      "method_name": "get_incident",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_safety.py",
+      "module": "construction_api",
+      "route": "/api/v2/safety_incidents",
+      "method_name": "create_incident",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_safety.py",
+      "module": "construction_api",
+      "route": "/api/v2/safety_inspections",
+      "method_name": "list_inspections",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_safety.py",
+      "module": "construction_api",
+      "route": "/api/v2/safety_inspections/<int:record_id>",
+      "method_name": "get_inspection",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_procurement.py",
+      "module": "construction_api",
+      "route": "/api/v2/purchase_requests",
+      "method_name": "list_purchase_requests",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_procurement.py",
+      "module": "construction_api",
+      "route": "/api/v2/purchase_requests/<int:record_id>",
+      "method_name": "get_purchase_request",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_procurement.py",
+      "module": "construction_api",
+      "route": "/api/v2/tenders",
+      "method_name": "list_tenders",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_procurement.py",
+      "module": "construction_api",
+      "route": "/api/v2/tenders/<int:record_id>",
+      "method_name": "get_tender",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/health_controller.py",
+      "module": "construction_api",
+      "route": "/api/health",
+      "method_name": "health_check",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/health_controller.py",
+      "module": "construction_api",
+      "route": "/api/health/ready",
+      "method_name": "readiness_check",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_controller.py",
+      "module": "construction_api",
+      "route": "/api/v2/swagger.json",
+      "method_name": "swagger_spec",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_controller.py",
+      "module": "construction_api",
+      "route": "/api/docs",
+      "method_name": "api_docs",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_finance.py",
+      "module": "construction_api",
+      "route": "/api/v2/budget_items",
+      "method_name": "list_budget_items",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_finance.py",
+      "module": "construction_api",
+      "route": "/api/v2/budgets",
+      "method_name": "list_budgets",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_finance.py",
+      "module": "construction_api",
+      "route": "/api/v2/budgets/<int:record_id>",
+      "method_name": "get_budget",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_finance.py",
+      "module": "construction_api",
+      "route": "/api/v2/fixed_assets",
+      "method_name": "list_fixed_assets",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_api/controllers/api_v2_finance.py",
+      "module": "construction_api",
+      "route": "/api/v2/tax_calendar",
+      "method_name": "list_tax_calendar",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_auth_oidc/controllers/main.py",
+      "module": "construction_auth_oidc",
+      "route": "/auth/oidc/login/<int:provider_id>",
+      "method_name": "oidc_login",
+      "auth": "none",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_auth_oidc/controllers/main.py",
+      "module": "construction_auth_oidc",
+      "route": "/auth/oidc/callback",
+      "method_name": "oidc_callback",
+      "auth": "none",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_auth_oidc/controllers/main.py",
+      "module": "construction_auth_oidc",
+      "route": "/auth/oidc/logout",
+      "method_name": "oidc_logout",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_auth_oidc/controllers/main.py",
+      "module": "construction_auth_oidc",
+      "route": "/auth/oidc/refresh",
+      "method_name": "oidc_refresh_token",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v2/specifications",
+      "method_name": "v2_list_specifications",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v2/specifications/<int:spec_id>",
+      "method_name": "v2_get_specification",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v2/estimates",
+      "method_name": "v2_list_estimates",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v2/estimates/<int:estimate_id>",
+      "method_name": "v2_get_estimate",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v1/specifications",
+      "method_name": "v1_list_specifications",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v1/specifications/<int:spec_id>",
+      "method_name": "v1_get_specification",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v1/estimates",
+      "method_name": "v1_list_estimates",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_specifications.py",
+      "module": "construction_base",
+      "route": "/api/v1/estimates/<int:estimate_id>",
+      "method_name": "v1_get_estimate",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_finance.py",
+      "module": "construction_base",
+      "route": "/api/v2/budget-items",
+      "method_name": "v2_list_budget_items",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_finance.py",
+      "module": "construction_base",
+      "route": "/api/v2/payments",
+      "method_name": "v2_list_payments",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_finance.py",
+      "module": "construction_base",
+      "route": "/api/v2/pnl",
+      "method_name": "v2_list_pnl",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_finance.py",
+      "module": "construction_base",
+      "route": "/api/v2/aging",
+      "method_name": "v2_list_aging",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_finance.py",
+      "module": "construction_base",
+      "route": "/api/v1/budget",
+      "method_name": "v1_list_budget_items",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_safety.py",
+      "module": "construction_base",
+      "route": "/api/v2/safety/incidents",
+      "method_name": "v2_list_safety_incidents",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_safety.py",
+      "module": "construction_base",
+      "route": "/api/v2/safety/inspections",
+      "method_name": "v2_list_safety_inspections",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_safety.py",
+      "module": "construction_base",
+      "route": "/api/v1/safety/incidents",
+      "method_name": "v1_list_safety_incidents",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/notification_controller.py",
+      "module": "construction_base",
+      "route": "/construction/notifications/subscribe",
+      "method_name": "subscribe",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/notification_controller.py",
+      "module": "construction_base",
+      "route": "/construction/notifications/mark_read",
+      "method_name": "mark_read",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/notification_controller.py",
+      "module": "construction_base",
+      "route": "/construction/notifications/history",
+      "method_name": "history",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v2/projects",
+      "method_name": "v2_list_projects",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v2/projects/<int:project_id>",
+      "method_name": "v2_get_project",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v2/projects",
+      "method_name": "v2_create_project",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v2/projects/<int:project_id>",
+      "method_name": "v2_update_project",
+      "auth": "none",
+      "http_methods": "PUT",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v1/projects",
+      "method_name": "v1_list_projects",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v1/projects/<int:project_id>",
+      "method_name": "v1_get_project",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v1/projects",
+      "method_name": "v1_create_project",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_projects.py",
+      "module": "construction_base",
+      "route": "/api/v1/projects/<int:project_id>",
+      "method_name": "v1_update_project",
+      "auth": "none",
+      "http_methods": "PUT",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/contracts",
+      "method_name": "v2_list_contracts",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/contracts/<int:contract_id>",
+      "method_name": "v2_get_contract",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/contracts",
+      "method_name": "v2_create_contract",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/ks2",
+      "method_name": "v2_list_ks2",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/ks2/<int:ks2_id>",
+      "method_name": "v2_get_ks2",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/ks2",
+      "method_name": "v2_create_ks2",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/ks3",
+      "method_name": "v2_list_ks3",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v2/ks3/<int:ks3_id>",
+      "method_name": "v2_get_ks3",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/contracts",
+      "method_name": "v1_list_contracts",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/contracts/<int:contract_id>",
+      "method_name": "v1_get_contract",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/contracts",
+      "method_name": "v1_create_contract",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/ks2",
+      "method_name": "v1_list_ks2",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/ks2",
+      "method_name": "v1_create_ks2",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/ks3",
+      "method_name": "v1_list_ks3",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_contracts.py",
+      "module": "construction_base",
+      "route": "/api/v1/ks3",
+      "method_name": "v1_create_ks3",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_dashboard.py",
+      "module": "construction_base",
+      "route": "/api/v2/dashboard",
+      "method_name": "v2_dashboard",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_dashboard.py",
+      "module": "construction_base",
+      "route": "/api/v1/dashboard/<int:project_id>",
+      "method_name": "v1_project_dashboard",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_bim.py",
+      "module": "construction_base",
+      "route": "/api/v2/bim/models",
+      "method_name": "v2_list_bim_models",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_bim.py",
+      "module": "construction_base",
+      "route": "/api/v2/bim/elements",
+      "method_name": "v2_list_bim_elements",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_procurement.py",
+      "module": "construction_base",
+      "route": "/api/v2/purchase-requests",
+      "method_name": "v2_list_purchase_requests",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_procurement.py",
+      "module": "construction_base",
+      "route": "/api/v2/purchase-requests",
+      "method_name": "v2_create_purchase_request",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_procurement.py",
+      "module": "construction_base",
+      "route": "/api/v2/tenders",
+      "method_name": "v2_list_tenders",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_procurement.py",
+      "module": "construction_base",
+      "route": "/api/v1/purchase-requests",
+      "method_name": "v1_list_purchase_requests",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_procurement.py",
+      "module": "construction_base",
+      "route": "/api/v1/purchase-requests",
+      "method_name": "v1_create_purchase_request",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_iot.py",
+      "module": "construction_base",
+      "route": "/api/v2/iot/equipment",
+      "method_name": "v2_list_iot_equipment",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_iot.py",
+      "module": "construction_base",
+      "route": "/api/v2/iot/telemetry",
+      "method_name": "v2_list_iot_telemetry",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_operations.py",
+      "module": "construction_base",
+      "route": "/api/v2/work-orders",
+      "method_name": "v2_list_work_orders",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_operations.py",
+      "module": "construction_base",
+      "route": "/api/v2/work-orders/<int:wo_id>",
+      "method_name": "v2_get_work_order",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_operations.py",
+      "module": "construction_base",
+      "route": "/api/v2/resources",
+      "method_name": "v2_list_resources",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>",
+      "method_name": "bim_viewer",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>/ifc",
+      "method_name": "download_ifc",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>/save_camera",
+      "method_name": "save_camera_position",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>/annotations",
+      "method_name": "get_annotations",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>/annotation",
+      "method_name": "create_annotation",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>/measurement",
+      "method_name": "create_measurement",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_bim/controllers/bim_viewer_controller.py",
+      "module": "construction_bim",
+      "route": "/bim/viewer/<int:model_id>/clashes",
+      "method_name": "get_clashes",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_bim/controllers/bim_controller.py",
+      "module": "construction_bim",
+      "route": "/web/bim/viewer/<int:model_id>",
+      "method_name": "view_3d_model",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_bim/controllers/bim_controller.py",
+      "module": "construction_bim",
+      "route": "/web/bim/import_ifc",
+      "method_name": "import_ifc",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/project/<int:project_id>",
+      "method_name": "portal_construction_project",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/ks2/<int:ks2_id>",
+      "method_name": "portal_construction_ks2",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/ks3/<int:ks3_id>",
+      "method_name": "portal_construction_ks3",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/contract/<int:contract_id>",
+      "method_name": "portal_construction_contract",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/specification/<int:spec_id>",
+      "method_name": "portal_construction_specification",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/projects",
+      "method_name": "portal_my_construction_projects",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_contractor_portal/controllers/portal.py",
+      "module": "construction_contractor_portal",
+      "route": "/my/construction/projects/page/<int:page>",
+      "method_name": "portal_my_construction_projects",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_documents/controllers/nas_controller.py",
+      "module": "construction_documents",
+      "route": "/construction/nas/list",
+      "method_name": "list_directory",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_documents/controllers/nas_controller.py",
+      "module": "construction_documents",
+      "route": "/construction/nas/upload",
+      "method_name": "upload_to_nas",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_documents/controllers/nas_controller.py",
+      "module": "construction_documents",
+      "route": "/construction/nas/download",
+      "method_name": "download_from_nas",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_documents/controllers/nas_controller.py",
+      "module": "construction_documents",
+      "route": "/construction/nas/delete",
+      "method_name": "delete_from_nas",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_documents/controllers/nas_controller.py",
+      "module": "construction_documents",
+      "route": "/construction/nas/create_folder",
+      "method_name": "create_folder",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_documents/controllers/nas_controller.py",
+      "module": "construction_documents",
+      "route": "/construction/nas/test_connection",
+      "method_name": "test_connection",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_finance/controllers/sbp_webhook.py",
+      "module": "construction_finance",
+      "route": "/api/sbp/webhook",
+      "method_name": "sbp_webhook",
+      "auth": "public",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "json"
+    },
+    {
+      "file": "construction_integration/controllers/contractor_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/contractor/portal",
+      "method_name": "contractor_portal_home",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/contractor_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/contractor/portal/contracts",
+      "method_name": "contractor_portal_contracts",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/contractor_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/contractor/portal/projects",
+      "method_name": "contractor_portal_projects",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/contractor_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/contractor/portal/tenders",
+      "method_name": "contractor_portal_tenders",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/edi_controller.py",
+      "module": "construction_integration",
+      "route": "/construction/edi/receive",
+      "method_name": "receive_edi_document",
+      "auth": "public",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/customer_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/customer/portal",
+      "method_name": "customer_portal_home",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/customer_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/customer/portal/projects",
+      "method_name": "customer_portal_projects",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/customer_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/customer/portal/projects/<int:project_id>",
+      "method_name": "customer_portal_project_detail",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/customer_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/customer/portal/contracts",
+      "method_name": "customer_portal_contracts",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integration/controllers/customer_portal_controller.py",
+      "module": "construction_integration",
+      "route": "/customer/portal/documents",
+      "method_name": "customer_portal_documents",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/fns/check-counterparty",
+      "method_name": "fns_check_counterparty",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/fns/send-vat-declaration",
+      "method_name": "fns_send_vat_declaration",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/rosreestr/check-property",
+      "method_name": "rosreestr_check_property",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/rosreestr/get-egrn",
+      "method_name": "rosreestr_get_egrn",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/rosreestr/validate-address",
+      "method_name": "rosreestr_validate_address",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/egrul/check-company",
+      "method_name": "egrul_check_company",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+      "module": "construction_integrations_enhanced",
+      "route": "/construction/integrations/egrul/auto-fill-partner",
+      "method_name": "egrul_auto_fill_partner",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_iot/controllers/iot_telemetry_controller.py",
+      "module": "construction_iot",
+      "route": "/api/iot/telemetry",
+      "method_name": "receive_telemetry",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_iot/controllers/iot_telemetry_controller.py",
+      "module": "construction_iot",
+      "route": "/api/iot/equipment/telemetry",
+      "method_name": "receive_equipment_telemetry",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_iot/controllers/iot_telemetry_controller.py",
+      "module": "construction_iot",
+      "route": "/api/iot/devices",
+      "method_name": "list_devices",
+      "auth": "none",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_iot/controllers/iot_telemetry_controller.py",
+      "module": "construction_iot",
+      "route": "/api/iot/alert/acknowledge/<int:alert_id>",
+      "method_name": "acknowledge_alert",
+      "auth": "none",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_mfa/controllers/main.py",
+      "module": "construction_mfa",
+      "route": "/web",
+      "method_name": "web_client",
+      "auth": "none",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_mfa/controllers/main.py",
+      "module": "construction_mfa",
+      "route": "/construction_mfa/setup_required",
+      "method_name": "mfa_setup_required",
+      "auth": "user",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_mfa/controllers/main.py",
+      "module": "construction_mfa",
+      "route": "/construction_mfa/verify",
+      "method_name": "mfa_verify",
+      "auth": "public",
+      "http_methods": "GET, POST",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/upload-photo",
+      "method_name": "upload_photo",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/sync",
+      "method_name": "sync_offline_data",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/procurement/requests",
+      "method_name": "get_purchase_requests",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/procurement/requests/<int:request_id>",
+      "method_name": "get_purchase_request",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/procurement/requests",
+      "method_name": "create_purchase_request",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/stock/zones",
+      "method_name": "get_stock_zones",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/stock/inventories",
+      "method_name": "get_stock_inventories",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/stock/inventories/<int:registry_id>",
+      "method_name": "get_stock_inventory",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/stock/inventories",
+      "method_name": "create_stock_inventory",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/stock/inventories/<int:registry_id>/line",
+      "method_name": "update_stock_inventory_line",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/procurement/tracking/<int:tracking_id>/location",
+      "method_name": "update_supply_tracking_location",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/push",
+      "method_name": "push_offline_batch",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/status",
+      "method_name": "offline_status",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/books",
+      "method_name": "get_offline_books",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/books/check",
+      "method_name": "check_offline_books",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/books/updates",
+      "method_name": "get_offline_books_updates",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/books/<int:book_id>/delta",
+      "method_name": "get_offline_book_delta",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/offline/books/<int:book_id>/download",
+      "method_name": "download_offline_book",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/geofence/zones",
+      "method_name": "get_geofence_zones",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/geofence/check",
+      "method_name": "check_geofence",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/geofence/events",
+      "method_name": "get_geofence_events",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/geofence/check/bulk",
+      "method_name": "check_geofence_bulk",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/geofence/inside",
+      "method_name": "get_geofence_inside",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/push/register",
+      "method_name": "push_register",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/push/unregister",
+      "method_name": "push_unregister",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/push/pending",
+      "method_name": "push_pending",
+      "auth": "user",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/qr-scan",
+      "method_name": "process_qr_scan",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/voice-fill",
+      "method_name": "voice_fill",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/voice-journal",
+      "method_name": "voice_journal",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/sign-document",
+      "method_name": "sign_document_mobile",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_mobile/controllers/mobile_controller.py",
+      "module": "construction_mobile",
+      "route": "/construction/mobile/register-material-movement",
+      "method_name": "register_material_movement",
+      "auth": "user",
+      "http_methods": "POST",
+      "csrf": "",
+      "type": "json"
+    },
+    {
+      "file": "construction_pwa/controllers/pwa_controller.py",
+      "module": "construction_pwa",
+      "route": "/pwa/manifest.json",
+      "method_name": "pwa_manifest",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_pwa/controllers/pwa_controller.py",
+      "module": "construction_pwa",
+      "route": "/pwa/sw.js",
+      "method_name": "pwa_service_worker",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_pwa/controllers/pwa_controller.py",
+      "module": "construction_pwa",
+      "route": "/api/sync/pull",
+      "method_name": "sync_pull",
+      "auth": "public",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_pwa/controllers/pwa_controller.py",
+      "module": "construction_pwa",
+      "route": "/api/sync/push",
+      "method_name": "sync_push",
+      "auth": "public",
+      "http_methods": "POST",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_pwa/controllers/pwa_controller.py",
+      "module": "construction_pwa",
+      "route": "/api/sync/status",
+      "method_name": "sync_status",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_support/controllers/status_page_controller.py",
+      "module": "construction_support",
+      "route": "/status",
+      "method_name": "status_page",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_support/controllers/status_page_controller.py",
+      "module": "construction_support",
+      "route": "/status/api",
+      "method_name": "status_api",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "False",
+      "type": "json"
+    },
+    {
+      "file": "construction_theme/controllers/binary.py",
+      "module": "construction_theme",
+      "route": "/web/binary/company_logo",
+      "method_name": "company_logo",
+      "auth": "none",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_theme/controllers/binary.py",
+      "module": "construction_theme",
+      "route": "/logo",
+      "method_name": "company_logo",
+      "auth": "none",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_theme/controllers/binary.py",
+      "module": "construction_theme",
+      "route": "/logo.png",
+      "method_name": "company_logo",
+      "auth": "none",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_theme/controllers/webmanifest.py",
+      "module": "construction_theme",
+      "route": "/scoped_app",
+      "method_name": "scoped_app",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_theme/controllers/webmanifest.py",
+      "module": "construction_theme",
+      "route": "/web/manifest.scoped_app_manifest",
+      "method_name": "scoped_app_manifest",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_theme/controllers/landing.py",
+      "module": "construction_theme",
+      "route": "/privod",
+      "method_name": "landing",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_theme/controllers/landing.py",
+      "module": "construction_theme",
+      "route": "/privod/help",
+      "method_name": "knowledge_base",
+      "auth": "public",
+      "http_methods": "",
+      "csrf": "",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/",
+      "method_name": "homepage",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/features",
+      "method_name": "features",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/pricing",
+      "method_name": "pricing",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/about",
+      "method_name": "about",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/contacts",
+      "method_name": "contacts",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/privacy",
+      "method_name": "privacy",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/legal/terms",
+      "method_name": "terms",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge",
+      "method_name": "knowledge",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/getting-started",
+      "method_name": "knowledge_getting_started",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/projects",
+      "method_name": "knowledge_projects",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/finance",
+      "method_name": "knowledge_finance",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/procurement",
+      "method_name": "knowledge_procurement",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/safety",
+      "method_name": "knowledge_safety",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/bim",
+      "method_name": "knowledge_bim",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/analytics",
+      "method_name": "knowledge_analytics",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/integrations",
+      "method_name": "knowledge_integrations",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/knowledge/admin",
+      "method_name": "knowledge_admin",
+      "auth": "public",
+      "http_methods": "GET",
+      "csrf": "False",
+      "type": "http"
+    },
+    {
+      "file": "construction_website/controllers/main.py",
+      "module": "construction_website",
+      "route": "/contact-submit",
+      "method_name": "contact_submit",
+      "auth": "public",
+      "http_methods": "POST",
+      "csrf": "True",
+      "type": "http"
+    }
+  ],
+  "integration_references": [
+    {
+      "file": "construction_1c_integration/__manifest__.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 3,
+      "context": "'name': 'Construction 1C Integration',"
+    },
+    {
+      "file": "construction_1c_integration/__manifest__.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 7,
+      "context": "'summary': 'Интеграция с 1С через CommerceML 2.10',"
+    },
+    {
+      "file": "construction_1c_integration/__manifest__.py",
+      "module": "construction_1c_integration",
+      "keyword": "банк",
+      "line": 15,
+      "context": "- Файловый обмен (банковские выписки)"
+    },
+    {
+      "file": "construction_1c_integration/tests/__init__.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 3,
+      "context": "from . import test_1c_integration"
+    },
+    {
+      "file": "construction_1c_integration/tests/test_1c_integration.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 4,
+      "context": "Unit-tests for construction_1c_integration models:"
+    },
+    {
+      "file": "construction_1c_integration/tests/test_api_endpoints.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 4,
+      "context": "Unit tests for 1C API integration services."
+    },
+    {
+      "file": "construction_1c_integration/models/sync_config.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 37,
+      "context": "help='Ключ для аутентификации запросов от 1С (заголовок X-1C-Api-Key)',"
+    },
+    {
+      "file": "construction_1c_integration/models/sync_config.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 4,
+      "context": "Конфигурация синхронизации с 1С."
+    },
+    {
+      "file": "construction_1c_integration/models/one_c_exchange_log.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 164,
+      "context": "operations = import_service.import_bank_statement_from_1c(file_content)"
+    },
+    {
+      "file": "construction_1c_integration/models/one_c_exchange_log.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 11,
+      "context": "\"\"\"Журнал обменов с 1С (заглушка)\"\"\""
+    },
+    {
+      "file": "construction_1c_integration/models/one_c_exchange_log.py",
+      "module": "construction_1c_integration",
+      "keyword": "bank",
+      "line": 164,
+      "context": "operations = import_service.import_bank_statement_from_1c(file_content)"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 9,
+      "context": "- Аутентификация через X-1C-Api-Key"
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 4,
+      "context": "REST API контроллер для интеграции с 1С."
+    },
+    {
+      "file": "construction_1c_integration/controllers/one_c_controller.py",
+      "module": "construction_1c_integration",
+      "keyword": "bank",
+      "line": 106,
+      "context": "operations = import_service.import_bank_statement_from_1c(file_content)"
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_import.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 15,
+      "context": "def import_bank_statement_from_1c(self, file_content, encoding='windows-1251'):"
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_import.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 11,
+      "context": "\"\"\"Сервис для импорта данных из формата 1С\"\"\""
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_import.py",
+      "module": "construction_1c_integration",
+      "keyword": "bank",
+      "line": 15,
+      "context": "def import_bank_statement_from_1c(self, file_content, encoding='windows-1251'):"
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_import.py",
+      "module": "construction_1c_integration",
+      "keyword": "банк",
+      "line": 17,
+      "context": "Импорт банковской выписки из формата 1С (txt)"
+    },
+    {
+      "file": "construction_1c_integration/services/commerceml.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 4,
+      "context": "CommerceML 2.10 — сервис для обмена данными с 1С в формате XML."
+    },
+    {
+      "file": "construction_1c_integration/services/commerceml.py",
+      "module": "construction_1c_integration",
+      "keyword": "bank",
+      "line": 85,
+      "context": "if partner.bank_ids:"
+    },
+    {
+      "file": "construction_1c_integration/services/commerceml.py",
+      "module": "construction_1c_integration",
+      "keyword": "банк",
+      "line": 87,
+      "context": "bank_el = ET.SubElement(kontragent, 'БанковскиеРеквизиты')"
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_export.py",
+      "module": "construction_1c_integration",
+      "keyword": "1c",
+      "line": 16,
+      "context": "def export_invoices_to_1c(self, invoices):"
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_export.py",
+      "module": "construction_1c_integration",
+      "keyword": "1с",
+      "line": 12,
+      "context": "\"\"\"Сервис для экспорта данных в формат 1С\"\"\""
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_export.py",
+      "module": "construction_1c_integration",
+      "keyword": "bank",
+      "line": 35,
+      "context": "output.write('1CClientBankExchange\\n')"
+    },
+    {
+      "file": "construction_1c_integration/services/one_c_export.py",
+      "module": "construction_1c_integration",
+      "keyword": "банк",
+      "line": 18,
+      "context": "Экспорт счетов в формат 1С (txt для клиент-банка)"
+    },
+    {
+      "file": "construction_analytics/models/ml_computer_vision_quality.py",
+      "module": "construction_analytics",
+      "keyword": "edo",
+      "line": 303,
+      "context": "class CVDetectedObject(models.Model):"
+    },
+    {
+      "file": "construction_api/__manifest__.py",
+      "module": "construction_api",
+      "keyword": "webhook",
+      "line": 7,
+      "context": "'summary': 'REST API и Webhooks для внешних систем',"
+    },
+    {
+      "file": "construction_api/models/webhook.py",
+      "module": "construction_api",
+      "keyword": "webhook",
+      "line": 14,
+      "context": "class Webhook(models.Model):"
+    },
+    {
+      "file": "construction_api/models/rate_limiter.py",
+      "module": "construction_api",
+      "keyword": "webhook",
+      "line": 13,
+      "context": "* SBP webhook (IP): 10 requests / minute"
+    },
+    {
+      "file": "construction_api/models/outbox_pattern.py",
+      "module": "construction_api",
+      "keyword": "webhook",
+      "line": 78,
+      "context": "webhook_ids = fields.Many2many("
+    },
+    {
+      "file": "construction_api/models/__init__.py",
+      "module": "construction_api",
+      "keyword": "webhook",
+      "line": 2,
+      "context": "from . import webhook"
+    },
+    {
+      "file": "construction_api/models/webhook_mixin.py",
+      "module": "construction_api",
+      "keyword": "webhook",
+      "line": 6,
+      "context": "class WebhookMixin(models.AbstractModel):"
+    },
+    {
+      "file": "construction_base/controllers/rest_api_finance.py",
+      "module": "construction_base",
+      "keyword": "bank",
+      "line": 98,
+      "context": "if not ConstructionRestAPI._model_available('bank.sbp.payment'):"
+    },
+    {
+      "file": "construction_contract/models/contract_lifecycle_alert.py",
+      "module": "construction_contract",
+      "keyword": "банк",
+      "line": 48,
+      "context": "('guarantee_expiry', 'Истечение банковской гарантии'),"
+    },
+    {
+      "file": "construction_demo/data/demo_create_invoices.py",
+      "module": "construction_demo",
+      "keyword": "bank",
+      "line": 69,
+      "context": "bank = _create_account('1014', 'Bank', 'asset_cash', reconcile=True)"
+    },
+    {
+      "file": "construction_documents/tests/test_documents.py",
+      "module": "construction_documents",
+      "keyword": "edo",
+      "line": 282,
+      "context": "\"\"\"Tests for PTO document models (PPR, TechCard, ExecutiveDoc, PermitDoc)\"\"\""
+    },
+    {
+      "file": "construction_documents/models/pto_documents.py",
+      "module": "construction_documents",
+      "keyword": "edo",
+      "line": 39,
+      "context": "class ConstructionExecutiveDoc(models.Model):"
+    },
+    {
+      "file": "construction_edi_sbis/__manifest__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "эдо",
+      "line": 9,
+      "context": "Модуль электронного документооборота (ЭДО) через платформу СБИС."
+    },
+    {
+      "file": "construction_edi_sbis/__manifest__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 3,
+      "context": "'name': 'Construction EDI SBIS',"
+    },
+    {
+      "file": "construction_edi_sbis/__manifest__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 7,
+      "context": "'summary': 'Электронный документооборот через СБИС (Тензор)',"
+    },
+    {
+      "file": "construction_edi_sbis/tests/test_edi_sbis.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 4,
+      "context": "Tests for construction_edi_sbis module."
+    },
+    {
+      "file": "construction_edi_sbis/tests/test_edi_sbis.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 26,
+      "context": "'name': 'СБИС Тест',"
+    },
+    {
+      "file": "construction_edi_sbis/tests/__init__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 3,
+      "context": "from . import test_edi_sbis"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_partner_mapping.py",
+      "module": "construction_edi_sbis",
+      "keyword": "эдо",
+      "line": 82,
+      "context": "string='ЭДО активирован',"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_partner_mapping.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 11,
+      "context": "class EdiSbisPartnerMapping(models.Model):"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_partner_mapping.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 12,
+      "context": "\"\"\"Маппинг контрагентов Odoo <-> СБИС\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_exchange_log.py",
+      "module": "construction_edi_sbis",
+      "keyword": "эдо",
+      "line": 36,
+      "context": "string='Документ ЭДО',"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_exchange_log.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 10,
+      "context": "class EdiSbisExchangeLog(models.Model):"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_exchange_log.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 11,
+      "context": "\"\"\"Журнал обменов с СБИС\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_document.py",
+      "module": "construction_edi_sbis",
+      "keyword": "эдо",
+      "line": 38,
+      "context": "\"\"\"Документ ЭДО СБИС\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_document.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 37,
+      "context": "class EdiSbisDocument(models.Model):"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_document.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 38,
+      "context": "\"\"\"Документ ЭДО СБИС\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/models/__init__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 3,
+      "context": "from . import edi_sbis_config"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_config.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 11,
+      "context": "class EdiSbisConfig(models.Model):"
+    },
+    {
+      "file": "construction_edi_sbis/models/edi_sbis_config.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 12,
+      "context": "\"\"\"Настройки подключения к СБИС (Тензор)\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/wizards/__init__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 3,
+      "context": "from . import edi_sbis_send_wizard"
+    },
+    {
+      "file": "construction_edi_sbis/wizards/edi_sbis_send_wizard.py",
+      "module": "construction_edi_sbis",
+      "keyword": "эдо",
+      "line": 200,
+      "context": "\"\"\"Создать документ ЭДО СБИС\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/wizards/edi_sbis_send_wizard.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 11,
+      "context": "class EdiSbisSendWizard(models.TransientModel):"
+    },
+    {
+      "file": "construction_edi_sbis/wizards/edi_sbis_send_wizard.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 12,
+      "context": "\"\"\"Мастер отправки документов через СБИС\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "keyword": "эдо",
+      "line": 263,
+      "context": "'edi_enabled': data.get('ЭДОВключён', False),"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 19,
+      "context": "class SBISApiClientService(models.AbstractModel):"
+    },
+    {
+      "file": "construction_edi_sbis/services/sbis_api_client.py",
+      "module": "construction_edi_sbis",
+      "keyword": "сбис",
+      "line": 20,
+      "context": "\"\"\"Сервис-обёртка для работы с API СБИС через ORM\"\"\""
+    },
+    {
+      "file": "construction_edi_sbis/services/__init__.py",
+      "module": "construction_edi_sbis",
+      "keyword": "sbis",
+      "line": 3,
+      "context": "from . import sbis_api_client"
+    },
+    {
+      "file": "construction_edo_generator/__manifest__.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 3,
+      "context": "'name': 'EDO XML Generator (УПД/УКД)',"
+    },
+    {
+      "file": "construction_edo_generator/__manifest__.py",
+      "module": "construction_edo_generator",
+      "keyword": "эдо",
+      "line": 7,
+      "context": "'summary': 'Генератор XML для ЭДО в форматах УПД/УКД по приказу ММВ-7-15/155@',"
+    },
+    {
+      "file": "construction_edo_generator/__manifest__.py",
+      "module": "construction_edo_generator",
+      "keyword": "сбис",
+      "line": 12,
+      "context": "- Интеграция с Диадок, СБИС, Контур"
+    },
+    {
+      "file": "construction_edo_generator/__manifest__.py",
+      "module": "construction_edo_generator",
+      "keyword": "диадок",
+      "line": 12,
+      "context": "- Интеграция с Диадок, СБИС, Контур"
+    },
+    {
+      "file": "construction_edo_generator/tests/test_edo_generator.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 9,
+      "context": "class TestEdoGenerator(TransactionCase):"
+    },
+    {
+      "file": "construction_edo_generator/tests/test_edo_generator.py",
+      "module": "construction_edo_generator",
+      "keyword": "sbis",
+      "line": 330,
+      "context": "def test_19_company_has_sbis_participant_id(self):"
+    },
+    {
+      "file": "construction_edo_generator/tests/test_edo_generator.py",
+      "module": "construction_edo_generator",
+      "keyword": "diadoc",
+      "line": 326,
+      "context": "def test_18_company_has_diadoc_box_id(self):"
+    },
+    {
+      "file": "construction_edo_generator/tests/__init__.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 3,
+      "context": "from . import test_edo_generator"
+    },
+    {
+      "file": "construction_edo_generator/models/account_move.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 5,
+      "context": "\"\"\"Расширение счёта-фактуры для EDO\"\"\""
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 8,
+      "context": "class EdoDocument(models.Model):"
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "keyword": "эдо",
+      "line": 48,
+      "context": "], string='Провайдер ЭДО')"
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "keyword": "sbis",
+      "line": 46,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "keyword": "сбис",
+      "line": 46,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "keyword": "diadoc",
+      "line": 45,
+      "context": "('diadoc', 'Диадок (СКБ Контур)'),"
+    },
+    {
+      "file": "construction_edo_generator/models/edo_document.py",
+      "module": "construction_edo_generator",
+      "keyword": "диадок",
+      "line": 45,
+      "context": "('diadoc', 'Диадок (СКБ Контур)'),"
+    },
+    {
+      "file": "construction_edo_generator/models/__init__.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 2,
+      "context": "from . import edo_document"
+    },
+    {
+      "file": "construction_edo_generator/models/res_company.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 5,
+      "context": "\"\"\"Расширение компании для EDO\"\"\""
+    },
+    {
+      "file": "construction_edo_generator/models/res_company.py",
+      "module": "construction_edo_generator",
+      "keyword": "sbis",
+      "line": 9,
+      "context": "sbis_participant_id = fields.Char('СБИС Participant ID', help='Идентификатор участника в СБИС')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_company.py",
+      "module": "construction_edo_generator",
+      "keyword": "сбис",
+      "line": 9,
+      "context": "sbis_participant_id = fields.Char('СБИС Participant ID', help='Идентификатор участника в СБИС')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_company.py",
+      "module": "construction_edo_generator",
+      "keyword": "diadoc",
+      "line": 8,
+      "context": "diadoc_box_id = fields.Char('Diadoc Box ID', help='Идентификатор ящика в системе Диадок')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_company.py",
+      "module": "construction_edo_generator",
+      "keyword": "диадок",
+      "line": 8,
+      "context": "diadoc_box_id = fields.Char('Diadoc Box ID', help='Идентификатор ящика в системе Диадок')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_config_settings.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 5,
+      "context": "\"\"\"Настройки EDO\"\"\""
+    },
+    {
+      "file": "construction_edo_generator/models/res_config_settings.py",
+      "module": "construction_edo_generator",
+      "keyword": "sbis",
+      "line": 25,
+      "context": "edo_sbis_api_url = fields.Char("
+    },
+    {
+      "file": "construction_edo_generator/models/res_config_settings.py",
+      "module": "construction_edo_generator",
+      "keyword": "сбис",
+      "line": 26,
+      "context": "string='СБИС API URL',"
+    },
+    {
+      "file": "construction_edo_generator/models/res_config_settings.py",
+      "module": "construction_edo_generator",
+      "keyword": "diadoc",
+      "line": 9,
+      "context": "edo_diadoc_api_url = fields.Char("
+    },
+    {
+      "file": "construction_edo_generator/models/res_partner.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 5,
+      "context": "\"\"\"Расширение контрагента для EDO\"\"\""
+    },
+    {
+      "file": "construction_edo_generator/models/res_partner.py",
+      "module": "construction_edo_generator",
+      "keyword": "sbis",
+      "line": 9,
+      "context": "sbis_participant_id = fields.Char('СБИС Participant ID', help='Идентификатор участника в СБИС')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_partner.py",
+      "module": "construction_edo_generator",
+      "keyword": "сбис",
+      "line": 9,
+      "context": "sbis_participant_id = fields.Char('СБИС Participant ID', help='Идентификатор участника в СБИС')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_partner.py",
+      "module": "construction_edo_generator",
+      "keyword": "diadoc",
+      "line": 8,
+      "context": "diadoc_box_id = fields.Char('Diadoc Box ID', help='Идентификатор ящика контрагента в Диадок')"
+    },
+    {
+      "file": "construction_edo_generator/models/res_partner.py",
+      "module": "construction_edo_generator",
+      "keyword": "диадок",
+      "line": 8,
+      "context": "diadoc_box_id = fields.Char('Diadoc Box ID', help='Идентификатор ящика контрагента в Диадок')"
+    },
+    {
+      "file": "construction_edo_generator/wizards/edo_upd_wizard.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 4,
+      "context": "class EdoUpdWizard(models.TransientModel):"
+    },
+    {
+      "file": "construction_edo_generator/wizards/edo_upd_wizard.py",
+      "module": "construction_edo_generator",
+      "keyword": "sbis",
+      "line": 12,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_edo_generator/wizards/edo_upd_wizard.py",
+      "module": "construction_edo_generator",
+      "keyword": "сбис",
+      "line": 12,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_edo_generator/wizards/edo_upd_wizard.py",
+      "module": "construction_edo_generator",
+      "keyword": "diadoc",
+      "line": 11,
+      "context": "('diadoc', 'Диадок'),"
+    },
+    {
+      "file": "construction_edo_generator/wizards/edo_upd_wizard.py",
+      "module": "construction_edo_generator",
+      "keyword": "диадок",
+      "line": 11,
+      "context": "('diadoc', 'Диадок'),"
+    },
+    {
+      "file": "construction_edo_generator/wizards/__init__.py",
+      "module": "construction_edo_generator",
+      "keyword": "edo",
+      "line": 2,
+      "context": "from . import edo_upd_wizard"
+    },
+    {
+      "file": "construction_finance/hooks.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 48,
+      "context": "_ensure_access(env, \"edo.document\")"
+    },
+    {
+      "file": "construction_finance/hooks.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 46,
+      "context": "_ensure_access(env, \"bank.statement.import\")"
+    },
+    {
+      "file": "construction_finance/__manifest__.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 70,
+      "context": "'views/edo_integration_views.xml',"
+    },
+    {
+      "file": "construction_finance/__manifest__.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 38,
+      "context": "'data/bank_api_cron.xml',"
+    },
+    {
+      "file": "construction_finance/tests/test_finance.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 8,
+      "context": "- bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/payment_register.py",
+      "module": "construction_finance",
+      "keyword": "1c",
+      "line": 186,
+      "context": "def action_export_to_1c(self):"
+    },
+    {
+      "file": "construction_finance/models/payment_register.py",
+      "module": "construction_finance",
+      "keyword": "1с",
+      "line": 187,
+      "context": "\"\"\"Экспорт счетов реестра в формат 1С\"\"\""
+    },
+    {
+      "file": "construction_finance/models/bank_api_alfa.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 4,
+      "context": "Альфа-Банк API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/bank_api_alfa.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Альфа-Банк API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/bank_api_tochka.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 4,
+      "context": "Точка Банк API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/bank_api_tochka.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Точка Банк API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 15,
+      "context": "class EDOProvider(models.Model):"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "keyword": "эдо",
+      "line": 4,
+      "context": "Интеграция с провайдерами ЭДО"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "keyword": "sbis",
+      "line": 30,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "keyword": "сбис",
+      "line": 5,
+      "context": "Диадок, СБИС, Контур"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "keyword": "diadoc",
+      "line": 29,
+      "context": "('diadoc', 'Диадок'),"
+    },
+    {
+      "file": "construction_finance/models/edo_providers.py",
+      "module": "construction_finance",
+      "keyword": "диадок",
+      "line": 5,
+      "context": "Диадок, СБИС, Контур"
+    },
+    {
+      "file": "construction_finance/models/bank_api_enhanced.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 1161,
+      "context": "'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',"
+    },
+    {
+      "file": "construction_finance/models/bank_api_enhanced.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 10,
+      "context": "- bank_api_sberbank.py"
+    },
+    {
+      "file": "construction_finance/models/bank_api_enhanced.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "INT-002: Банковские API + сверка (улучшенная версия)"
+    },
+    {
+      "file": "construction_finance/models/bank_api_enhanced.py",
+      "module": "construction_finance",
+      "keyword": "webhook",
+      "line": 962,
+      "context": "sbp_webhook_secret = fields.Char("
+    },
+    {
+      "file": "construction_finance/models/partner.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 95,
+      "context": "bank_incoming = fields.Monetary("
+    },
+    {
+      "file": "construction_finance/models/partner.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 71,
+      "context": "help='Корр. счёт основного банка',"
+    },
+    {
+      "file": "construction_finance/models/bank_api_sberbank.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 4,
+      "context": "Сбербанк API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/bank_api_sberbank.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Сбербанк API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/__init__.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 31,
+      "context": "from . import edo_integration"
+    },
+    {
+      "file": "construction_finance/models/__init__.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 15,
+      "context": "from . import bank_integration"
+    },
+    {
+      "file": "construction_finance/models/sbp_payment_export_wizard.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 119,
+      "context": "'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',"
+    },
+    {
+      "file": "construction_finance/models/sbp_payment_export_wizard.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 31,
+      "context": "payments = self.env['bank.sbp.payment'].browse(active_ids)"
+    },
+    {
+      "file": "construction_finance/models/bank_api_tinkoff.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 4,
+      "context": "Тинькофф API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/bank_api_vtb.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 4,
+      "context": "ВТБ API — provider-specific methods for bank.api.config"
+    },
+    {
+      "file": "construction_finance/models/sbp_payment_assign_wizard.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 26,
+      "context": "payments = self.env['bank.sbp.payment'].browse(active_ids)"
+    },
+    {
+      "file": "construction_finance/models/bank_document_registry.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 14,
+      "context": "class BankDocumentRegistry(models.TransientModel):"
+    },
+    {
+      "file": "construction_finance/models/bank_document_registry.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Реестр банковских документов"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 272,
+      "context": "'basedOn': invoice_data.get('based_on', ''),"
+    },
+    {
+      "file": "construction_finance/models/tinkoff_api.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 48,
+      "context": ":param api_config: bank.api.config запись"
+    },
+    {
+      "file": "construction_finance/models/edo_integration.py",
+      "module": "construction_finance",
+      "keyword": "edo",
+      "line": 12,
+      "context": "class EDODocument(models.Model):"
+    },
+    {
+      "file": "construction_finance/models/edo_integration.py",
+      "module": "construction_finance",
+      "keyword": "эдо",
+      "line": 4,
+      "context": "Базовая структура для ЭДО и УКЭП"
+    },
+    {
+      "file": "construction_finance/models/edo_integration.py",
+      "module": "construction_finance",
+      "keyword": "sbis",
+      "line": 102,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_finance/models/edo_integration.py",
+      "module": "construction_finance",
+      "keyword": "сбис",
+      "line": 102,
+      "context": "('sbis', 'СБИС'),"
+    },
+    {
+      "file": "construction_finance/models/edo_integration.py",
+      "module": "construction_finance",
+      "keyword": "diadoc",
+      "line": 101,
+      "context": "('diadoc', 'Диадок'),"
+    },
+    {
+      "file": "construction_finance/models/edo_integration.py",
+      "module": "construction_finance",
+      "keyword": "диадок",
+      "line": 101,
+      "context": "('diadoc', 'Диадок'),"
+    },
+    {
+      "file": "construction_finance/models/bank_integration.py",
+      "module": "construction_finance",
+      "keyword": "1с",
+      "line": 46,
+      "context": "('csv', 'CSV (1С формат)'),"
+    },
+    {
+      "file": "construction_finance/models/bank_integration.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 15,
+      "context": "class BankStatementImport(models.Model):"
+    },
+    {
+      "file": "construction_finance/models/bank_integration.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Базовая структура для банковской интеграции"
+    },
+    {
+      "file": "construction_finance/models/acquiring_payment.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 6,
+      "context": "Provides a high-level business model for managing Tochka Bank acquiring payments"
+    },
+    {
+      "file": "construction_finance/models/acquiring_payment.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 45,
+      "context": "string='Конфигурация банка',"
+    },
+    {
+      "file": "construction_finance/models/vtb_api.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 43,
+      "context": ":param api_config: bank.api.config запись"
+    },
+    {
+      "file": "construction_finance/models/alfa_api.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 24,
+      "context": "ALFA_API_BASE = 'https://baas.alfabank.ru/api/v1'"
+    },
+    {
+      "file": "construction_finance/models/alfa_api.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Интеграция с API Альфа-Банка"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 5,
+      "context": "Документация: https://developer.sberbank.ru/doc/v1/"
+    },
+    {
+      "file": "construction_finance/models/sberbank_api.py",
+      "module": "construction_finance",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Интеграция с API Сбербанка"
+    },
+    {
+      "file": "construction_finance/controllers/__init__.py",
+      "module": "construction_finance",
+      "keyword": "webhook",
+      "line": 3,
+      "context": "from . import sbp_webhook"
+    },
+    {
+      "file": "construction_finance/controllers/sbp_webhook.py",
+      "module": "construction_finance",
+      "keyword": "bank",
+      "line": 67,
+      "context": "api_config = request.env['bank.api.config'].sudo().search(["
+    },
+    {
+      "file": "construction_finance/controllers/sbp_webhook.py",
+      "module": "construction_finance",
+      "keyword": "webhook",
+      "line": 14,
+      "context": "_SBP_WEBHOOK_RATE_LIMIT = 10"
+    },
+    {
+      "file": "construction_hr/__manifest__.py",
+      "module": "construction_hr",
+      "keyword": "1с",
+      "line": 11,
+      "context": "- Интеграция с 1С:ЗУП"
+    },
+    {
+      "file": "construction_hr/models/zup_integration.py",
+      "module": "construction_hr",
+      "keyword": "1с",
+      "line": 4,
+      "context": "HR-003: Интеграция с 1С:ЗУП"
+    },
+    {
+      "file": "construction_integration/tests/test_integration.py",
+      "module": "construction_integration",
+      "keyword": "telegram",
+      "line": 614,
+      "context": "'name': 'Test Telegram Bot',"
+    },
+    {
+      "file": "construction_integration/tests/test_integration.py",
+      "module": "construction_integration",
+      "keyword": "webhook",
+      "line": 639,
+      "context": "def test_webhook_url_compute(self):"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "keyword": "telegram",
+      "line": 4,
+      "context": "Omnichannel: integrations with Telegram, WhatsApp (Wazzup), SMS.ru, Mango Office"
+    },
+    {
+      "file": "construction_integration/models/omnichannel.py",
+      "module": "construction_integration",
+      "keyword": "webhook",
+      "line": 72,
+      "context": "webhook_url = fields.Char("
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "keyword": "bank",
+      "line": 161,
+      "context": "json={'query': '7707083893'},  # Sberbank INN for testing"
+    },
+    {
+      "file": "construction_integration/models/government_registry_integration.py",
+      "module": "construction_integration",
+      "keyword": "банк",
+      "line": 368,
+      "context": "\"value\": \"ПАО СБЕРБАНК\","
+    },
+    {
+      "file": "construction_integrations_enhanced/__manifest__.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "1c",
+      "line": 23,
+      "context": "'construction_1c_integration',"
+    },
+    {
+      "file": "construction_integrations_enhanced/__manifest__.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "1с",
+      "line": 11,
+      "context": "- Полная интеграция с 1С (синхронизация справочников, двусторонняя синхронизация)"
+    },
+    {
+      "file": "construction_integrations_enhanced/__manifest__.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "банк",
+      "line": 12,
+      "context": "- Интеграция с банками (API: Сбербанк, ВТБ, Альфа-Банк)"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/bank_api.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "bank",
+      "line": 15,
+      "context": "class BankAPIConfig(models.Model):"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/bank_api.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "банк",
+      "line": 4,
+      "context": "Интеграция с банками через API"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/__init__.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "bank",
+      "line": 4,
+      "context": "from . import bank_api"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "1c",
+      "line": 38,
+      "context": "help='URL сервера 1С (например, http://1c-server:8080/base)',"
+    },
+    {
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py",
+      "module": "construction_integrations_enhanced",
+      "keyword": "1с",
+      "line": 4,
+      "context": "Расширенная интеграция с 1С"
+    },
+    {
+      "file": "construction_procurement/models/purchase_request.py",
+      "module": "construction_procurement",
+      "keyword": "edo",
+      "line": 778,
+      "context": "'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',"
+    },
+    {
+      "file": "construction_procurement/models/supplier_invoice.py",
+      "module": "construction_procurement",
+      "keyword": "1c",
+      "line": 205,
+      "context": "def action_export_to_1c(self):"
+    },
+    {
+      "file": "construction_procurement/models/supplier_invoice.py",
+      "module": "construction_procurement",
+      "keyword": "1с",
+      "line": 206,
+      "context": "\"\"\"Экспорт счета в формат 1С\"\"\""
+    },
+    {
+      "file": "construction_procurement/models/supplier_invoice.py",
+      "module": "construction_procurement",
+      "keyword": "bank",
+      "line": 53,
+      "context": "partner_bank_id = fields.Many2one("
+    },
+    {
+      "file": "construction_pto/models/hidden_work_act.py",
+      "module": "construction_pto",
+      "keyword": "edo",
+      "line": 309,
+      "context": "class ConstructionExecutiveDocEnhanced(models.Model):"
+    },
+    {
+      "file": "construction_pto/models/ks11.py",
+      "module": "construction_pto",
+      "keyword": "1c",
+      "line": 414,
+      "context": "class KS11Commission(models.Model):"
+    },
+    {
+      "file": "construction_rbac/tests/test_construction_rbac.py",
+      "module": "construction_rbac",
+      "keyword": "telegram",
+      "line": 295,
+      "context": "self.test_user.notification_channels = 'telegram'"
+    },
+    {
+      "file": "construction_rbac/models/res_users.py",
+      "module": "construction_rbac",
+      "keyword": "telegram",
+      "line": 66,
+      "context": "('telegram', 'Телеграм'),"
+    },
+    {
+      "file": "construction_regulatory_reports/models/cash_flow_statement.py",
+      "module": "construction_regulatory_reports",
+      "keyword": "1с",
+      "line": 329,
+      "context": "# Создаем строки отчета согласно форме 4 (ФСБУ 4/2023, формат 1С/БИТ)"
+    },
+    {
+      "file": "construction_regulatory_reports/models/equity_changes.py",
+      "module": "construction_regulatory_reports",
+      "keyword": "1с",
+      "line": 196,
+      "context": "# Создаем строки отчета согласно форме 3 (ФСБУ 4/2023, формат 1С/БИТ)"
+    },
+    {
+      "file": "construction_regulatory_reports/models/balance_sheet.py",
+      "module": "construction_regulatory_reports",
+      "keyword": "1с",
+      "line": 209,
+      "context": "# Создаем строки актива согласно форме 1 (ФСБУ 4/2023, формат 1С/БИТ)"
+    },
+    {
+      "file": "construction_regulatory_reports/models/vat_declaration.py",
+      "module": "construction_regulatory_reports",
+      "keyword": "1с",
+      "line": 267,
+      "context": "\"\"\"Экспорт декларации в XML для ФНС (формат 1С/БИТ)\"\"\""
+    },
+    {
+      "file": "construction_russian_documents/models/invoice_extended.py",
+      "module": "construction_russian_documents",
+      "keyword": "bank",
+      "line": 99,
+      "context": "('bank_statement', 'Банковская выписка'),"
+    },
+    {
+      "file": "construction_russian_documents/models/invoice_extended.py",
+      "module": "construction_russian_documents",
+      "keyword": "банк",
+      "line": 99,
+      "context": "('bank_statement', 'Банковская выписка'),"
+    },
+    {
+      "file": "construction_support/__manifest__.py",
+      "module": "construction_support",
+      "keyword": "telegram",
+      "line": 17,
+      "context": "- Alerting System - уведомления в Telegram/Email при проблемах"
+    },
+    {
+      "file": "payment_custom/models/payment_provider.py",
+      "module": "payment_custom",
+      "keyword": "bank",
+      "line": 46,
+      "context": "\"\"\" Recompute the pending message to include the existing bank accounts. \"\"\""
+    }
+  ]
+}

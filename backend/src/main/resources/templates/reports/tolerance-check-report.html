@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Акт проверки допусков и качества'">Проверка допусков</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .within-tolerance { color: #16a34a; font-weight: bold; }
+        .out-of-tolerance { color: #dc2626; font-weight: bold; }
+        .marginal { color: #ca8a04; font-weight: bold; }
+        .deviation-bar { display: inline-block; height: 8pt; vertical-align: middle; }
+        .deviation-bar-ok { background-color: #16a34a; }
+        .deviation-bar-warn { background-color: #ca8a04; }
+        .deviation-bar-fail { background-color: #dc2626; }
+        .tolerance-range { font-family: "Courier New", monospace; font-size: 8pt;
+                           background-color: #f5f5f5; padding: 1pt 4pt; }
+        .verdict-block { text-align: center; margin: 16pt 0; padding: 8pt;
+                         border: 2px solid #333; font-size: 12pt; font-weight: bold; }
+        .verdict-pass { border-color: #16a34a; color: #16a34a; background-color: #f0fdf4; }
+        .verdict-fail { border-color: #dc2626; color: #dc2626; background-color: #fef2f2; }
+        .verdict-conditional { border-color: #ca8a04; color: #ca8a04; background-color: #fffbeb; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">АКТ ПРОВЕРКИ ДОПУСКОВ И КАЧЕСТВА</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Check metadata ─────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер акта:</td>
+        <td th:text="${actNumber} ?: '—'">ПД-001</td>
+        <td class="label">Дата проверки:</td>
+        <td th:text="${checkDate} ?: '—'">05.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td th:text="${objectName} ?: '—'">Корпус 1, секция А, этаж 3</td>
+        <td class="label">Вид конструкции:</td>
+        <td th:text="${structureType} ?: '—'">Монолитное перекрытие</td>
+    </tr>
+    <tr>
+        <td class="label">Нормативный документ:</td>
+        <td th:text="${standardRef} ?: '—'">СП 70.13330.2012 (СНиП 3.03.01-87)</td>
+        <td class="label">Инструмент:</td>
+        <td th:text="${instrument} ?: '—'">Нивелир, рулетка, штангенциркуль</td>
+    </tr>
+    <tr>
+        <td class="label">Контролёр:</td>
+        <td th:text="${inspectorName} ?: '—'">Инженер ОТК Семёнов В.В.</td>
+        <td class="label">Подрядчик:</td>
+        <td th:text="${contractorName} ?: '—'">ООО «Подрядчик»</td>
+    </tr>
+</table>
+
+<!-- ── Measurements table ─────────────────────────────────────────────────── -->
+<h2>Результаты замеров</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:18%;">Параметр</th>
+            <th style="width:8%;">Ось /<br/>Отметка</th>
+            <th style="width:12%;">Допуск<br/>(+/-, мм)</th>
+            <th style="width:10%;">Проектное<br/>значение</th>
+            <th style="width:10%;">Фактич.<br/>значение</th>
+            <th style="width:10%;">Отклон.,<br/>мм</th>
+            <th style="width:13%;">Результат</th>
+            <th style="width:15%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="m, iter : ${measurements}" th:if="${measurements != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${m.parameter}">Толщина перекрытия</td>
+            <td class="center" th:text="${m.axis} ?: '—'">Б-3 / +9.600</td>
+            <td class="center">
+                <span class="tolerance-range" th:text="'+/-' + ${m.tolerance}">+/-5</span>
+            </td>
+            <td class="number" th:text="${m.designValue}">200</td>
+            <td class="number" th:text="${m.actualValue}">198</td>
+            <td class="number"
+                th:classappend="${T(java.lang.Math).abs(m.deviation) <= m.tolerance} ? 'within-tolerance' : (${T(java.lang.Math).abs(m.deviation) <= m.tolerance * 1.5} ? 'marginal' : 'out-of-tolerance')"
+                th:text="${m.deviation > 0 ? '+' : ''} + ${m.deviation}">-2</td>
+            <td class="center">
+                <span th:if="${m.result == 'PASS'}" class="within-tolerance">В допуске</span>
+                <span th:if="${m.result == 'MARGINAL'}" class="marginal">На границе</span>
+                <span th:if="${m.result == 'FAIL'}" class="out-of-tolerance">Вне допуска</span>
+            </td>
+            <td class="text-small" th:text="${m.note} ?: ''"></td>
+        </tr>
+        <tr th:if="${measurements == null or measurements.isEmpty()}">
+            <td colspan="9" class="center text-muted">Замеры не проводились</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Summary ────────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Сводка результатов</h3>
+    <table class="info-grid" style="width:50%;">
+        <tr>
+            <td class="label">Всего замеров:</td>
+            <td th:text="${totalMeasurements} ?: '0'">20</td>
+        </tr>
+        <tr>
+            <td class="label within-tolerance">В допуске:</td>
+            <td th:text="${passCount} ?: '0'">17</td>
+        </tr>
+        <tr>
+            <td class="label marginal">На границе допуска:</td>
+            <td th:text="${marginalCount} ?: '0'">2</td>
+        </tr>
+        <tr>
+            <td class="label out-of-tolerance">Вне допуска:</td>
+            <td th:text="${failCount} ?: '0'">1</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Verdict ────────────────────────────────────────────────────────────── -->
+<div class="verdict-block"
+     th:classappend="${overallVerdict == 'PASS'} ? 'verdict-pass' : (${overallVerdict == 'CONDITIONAL'} ? 'verdict-conditional' : 'verdict-fail')">
+    <span th:if="${overallVerdict == 'PASS'}">КОНСТРУКЦИЯ СООТВЕТСТВУЕТ ТРЕБОВАНИЯМ</span>
+    <span th:if="${overallVerdict == 'CONDITIONAL'}">КОНСТРУКЦИЯ УСЛОВНО ПРИГОДНА (требуется устранение замечаний)</span>
+    <span th:if="${overallVerdict == 'FAIL'}">КОНСТРУКЦИЯ НЕ СООТВЕТСТВУЕТ ТРЕБОВАНИЯМ</span>
+    <span th:if="${overallVerdict == null}">ЗАКЛЮЧЕНИЕ НЕ ВЫНЕСЕНО</span>
+</div>
+
+<!-- ── Corrective actions ─────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${correctiveActions != null and !correctiveActions.isEmpty()}">
+    <h3>Предписания по устранению</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:40%;">Мероприятие</th>
+                <th style="width:20%;">Ответственный</th>
+                <th style="width:15%;">Срок</th>
+                <th style="width:20%;">Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="action, iter : ${correctiveActions}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${action.description}">Нарастить перекрытие до проектной толщины</td>
+                <td th:text="${action.responsible}">Прораб</td>
+                <td class="center" th:text="${action.deadline}">10.02.2026</td>
+                <td class="center" th:text="${action.status} ?: 'Открыто'">Открыто</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Контролёр (ОТК):</p>
+            <p th:text="${inspectorName} ?: '________________________'">Инженер ОТК</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Представитель подрядчика:</p>
+            <p th:text="${contractorRep} ?: '________________________'">Прораб</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Представитель заказчика:</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right"></div>
+    </div>
+</div>
+
+</body>
+</html>

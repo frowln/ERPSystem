@@ -1,0 +1,30 @@
+-- V82: Create sequences for auto-generated codes and the update_updated_at trigger function
+
+-- Trigger function used by all tables (Hibernate also handles this via @PreUpdate, but having it in DB is a safety net)
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Sequences for auto-generated entity codes/numbers
+CREATE SEQUENCE IF NOT EXISTS project_code_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS contract_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS employee_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS purchase_request_name_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS invoice_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS payment_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS task_code_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS quality_check_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS incident_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS budget_code_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS document_code_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS material_code_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS ks2_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS ks3_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS m29_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS work_order_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS dispatch_order_number_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS support_ticket_number_seq START WITH 1 INCREMENT BY 1;

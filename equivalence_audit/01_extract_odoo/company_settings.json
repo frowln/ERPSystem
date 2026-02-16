@@ -1,0 +1,3 @@
+ERROR:  column "street" does not exist
+LINE 3:   SELECT id, name, currency_id, partner_id, street, city, co...
+                                                    ^

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Лимитно-заборная ведомость (ЛЗВ)'">ЛЗВ</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 landscape; margin: 10mm 10mm 10mm 10mm; }
+        .overrun { color: #dc2626; font-weight: bold; }
+        .underrun { color: #16a34a; }
+        .limit-bar { display: inline-block; height: 8pt; background-color: #2563eb; vertical-align: middle; }
+        .actual-bar { display: inline-block; height: 8pt; background-color: #dc2626; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ЛИМИТНО-ЗАБОРНАЯ ВЕДОМОСТЬ</div>
+    <div class="report-subtitle">(ЛЗВ)</div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер документа:</td>
+        <td th:text="${documentNumber} ?: '—'">ЛЗВ-001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Подрядчик:</td>
+        <td th:text="${contractorOrg} ?: '—'">ООО Подрядчик</td>
+        <td class="label">Склад:</td>
+        <td th:text="${warehouseName} ?: '—'">Центральный склад</td>
+    </tr>
+    <tr>
+        <td class="label">Период действия:</td>
+        <td colspan="3">
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.03.2026</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── Materials table ───────────────────────────────────────────────────── -->
+<table class="gost-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№<br/>п/п</th>
+            <th style="width:10%;">Код<br/>материала</th>
+            <th style="width:22%;">Наименование материала</th>
+            <th style="width:6%;">Ед.<br/>изм.</th>
+            <th style="width:10%;">Лимит<br/>(план)</th>
+            <th style="width:10%;">Фактический<br/>расход</th>
+            <th style="width:10%;">Отклонение</th>
+            <th style="width:8%;">Откл.,<br/>%</th>
+            <th style="width:10%;">Цена за<br/>ед., руб.</th>
+            <th style="width:10%;">Сумма<br/>откл., руб.</th>
+        </tr>
+        <tr>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+            <th>9</th>
+            <th>10</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over materials */-->
+        <tr th:each="item, iter : ${materials}" th:if="${materials != null}">
+            <td th:text="${iter.count}">1</td>
+            <td th:text="${item.materialCode} ?: '—'">МАТ-001</td>
+            <td class="left" th:text="${item.materialName}">Бетон М300</td>
+            <td th:text="${item.unit}">м3</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.limitQty, 1, 2)}">500.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.actualQty, 1, 2)}">480.00</td>
+            <td class="right"
+                th:classappend="${item.deviation > 0} ? 'overrun' : 'underrun'"
+                th:text="${#numbers.formatDecimal(item.deviation, 1, 2)}">-20.00</td>
+            <td th:classappend="${item.deviationPercent > 0} ? 'overrun' : 'underrun'"
+                th:text="${#numbers.formatDecimal(item.deviationPercent, 1, 1)}">-4.0</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">5000.00</td>
+            <td class="right"
+                th:classappend="${item.deviationAmount > 0} ? 'overrun' : 'underrun'"
+                th:text="${#numbers.formatDecimal(item.deviationAmount, 1, 2)}">-100000.00</td>
+        </tr>
+        <!--/* Placeholder when no data */-->
+        <tr th:if="${materials == null or materials.isEmpty()}">
+            <td>1</td>
+            <td>—</td>
+            <td class="left">—</td>
+            <td>—</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td>0.0</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="9" class="right" style="font-weight:bold;">Итого отклонение:</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${totalDeviation != null} ? ${#numbers.formatDecimal(totalDeviation, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Summary ───────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Сводка</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Всего позиций материалов:</td>
+            <td th:text="${totalMaterials} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Позиций с перерасходом:</td>
+            <td th:text="${overrunCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Позиций с экономией:</td>
+            <td th:text="${underrunCount} ?: '0'">0</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Начальник участка:</p>
+            <p th:text="${siteManager} ?: '________________________'">Начальник участка</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Кладовщик:</p>
+            <p th:text="${warehouseKeeper} ?: '________________________'">Кладовщик</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

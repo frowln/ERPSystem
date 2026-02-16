@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Отчёт по выполнению KPI'">Отчёт по KPI</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .kpi-achieved { color: #16a34a; font-weight: bold; }
+        .kpi-warning { color: #ca8a04; font-weight: bold; }
+        .kpi-failed { color: #dc2626; font-weight: bold; }
+        .progress-bar-bg { display: inline-block; width: 60pt; height: 10pt; background-color: #e5e7eb;
+                           vertical-align: middle; border: 1px solid #ccc; }
+        .progress-bar { display: inline-block; height: 10pt; vertical-align: middle; }
+        .progress-green { background-color: #16a34a; }
+        .progress-yellow { background-color: #ca8a04; }
+        .progress-red { background-color: #dc2626; }
+        .overall-score { text-align: center; margin: 12pt 0; }
+        .overall-score .score-value { font-size: 24pt; font-weight: bold; }
+        .overall-score .score-label { font-size: 9pt; color: #666; }
+        .category-header td { background-color: #e8eef5; font-weight: bold; font-size: 10pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ОТЧЁТ ПО ВЫПОЛНЕНИЮ KPI</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Report metadata ────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер отчёта:</td>
+        <td th:text="${reportNumber} ?: '—'">KPI-001</td>
+        <td class="label">Отчётный период:</td>
+        <td>
+            <span th:text="${periodFrom} ?: '—'">01.01.2026</span> —
+            <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Ответственный:</td>
+        <td th:text="${responsiblePerson} ?: '—'">Руководитель проекта Иванов И.И.</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${reportDate} ?: '—'">05.02.2026</td>
+    </tr>
+</table>
+
+<!-- ── Overall score ──────────────────────────────────────────────────────── -->
+<div class="overall-score no-break">
+    <div class="score-value"
+         th:classappend="${overallScore != null and overallScore >= 90} ? 'kpi-achieved' : (${overallScore != null and overallScore >= 70} ? 'kpi-warning' : 'kpi-failed')"
+         th:text="${overallScore != null} ? ${overallScore} + '%' : '—'">85%</div>
+    <div class="score-label">Общий показатель выполнения KPI</div>
+</div>
+
+<!-- ── KPI table ──────────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:22%;">Показатель KPI</th>
+            <th style="width:7%;">Вес,<br/>%</th>
+            <th style="width:10%;">Ед.<br/>изм.</th>
+            <th style="width:10%;">Целевое<br/>значение</th>
+            <th style="width:10%;">Фактич.<br/>значение</th>
+            <th style="width:8%;">Выполн.,<br/>%</th>
+            <th style="width:15%;">Прогресс</th>
+            <th style="width:14%;">Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        <th:block th:each="category : ${categories}" th:if="${categories != null}">
+            <tr class="category-header">
+                <td colspan="9" th:text="${category.name}">Финансовые показатели</td>
+            </tr>
+            <tr th:each="kpi, iter : ${category.kpis}">
+                <td class="center" th:text="${kpi.number}">1.1</td>
+                <td th:text="${kpi.name}">Освоение бюджета</td>
+                <td class="center" th:text="${kpi.weight}">15</td>
+                <td class="center" th:text="${kpi.unit}">%</td>
+                <td class="number" th:text="${kpi.target}">100</td>
+                <td class="number" th:text="${kpi.actual}">95</td>
+                <td class="center"
+                    th:classappend="${kpi.achievement >= 90} ? 'kpi-achieved' : (${kpi.achievement >= 70} ? 'kpi-warning' : 'kpi-failed')"
+                    th:text="${kpi.achievement} + '%'">95%</td>
+                <td>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar"
+                             th:classappend="${kpi.achievement >= 90} ? 'progress-green' : (${kpi.achievement >= 70} ? 'progress-yellow' : 'progress-red')"
+                             th:style="'width:' + ${T(java.lang.Math).min(kpi.achievement, 100) * 0.6} + 'pt;'"></div>
+                    </div>
+                </td>
+                <td class="center">
+                    <span th:if="${kpi.achievement >= 90}" class="kpi-achieved">Выполнен</span>
+                    <span th:if="${kpi.achievement >= 70 and kpi.achievement < 90}" class="kpi-warning">Частично</span>
+                    <span th:if="${kpi.achievement < 70}" class="kpi-failed">Не выполнен</span>
+                </td>
+            </tr>
+        </th:block>
+        <tr th:if="${categories == null or categories.isEmpty()}">
+            <td colspan="9" class="center text-muted">Показатели KPI не определены</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Summary statistics ─────────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h2>Сводка</h2>
+    <table class="info-grid" style="width:50%;">
+        <tr>
+            <td class="label">Всего KPI:</td>
+            <td th:text="${totalKpis} ?: '0'">12</td>
+        </tr>
+        <tr>
+            <td class="label kpi-achieved">Выполнено (>=90%):</td>
+            <td th:text="${achievedCount} ?: '0'">8</td>
+        </tr>
+        <tr>
+            <td class="label kpi-warning">Частично (70-89%):</td>
+            <td th:text="${warningCount} ?: '0'">3</td>
+        </tr>
+        <tr>
+            <td class="label kpi-failed">Не выполнено (<70%):</td>
+            <td th:text="${failedCount} ?: '0'">1</td>
+        </tr>
+        <tr>
+            <td class="label">Взвешенный итог:</td>
+            <td class="text-bold" th:text="${weightedScore != null} ? ${weightedScore} + '%' : '—'">85%</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Commentary ─────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${commentary != null}">
+    <h3>Комментарий</h3>
+    <p th:text="${commentary}">Основные отклонения связаны с задержкой поставок материалов.</p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Аналитик</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Утвердил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Директор</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

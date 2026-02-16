@@ -1,0 +1,95 @@
+{
+  "measurement_context": {
+    "runtime": "docker frontend dev server at http://localhost:13000",
+    "method": "Playwright headless navigation timing and resource entries",
+    "note": "Production bundle audit blocked because frontend build fails TypeScript checks"
+  },
+  "build_status": {
+    "build_command": "docker exec privod_next_frontend npm run build",
+    "result": "failed",
+    "error_summary": {
+      "errors_file_lines": 891,
+      "major_classes": [
+        "type mismatch",
+        "missing exports",
+        "invalid variant values",
+        "domain type contract drift"
+      ]
+    }
+  },
+  "route_metrics_dev": {
+    "/": {
+      "domContentLoaded_ms": 464,
+      "loadEventEnd_ms": 467,
+      "fcp_ms": 540,
+      "resource_count": 42,
+      "transfer_size_kb": 6227
+    },
+    "/projects": {
+      "domContentLoaded_ms": 46,
+      "loadEventEnd_ms": 46,
+      "fcp_ms": 116,
+      "resource_count": 48,
+      "transfer_size_kb": 298
+    },
+    "/workflow/designer": {
+      "domContentLoaded_ms": 86,
+      "loadEventEnd_ms": 87,
+      "fcp_ms": 136,
+      "resource_count": 44,
+      "transfer_size_kb": 94
+    },
+    "/mobile/reports/new": {
+      "domContentLoaded_ms": 61,
+      "loadEventEnd_ms": 62,
+      "fcp_ms": 104,
+      "resource_count": 37,
+      "transfer_size_kb": 50
+    },
+    "/analytics": {
+      "domContentLoaded_ms": 132,
+      "loadEventEnd_ms": 133,
+      "fcp_ms": 188,
+      "resource_count": 43,
+      "transfer_size_kb": 76
+    }
+  },
+  "diagnosis": [
+    "Cold start payload in dev is large (6.2 MB transfer equivalent on root route)",
+    "No production benchmark is currently trustworthy due to build failure",
+    "Data tables render full page rows without virtualization",
+    "Bundle split strategy is minimal (vendor/charts/table/query only) and not route-domain aware"
+  ],
+  "recommendations": [
+    {
+      "id": "PERF-001",
+      "priority": "P0",
+      "action": "Fix build pipeline and produce production artifacts before further optimization",
+      "target": "stable CI build in <10 min with zero TS errors"
+    },
+    {
+      "id": "PERF-002",
+      "priority": "P1",
+      "action": "Introduce route-level chunking by domain modules (projects, finance, warehouse, workflow, analytics)",
+      "target": "reduce cold-route JS transfer by 30-40%"
+    },
+    {
+      "id": "PERF-003",
+      "priority": "P1",
+      "action": "Implement table virtualization and server-side pagination for heavy lists",
+      "target": "smooth scrolling >50 FPS on 10k-row datasets"
+    },
+    {
+      "id": "PERF-004",
+      "priority": "P1",
+      "action": "Set JS/CSS performance budgets in CI and block regressions",
+      "target": "max initial JS budget per route and automatic regression alerting"
+    },
+    {
+      "id": "PERF-005",
+      "priority": "P2",
+      "action": "Add prefetch strategy for likely next routes in happy paths",
+      "target": "reduce interaction-to-next-route latency by 20%"
+    }
+  ]
+}

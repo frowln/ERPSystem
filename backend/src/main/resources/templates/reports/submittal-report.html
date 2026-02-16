@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Ведомость представленных документов (Submittal)'">Submittal</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .status-approved { color: #16a34a; font-weight: bold; }
+        .status-pending { color: #ca8a04; font-weight: bold; }
+        .status-rejected { color: #dc2626; font-weight: bold; }
+        .status-resubmit { color: #2563eb; font-weight: bold; }
+        .comments-cell { font-size: 8pt; font-style: italic; color: #333; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ВЕДОМОСТЬ ПРЕДСТАВЛЕННЫХ ДОКУМЕНТОВ</div>
+    <div class="report-subtitle">(Submittal Log)</div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер документа:</td>
+        <td th:text="${documentNumber} ?: '—'">SUB-001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Генподрядчик:</td>
+        <td th:text="${generalContractor} ?: '—'">ООО ГенПодрядчик</td>
+        <td class="label">Заказчик:</td>
+        <td th:text="${customerOrg} ?: '—'">ООО Заказчик</td>
+    </tr>
+    <tr>
+        <td class="label">Договор №:</td>
+        <td th:text="${contractNumber} ?: '—'">Д-001</td>
+        <td class="label">от:</td>
+        <td th:text="${contractDate} ?: '—'">01.01.2026</td>
+    </tr>
+</table>
+
+<!-- ── Submittals table ──────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:10%;">Номер<br/>submittal</th>
+            <th style="width:10%;">Раздел<br/>спецификации</th>
+            <th style="width:20%;">Описание</th>
+            <th style="width:12%;">Поставщик /<br/>Производитель</th>
+            <th style="width:8%;">Дата<br/>подачи</th>
+            <th style="width:8%;">Дата<br/>рецензии</th>
+            <th style="width:10%;">Статус</th>
+            <th style="width:18%;">Комментарии<br/>рецензента</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over submittals */-->
+        <tr th:each="item, iter : ${submittals}" th:if="${submittals != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${item.submittalNumber} ?: '—'">SUB-001-01</td>
+            <td th:text="${item.specSection} ?: '—'">03 30 00</td>
+            <td th:text="${item.description}">Бетонная смесь М300</td>
+            <td th:text="${item.vendor} ?: '—'">ООО Бетон</td>
+            <td class="center" th:text="${item.submittedDate} ?: '—'">10.01.2026</td>
+            <td class="center" th:text="${item.reviewDate} ?: '—'">15.01.2026</td>
+            <td class="center">
+                <span th:if="${item.status == 'APPROVED'}" class="status-approved">Одобрено</span>
+                <span th:if="${item.status == 'PENDING'}" class="status-pending">На рассмотрении</span>
+                <span th:if="${item.status == 'REJECTED'}" class="status-rejected">Отклонено</span>
+                <span th:if="${item.status == 'RESUBMIT'}" class="status-resubmit">На доработку</span>
+            </td>
+            <td class="comments-cell" th:text="${item.reviewComments} ?: '—'">Без замечаний</td>
+        </tr>
+        <!--/* Placeholder when no data */-->
+        <tr th:if="${submittals == null or submittals.isEmpty()}">
+            <td class="center">1</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td class="comments-cell">—</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Summary ───────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Сводка по статусам</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Всего submittal:</td>
+            <td th:text="${totalSubmittals} ?: '0'">0</td>
+            <td class="label">Одобрено:</td>
+            <td th:text="${approvedCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">На рассмотрении:</td>
+            <td th:text="${pendingCount} ?: '0'">0</td>
+            <td class="label">Отклонено:</td>
+            <td th:text="${rejectedCount} ?: '0'">0</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Подготовил:</p>
+            <p th:text="${preparedByPosition} ?: '________________________'">Инженер ПТО</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Согласовал:</p>
+            <p th:text="${approvedByPosition} ?: '________________________'">Главный инженер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{email/base-layout :: *}">
+<body>
+<div th:fragment="content">
+
+    <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600; color: #1a1a1a;">
+        Требуется утверждение платежа
+    </h2>
+
+    <p style="margin: 0 0 20px 0; font-size: 15px; color: #4a4a4a;">
+        <span th:text="${approverName}">Уважаемый утверждающий</span>,
+        платеж ожидает вашего утверждения. Срок принятия решения истекает через
+        <strong th:text="${daysLeft + ' дн.'}">3 дн.</strong>
+    </p>
+
+    <!-- Alert badge -->
+    <div th:classappend="${daysLeft <= 1 ? '' : ''}"
+         th:style="${daysLeft <= 1 ? 'background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; padding: 12px 16px; margin-bottom: 24px;' : 'background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px 16px; margin-bottom: 24px;'}">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td th:style="${daysLeft <= 1 ? 'font-size: 14px; color: #721c24;' : 'font-size: 14px; color: #856404;'}">
+                    <strong>Срок утверждения:</strong>
+                    <span th:text="${dueDate}" style="font-size: 16px; font-weight: 700;">15.03.2025</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Payment details -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+           style="background-color: #f8f9fa; border-radius: 6px; margin-bottom: 24px;">
+        <tr>
+            <td style="padding: 16px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d; width: 140px;">Номер платежа:</td>
+                        <td style="padding: 6px 0; font-size: 14px; font-weight: 600; color: #1a1a1a;" th:text="${paymentNumber}">P-2024-0042</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d;">Сумма:</td>
+                        <td style="padding: 6px 0; font-size: 18px; font-weight: 700; color: #1a1a1a;">
+                            <span th:text="${amount}">1 500 000</span>
+                            <span th:text="${currency}" style="font-size: 14px; font-weight: 400; color: #6c757d;">RUB</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d;">Договор:</td>
+                        <td style="padding: 6px 0; font-size: 14px; color: #1a1a1a;">
+                            <span th:text="${contractNumber}">K-2024-001</span>
+                            <span th:if="${contractName}" style="color: #6c757d;"> - </span>
+                            <span th:text="${contractName}" style="color: #6c757d;">Строительство</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d;">Срок оплаты:</td>
+                        <td style="padding: 6px 0; font-size: 14px; font-weight: 600; color: #dc3545;" th:text="${dueDate}">15.03.2025</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Action buttons -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 8px 0;">
+                <a th:href="${baseUrl + '/payments/' + paymentId + '?action=approve'}"
+                   style="display: inline-block; background-color: #198754; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 12px 28px; border-radius: 6px; margin-right: 12px;">
+                    Утвердить
+                </a>
+                <a th:href="${baseUrl + '/payments/' + paymentId + '?action=reject'}"
+                   style="display: inline-block; background-color: #ffffff; color: #dc3545; font-size: 14px; font-weight: 600; text-decoration: none; padding: 12px 28px; border-radius: 6px; border: 2px solid #dc3545;">
+                    Отклонить
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 16px 0 0 0;">
+                <a th:href="${baseUrl + '/payments/' + paymentId}"
+                   style="font-size: 13px; color: #6c757d; text-decoration: underline;">
+                    Просмотреть детали платежа
+                </a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+</body>
+</html>

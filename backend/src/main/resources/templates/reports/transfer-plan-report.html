@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'План перемещения материалов'">План перемещения материалов</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .route-arrow { font-size: 14pt; color: #2563eb; font-weight: bold; }
+        .location-box { border: 1px solid #333; padding: 6pt 10pt; display: inline-block;
+                        min-width: 120pt; text-align: center; vertical-align: middle; }
+        .transfer-route { text-align: center; margin: 12pt 0; }
+        .status-planned { color: #2563eb; font-weight: bold; }
+        .status-in-transit { color: #ca8a04; font-weight: bold; }
+        .status-delivered { color: #16a34a; font-weight: bold; }
+        .status-cancelled { color: #666; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ПЛАН ПЕРЕМЕЩЕНИЯ МАТЕРИАЛОВ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Plan metadata ──────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер плана:</td>
+        <td th:text="${planNumber} ?: '—'">ПМ-001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">01.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Период выполнения:</td>
+        <td>
+            с <span th:text="${periodFrom} ?: '—'">03.02.2026</span>
+            по <span th:text="${periodTo} ?: '—'">07.02.2026</span>
+        </td>
+        <td class="label">Ответственный:</td>
+        <td th:text="${responsiblePerson} ?: '—'">Логист Козлов А.А.</td>
+    </tr>
+</table>
+
+<!-- ── Transfer route visualization ───────────────────────────────────────── -->
+<div class="transfer-route no-break">
+    <div class="location-box">
+        <div class="text-small text-muted">Откуда</div>
+        <div class="text-bold" th:text="${sourceLocation} ?: '—'">Склад №1 (Центральный)</div>
+    </div>
+    <span class="route-arrow"> &rarr; </span>
+    <div class="location-box">
+        <div class="text-small text-muted">Куда</div>
+        <div class="text-bold" th:text="${destinationLocation} ?: '—'">Объект «Панорама», площ. №3</div>
+    </div>
+</div>
+
+<!-- ── Transfers table ────────────────────────────────────────────────────── -->
+<h2>Перечень перемещаемых материалов</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:22%;">Наименование<br/>материала</th>
+            <th style="width:7%;">Ед.<br/>изм.</th>
+            <th style="width:8%;">Кол-во</th>
+            <th style="width:10%;">Масса,<br/>кг</th>
+            <th style="width:10%;">Откуда</th>
+            <th style="width:10%;">Куда</th>
+            <th style="width:8%;">Дата<br/>план</th>
+            <th style="width:8%;">Дата<br/>факт</th>
+            <th style="width:13%;">Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item, iter : ${transfers}" th:if="${transfers != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${item.materialName}">Арматура А500С д.12мм</td>
+            <td class="center" th:text="${item.unit}">т</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.quantity, 1, 2)}">5.00</td>
+            <td class="number" th:text="${item.weight != null} ? ${#numbers.formatDecimal(item.weight, 1, 1)} : '—'">5 000.0</td>
+            <td class="text-small" th:text="${item.fromLocation}">Склад №1</td>
+            <td class="text-small" th:text="${item.toLocation}">Площ. №3</td>
+            <td class="center" th:text="${item.plannedDate}">03.02.2026</td>
+            <td class="center" th:text="${item.actualDate} ?: '—'">—</td>
+            <td class="center">
+                <span th:if="${item.status == 'PLANNED'}" class="status-planned">Планируется</span>
+                <span th:if="${item.status == 'IN_TRANSIT'}" class="status-in-transit">В пути</span>
+                <span th:if="${item.status == 'DELIVERED'}" class="status-delivered">Доставлено</span>
+                <span th:if="${item.status == 'CANCELLED'}" class="status-cancelled">Отменено</span>
+            </td>
+        </tr>
+        <tr th:if="${transfers == null or transfers.isEmpty()}">
+            <td colspan="10" class="center text-muted">Перемещения не запланированы</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${transfers != null and !transfers.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="3" class="text-right">Итого позиций:</td>
+            <td class="center" th:text="${totalItems} ?: '0'">0</td>
+            <td class="number" th:text="${totalWeight != null} ? ${#numbers.formatDecimal(totalWeight, 1, 1)} : '—'">0.0</td>
+            <td colspan="5"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Transport requirements ─────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Транспортные требования</h3>
+    <table class="info-grid" style="width:70%;">
+        <tr>
+            <td class="label">Тип транспорта:</td>
+            <td th:text="${vehicleType} ?: '—'">Бортовой автомобиль, г/п 10 т</td>
+        </tr>
+        <tr>
+            <td class="label">Количество рейсов:</td>
+            <td th:text="${tripsCount} ?: '—'">3</td>
+        </tr>
+        <tr>
+            <td class="label">Расстояние:</td>
+            <td th:text="${distance} ?: '—'">25 км</td>
+        </tr>
+        <tr th:if="${specialConditions != null}">
+            <td class="label">Особые условия:</td>
+            <td th:text="${specialConditions}">Негабаритный груз — требуется сопровождение</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил (логист):</p>
+            <p th:text="${preparedBy} ?: '________________________'">Логист</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Утвердил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Начальник снабжения</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Отпустил со склада:</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(кладовщик, подпись, дата)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Принял на объекте:</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(прораб, подпись, дата)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

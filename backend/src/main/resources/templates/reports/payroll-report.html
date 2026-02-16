@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Расчётная ведомость заработной платы'">Расчётная ведомость</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 landscape; margin: 10mm 8mm 10mm 8mm; }
+        .payroll-table { width: 100%; border-collapse: collapse; font-size: 8pt; }
+        .payroll-table th, .payroll-table td {
+            border: 1px solid #333; padding: 2pt 4pt; text-align: center; vertical-align: middle;
+        }
+        .payroll-table th { background-color: #e8e8e8; font-size: 7pt; font-weight: bold; }
+        .payroll-table td.name-cell { text-align: left; font-size: 7pt; }
+        .payroll-table td.num { text-align: right; font-family: "Courier New", monospace; }
+        .accrual { color: #1a365d; }
+        .deduction { color: #dc2626; }
+        .net-pay { font-weight: bold; color: #16a34a; font-size: 9pt; }
+        .section-header { background-color: #f0f4fa; font-weight: bold; }
+        .summary-row td { font-weight: bold; background-color: #f5f5f5; border-top: 2px solid #333; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">РАСЧЁТНАЯ ВЕДОМОСТЬ ЗАРАБОТНОЙ ПЛАТЫ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Metadata ───────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер ведомости:</td>
+        <td th:text="${documentNumber} ?: '—'">РВ-001</td>
+        <td class="label">Расчётный период:</td>
+        <td th:text="${period} ?: '—'">Январь 2026</td>
+    </tr>
+    <tr>
+        <td class="label">Подразделение:</td>
+        <td th:text="${department} ?: '—'">Участок №3</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${reportDate} ?: '—'">05.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Норма часов:</td>
+        <td th:text="${normHours} ?: '—'">176</td>
+        <td class="label">Рабочих дней:</td>
+        <td th:text="${workingDays} ?: '—'">22</td>
+    </tr>
+</table>
+
+<!-- ── Payroll table ──────────────────────────────────────────────────────── -->
+<table class="payroll-table">
+    <thead>
+        <tr>
+            <th rowspan="2" style="width:3%;">№</th>
+            <th rowspan="2" style="width:5%;">Таб.<br/>№</th>
+            <th rowspan="2" style="width:11%;">ФИО</th>
+            <th rowspan="2" style="width:6%;">Должность</th>
+            <th rowspan="2" style="width:5%;">Отраб.<br/>дней</th>
+            <th rowspan="2" style="width:5%;">Отраб.<br/>часов</th>
+            <!--/* Accruals */-->
+            <th colspan="5" class="accrual">Начислено</th>
+            <!--/* Deductions */-->
+            <th colspan="4" class="deduction">Удержано</th>
+            <!--/* Net pay */-->
+            <th rowspan="2" style="width:8%;">К выплате,<br/>руб.</th>
+        </tr>
+        <tr>
+            <!--/* Accrual columns */-->
+            <th style="width:6%;" class="accrual">Оклад /<br/>тариф</th>
+            <th style="width:6%;" class="accrual">Премия</th>
+            <th style="width:5%;" class="accrual">Сверх-<br/>урочн.</th>
+            <th style="width:5%;" class="accrual">Районн.<br/>коэфф.</th>
+            <th style="width:6%;" class="accrual">Итого<br/>начисл.</th>
+            <!--/* Deduction columns */-->
+            <th style="width:5%;" class="deduction">НДФЛ<br/>(13%)</th>
+            <th style="width:5%;" class="deduction">Аванс</th>
+            <th style="width:5%;" class="deduction">Прочие<br/>удерж.</th>
+            <th style="width:6%;" class="deduction">Итого<br/>удерж.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="emp, iter : ${employees}" th:if="${employees != null}">
+            <td th:text="${iter.count}">1</td>
+            <td th:text="${emp.tabNumber}">001</td>
+            <td class="name-cell" th:text="${emp.fullName}">Иванов Иван Иванович</td>
+            <td class="name-cell" th:text="${emp.position}">Монтажник 5р</td>
+            <td th:text="${emp.workedDays}">22</td>
+            <td th:text="${emp.workedHours}">176</td>
+            <!--/* Accruals */-->
+            <td class="num" th:text="${#numbers.formatDecimal(emp.baseSalary, 1, 2)}">80 000.00</td>
+            <td class="num" th:text="${#numbers.formatDecimal(emp.bonus, 1, 2)}">16 000.00</td>
+            <td class="num" th:text="${emp.overtimePay != null} ? ${#numbers.formatDecimal(emp.overtimePay, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${emp.regionalCoeff != null} ? ${#numbers.formatDecimal(emp.regionalCoeff, 1, 2)} : '0.00'">0.00</td>
+            <td class="num accrual" style="font-weight:bold;"
+                th:text="${#numbers.formatDecimal(emp.totalAccrued, 1, 2)}">96 000.00</td>
+            <!--/* Deductions */-->
+            <td class="num" th:text="${#numbers.formatDecimal(emp.incomeTax, 1, 2)}">12 480.00</td>
+            <td class="num" th:text="${#numbers.formatDecimal(emp.advancePayment, 1, 2)}">30 000.00</td>
+            <td class="num" th:text="${emp.otherDeductions != null} ? ${#numbers.formatDecimal(emp.otherDeductions, 1, 2)} : '0.00'">0.00</td>
+            <td class="num deduction" style="font-weight:bold;"
+                th:text="${#numbers.formatDecimal(emp.totalDeductions, 1, 2)}">42 480.00</td>
+            <!--/* Net pay */-->
+            <td class="num net-pay" th:text="${#numbers.formatDecimal(emp.netPay, 1, 2)}">53 520.00</td>
+        </tr>
+        <tr th:if="${employees == null or employees.isEmpty()}">
+            <td colspan="15" class="center text-muted">Нет данных по сотрудникам</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${employees != null and !employees.isEmpty()}">
+        <tr class="summary-row">
+            <td colspan="6" style="text-align:right;">Итого по ведомости:</td>
+            <td class="num" th:text="${totalBaseSalary != null} ? ${#numbers.formatDecimal(totalBaseSalary, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${totalBonus != null} ? ${#numbers.formatDecimal(totalBonus, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${totalOvertime != null} ? ${#numbers.formatDecimal(totalOvertime, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${totalRegional != null} ? ${#numbers.formatDecimal(totalRegional, 1, 2)} : '0.00'">0.00</td>
+            <td class="num accrual" style="font-weight:bold;"
+                th:text="${grandTotalAccrued != null} ? ${#numbers.formatDecimal(grandTotalAccrued, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${totalIncomeTax != null} ? ${#numbers.formatDecimal(totalIncomeTax, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${totalAdvance != null} ? ${#numbers.formatDecimal(totalAdvance, 1, 2)} : '0.00'">0.00</td>
+            <td class="num" th:text="${totalOtherDeductions != null} ? ${#numbers.formatDecimal(totalOtherDeductions, 1, 2)} : '0.00'">0.00</td>
+            <td class="num deduction" style="font-weight:bold;"
+                th:text="${grandTotalDeductions != null} ? ${#numbers.formatDecimal(grandTotalDeductions, 1, 2)} : '0.00'">0.00</td>
+            <td class="num net-pay"
+                th:text="${grandTotalNetPay != null} ? ${#numbers.formatDecimal(grandTotalNetPay, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Employer contributions ─────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h3>Начисления на ФОТ (за счёт работодателя)</h3>
+    <table class="data-table" style="width:60%;">
+        <thead>
+            <tr>
+                <th>Фонд</th>
+                <th>Ставка, %</th>
+                <th>Сумма, руб.</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Единый социальный взнос (ПФР+ОМС+ВНиМ)</td>
+                <td class="center" th:text="${socialRate} ?: '30'">30</td>
+                <td class="number" th:text="${socialContribution != null} ? ${#numbers.formatDecimal(socialContribution, 1, 2)} : '0.00'">0.00</td>
+            </tr>
+            <tr>
+                <td>Взнос на травматизм (ФСС НС)</td>
+                <td class="center" th:text="${accidentRate} ?: '0.2'">0.2</td>
+                <td class="number" th:text="${accidentContribution != null} ? ${#numbers.formatDecimal(accidentContribution, 1, 2)} : '0.00'">0.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="2" class="text-right">Итого взносов:</td>
+                <td class="number" th:text="${totalContributions != null} ? ${#numbers.formatDecimal(totalContributions, 1, 2)} : '0.00'">0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- ── Grand summary ──────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Итоговая сводка</h3>
+    <table class="info-grid" style="width:50%;">
+        <tr>
+            <td class="label">Количество сотрудников:</td>
+            <td th:text="${employeeCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Всего начислено:</td>
+            <td class="text-bold accrual" th:text="${grandTotalAccrued != null} ? ${#numbers.formatDecimal(grandTotalAccrued, 1, 2)} + ' руб.' : '0.00 руб.'">0.00 руб.</td>
+        </tr>
+        <tr>
+            <td class="label">Всего удержано:</td>
+            <td class="text-bold deduction" th:text="${grandTotalDeductions != null} ? ${#numbers.formatDecimal(grandTotalDeductions, 1, 2)} + ' руб.' : '0.00 руб.'">0.00 руб.</td>
+        </tr>
+        <tr>
+            <td class="label">К выплате:</td>
+            <td class="net-pay" th:text="${grandTotalNetPay != null} ? ${#numbers.formatDecimal(grandTotalNetPay, 1, 2)} + ' руб.' : '0.00 руб.'">0.00 руб.</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил (бухгалтер):</p>
+            <p th:text="${preparedBy} ?: '________________________'">Бухгалтер по расчёту з/п</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Главный бухгалтер:</p>
+            <p th:text="${chiefAccountant} ?: '________________________'">Главный бухгалтер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Руководитель организации:</p>
+            <p th:text="${director} ?: '________________________'">Генеральный директор</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right"></div>
+    </div>
+</div>
+
+</body>
+</html>

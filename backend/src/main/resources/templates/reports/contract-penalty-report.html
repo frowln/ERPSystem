@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Расчёт штрафных санкций'">Расчёт штрафных санкций</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .penalty-total { font-size: 14pt; font-weight: bold; color: #dc2626; }
+        .penalty-formula { font-family: "Courier New", monospace; font-size: 9pt;
+                           background-color: #f5f5f5; padding: 4pt 8pt; border: 1px solid #ccc;
+                           margin: 4pt 0; }
+        .status-active { color: #dc2626; font-weight: bold; }
+        .status-paid { color: #16a34a; font-weight: bold; }
+        .status-waived { color: #666; text-decoration: line-through; }
+        .status-disputed { color: #ca8a04; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">РАСЧЁТ ШТРАФНЫХ САНКЦИЙ ПО ДОГОВОРУ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Contract details ───────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер документа:</td>
+        <td th:text="${documentNumber} ?: '—'">ШС-001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">31.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Договор №:</td>
+        <td th:text="${contractNumber} ?: '—'">Д-001</td>
+        <td class="label">от:</td>
+        <td th:text="${contractDate} ?: '—'">01.06.2025</td>
+    </tr>
+    <tr>
+        <td class="label">Заказчик:</td>
+        <td th:text="${customerOrg} ?: '—'">ООО «Заказчик»</td>
+        <td class="label">Подрядчик:</td>
+        <td th:text="${contractorOrg} ?: '—'">ООО «Подрядчик»</td>
+    </tr>
+    <tr>
+        <td class="label">Сумма договора:</td>
+        <td th:text="${contractAmount != null} ? ${#numbers.formatDecimal(contractAmount, 1, 2)} + ' руб.' : '—'">10 000 000.00 руб.</td>
+        <td class="label">Ставка пени:</td>
+        <td th:text="${penaltyRate} ?: '—'">0.1% за день просрочки</td>
+    </tr>
+    <tr>
+        <td class="label">Расчётный период:</td>
+        <td colspan="3">
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── Penalty formula ────────────────────────────────────────────────────── -->
+<div class="no-break mb-8">
+    <h3>Формула расчёта</h3>
+    <div class="penalty-formula" th:text="${penaltyFormula} ?: 'Пеня = Сумма задолженности × Ставка (%) × Количество дней просрочки'">
+        Пеня = Сумма задолженности × Ставка (%) × Количество дней просрочки
+    </div>
+</div>
+
+<!-- ── Penalties table ────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:16%;">Обязательство</th>
+            <th style="width:9%;">Срок по<br/>договору</th>
+            <th style="width:9%;">Фактич.<br/>дата</th>
+            <th style="width:7%;">Дней<br/>просрочки</th>
+            <th style="width:12%;">Сумма<br/>обязательства,<br/>руб.</th>
+            <th style="width:7%;">Ставка,<br/>%</th>
+            <th style="width:12%;">Сумма<br/>штрафа,<br/>руб.</th>
+            <th style="width:12%;">Ограничение<br/>(макс.),<br/>руб.</th>
+            <th style="width:12%;">Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="pen, iter : ${penalties}" th:if="${penalties != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${pen.obligation}">Монтаж каркаса</td>
+            <td class="center" th:text="${pen.dueDate}">15.12.2025</td>
+            <td class="center" th:text="${pen.actualDate} ?: '—'">10.01.2026</td>
+            <td class="center" th:text="${pen.daysOverdue}">26</td>
+            <td class="number" th:text="${#numbers.formatDecimal(pen.obligationAmount, 1, 2)}">2 500 000.00</td>
+            <td class="center" th:text="${pen.rate}">0.1</td>
+            <td class="number" th:text="${#numbers.formatDecimal(pen.penaltyAmount, 1, 2)}">65 000.00</td>
+            <td class="number" th:text="${pen.maxPenalty != null} ? ${#numbers.formatDecimal(pen.maxPenalty, 1, 2)} : '—'">250 000.00</td>
+            <td class="center">
+                <span th:if="${pen.status == 'ACTIVE'}" class="status-active">Начислено</span>
+                <span th:if="${pen.status == 'PAID'}" class="status-paid">Оплачено</span>
+                <span th:if="${pen.status == 'WAIVED'}" class="status-waived">Снято</span>
+                <span th:if="${pen.status == 'DISPUTED'}" class="status-disputed">Оспаривается</span>
+            </td>
+        </tr>
+        <tr th:if="${penalties == null or penalties.isEmpty()}">
+            <td colspan="10" class="center text-muted">Штрафные санкции за период отсутствуют</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${penalties != null and !penalties.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="7" class="text-right">Итого начислено штрафов:</td>
+            <td class="number" th:text="${totalPenalty != null} ? ${#numbers.formatDecimal(totalPenalty, 1, 2)} : '0.00'">0.00</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="total-row">
+            <td colspan="7" class="text-right">Оплачено:</td>
+            <td class="number" th:text="${paidPenalty != null} ? ${#numbers.formatDecimal(paidPenalty, 1, 2)} : '0.00'">0.00</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr class="total-row">
+            <td colspan="7" class="text-right">Остаток к оплате:</td>
+            <td class="number penalty-total" th:text="${outstandingPenalty != null} ? ${#numbers.formatDecimal(outstandingPenalty, 1, 2)} : '0.00'">0.00</td>
+            <td colspan="2"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Notes ──────────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${notes != null}">
+    <h3>Примечания</h3>
+    <p th:text="${notes}">Примечание к расчёту</p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Юрист</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Согласовал:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Руководитель проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

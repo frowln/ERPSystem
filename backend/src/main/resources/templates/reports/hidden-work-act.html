@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Акт освидетельствования скрытых работ'">Акт скрытых работ</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 120pt; }
+        .act-section { margin-bottom: 12pt; }
+        .act-section h4 { margin-bottom: 4pt; }
+        .members-table td { padding: 4pt 6pt; vertical-align: top; }
+    </style>
+</head>
+<body>
+
+<!-- ── Title ──────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="report-title">АКТ<br/>ОСВИДЕТЕЛЬСТВОВАНИЯ СКРЫТЫХ РАБОТ</div>
+    <div class="report-subtitle">(РД 11-02-2006, Приложение 3)</div>
+</div>
+
+<!-- ── Meta information ───────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер акта:</td>
+        <td th:text="${actNumber} ?: '—'">СР-001</td>
+        <td class="label">Дата:</td>
+        <td th:text="${actDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Объект капитального<br/>строительства:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Жилой комплекс «Панорама»</td>
+    </tr>
+    <tr>
+        <td class="label">Застройщик<br/>(заказчик):</td>
+        <td colspan="3" th:text="${customerOrg} ?: '—'">ООО «Заказчик»</td>
+    </tr>
+    <tr>
+        <td class="label">Подрядчик:</td>
+        <td colspan="3" th:text="${contractorOrg} ?: '—'">ООО «СтройПроект»</td>
+    </tr>
+    <tr>
+        <td class="label">Проектная<br/>документация:</td>
+        <td colspan="3" th:text="${projectDoc} ?: '—'">Шифр проекта 123-АР</td>
+    </tr>
+</table>
+
+<!-- ── Commission members ─────────────────────────────────────────────────── -->
+<div class="act-section">
+    <h3>Комиссия в составе:</h3>
+    <table class="data-table" style="font-size:9pt;">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:30%;">Ф.И.О.</th>
+                <th style="width:30%;">Должность</th>
+                <th style="width:35%;">Организация</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="member, iter : ${commissionMembers}" th:if="${commissionMembers != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${member.fullName}">Иванов И.И.</td>
+                <td th:text="${member.position}">Инженер технадзора</td>
+                <td th:text="${member.organization}">ООО «Заказчик»</td>
+            </tr>
+            <tr th:if="${commissionMembers == null or commissionMembers.isEmpty()}">
+                <td class="center">1</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Work description ───────────────────────────────────────────────────── -->
+<div class="act-section">
+    <h3>Произвели осмотр работ, выполненных:</h3>
+    <p><strong>Наименование скрытых работ:</strong></p>
+    <p th:text="${workDescription} ?: '—'">Устройство гидроизоляции фундаментной плиты</p>
+
+    <p class="mt-8"><strong>Место выполнения работ (оси, ряды, отметки):</strong></p>
+    <p th:text="${workLocation} ?: '—'">Оси А-Д / 1-5, отм. -3.600</p>
+
+    <p class="mt-8"><strong>Объём выполненных работ:</strong></p>
+    <p th:text="${workVolume} ?: '—'">450 м2</p>
+</div>
+
+<!-- ── Materials used ─────────────────────────────────────────────────────── -->
+<div class="act-section">
+    <h3>Применённые материалы:</h3>
+    <table class="data-table" style="font-size:9pt;">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:35%;">Наименование материала</th>
+                <th style="width:15%;">Марка / ГОСТ</th>
+                <th style="width:15%;">Ед. изм.</th>
+                <th style="width:15%;">Кол-во</th>
+                <th style="width:15%;">№ сертификата</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="mat, iter : ${materialsUsed}" th:if="${materialsUsed != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${mat.name}">Мастика битумная</td>
+                <td th:text="${mat.standard} ?: '—'">ГОСТ 30693-2000</td>
+                <td class="center" th:text="${mat.unit}">кг</td>
+                <td class="center" th:text="${#numbers.formatDecimal(mat.quantity, 1, 2)}">150.00</td>
+                <td th:text="${mat.certificate} ?: '—'">№ 12345</td>
+            </tr>
+            <tr th:if="${materialsUsed == null or materialsUsed.isEmpty()}">
+                <td class="center">1</td>
+                <td>—</td>
+                <td>—</td>
+                <td class="center">—</td>
+                <td class="center">0.00</td>
+                <td>—</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Regulatory documents ───────────────────────────────────────────────── -->
+<div class="act-section">
+    <h3>Работы выполнены в соответствии с:</h3>
+    <ul>
+        <li th:each="doc : ${regulatoryDocs}" th:if="${regulatoryDocs != null}"
+            th:text="${doc}">СП 71.13330.2017</li>
+        <li th:if="${regulatoryDocs == null or regulatoryDocs.isEmpty()}">
+            Проектная и нормативная документация
+        </li>
+    </ul>
+</div>
+
+<!-- ── Conclusion ─────────────────────────────────────────────────────────── -->
+<div class="act-section">
+    <h3>Заключение комиссии:</h3>
+    <p th:text="${conclusion} ?: 'Работы выполнены в соответствии с проектной документацией и требованиями нормативных документов. Разрешается производство последующих работ.'">
+        Работы выполнены в соответствии с проектной документацией.
+    </p>
+</div>
+
+<!-- ── Additional notes ───────────────────────────────────────────────────── -->
+<div class="act-section" th:if="${additionalNotes != null and !additionalNotes.isEmpty()}">
+    <h3>Дополнительные сведения:</h3>
+    <p th:text="${additionalNotes}">Замечания отсутствуют.</p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <h3>Подписи членов комиссии:</h3>
+    <div th:each="member : ${commissionMembers}" th:if="${commissionMembers != null}" class="signature-row">
+        <div class="signature-left">
+            <p th:text="${member.position} + ', ' + ${member.organization}">Инженер технадзора, ООО «Заказчик»</p>
+        </div>
+        <div class="signature-right">
+            <div class="signature-line"></div>
+            <p class="signature-caption">(<span th:text="${member.fullName}">Иванов И.И.</span>)</p>
+        </div>
+    </div>
+    <div th:if="${commissionMembers == null or commissionMembers.isEmpty()}">
+        <div class="signature-row">
+            <div class="signature-left">
+                <p>Представитель заказчика</p>
+            </div>
+            <div class="signature-right">
+                <div class="signature-line"></div>
+                <p class="signature-caption">(подпись, расшифровка подписи)</p>
+            </div>
+        </div>
+        <div class="signature-row">
+            <div class="signature-left">
+                <p>Представитель подрядчика</p>
+            </div>
+            <div class="signature-right">
+                <div class="signature-line"></div>
+                <p class="signature-caption">(подпись, расшифровка подписи)</p>
+            </div>
+        </div>
+        <div class="signature-row">
+            <div class="signature-left">
+                <p>Представитель проектной организации</p>
+            </div>
+            <div class="signature-right">
+                <div class="signature-line"></div>
+                <p class="signature-caption">(подпись, расшифровка подписи)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

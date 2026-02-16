@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Сертификат качества материала'">Сертификат качества</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .cert-number { font-size: 16pt; font-weight: bold; color: #1a365d; text-align: center;
+                       border: 2px solid #1a365d; padding: 6pt 16pt; display: inline-block;
+                       margin: 8pt 0; }
+        .result-pass { color: #16a34a; font-weight: bold; }
+        .result-fail { color: #dc2626; font-weight: bold; }
+        .result-conditional { color: #ca8a04; font-weight: bold; }
+        .stamp-area { border: 1px dashed #999; width: 80pt; height: 80pt; text-align: center;
+                      line-height: 80pt; font-size: 7pt; color: #999; display: inline-block; }
+        .cert-verdict { text-align: center; font-size: 14pt; font-weight: bold; margin: 16pt 0;
+                        padding: 8pt; border: 2px solid #333; }
+        .verdict-pass { border-color: #16a34a; color: #16a34a; background-color: #f0fdf4; }
+        .verdict-fail { border-color: #dc2626; color: #dc2626; background-color: #fef2f2; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">СЕРТИФИКАТ КАЧЕСТВА МАТЕРИАЛА</div>
+    <div style="text-align:center;">
+        <span class="cert-number" th:text="${certificateNumber} ?: 'СК-000'">СК-001</span>
+    </div>
+</div>
+
+<!-- ── Material info ──────────────────────────────────────────────────────── -->
+<h2>Сведения о материале</h2>
+<table class="info-grid">
+    <tr>
+        <td class="label">Наименование материала:</td>
+        <td colspan="3" th:text="${materialName} ?: '—'">Арматура горячекатаная А500С д.12мм</td>
+    </tr>
+    <tr>
+        <td class="label">ГОСТ / ТУ:</td>
+        <td th:text="${standard} ?: '—'">ГОСТ 34028-2016</td>
+        <td class="label">Марка / Класс:</td>
+        <td th:text="${grade} ?: '—'">А500С</td>
+    </tr>
+    <tr>
+        <td class="label">Партия №:</td>
+        <td th:text="${batchNumber} ?: '—'">П-2026-001</td>
+        <td class="label">Дата изготовления:</td>
+        <td th:text="${manufacturingDate} ?: '—'">15.12.2025</td>
+    </tr>
+    <tr>
+        <td class="label">Производитель:</td>
+        <td th:text="${manufacturer} ?: '—'">ОАО «Северсталь-Метиз»</td>
+        <td class="label">Страна:</td>
+        <td th:text="${country} ?: 'Россия'">Россия</td>
+    </tr>
+    <tr>
+        <td class="label">Количество:</td>
+        <td th:text="${quantity} ?: '—'">5.000 т</td>
+        <td class="label">Дата поставки:</td>
+        <td th:text="${deliveryDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Поставщик:</td>
+        <td colspan="3" th:text="${supplierName} ?: '—'">ООО «МеталлТорг»</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</td>
+    </tr>
+</table>
+
+<!-- ── Test results ───────────────────────────────────────────────────────── -->
+<h2>Результаты испытаний</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:25%;">Показатель</th>
+            <th style="width:12%;">Ед. изм.</th>
+            <th style="width:15%;">Требование<br/>по ГОСТ</th>
+            <th style="width:15%;">Фактич.<br/>значение</th>
+            <th style="width:13%;">Метод<br/>испытания</th>
+            <th style="width:15%;">Результат</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="test, iter : ${testResults}" th:if="${testResults != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${test.parameter}">Предел текучести, σт</td>
+            <td class="center" th:text="${test.unit}">МПа</td>
+            <td class="center" th:text="${test.requirement}">не менее 500</td>
+            <td class="number" th:text="${test.actualValue}">525</td>
+            <td class="text-small" th:text="${test.method}">ГОСТ 12004</td>
+            <td class="center">
+                <span th:if="${test.passed}" class="result-pass">Соответствует</span>
+                <span th:if="${!test.passed}" class="result-fail">Не соответствует</span>
+            </td>
+        </tr>
+        <tr th:if="${testResults == null or testResults.isEmpty()}">
+            <td colspan="7" class="center text-muted">Испытания не проводились</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Chemical composition (for metals) ──────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${chemicalComposition != null and !chemicalComposition.isEmpty()}">
+    <h3>Химический состав</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th th:each="elem : ${chemicalComposition}" th:text="${elem.element}">C</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center" th:each="elem : ${chemicalComposition}">
+                    <span th:text="${elem.requirement}">0.22 макс.</span><br/>
+                    <strong th:text="${elem.actual}">0.18</strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Verdict ────────────────────────────────────────────────────────────── -->
+<div class="cert-verdict"
+     th:classappend="${overallResult == 'PASS'} ? 'verdict-pass' : 'verdict-fail'">
+    <span th:if="${overallResult == 'PASS'}">МАТЕРИАЛ СООТВЕТСТВУЕТ ТРЕБОВАНИЯМ</span>
+    <span th:if="${overallResult != 'PASS'}">МАТЕРИАЛ НЕ СООТВЕТСТВУЕТ ТРЕБОВАНИЯМ</span>
+</div>
+
+<!-- ── Attached docs ──────────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${attachedDocs != null}">
+    <h3>Прилагаемая документация</h3>
+    <ul>
+        <li th:each="doc : ${attachedDocs}" th:text="${doc}">Паспорт качества завода-изготовителя</li>
+    </ul>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Инженер лаборатории:</p>
+            <p th:text="${labEngineer} ?: '________________________'">Инженер ОТК</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Начальник лаборатории:</p>
+            <p th:text="${labHead} ?: '________________________'">Начальник ОТК</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+            <div class="mt-8">
+                <div class="stamp-area">М.П.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

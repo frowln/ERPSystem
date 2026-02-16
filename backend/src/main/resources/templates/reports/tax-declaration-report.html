@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Налоговая декларация'">Налоговая декларация</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .section-header { background-color: #e8e8e8; padding: 4pt 8pt; font-weight: bold;
+                          margin-top: 12pt; margin-bottom: 6pt; border: 1px solid #ccc; }
+        .amount-cell { text-align: right; font-family: "Courier New", monospace; }
+        .total-highlight { background-color: #f5f5f5; font-weight: bold; font-size: 11pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">ООО "Компания"</div>
+    <div class="report-title">НАЛОГОВАЯ ДЕКЛАРАЦИЯ</div>
+    <div class="report-subtitle" th:text="${taxType} ?: 'НДС'">НДС</div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">ИНН:</td>
+        <td th:text="${inn} ?: '—'">7712345678</td>
+        <td class="label">КПП:</td>
+        <td th:text="${kpp} ?: '—'">771201001</td>
+    </tr>
+    <tr>
+        <td class="label">Налоговый орган:</td>
+        <td colspan="3" th:text="${taxAuthority} ?: '—'">ИФНС №12 по г. Москве</td>
+    </tr>
+    <tr>
+        <td class="label">Налоговый период:</td>
+        <td th:text="${taxPeriod} ?: '—'">1 квартал 2026</td>
+        <td class="label">Код периода:</td>
+        <td th:text="${periodCode} ?: '—'">21</td>
+    </tr>
+    <tr>
+        <td class="label">Вид декларации:</td>
+        <td th:text="${declarationType} ?: '—'">Первичная</td>
+        <td class="label">Номер корректировки:</td>
+        <td th:text="${correctionNumber} ?: '0'">0</td>
+    </tr>
+    <tr>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">25.04.2026</td>
+        <td class="label">Код ОКВЭД:</td>
+        <td th:text="${okvedCode} ?: '—'">41.20</td>
+    </tr>
+</table>
+
+<!-- ── Section: Tax Base (НДС) ────────────────────────────────────────────── -->
+<div class="section-header">Раздел 1. Налоговая база</div>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:8%;">Код<br/>строки</th>
+            <th style="width:42%;">Наименование показателя</th>
+            <th style="width:20%;">Налоговая<br/>база, руб.</th>
+            <th style="width:10%;">Ставка,<br/>%</th>
+            <th style="width:15%;">Сумма налога,<br/>руб.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over tax base lines */-->
+        <tr th:each="line, iter : ${taxBaseLines}" th:if="${taxBaseLines != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${line.lineCode} ?: '—'">010</td>
+            <td th:text="${line.description}">Реализация товаров (работ, услуг)</td>
+            <td class="amount-cell" th:text="${line.taxBase != null} ? ${#numbers.formatDecimal(line.taxBase, 1, 2)} : '0.00'">1000000.00</td>
+            <td class="center" th:text="${line.rate} ?: '20'">20</td>
+            <td class="amount-cell" th:text="${line.taxAmount != null} ? ${#numbers.formatDecimal(line.taxAmount, 1, 2)} : '0.00'">200000.00</td>
+        </tr>
+        <!--/* Placeholder */-->
+        <tr th:if="${taxBaseLines == null or taxBaseLines.isEmpty()}">
+            <td class="center">1</td>
+            <td class="center">010</td>
+            <td>—</td>
+            <td class="amount-cell">0.00</td>
+            <td class="center">20</td>
+            <td class="amount-cell">0.00</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr class="total-row">
+            <td colspan="3" class="text-right">Итого начислено:</td>
+            <td class="amount-cell" th:text="${totalTaxBase != null} ? ${#numbers.formatDecimal(totalTaxBase, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td class="amount-cell" th:text="${totalTaxAccrued != null} ? ${#numbers.formatDecimal(totalTaxAccrued, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Section: Deductions ───────────────────────────────────────────────── -->
+<div class="section-header">Раздел 2. Налоговые вычеты</div>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:8%;">Код<br/>строки</th>
+            <th style="width:52%;">Наименование вычета</th>
+            <th style="width:15%;">Сумма вычета,<br/>руб.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over deduction lines */-->
+        <tr th:each="ded, iter : ${deductionLines}" th:if="${deductionLines != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${ded.lineCode} ?: '—'">120</td>
+            <td th:text="${ded.description}">НДС по приобретенным товарам</td>
+            <td class="amount-cell" th:text="${ded.amount != null} ? ${#numbers.formatDecimal(ded.amount, 1, 2)} : '0.00'">150000.00</td>
+        </tr>
+        <!--/* Placeholder */-->
+        <tr th:if="${deductionLines == null or deductionLines.isEmpty()}">
+            <td class="center">1</td>
+            <td class="center">120</td>
+            <td>—</td>
+            <td class="amount-cell">0.00</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr class="total-row">
+            <td colspan="3" class="text-right">Итого вычетов:</td>
+            <td class="amount-cell" th:text="${totalDeductions != null} ? ${#numbers.formatDecimal(totalDeductions, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Section: Amount Payable ────────────────────────────────────────────── -->
+<div class="section-header">Раздел 3. Сумма налога к уплате</div>
+<table class="info-grid">
+    <tr>
+        <td class="label">Общая сумма начисленного налога:</td>
+        <td class="amount-cell" th:text="${totalTaxAccrued != null} ? ${#numbers.formatDecimal(totalTaxAccrued, 1, 2)} : '0.00'">0.00</td>
+    </tr>
+    <tr>
+        <td class="label">Общая сумма вычетов:</td>
+        <td class="amount-cell" th:text="${totalDeductions != null} ? ${#numbers.formatDecimal(totalDeductions, 1, 2)} : '0.00'">0.00</td>
+    </tr>
+    <tr class="total-highlight">
+        <td class="label" style="font-size: 11pt;">Итого к уплате в бюджет:</td>
+        <td class="amount-cell" style="font-size: 11pt;"
+            th:text="${amountPayable != null} ? ${#numbers.formatDecimal(amountPayable, 1, 2)} : '0.00'">0.00</td>
+    </tr>
+    <tr th:if="${amountRefundable != null}">
+        <td class="label">К возмещению из бюджета:</td>
+        <td class="amount-cell" th:text="${#numbers.formatDecimal(amountRefundable, 1, 2)}">0.00</td>
+    </tr>
+</table>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Руководитель организации:</p>
+            <p th:text="${directorName} ?: '________________________'">Генеральный директор</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Главный бухгалтер:</p>
+            <p th:text="${chiefAccountant} ?: '________________________'">Главный бухгалтер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+    <div class="mt-8">
+        <p>М.П.</p>
+        <p class="text-small text-muted">Дата подписания: <span th:text="${signatureDate} ?: '«___» ____________ 20___ г.'">«___» ____________ 20___ г.</span></p>
+    </div>
+</div>
+
+</body>
+</html>

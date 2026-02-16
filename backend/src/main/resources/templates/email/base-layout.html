@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${emailSubject ?: 'Уведомление'}">Уведомление</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #333333; line-height: 1.6;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f6f9;">
+        <tr>
+            <td align="center" style="padding: 24px 16px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px; width: 100%;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #1a56db; border-radius: 8px 8px 0 0; padding: 24px 32px; text-align: center;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <div style="font-size: 24px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px;">
+                                            ПРИВОД
+                                        </div>
+                                        <div style="font-size: 13px; color: #c3d9ff; margin-top: 4px;">
+                                            Строительная ERP-платформа
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Content area -->
+                    <tr>
+                        <td style="background-color: #ffffff; padding: 32px;">
+                            <div th:replace="~{::content}">
+                                <!-- Individual template content is inserted here -->
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; border-radius: 0 0 8px 8px; padding: 24px 32px; border-top: 1px solid #e9ecef;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td style="text-align: center; font-size: 12px; color: #6c757d;">
+                                        <p style="margin: 0 0 8px 0;" th:text="${companyName ?: 'Привод - Строительная ERP'}">
+                                            Привод - Строительная ERP
+                                        </p>
+                                        <p style="margin: 0 0 8px 0;">
+                                            Это автоматическое уведомление. Пожалуйста, не отвечайте на это письмо.
+                                        </p>
+                                        <p style="margin: 0;">
+                                            <a th:href="${baseUrl + '/settings/notifications'}"
+                                               style="color: #6c757d; text-decoration: underline;">
+                                                Настроить уведомления
+                                            </a>
+                                            &nbsp;&middot;&nbsp;
+                                            <a th:href="${baseUrl + '/settings/notifications/unsubscribe'}"
+                                               style="color: #6c757d; text-decoration: underline;">
+                                                Отписаться
+                                            </a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

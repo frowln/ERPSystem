@@ -1,0 +1,4726 @@
+[
+  {
+    "route": "/auth/oidc/callback",
+    "method_name": "oidc_callback",
+    "controller_class": "OidcLogin",
+    "module": "construction_auth_oidc",
+    "file": "construction_auth_oidc/controllers/main.py",
+    "line": 222,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "/auth/oidc/login/<int:provider_id>",
+    "method_name": "oidc_login",
+    "controller_class": "OidcLogin",
+    "module": "construction_auth_oidc",
+    "file": "construction_auth_oidc/controllers/main.py",
+    "line": 130,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "provider_id",
+      "redirect=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/auth/oidc/logout",
+    "method_name": "oidc_logout",
+    "controller_class": "OidcLogin",
+    "module": "construction_auth_oidc",
+    "file": "construction_auth_oidc/controllers/main.py",
+    "line": 470,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "/auth/oidc/refresh",
+    "method_name": "oidc_refresh_token",
+    "controller_class": "OidcLogin",
+    "module": "construction_auth_oidc",
+    "file": "construction_auth_oidc/controllers/main.py",
+    "line": 523,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "/bim/viewer/<int:model_id>",
+    "method_name": "bim_viewer",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 14,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/bim/viewer/<int:model_id>/annotations",
+    "method_name": "get_annotations",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 81,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/bim/viewer/<int:model_id>/clashes",
+    "method_name": "get_clashes",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 166,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/bim/viewer/<int:model_id>/ifc",
+    "method_name": "download_ifc",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 33,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/bim/viewer/<int:model_id>/save_camera",
+    "method_name": "save_camera_position",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 59,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "camera_data",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/construction/nas/download",
+    "method_name": "download_from_nas",
+    "controller_class": "NASController",
+    "module": "construction_documents",
+    "file": "construction_documents/controllers/nas_controller.py",
+    "line": 86,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "file_path",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/construction_ai/chat_legacy",
+    "method_name": "construction_ai_chat",
+    "controller_class": "ConstructionAIChatController",
+    "module": "construction_ai",
+    "file": "construction_ai/controllers/ai_chat.py",
+    "line": 52,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "message=None",
+      "context=None",
+      "pending=None"
+    ]
+  },
+  {
+    "route": "/construction_mfa/setup_required",
+    "method_name": "mfa_setup_required",
+    "controller_class": "ConstructionMfaController",
+    "module": "construction_mfa",
+    "file": "construction_mfa/controllers/main.py",
+    "line": 73,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "False",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "/contractor/portal",
+    "method_name": "contractor_portal_home",
+    "controller_class": "ContractorPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/contractor_portal_controller.py",
+    "line": 13,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/contractor/portal/contracts",
+    "method_name": "contractor_portal_contracts",
+    "controller_class": "ContractorPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/contractor_portal_controller.py",
+    "line": 44,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/contractor/portal/projects",
+    "method_name": "contractor_portal_projects",
+    "controller_class": "ContractorPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/contractor_portal_controller.py",
+    "line": 70,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/contractor/portal/tenders",
+    "method_name": "contractor_portal_tenders",
+    "controller_class": "ContractorPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/contractor_portal_controller.py",
+    "line": 98,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/customer/portal",
+    "method_name": "customer_portal_home",
+    "controller_class": "CustomerPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/customer_portal_controller.py",
+    "line": 13,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/customer/portal/contracts",
+    "method_name": "customer_portal_contracts",
+    "controller_class": "CustomerPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/customer_portal_controller.py",
+    "line": 106,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/customer/portal/documents",
+    "method_name": "customer_portal_documents",
+    "controller_class": "CustomerPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/customer_portal_controller.py",
+    "line": 132,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/customer/portal/projects",
+    "method_name": "customer_portal_projects",
+    "controller_class": "CustomerPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/customer_portal_controller.py",
+    "line": 46,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/customer/portal/projects/<int:project_id>",
+    "method_name": "customer_portal_project_detail",
+    "controller_class": "CustomerPortalController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/customer_portal_controller.py",
+    "line": 72,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "access_token=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/logo",
+    "method_name": "company_logo",
+    "controller_class": "Binary",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/binary.py",
+    "line": 9,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "*",
+    "docstring": "",
+    "params": [
+      "dbname=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/logo.png",
+    "method_name": "company_logo",
+    "controller_class": "Binary",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/binary.py",
+    "line": 9,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "*",
+    "docstring": "",
+    "params": [
+      "dbname=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/contract/<int:contract_id>",
+    "method_name": "portal_construction_contract",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 274,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "contract_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/ks2/<int:ks2_id>",
+    "method_name": "portal_construction_ks2",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 228,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "ks2_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/ks3/<int:ks3_id>",
+    "method_name": "portal_construction_ks3",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 251,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "ks3_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/project/<int:project_id>",
+    "method_name": "portal_construction_project",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 167,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/projects",
+    "method_name": "portal_my_construction_projects",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 101,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "page=1",
+      "sortby=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/projects/page/<int:page>",
+    "method_name": "portal_my_construction_projects",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 101,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "page=1",
+      "sortby=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/my/construction/specification/<int:spec_id>",
+    "method_name": "portal_construction_specification",
+    "controller_class": "ConstructionPortal",
+    "module": "construction_contractor_portal",
+    "file": "construction_contractor_portal/controllers/portal.py",
+    "line": 297,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "spec_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/privod",
+    "method_name": "landing",
+    "controller_class": "LandingPage",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/landing.py",
+    "line": 8,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "False",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "/privod/help",
+    "method_name": "knowledge_base",
+    "controller_class": "LandingPage",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/landing.py",
+    "line": 12,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "False",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "/status",
+    "method_name": "status_page",
+    "controller_class": "StatusPageController",
+    "module": "construction_support",
+    "file": "construction_support/controllers/status_page_controller.py",
+    "line": 10,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "True",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/status/api",
+    "method_name": "status_api",
+    "controller_class": "StatusPageController",
+    "module": "construction_support",
+    "file": "construction_support/controllers/status_page_controller.py",
+    "line": 41,
+    "auth": "public",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/web",
+    "method_name": "web_client",
+    "controller_class": "ConstructionMfaController",
+    "module": "construction_mfa",
+    "file": "construction_mfa/controllers/main.py",
+    "line": 16,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "s_action=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "/web/bim/viewer/<int:model_id>",
+    "method_name": "view_3d_model",
+    "controller_class": "BIMController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_controller.py",
+    "line": 19,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "/web/binary/company_logo",
+    "method_name": "company_logo",
+    "controller_class": "Binary",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/binary.py",
+    "line": 9,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "*",
+    "docstring": "",
+    "params": [
+      "dbname=None",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_changes",
+    "controller_class": "OneCController",
+    "module": "construction_1c_integration",
+    "file": "construction_1c_integration/controllers/one_c_controller.py",
+    "line": 254,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "since=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_projects",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 47,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_project",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 121,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_contracts",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 157,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_contract",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 167,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_ks2",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 197,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_ks2",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 207,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_ks3",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 241,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_ks3",
+    "controller_class": "ConstructionAPIv2Projects",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_projects.py",
+    "line": 251,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "prometheus_metrics",
+    "controller_class": "PrometheusMetricsController",
+    "module": "construction_api",
+    "file": "construction_api/controllers/metrics_controller.py",
+    "line": 93,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_projects",
+    "controller_class": "ConstructionAPIController",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_controller.py",
+    "line": 58,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_project",
+    "controller_class": "ConstructionAPIController",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_controller.py",
+    "line": 106,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_purchase_requests",
+    "controller_class": "ConstructionAPIController",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_controller.py",
+    "line": 133,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_spec_items",
+    "controller_class": "ConstructionAPIv2Specifications",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_specifications.py",
+    "line": 41,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_estimates",
+    "controller_class": "ConstructionAPIv2Specifications",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_specifications.py",
+    "line": 73,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_documents",
+    "controller_class": "ConstructionAPIv2Specifications",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_specifications.py",
+    "line": 103,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_specifications",
+    "controller_class": "ConstructionAPIv2Specifications",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_specifications.py",
+    "line": 128,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_specification",
+    "controller_class": "ConstructionAPIv2Specifications",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_specifications.py",
+    "line": 138,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_maintenance_requests",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 39,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_maintenance_request",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 49,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_vehicle_assignments",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 81,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_audit_checklists",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 113,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_audit_checklist",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 123,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_journal_entries",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 157,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_qualifications",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 190,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_tasks",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 217,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_task",
+    "controller_class": "ConstructionAPIv2Operations",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_operations.py",
+    "line": 227,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_iot_equipment",
+    "controller_class": "ConstructionAPIv2IoTBIM",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_iot_bim.py",
+    "line": 35,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_iot_equipment",
+    "controller_class": "ConstructionAPIv2IoTBIM",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_iot_bim.py",
+    "line": 45,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_bim_models",
+    "controller_class": "ConstructionAPIv2IoTBIM",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_iot_bim.py",
+    "line": 71,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_bim_model",
+    "controller_class": "ConstructionAPIv2IoTBIM",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_iot_bim.py",
+    "line": 81,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_incidents",
+    "controller_class": "ConstructionAPIv2Safety",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_safety.py",
+    "line": 51,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_incident",
+    "controller_class": "ConstructionAPIv2Safety",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_safety.py",
+    "line": 61,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_inspections",
+    "controller_class": "ConstructionAPIv2Safety",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_safety.py",
+    "line": 191,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_inspection",
+    "controller_class": "ConstructionAPIv2Safety",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_safety.py",
+    "line": 201,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_purchase_requests",
+    "controller_class": "ConstructionAPIv2Procurement",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_procurement.py",
+    "line": 37,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_purchase_request",
+    "controller_class": "ConstructionAPIv2Procurement",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_procurement.py",
+    "line": 47,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_tenders",
+    "controller_class": "ConstructionAPIv2Procurement",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_procurement.py",
+    "line": 71,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_tender",
+    "controller_class": "ConstructionAPIv2Procurement",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_procurement.py",
+    "line": 81,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "health_check",
+    "controller_class": "HealthCheckController",
+    "module": "construction_api",
+    "file": "construction_api/controllers/health_controller.py",
+    "line": 20,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "readiness_check",
+    "controller_class": "HealthCheckController",
+    "module": "construction_api",
+    "file": "construction_api/controllers/health_controller.py",
+    "line": 49,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "swagger_spec",
+    "controller_class": "ConstructionAPIv2Controller",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_controller.py",
+    "line": 561,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "api_docs",
+    "controller_class": "ConstructionAPIv2Controller",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_controller.py",
+    "line": 573,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "False",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_budget_items",
+    "controller_class": "ConstructionAPIv2Finance",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_finance.py",
+    "line": 34,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_budgets",
+    "controller_class": "ConstructionAPIv2Finance",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_finance.py",
+    "line": 61,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_budget",
+    "controller_class": "ConstructionAPIv2Finance",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_finance.py",
+    "line": 71,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "record_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_fixed_assets",
+    "controller_class": "ConstructionAPIv2Finance",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_finance.py",
+    "line": 104,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_tax_calendar",
+    "controller_class": "ConstructionAPIv2Finance",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_finance.py",
+    "line": 134,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_specifications",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 27,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_specification",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 63,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "spec_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_estimates",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 120,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_estimate",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 153,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "estimate_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_specifications",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 219,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_get_specification",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 224,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "spec_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_estimates",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 229,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_get_estimate",
+    "controller_class": "ConstructionRestAPISpecifications",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_specifications.py",
+    "line": 234,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "estimate_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_budget_items",
+    "controller_class": "ConstructionRestAPIFinance",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_finance.py",
+    "line": 26,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_payments",
+    "controller_class": "ConstructionRestAPIFinance",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_finance.py",
+    "line": 89,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_pnl",
+    "controller_class": "ConstructionRestAPIFinance",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_finance.py",
+    "line": 163,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_aging",
+    "controller_class": "ConstructionRestAPIFinance",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_finance.py",
+    "line": 233,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_budget_items",
+    "controller_class": "ConstructionRestAPIFinance",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_finance.py",
+    "line": 302,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_safety_incidents",
+    "controller_class": "ConstructionRestAPISafety",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_safety.py",
+    "line": 26,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_safety_inspections",
+    "controller_class": "ConstructionRestAPISafety",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_safety.py",
+    "line": 103,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_safety_incidents",
+    "controller_class": "ConstructionRestAPISafety",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_safety.py",
+    "line": 168,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "subscribe",
+    "controller_class": "ConstructionNotificationController",
+    "module": "construction_base",
+    "file": "construction_base/controllers/notification_controller.py",
+    "line": 27,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "history",
+    "controller_class": "ConstructionNotificationController",
+    "module": "construction_base",
+    "file": "construction_base/controllers/notification_controller.py",
+    "line": 129,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_projects",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 27,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_project",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 63,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_projects",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 210,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_get_project",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 215,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_contracts",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 27,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_contract",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 63,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "contract_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_ks2",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 174,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_ks2",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 216,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "ks2_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_ks3",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 332,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_ks3",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 374,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "ks3_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_contracts",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 427,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_get_contract",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 432,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "contract_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_ks2",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 442,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_ks3",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 452,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_dashboard",
+    "controller_class": "ConstructionRestAPIDashboard",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_dashboard.py",
+    "line": 26,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_project_dashboard",
+    "controller_class": "ConstructionRestAPIDashboard",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_dashboard.py",
+    "line": 210,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_bim_models",
+    "controller_class": "ConstructionRestAPIBIM",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_bim.py",
+    "line": 26,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_bim_elements",
+    "controller_class": "ConstructionRestAPIBIM",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_bim.py",
+    "line": 85,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_purchase_requests",
+    "controller_class": "ConstructionRestAPIProcurement",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_procurement.py",
+    "line": 27,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_tenders",
+    "controller_class": "ConstructionRestAPIProcurement",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_procurement.py",
+    "line": 170,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v1_list_purchase_requests",
+    "controller_class": "ConstructionRestAPIProcurement",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_procurement.py",
+    "line": 229,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_iot_equipment",
+    "controller_class": "ConstructionRestAPIIoT",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_iot.py",
+    "line": 26,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_iot_telemetry",
+    "controller_class": "ConstructionRestAPIIoT",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_iot.py",
+    "line": 94,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_work_orders",
+    "controller_class": "ConstructionRestAPIOperations",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_operations.py",
+    "line": 27,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_get_work_order",
+    "controller_class": "ConstructionRestAPIOperations",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_operations.py",
+    "line": 66,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "wo_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "v2_list_resources",
+    "controller_class": "ConstructionRestAPIOperations",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_operations.py",
+    "line": 129,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "list_devices",
+    "controller_class": "IoTTelemetryController",
+    "module": "construction_iot",
+    "file": "construction_iot/controllers/iot_telemetry_controller.py",
+    "line": 252,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "mfa_verify",
+    "controller_class": "ConstructionMfaController",
+    "module": "construction_mfa",
+    "file": "construction_mfa/controllers/main.py",
+    "line": 98,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET",
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "False",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "redirect=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_purchase_requests",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 122,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_purchase_request",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 144,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "request_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_stock_zones",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 205,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_stock_inventories",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 228,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_stock_inventory",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 248,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "registry_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "offline_status",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 378,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_offline_books",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 388,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "download_offline_book",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 473,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "book_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_geofence_zones",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 497,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_geofence_events",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 548,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "get_geofence_inside",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 602,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "push_pending",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 651,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "pwa_manifest",
+    "controller_class": "PWAController",
+    "module": "construction_pwa",
+    "file": "construction_pwa/controllers/pwa_controller.py",
+    "line": 116,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "pwa_service_worker",
+    "controller_class": "PWAController",
+    "module": "construction_pwa",
+    "file": "construction_pwa/controllers/pwa_controller.py",
+    "line": 158,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "sync_status",
+    "controller_class": "PWAController",
+    "module": "construction_pwa",
+    "file": "construction_pwa/controllers/pwa_controller.py",
+    "line": 599,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "scoped_app",
+    "controller_class": "WebManifest",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/webmanifest.py",
+    "line": 33,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "app_id",
+      "path=''",
+      "app_name=''"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "scoped_app_manifest",
+    "controller_class": "WebManifest",
+    "module": "construction_theme",
+    "file": "construction_theme/controllers/webmanifest.py",
+    "line": 53,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "app_id",
+      "path",
+      "app_name=''"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "homepage",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 13,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "features",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 28,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "pricing",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 32,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "about",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 36,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "contacts",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 40,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "privacy",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 44,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "terms",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 48,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 52,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_getting_started",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 56,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_projects",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 60,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_finance",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 64,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_procurement",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 68,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_safety",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 72,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_bim",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 76,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_analytics",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 80,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_integrations",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 84,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "GET",
+    "method_name": "knowledge_admin",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 88,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "export_to_1c",
+    "controller_class": "OneCController",
+    "module": "construction_1c_integration",
+    "file": "construction_1c_integration/controllers/one_c_controller.py",
+    "line": 27,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "data_type='invoices'",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "import_from_1c",
+    "controller_class": "OneCController",
+    "module": "construction_1c_integration",
+    "file": "construction_1c_integration/controllers/one_c_controller.py",
+    "line": 70,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sync_partners",
+    "controller_class": "OneCController",
+    "module": "construction_1c_integration",
+    "file": "construction_1c_integration/controllers/one_c_controller.py",
+    "line": 133,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sync_documents",
+    "controller_class": "OneCController",
+    "module": "construction_1c_integration",
+    "file": "construction_1c_integration/controllers/one_c_controller.py",
+    "line": 174,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sync_nomenclature",
+    "controller_class": "OneCController",
+    "module": "construction_1c_integration",
+    "file": "construction_1c_integration/controllers/one_c_controller.py",
+    "line": 214,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "ai_chat",
+    "controller_class": "ConstructionAIController",
+    "module": "construction_ai_assistant",
+    "file": "construction_ai_assistant/controllers/ai_controller.py",
+    "line": 32,
+    "auth": "user",
+    "type": "jsonrpc",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "message=None",
+      "context=None",
+      "conversation_id=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "ai_analyze",
+    "controller_class": "ConstructionAIController",
+    "module": "construction_ai_assistant",
+    "file": "construction_ai_assistant/controllers/ai_controller.py",
+    "line": 81,
+    "auth": "user",
+    "type": "jsonrpc",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model=None",
+      "record_id=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "ai_suggest_tasks",
+    "controller_class": "ConstructionAIController",
+    "module": "construction_ai_assistant",
+    "file": "construction_ai_assistant/controllers/ai_controller.py",
+    "line": 123,
+    "auth": "user",
+    "type": "jsonrpc",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "ai_summarize",
+    "controller_class": "ConstructionAIController",
+    "module": "construction_ai_assistant",
+    "file": "construction_ai_assistant/controllers/ai_controller.py",
+    "line": 171,
+    "auth": "user",
+    "type": "jsonrpc",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model=None",
+      "record_id=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "ai_create_task",
+    "controller_class": "ConstructionAIController",
+    "module": "construction_ai_assistant",
+    "file": "construction_ai_assistant/controllers/ai_controller.py",
+    "line": 209,
+    "auth": "user",
+    "type": "jsonrpc",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "task_name=None",
+      "description=None",
+      "project_id=None",
+      "deadline=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "create_incident",
+    "controller_class": "ConstructionAPIv2Safety",
+    "module": "construction_api",
+    "file": "construction_api/controllers/api_v2_safety.py",
+    "line": 70,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "mark_read",
+    "controller_class": "ConstructionNotificationController",
+    "module": "construction_base",
+    "file": "construction_base/controllers/notification_controller.py",
+    "line": 72,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v2_create_project",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 83,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v1_create_project",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 220,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v2_create_contract",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 86,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v2_create_ks2",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 239,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v1_create_contract",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 437,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v1_create_ks2",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 447,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v1_create_ks3",
+    "controller_class": "ConstructionRestAPIContracts",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_contracts.py",
+    "line": 457,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v2_create_purchase_request",
+    "controller_class": "ConstructionRestAPIProcurement",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_procurement.py",
+    "line": 66,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "v1_create_purchase_request",
+    "controller_class": "ConstructionRestAPIProcurement",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_procurement.py",
+    "line": 234,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "create_annotation",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 108,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "annotation_data",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "create_measurement",
+    "controller_class": "BimViewerController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_viewer_controller.py",
+    "line": 138,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "measurement_data",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "import_ifc",
+    "controller_class": "BIMController",
+    "module": "construction_bim",
+    "file": "construction_bim/controllers/bim_controller.py",
+    "line": 57,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "model_id",
+      "file_data",
+      "filename",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "list_directory",
+    "controller_class": "NASController",
+    "module": "construction_documents",
+    "file": "construction_documents/controllers/nas_controller.py",
+    "line": 27,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "path=''",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "upload_to_nas",
+    "controller_class": "NASController",
+    "module": "construction_documents",
+    "file": "construction_documents/controllers/nas_controller.py",
+    "line": 45,
+    "auth": "user",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "delete_from_nas",
+    "controller_class": "NASController",
+    "module": "construction_documents",
+    "file": "construction_documents/controllers/nas_controller.py",
+    "line": 107,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "file_path",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "create_folder",
+    "controller_class": "NASController",
+    "module": "construction_documents",
+    "file": "construction_documents/controllers/nas_controller.py",
+    "line": 131,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "folder_path",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "test_connection",
+    "controller_class": "NASController",
+    "module": "construction_documents",
+    "file": "construction_documents/controllers/nas_controller.py",
+    "line": 147,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sbp_webhook",
+    "controller_class": "SbpWebhookController",
+    "module": "construction_finance",
+    "file": "construction_finance/controllers/sbp_webhook.py",
+    "line": 57,
+    "auth": "public",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "receive_edi_document",
+    "controller_class": "EDIController",
+    "module": "construction_integration",
+    "file": "construction_integration/controllers/edi_controller.py",
+    "line": 19,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "fns_check_counterparty",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 13,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "fns_send_vat_declaration",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 34,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "rosreestr_check_property",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 55,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "rosreestr_get_egrn",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 75,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "rosreestr_validate_address",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 95,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "egrul_check_company",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 115,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "egrul_auto_fill_partner",
+    "controller_class": "GovIntegrationsController",
+    "module": "construction_integrations_enhanced",
+    "file": "construction_integrations_enhanced/controllers/gov_integrations_controller.py",
+    "line": 136,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "receive_telemetry",
+    "controller_class": "IoTTelemetryController",
+    "module": "construction_iot",
+    "file": "construction_iot/controllers/iot_telemetry_controller.py",
+    "line": 70,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "receive_equipment_telemetry",
+    "controller_class": "IoTTelemetryController",
+    "module": "construction_iot",
+    "file": "construction_iot/controllers/iot_telemetry_controller.py",
+    "line": 167,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "acknowledge_alert",
+    "controller_class": "IoTTelemetryController",
+    "module": "construction_iot",
+    "file": "construction_iot/controllers/iot_telemetry_controller.py",
+    "line": 295,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "alert_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "mfa_verify",
+    "controller_class": "ConstructionMfaController",
+    "module": "construction_mfa",
+    "file": "construction_mfa/controllers/main.py",
+    "line": 98,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "GET",
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "False",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "redirect=None",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "upload_photo",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 71,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sync_offline_data",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 107,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "create_purchase_request",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 156,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "create_stock_inventory",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 260,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "update_stock_inventory_line",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 313,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "registry_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "update_supply_tracking_location",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 342,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "tracking_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "push_offline_batch",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 360,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "check_offline_books",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 411,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "get_offline_books_updates",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 433,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "get_offline_book_delta",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 458,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "book_id",
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "check_geofence",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 532,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "check_geofence_bulk",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 579,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "push_register",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 618,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "push_unregister",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 638,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "process_qr_scan",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 673,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "voice_fill",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 722,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "voice_journal",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 752,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sign_document_mobile",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 779,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "register_material_movement",
+    "controller_class": "MobileController",
+    "module": "construction_mobile",
+    "file": "construction_mobile/controllers/mobile_controller.py",
+    "line": 808,
+    "auth": "user",
+    "type": "json",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kwargs"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sync_pull",
+    "controller_class": "PWAController",
+    "module": "construction_pwa",
+    "file": "construction_pwa/controllers/pwa_controller.py",
+    "line": 195,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "sync_push",
+    "controller_class": "PWAController",
+    "module": "construction_pwa",
+    "file": "construction_pwa/controllers/pwa_controller.py",
+    "line": 326,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "POST",
+    "method_name": "contact_submit",
+    "controller_class": "PrivodWebsite",
+    "module": "construction_website",
+    "file": "construction_website/controllers/main.py",
+    "line": 92,
+    "auth": "public",
+    "type": "http",
+    "http_methods": [
+      "POST"
+    ],
+    "csrf": "True",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "**kw"
+    ]
+  },
+  {
+    "route": "PUT",
+    "method_name": "v2_update_project",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 122,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "PUT"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kw"
+    ]
+  },
+  {
+    "route": "PUT",
+    "method_name": "v1_update_project",
+    "controller_class": "ConstructionRestAPIProjects",
+    "module": "construction_base",
+    "file": "construction_base/controllers/rest_api_projects.py",
+    "line": 225,
+    "auth": "none",
+    "type": "http",
+    "http_methods": [
+      "PUT"
+    ],
+    "csrf": "False",
+    "website": "",
+    "cors": "",
+    "docstring": "",
+    "params": [
+      "project_id",
+      "**kw"
+    ]
+  }
+]

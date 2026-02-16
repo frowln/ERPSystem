@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Project Summary Report'">Project Summary</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .metric-card {
+            display: inline-block;
+            width: 22%;
+            border: 1px solid #ccc;
+            padding: 8pt;
+            margin: 2pt;
+            text-align: center;
+            vertical-align: top;
+        }
+        .metric-card .metric-value {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .metric-card .metric-label {
+            font-size: 8pt;
+            color: #555;
+            margin-top: 2pt;
+        }
+        .progress-bar-container {
+            background-color: #e5e7eb;
+            height: 10pt;
+            border-radius: 5pt;
+            overflow: hidden;
+            margin: 4pt 0;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 5pt;
+        }
+        .progress-green  { background-color: #16a34a; }
+        .progress-yellow { background-color: #ca8a04; }
+        .progress-red    { background-color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Organization'">Privod Construction</div>
+    <div class="report-title">Project Summary Report</div>
+    <div class="report-subtitle">
+        Generated: <span th:text="${#temporals.format(generatedAt, 'dd MMM yyyy HH:mm')}"
+                         th:if="${generatedAt != null}">01 Jan 2026 10:00</span>
+        <span th:if="${generatedAt == null}" th:text="${generatedDate} ?: '—'">—</span>
+    </div>
+</div>
+
+<!-- ── Project info ───────────────────────────────────────────────────────── -->
+<h2>Project Information</h2>
+<table class="info-grid">
+    <tr>
+        <td class="label">Project Name:</td>
+        <td th:text="${projectName} ?: '—'">Highway Overpass Construction</td>
+    </tr>
+    <tr>
+        <td class="label">Project Code:</td>
+        <td th:text="${projectCode} ?: '—'">PRJ-001</td>
+    </tr>
+    <tr>
+        <td class="label">Client:</td>
+        <td th:text="${clientName} ?: '—'">City Administration</td>
+    </tr>
+    <tr>
+        <td class="label">Project Manager:</td>
+        <td th:text="${projectManager} ?: '—'">Ivan Petrov</td>
+    </tr>
+    <tr>
+        <td class="label">Location:</td>
+        <td th:text="${location} ?: '—'">Moscow, Tverskaya st.</td>
+    </tr>
+    <tr>
+        <td class="label">Status:</td>
+        <td th:text="${status} ?: 'Active'">Active</td>
+    </tr>
+</table>
+
+<!-- ── Key metrics ────────────────────────────────────────────────────────── -->
+<h2>Key Metrics</h2>
+<div class="mb-16">
+    <div class="metric-card">
+        <div class="metric-value" th:text="${completionPercent != null ? completionPercent + '%' : '—'}">45%</div>
+        <div class="metric-label">Overall Completion</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value" th:text="${daysRemaining} ?: '—'">120</div>
+        <div class="metric-label">Days Remaining</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value" th:text="${openIssues} ?: '—'">7</div>
+        <div class="metric-label">Open Issues</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value" th:text="${activeRfis} ?: '—'">3</div>
+        <div class="metric-label">Active RFIs</div>
+    </div>
+</div>
+
+<!-- ── Budget vs. actual ──────────────────────────────────────────────────── -->
+<h2>Budget vs. Actual</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:30%;">Category</th>
+            <th style="width:20%;">Budget</th>
+            <th style="width:20%;">Actual</th>
+            <th style="width:15%;">Variance</th>
+            <th style="width:15%;">Variance %</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item : ${budgetItems}" th:if="${budgetItems != null}">
+            <td th:text="${item.category}">Materials</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.budget, 1, 2)}">500000.00</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.actual, 1, 2)}">480000.00</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.variance, 1, 2)}">-20000.00</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.variancePercent, 1, 1) + '%'}">-4.0%</td>
+        </tr>
+        <tr th:if="${budgetItems == null or budgetItems.isEmpty()}">
+            <td colspan="5" class="center text-muted">No budget data available</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${budgetItems != null and !budgetItems.isEmpty()}">
+        <tr class="total-row">
+            <td class="text-bold">Total</td>
+            <td class="number" th:text="${totalBudget != null ? #numbers.formatDecimal(totalBudget, 1, 2) : '—'}">0.00</td>
+            <td class="number" th:text="${totalActual != null ? #numbers.formatDecimal(totalActual, 1, 2) : '—'}">0.00</td>
+            <td class="number" th:text="${totalVariance != null ? #numbers.formatDecimal(totalVariance, 1, 2) : '—'}">0.00</td>
+            <td class="number" th:text="${totalVariancePercent != null ? #numbers.formatDecimal(totalVariancePercent, 1, 1) + '%' : '—'}">0.0%</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Schedule status ────────────────────────────────────────────────────── -->
+<h2>Schedule Status</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:30%;">Milestone</th>
+            <th style="width:18%;">Planned Date</th>
+            <th style="width:18%;">Actual / Forecast</th>
+            <th style="width:14%;">Variance (days)</th>
+            <th style="width:20%;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="ms : ${milestones}" th:if="${milestones != null}">
+            <td th:text="${ms.name}">Foundation</td>
+            <td class="center" th:text="${ms.plannedDate}">2026-02-15</td>
+            <td class="center" th:text="${ms.actualDate} ?: ${ms.forecastDate}">2026-02-20</td>
+            <td class="center" th:text="${ms.varianceDays}">+5</td>
+            <td class="center">
+                <span class="badge"
+                      th:classappend="${ms.status == 'On Track' ? 'badge-low' : (ms.status == 'At Risk' ? 'badge-medium' : 'badge-critical')}"
+                      th:text="${ms.status}">On Track</span>
+            </td>
+        </tr>
+        <tr th:if="${milestones == null or milestones.isEmpty()}">
+            <td colspan="5" class="center text-muted">No milestones defined</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Risk summary ───────────────────────────────────────────────────────── -->
+<h2>Risk Summary</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">#</th>
+            <th style="width:30%;">Risk Description</th>
+            <th style="width:12%;">Likelihood</th>
+            <th style="width:12%;">Impact</th>
+            <th style="width:12%;">Rating</th>
+            <th style="width:29%;">Mitigation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="risk, iter : ${risks}" th:if="${risks != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${risk.description}">Material supply delay</td>
+            <td class="center" th:text="${risk.likelihood}">Medium</td>
+            <td class="center" th:text="${risk.impact}">High</td>
+            <td class="center">
+                <span class="badge"
+                      th:classappend="${risk.rating == 'Critical' ? 'badge-critical' : (risk.rating == 'High' ? 'badge-high' : (risk.rating == 'Medium' ? 'badge-medium' : 'badge-low'))}"
+                      th:text="${risk.rating}">High</span>
+            </td>
+            <td th:text="${risk.mitigation}">Alternative supplier identified</td>
+        </tr>
+        <tr th:if="${risks == null or risks.isEmpty()}">
+            <td colspan="6" class="center text-muted">No active risks</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+<div class="mt-16 text-small text-muted text-center">
+    This report was generated automatically by the Privod Construction Platform.
+    Data is current as of the generation timestamp.
+</div>
+
+</body>
+</html>

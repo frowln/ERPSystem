@@ -1,0 +1,125 @@
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Edit3, ChevronDown } from 'lucide-react';
+import { PageHeader } from '@/design-system/components/PageHeader';
+import { Button } from '@/design-system/components/Button';
+import { StatusBadge, projectStatusLabels } from '@/design-system/components/StatusBadge';
+import { Modal } from '@/design-system/components/Modal';
+import { projectsApi } from '@/api/projects';
+import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
+import { useProjectFinancials } from './hooks/useProjectFinancials';
+import { ProjectOverviewTab } from './ProjectOverviewTab';
+import { ProjectFinanceTab } from './ProjectFinanceTab';
+import { ProjectTeamTab } from './ProjectTeamTab';
+import { ProjectDocumentsTab } from './ProjectDocumentsTab';
+import type { ProjectStatus } from '@/types';
+
+type DetailTab = 'overview' | 'team' | 'documents' | 'FINANCE';
+
+const ProjectDetailPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<DetailTab>('overview');
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+
+  const { data: project } = useQuery({
+    queryKey: ['PROJECT', id],
+    queryFn: () => projectsApi.getProject(id!),
+    enabled: !!id,
+  });
+
+  const { data: financials, isLoading: financialsLoading } = useQuery({
+    queryKey: ['project-financials', id],
+    queryFn: () => projectsApi.getProjectFinancials(id!),
+    enabled: !!id,
+  });
+
+  const { data: members } = useQuery({
+    queryKey: ['project-members', id],
+    queryFn: () => projectsApi.getProjectMembers(id!),
+    enabled: !!id && activeTab === 'team',
+  });
+
+  const computed = useProjectFinancials(project, financials);
+  const statuses: ProjectStatus[] = ['DRAFT', 'PLANNING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED'];
+
+  return (
+    <div className="animate-fade-in">
+      <PageHeader
+        title={project?.name ?? ''}
+        subtitle={`${project?.code ?? ''} / ${project?.type ?? ''}`}
+        backTo="/projects"
+        breadcrumbs={[
+          { label: t('nav.dashboard'), href: '/' },
+          { label: t('nav.projects'), href: '/projects' },
+          { label: project?.name ?? '' },
+        ]}
+        actions={
+          <div className="flex items-center gap-2">
+            <StatusBadge status={project?.status ?? ''} size="md" />
+            <Button variant="secondary" size="sm" iconRight={<ChevronDown size={14} />} onClick={() => setStatusModalOpen(true)}>
+              {t('projects.status')}
+            </Button>
+            <Button variant="secondary" size="sm" iconLeft={<Edit3 size={14} />} onClick={() => navigate(`/projects/${id}/edit`)}>
+              {t('common.edit')}
+            </Button>
+          </div>
+        }
+        tabs={[
+          { id: 'overview', label: t('analytics.overview') },
+          { id: 'team', label: t('projects.team'), count: project?.membersCount },
+          { id: 'documents', label: t('nav.documents') },
+          { id: 'FINANCE', label: t('nav.finance') },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(id) => setActiveTab(id as DetailTab)}
+      />
+
+      {activeTab === 'overview' && (
+        <ProjectOverviewTab project={project} financials={computed} financialsLoading={financialsLoading} />
+      )}
+      {activeTab === 'team' && (
+        <ProjectTeamTab members={members ?? []} />
+      )}
+      {activeTab === 'documents' && (
+        <ProjectDocumentsTab project={project} />
+      )}
+      {activeTab === 'FINANCE' && (
+        <ProjectFinanceTab project={project} financials={financials} computed={computed} financialsLoading={financialsLoading} />
+      )}
+
+      <Modal
+        open={statusModalOpen}
+        onClose={() => setStatusModalOpen(false)}
+        title={t('projects.status')}
+        description={projectStatusLabels[project?.status ?? ''] ?? project?.status ?? ''}
+        size="sm"
+      >
+        <div className="space-y-2">
+          {statuses.map((status) => (
+            <button
+              key={status}
+              disabled={status === project?.status}
+              onClick={() => setStatusModalOpen(false)}
+              className={cn(
+                'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors',
+                status === project?.status
+                  ? 'bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 cursor-default'
+                  : 'hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:hover:bg-neutral-800 border border-transparent',
+              )}
+            >
+              <StatusBadge status={status} />
+              {status === project?.status && (
+                <span className="ml-auto text-xs text-primary-600 font-medium">{t('status.active')}</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+export default ProjectDetailPage;

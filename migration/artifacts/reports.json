@@ -1,0 +1,2446 @@
+{
+  "reports": [
+    {
+      "module": "construction_1c_integration",
+      "id": "action_report_exchange_log",
+      "name": "Отчет по обмену с 1С",
+      "model": "one.c.exchange.log",
+      "report_name": "construction_1c_integration.report_exchange_log",
+      "report_type": "qweb-pdf",
+      "file": "construction_1c_integration/report/exchange_log_report_templates.xml"
+    },
+    {
+      "module": "construction_analytics",
+      "id": "action_report_risk_register",
+      "name": "Реестр рисков",
+      "model": "project.risk",
+      "report_name": "construction_analytics.report_risk_register_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_analytics/reports/analytics_reports.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "action_report_audit_checklist",
+      "name": "Отчет по аудиту",
+      "model": "construction.audit.checklist",
+      "report_name": "construction_audit.report_audit_checklist",
+      "report_type": "qweb-pdf",
+      "file": "construction_audit/report/audit_report_template.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "action_report_audit_checklist_detailed",
+      "name": "Отчёт о проверке (детальный)",
+      "model": "construction.audit.checklist",
+      "report_name": "construction_audit.report_audit_checklist_detailed",
+      "report_type": "qweb-pdf",
+      "file": "construction_audit/reports/audit_checklist_report.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "action_report_audit_schedule",
+      "name": "Расписание аудитов",
+      "model": "construction.audit.schedule",
+      "report_name": "construction_audit.report_audit_schedule",
+      "report_type": "qweb-pdf",
+      "file": "construction_audit/reports/audit_schedule_report.xml"
+    },
+    {
+      "module": "construction_bim",
+      "id": "action_report_bim_model",
+      "name": "BIM модель - сводка",
+      "model": "bim.model",
+      "report_name": "construction_bim.report_bim_model_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_bim/reports/bim_model_report.xml"
+    },
+    {
+      "module": "construction_certificates",
+      "id": "action_report_material_certificate",
+      "name": "Реестр сертификатов",
+      "model": "construction.material.certificate",
+      "report_name": "construction_certificates.report_material_certificate",
+      "report_type": "qweb-pdf",
+      "file": "construction_certificates/reports/certificate_report.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "action_report_contract",
+      "name": "Договор",
+      "model": "contract.contract",
+      "report_name": "construction_contract.report_contract",
+      "report_type": "qweb-pdf",
+      "file": "construction_contract/reports/contract_report.xml"
+    },
+    {
+      "module": "construction_crew_time",
+      "id": "action_report_timesheet",
+      "name": "Табель учёта рабочего времени",
+      "model": "construction.time.sheet",
+      "report_name": "construction_crew_time.report_timesheet",
+      "report_type": "qweb-pdf",
+      "file": "construction_crew_time/reports/timesheet_report.xml"
+    },
+    {
+      "module": "construction_daily_log",
+      "id": "action_report_daily_log",
+      "name": "Полевой журнал",
+      "model": "construction.daily.log",
+      "report_name": "construction_daily_log.report_daily_log_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_daily_log/reports/daily_log_report.xml"
+    },
+    {
+      "module": "construction_design",
+      "id": "action_report_design_section",
+      "name": "Раздел проектной документации",
+      "model": "design.section",
+      "report_name": "construction_design.report_design_section_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_design/reports/design_section_report.xml"
+    },
+    {
+      "module": "construction_dispatch",
+      "id": "action_report_dispatch_order",
+      "name": "Путевой лист",
+      "model": "construction.dispatch.order",
+      "report_name": "construction_dispatch.report_dispatch_order",
+      "report_type": "qweb-pdf",
+      "file": "construction_dispatch/reports/dispatch_order_report.xml"
+    },
+    {
+      "module": "construction_edo_generator",
+      "id": "action_report_edo_document",
+      "name": "Карточка ЭДО документа",
+      "model": "edo.document",
+      "report_name": "construction_edo_generator.report_edo_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_edo_generator/report/edo_document_report_templates.xml"
+    },
+    {
+      "module": "construction_estimate",
+      "id": "action_report_estimate",
+      "name": "Смета (детально)",
+      "model": "construction.estimate",
+      "report_name": "construction_estimate.report_estimate_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_estimate/reports/estimate_report.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "action_report_contract_penalty",
+      "name": "Начисление пеней",
+      "model": "construction.contract.penalty",
+      "report_name": "construction_finance.report_contract_penalty_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_finance/reports/report_contract_penalty.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "action_report_contract_retention",
+      "name": "Удержание по договору",
+      "model": "contract.retention",
+      "report_name": "construction_finance.report_contract_retention_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_finance/reports/report_contract_retention.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "action_report_overhead_allocation",
+      "name": "Распределение накладных расходов",
+      "model": "construction.overhead.allocation",
+      "report_name": "construction_finance.report_overhead_allocation_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_finance/reports/report_overhead_allocation.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "action_report_payment_calendar",
+      "name": "Платежный календарь",
+      "model": "payment.calendar",
+      "report_name": "construction_finance.report_payment_calendar_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_finance/reports/report_payment_calendar.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "action_report_payment_register",
+      "name": "Реестр на оплату",
+      "model": "payment.register",
+      "report_name": "construction_finance.report_payment_register_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_finance/reports/report_payment_register.xml"
+    },
+    {
+      "module": "construction_fleet_integration",
+      "id": "action_report_fleet_assignment",
+      "name": "График назначения транспорта",
+      "model": "fleet.vehicle.assignment",
+      "report_name": "construction_fleet_integration.report_fleet_assignment_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_fleet_integration/reports/fleet_assignment_report.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "action_report_piecework_payment",
+      "name": "Расчет сдельной оплаты",
+      "model": "piecework.payment",
+      "report_name": "construction_hr_russian.report_piecework_payment_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_hr_russian/reports/piecework_payment_report.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "action_report_self_employed_registry",
+      "name": "Реестр выплат самозанятым",
+      "model": "construction.self.employed.registry",
+      "report_name": "construction_hr_russian.report_self_employed_registry_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_hr_russian/reports/self_employed_registry_report.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "action_report_work_order",
+      "name": "Наряд на выполнение работ",
+      "model": "construction.work.order",
+      "report_name": "construction_hr_russian.report_work_order_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_hr_russian/reports/work_order_report.xml"
+    },
+    {
+      "module": "construction_iot",
+      "id": "action_report_iot_device",
+      "name": "Статус IoT устройств",
+      "model": "construction.iot.device",
+      "report_name": "construction_iot.report_iot_device_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_iot/reports/iot_device_report.xml"
+    },
+    {
+      "module": "construction_journals",
+      "id": "action_report_journal_general_ks6",
+      "name": "Общий журнал работ (КС-6)",
+      "model": "construction.journal.general",
+      "report_name": "construction_journals.report_journal_general_ks6",
+      "report_type": "qweb-pdf",
+      "file": "construction_journals/report/journal_general_report.xml"
+    },
+    {
+      "module": "construction_kep",
+      "id": "action_report_kep_signature",
+      "name": "Журнал подписей КЭП",
+      "model": "kep.signature",
+      "report_name": "construction_kep.report_kep_signature_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_kep/reports/kep_signature_report.xml"
+    },
+    {
+      "module": "construction_kpi",
+      "id": "action_report_kpi_achievement",
+      "name": "Отчёт по KPI",
+      "model": "construction.kpi.achievement",
+      "report_name": "construction_kpi.report_kpi_achievement_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_kpi/reports/kpi_report.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "action_report_transfer_plan",
+      "name": "План перевозок",
+      "model": "construction.transfer.plan",
+      "report_name": "construction_logistics.report_transfer_plan",
+      "report_type": "qweb-pdf",
+      "file": "construction_logistics/reports/logistics_reports.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "action_report_transfer_task",
+      "name": "Накладная на доставку",
+      "model": "construction.transfer.task",
+      "report_name": "construction_logistics.report_transfer_task",
+      "report_type": "qweb-pdf",
+      "file": "construction_logistics/reports/logistics_reports.xml"
+    },
+    {
+      "module": "construction_lrv",
+      "id": "action_report_lrv",
+      "name": "Лимитно-распределительная ведомость",
+      "model": "construction.lrv",
+      "report_name": "construction_lrv.report_lrv",
+      "report_type": "qweb-pdf",
+      "file": "construction_lrv/reports/lrv_report.xml"
+    },
+    {
+      "module": "construction_material_analogs",
+      "id": "action_report_material_analog",
+      "name": "Карточка аналогов материала",
+      "model": "construction.material.analog",
+      "report_name": "construction_material_analogs.report_material_analog",
+      "report_type": "qweb-pdf",
+      "file": "construction_material_analogs/reports/analog_report.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "action_report_work_journal",
+      "name": "Отчёт по журналу работ",
+      "model": "construction.work.journal",
+      "report_name": "construction_mobile.report_work_journal_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_mobile/reports/mobile_reports.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "action_report_quality_checklist",
+      "name": "Чек-лист качества (PDF)",
+      "model": "mobile.quality.checklist",
+      "report_name": "construction_mobile.report_quality_checklist_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_mobile/reports/mobile_reports.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "action_report_quality_defect",
+      "name": "Акт по дефекту качества (PDF)",
+      "model": "mobile.quality.defect",
+      "report_name": "construction_mobile.report_quality_defect_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_mobile/reports/mobile_reports.xml"
+    },
+    {
+      "module": "construction_monthly_schedule",
+      "id": "action_report_monthly_schedule",
+      "name": "Месячный сводный график",
+      "model": "construction.monthly.schedule",
+      "report_name": "construction_monthly_schedule.report_monthly_schedule",
+      "report_type": "qweb-pdf",
+      "file": "construction_monthly_schedule/reports/monthly_schedule_report.xml"
+    },
+    {
+      "module": "construction_ocr",
+      "id": "action_report_document_recognition",
+      "name": "Отчет по распознаванию документа",
+      "model": "document.recognition",
+      "report_name": "construction_ocr.report_document_recognition",
+      "report_type": "qweb-pdf",
+      "file": "construction_ocr/report/document_recognition_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "action_report_technical_spec_registry",
+      "name": "Реестр ТЗ",
+      "model": "technical.spec.registry",
+      "report_name": "construction_ops.report_technical_spec_registry",
+      "report_type": "qweb-pdf",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "action_report_defect_statement",
+      "name": "Дефектная ведомость",
+      "model": "defect.statement",
+      "report_name": "construction_ops.report_defect_statement",
+      "report_type": "qweb-pdf",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "action_report_commercial_proposal",
+      "name": "Коммерческое предложение",
+      "model": "commercial.proposal",
+      "report_name": "construction_ops.report_commercial_proposal",
+      "report_type": "qweb-pdf",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "action_report_work_schedule",
+      "name": "График производства работ (ГПР)",
+      "model": "work.schedule",
+      "report_name": "construction_ops.report_work_schedule",
+      "report_type": "qweb-pdf",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "action_report_contractor_selection",
+      "name": "Отбор подрядчиков",
+      "model": "contractor.selection",
+      "report_name": "construction_ops.report_contractor_selection",
+      "report_type": "qweb-pdf",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_photo_progress",
+      "id": "action_report_photo_progress",
+      "name": "Отчёт фотофиксации",
+      "model": "construction.photo.report",
+      "report_name": "construction_photo_progress.report_photo_progress",
+      "report_type": "qweb-pdf",
+      "file": "construction_photo_progress/reports/photo_progress_report.xml"
+    },
+    {
+      "module": "construction_planning",
+      "id": "action_report_evm",
+      "name": "Отчёт планирования (EVM)",
+      "model": "construction.evm",
+      "report_name": "construction_planning.report_evm_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_planning/reports/planning_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "action_report_material_receipt",
+      "name": "Акт приемки материалов",
+      "model": "material.receipt",
+      "report_name": "construction_procurement.report_material_receipt",
+      "report_type": "qweb-pdf",
+      "file": "construction_procurement/reports/material_receipt_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "action_report_min_price_request",
+      "name": "Запрос минимальных цен",
+      "model": "purchase.request",
+      "report_name": "construction_procurement.min_price_request_report",
+      "report_type": "qweb-pdf",
+      "file": "construction_procurement/reports/min_price_request_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "action_report_price_request",
+      "name": "Запрос цен",
+      "model": "purchase.request",
+      "report_name": "construction_procurement.price_request_report",
+      "report_type": "qweb-pdf",
+      "file": "construction_procurement/reports/price_request_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "action_report_supplier_qualification",
+      "name": "Карточка квалификации поставщика",
+      "model": "supplier.qualification",
+      "report_name": "construction_procurement.report_supplier_qualification",
+      "report_type": "qweb-pdf",
+      "file": "construction_procurement/reports/supplier_qualification_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "action_report_three_way_match",
+      "name": "Трехстороннее сопоставление",
+      "model": "procurement.three.way.match",
+      "report_name": "construction_procurement.report_three_way_match",
+      "report_type": "qweb-pdf",
+      "file": "construction_procurement/reports/three_way_match_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "action_report_upd",
+      "name": "Универсальный передаточный документ",
+      "model": "construction.upd",
+      "report_name": "construction_procurement.report_upd",
+      "report_type": "qweb-pdf",
+      "file": "construction_procurement/reports/upd_report.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "action_report_task_enhanced",
+      "name": "Отчёт по задаче (строительство)",
+      "model": "project.task",
+      "report_name": "construction_project_enhanced.report_task_enhanced_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_project_enhanced/reports/task_report.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "action_report_task_approval",
+      "name": "Лист согласования",
+      "model": "project.task",
+      "report_name": "construction_project_enhanced.report_task_approval_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_project_enhanced/reports/task_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "action_report_hidden_work_act",
+      "name": "Акт скрытых работ",
+      "model": "construction.hidden.work.act",
+      "report_name": "construction_pto.report_hidden_work_act_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_pto/reports/hidden_work_act_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "action_report_ks2",
+      "name": "КС-2 (Акт)",
+      "model": "construction.ks2",
+      "report_name": "construction_pto.report_ks2_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_pto/reports/ks2_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "action_report_ks3",
+      "name": "КС-3 (Справка)",
+      "model": "construction.ks3",
+      "report_name": "construction_pto.report_ks3_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_pto/reports/ks3_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "action_report_ks6a",
+      "name": "КС-6а (Журнал учета)",
+      "model": "construction.ks6a",
+      "report_name": "construction_pto.report_ks6a_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_pto/reports/ks6a_report.xml"
+    },
+    {
+      "module": "construction_punch_list",
+      "id": "action_report_punch_list",
+      "name": "Отчёт по замечаниям",
+      "model": "construction.punch.item",
+      "report_name": "construction_punch_list.report_punch_list_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_punch_list/reports/punch_list_report.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "action_report_balance_sheet",
+      "name": "Бухгалтерский баланс (PDF)",
+      "model": "balance.sheet",
+      "report_name": "construction_regulatory_reports.report_balance_sheet_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "action_report_financial_results",
+      "name": "Отчёт о финансовых результатах (PDF)",
+      "model": "financial.results",
+      "report_name": "construction_regulatory_reports.report_financial_results_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "action_report_vat_declaration",
+      "name": "Декларация по НДС (PDF)",
+      "model": "vat.declaration",
+      "report_name": "construction_regulatory_reports.report_vat_declaration_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "action_report_cash_flow",
+      "name": "ОДДС (PDF)",
+      "model": "cash.flow.statement",
+      "report_name": "construction_regulatory_reports.report_cash_flow_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "action_report_contract_branded",
+      "name": "Договор (фирменный)",
+      "model": "contract.contract",
+      "report_name": "construction_reports.report_contract_branded_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_reports/report/report_contract.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "action_report_estimate_branded",
+      "name": "Смета (фирменный)",
+      "model": "construction.estimate",
+      "report_name": "construction_reports.report_estimate_branded_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_reports/report/report_estimate.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "action_report_ks2_branded",
+      "name": "КС-2: Акт выполненных работ (фирменный)",
+      "model": "construction.ks2",
+      "report_name": "construction_reports.report_ks2_branded_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_reports/report/report_ks2.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "action_report_ks3_branded",
+      "name": "КС-3: Справка о стоимости (фирменный)",
+      "model": "construction.ks3",
+      "report_name": "construction_reports.report_ks3_branded_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_reports/report/report_ks3.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "action_report_m29_branded",
+      "name": "М-29: Отчет о расходе материалов (фирменный)",
+      "model": "construction.m29",
+      "report_name": "construction_reports.report_m29_branded_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_reports/report/report_m29.xml"
+    },
+    {
+      "module": "construction_reservation",
+      "id": "action_report_material_reservation",
+      "name": "Заявка на материалы",
+      "model": "construction.material.reservation",
+      "report_name": "construction_reservation.report_material_reservation",
+      "report_type": "qweb-pdf",
+      "file": "construction_reservation/reports/reservation_report.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "action_report_fixed_asset_card",
+      "name": "Инвентарная карточка ОС",
+      "model": "fixed.asset",
+      "report_name": "construction_russian_accounting.report_fixed_asset_card_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_russian_accounting/reports/fixed_asset_report.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "action_report_tax_declaration",
+      "name": "Налоговая декларация",
+      "model": "construction.tax.declaration",
+      "report_name": "construction_russian_accounting.report_tax_declaration_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_russian_accounting/reports/tax_declaration_report.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "action_report_torg12",
+      "name": "ТОРГ-12 (товарная накладная)",
+      "model": "torg12",
+      "report_name": "construction_russian_documents.report_torg12_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_russian_documents/report/report_actions.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "action_report_ttn",
+      "name": "ТТН (товарно-транспортная накладная)",
+      "model": "ttn",
+      "report_name": "construction_russian_documents.report_ttn_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_russian_documents/report/report_actions.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "action_report_pko",
+      "name": "ПКО (приходный кассовый ордер)",
+      "model": "cash.receipt.order",
+      "report_name": "construction_russian_documents.report_pko_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_russian_documents/report/report_actions.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "action_report_rko",
+      "name": "РКО (расходный кассовый ордер)",
+      "model": "cash.expense.order",
+      "report_name": "construction_russian_documents.report_rko_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_russian_documents/report/report_actions.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "action_report_safety_incident",
+      "name": "Safety Incident Report",
+      "model": "safety.incident",
+      "report_name": "construction_safety.report_safety_incident_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_safety/reports/safety_incident_report.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "action_report_safety_inspection",
+      "name": "Safety Inspection Report",
+      "model": "safety.inspection",
+      "report_name": "construction_safety.report_safety_inspection_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_safety/reports/safety_inspection_report.xml"
+    },
+    {
+      "module": "construction_specification",
+      "id": "action_report_specification",
+      "name": "Спецификация",
+      "model": "construction.specification",
+      "report_name": "construction_specification.report_specification_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_specification/reports/specification_report.xml"
+    },
+    {
+      "module": "construction_stock",
+      "id": "action_report_m29",
+      "name": "М-29 (Отчет о расходе материалов)",
+      "model": "construction.m29",
+      "report_name": "construction_stock.report_m29_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_stock/reports/m29_report.xml"
+    },
+    {
+      "module": "construction_submittals",
+      "id": "action_report_submittal",
+      "name": "Передача документации",
+      "model": "construction.submittal",
+      "report_name": "construction_submittals.report_submittal_document",
+      "report_type": "qweb-pdf",
+      "file": "construction_submittals/reports/submittal_report.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "action_report_tolerance_check",
+      "name": "Акт проверки допуска",
+      "model": "construction.tolerance.check",
+      "report_name": "construction_tolerance.report_tolerance_check",
+      "report_type": "qweb-pdf",
+      "file": "construction_tolerance/reports/tolerance_reports.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "action_report_tolerance_rules",
+      "name": "Реестр правил допусков",
+      "model": "construction.tolerance.rule",
+      "report_name": "construction_tolerance.report_tolerance_rules",
+      "report_type": "qweb-pdf",
+      "file": "construction_tolerance/reports/tolerance_reports.xml"
+    }
+  ],
+  "email_templates": [
+    {
+      "module": "construction_1c_integration",
+      "id": "mail_template_exchange_log_completed",
+      "name": "1С Обмен: уведомление о завершении",
+      "model_id": "model_one_c_exchange_log",
+      "subject": "1С Обмен {{ object.name }} - {{ object.status }}",
+      "file": "construction_1c_integration/data/exchange_log_email_templates.xml"
+    },
+    {
+      "module": "construction_1c_integration",
+      "id": "mail_template_exchange_log_error",
+      "name": "1С Обмен: ошибка",
+      "model_id": "model_one_c_exchange_log",
+      "subject": "ОШИБКА обмена 1С: {{ object.name }}",
+      "file": "construction_1c_integration/data/exchange_log_email_templates.xml"
+    },
+    {
+      "module": "construction_analytics",
+      "id": "mail_template_risk_critical",
+      "name": "Аналитика: Критический риск",
+      "model_id": "model_project_risk",
+      "subject": "Критический риск: {{ object.name }}",
+      "file": "construction_analytics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_analytics",
+      "id": "mail_template_risk_mitigated",
+      "name": "Аналитика: Риск митигирован",
+      "model_id": "model_project_risk",
+      "subject": "Риск митигирован: {{ object.name }}",
+      "file": "construction_analytics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_analytics",
+      "id": "mail_template_esg_report_ready",
+      "name": "Аналитика: ESG отчёт готов",
+      "model_id": "model_esg_report",
+      "subject": "ESG отчёт сформирован: {{ object.name }}",
+      "file": "construction_analytics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "mail_template_audit_started",
+      "name": "Аудит: Проверка начата",
+      "model_id": "model_construction_audit_checklist",
+      "subject": "Аудит «{{ object.name }}» начат",
+      "file": "construction_audit/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "mail_template_audit_completed",
+      "name": "Аудит: Проверка завершена",
+      "model_id": "model_construction_audit_checklist",
+      "subject": "Аудит «{{ object.name }}» завершён — соответствие {{ object.compliance_score }}%",
+      "file": "construction_audit/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "mail_template_scheduled_audit_created",
+      "name": "Аудит: Плановый аудит создан по расписанию",
+      "model_id": "model_construction_audit_checklist",
+      "subject": "Плановый аудит «{{ object.name }}» создан",
+      "file": "construction_audit/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "mail_template_low_compliance",
+      "name": "Аудит: Низкий уровень соответствия",
+      "model_id": "model_construction_audit_checklist",
+      "subject": "ВНИМАНИЕ: Низкое соответствие {{ object.compliance_score }}% — «{{ object.name }}»",
+      "file": "construction_audit/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_bim",
+      "id": "mail_template_bim_clash_detected",
+      "name": "BIM: Обнаружена коллизия",
+      "model_id": "model_bim_clash",
+      "subject": "Обнаружена коллизия BIM: {{ object.name }}",
+      "file": "construction_bim/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_bim",
+      "id": "mail_template_bim_model_processed",
+      "name": "BIM: Модель обработана",
+      "model_id": "model_bim_model",
+      "subject": "BIM модель {{ object.name }} обработана",
+      "file": "construction_bim/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_expiry_warning",
+      "name": "Договор: истечение срока",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Истечение договора: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_warranty_expiry",
+      "name": "Договор: истечение гарантии",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Истечение гарантии: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_retention_release",
+      "name": "Договор: возврат удержания",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Возврат удержания: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_renewal_reminder",
+      "name": "Договор: напоминание о продлении",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Продление договора: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_payment_due",
+      "name": "Договор: срок оплаты",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Срок оплаты: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_guarantee_expiry",
+      "name": "Договор: истечение банковской гарантии",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Истечение банковской гарантии: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_alert_milestone",
+      "name": "Договор: приближение контрольной точки",
+      "model_id": "model_contract_lifecycle_alert",
+      "subject": "Контрольная точка: {{ object.contract_id.name }}",
+      "file": "construction_contract/data/contract_lifecycle_alert_data.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_contract_approved",
+      "name": "Contract: Approved",
+      "model_id": "model_contract_contract",
+      "subject": "Contract Approved: {{ object.name or '' }} ({{ object.number or '' }})",
+      "file": "construction_contract/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "mail_template_contract_expiring",
+      "name": "Contract: Expiring Soon",
+      "model_id": "model_contract_contract",
+      "subject": "Contract Expiring Soon: {{ object.name or '' }} ({{ object.number or '' }})",
+      "file": "construction_contract/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "mail_template_portal_access_granted",
+      "name": "Портал подрядчика: доступ предоставлен",
+      "model_id": "model_construction_portal_access",
+      "subject": "Вам предоставлен доступ к порталу строительных объектов",
+      "file": "construction_contractor_portal/data/portal_data.xml"
+    },
+    {
+      "module": "construction_crew_time",
+      "id": "mail_template_timesheet_submitted",
+      "name": "Табель: Отправлен на утверждение",
+      "model_id": "model_construction_time_sheet",
+      "subject": "Табель «{{ object.name }}» отправлен на утверждение",
+      "file": "construction_crew_time/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_crew_time",
+      "id": "mail_template_timesheet_approved",
+      "name": "Табель: Утверждён",
+      "model_id": "model_construction_time_sheet",
+      "subject": "Табель «{{ object.name }}» утверждён",
+      "file": "construction_crew_time/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_daily_log",
+      "id": "mail_template_daily_log_reminder",
+      "name": "Daily Log: Reminder to Fill",
+      "model_id": "model_construction_daily_log",
+      "subject": "Reminder: Fill Daily Log for {{ object.project_id.name or '' }} - {{ object.date or '' }}",
+      "file": "construction_daily_log/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_daily_log",
+      "id": "mail_template_daily_log_submitted",
+      "name": "Daily Log: Submitted for Approval",
+      "model_id": "model_construction_daily_log",
+      "subject": "Daily Log Submitted: {{ object.project_id.name or '' }} - {{ object.date or '' }}",
+      "file": "construction_daily_log/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_design",
+      "id": "mail_template_design_section_review",
+      "name": "Проектный раздел: На согласование",
+      "model_id": "model_design_section",
+      "subject": "Раздел проекта {{ object.name }} направлен на согласование",
+      "file": "construction_design/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_design",
+      "id": "mail_template_design_section_approved",
+      "name": "Проектный раздел: Утверждён",
+      "model_id": "model_design_section",
+      "subject": "Раздел проекта {{ object.name }} утверждён",
+      "file": "construction_design/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_dispatch",
+      "id": "mail_template_dispatch_assigned",
+      "name": "Диспетчеризация: Заявка назначена",
+      "model_id": "model_construction_dispatch_order",
+      "subject": "Заявка на технику «{{ object.name }}» назначена",
+      "file": "construction_dispatch/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_dispatch",
+      "id": "mail_template_dispatch_completed",
+      "name": "Диспетчеризация: Заявка выполнена",
+      "model_id": "model_construction_dispatch_order",
+      "subject": "Заявка на технику «{{ object.name }}» выполнена",
+      "file": "construction_dispatch/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_edo_generator",
+      "id": "mail_template_edo_document_generated",
+      "name": "ЭДО: XML документ сгенерирован",
+      "model_id": "model_edo_document",
+      "subject": "ЭДО документ {{ object.name }} сгенерирован",
+      "file": "construction_edo_generator/data/edo_email_templates.xml"
+    },
+    {
+      "module": "construction_edo_generator",
+      "id": "mail_template_edo_document_sent",
+      "name": "ЭДО: документ отправлен",
+      "model_id": "model_edo_document",
+      "subject": "ЭДО документ {{ object.name }} отправлен через {{ object.provider }}",
+      "file": "construction_edo_generator/data/edo_email_templates.xml"
+    },
+    {
+      "module": "construction_edo_generator",
+      "id": "mail_template_edo_document_rejected",
+      "name": "ЭДО: документ отклонен",
+      "model_id": "model_edo_document",
+      "subject": "ЭДО документ {{ object.name }} отклонен",
+      "file": "construction_edo_generator/data/edo_email_templates.xml"
+    },
+    {
+      "module": "construction_estimate",
+      "id": "mail_template_estimate_submitted",
+      "name": "Смета: На рассмотрение",
+      "model_id": "model_construction_estimate",
+      "subject": "Смета {{ object.name }} направлена на рассмотрение",
+      "file": "construction_estimate/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_estimate",
+      "id": "mail_template_estimate_approved",
+      "name": "Смета: Утверждена",
+      "model_id": "model_construction_estimate",
+      "subject": "Смета {{ object.name }} утверждена",
+      "file": "construction_estimate/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_payment_register_confirmed",
+      "name": "Финансы: Реестр на оплату подтвержден",
+      "model_id": "model_payment_register",
+      "subject": "Реестр на оплату {{ object.name }} подтвержден",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_payment_register_paid",
+      "name": "Финансы: Реестр на оплату - оплачен",
+      "model_id": "model_payment_register",
+      "subject": "Реестр на оплату {{ object.name }} оплачен",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_penalty_confirmed",
+      "name": "Финансы: Начисление пеней подтверждено",
+      "model_id": "model_construction_contract_penalty",
+      "subject": "Начисление пеней {{ object.name }} подтверждено",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_penalty_paid",
+      "name": "Финансы: Пени оплачены",
+      "model_id": "model_construction_contract_penalty",
+      "subject": "Пени {{ object.name }} оплачены",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_retention_overdue",
+      "name": "Финансы: Удержание просрочено",
+      "model_id": "model_contract_retention",
+      "subject": "Просроченное удержание: {{ object.name }}",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_retention_returned",
+      "name": "Финансы: Удержание возвращено",
+      "model_id": "model_contract_retention",
+      "subject": "Удержание {{ object.name }} возвращено",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_payment_calendar_overdue",
+      "name": "Финансы: Просроченный платеж в календаре",
+      "model_id": "model_payment_calendar",
+      "subject": "Просроченный платеж: {{ object.partner_id.name }} на {{ format_amount(object.amount, object.currency_id) }}",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "mail_template_overhead_posted",
+      "name": "Финансы: Распределение накладных проведено",
+      "model_id": "model_construction_overhead_allocation",
+      "subject": "Распределение накладных расходов {{ object.name }} проведено",
+      "file": "construction_finance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "mail_template_work_order_approved",
+      "name": "Наряд: Согласован",
+      "model_id": "model_construction_work_order",
+      "subject": "Наряд {{ object.name }} согласован",
+      "file": "construction_hr_russian/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "mail_template_piecework_approved",
+      "name": "Сдельная оплата: Согласована",
+      "model_id": "model_piecework_payment",
+      "subject": "Расчет сдельной оплаты {{ object.name }} согласован",
+      "file": "construction_hr_russian/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "mail_template_self_employed_confirmed",
+      "name": "Реестр СМЗ: Подтвержден",
+      "model_id": "model_construction_self_employed_registry",
+      "subject": "Реестр выплат самозанятым {{ object.name }} подтвержден",
+      "file": "construction_hr_russian/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_iot",
+      "id": "mail_template_iot_alert",
+      "name": "IoT: Предупреждение устройства",
+      "model_id": "model_construction_iot_alert",
+      "subject": "IoT предупреждение: {{ object.name }} ({{ object.severity }})",
+      "file": "construction_iot/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_iot",
+      "id": "mail_template_iot_device_offline",
+      "name": "IoT: Устройство отключено",
+      "model_id": "model_construction_iot_device",
+      "subject": "IoT устройство {{ object.name }} отключено",
+      "file": "construction_iot/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "mail_template_transfer_plan_approved",
+      "name": "Логистика: План перевозок утверждён",
+      "model_id": "model_construction_transfer_plan",
+      "subject": "План перевозок {{ object.name }} утверждён",
+      "file": "construction_logistics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "mail_template_transfer_plan_completed",
+      "name": "Логистика: План перевозок завершён",
+      "model_id": "model_construction_transfer_plan",
+      "subject": "План перевозок {{ object.name }} завершён",
+      "file": "construction_logistics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "mail_template_transfer_task_in_transit",
+      "name": "Логистика: Груз отправлен",
+      "model_id": "model_construction_transfer_task",
+      "subject": "Задача доставки {{ object.name }} — груз отправлен",
+      "file": "construction_logistics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "mail_template_transfer_task_delivered",
+      "name": "Логистика: Груз доставлен",
+      "model_id": "model_construction_transfer_task",
+      "subject": "Задача доставки {{ object.name }} — груз доставлен",
+      "file": "construction_logistics/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_lrv",
+      "id": "mail_template_lrv_submitted",
+      "name": "ЛРВ: Отправлена на утверждение",
+      "model_id": "model_construction_lrv",
+      "subject": "ЛРВ {{ object.name }} отправлена на утверждение",
+      "file": "construction_lrv/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_lrv",
+      "id": "mail_template_lrv_approved",
+      "name": "ЛРВ: Утверждена",
+      "model_id": "model_construction_lrv",
+      "subject": "ЛРВ {{ object.name }} утверждена",
+      "file": "construction_lrv/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_material_analogs",
+      "id": "mail_template_analog_created",
+      "name": "Аналоги: Новая группа создана",
+      "model_id": "model_construction_material_analog",
+      "subject": "Группа аналогов «{{ object.name }}» создана",
+      "file": "construction_material_analogs/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_material_analogs",
+      "id": "mail_template_analog_deactivated",
+      "name": "Аналоги: Группа деактивирована",
+      "model_id": "model_construction_material_analog",
+      "subject": "Группа аналогов «{{ object.name }}» деактивирована",
+      "file": "construction_material_analogs/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "mail_template_quality_checklist_failed",
+      "name": "Чек-лист качества: Не пройден",
+      "model_id": "model_mobile_quality_checklist",
+      "subject": "Чек-лист качества не пройден: {{ object.name or '' }}",
+      "file": "construction_mobile/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "mail_template_quality_defect_created",
+      "name": "Дефект качества: Создан",
+      "model_id": "model_mobile_quality_defect",
+      "subject": "Обнаружен дефект качества: {{ object.name or '' }}",
+      "file": "construction_mobile/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "mail_template_quality_defect_fixed",
+      "name": "Дефект качества: Исправлен",
+      "model_id": "model_mobile_quality_defect",
+      "subject": "Дефект исправлен: {{ object.name or '' }}",
+      "file": "construction_mobile/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "mail_template_work_journal_reviewed",
+      "name": "Журнал работ: Проверен",
+      "model_id": "model_construction_work_journal",
+      "subject": "Журнал работ проверен: {{ object.name or '' }}",
+      "file": "construction_mobile/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_monthly_schedule",
+      "id": "mail_template_schedule_submitted",
+      "name": "МСГ: Подан на утверждение",
+      "model_id": "model_construction_monthly_schedule",
+      "subject": "МСГ «{{ object.name }}» подан на утверждение",
+      "file": "construction_monthly_schedule/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_monthly_schedule",
+      "id": "mail_template_schedule_approved",
+      "name": "МСГ: Утверждён",
+      "model_id": "model_construction_monthly_schedule",
+      "subject": "МСГ «{{ object.name }}» утверждён",
+      "file": "construction_monthly_schedule/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_monthly_schedule",
+      "id": "mail_template_schedule_deadline_reminder",
+      "name": "МСГ: Напоминание о сроке подачи",
+      "model_id": "model_construction_monthly_schedule",
+      "subject": "Напоминание: срок подачи МСГ «{{ object.name }}»",
+      "file": "construction_monthly_schedule/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ocr",
+      "id": "mail_template_ocr_recognized",
+      "name": "OCR: документ распознан",
+      "model_id": "model_document_recognition",
+      "subject": "Документ распознан: {{ object.name }}",
+      "file": "construction_ocr/data/ocr_email_templates.xml"
+    },
+    {
+      "module": "construction_ocr",
+      "id": "mail_template_ocr_error",
+      "name": "OCR: ошибка распознавания",
+      "model_id": "model_document_recognition",
+      "subject": "Ошибка OCR: {{ object.name }}",
+      "file": "construction_ocr/data/ocr_email_templates.xml"
+    },
+    {
+      "module": "construction_ocr",
+      "id": "mail_template_ocr_confirmed",
+      "name": "OCR: документ подтвержден и создан",
+      "model_id": "model_document_recognition",
+      "subject": "OCR подтвержден: {{ object.name }} - документ создан",
+      "file": "construction_ocr/data/ocr_email_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_spec_registry_accepted",
+      "name": "ОПС: ТЗ принято",
+      "model_id": "model_technical_spec_registry",
+      "subject": "ТЗ {{ object.name }} принято",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_spec_registry_clarification",
+      "name": "ОПС: ТЗ на уточнении",
+      "model_id": "model_technical_spec_registry",
+      "subject": "ТЗ {{ object.name }} требует уточнения",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_spec_registry_completed",
+      "name": "ОПС: Обработка ТЗ завершена",
+      "model_id": "model_technical_spec_registry",
+      "subject": "Обработка ТЗ {{ object.name }} завершена",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_defect_statement_review",
+      "name": "ОПС: Дефектная ведомость на проверке",
+      "model_id": "model_defect_statement",
+      "subject": "Дефектная ведомость {{ object.name }} на проверке",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_defect_statement_approved",
+      "name": "ОПС: Дефектная ведомость утверждена",
+      "model_id": "model_defect_statement",
+      "subject": "Дефектная ведомость {{ object.name }} утверждена",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_defect_statement_completed",
+      "name": "ОПС: Дефекты исправлены",
+      "model_id": "model_defect_statement",
+      "subject": "Дефектная ведомость {{ object.name }} — все дефекты исправлены",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_commercial_proposal_sent",
+      "name": "ОПС: КП отправлено заказчику",
+      "model_id": "model_commercial_proposal",
+      "subject": "Коммерческое предложение {{ object.name }}",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_commercial_proposal_accepted",
+      "name": "ОПС: КП принято",
+      "model_id": "model_commercial_proposal",
+      "subject": "КП {{ object.name }} принято заказчиком",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_commercial_proposal_converted",
+      "name": "ОПС: Договор создан из КП",
+      "model_id": "model_commercial_proposal",
+      "subject": "Договор создан из КП {{ object.name }}",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_work_schedule_approved",
+      "name": "ОПС: ГПР утвержден",
+      "model_id": "model_work_schedule",
+      "subject": "ГПР {{ object.name }} утвержден",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_work_schedule_activated",
+      "name": "ОПС: ГПР активирован",
+      "model_id": "model_work_schedule",
+      "subject": "ГПР {{ object.name }} активирован — начало работ",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_work_schedule_completed",
+      "name": "ОПС: ГПР завершен",
+      "model_id": "model_work_schedule",
+      "subject": "ГПР {{ object.name }} завершен",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_contractor_selection_searching",
+      "name": "ОПС: Начат поиск подрядчиков",
+      "model_id": "model_contractor_selection",
+      "subject": "Начат поиск подрядчиков: {{ object.name }}",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_contractor_selection_selected",
+      "name": "ОПС: Подрядчик выбран",
+      "model_id": "model_contractor_selection",
+      "subject": "Подрядчик выбран: {{ object.name }}",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "mail_template_contractor_selection_contracted",
+      "name": "ОПС: Договор с подрядчиком заключен",
+      "model_id": "model_contractor_selection",
+      "subject": "Договор с подрядчиком заключен: {{ object.name }}",
+      "file": "construction_ops/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_photo_progress",
+      "id": "mail_template_photo_report_sent",
+      "name": "Фото-прогресс: Отчёт отправлен",
+      "model_id": "model_construction_photo_report",
+      "subject": "Фотоотчёт «{{ object.name }}» отправлен на утверждение",
+      "file": "construction_photo_progress/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_photo_progress",
+      "id": "mail_template_photo_report_approved",
+      "name": "Фото-прогресс: Отчёт утверждён",
+      "model_id": "model_construction_photo_report",
+      "subject": "Фотоотчёт «{{ object.name }}» утверждён",
+      "file": "construction_photo_progress/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_photo_progress",
+      "id": "mail_template_new_progress_photo",
+      "name": "Фото-прогресс: Новая фотография загружена",
+      "model_id": "model_construction_progress_photo",
+      "subject": "Новая фотография: {{ object.point_id.name or '' }} — {{ object.taken_date }}",
+      "file": "construction_photo_progress/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "mail_template_purchase_request_approved",
+      "name": "Procurement: Purchase Request Approved",
+      "model_id": "model_purchase_request",
+      "subject": "Purchase Request Approved: {{ object.name or '' }}",
+      "file": "construction_procurement/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "mail_template_purchase_request_rejected",
+      "name": "Procurement: Purchase Request Rejected",
+      "model_id": "model_purchase_request",
+      "subject": "Purchase Request Rejected: {{ object.name or '' }}",
+      "file": "construction_procurement/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "mail_template_tender_bid_received",
+      "name": "Procurement: Tender Bid Received",
+      "model_id": "model_purchase_tender_bid",
+      "subject": "New Bid Received for Tender: {{ object.tender_id.name or '' }}",
+      "file": "construction_procurement/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "mail_template_material_receipt_confirmed",
+      "name": "Снабжение: Акт приемки подтвержден",
+      "model_id": "model_material_receipt",
+      "subject": "Акт приемки {{ object.name }} подтвержден",
+      "file": "construction_procurement/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "mail_template_delivery_schedule_planned",
+      "name": "Снабжение: График поставки запланирован",
+      "model_id": "model_material_delivery_schedule",
+      "subject": "График поставки {{ object.name }} — запланирован",
+      "file": "construction_procurement/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "mail_template_three_way_match_variance",
+      "name": "Снабжение: Обнаружено расхождение при сопоставлении",
+      "model_id": "model_procurement_three_way_match",
+      "subject": "Расхождение в сопоставлении {{ object.name }}",
+      "file": "construction_procurement/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "mail_template_task_approval_requested",
+      "name": "Задача: Запрос согласования",
+      "model_id": "project.model_project_task",
+      "subject": "Запрос согласования: {{ object.name or '' }}",
+      "file": "construction_project_enhanced/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "mail_template_task_delegated",
+      "name": "Задача: Делегирование",
+      "model_id": "project.model_project_task",
+      "subject": "Задача делегирована: {{ object.name or '' }}",
+      "file": "construction_project_enhanced/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "mail_template_defect_found",
+      "name": "Дефект: Обнаружен",
+      "model_id": "project.model_project_task",
+      "subject": "Обнаружен дефект: {{ object.name or '' }}",
+      "file": "construction_project_enhanced/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "mail_template_task_overdue",
+      "name": "Задача: Просрочена",
+      "model_id": "project.model_project_task",
+      "subject": "ПРОСРОЧЕНО: Задача {{ object.name or '' }}",
+      "file": "construction_project_enhanced/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_punch_list",
+      "id": "mail_template_punch_item_assigned",
+      "name": "Замечание: Назначен ответственный",
+      "model_id": "model_construction_punch_item",
+      "subject": "Замечание назначено: {{ object.number or '' }} - {{ object.name or '' }}",
+      "file": "construction_punch_list/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_punch_list",
+      "id": "mail_template_punch_item_resolved",
+      "name": "Замечание: Устранено",
+      "model_id": "model_construction_punch_item",
+      "subject": "Замечание устранено: {{ object.number or '' }} - {{ object.name or '' }}",
+      "file": "construction_punch_list/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_punch_list",
+      "id": "mail_template_punch_item_overdue",
+      "name": "Замечание: Просрочено",
+      "model_id": "model_construction_punch_item",
+      "subject": "ПРОСРОЧЕНО: Замечание {{ object.number or '' }} - {{ object.name or '' }}",
+      "file": "construction_punch_list/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_reservation",
+      "id": "mail_template_reservation_confirmed",
+      "name": "Резервирование: Подтверждено",
+      "model_id": "model_construction_material_reservation",
+      "subject": "Резервирование {{ object.name }} подтверждено",
+      "file": "construction_reservation/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_reservation",
+      "id": "mail_template_material_ready",
+      "name": "Резервирование: Материал готов к выдаче",
+      "model_id": "model_construction_material_reservation",
+      "subject": "Материалы по заявке {{ object.name }} готовы к выдаче",
+      "file": "construction_reservation/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_reservation",
+      "id": "mail_template_reservation_cancelled",
+      "name": "Резервирование: Отменено",
+      "model_id": "model_construction_material_reservation",
+      "subject": "Резервирование {{ object.name }} отменено",
+      "file": "construction_reservation/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_reservation",
+      "id": "mail_template_reservation_released",
+      "name": "Резервирование: Материалы выданы",
+      "model_id": "model_construction_material_reservation",
+      "subject": "Материалы по заявке {{ object.name }} выданы",
+      "file": "construction_reservation/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "mail_template_fixed_asset_activated",
+      "name": "ОС: Введено в эксплуатацию",
+      "model_id": "model_fixed_asset",
+      "subject": "Основное средство {{ object.name }} ({{ object.code }}) введено в эксплуатацию",
+      "file": "construction_russian_accounting/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "mail_template_tax_declaration_submitted",
+      "name": "Декларация: Подана",
+      "model_id": "model_construction_tax_declaration",
+      "subject": "Налоговая декларация {{ object.name }} подана",
+      "file": "construction_russian_accounting/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "mail_template_tax_calendar_reminder",
+      "name": "Налоговый календарь: Напоминание о сроке",
+      "model_id": "model_construction_tax_calendar",
+      "subject": "Напоминание: {{ object.name }} - срок {{ object.deadline }}",
+      "file": "construction_russian_accounting/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "mail_template_torg12_posted",
+      "name": "ТОРГ-12: Проведена",
+      "model_id": "model_torg12",
+      "subject": "ТОРГ-12 N {{ object.name }} от {{ object.date }} проведена",
+      "file": "construction_russian_documents/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "mail_template_ttn_delivered",
+      "name": "ТТН: Доставлено",
+      "model_id": "model_ttn",
+      "subject": "ТТН N {{ object.name }} - груз доставлен",
+      "file": "construction_russian_documents/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "mail_template_pko_posted",
+      "name": "ПКО: Проведен",
+      "model_id": "model_cash_receipt_order",
+      "subject": "ПКО N {{ object.name }} - приход денежных средств",
+      "file": "construction_russian_documents/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "mail_template_rko_posted",
+      "name": "РКО: Проведен",
+      "model_id": "model_cash_expense_order",
+      "subject": "РКО N {{ object.name }} - выдача денежных средств",
+      "file": "construction_russian_documents/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "mail_template_safety_incident_created",
+      "name": "Safety: Incident Created",
+      "model_id": "model_safety_incident",
+      "subject": "Safety Incident Reported: {{ object.name or '' }}",
+      "file": "construction_safety/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "mail_template_inspection_failed",
+      "name": "Safety: Inspection Failed",
+      "model_id": "model_quality_inspection",
+      "subject": "Quality Inspection FAILED: {{ object.name or '' }}",
+      "file": "construction_safety/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "mail_template_certification_expiring",
+      "name": "Safety: Certification Expiring",
+      "model_id": "model_safety_certificate",
+      "subject": "Certificate Expiring Soon: {{ object.name or '' }} - {{ object.certificate_type_id.name or '' }}",
+      "file": "construction_safety/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_stock",
+      "id": "mail_template_m29_confirmed",
+      "name": "Склад: М-29 подтверждён",
+      "model_id": "model_construction_m29",
+      "subject": "М-29 «{{ object.name }}» подтверждён прорабом",
+      "file": "construction_stock/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_stock",
+      "id": "mail_template_m29_posted",
+      "name": "Склад: М-29 проведён",
+      "model_id": "model_construction_m29",
+      "subject": "М-29 «{{ object.name }}» — материалы списаны",
+      "file": "construction_stock/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_stock",
+      "id": "mail_template_inventory_approved",
+      "name": "Склад: Инвентаризация согласована",
+      "model_id": "model_stock_inventory_registry",
+      "subject": "Инвентаризация «{{ object.name }}» согласована",
+      "file": "construction_stock/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_stock",
+      "id": "mail_template_discrepancy_reported",
+      "name": "Склад: Несоответствие зарегистрировано",
+      "model_id": "model_warehouse_discrepancy",
+      "subject": "Складское несоответствие: {{ object.name }}",
+      "file": "construction_stock/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_submittals",
+      "id": "mail_template_submittal_submitted",
+      "name": "Submittal: Направлен на рассмотрение",
+      "model_id": "model_construction_submittal",
+      "subject": "Документация {{ object.number }} направлена на рассмотрение",
+      "file": "construction_submittals/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_submittals",
+      "id": "mail_template_submittal_reviewed",
+      "name": "Submittal: Рассмотрение завершено",
+      "model_id": "model_construction_submittal",
+      "subject": "Рассмотрение документации {{ object.number }} завершено — {{ object.state }}",
+      "file": "construction_submittals/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_support",
+      "id": "email_template_ticket_created",
+      "name": "Support: Ticket Created",
+      "model_id": "model_support_ticket",
+      "subject": "Ticket ${object.name}: ${object.title}",
+      "file": "construction_support/data/email_templates.xml"
+    },
+    {
+      "module": "construction_support",
+      "id": "email_template_sla_breach",
+      "name": "Support: SLA Breach Alert",
+      "model_id": "model_support_ticket",
+      "subject": "🚨 SLA BREACH: ${object.name} - ${object.title}",
+      "file": "construction_support/data/email_templates.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "mail_template_tolerance_warning",
+      "name": "Допуски: Предупреждение об отклонении",
+      "model_id": "model_construction_tolerance_check",
+      "subject": "Предупреждение: отклонение по проверке {{ object.name }}",
+      "file": "construction_tolerance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "mail_template_tolerance_violation",
+      "name": "Допуски: Нарушение допуска",
+      "model_id": "model_construction_tolerance_check",
+      "subject": "НАРУШЕНИЕ: критическое отклонение по проверке {{ object.name }}",
+      "file": "construction_tolerance/data/mail_templates.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "mail_template_tolerance_approved",
+      "name": "Допуски: Отклонение одобрено",
+      "model_id": "model_construction_tolerance_check",
+      "subject": "Отклонение по проверке {{ object.name }} одобрено",
+      "file": "construction_tolerance/data/mail_templates.xml"
+    }
+  ],
+  "qweb_templates": [
+    {
+      "module": "construction_1c_integration",
+      "id": "report_exchange_log",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_1c_integration/report/exchange_log_report_templates.xml"
+    },
+    {
+      "module": "construction_analytics",
+      "id": "report_risk_register_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_analytics/reports/analytics_reports.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "report_audit_checklist",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_audit/report/audit_report_template.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "report_audit_checklist_detailed",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_audit/reports/audit_checklist_report.xml"
+    },
+    {
+      "module": "construction_audit",
+      "id": "report_audit_schedule",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_audit/reports/audit_schedule_report.xml"
+    },
+    {
+      "module": "construction_auth_oidc",
+      "id": "login_oidc_buttons",
+      "inherit_id": "web.login",
+      "type": "qweb_template",
+      "file": "construction_auth_oidc/views/auth_oidc_templates.xml"
+    },
+    {
+      "module": "construction_auth_oidc",
+      "id": "oidc_error_template",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_auth_oidc/views/auth_oidc_templates.xml"
+    },
+    {
+      "module": "construction_bim",
+      "id": "report_bim_model_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_bim/reports/bim_model_report.xml"
+    },
+    {
+      "module": "construction_bim",
+      "id": "bim_viewer_template",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_bim/views/bim_viewer_template.xml"
+    },
+    {
+      "module": "construction_certificates",
+      "id": "report_material_certificate",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_certificates/reports/certificate_report.xml"
+    },
+    {
+      "module": "construction_contract",
+      "id": "report_contract",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contract/reports/contract_report.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "portal_construction_projects",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contractor_portal/views/portal_templates.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "portal_construction_project",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contractor_portal/views/portal_templates.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "portal_construction_ks2",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contractor_portal/views/portal_templates.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "portal_construction_ks3",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contractor_portal/views/portal_templates.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "portal_construction_contract",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contractor_portal/views/portal_templates.xml"
+    },
+    {
+      "module": "construction_contractor_portal",
+      "id": "portal_construction_specification",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_contractor_portal/views/portal_templates.xml"
+    },
+    {
+      "module": "construction_crew_time",
+      "id": "report_timesheet",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_crew_time/reports/timesheet_report.xml"
+    },
+    {
+      "module": "construction_daily_log",
+      "id": "report_daily_log_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_daily_log/reports/daily_log_report.xml"
+    },
+    {
+      "module": "construction_design",
+      "id": "report_design_section_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_design/reports/design_section_report.xml"
+    },
+    {
+      "module": "construction_dispatch",
+      "id": "report_dispatch_order",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_dispatch/reports/dispatch_order_report.xml"
+    },
+    {
+      "module": "construction_edo_generator",
+      "id": "report_edo_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_edo_generator/report/edo_document_report_templates.xml"
+    },
+    {
+      "module": "construction_estimate",
+      "id": "report_estimate_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_estimate/reports/estimate_report.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "report_contract_penalty_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_finance/reports/report_contract_penalty.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "report_contract_retention_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_finance/reports/report_contract_retention.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "report_overhead_allocation_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_finance/reports/report_overhead_allocation.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "report_payment_calendar_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_finance/reports/report_payment_calendar.xml"
+    },
+    {
+      "module": "construction_finance",
+      "id": "report_payment_register_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_finance/reports/report_payment_register.xml"
+    },
+    {
+      "module": "construction_fleet_integration",
+      "id": "report_fleet_assignment_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_fleet_integration/reports/fleet_assignment_report.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "report_piecework_payment_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_hr_russian/reports/piecework_payment_report.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "report_self_employed_registry_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_hr_russian/reports/self_employed_registry_report.xml"
+    },
+    {
+      "module": "construction_hr_russian",
+      "id": "report_work_order_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_hr_russian/reports/work_order_report.xml"
+    },
+    {
+      "module": "construction_iot",
+      "id": "report_iot_device_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_iot/reports/iot_device_report.xml"
+    },
+    {
+      "module": "construction_journals",
+      "id": "report_journal_general_ks6",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_journals/report/journal_general_report.xml"
+    },
+    {
+      "module": "construction_kep",
+      "id": "report_kep_signature_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_kep/reports/kep_signature_report.xml"
+    },
+    {
+      "module": "construction_kpi",
+      "id": "report_kpi_achievement_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_kpi/reports/kpi_report.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "report_transfer_plan",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_logistics/reports/logistics_reports.xml"
+    },
+    {
+      "module": "construction_logistics",
+      "id": "report_transfer_task",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_logistics/reports/logistics_reports.xml"
+    },
+    {
+      "module": "construction_lrv",
+      "id": "report_lrv",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_lrv/reports/lrv_report.xml"
+    },
+    {
+      "module": "construction_material_analogs",
+      "id": "report_material_analog",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_material_analogs/reports/analog_report.xml"
+    },
+    {
+      "module": "construction_mfa",
+      "id": "mfa_verify_template",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_mfa/views/templates.xml"
+    },
+    {
+      "module": "construction_mfa",
+      "id": "mfa_setup_required_template",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_mfa/views/templates.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "report_work_journal_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_mobile/reports/mobile_reports.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "report_quality_checklist_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_mobile/reports/mobile_reports.xml"
+    },
+    {
+      "module": "construction_mobile",
+      "id": "report_quality_defect_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_mobile/reports/mobile_reports.xml"
+    },
+    {
+      "module": "construction_monthly_schedule",
+      "id": "report_monthly_schedule",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_monthly_schedule/reports/monthly_schedule_report.xml"
+    },
+    {
+      "module": "construction_ocr",
+      "id": "report_document_recognition",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_ocr/report/document_recognition_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "report_technical_spec_registry",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "report_defect_statement",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "report_commercial_proposal",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "report_work_schedule",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_ops",
+      "id": "report_contractor_selection",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_ops/reports/ops_report_templates.xml"
+    },
+    {
+      "module": "construction_photo_progress",
+      "id": "report_photo_progress",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_photo_progress/reports/photo_progress_report.xml"
+    },
+    {
+      "module": "construction_planning",
+      "id": "report_evm_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_planning/reports/planning_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "report_material_receipt",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_procurement/reports/material_receipt_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "min_price_request_report_template",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_procurement/reports/min_price_request_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "price_request_report_template",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_procurement/reports/price_request_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "report_supplier_qualification",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_procurement/reports/supplier_qualification_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "report_three_way_match",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_procurement/reports/three_way_match_report.xml"
+    },
+    {
+      "module": "construction_procurement",
+      "id": "report_upd",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_procurement/reports/upd_report.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "report_task_enhanced_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_project_enhanced/reports/task_report.xml"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "id": "report_task_approval_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_project_enhanced/reports/task_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "report_hidden_work_act_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_pto/reports/hidden_work_act_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "report_ks2_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_pto/reports/ks2_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "report_ks3_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_pto/reports/ks3_report.xml"
+    },
+    {
+      "module": "construction_pto",
+      "id": "report_ks6a_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_pto/reports/ks6a_report.xml"
+    },
+    {
+      "module": "construction_punch_list",
+      "id": "report_punch_list_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_punch_list/reports/punch_list_report.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "report_balance_sheet_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "report_financial_results_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "report_vat_declaration_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_regulatory_reports",
+      "id": "report_cash_flow_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "report_contract_branded_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_reports/report/report_contract.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "report_estimate_branded_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_reports/report/report_estimate.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "report_ks2_branded_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_reports/report/report_ks2.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "report_ks3_branded_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_reports/report/report_ks3.xml"
+    },
+    {
+      "module": "construction_reports",
+      "id": "report_m29_branded_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_reports/report/report_m29.xml"
+    },
+    {
+      "module": "construction_reservation",
+      "id": "report_material_reservation",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_reservation/reports/reservation_report.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "report_fixed_asset_card_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_russian_accounting/reports/fixed_asset_report.xml"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "id": "report_tax_declaration_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_russian_accounting/reports/tax_declaration_report.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "report_pko_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_russian_documents/report/pko_report.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "report_rko_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_russian_documents/report/rko_report.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "report_torg12_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_russian_documents/report/torg12_report.xml"
+    },
+    {
+      "module": "construction_russian_documents",
+      "id": "report_ttn_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_russian_documents/report/ttn_report.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "report_safety_incident_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_safety/reports/safety_incident_report.xml"
+    },
+    {
+      "module": "construction_safety",
+      "id": "report_safety_inspection_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_safety/reports/safety_inspection_report.xml"
+    },
+    {
+      "module": "construction_specification",
+      "id": "report_specification_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_specification/reports/specification_report.xml"
+    },
+    {
+      "module": "construction_stock",
+      "id": "report_m29_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_stock/reports/m29_report.xml"
+    },
+    {
+      "module": "construction_submittals",
+      "id": "report_submittal_document",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_submittals/reports/submittal_report.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "landing_page",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_theme/views/landing_page.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "knowledge_base_page",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_theme/views/landing_page.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "web_layout_inherit",
+      "inherit_id": "web.layout",
+      "type": "qweb_template",
+      "file": "construction_theme/views/web_layout.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "brand_promotion_hide",
+      "inherit_id": "web.brand_promotion",
+      "type": "qweb_template",
+      "file": "construction_theme/views/web_layout.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "web_frontend_layout_inherit",
+      "inherit_id": "web.frontend_layout",
+      "type": "qweb_template",
+      "file": "construction_theme/views/web_layout.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "web_login_layout_inherit",
+      "inherit_id": "web.login_layout",
+      "type": "qweb_template",
+      "file": "construction_theme/views/web_layout.xml"
+    },
+    {
+      "module": "construction_theme",
+      "id": "webclient_bootstrap_inherit",
+      "inherit_id": "web.webclient_bootstrap",
+      "type": "qweb_template",
+      "file": "construction_theme/views/web_layout.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "report_tolerance_check",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_tolerance/reports/tolerance_reports.xml"
+    },
+    {
+      "module": "construction_tolerance",
+      "id": "report_tolerance_rules",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_tolerance/reports/tolerance_reports.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "about",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/about.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "contacts",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/contacts.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "features",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/features.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "homepage",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/homepage.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "homepage_enhanced",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/homepage_enhanced.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "kb_getting_started",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/kb_getting_started.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "knowledge",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/knowledge.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "pricing",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/pricing.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "privacy",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/privacy.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "base_layout",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/templates.xml"
+    },
+    {
+      "module": "construction_website",
+      "id": "terms",
+      "inherit_id": "",
+      "type": "qweb_template",
+      "file": "construction_website/views/terms.xml"
+    }
+  ],
+  "total_reports": 79,
+  "total_email_templates": 121,
+  "total_qweb_templates": 108
+}

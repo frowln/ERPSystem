@@ -1,0 +1,19 @@
+{
+  "name": "Привод — Строительная платформа",
+  "short_name": "Привод",
+  "description": "ERP/CRM система для строительных компаний",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

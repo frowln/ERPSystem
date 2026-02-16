@@ -1,0 +1,380 @@
+{
+  "audit_type": "full_system_parity_audit",
+  "generated_at_utc": "2026-02-13T22:38:37.755636+00:00",
+  "scope": {
+    "legacy_source": "/Users/damirkasimov/Desktop/privod2/odoo/addons",
+    "target_platform": "/Users/damirkasimov/Desktop/privod2/privod2_next",
+    "mode": "read-only on legacy, write-only in privod2_next artifacts"
+  },
+  "legacy_inventory": {
+    "odoo_modules_total": 79,
+    "odoo_models_total": 829,
+    "odoo_workflows_total": 213,
+    "odoo_views_total": 1155,
+    "odoo_menus_total": 480,
+    "odoo_reports_total": 79
+  },
+  "new_platform_inventory": {
+    "backend_modules_total": 60,
+    "backend_entities_total": 322,
+    "backend_rest_controllers_total": 169,
+    "backend_test_cases_total": 1308,
+    "migration_create_table_statements_total": 316,
+    "frontend_route_patterns_total": 169,
+    "frontend_navigation_targets_total": 155,
+    "frontend_smoke_specs_total": 7,
+    "frontend_e2e_specs_total": 7,
+    "backend_smoke_tests_total": 26
+  },
+  "coverage": {
+    "module_coverage": 1.0,
+    "model_coverage_proxy": 1.0,
+    "api_coverage_proxy": 1.0,
+    "ui_navigation_health": 1.0,
+    "test_automation_proxy": 1.0,
+    "overall_readiness_index": 1.0,
+    "overall_readiness_percent": 100.0,
+    "overall_readiness_base_percent": 100.0,
+    "critical_penalty_percent": 0.0
+  },
+  "critical_capabilities": {
+    "ai_assistant": true,
+    "messaging": true,
+    "video_audio_calls": true,
+    "task_management": true,
+    "settings_management": true,
+    "integration_1c": true,
+    "edo": true
+  },
+  "gaps": {
+    "unmapped_odoo_modules": [],
+    "unmapped_odoo_modules_count": 0,
+    "unresolved_frontend_navigation_targets": [],
+    "unresolved_frontend_navigation_targets_count": 0,
+    "missing_critical_capabilities": []
+  },
+  "module_mapping_sample": [
+    {
+      "odoo_module": "construction_1c_integration",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_ai",
+      "backend_module": "ai"
+    },
+    {
+      "odoo_module": "construction_ai_assistant",
+      "backend_module": "ai"
+    },
+    {
+      "odoo_module": "construction_analytics",
+      "backend_module": "analytics"
+    },
+    {
+      "odoo_module": "construction_api",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_audit",
+      "backend_module": "immutableAudit"
+    },
+    {
+      "odoo_module": "construction_auth_oidc",
+      "backend_module": "auth"
+    },
+    {
+      "odoo_module": "construction_base",
+      "backend_module": "project"
+    },
+    {
+      "odoo_module": "construction_bim",
+      "backend_module": "bim"
+    },
+    {
+      "odoo_module": "construction_cache",
+      "backend_module": "ops"
+    },
+    {
+      "odoo_module": "construction_calendar_integration",
+      "backend_module": "calendar"
+    },
+    {
+      "odoo_module": "construction_certificates",
+      "backend_module": "quality"
+    },
+    {
+      "odoo_module": "construction_contract",
+      "backend_module": "contract"
+    },
+    {
+      "odoo_module": "construction_contractor_portal",
+      "backend_module": "contract"
+    },
+    {
+      "odoo_module": "construction_crew_time",
+      "backend_module": "hrRussian"
+    },
+    {
+      "odoo_module": "construction_crm_integration",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_daily_log",
+      "backend_module": "dailylog"
+    },
+    {
+      "odoo_module": "construction_demo",
+      "backend_module": "portal"
+    },
+    {
+      "odoo_module": "construction_design",
+      "backend_module": "bim"
+    },
+    {
+      "odoo_module": "construction_devops",
+      "backend_module": "ops"
+    },
+    {
+      "odoo_module": "construction_discuss_enhanced",
+      "backend_module": "messaging"
+    },
+    {
+      "odoo_module": "construction_dispatch",
+      "backend_module": "ops"
+    },
+    {
+      "odoo_module": "construction_documents",
+      "backend_module": "document"
+    },
+    {
+      "odoo_module": "construction_drawing_annotation",
+      "backend_module": "bim"
+    },
+    {
+      "odoo_module": "construction_edi_sbis",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_edo_generator",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_ens",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_estimate",
+      "backend_module": "estimate"
+    },
+    {
+      "odoo_module": "construction_finance",
+      "backend_module": "finance"
+    },
+    {
+      "odoo_module": "construction_fleet_integration",
+      "backend_module": "fleet"
+    },
+    {
+      "odoo_module": "construction_gantt",
+      "backend_module": "planning"
+    },
+    {
+      "odoo_module": "construction_hr",
+      "backend_module": "hr"
+    },
+    {
+      "odoo_module": "construction_hr_russian",
+      "backend_module": "hr"
+    },
+    {
+      "odoo_module": "construction_integration",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_integrations_enhanced",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_iot",
+      "backend_module": "iot"
+    },
+    {
+      "odoo_module": "construction_journals",
+      "backend_module": "journal"
+    },
+    {
+      "odoo_module": "construction_kep",
+      "backend_module": "russianDoc"
+    },
+    {
+      "odoo_module": "construction_kpi",
+      "backend_module": "analytics"
+    },
+    {
+      "odoo_module": "construction_legal",
+      "backend_module": "contract"
+    },
+    {
+      "odoo_module": "construction_logistics",
+      "backend_module": "warehouse"
+    },
+    {
+      "odoo_module": "construction_lrv",
+      "backend_module": "fleet"
+    },
+    {
+      "odoo_module": "construction_maintenance_integration",
+      "backend_module": "ai"
+    },
+    {
+      "odoo_module": "construction_material_analogs",
+      "backend_module": "warehouse"
+    },
+    {
+      "odoo_module": "construction_mfa",
+      "backend_module": "auth"
+    },
+    {
+      "odoo_module": "construction_mobile",
+      "backend_module": "mobile"
+    },
+    {
+      "odoo_module": "construction_monitoring",
+      "backend_module": "monitoring"
+    },
+    {
+      "odoo_module": "construction_monthly_schedule",
+      "backend_module": "monthlySchedule"
+    },
+    {
+      "odoo_module": "construction_ocr",
+      "backend_module": "document"
+    },
+    {
+      "odoo_module": "construction_ops",
+      "backend_module": "ops"
+    },
+    {
+      "odoo_module": "construction_photo_progress",
+      "backend_module": "dailylog"
+    },
+    {
+      "odoo_module": "construction_planning",
+      "backend_module": "planning"
+    },
+    {
+      "odoo_module": "construction_procurement",
+      "backend_module": "procurement"
+    },
+    {
+      "odoo_module": "construction_project_enhanced",
+      "backend_module": "project"
+    },
+    {
+      "odoo_module": "construction_pto",
+      "backend_module": "pto"
+    },
+    {
+      "odoo_module": "construction_punch_list",
+      "backend_module": "punchlist"
+    },
+    {
+      "odoo_module": "construction_purchase_integration",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_pwa",
+      "backend_module": "mobile"
+    },
+    {
+      "odoo_module": "construction_rbac",
+      "backend_module": "permission"
+    },
+    {
+      "odoo_module": "construction_regulatory_reports",
+      "backend_module": "regulatory"
+    },
+    {
+      "odoo_module": "construction_reporting_calendar",
+      "backend_module": "calendar"
+    },
+    {
+      "odoo_module": "construction_reports",
+      "backend_module": "report"
+    },
+    {
+      "odoo_module": "construction_reservation",
+      "backend_module": "warehouse"
+    },
+    {
+      "odoo_module": "construction_russian_accounting",
+      "backend_module": "accounting"
+    },
+    {
+      "odoo_module": "construction_russian_documents",
+      "backend_module": "russianDoc"
+    },
+    {
+      "odoo_module": "construction_safety",
+      "backend_module": "safety"
+    },
+    {
+      "odoo_module": "construction_search",
+      "backend_module": "search"
+    },
+    {
+      "odoo_module": "construction_security",
+      "backend_module": "permission"
+    },
+    {
+      "odoo_module": "construction_specification",
+      "backend_module": "specification"
+    },
+    {
+      "odoo_module": "construction_stock",
+      "backend_module": "warehouse"
+    },
+    {
+      "odoo_module": "construction_stock_integration",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_stock_limits",
+      "backend_module": "warehouse"
+    },
+    {
+      "odoo_module": "construction_submittals",
+      "backend_module": "pmWorkflow"
+    },
+    {
+      "odoo_module": "construction_support",
+      "backend_module": "support"
+    },
+    {
+      "odoo_module": "construction_theme",
+      "backend_module": "settings"
+    },
+    {
+      "odoo_module": "construction_timesheet_integration",
+      "backend_module": "integration"
+    },
+    {
+      "odoo_module": "construction_tolerance",
+      "backend_module": "quality"
+    },
+    {
+      "odoo_module": "construction_ui_improvements",
+      "backend_module": "settings"
+    },
+    {
+      "odoo_module": "construction_website",
+      "backend_module": "portal"
+    }
+  ],
+  "notes": [
+    "overall_readiness_percent is a parity index, not a claim of legal/accounting production equivalence.",
+    "model_coverage_proxy uses combined ORM+DDL evidence with consolidation coefficients because one bounded context often covers multiple legacy models.",
+    "for strict go-live parity, manual acceptance scenarios and contract tests for 1C/EDO/banks remain mandatory.",
+    "missing critical capabilities apply a conservative penalty to the readiness index."
+  ]
+}

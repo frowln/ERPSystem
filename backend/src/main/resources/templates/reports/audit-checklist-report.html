@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Аудиторский чек-лист'">Аудиторский чек-лист</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .checkbox { display: inline-block; width: 10pt; height: 10pt; border: 1px solid #000;
+                    text-align: center; font-size: 8pt; line-height: 10pt; vertical-align: middle; }
+        .checkbox-checked { background-color: #333; color: #fff; }
+        .section-header td { background-color: #ddd; font-weight: bold; font-size: 10pt; }
+        .finding-critical { color: #dc2626; font-weight: bold; }
+        .finding-major { color: #ea580c; font-weight: bold; }
+        .finding-minor { color: #ca8a04; }
+        .finding-observation { color: #2563eb; }
+        .summary-box { border: 1px solid #333; padding: 8pt 12pt; margin-bottom: 12pt; }
+        .summary-box .score { font-size: 18pt; font-weight: bold; color: #1a365d; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">АУДИТОРСКИЙ ЧЕК-ЛИСТ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Audit metadata ─────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер аудита:</td>
+        <td th:text="${auditNumber} ?: '—'">АУД-001</td>
+        <td class="label">Дата проведения:</td>
+        <td th:text="${auditDate} ?: '—'">01.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Тип аудита:</td>
+        <td th:text="${auditType} ?: '—'">Плановый</td>
+        <td class="label">Область аудита:</td>
+        <td th:text="${auditScope} ?: '—'">Охрана труда и ТБ</td>
+    </tr>
+    <tr>
+        <td class="label">Аудитор:</td>
+        <td th:text="${auditorName} ?: '—'">Иванов И.И.</td>
+        <td class="label">Подразделение:</td>
+        <td th:text="${department} ?: '—'">Участок №3</td>
+    </tr>
+    <tr>
+        <td class="label">Ответственный:</td>
+        <td colspan="3" th:text="${responsiblePerson} ?: '—'">Петров П.П., начальник участка</td>
+    </tr>
+</table>
+
+<!-- ── Overall score ──────────────────────────────────────────────────────── -->
+<div class="summary-box no-break">
+    <table style="width:100%; border:none;">
+        <tr>
+            <td style="border:none; width:25%; text-align:center;">
+                <div class="score" th:text="${overallScore} ?: '—'">85</div>
+                <div class="text-small text-muted">Общий балл (%)</div>
+            </td>
+            <td style="border:none; width:25%; text-align:center;">
+                <div class="text-bold" th:text="${totalChecks} ?: '0'">50</div>
+                <div class="text-small text-muted">Всего проверок</div>
+            </td>
+            <td style="border:none; width:25%; text-align:center;">
+                <div class="text-bold" style="color:#16a34a;" th:text="${passedChecks} ?: '0'">42</div>
+                <div class="text-small text-muted">Соответствует</div>
+            </td>
+            <td style="border:none; width:25%; text-align:center;">
+                <div class="text-bold" style="color:#dc2626;" th:text="${failedChecks} ?: '0'">8</div>
+                <div class="text-small text-muted">Несоответствия</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Checklist sections ─────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:35%;">Пункт проверки</th>
+            <th style="width:10%;">Норматив</th>
+            <th style="width:8%;">Статус</th>
+            <th style="width:10%;">Категория</th>
+            <th style="width:32%;">Замечание / Находка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over sections, each containing check items */-->
+        <th:block th:each="section : ${sections}" th:if="${sections != null}">
+            <tr class="section-header">
+                <td colspan="6" th:text="${section.name}">Раздел 1. Документация</td>
+            </tr>
+            <tr th:each="item, iter : ${section.items}">
+                <td class="center" th:text="${item.number}">1.1</td>
+                <td th:text="${item.checkPoint}">Наличие журнала инструктажа</td>
+                <td class="center text-small" th:text="${item.reference} ?: '—'">СНиП 12-03</td>
+                <td class="center">
+                    <span class="checkbox" th:classappend="${item.passed} ? 'checkbox-checked' : ''"
+                          th:text="${item.passed} ? '✓' : ''">✓</span>
+                </td>
+                <td class="center">
+                    <span th:if="${item.findingCategory == 'CRITICAL'}" class="finding-critical">Критическое</span>
+                    <span th:if="${item.findingCategory == 'MAJOR'}" class="finding-major">Значительное</span>
+                    <span th:if="${item.findingCategory == 'MINOR'}" class="finding-minor">Незначительное</span>
+                    <span th:if="${item.findingCategory == 'OBSERVATION'}" class="finding-observation">Наблюдение</span>
+                    <span th:if="${item.findingCategory == null or item.findingCategory == 'NONE'}">—</span>
+                </td>
+                <td class="text-small" th:text="${item.finding} ?: ''"></td>
+            </tr>
+        </th:block>
+        <tr th:if="${sections == null or sections.isEmpty()}">
+            <td colspan="6" class="center text-muted">Нет данных для отображения</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Findings summary ───────────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h2>Сводка несоответствий</h2>
+    <table class="data-table" style="width:60%;">
+        <thead>
+            <tr>
+                <th>Категория</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="finding-critical">Критические</td>
+                <td class="center" th:text="${criticalCount} ?: '0'">0</td>
+            </tr>
+            <tr>
+                <td class="finding-major">Значительные</td>
+                <td class="center" th:text="${majorCount} ?: '0'">2</td>
+            </tr>
+            <tr>
+                <td class="finding-minor">Незначительные</td>
+                <td class="center" th:text="${minorCount} ?: '0'">4</td>
+            </tr>
+            <tr>
+                <td class="finding-observation">Наблюдения</td>
+                <td class="center" th:text="${observationCount} ?: '0'">2</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Corrective actions ─────────────────────────────────────────────────── -->
+<div class="no-break mt-16">
+    <h2>Корректирующие мероприятия</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:30%;">Мероприятие</th>
+                <th style="width:20%;">Ответственный</th>
+                <th style="width:15%;">Срок устранения</th>
+                <th style="width:15%;">Приоритет</th>
+                <th style="width:15%;">Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="action, iter : ${correctiveActions}" th:if="${correctiveActions != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${action.description}">Завести журнал инструктажа</td>
+                <td th:text="${action.responsible}">Мастер участка</td>
+                <td class="center" th:text="${action.deadline}">15.02.2026</td>
+                <td class="center">
+                    <span class="badge"
+                          th:classappend="${action.priority == 'HIGH' ? 'badge-critical' : (action.priority == 'MEDIUM' ? 'badge-medium' : 'badge-low')}"
+                          th:text="${action.priority == 'HIGH'} ? 'Высокий' : (${action.priority == 'MEDIUM'} ? 'Средний' : 'Низкий')">Высокий</span>
+                </td>
+                <td class="center" th:text="${action.status} ?: 'Открыто'">Открыто</td>
+            </tr>
+            <tr th:if="${correctiveActions == null or correctiveActions.isEmpty()}">
+                <td colspan="6" class="center text-muted">Корректирующие мероприятия не назначены</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Аудитор:</p>
+            <p th:text="${auditorName} ?: '________________________'">Иванов И.И.</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Ответственный:</p>
+            <p th:text="${responsiblePerson} ?: '________________________'">Петров П.П.</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

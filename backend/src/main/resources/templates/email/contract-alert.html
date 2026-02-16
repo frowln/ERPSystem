@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{email/base-layout :: *}">
+<body>
+<div th:fragment="content">
+
+    <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600; color: #1a1a1a;">
+        Договор истекает
+    </h2>
+
+    <p style="margin: 0 0 20px 0; font-size: 15px; color: #4a4a4a;">
+        Уведомляем вас, что срок действия договора подходит к концу.
+        Пожалуйста, примите необходимые меры заблаговременно.
+    </p>
+
+    <!-- Alert badge -->
+    <div style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px 16px; margin-bottom: 24px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td style="font-size: 14px; color: #856404;">
+                    <strong>Осталось дней:</strong>
+                    <span th:text="${daysLeft}" style="font-size: 18px; font-weight: 700;">14</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Contract details -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+           style="background-color: #f8f9fa; border-radius: 6px; margin-bottom: 24px;">
+        <tr>
+            <td style="padding: 16px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d; width: 140px;">Номер договора:</td>
+                        <td style="padding: 6px 0; font-size: 14px; font-weight: 600; color: #1a1a1a;" th:text="${contractNumber}">K-2024-001</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d;">Наименование:</td>
+                        <td style="padding: 6px 0; font-size: 14px; color: #1a1a1a;" th:text="${contractName}">Строительство объекта</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d;">Контрагент:</td>
+                        <td style="padding: 6px 0; font-size: 14px; color: #1a1a1a;" th:text="${contractorName}">ООО Подрядчик</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 13px; color: #6c757d;">Дата окончания:</td>
+                        <td style="padding: 6px 0; font-size: 14px; font-weight: 600; color: #dc3545;" th:text="${endDate}">15.03.2025</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Action button -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 8px 0;">
+                <a th:href="${baseUrl + '/contracts/' + contractId}"
+                   style="display: inline-block; background-color: #1a56db; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 12px 32px; border-radius: 6px;">
+                    Открыть договор
+                </a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+</body>
+</html>

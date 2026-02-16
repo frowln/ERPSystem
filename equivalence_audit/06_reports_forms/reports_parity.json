@@ -1,0 +1,422 @@
+{
+  "summary": {
+    "generated": "2026-02-14",
+    "description": "Reports and print forms parity audit: Odoo construction.* ir.actions.report vs Privod2 Next",
+    "total_odoo_reports": 40,
+    "matched": 3,
+    "partial": 11,
+    "missing": 26,
+    "coverage_pct": 21.2,
+    "next_thymeleaf_templates_available": 18,
+    "next_dedicated_pdf_endpoints": 5,
+    "notes": [
+      "Next has a generic report-template engine (/api/report-templates/generate) that can serve any template registered in pdf_report_templates table",
+      "Next has a print-forms registry (print_forms table) that links entity types to templates, but no seed data was found in migrations",
+      "Thymeleaf HTML templates exist for 18 report types but only 5 have dedicated REST endpoints in PdfReportController",
+      "PdfGenerationService.generatePdf() is a placeholder (returns HTML bytes, not actual PDF) - production integration pending",
+      "Odoo branded variants have no equivalent in Next - single template per document type"
+    ]
+  },
+  "parity": [
+    {
+      "odoo_report_name": "construction_audit.report_audit_checklist",
+      "odoo_display_name": "Отчет по аудиту",
+      "odoo_model": "construction.audit.checklist",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No audit checklist report template or endpoint in Next"
+    },
+    {
+      "odoo_report_name": "construction_audit.report_audit_checklist_detailed",
+      "odoo_display_name": "Отчёт о проверке (детальный)",
+      "odoo_model": "construction.audit.checklist",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No detailed audit checklist report in Next"
+    },
+    {
+      "odoo_report_name": "construction_audit.report_audit_schedule",
+      "odoo_display_name": "Расписание аудитов",
+      "odoo_model": "construction.audit.schedule",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No audit schedule report template or endpoint in Next"
+    },
+    {
+      "odoo_report_name": "construction_certificates.report_material_certificate",
+      "odoo_display_name": "Реестр сертификатов",
+      "odoo_model": "construction.material.certificate",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No material certificate registry report; certificates tables exist (V71) but no PDF"
+    },
+    {
+      "odoo_report_name": "construction_crew_time.report_timesheet",
+      "odoo_display_name": "Табель учёта рабочего времени",
+      "odoo_model": "construction.time.sheet",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No crew timesheet report template; CrewTimeReport domain exists but no PDF print form"
+    },
+    {
+      "odoo_report_name": "construction_dispatch.report_dispatch_order",
+      "odoo_display_name": "Путевой лист",
+      "odoo_model": "construction.dispatch.order",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No dispatch order (waybill) report template or endpoint; fleet-assignment.html is for fleet only"
+    },
+    {
+      "odoo_report_name": "construction_finance.report_contract_penalty_document",
+      "odoo_display_name": "Начисление пеней",
+      "odoo_model": "construction.contract.penalty",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No contract penalty report template; contract-report.html covers contract but not penalty accruals"
+    },
+    {
+      "odoo_report_name": "construction_finance.report_overhead_allocation_document",
+      "odoo_display_name": "Распределение накладных расходов",
+      "odoo_model": "construction.overhead.allocation",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No overhead allocation distribution report template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_hr_russian.report_self_employed_registry_document",
+      "odoo_display_name": "Реестр выплат самозанятым",
+      "odoo_model": "construction.self.employed.registry",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No self-employed payment registry report template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_hr_russian.report_work_order_document",
+      "odoo_display_name": "Наряд на выполнение работ",
+      "odoo_model": "construction.work.order",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No work order report template; WorkOrderController exists but no PDF endpoint"
+    },
+    {
+      "odoo_report_name": "construction_iot.report_iot_device_document",
+      "odoo_display_name": "Статус IoT устройств",
+      "odoo_model": "construction.iot.device",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No IoT device status report template or endpoint in Next"
+    },
+    {
+      "odoo_report_name": "construction_journals.report_journal_general_ks6",
+      "odoo_display_name": "Общий журнал работ (КС-6)",
+      "odoo_model": "construction.journal.general",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No KS-6 general journal report template; journal tables exist (V63) but no print form"
+    },
+    {
+      "odoo_report_name": "construction_kpi.report_kpi_achievement_document",
+      "odoo_display_name": "Отчёт по KPI",
+      "odoo_model": "construction.kpi.achievement",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No KPI achievement report template; KPI module exists in Next but no PDF print form"
+    },
+    {
+      "odoo_report_name": "construction_logistics.report_transfer_plan",
+      "odoo_display_name": "План перевозок",
+      "odoo_model": "construction.transfer.plan",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No transfer/transport plan report template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_logistics.report_transfer_task",
+      "odoo_display_name": "Накладная на доставку",
+      "odoo_model": "construction.transfer.task",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No delivery note (transfer task) report template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_lrv.report_lrv",
+      "odoo_display_name": "Лимитно-распределительная ведомость",
+      "odoo_model": "construction.lrv",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No limit-distribution statement (LRV) report template or endpoint in Next"
+    },
+    {
+      "odoo_report_name": "construction_material_analogs.report_material_analog",
+      "odoo_display_name": "Карточка аналогов материала",
+      "odoo_model": "construction.material.analog",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No material analog card report; material analogs tables exist (V71) but no PDF"
+    },
+    {
+      "odoo_report_name": "construction_mobile.report_work_journal_document",
+      "odoo_display_name": "Отчёт по журналу работ",
+      "odoo_model": "construction.work.journal",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No work journal report from mobile module; no template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_monthly_schedule.report_monthly_schedule",
+      "odoo_display_name": "Месячный сводный график",
+      "odoo_model": "construction.monthly.schedule",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No monthly consolidated schedule report; tables exist (V64) but no PDF"
+    },
+    {
+      "odoo_report_name": "construction_photo_progress.report_photo_progress",
+      "odoo_display_name": "Отчёт фотофиксации",
+      "odoo_model": "construction.photo.report",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No Thymeleaf template or controller endpoint for photo progress reports"
+    },
+    {
+      "odoo_report_name": "construction_planning.report_evm_document",
+      "odoo_display_name": "Отчёт планирования (EVM)",
+      "odoo_model": "construction.evm",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No EVM (Earned Value Management) report template or endpoint in Next"
+    },
+    {
+      "odoo_report_name": "construction_reservation.report_material_reservation",
+      "odoo_display_name": "Заявка на материалы",
+      "odoo_model": "construction.material.reservation",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No material reservation request report template or endpoint in Next"
+    },
+    {
+      "odoo_report_name": "construction_russian_accounting.report_tax_declaration_document",
+      "odoo_display_name": "Налоговая декларация",
+      "odoo_model": "construction.tax.declaration",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No tax declaration report template or endpoint; regulatory module exists but no PDF for tax"
+    },
+    {
+      "odoo_report_name": "construction_submittals.report_submittal_document",
+      "odoo_display_name": "Передача документации",
+      "odoo_model": "construction.submittal",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No submittal/document transmittal report template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_tolerance.report_tolerance_check",
+      "odoo_display_name": "Акт проверки допуска",
+      "odoo_model": "construction.tolerance.check",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No tolerance check act report; tolerance tables exist (V71) but no PDF"
+    },
+    {
+      "odoo_report_name": "construction_tolerance.report_tolerance_rules",
+      "odoo_display_name": "Реестр правил допусков",
+      "odoo_model": "construction.tolerance.rule",
+      "odoo_type": "qweb-pdf",
+      "next_report": null,
+      "next_endpoint": null,
+      "status": "MISSING",
+      "gap": "No tolerance rules registry report template or endpoint"
+    },
+    {
+      "odoo_report_name": "construction_estimate.report_estimate_document",
+      "odoo_display_name": "Смета (детально)",
+      "odoo_model": "construction.estimate",
+      "odoo_type": "qweb-pdf",
+      "next_report": "Estimate Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: estimate-report)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template estimate-report.html exists but no dedicated PdfReportController endpoint; must use generic report engine"
+    },
+    {
+      "odoo_report_name": "construction_procurement.report_upd",
+      "odoo_display_name": "Универсальный передаточный документ",
+      "odoo_model": "construction.upd",
+      "odoo_type": "qweb-pdf",
+      "next_report": "UPD Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: upd-report)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template upd-report.html exists; no dedicated controller endpoint"
+    },
+    {
+      "odoo_report_name": "construction_pto.report_hidden_work_act_document",
+      "odoo_display_name": "Акт скрытых работ",
+      "odoo_model": "construction.hidden.work.act",
+      "odoo_type": "qweb-pdf",
+      "next_report": "Hidden Work Act Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: hidden-work-act)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template hidden-work-act.html exists; no dedicated controller endpoint; generic engine only"
+    },
+    {
+      "odoo_report_name": "construction_pto.report_ks6a_document",
+      "odoo_display_name": "КС-6а (Журнал учета)",
+      "odoo_model": "construction.ks6a",
+      "odoo_type": "qweb-pdf",
+      "next_report": "KS-6a Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: ks6a-report)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template ks6a-report.html exists; no dedicated controller endpoint; generic engine only"
+    },
+    {
+      "odoo_report_name": "construction_punch_list.report_punch_list_document",
+      "odoo_display_name": "Отчёт по замечаниям",
+      "odoo_model": "construction.punch.item",
+      "odoo_type": "qweb-pdf",
+      "next_report": "Punch List Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: punch-list-report)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template punch-list-report.html exists; no dedicated controller endpoint"
+    },
+    {
+      "odoo_report_name": "construction_reports.report_estimate_branded_document",
+      "odoo_display_name": "Смета (фирменный)",
+      "odoo_model": "construction.estimate",
+      "odoo_type": "qweb-pdf",
+      "next_report": "Estimate Report (Thymeleaf template) - no branded variant",
+      "next_endpoint": "/api/report-templates/generate (template: estimate-report)",
+      "status": "PARTIAL",
+      "gap": "No separate branded variant; estimate-report.html is the only template; branding not configurable per-template"
+    },
+    {
+      "odoo_report_name": "construction_reports.report_ks2_branded_document",
+      "odoo_display_name": "КС-2: Акт выполненных работ (фирменный)",
+      "odoo_model": "construction.ks2",
+      "odoo_type": "qweb-pdf",
+      "next_report": "KS-2 PDF Report (PdfReportController) - single template, no branded variant",
+      "next_endpoint": "/api/pdf-reports/ks2/{id}/pdf",
+      "status": "PARTIAL",
+      "gap": "No separate branded/letterhead variant; single ks2-report.html template; branding must be configured at template level"
+    },
+    {
+      "odoo_report_name": "construction_reports.report_ks3_branded_document",
+      "odoo_display_name": "КС-3: Справка о стоимости (фирменный)",
+      "odoo_model": "construction.ks3",
+      "odoo_type": "qweb-pdf",
+      "next_report": "KS-3 PDF Report (PdfReportController) - single template, no branded variant",
+      "next_endpoint": "/api/pdf-reports/ks3/{id}/pdf",
+      "status": "PARTIAL",
+      "gap": "No separate branded/letterhead variant; single ks3-report.html template"
+    },
+    {
+      "odoo_report_name": "construction_reports.report_m29_branded_document",
+      "odoo_display_name": "М-29: Отчет о расходе материалов (фирменный)",
+      "odoo_model": "construction.m29",
+      "odoo_type": "qweb-pdf",
+      "next_report": "M-29 Report (Thymeleaf template) - no branded variant",
+      "next_endpoint": "/api/report-templates/generate (template: m29-report)",
+      "status": "PARTIAL",
+      "gap": "No separate branded variant; m29-report.html is the only template"
+    },
+    {
+      "odoo_report_name": "construction_specification.report_specification_document",
+      "odoo_display_name": "Спецификация",
+      "odoo_model": "construction.specification",
+      "odoo_type": "qweb-pdf",
+      "next_report": "Specification Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: specification-report)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template specification-report.html exists; no dedicated controller endpoint"
+    },
+    {
+      "odoo_report_name": "construction_stock.report_m29_document",
+      "odoo_display_name": "М-29 (Отчет о расходе материалов)",
+      "odoo_model": "construction.m29",
+      "odoo_type": "qweb-pdf",
+      "next_report": "M-29 Report (Thymeleaf template)",
+      "next_endpoint": "/api/report-templates/generate (template: m29-report)",
+      "status": "PARTIAL",
+      "gap": "Thymeleaf template m29-report.html exists; no dedicated controller endpoint; generic engine only"
+    },
+    {
+      "odoo_report_name": "construction_daily_log.report_daily_log_document",
+      "odoo_display_name": "Полевой журнал",
+      "odoo_model": "construction.daily.log",
+      "odoo_type": "qweb-pdf",
+      "next_report": "Daily Log PDF Report (PdfReportController)",
+      "next_endpoint": "/api/pdf-reports/daily-log/{id}/pdf",
+      "status": "MATCHED",
+      "gap": "Thymeleaf template daily-log.html present; Odoo template has weather/crew/equipment sections - need to verify parity"
+    },
+    {
+      "odoo_report_name": "construction_pto.report_ks2_document",
+      "odoo_display_name": "КС-2 (Акт)",
+      "odoo_model": "construction.ks2",
+      "odoo_type": "qweb-pdf",
+      "next_report": "KS-2 PDF Report (PdfReportController)",
+      "next_endpoint": "/api/pdf-reports/ks2/{id}/pdf",
+      "status": "MATCHED",
+      "gap": "Thymeleaf template ks2-report.html present; data binding passes only ks2Id - full line-item rendering needs verification"
+    },
+    {
+      "odoo_report_name": "construction_pto.report_ks3_document",
+      "odoo_display_name": "КС-3 (Справка)",
+      "odoo_model": "construction.ks3",
+      "odoo_type": "qweb-pdf",
+      "next_report": "KS-3 PDF Report (PdfReportController)",
+      "next_endpoint": "/api/pdf-reports/ks3/{id}/pdf",
+      "status": "MATCHED",
+      "gap": "Thymeleaf template ks3-report.html present; data binding passes only ks3Id - full totals rendering needs verification"
+    }
+  ]
+}

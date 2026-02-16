@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Журнал работ'">Журнал работ</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .day-header { background-color: #e8e8e8; padding: 4pt 8pt; font-weight: bold;
+                      margin-top: 10pt; margin-bottom: 4pt; border: 1px solid #ccc;
+                      page-break-inside: avoid; }
+        .equipment-list { font-size: 8pt; color: #333; margin-top: 2pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ЖУРНАЛ РАБОТ</div>
+    <div class="report-subtitle" th:text="${reportSubtitle} ?: ''"></div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер журнала:</td>
+        <td th:text="${documentNumber} ?: '—'">ЖР-001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Подрядчик:</td>
+        <td th:text="${contractorOrg} ?: '—'">ООО Подрядчик</td>
+        <td class="label">Прораб:</td>
+        <td th:text="${foremanName} ?: '—'">Иванов И.И.</td>
+    </tr>
+    <tr>
+        <td class="label">Отчетный период:</td>
+        <td colspan="3">
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── Daily entries table ────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:9%;">Дата</th>
+            <th style="width:8%;">Смена</th>
+            <th style="width:25%;">Наименование работ</th>
+            <th style="width:10%;">Объем</th>
+            <th style="width:6%;">Ед.<br/>изм.</th>
+            <th style="width:8%;">Бригада /<br/>Кол-во, чел.</th>
+            <th style="width:16%;">Техника и<br/>оборудование</th>
+            <th style="width:14%;">Примечания</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over daily entries */-->
+        <tr th:each="entry, iter : ${entries}" th:if="${entries != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${entry.date}">15.01.2026</td>
+            <td class="center" th:text="${entry.shift} ?: 'Дневная'">Дневная</td>
+            <td th:text="${entry.workDescription}">Армирование перекрытия</td>
+            <td class="number" th:text="${entry.volume != null} ? ${#numbers.formatDecimal(entry.volume, 1, 2)} : '—'">50.00</td>
+            <td class="center" th:text="${entry.unit} ?: '—'">м2</td>
+            <td class="center" th:text="${entry.crewInfo} ?: '—'">Бр.3 / 12 чел.</td>
+            <td class="left" th:text="${entry.equipmentUsed} ?: '—'">Кран КБ-403, вибратор</td>
+            <td class="left" th:text="${entry.notes} ?: '—'">—</td>
+        </tr>
+        <!--/* Placeholder when no data */-->
+        <tr th:if="${entries == null or entries.isEmpty()}">
+            <td class="center">1</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td>—</td>
+            <td class="number">0.00</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td class="left">—</td>
+            <td class="left">—</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Summary section ───────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Сводка за период</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Всего рабочих дней:</td>
+            <td th:text="${totalWorkDays} ?: '0'">0</td>
+            <td class="label">Простои, дней:</td>
+            <td th:text="${downtimeDays} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Среднее кол-во рабочих:</td>
+            <td th:text="${avgWorkers} ?: '0'">0</td>
+            <td class="label">Выполнение плана, %:</td>
+            <td th:text="${planCompletion} ?: '—'">—</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Прораб / мастер:</p>
+            <p th:text="${foremanPosition} ?: '________________________'">Производитель работ</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Начальник участка:</p>
+            <p th:text="${siteManagerPosition} ?: '________________________'">Начальник участка</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

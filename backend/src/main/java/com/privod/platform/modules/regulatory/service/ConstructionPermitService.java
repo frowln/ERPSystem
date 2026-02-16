@@ -1,0 +1,137 @@
+package com.privod.platform.modules.regulatory.service;
+
+import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.modules.regulatory.domain.ConstructionPermit;
+import com.privod.platform.modules.regulatory.domain.PermitStatus;
+import com.privod.platform.modules.regulatory.repository.ConstructionPermitRepository;
+import com.privod.platform.modules.regulatory.web.dto.ConstructionPermitResponse;
+import com.privod.platform.modules.regulatory.web.dto.CreateConstructionPermitRequest;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class ConstructionPermitService {
+
+    private final ConstructionPermitRepository permitRepository;
+    private final AuditService auditService;
+
+    @Transactional(readOnly = true)
+    public Page<ConstructionPermitResponse> listPermits(UUID projectId, Pageable pageable) {
+        if (projectId != null) {
+            return permitRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+                    .map(ConstructionPermitResponse::fromEntity);
+        }
+        return permitRepository.findAll(pageable).map(ConstructionPermitResponse::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public ConstructionPermitResponse getPermit(UUID id) {
+        ConstructionPermit permit = getPermitOrThrow(id);
+        return ConstructionPermitResponse.fromEntity(permit);
+    }
+
+    @Transactional
+    public ConstructionPermitResponse createPermit(CreateConstructionPermitRequest request) {
+        ConstructionPermit permit = ConstructionPermit.builder()
+                .projectId(request.projectId())
+                .permitNumber(request.permitNumber())
+                .issuedBy(request.issuedBy())
+                .issuedDate(request.issuedDate())
+                .expiresDate(request.expiresDate())
+                .status(PermitStatus.ACTIVE)
+                .permitType(request.permitType())
+                .conditions(request.conditions())
+                .fileUrl(request.fileUrl())
+                .build();
+
+        permit = permitRepository.save(permit);
+        auditService.logCreate("ConstructionPermit", permit.getId());
+
+        log.info("Construction permit created: {} ({})", permit.getPermitNumber(), permit.getId());
+        return ConstructionPermitResponse.fromEntity(permit);
+    }
+
+    @Transactional
+    public ConstructionPermitResponse updatePermit(UUID id, CreateConstructionPermitRequest request) {
+        ConstructionPermit permit = getPermitOrThrow(id);
+
+        if (request.projectId() != null) permit.setProjectId(request.projectId());
+        if (request.permitNumber() != null) permit.setPermitNumber(request.permitNumber());
+        if (request.issuedBy() != null) permit.setIssuedBy(request.issuedBy());
+        if (request.issuedDate() != null) permit.setIssuedDate(request.issuedDate());
+        if (request.expiresDate() != null) permit.setExpiresDate(request.expiresDate());
+        if (request.permitType() != null) permit.setPermitType(request.permitType());
+        if (request.conditions() != null) permit.setConditions(request.conditions());
+        if (request.fileUrl() != null) permit.setFileUrl(request.fileUrl());
+
+        permit = permitRepository.save(permit);
+        auditService.logUpdate("ConstructionPermit", permit.getId(), "multiple", null, null);
+
+        log.info("Construction permit updated: {} ({})", permit.getPermitNumber(), permit.getId());
+        return ConstructionPermitResponse.fromEntity(permit);
+    }
+
+    @Transactional
+    public void deletePermit(UUID id) {
+        ConstructionPermit permit = getPermitOrThrow(id);
+        permit.softDelete();
+        permitRepository.save(permit);
+        auditService.logDelete("ConstructionPermit", id);
+        log.info("Construction permit deleted: {} ({})", permit.getPermitNumber(), id);
+    }
+
+    @Transactional
+    public ConstructionPermitResponse suspendPermit(UUID id) {
+        ConstructionPermit permit = getPermitOrThrow(id);
+
+        if (permit.getStatus() != PermitStatus.ACTIVE) {
+            throw new IllegalStateException(
+                    String.format("Приостановить можно только действующее разрешение, текущий статус: %s",
+                            permit.getStatus().getDisplayName()));
+        }
+
+        PermitStatus oldStatus = permit.getStatus();
+        permit.setStatus(PermitStatus.SUSPENDED);
+
+        permit = permitRepository.save(permit);
+        auditService.logStatusChange("ConstructionPermit", permit.getId(),
+                oldStatus.name(), PermitStatus.SUSPENDED.name());
+
+        log.info("Construction permit suspended: {} ({})", permit.getPermitNumber(), permit.getId());
+        return ConstructionPermitResponse.fromEntity(permit);
+    }
+
+    @Transactional
+    public ConstructionPermitResponse revokePermit(UUID id) {
+        ConstructionPermit permit = getPermitOrThrow(id);
+
+        if (permit.getStatus() == PermitStatus.REVOKED) {
+            throw new IllegalStateException("Разрешение уже отозвано");
+        }
+
+        PermitStatus oldStatus = permit.getStatus();
+        permit.setStatus(PermitStatus.REVOKED);
+
+        permit = permitRepository.save(permit);
+        auditService.logStatusChange("ConstructionPermit", permit.getId(),
+                oldStatus.name(), PermitStatus.REVOKED.name());
+
+        log.info("Construction permit revoked: {} ({})", permit.getPermitNumber(), permit.getId());
+        return ConstructionPermitResponse.fromEntity(permit);
+    }
+
+    private ConstructionPermit getPermitOrThrow(UUID id) {
+        return permitRepository.findById(id)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Разрешение на строительство не найдено: " + id));
+    }
+}

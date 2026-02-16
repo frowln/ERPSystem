@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Спецификация материалов'">Спецификация</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 12mm 15mm 12mm; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 120pt; }
+        .group-row td { background-color: #e8e8e8; font-weight: bold; font-size: 9pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">СПЕЦИФИКАЦИЯ</div>
+    <div class="report-subtitle" th:text="${specificationTitle} ?: ''">
+        материалов и оборудования
+    </div>
+</div>
+
+<!-- ── Meta information ───────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер спецификации:</td>
+        <td th:text="${specNumber} ?: '—'">СП-001</td>
+        <td class="label">Дата:</td>
+        <td th:text="${specDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Раздел проекта:</td>
+        <td colspan="3" th:text="${projectSection} ?: '—'">Конструктивные решения (КР)</td>
+    </tr>
+    <tr>
+        <td class="label">Основание:</td>
+        <td colspan="3" th:text="${basis} ?: '—'">Рабочая документация шифр 123-КР</td>
+    </tr>
+</table>
+
+<!-- ── Materials table ────────────────────────────────────────────────────── -->
+<table class="gost-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№<br/>п/п</th>
+            <th style="width:24%;">Наименование<br/>материала / оборудования</th>
+            <th style="width:12%;">Марка, тип,<br/>артикул</th>
+            <th style="width:10%;">ГОСТ / ТУ</th>
+            <th style="width:6%;">Ед.<br/>изм.</th>
+            <th style="width:8%;">Кол-во</th>
+            <th style="width:8%;">Масса<br/>ед., кг</th>
+            <th style="width:9%;">Масса<br/>общая, кг</th>
+            <th style="width:9%;">Цена,<br/>руб.</th>
+            <th style="width:10%;">Стоимость,<br/>руб.</th>
+        </tr>
+        <tr>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item : ${specItems}" th:if="${specItems != null}">
+            <!--/* Group header */-->
+            <td th:if="${item.isGroup}" colspan="10" class="left"
+                style="background-color:#e8e8e8; font-weight:bold;"
+                th:text="${item.name}">Арматурные изделия</td>
+            <!--/* Regular item */-->
+            <td th:unless="${item.isGroup}" th:text="${item.lineNumber}">1</td>
+            <td th:unless="${item.isGroup}" class="left" th:text="${item.name}">Арматура А500С д.12мм</td>
+            <td th:unless="${item.isGroup}" th:text="${item.mark} ?: '—'">А500С</td>
+            <td th:unless="${item.isGroup}" th:text="${item.standard} ?: '—'">ГОСТ 34028-2016</td>
+            <td th:unless="${item.isGroup}" th:text="${item.unit}">т</td>
+            <td th:unless="${item.isGroup}" class="right" th:text="${#numbers.formatDecimal(item.quantity, 1, 3)}">5.250</td>
+            <td th:unless="${item.isGroup}" class="right" th:text="${item.unitWeight != null} ? ${#numbers.formatDecimal(item.unitWeight, 1, 2)} : '—'">0.89</td>
+            <td th:unless="${item.isGroup}" class="right" th:text="${item.totalWeight != null} ? ${#numbers.formatDecimal(item.totalWeight, 1, 2)} : '—'">5 250.00</td>
+            <td th:unless="${item.isGroup}" class="right" th:text="${item.price != null} ? ${#numbers.formatDecimal(item.price, 1, 2)} : '—'">65 000.00</td>
+            <td th:unless="${item.isGroup}" class="right" th:text="${item.totalCost != null} ? ${#numbers.formatDecimal(item.totalCost, 1, 2)} : '—'">341 250.00</td>
+        </tr>
+        <tr th:if="${specItems == null or specItems.isEmpty()}">
+            <td>1</td><td class="left">—</td><td>—</td><td>—</td><td>—</td>
+            <td class="right">0.000</td><td class="right">0.00</td><td class="right">0.00</td>
+            <td class="right">0.00</td><td class="right">0.00</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7" class="right" style="font-weight:bold;">Итого:</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${totalWeight != null} ? ${#numbers.formatDecimal(totalWeight, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${totalCost != null} ? ${#numbers.formatDecimal(totalCost, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Notes ───────────────────────────────────────────────────────────────── -->
+<div class="mt-8" th:if="${notes != null and !notes.isEmpty()}">
+    <h4>Примечания:</h4>
+    <ol>
+        <li th:each="note : ${notes}" th:text="${note}">Примечание</li>
+    </ol>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Инженер ПТО</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Согласовал:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Главный инженер проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

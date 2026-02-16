@@ -1,0 +1,190 @@
+export type PermitStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'APPROVED'
+  | 'ACTIVE'
+  | 'EXPIRED'
+  | 'REVOKED'
+  | 'REJECTED';
+
+export type PermitType =
+  | 'BUILDING_PERMIT'
+  | 'DEMOLITION_PERMIT'
+  | 'EXCAVATION_PERMIT'
+  | 'ENVIRONMENTAL_PERMIT'
+  | 'FIRE_SAFETY'
+  | 'SANITARY'
+  | 'ROSTECHNADZOR'
+  | 'OTHER';
+
+export type LicenseStatus = 'ACTIVE' | 'EXPIRING_SOON' | 'EXPIRED' | 'SUSPENDED' | 'REVOKED';
+
+export type LicenseType = 'SRO_CONSTRUCTION' | 'SRO_DESIGN' | 'SRO_ENGINEERING' | 'SPECIAL_PERMIT' | 'OTHER';
+
+export type InspectionStatus = 'SCHEDULED' | 'IN_PROGRESS' | 'PASSED' | 'FAILED' | 'RESCHEDULED' | 'CANCELLED';
+
+export type InspectionType =
+  | 'ROSTECHNADZOR'
+  | 'FIRE_INSPECTION'
+  | 'SANITARY'
+  | 'ENVIRONMENTAL'
+  | 'LABOR_INSPECTION'
+  | 'INTERNAL_AUDIT'
+  | 'CUSTOMER_INSPECTION'
+  | 'OTHER';
+
+export type ComplianceCheckResult = 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' | 'PENDING';
+
+export interface RegulatoryPermit {
+  id: string;
+  number: string;
+  name: string;
+  permitType: PermitType;
+  status: PermitStatus;
+  projectId: string;
+  projectName?: string;
+  issuedBy: string;
+  issuedDate?: string;
+  validFrom?: string;
+  validUntil?: string;
+  responsibleId: string;
+  responsibleName: string;
+  documentUrl?: string;
+  conditions?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface License {
+  id: string;
+  number: string;
+  name: string;
+  licenseType: LicenseType;
+  status: LicenseStatus;
+  organizationName: string;
+  issuedBy: string;
+  issuedDate: string;
+  validUntil: string;
+  sroName?: string;
+  compensationFund?: number;
+  maxContractAmount?: number;
+  responsibleId: string;
+  responsibleName: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Inspection {
+  id: string;
+  number: string;
+  name: string;
+  inspectionType: InspectionType;
+  status: InspectionStatus;
+  projectId: string;
+  projectName?: string;
+  scheduledDate: string;
+  actualDate?: string;
+  inspectorName: string;
+  inspectorOrganization: string;
+  responsibleId: string;
+  responsibleName: string;
+  result?: ComplianceCheckResult;
+  findings?: string;
+  correctiveActions?: string;
+  correctiveDeadline?: string;
+  documentUrl?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ComplianceCheck {
+  id: string;
+  name: string;
+  projectId: string;
+  projectName?: string;
+  checkDate: string;
+  result: ComplianceCheckResult;
+  regulationReference: string;
+  checkedById: string;
+  checkedByName: string;
+  findings: string;
+  correctiveActions?: string;
+  dueDate?: string;
+  resolvedDate?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface CreatePermitRequest {
+  name: string;
+  permitType: PermitType;
+  projectId: string;
+  issuedBy: string;
+  validFrom?: string;
+  validUntil?: string;
+  responsibleId: string;
+  conditions?: string;
+  notes?: string;
+}
+
+export interface CreateInspectionRequest {
+  name: string;
+  inspectionType: InspectionType;
+  projectId: string;
+  scheduledDate: string;
+  inspectorName: string;
+  inspectorOrganization: string;
+  responsibleId: string;
+  notes?: string;
+}
+
+// Reporting Calendar
+
+export type DeadlineStatus = 'UPCOMING' | 'DUE_TODAY' | 'OVERDUE' | 'SUBMITTED' | 'ACCEPTED' | 'REJECTED';
+export type ReportingFrequency = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY' | 'ONE_TIME';
+export type SubmissionStatus = 'DRAFT' | 'PENDING' | 'SUBMITTED' | 'ACCEPTED' | 'REJECTED' | 'REVISION_REQUIRED';
+export type SubmissionChannel = 'portal' | 'EMAIL' | 'paper' | 'EDO' | 'api';
+
+export interface ReportingDeadline {
+  id: string;
+  name: string;
+  description: string;
+  regulatoryBody: string;
+  frequency: ReportingFrequency;
+  dueDate: string;
+  status: DeadlineStatus;
+  projectId?: string;
+  projectName?: string;
+  responsibleId: string;
+  responsibleName: string;
+  submissionChannel: SubmissionChannel;
+  reportType: string;
+  penalty?: number;
+  lastSubmissionDate?: string;
+  nextDueDate?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReportingSubmission {
+  id: string;
+  deadlineId: string;
+  deadlineName: string;
+  regulatoryBody: string;
+  submissionDate: string;
+  status: SubmissionStatus;
+  channel: SubmissionChannel;
+  submittedById: string;
+  submittedByName: string;
+  documentUrl?: string;
+  confirmationNumber?: string;
+  rejectionReason?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -1,0 +1,1971 @@
+[
+  {
+    "file": "construction_1c_integration/report/exchange_log_report_templates.xml",
+    "module": "construction_1c_integration",
+    "template_ids": [
+      "report_exchange_log"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_1c_integration/views/1c_integration_views.xml",
+    "module": "construction_1c_integration",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_ai/static/src/xml/ai_floating.xml",
+    "module": "construction_ai",
+    "template_ids": [
+      "construction_ai.FloatingAssistant"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_ai_assistant/static/src/xml/ai_chat_widget.xml",
+    "module": "construction_ai_assistant",
+    "template_ids": [
+      "construction_ai_assistant.ChatWidget"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_analytics/views/project_dashboard_views.xml",
+    "module": "construction_analytics",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_analytics/views/analytics_reports_views.xml",
+    "module": "construction_analytics",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": true,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_analytics/views/risk_management_views.xml",
+    "module": "construction_analytics",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_analytics/reports/analytics_reports.xml",
+    "module": "construction_analytics",
+    "template_ids": [
+      "report_risk_register_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_audit/report/audit_report_template.xml",
+    "module": "construction_audit",
+    "template_ids": [
+      "report_audit_checklist"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_audit/views/audit_schedule_views.xml",
+    "module": "construction_audit",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_audit/views/audit_checklist_views.xml",
+    "module": "construction_audit",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_audit/reports/audit_checklist_report.xml",
+    "module": "construction_audit",
+    "template_ids": [
+      "report_audit_checklist_detailed"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_audit/reports/audit_schedule_report.xml",
+    "module": "construction_audit",
+    "template_ids": [
+      "report_audit_schedule"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_auth_oidc/views/auth_oidc_templates.xml",
+    "module": "construction_auth_oidc",
+    "template_ids": [
+      "oidc_error_template",
+      "login_oidc_buttons"
+    ],
+    "t_calls": [
+      "web.login_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_base/static/src/xml/dashboard_demo.xml",
+    "module": "construction_base",
+    "template_ids": [
+      "construction_base.ExecutiveDashboard",
+      "construction_base.DashboardSkeleton"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_base/static/src/xml/construction_project_kanban_controller.xml",
+    "module": "construction_base",
+    "template_ids": [
+      "construction.ConstructionProjectKanbanView"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_base/static/src/xml/toast_notifications.xml",
+    "module": "construction_base",
+    "template_ids": [
+      "construction_base.ToastNotification",
+      "construction_base.ToastContainer"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_base/views/construction_dashboard_views.xml",
+    "module": "construction_base",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_base/views/construction_project_views.xml",
+    "module": "construction_base",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_bim/static/src/xml/three_viewer.xml",
+    "module": "construction_bim",
+    "template_ids": [
+      "construction_bim.ThreeJSViewer"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_bim/views/bim_viewer_views.xml",
+    "module": "construction_bim",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_bim/views/bim_viewer_template.xml",
+    "module": "construction_bim",
+    "template_ids": [
+      "bim_viewer_template"
+    ],
+    "t_calls": [
+      "web.layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_bim/views/bim_model_views.xml",
+    "module": "construction_bim",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_bim/reports/bim_model_report.xml",
+    "module": "construction_bim",
+    "template_ids": [
+      "report_bim_model_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_certificates/reports/certificate_report.xml",
+    "module": "construction_certificates",
+    "template_ids": [
+      "report_material_certificate"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_contract/views/contract_views.xml",
+    "module": "construction_contract",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_contract/reports/contract_report.xml",
+    "module": "construction_contract",
+    "template_ids": [
+      "report_contract"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_contractor_portal/views/portal_templates.xml",
+    "module": "construction_contractor_portal",
+    "template_ids": [
+      "portal_construction_projects",
+      "portal_construction_contract",
+      "portal_construction_specification",
+      "portal_construction_ks2",
+      "portal_construction_ks3",
+      "portal_construction_project"
+    ],
+    "t_calls": [
+      "portal.portal_searchbar",
+      "portal.portal_layout",
+      "portal.portal_table"
+    ],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_crew_time/views/crew_views.xml",
+    "module": "construction_crew_time",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_crew_time/views/time_sheet_views.xml",
+    "module": "construction_crew_time",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_crew_time/reports/timesheet_report.xml",
+    "module": "construction_crew_time",
+    "template_ids": [
+      "report_timesheet"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_daily_log/views/daily_log_views.xml",
+    "module": "construction_daily_log",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_daily_log/views/daily_log_child_views.xml",
+    "module": "construction_daily_log",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_daily_log/reports/daily_log_report.xml",
+    "module": "construction_daily_log",
+    "template_ids": [
+      "report_daily_log_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_design/views/design_section_views.xml",
+    "module": "construction_design",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_design/reports/design_section_report.xml",
+    "module": "construction_design",
+    "template_ids": [
+      "report_design_section_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_dispatch/views/dispatch_order_views.xml",
+    "module": "construction_dispatch",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_dispatch/reports/dispatch_order_report.xml",
+    "module": "construction_dispatch",
+    "template_ids": [
+      "report_dispatch_order"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_documents/static/src/xml/nas_file_browser.xml",
+    "module": "construction_documents",
+    "template_ids": [
+      "construction_documents.NASFileBrowser"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_documents/views/unified_document_views.xml",
+    "module": "construction_documents",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_drawing_annotation/static/src/xml/pdf_viewer_template.xml",
+    "module": "construction_drawing_annotation",
+    "template_ids": [
+      "construction_drawing_annotation.PDFViewer"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_edi_sbis/views/edi_sbis_dashboard_views.xml",
+    "module": "construction_edi_sbis",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_edo_generator/report/edo_document_report_templates.xml",
+    "module": "construction_edo_generator",
+    "template_ids": [
+      "report_edo_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_edo_generator/views/edo_document_kanban.xml",
+    "module": "construction_edo_generator",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_estimate/views/estimate_views.xml",
+    "module": "construction_estimate",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_estimate/reports/estimate_report.xml",
+    "module": "construction_estimate",
+    "template_ids": [
+      "report_estimate_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_finance/views/payment_calendar_views.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_finance/views/payment_register_views.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_finance/views/retention_views.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_finance/views/overhead_allocation_views.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_finance/views/contract_penalty_views.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_finance/reports/report_payment_calendar.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "report_payment_calendar_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_finance/reports/report_overhead_allocation.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "report_overhead_allocation_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_finance/reports/report_contract_penalty.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "report_contract_penalty_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_finance/reports/report_payment_register.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "report_payment_register_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_finance/reports/report_contract_retention.xml",
+    "module": "construction_finance",
+    "template_ids": [
+      "report_contract_retention_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_fleet_integration/views/vehicle_assignment_views.xml",
+    "module": "construction_fleet_integration",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_fleet_integration/reports/fleet_assignment_report.xml",
+    "module": "construction_fleet_integration",
+    "template_ids": [
+      "report_fleet_assignment_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_hr_russian/views/self_employed_views.xml",
+    "module": "construction_hr_russian",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_hr_russian/views/work_order_views.xml",
+    "module": "construction_hr_russian",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_hr_russian/views/piecework_payment_views.xml",
+    "module": "construction_hr_russian",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_hr_russian/reports/self_employed_registry_report.xml",
+    "module": "construction_hr_russian",
+    "template_ids": [
+      "report_self_employed_registry_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_hr_russian/reports/work_order_report.xml",
+    "module": "construction_hr_russian",
+    "template_ids": [
+      "report_work_order_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_hr_russian/reports/piecework_payment_report.xml",
+    "module": "construction_hr_russian",
+    "template_ids": [
+      "report_piecework_payment_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_iot/views/iot_device_views.xml",
+    "module": "construction_iot",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_iot/reports/iot_device_report.xml",
+    "module": "construction_iot",
+    "template_ids": [
+      "report_iot_device_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_journals/report/journal_general_report.xml",
+    "module": "construction_journals",
+    "template_ids": [
+      "report_journal_general_ks6"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_kep/views/kep_certificate_views.xml",
+    "module": "construction_kep",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_kep/reports/kep_signature_report.xml",
+    "module": "construction_kep",
+    "template_ids": [
+      "report_kep_signature_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_kpi/views/kpi_views.xml",
+    "module": "construction_kpi",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_kpi/reports/kpi_report.xml",
+    "module": "construction_kpi",
+    "template_ids": [
+      "report_kpi_achievement_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_logistics/views/logistics_views.xml",
+    "module": "construction_logistics",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_logistics/reports/logistics_reports.xml",
+    "module": "construction_logistics",
+    "template_ids": [
+      "report_transfer_task",
+      "report_transfer_plan"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_lrv/views/lrv_views.xml",
+    "module": "construction_lrv",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_lrv/reports/lrv_report.xml",
+    "module": "construction_lrv",
+    "template_ids": [
+      "report_lrv"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_material_analogs/views/analog_views.xml",
+    "module": "construction_material_analogs",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_material_analogs/reports/analog_report.xml",
+    "module": "construction_material_analogs",
+    "template_ids": [
+      "report_material_analog"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_mfa/views/templates.xml",
+    "module": "construction_mfa",
+    "template_ids": [
+      "mfa_verify_template",
+      "mfa_setup_required_template"
+    ],
+    "t_calls": [
+      "web.login_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_mobile/views/mobile_quality_checklist_views.xml",
+    "module": "construction_mobile",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_mobile/views/work_journal_views.xml",
+    "module": "construction_mobile",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_mobile/reports/mobile_reports.xml",
+    "module": "construction_mobile",
+    "template_ids": [
+      "report_quality_checklist_document",
+      "report_quality_defect_document",
+      "report_work_journal_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_monthly_schedule/views/monthly_schedule_views.xml",
+    "module": "construction_monthly_schedule",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_monthly_schedule/reports/monthly_schedule_report.xml",
+    "module": "construction_monthly_schedule",
+    "template_ids": [
+      "report_monthly_schedule"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_ocr/report/document_recognition_report_templates.xml",
+    "module": "construction_ocr",
+    "template_ids": [
+      "report_document_recognition"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_ocr/views/document_recognition_views.xml",
+    "module": "construction_ocr",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_ops/views/ops_kanban_views.xml",
+    "module": "construction_ops",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_ops/reports/ops_report_templates.xml",
+    "module": "construction_ops",
+    "template_ids": [
+      "report_technical_spec_registry",
+      "report_contractor_selection",
+      "report_work_schedule",
+      "report_defect_statement",
+      "report_commercial_proposal"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_photo_progress/views/photo_progress_views.xml",
+    "module": "construction_photo_progress",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": true,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_photo_progress/reports/photo_progress_report.xml",
+    "module": "construction_photo_progress",
+    "template_ids": [
+      "report_photo_progress"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_planning/reports/planning_report.xml",
+    "module": "construction_planning",
+    "template_ids": [
+      "report_evm_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_procurement/static/src/xml/construction_icons.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "construction.icon.material",
+      "construction.icon.request",
+      "construction.icon.invoice",
+      "construction.icon.project",
+      "construction.icon.delivery",
+      "construction.icon.budget"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/upd_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/procurement_variant_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/material_receipt_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/tender_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/purchase_request_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/commercial_offer_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/three_way_match_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/views/delivery_schedule_views.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_procurement/reports/three_way_match_report.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "report_three_way_match"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_procurement/reports/min_price_request_report.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "min_price_request_report_template"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_procurement/reports/price_request_report.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "price_request_report_template"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_procurement/reports/material_receipt_report.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "report_material_receipt"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_procurement/reports/supplier_qualification_report.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "report_supplier_qualification"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_procurement/reports/upd_report.xml",
+    "module": "construction_procurement",
+    "template_ids": [
+      "report_upd"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_project_enhanced/views/task_defect_views.xml",
+    "module": "construction_project_enhanced",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_project_enhanced/views/project_task_approval_views.xml",
+    "module": "construction_project_enhanced",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_project_enhanced/reports/task_report.xml",
+    "module": "construction_project_enhanced",
+    "template_ids": [
+      "report_task_enhanced_document",
+      "report_task_approval_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_pto/views/ks2_views.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_pto/views/ks3_views.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_pto/views/hidden_work_photo_views.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "kanban-box"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_pto/views/ks6a_views.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_pto/reports/ks6a_report.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "report_ks6a_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_pto/reports/hidden_work_act_report.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "report_hidden_work_act_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_pto/reports/ks3_report.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "report_ks3_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_pto/reports/ks2_report.xml",
+    "module": "construction_pto",
+    "template_ids": [
+      "report_ks2_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_punch_list/static/src/xml/drawing_pin_widget.xml",
+    "module": "construction_punch_list",
+    "template_ids": [
+      "construction_punch_list.DrawingPinWidget"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_punch_list/views/punch_item_views.xml",
+    "module": "construction_punch_list",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_punch_list/reports/punch_list_report.xml",
+    "module": "construction_punch_list",
+    "template_ids": [
+      "report_punch_list_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_pwa/static/src/xml/pwa_templates.xml",
+    "module": "construction_pwa",
+    "template_ids": [
+      "construction_pwa.SyncStatusIndicator",
+      "construction_pwa.OfflineBanner"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_regulatory_reports/reports/regulatory_pdf_reports.xml",
+    "module": "construction_regulatory_reports",
+    "template_ids": [
+      "report_vat_declaration_document",
+      "report_financial_results_document",
+      "report_balance_sheet_document",
+      "report_cash_flow_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_reports/report/report_estimate.xml",
+    "module": "construction_reports",
+    "template_ids": [
+      "report_estimate_branded_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_reports/report/report_m29.xml",
+    "module": "construction_reports",
+    "template_ids": [
+      "report_m29_branded_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_reports/report/report_ks2.xml",
+    "module": "construction_reports",
+    "template_ids": [
+      "report_ks2_branded_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_reports/report/report_ks3.xml",
+    "module": "construction_reports",
+    "template_ids": [
+      "report_ks3_branded_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_reports/report/report_contract.xml",
+    "module": "construction_reports",
+    "template_ids": [
+      "report_contract_branded_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_reservation/views/reservation_views.xml",
+    "module": "construction_reservation",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_reservation/reports/reservation_report.xml",
+    "module": "construction_reservation",
+    "template_ids": [
+      "report_material_reservation"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_accounting/views/fixed_assets_views.xml",
+    "module": "construction_russian_accounting",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_russian_accounting/views/tax_accounting_views.xml",
+    "module": "construction_russian_accounting",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_russian_accounting/reports/tax_declaration_report.xml",
+    "module": "construction_russian_accounting",
+    "template_ids": [
+      "report_tax_declaration_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_accounting/reports/fixed_asset_report.xml",
+    "module": "construction_russian_accounting",
+    "template_ids": [
+      "report_fixed_asset_card_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_documents/report/pko_report.xml",
+    "module": "construction_russian_documents",
+    "template_ids": [
+      "report_pko_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_documents/report/torg12_report.xml",
+    "module": "construction_russian_documents",
+    "template_ids": [
+      "report_torg12_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_documents/report/ttn_report.xml",
+    "module": "construction_russian_documents",
+    "template_ids": [
+      "report_ttn_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_documents/report/rko_report.xml",
+    "module": "construction_russian_documents",
+    "template_ids": [
+      "report_rko_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_russian_documents/views/russian_documents_views.xml",
+    "module": "construction_russian_documents",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_safety/views/quality_inspection_views.xml",
+    "module": "construction_safety",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_safety/views/safety_inspection_views.xml",
+    "module": "construction_safety",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_safety/reports/safety_incident_report.xml",
+    "module": "construction_safety",
+    "template_ids": [
+      "report_safety_incident_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_safety/reports/safety_inspection_report.xml",
+    "module": "construction_safety",
+    "template_ids": [
+      "report_safety_inspection_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_specification/views/specification_views.xml",
+    "module": "construction_specification",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_specification/reports/specification_report.xml",
+    "module": "construction_specification",
+    "template_ids": [
+      "report_specification_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_stock/views/transfer_registry_views.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_stock/views/warehouse_discrepancy_views.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_stock/views/writeoff_registry_views.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_stock/views/receipt_registry_views.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_stock/views/inventory_registry_views.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_stock/views/m29_views.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_stock/reports/m29_report.xml",
+    "module": "construction_stock",
+    "template_ids": [
+      "report_m29_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_submittals/views/submittal_views.xml",
+    "module": "construction_submittals",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_submittals/reports/submittal_report.xml",
+    "module": "construction_submittals",
+    "template_ids": [
+      "report_submittal_document"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_theme/static/src/xml/sidebar_toggle.xml",
+    "module": "construction_theme",
+    "template_ids": [
+      "construction_theme.SidebarToggle"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_theme/views/landing_page.xml",
+    "module": "construction_theme",
+    "template_ids": [
+      "landing_page",
+      "knowledge_base_page"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_theme/views/web_layout.xml",
+    "module": "construction_theme",
+    "template_ids": [
+      "web_login_layout_inherit",
+      "webclient_bootstrap_inherit",
+      "web_layout_inherit",
+      "web_frontend_layout_inherit",
+      "brand_promotion_hide"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_theme/views/navbar_tree.xml",
+    "module": "construction_theme",
+    "template_ids": [
+      "web.NavBar.SectionsMenu.Dropdown",
+      "web.NavBar.SectionsMenu"
+    ],
+    "t_calls": [
+      "web.NavBar.SectionsMenu.Dropdown.MenuSlot"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_tolerance/views/tolerance_views.xml",
+    "module": "construction_tolerance",
+    "template_ids": [
+      "card"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_tolerance/reports/tolerance_reports.xml",
+    "module": "construction_tolerance",
+    "template_ids": [
+      "report_tolerance_check",
+      "report_tolerance_rules"
+    ],
+    "t_calls": [
+      "web.external_layout",
+      "web.html_container"
+    ],
+    "is_report": true,
+    "has_t_foreach": true
+  },
+  {
+    "file": "construction_website/views/features.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "features"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/knowledge.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "knowledge"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/templates.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "base_layout"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/terms.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "terms"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/pricing.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "pricing"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/homepage_enhanced.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "homepage_enhanced"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/privacy.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "privacy"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/kb_getting_started.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "kb_getting_started"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/homepage.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "homepage"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/contacts.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "contacts"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "construction_website/views/about.xml",
+    "module": "construction_website",
+    "template_ids": [
+      "about"
+    ],
+    "t_calls": [
+      "construction_website.base_layout"
+    ],
+    "is_report": false,
+    "has_t_foreach": false
+  },
+  {
+    "file": "payment_custom/views/payment_custom_templates.xml",
+    "module": "payment_custom",
+    "template_ids": [
+      "payment_custom.token_form",
+      "custom_state_header",
+      "redirect_form",
+      "payment_custom.payment_method_form"
+    ],
+    "t_calls": [],
+    "is_report": false,
+    "has_t_foreach": false
+  }
+]

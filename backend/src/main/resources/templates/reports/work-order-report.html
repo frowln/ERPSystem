@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Наряд-заказ на работы'">Наряд-заказ на работы</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .priority-urgent { color: #dc2626; font-weight: bold; border: 1px solid #dc2626; padding: 1pt 6pt; }
+        .priority-high { color: #ea580c; font-weight: bold; }
+        .priority-normal { color: #1a365d; }
+        .scope-box { border: 1px solid #333; padding: 8pt 10pt; margin-bottom: 12pt;
+                     background-color: #fafafa; }
+        .crew-section { overflow: hidden; margin-bottom: 12pt; }
+        .crew-left { float: left; width: 48%; }
+        .crew-right { float: right; width: 48%; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">НАРЯД-ЗАКАЗ НА ВЫПОЛНЕНИЕ РАБОТ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Work order metadata ────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер наряд-заказа:</td>
+        <td th:text="${orderNumber} ?: '—'">НЗ-001</td>
+        <td class="label">Дата выдачи:</td>
+        <td th:text="${issueDate} ?: '—'">01.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td th:text="${objectName} ?: '—'">Корпус 1, секция А</td>
+        <td class="label">Приоритет:</td>
+        <td>
+            <span th:if="${priority == 'URGENT'}" class="priority-urgent">Срочный</span>
+            <span th:if="${priority == 'HIGH'}" class="priority-high">Высокий</span>
+            <span th:if="${priority == null or priority == 'NORMAL'}" class="priority-normal">Обычный</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Начало работ:</td>
+        <td th:text="${startDate} ?: '—'">03.02.2026</td>
+        <td class="label">Окончание работ:</td>
+        <td th:text="${endDate} ?: '—'">07.02.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Вид работ:</td>
+        <td colspan="3" th:text="${workType} ?: '—'">Монтажные работы</td>
+    </tr>
+</table>
+
+<!-- ── Scope of work ──────────────────────────────────────────────────────── -->
+<h2>Объём работ</h2>
+<div class="scope-box" th:text="${scopeDescription} ?: 'Описание объёма работ не указано'">
+    Монтаж металлических конструкций каркаса 2-го этажа, включая сварочные работы и антикоррозионную обработку.
+</div>
+
+<!-- ── Work items ─────────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:35%;">Наименование работ</th>
+            <th style="width:10%;">Ед. изм.</th>
+            <th style="width:12%;">Объём</th>
+            <th style="width:13%;">Расценка,<br/>руб.</th>
+            <th style="width:13%;">Стоимость,<br/>руб.</th>
+            <th style="width:12%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item, iter : ${workItems}" th:if="${workItems != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${item.name}">Монтаж балок</td>
+            <td class="center" th:text="${item.unit}">шт.</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.quantity, 1, 2)}">24.00</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2)}">5 000.00</td>
+            <td class="number" th:text="${#numbers.formatDecimal(item.total, 1, 2)}">120 000.00</td>
+            <td class="text-small" th:text="${item.note} ?: ''"></td>
+        </tr>
+        <tr th:if="${workItems == null or workItems.isEmpty()}">
+            <td colspan="7" class="center text-muted">Работы не указаны</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${workItems != null and !workItems.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="5" class="text-right">Итого:</td>
+            <td class="number" th:text="${totalWorkCost != null} ? ${#numbers.formatDecimal(totalWorkCost, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Crew assignment ────────────────────────────────────────────────────── -->
+<h2>Состав бригады</h2>
+<table class="data-table" style="width:70%;">
+    <thead>
+        <tr>
+            <th style="width:7%;">№</th>
+            <th style="width:30%;">ФИО</th>
+            <th style="width:25%;">Специальность / Разряд</th>
+            <th style="width:20%;">Таб. номер</th>
+            <th style="width:18%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="worker, iter : ${crew}" th:if="${crew != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${worker.fullName}">Иванов И.И.</td>
+            <td th:text="${worker.specialty}">Монтажник 5 разряд</td>
+            <td class="center" th:text="${worker.tabNumber}">001</td>
+            <td class="text-small" th:text="${worker.note} ?: ''"></td>
+        </tr>
+        <tr th:if="${crew == null or crew.isEmpty()}">
+            <td colspan="5" class="center text-muted">Бригада не назначена</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Required materials ─────────────────────────────────────────────────── -->
+<h2>Необходимые материалы</h2>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:35%;">Наименование материала</th>
+            <th style="width:12%;">Ед. изм.</th>
+            <th style="width:12%;">Кол-во</th>
+            <th style="width:18%;">Склад / Источник</th>
+            <th style="width:18%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="mat, iter : ${materials}" th:if="${materials != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${mat.name}">Балка двутавровая 20Б1</td>
+            <td class="center" th:text="${mat.unit}">шт.</td>
+            <td class="number" th:text="${#numbers.formatDecimal(mat.quantity, 1, 2)}">24.00</td>
+            <td th:text="${mat.source} ?: '—'">Склад №1</td>
+            <td class="text-small" th:text="${mat.note} ?: ''"></td>
+        </tr>
+        <tr th:if="${materials == null or materials.isEmpty()}">
+            <td colspan="6" class="center text-muted">Материалы не указаны</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Safety requirements ────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${safetyRequirements != null}">
+    <h3>Требования по охране труда</h3>
+    <p th:text="${safetyRequirements}">Работы на высоте — использовать страховочные привязи. Проведён инструктаж.</p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Выдал (прораб):</p>
+            <p th:text="${issuedBy} ?: '________________________'">Начальник участка</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Принял (бригадир):</p>
+            <p th:text="${acceptedBy} ?: '________________________'">Бригадир</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Работы выполнены:</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(дата, подпись бригадира)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Работы приняты:</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(дата, подпись прораба)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

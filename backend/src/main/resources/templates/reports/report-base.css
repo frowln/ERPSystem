@@ -1,0 +1,268 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   report-base.css  —  Shared styles for PDF reports (Flying Saucer / OpenPDF)
+   Target: A4 portrait (210 x 297 mm) with 15mm horizontal, 20mm vertical margins
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Page layout ──────────────────────────────────────────────────────────── */
+@page {
+    size: A4 portrait;
+    margin: 20mm 15mm 20mm 15mm;
+
+    @bottom-center {
+        content: "Стр. " counter(page) " из " counter(pages);
+        font-size: 8pt;
+        font-family: "Times New Roman", serif;
+        color: #666;
+    }
+}
+
+/* ── Base typography ──────────────────────────────────────────────────────── */
+body {
+    font-family: "Times New Roman", "DejaVu Serif", serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4 {
+    font-family: "Arial", "DejaVu Sans", sans-serif;
+    margin-top: 0;
+}
+
+h1 { font-size: 14pt; margin-bottom: 10pt; }
+h2 { font-size: 12pt; margin-bottom: 8pt; }
+h3 { font-size: 11pt; margin-bottom: 6pt; }
+h4 { font-size: 10pt; margin-bottom: 4pt; }
+
+p {
+    margin: 0 0 6pt 0;
+}
+
+/* ── Report header block ──────────────────────────────────────────────────── */
+.report-header {
+    text-align: center;
+    margin-bottom: 16pt;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10pt;
+}
+
+.report-header .report-title {
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+}
+
+.report-header .report-subtitle {
+    font-size: 10pt;
+    color: #555;
+    margin-top: 4pt;
+}
+
+.report-header .org-name {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-bottom: 2pt;
+}
+
+/* ── Metadata / info rows ─────────────────────────────────────────────────── */
+.info-row {
+    display: block;
+    margin-bottom: 4pt;
+    overflow: hidden;
+}
+
+.info-label {
+    font-weight: bold;
+    width: 140pt;
+    float: left;
+}
+
+.info-value {
+    margin-left: 145pt;
+}
+
+.info-grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12pt;
+}
+
+.info-grid td {
+    padding: 3pt 6pt;
+    vertical-align: top;
+}
+
+.info-grid .label {
+    font-weight: bold;
+    width: 30%;
+    color: #333;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────── */
+table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12pt;
+    font-size: 9pt;
+}
+
+table.data-table th,
+table.data-table td {
+    border: 1px solid #333;
+    padding: 4pt 6pt;
+    text-align: left;
+    vertical-align: top;
+}
+
+table.data-table th {
+    background-color: #e8e8e8;
+    font-weight: bold;
+    text-align: center;
+    font-size: 9pt;
+}
+
+table.data-table td.number {
+    text-align: right;
+    font-family: "Courier New", monospace;
+}
+
+table.data-table td.center {
+    text-align: center;
+}
+
+table.data-table tr.total-row td {
+    font-weight: bold;
+    background-color: #f5f5f5;
+    border-top: 2px solid #333;
+}
+
+table.data-table tr.subtotal-row td {
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* Zebra striping */
+table.data-table tr:nth-child(even) td {
+    background-color: #fafafa;
+}
+
+table.data-table tr.total-row:nth-child(even) td,
+table.data-table tr.subtotal-row:nth-child(even) td {
+    background-color: #f5f5f5;
+}
+
+/* ── GOST-style form tables (КС-2, КС-3) ─────────────────────────────────── */
+table.gost-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12pt;
+    font-size: 9pt;
+}
+
+table.gost-table th,
+table.gost-table td {
+    border: 1px solid #000;
+    padding: 3pt 4pt;
+    text-align: center;
+    vertical-align: middle;
+}
+
+table.gost-table th {
+    background-color: #ddd;
+    font-weight: bold;
+    font-size: 8pt;
+}
+
+table.gost-table td.left {
+    text-align: left;
+}
+
+table.gost-table td.right {
+    text-align: right;
+}
+
+/* ── Signature blocks ─────────────────────────────────────────────────────── */
+.signature-block {
+    margin-top: 30pt;
+    page-break-inside: avoid;
+}
+
+.signature-row {
+    display: block;
+    overflow: hidden;
+    margin-bottom: 24pt;
+}
+
+.signature-left {
+    float: left;
+    width: 45%;
+}
+
+.signature-right {
+    float: right;
+    width: 45%;
+}
+
+.signature-line {
+    border-bottom: 1px solid #000;
+    min-height: 14pt;
+    margin-top: 20pt;
+    margin-bottom: 2pt;
+}
+
+.signature-caption {
+    font-size: 7pt;
+    color: #555;
+    text-align: center;
+}
+
+/* ── Severity / status badges ─────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    padding: 1pt 6pt;
+    border-radius: 3pt;
+    font-size: 8pt;
+    font-weight: bold;
+    color: #fff;
+}
+
+.badge-critical { background-color: #dc2626; }
+.badge-high     { background-color: #ea580c; }
+.badge-medium   { background-color: #ca8a04; }
+.badge-low      { background-color: #16a34a; }
+.badge-info     { background-color: #2563eb; }
+
+/* ── Utility ──────────────────────────────────────────────────────────────── */
+.text-right  { text-align: right; }
+.text-center { text-align: center; }
+.text-bold   { font-weight: bold; }
+.text-small  { font-size: 8pt; }
+.text-muted  { color: #666; }
+
+.mt-4  { margin-top: 4pt; }
+.mt-8  { margin-top: 8pt; }
+.mt-16 { margin-top: 16pt; }
+.mb-4  { margin-bottom: 4pt; }
+.mb-8  { margin-bottom: 8pt; }
+.mb-16 { margin-bottom: 16pt; }
+
+.page-break { page-break-after: always; }
+
+.no-break { page-break-inside: avoid; }
+
+/* ── Photo placeholder ────────────────────────────────────────────────────── */
+.photo-placeholder {
+    width: 160pt;
+    height: 120pt;
+    border: 1px dashed #999;
+    display: inline-block;
+    margin: 4pt;
+    text-align: center;
+    line-height: 120pt;
+    color: #999;
+    font-size: 8pt;
+    vertical-align: top;
+}

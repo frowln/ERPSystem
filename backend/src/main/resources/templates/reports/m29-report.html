@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Отчёт о расходе материалов (М-29)'">М-29</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .form-code { text-align: right; font-size: 8pt; margin-bottom: 6pt; }
+        .form-code span { border: 1px solid #000; padding: 2pt 6pt; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 120pt; }
+        .overuse { color: #dc2626; font-weight: bold; }
+        .savings { color: #16a34a; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- ── Form code ──────────────────────────────────────────────────────────── -->
+<div class="form-code">
+    Типовая межотраслевая форма № <span>М-29</span>
+</div>
+
+<!-- ── Title ──────────────────────────────────────────────────────────────── -->
+<div class="report-header" style="border-bottom: none;">
+    <div class="report-title">ОТЧЁТ<br/>О РАСХОДЕ ОСНОВНЫХ МАТЕРИАЛОВ В СТРОИТЕЛЬСТВЕ<br/>
+        В СОПОСТАВЛЕНИИ С РАСХОДОМ, ОПРЕДЕЛЁННЫМ ПО ПРОИЗВОДСТВЕННЫМ НОРМАМ</div>
+    <div class="report-subtitle">Форма М-29</div>
+</div>
+
+<!-- ── Meta information ───────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Организация:</td>
+        <td colspan="3" th:text="${organizationName} ?: '—'">ООО «СтройПроект»</td>
+    </tr>
+    <tr>
+        <td class="label">Стройка:</td>
+        <td colspan="3" th:text="${constructionName} ?: '—'">Строительство жилого комплекса</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Прораб (мастер):</td>
+        <td th:text="${foremanName} ?: '—'">Иванов И.И.</td>
+        <td class="label">Табельный №:</td>
+        <td th:text="${foremanTabNo} ?: '—'">0001</td>
+    </tr>
+    <tr>
+        <td class="label">Отчётный период:</td>
+        <td colspan="3">
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── Part I: Material consumption norms ─────────────────────────────────── -->
+<h3>Часть I. Нормативная потребность в материалах и фактический расход</h3>
+
+<table class="gost-table">
+    <thead>
+        <tr>
+            <th rowspan="2" style="width:5%;">№<br/>п/п</th>
+            <th rowspan="2" style="width:22%;">Наименование<br/>материала</th>
+            <th rowspan="2" style="width:8%;">Ед.<br/>изм.</th>
+            <th colspan="2">Расход по норме</th>
+            <th colspan="2">Фактический расход</th>
+            <th rowspan="2" style="width:10%;">Отклонение<br/>(+/-)</th>
+            <th rowspan="2" style="width:10%;">Отклонение,<br/>%</th>
+            <th rowspan="2" style="width:10%;">Примечание</th>
+        </tr>
+        <tr>
+            <th style="width:9%;">Кол-во</th>
+            <th style="width:10%;">Сумма, руб.</th>
+            <th style="width:9%;">Кол-во</th>
+            <th style="width:10%;">Сумма, руб.</th>
+        </tr>
+        <tr>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item, iter : ${materials}" th:if="${materials != null}">
+            <td th:text="${iter.count}">1</td>
+            <td class="left" th:text="${item.name}">Бетон М300</td>
+            <td th:text="${item.unit}">м3</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.normQty, 1, 2)}">100.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.normCost, 1, 2)}">500 000.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.actualQty, 1, 2)}">105.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.actualCost, 1, 2)}">525 000.00</td>
+            <td class="right"
+                th:classappend="${item.deviation > 0} ? 'overuse' : (${item.deviation < 0} ? 'savings' : '')"
+                th:text="${#numbers.formatDecimal(item.deviation, 1, 2)}">+5.00</td>
+            <td class="right"
+                th:classappend="${item.deviationPct > 0} ? 'overuse' : (${item.deviationPct < 0} ? 'savings' : '')"
+                th:text="${#numbers.formatDecimal(item.deviationPct, 1, 1)}">+5.0</td>
+            <td class="left" th:text="${item.note} ?: ''">Перерасход</td>
+        </tr>
+        <tr th:if="${materials == null or materials.isEmpty()}">
+            <td>1</td>
+            <td class="left">—</td>
+            <td>—</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.0</td>
+            <td></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" class="right" style="font-weight:bold;">Итого:</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${normTotal != null} ? ${#numbers.formatDecimal(normTotal, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${actualTotal != null} ? ${#numbers.formatDecimal(actualTotal, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${deviationTotal != null} ? ${#numbers.formatDecimal(deviationTotal, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Part II: Explanation of deviations ─────────────────────────────────── -->
+<h3>Часть II. Объяснение причин перерасхода или экономии материалов</h3>
+
+<div th:if="${deviationNotes != null}" th:each="note : ${deviationNotes}" class="mb-4">
+    <p th:text="${note}">Объяснение причин отклонения</p>
+</div>
+<div th:if="${deviationNotes == null or deviationNotes.isEmpty()}" class="mb-8">
+    <p class="text-muted">Объяснительная записка не представлена.</p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Отчёт составил:</p>
+            <p th:text="${foremanPosition} ?: 'Производитель работ'">Производитель работ</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Проверил:</p>
+            <p th:text="${checkerPosition} ?: 'Начальник ПТО'">Начальник ПТО</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Утвердил:</p>
+            <p th:text="${approvedByPosition} ?: 'Руководитель организации'">Руководитель организации</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

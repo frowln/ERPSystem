@@ -1,0 +1,221 @@
+{
+  "capability_map": [
+    {
+      "domain": "Project Management",
+      "description": "Core project management, planning, scheduling",
+      "modules": [
+        "construction_base",
+        "construction_gantt",
+        "construction_monthly_schedule",
+        "construction_planning",
+        "construction_project_enhanced",
+        "construction_reporting_calendar"
+      ],
+      "module_count": 6,
+      "model_count": 62
+    },
+    {
+      "domain": "Financial Management",
+      "description": "Budgeting, cost control, banking, payments, accounting",
+      "modules": [
+        "construction_ens",
+        "construction_estimate",
+        "construction_finance",
+        "construction_russian_accounting"
+      ],
+      "module_count": 4,
+      "model_count": 99
+    },
+    {
+      "domain": "Contract Management",
+      "description": "Contract lifecycle, supplements, claims, SLA",
+      "modules": [
+        "construction_contract"
+      ],
+      "module_count": 1,
+      "model_count": 15
+    },
+    {
+      "domain": "Document Management",
+      "description": "Documents, drawings, annotations, electronic signatures, EDO",
+      "modules": [
+        "construction_documents",
+        "construction_drawing_annotation",
+        "construction_edi_sbis",
+        "construction_edo_generator",
+        "construction_russian_documents"
+      ],
+      "module_count": 5,
+      "model_count": 44
+    },
+    {
+      "domain": "Human Resources",
+      "description": "HR management, crew management, timesheets",
+      "modules": [
+        "construction_crew_time",
+        "construction_hr",
+        "construction_hr_russian"
+      ],
+      "module_count": 3,
+      "model_count": 35
+    },
+    {
+      "domain": "Supply Chain & Procurement",
+      "description": "Procurement, stock, materials, logistics, reservation",
+      "modules": [
+        "construction_logistics",
+        "construction_material_analogs",
+        "construction_procurement",
+        "construction_reservation",
+        "construction_specification",
+        "construction_stock",
+        "construction_stock_limits"
+      ],
+      "module_count": 7,
+      "model_count": 96
+    },
+    {
+      "domain": "Safety & Compliance",
+      "description": "Safety management, certificates, tolerances, regulatory",
+      "modules": [
+        "construction_certificates",
+        "construction_legal",
+        "construction_regulatory_reports",
+        "construction_safety",
+        "construction_tolerance"
+      ],
+      "module_count": 5,
+      "model_count": 41
+    },
+    {
+      "domain": "Quality & Inspections",
+      "description": "Quality control, punch lists, submittals, PTO",
+      "modules": [
+        "construction_audit",
+        "construction_daily_log",
+        "construction_pto",
+        "construction_punch_list",
+        "construction_submittals"
+      ],
+      "module_count": 5,
+      "model_count": 44
+    },
+    {
+      "domain": "BIM & Design",
+      "description": "BIM, 3D modeling, design management, IFC",
+      "modules": [
+        "construction_bim",
+        "construction_design",
+        "construction_photo_progress"
+      ],
+      "module_count": 3,
+      "model_count": 33
+    },
+    {
+      "domain": "Analytics & Reporting",
+      "description": "Dashboards, KPIs, analytics, reports, BI",
+      "modules": [
+        "construction_analytics",
+        "construction_journals",
+        "construction_kpi",
+        "construction_lrv",
+        "construction_reports"
+      ],
+      "module_count": 5,
+      "model_count": 42
+    },
+    {
+      "domain": "Integration & API",
+      "description": "External integrations, APIs, webhooks",
+      "modules": [
+        "construction_1c_integration",
+        "construction_api",
+        "construction_calendar_integration",
+        "construction_crm_integration",
+        "construction_fleet_integration",
+        "construction_integration",
+        "construction_integrations_enhanced",
+        "construction_maintenance_integration",
+        "construction_purchase_integration",
+        "construction_stock_integration",
+        "construction_timesheet_integration"
+      ],
+      "module_count": 11,
+      "model_count": 40
+    },
+    {
+      "domain": "AI & ML",
+      "description": "AI assistants, OCR, machine learning, computer vision",
+      "modules": [
+        "construction_ai",
+        "construction_ai_assistant",
+        "construction_ocr"
+      ],
+      "module_count": 3,
+      "model_count": 7
+    },
+    {
+      "domain": "Security & Auth",
+      "description": "Authentication, authorization, RBAC, MFA, security",
+      "modules": [
+        "construction_auth_oidc",
+        "construction_kep",
+        "construction_mfa",
+        "construction_rbac",
+        "construction_security"
+      ],
+      "module_count": 5,
+      "model_count": 23
+    },
+    {
+      "domain": "Infrastructure",
+      "description": "Caching, monitoring, DevOps, search, mobile, PWA",
+      "modules": [
+        "construction_cache",
+        "construction_devops",
+        "construction_mobile",
+        "construction_monitoring",
+        "construction_ops",
+        "construction_pwa",
+        "construction_search",
+        "construction_support"
+      ],
+      "module_count": 8,
+      "model_count": 73
+    },
+    {
+      "domain": "UI & UX",
+      "description": "Theme, UI improvements, discuss",
+      "modules": [
+        "construction_discuss_enhanced",
+        "construction_theme",
+        "construction_ui_improvements",
+        "construction_website"
+      ],
+      "module_count": 4,
+      "model_count": 0
+    },
+    {
+      "domain": "Field Operations",
+      "description": "Dispatch, IoT, fleet, contractor portal",
+      "modules": [
+        "construction_contractor_portal",
+        "construction_dispatch",
+        "construction_iot"
+      ],
+      "module_count": 3,
+      "model_count": 8
+    },
+    {
+      "domain": "Demo & Seed Data",
+      "description": "Demo data, seed scripts",
+      "modules": [
+        "construction_demo"
+      ],
+      "module_count": 1,
+      "model_count": 2
+    }
+  ],
+  "total_modules": 79,
+  "total_domains": 17
+}

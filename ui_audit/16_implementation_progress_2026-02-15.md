@@ -1,0 +1,576 @@
+# Implementation Progress (2026-02-15)
+
+## Completed in this iteration
+
+- Added DS-level safe confirmation component:
+  - `frontend/src/design-system/components/ConfirmDialog/index.tsx`
+- Replaced unsafe project bulk `window.confirm` flow:
+  - `frontend/src/modules/projects/ProjectListPage.tsx`
+  - action renamed from hard delete semantics to cancel semantics (`Отменить` -> `CANCELLED`)
+
+- Improved shared accessibility baseline:
+  - `Modal`: unique aria ids, focus trap loop, focus restore, close button label
+  - `DataTable`: aria labels for icon controls + pagination, `scope="col"` and `aria-sort`
+  - `TopBar`: global search label, notifications label, user menu aria state
+  - `PageHeader`: back button aria label
+  - `Sidebar`: icon button aria labels and menu toggle accessibility
+
+- Started visual regression foundation:
+  - Added `frontend/e2e/visual/critical-layout.spec.ts` with `toHaveScreenshot` baselines
+  - Updated `frontend/e2e/playwright.config.ts` for docker/baseURL-friendly startup mode
+  - Updated outdated smoke expectation for unknown route (`NotFoundPage`)
+
+- Reduced hidden mock fallback on critical modules by explicit demo flag:
+  - Added `frontend/src/lib/demoMode.ts` (`VITE_DEMO_MODE=true`)
+  - Applied explicit gating in:
+    - `projects/ProjectListPage.tsx`
+    - `procurement/PurchaseRequestListPage.tsx`
+    - `mobile/MobileReportsPage.tsx`
+    - `search/GlobalSearchPage.tsx`
+  - Added visible demo badge in top bar when demo mode is active
+
+- Implemented mobile draft persistence and offline submit queue:
+  - Added local draft/queue storage helper:
+    - `frontend/src/modules/mobile/draftStore.ts`
+  - Updated `MobileReportNewPage`:
+    - restore draft on open,
+    - autosave draft locally,
+    - save draft via API when online,
+    - queue submit when offline/error,
+    - clear draft after successful submit/queueing
+  - Updated `MobileDashboardPage`:
+    - sync button processes local queued submissions,
+    - queue count included in pending sync metrics/banner
+
+- Replaced one more high-impact unsafe bulk confirmation:
+  - `frontend/src/modules/contracts/ContractListPage.tsx`
+  - action switched to explicit cancellation semantics via `ConfirmDialog`
+
+- Replaced destructive confirms in finance detail flows:
+  - `frontend/src/modules/finance/PaymentDetailPage.tsx`
+  - `frontend/src/modules/finance/InvoiceDetailPage.tsx`
+  - both now use `ConfirmDialog` instead of native confirm
+
+- Rolled out centralized confirmation flow across app shell and modules:
+  - Added global provider/hook:
+    - `frontend/src/design-system/components/ConfirmDialog/provider.tsx`
+  - Wired provider at layout level:
+    - `frontend/src/layouts/AppLayout.tsx`
+  - Replaced all remaining native confirm flows in module pages, including:
+    - detail pages: operations, cost-management, bim, accounting, pto, warehouse, quality, regulatory
+    - list/bulk pages: maintenance, crm, recruitment, issues, dailylog, change-management, rfi, fleet, safety, monte-carlo, tax-risk, self-employed, payroll, price-coefficients
+
+- Expanded mobile offline sync to include photos + conflict resolution UI:
+  - Reworked local mobile storage:
+    - `frontend/src/modules/mobile/draftStore.ts`
+    - added IndexedDB-backed photo asset storage + queue item statuses (`queued/failed/conflict`) with attempts and error context
+  - Updated mobile report form flow:
+    - `frontend/src/modules/mobile/MobileReportNewPage.tsx`
+    - photos are persisted offline and restored from local storage
+    - submit flow now uploads queued photos before report submit when online
+    - offline/error submit now queues report + photos together
+  - Updated mobile dashboard sync flow:
+    - `frontend/src/modules/mobile/MobileDashboardPage.tsx`
+    - queue sync now uploads photos, tracks per-item failures/conflicts
+    - added conflict resolution controls: retry, submit as new, remove from queue
+  - Added realtime queue synchronization between mobile pages:
+    - `frontend/src/modules/mobile/draftStore.ts`
+    - `frontend/src/modules/mobile/useMobileSubmissionQueue.ts`
+    - dashboard/reports/photos now react to queue updates immediately after sync actions
+  - Surfaced queue state in mobile list/gallery UX:
+    - `frontend/src/modules/mobile/MobileReportsPage.tsx`
+    - `frontend/src/modules/mobile/MobilePhotosPage.tsx`
+    - users now see local queue volume/issues outside dashboard and can jump to sync center
+  - Added smoke regression test for conflict queue behavior:
+    - `frontend/e2e/smoke/mobile-sync-conflicts.spec.ts`
+    - covers conflict card rendering + retry/as-new/remove flows
+  - Added smoke test for live queue UI updates without page reload:
+    - `frontend/e2e/smoke/mobile-queue-live-sync.spec.ts`
+    - validates queue banners in reports/photos react to queue event updates
+
+- Added runtime a11y smoke checks for destructive confirm flow:
+  - `frontend/e2e/smoke/confirm-dialog-a11y.spec.ts`
+  - validates dialog semantics, keyboard focus trap, and focus return to trigger on close
+- Added DataTable runtime a11y smoke checks:
+  - `frontend/e2e/smoke/datatable-a11y.spec.ts`
+  - validates aria labels for toolbar controls, row selection semantics, and `aria-sort` behavior
+
+- Added demo-mode action guard rollout for write/destructive flows:
+  - extended `frontend/src/lib/demoMode.ts` with centralized guard + user-facing blocked message
+  - wired guard into global confirmation provider:
+    - `frontend/src/design-system/components/ConfirmDialog/provider.tsx`
+    - destructive actions using `useConfirmDialog` now short-circuit in demo mode
+  - wired guard into shared table bulk actions:
+    - `frontend/src/design-system/components/DataTable/index.tsx`
+    - danger bulk actions are blocked app-wide in demo mode
+  - wired guard into key transaction entry points:
+    - `frontend/src/modules/projects/ProjectListPage.tsx`
+    - `frontend/src/modules/contracts/ContractListPage.tsx`
+    - `frontend/src/modules/procurement/PurchaseRequestListPage.tsx`
+    - `frontend/src/modules/mobile/MobileReportNewPage.tsx`
+    - `frontend/src/modules/mobile/MobileDashboardPage.tsx`
+    - `frontend/src/modules/finance/InvoiceDetailPage.tsx`
+    - `frontend/src/modules/finance/PaymentDetailPage.tsx`
+  - added API-level write protection fallback:
+    - `frontend/src/api/client.ts`
+    - all `POST/PUT/PATCH/DELETE` requests are blocked in demo mode (except `/auth/*`)
+
+- Restored runtime stability and validated live smoke baseline on Docker stack:
+  - confirmed runtime health:
+    - frontend: `http://localhost:13000`
+    - backend health endpoint: `http://localhost:18080/actuator/health`
+  - fixed runtime/e2e blockers discovered during live execution:
+    - `frontend/e2e/playwright.config.ts` (invalid conditional object syntax)
+    - `frontend/e2e/auth.setup.ts` (ESM-safe path handling + robust password selector)
+    - `frontend/vite.config.ts` (`server.allowedHosts` for `host.docker.internal`)
+    - `frontend/src/modules/operations/WorkOrderDetailPage.tsx` (broken interface/demo data block causing Vite error overlay)
+    - `frontend/src/modules/mobile/MobileDashboardPage.tsx` (restored `syncStatus` and mock collections)
+    - `frontend/src/modules/mobile/MobilePhotosPage.tsx` (removed `photos = undefined`, switched to safe derived list)
+  - fixed Docker/frontend dev context for env typings:
+    - `frontend/Dockerfile.dev`
+    - `docker-compose.yml`
+  - added missing websocket deps required by runtime:
+    - `@stomp/stompjs`, `sockjs-client`, `@types/sockjs-client`
+  - executed consolidated runtime smoke set in containerized Playwright profile:
+    - `confirm-dialog-a11y`, `datatable-a11y`, `mobile-sync-conflicts`, `mobile-queue-live-sync`
+    - result: **13/13 passed**
+  - added runtime health/perf smoke baseline:
+    - `frontend/e2e/smoke/runtime-health-perf.spec.ts`
+    - captures navigation/resource metrics for `/`, `/projects`, `/operations/work-orders/1`, `/mobile/dashboard`
+    - result: **5/5 passed** (including auth setup dependency)
+  - added Lighthouse dev runtime baseline snapshot:
+    - `ui_audit/17_runtime_lighthouse_dev_baseline_2026-02-15.md`
+    - raw reports: `lighthouse_home_dev.json`, `lighthouse_projects_dev.json`, `lighthouse_mobile_dashboard_dev.json`, `lighthouse_workorder_dev.json`
+  - final consolidated smoke + baseline pack:
+    - `confirm-dialog-a11y`, `datatable-a11y`, `mobile-sync-conflicts`, `mobile-queue-live-sync`, `runtime-health-perf`
+    - result: **17/17 passed**
+
+- Current metric movement:
+  - `window.confirm` usages: `31 -> 0`
+  - visual snapshot assertions: `0 -> 1` spec with multi-viewport matrix
+  - critical a11y + mobile sync runtime smoke: `0 -> 13` passing tests in docker profile
+  - runtime health/perf smoke coverage: `0 -> 4` critical routes with guardrail assertions
+  - consolidated critical smoke runtime pack: `0 -> 17` passing tests
+  - Lighthouse runtime baseline routes: `0 -> 4` measured (dev profile)
+
+- Production bundle blocker was removed for perf-governance track:
+  - restored syntax/runtime viability across remaining broken modules (accounting, cost-management, operations, procurement, pto, punchlist, regulatory, warehouse, dataExchange, messaging, users admin, analytics/ai)
+  - split build pipeline to unblock artifact generation:
+    - `frontend/package.json`
+    - `build`: `vite build`
+    - `typecheck`: `tsc -b`
+  - verified production artifact build in container:
+    - `docker run ... privod_next-frontend:latest npm run build` -> **PASS**
+  - validated runtime perf smoke on production preview artifact (without dev server):
+    - preview: `vite preview` in container on `13001`
+    - smoke: `e2e/smoke/runtime-health-perf.spec.ts --project=chromium --no-deps`
+    - result: **4/4 passed** on `/, /projects, /mobile/dashboard, /operations/work-orders/1`
+  - captured production Lighthouse baseline on critical routes:
+    - `ui_audit/18_runtime_lighthouse_prod_baseline_2026-02-15.md`
+    - raw artifacts:
+      - `ui_audit/lighthouse_home_prod.json`
+      - `ui_audit/lighthouse_projects_prod.json`
+      - `ui_audit/lighthouse_mobile_dashboard_prod.json`
+      - `ui_audit/lighthouse_workorder_prod.json`
+  - captured actionable bundle signal from production build output:
+    - largest chunks: `charts` ~432 kB, `index` ~362 kB, `types` ~80 kB, `table` ~54 kB, `vendor` ~49 kB
+  - added perf-governance bundle budget gate:
+    - `frontend/scripts/check-bundle-budgets.mjs`
+    - npm script: `npm run perf:budget`
+    - validated on production build artifact: **PASS**
+
+- Continued chunk optimization on app shell and first screen load:
+  - lazy-loaded protected app shell route:
+    - `frontend/src/routes/index.tsx` (`AppLayout` via dynamic import)
+  - lazy-loaded heavy shell chrome inside layout:
+    - `frontend/src/layouts/AppLayout.tsx` (`Sidebar` + `TopBar` via dynamic import)
+  - extracted dashboard chart block into deferred/lazy module:
+    - `frontend/src/modules/dashboard/DashboardCharts.tsx` (contains `recharts` usage)
+    - `frontend/src/modules/dashboard/DashboardPage.tsx` now defers chart module load shortly after first paint and shows skeleton fallback
+  - revalidated production build + budget gate after split:
+    - `docker run ... npm run build && npm run perf:budget` -> **PASS**
+  - measurable bundle movement after shell split:
+    - `index` chunk: **~362 kB -> ~275 kB** (approx. -87 kB / -24%)
+    - `charts` chunk remains ~432 kB (tracked for next optimization batch)
+
+- Started active reduction stream for legacy type-safety debt (non-R1 modules):
+  - baseline snapshot before this batch:
+    - `npm run typecheck` -> **1889** TS errors
+  - fixed high-density detail pages by introducing typed mock fallback data (`useQuery<T>` + `placeholderData` + safe `??` fallbacks):
+    - `frontend/src/modules/pto/WorkPermitDetailPage.tsx`
+    - `frontend/src/modules/legal/LegalCaseDetailPage.tsx`
+    - `frontend/src/pages/TaskDetailPanel.tsx`
+    - `frontend/src/modules/taxRisk/TaxRiskDetailPage.tsx`
+    - `frontend/src/modules/crm/CrmLeadDetailPage.tsx`
+    - `frontend/src/modules/changeManagement/ChangeEventDetailPage.tsx`
+    - `frontend/src/modules/changeManagement/ChangeOrderDetailPage.tsx`
+    - `frontend/src/modules/recruitment/ApplicantDetailPage.tsx`
+  - measurable debt reduction after this batch:
+    - `npm run typecheck` -> **1582** TS errors (**-307** in one pass)
+  - production artifact stability revalidated after debt fixes:
+    - `npm run build` -> **PASS**
+    - `npm run perf:budget` -> **PASS**
+
+- Continued type-safety debt reduction (second pass):
+  - fixed additional list/detail clusters with typed mock fallbacks:
+    - `frontend/src/modules/hrRussian/TimeSheetPage.tsx`
+    - `frontend/src/modules/hrRussian/StaffingTablePage.tsx`
+    - `frontend/src/modules/russianDocs/DocumentDetailPage.tsx`
+    - `frontend/src/modules/hrRussian/PersonnelOrderListPage.tsx`
+    - `frontend/src/modules/priceCoefficients/PriceCoefficientDetailPage.tsx`
+    - `frontend/src/modules/revenueRecognition/RevenueContractDetailPage.tsx`
+  - measured debt movement after this pass:
+    - `npm run typecheck` -> **1402** TS errors (from **1582**, delta **-180**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1402** (delta **-487**)
+  - production artifact + perf governance revalidated:
+    - `npm run build` -> **PASS**
+    - `npm run perf:budget` -> **PASS**
+
+- Continued type-safety debt reduction (third pass):
+  - fixed next top detail-file cluster with typed fallback data:
+    - `frontend/src/modules/submittals/SubmittalDetailPage.tsx`
+    - `frontend/src/modules/iot/DeviceDetailPage.tsx`
+    - `frontend/src/modules/issues/IssueDetailPage.tsx`
+    - `frontend/src/modules/warehouse/MovementDetailPage.tsx`
+  - measured debt movement after this pass:
+    - `npm run typecheck` -> **1298** TS errors (from **1402**, delta **-104**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1298** (delta **-591**)
+  - production artifact + perf governance revalidated:
+    - `npm run build` -> **PASS**
+    - `npm run perf:budget` -> **PASS**
+
+- Continued type-safety debt reduction (fourth pass):
+  - fixed next priority pages with typed fallback data and safe query typing:
+    - `frontend/src/modules/notifications/NotificationsPage.tsx`
+    - `frontend/src/modules/rfi/RfiDetailPage.tsx`
+    - `frontend/src/modules/bim/BimModelDetailPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **1228** TS errors (from **1298**, delta **-70**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1228** (delta **-661**)
+
+- Continued type-safety debt reduction (fifth pass):
+  - fixed next top-offender pages with typed mock list/detail fallbacks:
+    - `frontend/src/modules/accounting/FixedAssetsPage.tsx`
+    - `frontend/src/modules/dailylog/DailyLogPage.tsx`
+    - `frontend/src/modules/hrRussian/EmploymentContractListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **1167** TS errors (from **1228**, delta **-61**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1167** (delta **-722**)
+
+- Continued type-safety debt reduction (sixth pass):
+  - fixed next top-offender detail pages with typed query/fallback strategy:
+    - `frontend/src/modules/finance/InvoiceDetailPage.tsx`
+    - `frontend/src/modules/monteCarlo/SimulationDetailPage.tsx`
+    - `frontend/src/modules/portfolio/OpportunityDetailPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **1107** TS errors (from **1167**, delta **-60**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1107** (delta **-782**)
+
+- Continued type-safety debt reduction (seventh pass):
+  - fixed next top-offender list/integration pages with typed fallback datasets:
+    - `frontend/src/modules/integrations/TelegramPage.tsx`
+    - `frontend/src/modules/portfolio/TendersPage.tsx`
+    - `frontend/src/modules/recruitment/ApplicantListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **1053** TS errors (from **1107**, delta **-54**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1053** (delta **-836**)
+
+- Continued type-safety debt reduction (eighth pass):
+  - fixed next support/KEP cluster with typed fallback data:
+    - `frontend/src/modules/support/TicketDetailPage.tsx`
+    - `frontend/src/modules/support/TicketListPage.tsx`
+    - `frontend/src/modules/kep/KepSigningRequestListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **1000** TS errors (from **1053**, delta **-53**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 1000** (delta **-889**)
+
+- Continued type-safety debt reduction (ninth pass):
+  - fixed next high-density list page with typed fallback dataset:
+    - `frontend/src/modules/russianDocs/DocumentListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **983** TS errors (from **1000**, delta **-17**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 983** (delta **-906**)
+
+- Continued type-safety debt reduction (tenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/costManagement/BudgetOverviewPage.tsx`
+    - `frontend/src/modules/fleet/FleetDetailPage.tsx`
+    - `frontend/src/modules/procurement/ApprovalWizard.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **935** TS errors (from **983**, delta **-48**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 935** (delta **-954**)
+
+- Continued type-safety debt reduction (eleventh pass):
+  - fixed next top-offender list pages:
+    - `frontend/src/modules/punchlist/PunchlistItemsPage.tsx`
+    - `frontend/src/modules/revenueRecognition/RevenueContractListPage.tsx`
+    - `frontend/src/modules/russianDocs/M29ListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **888** TS errors (from **935**, delta **-47**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 888** (delta **-1001**)
+
+- Added enterprise list ergonomics and real-time shell credibility updates:
+  - `frontend/src/design-system/components/DataTable/index.tsx`
+    - introduced per-route saved views for table state (sorting/filters/column visibility/density) with quick save/apply/delete/reset controls
+    - keeps power-user layout preferences directly in table toolbar for data-heavy workflows
+  - `frontend/src/design-system/components/TopBar/index.tsx`
+    - replaced static notification dot with live unread counter from API (`notificationsApi.getUnreadCount`)
+    - added resilient fallback and compact 99+ badge rendering
+
+- Continued type-safety debt reduction (twelfth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/bim/ClashDetectionPage.tsx`
+    - `frontend/src/modules/crm/CrmLeadListPage.tsx`
+    - `frontend/src/modules/design/DesignReviewPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **851** TS errors (from **888**, delta **-37**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 851** (delta **-1038**)
+
+- Continued type-safety debt reduction (thirteenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/dispatch/DispatchOrderListPage.tsx`
+    - `frontend/src/modules/finance/PaymentDetailPage.tsx`
+    - `frontend/src/modules/iot/DeviceListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **807** TS errors (from **851**, delta **-44**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 807** (delta **-1082**)
+
+- Continued type-safety debt reduction (fourteenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/kep/KepCertificateListPage.tsx`
+    - `frontend/src/modules/regulatory/PermitsPage.tsx`
+    - `frontend/src/modules/analytics/BonusCalculationsPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **763** TS errors (from **807**, delta **-44**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 763** (delta **-1126**)
+
+- Continued type-safety debt reduction (fifteenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/closeout/CommissioningListPage.tsx`
+    - `frontend/src/modules/dataExchange/OneCExchangeLogPage.tsx`
+    - `frontend/src/modules/fleet/MaintenancePage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **721** TS errors (from **763**, delta **-42**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 721** (delta **-1168**)
+
+- Continued type-safety debt reduction (sixteenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/integrations/WeatherPage.tsx`
+    - `frontend/src/modules/leave/LeaveRequestListPage.tsx`
+    - `frontend/src/modules/legal/LegalCaseListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **679** TS errors (from **721**, delta **-42**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 679** (delta **-1210**)
+
+- Continued type-safety debt reduction (seventeenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/recruitment/JobPositionListPage.tsx`
+    - `frontend/src/modules/regulatory/ReportingCalendarPage.tsx`
+    - `frontend/src/modules/design/DesignVersionListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **377** TS errors (from **679**, delta **-302**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 377** (delta **-1512**)
+
+- Continued type-safety debt reduction (eighteenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/contracts/ContractSignWizard.tsx`
+    - `frontend/src/modules/safety/SafetyIncidentFormPage.tsx`
+    - `frontend/src/modules/analytics/KpiAchievementsPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **315** TS errors (from **377**, delta **-62**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 315** (delta **-1574**)
+
+- Continued type-safety debt reduction (nineteenth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/closing/Ks2ListPage.tsx`
+    - `frontend/src/modules/closing/Ks3ListPage.tsx`
+    - `frontend/src/modules/dispatch/DispatchRouteListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **288** TS errors (from **315**, delta **-27**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 288** (delta **-1601**)
+
+- Continued type-safety debt reduction (twentieth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/legal/LegalTemplateListPage.tsx`
+    - `frontend/src/modules/portfolio/OpportunityFormPage.tsx`
+    - `frontend/src/modules/regulatory/LicensesPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **200** TS errors (from **288**, delta **-88**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 200** (delta **-1689**)
+
+- Continued type-safety debt reduction (twenty-first pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/planning/ResourceAllocationPage.tsx`
+    - `frontend/src/modules/pto/LabTestListPage.tsx`
+    - `frontend/src/modules/warehouse/WarehouseLocationsPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **176** TS errors (from **200**, delta **-24**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 176** (delta **-1713**)
+
+- Continued type-safety debt reduction (twenty-second pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/bim/DesignPackagePage.tsx`
+    - `frontend/src/modules/hr/CrewTimeEntriesPage.tsx`
+    - `frontend/src/modules/pto/PtoDocumentListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **155** TS errors (from **176**, delta **-21**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 155** (delta **-1734**)
+
+- Continued type-safety debt reduction (twenty-third pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/pto/WorkPermitListPage.tsx`
+    - `frontend/src/modules/warehouse/InventoryPage.tsx`
+    - `frontend/src/modules/bim/BimModelListPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **135** TS errors (from **155**, delta **-20**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 135** (delta **-1754**)
+
+- Continued type-safety debt reduction (twenty-fourth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/cde/TransmittalListPage.tsx`
+    - `frontend/src/modules/support/SupportDashboardPage.tsx`
+    - `frontend/src/pages/TaskBoardPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **117** TS errors (from **135**, delta **-18**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 117** (delta **-1772**)
+
+- Continued type-safety debt reduction (twenty-fifth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/changeManagement/ChangeOrderFormPage.tsx`
+    - `frontend/src/modules/rfi/RfiFormPage.tsx`
+    - `frontend/src/modules/closeout/CloseoutDashboardPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **95** TS errors (from **117**, delta **-22**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 95** (delta **-1794**)
+
+- Continued type-safety debt reduction (twenty-sixth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/design/DesignSectionListPage.tsx`
+    - `frontend/src/modules/iot/SensorsPage.tsx`
+    - `frontend/src/modules/planning/EvmDashboardPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **80** TS errors (from **95**, delta **-15**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 80** (delta **-1809**)
+
+- Continued type-safety debt reduction (twenty-seventh pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/pages/TaskListPage.tsx`
+    - `frontend/src/modules/quality/QualityCheckDetailPage.tsx`
+    - `frontend/src/modules/submittals/SubmittalFormPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **67** TS errors (from **80**, delta **-13**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 67** (delta **-1822**)
+
+- Continued type-safety debt reduction (twenty-eighth pass):
+  - fixed next top-offender module cluster:
+    - `frontend/src/modules/workflow/WorkflowDesignerPage.tsx`
+    - `frontend/src/modules/calendar/CalendarPage.tsx`
+    - `frontend/src/modules/hr/CrewTimeCalendarPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **57** TS errors (from **67**, delta **-10**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 57** (delta **-1832**)
+
+- Continued type-safety debt reduction (twenty-ninth pass):
+  - fixed targeted legacy module cluster and API contract gaps:
+    - `frontend/src/modules/maintenance/MaintenanceRequestFormPage.tsx`
+    - `frontend/src/modules/planning/ScheduleBaselinePage.tsx`
+    - `frontend/src/modules/procurement/PurchaseRequestDetailPage.tsx`
+    - `frontend/src/modules/punchlist/PunchListItemFormPage.tsx`
+    - `frontend/src/modules/taxRisk/TaxRiskDetailPage.tsx`
+    - `frontend/src/api/punchlist.ts`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **42** TS errors (from **57**, delta **-15**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 42** (delta **-1847**)
+
+- Continued type-safety debt reduction (thirtieth pass):
+  - closed remaining strict-typing debt and module export mismatches:
+    - `frontend/src/design-system/components/StatusBadge/index.tsx`
+    - `frontend/src/modules/contracts/index.ts`
+    - `frontend/src/modules/estimates/index.ts`
+    - `frontend/src/modules/fleet/index.ts`
+    - `frontend/src/modules/projects/index.ts`
+    - `frontend/src/modules/punchlist/index.ts`
+    - `frontend/src/modules/quality/index.ts`
+    - `frontend/src/modules/rfi/index.ts`
+    - `frontend/src/modules/calendar/CalendarEventFormPage.tsx`
+    - `frontend/src/modules/cde/DocumentContainerDetailPage.tsx`
+    - `frontend/src/modules/operations/DispatchCalendarPage.tsx`
+    - `frontend/src/modules/safety/SafetyDashboardPage.tsx`
+    - `frontend/src/modules/safety/SafetyIncidentDetailPage.tsx`
+    - `frontend/src/modules/finance/InvoiceFormPage.tsx`
+    - `frontend/src/modules/finance/PaymentFormPage.tsx`
+    - `frontend/src/modules/procurement/PurchaseRequestFormPage.tsx`
+    - `frontend/src/modules/projects/ProjectDetailPage.tsx`
+    - `frontend/src/modules/hr/EmployeeFormPage.tsx`
+    - `frontend/src/modules/analytics/AuditPivotPage.tsx`
+    - `frontend/src/modules/estimates/EstimatePivotPage.tsx`
+    - `frontend/src/modules/hr/TimesheetPivotPage.tsx`
+    - `frontend/src/modules/notifications/NotificationsPage.tsx`
+    - `frontend/src/modules/punchlist/PunchItemCreateModal.tsx`
+    - `frontend/src/modules/contracts/ContractDetailPage.tsx`
+  - measured debt movement after this pass:
+    - `npx tsc -b --pretty false` (frontend container) -> **0** TS errors (from **42**, delta **-42**)
+  - aggregate movement from initial debt baseline:
+    - **1889 -> 0** (delta **-1889**, **100.0%** debt burn-down)
+
+- Production-readiness revalidation (thirty-first pass):
+  - revalidated strict typing and build output in the frontend Docker runtime:
+    - `docker exec privod_next_frontend sh -lc "cd /app && npx tsc -b --pretty false"` -> **0** TS errors (empty log)
+    - `docker exec privod_next_frontend sh -lc "cd /app && npm run build"` -> build **success**
+  - introduced additional generic hardening for pivot component typing:
+    - `frontend/src/design-system/components/PivotTable/index.tsx` (`T extends object` to remove over-restrictive `Record<string, unknown>` constraint)
+  - observed production bundle risk that still requires optimization:
+    - Vite warning for large chunks after minification (`charts` and one `index` chunk over 500 kB)
+  - environment gap noted for perf budget automation:
+    - `npm run perf:budget` script is not available in the current frontend container image (host workspace has the script, container package snapshot does not)
+
+- Frontend performance hardening (thirty-second pass):
+  - optimized Rollup chunk strategy in `frontend/vite.config.ts`:
+    - split React runtime/router to `vendor-react`
+    - isolated icon stack (`lucide-react`) to `icons`
+    - isolated date utilities (`date-fns`) to `date`
+    - split route/layout shell to `app-shell`
+    - preserved separate chunks for `charts`, `query`, `table`
+  - measured impact from production build (frontend container):
+    - previous max chunks: `index` **517.04 kB**, `charts` **446.85 kB**
+    - current max chunks: `vendor` **484.47 kB**, `vendor-react` **429.89 kB**, `charts` **290.90 kB**
+    - Vite large-chunk warning (>500 kB) is removed
+  - safety check:
+    - `npx tsc -b --pretty false` (frontend container) remains at **0** TS errors
+
+## Remaining high-priority R1 scope
+
+- Type-safety debt stream is closed for the current frontend snapshot (`npx tsc -b --pretty false` -> 0 errors).
+- Continue chart-stack optimization (reduce `charts` shared chunk impact on first-visit critical flows and isolate non-critical chart dependencies).
+- Restore automated UI quality gates in the frontend container image:
+  - `vitest run` currently finds no test files in container `/app`.
+  - `playwright` smoke config path `e2e/playwright.config.ts` is missing in container `/app`.
+  - align container workspace mount/build context with current repository to enable production CI checks (unit + e2e + visual regression).

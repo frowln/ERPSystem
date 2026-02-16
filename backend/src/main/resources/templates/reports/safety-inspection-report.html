@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Протокол проверки охраны труда'">Проверка ОТ</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .check-pass { color: #16a34a; font-weight: bold; }
+        .check-fail { color: #dc2626; font-weight: bold; }
+        .check-na { color: #666; }
+        .violation-block { border: 1px solid #dc2626; padding: 6pt; margin-bottom: 8pt;
+                           page-break-inside: avoid; background-color: #fff5f5; }
+        .violation-header { color: #dc2626; font-weight: bold; margin-bottom: 4pt; }
+        .corrective-block { border: 1px solid #2563eb; padding: 6pt; margin-bottom: 8pt;
+                            page-break-inside: avoid; background-color: #f0f7ff; }
+        .corrective-header { color: #2563eb; font-weight: bold; margin-bottom: 4pt; }
+        .severity-critical { background-color: #dc2626; color: #fff; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+        .severity-major { background-color: #ea580c; color: #fff; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+        .severity-minor { background-color: #ca8a04; color: #fff; padding: 1pt 4pt; font-size: 8pt; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ПРОТОКОЛ ПРОВЕРКИ ОХРАНЫ ТРУДА<br/>И ТЕХНИКИ БЕЗОПАСНОСТИ</div>
+    <div class="report-subtitle" th:text="${reportSubtitle} ?: ''"></div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер протокола:</td>
+        <td th:text="${documentNumber} ?: '—'">ОТ-001</td>
+        <td class="label">Дата проверки:</td>
+        <td th:text="${inspectionDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Объект / площадка:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Строительная площадка №1</td>
+    </tr>
+    <tr>
+        <td class="label">Тип проверки:</td>
+        <td th:text="${inspectionType} ?: '—'">Плановая</td>
+        <td class="label">Вид проверки:</td>
+        <td th:text="${inspectionScope} ?: '—'">Комплексная</td>
+    </tr>
+    <tr>
+        <td class="label">Проверяющий:</td>
+        <td th:text="${inspectorName} ?: '—'">Козлов К.К.</td>
+        <td class="label">Должность:</td>
+        <td th:text="${inspectorPosition} ?: '—'">Инженер по ОТ</td>
+    </tr>
+    <tr>
+        <td class="label">Ответственный на объекте:</td>
+        <td colspan="3" th:text="${siteResponsible} ?: '—'">Прораб Иванов И.И.</td>
+    </tr>
+</table>
+
+<!-- ── Checklist table ───────────────────────────────────────────────────── -->
+<h3>Чек-лист проверки</h3>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№</th>
+            <th style="width:8%;">Код</th>
+            <th style="width:35%;">Контрольный пункт</th>
+            <th style="width:10%;">Категория</th>
+            <th style="width:10%;">Результат</th>
+            <th style="width:33%;">Комментарий / Описание нарушения</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over checklist items */-->
+        <tr th:each="item, iter : ${checklistItems}" th:if="${checklistItems != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td class="center" th:text="${item.itemCode} ?: '—'">СНиП-01</td>
+            <td th:text="${item.checkPoint}">Наличие ограждений на высоте</td>
+            <td class="center" th:text="${item.category} ?: '—'">Высотные работы</td>
+            <td class="center">
+                <span th:if="${item.result == 'PASS'}" class="check-pass">Соответствует</span>
+                <span th:if="${item.result == 'FAIL'}" class="check-fail">Нарушение</span>
+                <span th:if="${item.result == 'NA'}" class="check-na">Н/П</span>
+            </td>
+            <td th:text="${item.comment} ?: '—'">Ограждения установлены, в исправном состоянии</td>
+        </tr>
+        <!--/* Placeholder when no data */-->
+        <tr th:if="${checklistItems == null or checklistItems.isEmpty()}">
+            <td class="center">1</td>
+            <td class="center">—</td>
+            <td>—</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Violations found ──────────────────────────────────────────────────── -->
+<div class="mt-8" th:if="${violations != null and !violations.isEmpty()}">
+    <h3>Выявленные нарушения</h3>
+    <div th:each="viol, iter : ${violations}" class="violation-block">
+        <div class="violation-header">
+            Нарушение №<span th:text="${iter.count}">1</span>
+            &mdash;
+            <span th:if="${viol.severity == 'CRITICAL'}" class="severity-critical">Критическое</span>
+            <span th:if="${viol.severity == 'MAJOR'}" class="severity-major">Существенное</span>
+            <span th:if="${viol.severity == 'MINOR'}" class="severity-minor">Незначительное</span>
+        </div>
+        <p><span class="text-bold">Описание: </span><span th:text="${viol.description}">Отсутствие ограждения</span></p>
+        <p><span class="text-bold">Расположение: </span><span th:text="${viol.location} ?: '—'">Этаж 5, секция Б</span></p>
+        <p><span class="text-bold">Нормативный документ: </span><span th:text="${viol.regulatoryReference} ?: '—'">СНиП 12-03-2001 п.6.2.16</span></p>
+    </div>
+</div>
+
+<!-- ── Corrective actions ────────────────────────────────────────────────── -->
+<div class="mt-8" th:if="${correctiveActions != null and !correctiveActions.isEmpty()}">
+    <h3>Корректирующие мероприятия</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:4%;">№</th>
+                <th style="width:30%;">Мероприятие</th>
+                <th style="width:15%;">Нарушение</th>
+                <th style="width:15%;">Ответственный</th>
+                <th style="width:10%;">Срок<br/>устранения</th>
+                <th style="width:10%;">Статус</th>
+                <th style="width:16%;">Примечания</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="action, iter : ${correctiveActions}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${action.description}">Установить ограждение</td>
+                <td th:text="${action.violationRef} ?: '—'">Нарушение №1</td>
+                <td th:text="${action.responsiblePerson} ?: '—'">Иванов И.И.</td>
+                <td class="center" th:text="${action.deadline} ?: '—'">20.01.2026</td>
+                <td class="center">
+                    <span th:if="${action.status == 'OPEN'}" class="check-fail">Открыто</span>
+                    <span th:if="${action.status == 'CLOSED'}" class="check-pass">Устранено</span>
+                    <span th:if="${action.status == 'IN_PROGRESS'}" class="status-partial">В работе</span>
+                </td>
+                <td th:text="${action.notes} ?: '—'">—</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Summary ───────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Итоги проверки</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Всего проверено пунктов:</td>
+            <td th:text="${totalChecked} ?: '0'">0</td>
+            <td class="label">Соответствует:</td>
+            <td th:text="${passedCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Нарушений выявлено:</td>
+            <td th:text="${violationsCount} ?: '0'">0</td>
+            <td class="label">Критических:</td>
+            <td th:text="${criticalCount} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Общая оценка:</td>
+            <td colspan="3" th:text="${overallAssessment} ?: '—'">Удовлетворительно</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Проверяющий:</p>
+            <p th:text="${inspectorPosition} ?: '________________________'">Инженер по ОТ</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Ответственный на объекте:</p>
+            <p th:text="${siteResponsiblePosition} ?: '________________________'">Производитель работ</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Руководитель проекта:</p>
+            <p th:text="${projectManager} ?: '________________________'">Руководитель проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

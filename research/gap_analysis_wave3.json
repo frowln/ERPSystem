@@ -1,0 +1,133 @@
+{
+  "generated_at": "2026-02-13",
+  "description": "Gaps remaining AFTER wave 2 agents complete. These are features needed for best-in-class construction ERP.",
+  "critical_gaps": [
+    {
+      "id": "GAP-001",
+      "domain": "PM Workflows",
+      "feature": "RFI (Request for Information)",
+      "description": "Formal RFI workflow: create → assign → respond → close. Link to docs/drawings/issues. Track SLA/deadlines. Mobile + web.",
+      "reference": "Procore/Autodesk Build",
+      "priority": "MUST",
+      "entities": ["Rfi", "RfiResponse", "RfiDistribution"]
+    },
+    {
+      "id": "GAP-002",
+      "domain": "PM Workflows",
+      "feature": "Submittals",
+      "description": "Submittal packages: create → submit → review → approve/reject/revise. Link to specs/drawings. Track ball-in-court.",
+      "reference": "Procore/Autodesk Build",
+      "priority": "MUST",
+      "entities": ["Submittal (exists in PTO but needs PM-workflow expansion)", "SubmittalPackage", "SubmittalReview"]
+    },
+    {
+      "id": "GAP-003",
+      "domain": "Change Management",
+      "feature": "RFI → Change Event → RFQ → Change Order chain",
+      "description": "Full change management: change event from RFI/issue → potential change order → RFQ for pricing → approved change order → budget/schedule impact",
+      "reference": "Procore Change Events",
+      "priority": "MUST",
+      "entities": ["ChangeEvent", "ChangeOrderRequest", "ChangeOrder", "ChangeOrderItem"]
+    },
+    {
+      "id": "GAP-004",
+      "domain": "CDE",
+      "feature": "Document states WIP/Shared/Published/Archived (ISO 19650)",
+      "description": "Documents as containers with lifecycle states, transmittals, revision sets, metadata classification",
+      "reference": "Oracle Aconex / ISO 19650",
+      "priority": "MUST",
+      "entities": ["DocumentContainer", "Transmittal", "TransmittalItem", "RevisionSet"]
+    },
+    {
+      "id": "GAP-005",
+      "domain": "Cost Management",
+      "feature": "Commitments + EAC/ETC + Cash Flow forecasting",
+      "description": "Track committed costs (POs, subcontracts), forecast EAC/ETC, cash flow projection, cost-to-complete",
+      "reference": "Autodesk Build Cost / CMiC / InEight",
+      "priority": "MUST",
+      "entities": ["Commitment", "CostForecast", "CashFlowProjection", "CostCode"]
+    },
+    {
+      "id": "GAP-006",
+      "domain": "Planning",
+      "feature": "WBS/CPM/Resource leveling/EVM (SPI/CPI)",
+      "description": "Primavera-grade: WBS hierarchy, critical path calculation, resource leveling, baseline management, EVM metrics",
+      "reference": "Oracle Primavera / InEight",
+      "priority": "SHOULD",
+      "entities": ["WbsNode", "ScheduleBaseline", "ResourceAllocation", "EvmSnapshot"]
+    },
+    {
+      "id": "GAP-007",
+      "domain": "Portfolio/CRM",
+      "feature": "Portfolio management + Tender/Bid tracking",
+      "description": "Project pipeline/funnel, bid packages, prequalification, KP generation, win/loss tracking",
+      "reference": "Procore / Buildertrend",
+      "priority": "SHOULD",
+      "entities": ["Opportunity", "BidPackage", "Prequalification", "TenderSubmission"]
+    },
+    {
+      "id": "GAP-008",
+      "domain": "Workflow Engine",
+      "feature": "Configurable workflow designer + automation rules",
+      "description": "Visual workflow builder for approvals/statuses, automation rules (when X then Y), run history, SLA tracking",
+      "reference": "Jira workflows / monday automations",
+      "priority": "SHOULD",
+      "entities": ["WorkflowDefinition", "WorkflowStep", "WorkflowTransition", "AutomationRule", "AutomationExecution"]
+    },
+    {
+      "id": "GAP-009",
+      "domain": "Closeout",
+      "feature": "Commissioning + Handover + Warranty management",
+      "description": "Commissioning checklists, handover document packages, warranty tracking, defect claims post-handover",
+      "reference": "CMAA post-construction",
+      "priority": "SHOULD",
+      "entities": ["CommissioningChecklist", "HandoverPackage", "WarrantyClaim"]
+    },
+    {
+      "id": "GAP-010",
+      "domain": "Procurement",
+      "feature": "RFQ comparison tables + Bid scoring",
+      "description": "Side-by-side bid comparison, weighted scoring, recommendation, approval workflow",
+      "reference": "Procore Bidding / PUSK",
+      "priority": "MUST",
+      "entities": ["BidComparison", "BidCriteria", "BidScore"]
+    },
+    {
+      "id": "GAP-011",
+      "domain": "Immutable Audit",
+      "feature": "Aconex-grade immutable record for critical objects",
+      "description": "Documents/contracts/payments/acts cannot be deleted, only superseded. Full audit trail with cryptographic integrity.",
+      "reference": "Oracle Aconex",
+      "priority": "MUST",
+      "entities": ["ImmutableRecord", "RecordSupersession"]
+    },
+    {
+      "id": "GAP-012",
+      "domain": "Data Import/Export",
+      "feature": "CSV/Excel import/export for all major entities",
+      "description": "Bulk import materials, employees, BOQ items from Excel. Export any table/report to CSV/Excel/PDF",
+      "reference": "Standard ERP expectation",
+      "priority": "MUST",
+      "entities": ["ImportJob", "ExportJob", "ImportMapping"]
+    },
+    {
+      "id": "GAP-013",
+      "domain": "Multi-company",
+      "feature": "Multi-company / multi-organization data isolation",
+      "description": "Tenant-level isolation, cross-company reporting, inter-company transactions",
+      "reference": "1C / CMiC",
+      "priority": "MUST",
+      "entities": ["already partial in organization module, needs enforcement"]
+    },
+    {
+      "id": "GAP-014",
+      "domain": "Revenue Recognition",
+      "feature": "ПБУ 2/2008 → ФСБУ 9/2025 revenue recognition",
+      "description": "Revenue recognition by percentage of completion, transition to FSBU 9/2025 from 2027",
+      "reference": "Russian accounting standards",
+      "priority": "SHOULD",
+      "entities": ["RevenueRecognitionPeriod", "CompletionPercentage"]
+    }
+  ],
+  "wave3_plan": "After wave 2 agents complete, launch wave 3 to cover: RFI/Submittals/Change Management, CDE proper, Cost Management depth, Portfolio/CRM, Workflow Engine, Closeout, and massive frontend build-out"
+}

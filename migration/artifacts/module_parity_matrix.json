@@ -1,0 +1,718 @@
+{
+  "generated_at_utc": "2026-02-13T22:38:38.046385+00:00",
+  "total_modules": 79,
+  "missing_modules": 0,
+  "items": [
+    {
+      "odoo_module": "construction_finance",
+      "target_backend_module": "finance",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 21,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_ops",
+      "target_backend_module": "ops",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 13,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_procurement",
+      "target_backend_module": "procurement",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 13,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_analytics",
+      "target_backend_module": "analytics",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 9,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_contract",
+      "target_backend_module": "contract",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 9,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_russian_documents",
+      "target_backend_module": "russianDoc",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 9,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_safety",
+      "target_backend_module": "safety",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 9,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_stock",
+      "target_backend_module": "warehouse",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 9,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_mobile",
+      "target_backend_module": "mobile",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 8,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_pto",
+      "target_backend_module": "pto",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 7,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_russian_accounting",
+      "target_backend_module": "accounting",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 7,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_documents",
+      "target_backend_module": "document",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 6,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_base",
+      "target_backend_module": "project",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 5,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_integration",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 5,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_iot",
+      "target_backend_module": "iot",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 5,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_support",
+      "target_backend_module": "support",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 5,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_bim",
+      "target_backend_module": "bim",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 4,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_hr_russian",
+      "target_backend_module": "hr",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 4,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_planning",
+      "target_backend_module": "planning",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 4,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_design",
+      "target_backend_module": "bim",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_devops",
+      "target_backend_module": "ops",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_edi_sbis",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_ens",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_estimate",
+      "target_backend_module": "estimate",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_hr",
+      "target_backend_module": "hr",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_specification",
+      "target_backend_module": "specification",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 3,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_api",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_crew_time",
+      "target_backend_module": "hrRussian",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_drawing_annotation",
+      "target_backend_module": "bim",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_fleet_integration",
+      "target_backend_module": "fleet",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_integrations_enhanced",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_kep",
+      "target_backend_module": "russianDoc",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_kpi",
+      "target_backend_module": "analytics",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_logistics",
+      "target_backend_module": "warehouse",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_reservation",
+      "target_backend_module": "warehouse",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_stock_limits",
+      "target_backend_module": "warehouse",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 2,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_1c_integration",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_ai_assistant",
+      "target_backend_module": "ai",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_audit",
+      "target_backend_module": "immutableAudit",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_certificates",
+      "target_backend_module": "quality",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_daily_log",
+      "target_backend_module": "dailylog",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_dispatch",
+      "target_backend_module": "ops",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_edo_generator",
+      "target_backend_module": "integration",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_legal",
+      "target_backend_module": "contract",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_lrv",
+      "target_backend_module": "fleet",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_maintenance_integration",
+      "target_backend_module": "ai",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_material_analogs",
+      "target_backend_module": "warehouse",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_monthly_schedule",
+      "target_backend_module": "monthlySchedule",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_ocr",
+      "target_backend_module": "document",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_photo_progress",
+      "target_backend_module": "dailylog",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_project_enhanced",
+      "target_backend_module": "project",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_punch_list",
+      "target_backend_module": "punchlist",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_pwa",
+      "target_backend_module": "mobile",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_reporting_calendar",
+      "target_backend_module": "calendar",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_submittals",
+      "target_backend_module": "pmWorkflow",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_tolerance",
+      "target_backend_module": "quality",
+      "status": "implemented",
+      "progress_percent": 100,
+      "workflows_detected": 1,
+      "risk": "low",
+      "action": "Keep regression scenarios green"
+    },
+    {
+      "odoo_module": "construction_ai",
+      "target_backend_module": "ai",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_auth_oidc",
+      "target_backend_module": "auth",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_cache",
+      "target_backend_module": "ops",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_calendar_integration",
+      "target_backend_module": "calendar",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_contractor_portal",
+      "target_backend_module": "contract",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_crm_integration",
+      "target_backend_module": "integration",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_demo",
+      "target_backend_module": "portal",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_discuss_enhanced",
+      "target_backend_module": "messaging",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_gantt",
+      "target_backend_module": "planning",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_journals",
+      "target_backend_module": "journal",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_mfa",
+      "target_backend_module": "auth",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_monitoring",
+      "target_backend_module": "monitoring",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_purchase_integration",
+      "target_backend_module": "integration",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_rbac",
+      "target_backend_module": "permission",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_regulatory_reports",
+      "target_backend_module": "regulatory",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_reports",
+      "target_backend_module": "report",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_search",
+      "target_backend_module": "search",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_security",
+      "target_backend_module": "permission",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_stock_integration",
+      "target_backend_module": "integration",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_theme",
+      "target_backend_module": "settings",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_timesheet_integration",
+      "target_backend_module": "integration",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_ui_improvements",
+      "target_backend_module": "settings",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    },
+    {
+      "odoo_module": "construction_website",
+      "target_backend_module": "portal",
+      "status": "mapped",
+      "progress_percent": 90,
+      "workflows_detected": 0,
+      "risk": "medium",
+      "action": "Add module-specific acceptance workflow scenarios"
+    }
+  ]
+}

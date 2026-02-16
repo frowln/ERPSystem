@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Акт о несоответствии (NCR)'">NCR</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .ncr-section { border: 1px solid #ccc; padding: 8pt; margin-bottom: 10pt;
+                       page-break-inside: avoid; }
+        .ncr-section-title { font-weight: bold; font-size: 10pt; margin-bottom: 6pt;
+                             padding-bottom: 3pt; border-bottom: 1px solid #ccc;
+                             text-transform: uppercase; color: #333; }
+        .severity-critical { background-color: #dc2626; color: #fff; padding: 2pt 8pt;
+                             font-weight: bold; font-size: 9pt; }
+        .severity-major { background-color: #ea580c; color: #fff; padding: 2pt 8pt;
+                          font-weight: bold; font-size: 9pt; }
+        .severity-minor { background-color: #ca8a04; color: #fff; padding: 2pt 8pt;
+                          font-weight: bold; font-size: 9pt; }
+        .status-open { color: #dc2626; font-weight: bold; }
+        .status-investigating { color: #2563eb; font-weight: bold; }
+        .status-correcting { color: #ca8a04; font-weight: bold; }
+        .status-verified { color: #16a34a; font-weight: bold; }
+        .status-closed { color: #666; font-weight: bold; }
+        .timeline-entry { border-left: 2px solid #2563eb; padding-left: 8pt;
+                          margin-bottom: 6pt; margin-left: 8pt; }
+        .timeline-date { font-size: 8pt; color: #555; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">АКТ О НЕСООТВЕТСТВИИ (NCR)</div>
+    <div class="report-subtitle">Non-Conformance Report</div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер NCR:</td>
+        <td th:text="${ncrNumber} ?: '—'">NCR-001</td>
+        <td class="label">Дата обнаружения:</td>
+        <td th:text="${detectionDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Инициатор:</td>
+        <td th:text="${initiatorName} ?: '—'">Иванов И.И.</td>
+        <td class="label">Должность:</td>
+        <td th:text="${initiatorPosition} ?: '—'">Инженер КК</td>
+    </tr>
+    <tr>
+        <td class="label">Серьезность:</td>
+        <td>
+            <span th:if="${severity == 'CRITICAL'}" class="severity-critical">Критическое</span>
+            <span th:if="${severity == 'MAJOR'}" class="severity-major">Существенное</span>
+            <span th:if="${severity == 'MINOR'}" class="severity-minor">Незначительное</span>
+            <span th:if="${severity == null}">—</span>
+        </td>
+        <td class="label">Текущий статус:</td>
+        <td>
+            <span th:if="${ncrStatus == 'OPEN'}" class="status-open">Открыт</span>
+            <span th:if="${ncrStatus == 'INVESTIGATING'}" class="status-investigating">Расследование</span>
+            <span th:if="${ncrStatus == 'CORRECTING'}" class="status-correcting">Устранение</span>
+            <span th:if="${ncrStatus == 'VERIFIED'}" class="status-verified">Проверен</span>
+            <span th:if="${ncrStatus == 'CLOSED'}" class="status-closed">Закрыт</span>
+            <span th:if="${ncrStatus == null}">—</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Договор №:</td>
+        <td th:text="${contractNumber} ?: '—'">Д-001</td>
+        <td class="label">Подрядчик:</td>
+        <td th:text="${contractorOrg} ?: '—'">ООО Подрядчик</td>
+    </tr>
+</table>
+
+<!-- ── Section 1: Description of nonconformance ──────────────────────────── -->
+<div class="ncr-section">
+    <div class="ncr-section-title">1. Описание несоответствия</div>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Вид работ / Элемент:</td>
+            <td colspan="3" th:text="${workType} ?: '—'">Бетонные работы / Перекрытие этажа 3</td>
+        </tr>
+        <tr>
+            <td class="label">Расположение:</td>
+            <td colspan="3" th:text="${location} ?: '—'">Секция А, ось 3-5 / В-Г</td>
+        </tr>
+        <tr>
+            <td class="label">Нормативный документ:</td>
+            <td colspan="3" th:text="${regulatoryReference} ?: '—'">СП 70.13330.2012 п.5.3.2</td>
+        </tr>
+    </table>
+    <p class="mt-4"><span class="text-bold">Подробное описание:</span></p>
+    <p th:text="${ncrDescription} ?: '—'">Обнаружены трещины в бетоне перекрытия с раскрытием более 0.3 мм, что превышает допустимые нормы.</p>
+</div>
+
+<!-- ── Section 2: Root cause analysis ────────────────────────────────────── -->
+<div class="ncr-section">
+    <div class="ncr-section-title">2. Анализ причин (Root Cause Analysis)</div>
+    <p><span class="text-bold">Метод анализа: </span><span th:text="${analysisMethod} ?: '—'">Диаграмма Исикавы</span></p>
+    <p class="mt-4"><span class="text-bold">Непосредственная причина:</span></p>
+    <p th:text="${immediateCause} ?: '—'">Нарушение режима ухода за бетоном в первые сутки после заливки.</p>
+    <p class="mt-4"><span class="text-bold">Коренная причина:</span></p>
+    <p th:text="${rootCause} ?: '—'">Отсутствие контроля температурно-влажностного режима при наборе прочности бетона.</p>
+    <p class="mt-4" th:if="${contributingFactors != null}"><span class="text-bold">Сопутствующие факторы:</span></p>
+    <p th:if="${contributingFactors != null}" th:text="${contributingFactors}">Высокая температура окружающей среды, отсутствие укрывного материала.</p>
+</div>
+
+<!-- ── Section 3: Corrective actions ─────────────────────────────────────── -->
+<div class="ncr-section">
+    <div class="ncr-section-title">3. Корректирующие мероприятия</div>
+    <table class="data-table" th:if="${correctiveActions != null and !correctiveActions.isEmpty()}">
+        <thead>
+            <tr>
+                <th style="width:4%;">№</th>
+                <th style="width:30%;">Мероприятие</th>
+                <th style="width:15%;">Ответственный</th>
+                <th style="width:10%;">Срок</th>
+                <th style="width:10%;">Статус</th>
+                <th style="width:10%;">Дата<br/>выполнения</th>
+                <th style="width:21%;">Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="action, iter : ${correctiveActions}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${action.description}">Инъектирование трещин</td>
+                <td th:text="${action.responsiblePerson} ?: '—'">Петров П.П.</td>
+                <td class="center" th:text="${action.deadline} ?: '—'">25.01.2026</td>
+                <td class="center">
+                    <span th:if="${action.status == 'PLANNED'}" class="status-investigating">Планируется</span>
+                    <span th:if="${action.status == 'IN_PROGRESS'}" class="status-correcting">В работе</span>
+                    <span th:if="${action.status == 'COMPLETED'}" class="status-verified">Выполнено</span>
+                </td>
+                <td class="center" th:text="${action.completionDate} ?: '—'">—</td>
+                <td th:text="${action.result} ?: '—'">—</td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${correctiveActions == null or correctiveActions.isEmpty()}" class="text-muted">Корректирующие мероприятия не определены.</p>
+</div>
+
+<!-- ── Section 4: Preventive actions ─────────────────────────────────────── -->
+<div class="ncr-section">
+    <div class="ncr-section-title">4. Предупреждающие мероприятия</div>
+    <table class="data-table" th:if="${preventiveActions != null and !preventiveActions.isEmpty()}">
+        <thead>
+            <tr>
+                <th style="width:4%;">№</th>
+                <th style="width:36%;">Мероприятие</th>
+                <th style="width:20%;">Ответственный</th>
+                <th style="width:12%;">Срок внедрения</th>
+                <th style="width:10%;">Статус</th>
+                <th style="width:18%;">Примечания</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="action, iter : ${preventiveActions}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${action.description}">Разработать ТТК на уход за бетоном</td>
+                <td th:text="${action.responsiblePerson} ?: '—'">Главный инженер</td>
+                <td class="center" th:text="${action.implementationDate} ?: '—'">01.02.2026</td>
+                <td class="center">
+                    <span th:if="${action.status == 'PLANNED'}" class="status-investigating">Планируется</span>
+                    <span th:if="${action.status == 'IMPLEMENTED'}" class="status-verified">Внедрено</span>
+                </td>
+                <td th:text="${action.notes} ?: '—'">—</td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${preventiveActions == null or preventiveActions.isEmpty()}" class="text-muted">Предупреждающие мероприятия не определены.</p>
+</div>
+
+<!-- ── Section 5: Verification ───────────────────────────────────────────── -->
+<div class="ncr-section">
+    <div class="ncr-section-title">5. Верификация</div>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Дата верификации:</td>
+            <td th:text="${verificationDate} ?: '—'">—</td>
+            <td class="label">Верификатор:</td>
+            <td th:text="${verifierName} ?: '—'">—</td>
+        </tr>
+        <tr>
+            <td class="label">Результат верификации:</td>
+            <td colspan="3" th:text="${verificationResult} ?: '—'">—</td>
+        </tr>
+    </table>
+    <p class="mt-4" th:if="${verificationComments != null}"><span class="text-bold">Комментарии: </span><span th:text="${verificationComments}">—</span></p>
+</div>
+
+<!-- ── Timeline ──────────────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${timeline != null and !timeline.isEmpty()}">
+    <h3>Хронология</h3>
+    <div th:each="event : ${timeline}" class="timeline-entry">
+        <div class="timeline-date" th:text="${event.date}">15.01.2026 10:30</div>
+        <p><span class="text-bold" th:text="${event.action}">Создан NCR</span>
+           &mdash; <span th:text="${event.user} ?: ''">Иванов И.И.</span></p>
+        <p th:if="${event.comment != null}" class="text-small text-muted" th:text="${event.comment}">Комментарий</p>
+    </div>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Инициатор NCR:</p>
+            <p th:text="${initiatorPosition} ?: '________________________'">Инженер контроля качества</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Ответственный за устранение:</p>
+            <p th:text="${responsiblePosition} ?: '________________________'">Начальник участка</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Верификацию провел:</p>
+            <p th:text="${verifierPosition} ?: '________________________'">Инженер КК</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Руководитель проекта:</p>
+            <p th:text="${projectManagerPosition} ?: '________________________'">Руководитель проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

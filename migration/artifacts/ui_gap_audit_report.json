@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-02-13T22:38:38.364883+00:00",
+  "scope": "frontend/src/**/*.tsx",
+  "summary": {
+    "files_scanned": 267,
+    "files_with_console_log": 0,
+    "files_with_placeholder_text": 0,
+    "files_with_mock_placeholder_data": 0,
+    "files_with_any_gap_signal": 0,
+    "gap_file_ratio": 0.0,
+    "ui_hardening_percent": 100.0
+  },
+  "signals": {
+    "console_log_files": [],
+    "placeholder_text_files": [],
+    "mock_placeholder_data_files": []
+  },
+  "notes": [
+    "This report is heuristic and only detects textual signals, not semantic correctness.",
+    "ui_hardening_percent measures UI production hardening, not business parity index."
+  ]
+}

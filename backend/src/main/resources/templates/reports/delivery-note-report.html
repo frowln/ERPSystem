@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Товарная накладная (приёмка)'">Товарная накладная</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 12mm 15mm 12mm; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 100pt; }
+        .party-block { overflow: hidden; margin-bottom: 10pt; font-size: 9pt; }
+        .party-left { float: left; width: 48%; }
+        .party-right { float: right; width: 48%; }
+        .stamp-area { border: 1px dashed #999; width: 80pt; height: 80pt; text-align: center;
+                      line-height: 80pt; font-size: 7pt; color: #999; display: inline-block; }
+        .discrepancy { color: #dc2626; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header" style="border-bottom: none; margin-bottom: 8pt;">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ПРИХОДНАЯ НАКЛАДНАЯ</div>
+    <div class="report-subtitle">(акт приёмки материалов)</div>
+</div>
+
+<!-- ── Parties ─────────────────────────────────────────────────────────────── -->
+<div class="party-block">
+    <div class="party-left">
+        <table class="info-grid" style="font-size:8pt;">
+            <tr>
+                <td class="label" style="width:35%;">Поставщик:</td>
+                <td th:text="${supplierName} ?: '—'">ООО «Поставщик»</td>
+            </tr>
+            <tr>
+                <td class="label">Адрес:</td>
+                <td th:text="${supplierAddress} ?: '—'">г. Москва, ул. Строителей, 1</td>
+            </tr>
+            <tr>
+                <td class="label">ИНН / КПП:</td>
+                <td th:text="${supplierInn} ?: '—'">7701234567 / 770101001</td>
+            </tr>
+        </table>
+    </div>
+    <div class="party-right">
+        <table class="info-grid" style="font-size:8pt;">
+            <tr>
+                <td class="label" style="width:35%;">Получатель:</td>
+                <td th:text="${receiverName} ?: '—'">ООО «СтройПроект»</td>
+            </tr>
+            <tr>
+                <td class="label">Склад:</td>
+                <td th:text="${warehouseName} ?: '—'">Склад №1 (Центральный)</td>
+            </tr>
+            <tr>
+                <td class="label">МОЛ:</td>
+                <td th:text="${responsiblePerson} ?: '—'">Кладовщик Сидоров С.С.</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- ── Document info ──────────────────────────────────────────────────────── -->
+<table class="info-grid" style="margin-bottom: 8pt;">
+    <tr>
+        <td class="label">Номер накладной:</td>
+        <td th:text="${documentNumber} ?: '—'">ПН-001</td>
+        <td class="label">Дата:</td>
+        <td th:text="${documentDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Договор №:</td>
+        <td th:text="${contractNumber} ?: '—'">Д-П-001</td>
+        <td class="label">Счёт-фактура №:</td>
+        <td th:text="${invoiceNumber} ?: '—'">СФ-001 от 14.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Транспортная накл.:</td>
+        <td th:text="${transportDoc} ?: '—'">ТТН-001</td>
+        <td class="label">Автомобиль:</td>
+        <td th:text="${vehicleInfo} ?: '—'">КамАЗ А123БВ77</td>
+    </tr>
+</table>
+
+<!-- ── Goods table ────────────────────────────────────────────────────────── -->
+<table class="gost-table">
+    <thead>
+        <tr>
+            <th style="width:4%;">№<br/>п/п</th>
+            <th style="width:22%;">Наименование<br/>материала</th>
+            <th style="width:7%;">Ед.<br/>изм.</th>
+            <th style="width:9%;">Кол-во<br/>по док.</th>
+            <th style="width:9%;">Кол-во<br/>факт.</th>
+            <th style="width:9%;">Отклон.</th>
+            <th style="width:10%;">Цена,<br/>руб.</th>
+            <th style="width:10%;">Сумма<br/>без НДС,<br/>руб.</th>
+            <th style="width:5%;">НДС,<br/>%</th>
+            <th style="width:10%;">Сумма<br/>с НДС,<br/>руб.</th>
+            <th style="width:5%;">Кач-во</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="item, iter : ${goods}" th:if="${goods != null}">
+            <td th:text="${iter.count}">1</td>
+            <td class="left" th:text="${item.name}">Арматура А500С д.12мм</td>
+            <td th:text="${item.unit}">т</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.docQuantity, 1, 3)}">5.000</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.actualQuantity, 1, 3)}">4.950</td>
+            <td class="right" th:classappend="${item.discrepancy != 0} ? 'discrepancy' : ''"
+                th:text="${#numbers.formatDecimal(item.discrepancy, 1, 3)}">-0.050</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.price, 1, 2)}">65 000.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.sumWithoutVat, 1, 2)}">321 750.00</td>
+            <td th:text="${item.vatRate}">20</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.sumWithVat, 1, 2)}">386 100.00</td>
+            <td th:text="${item.qualityOk} ? 'Годен' : 'Брак'">Годен</td>
+        </tr>
+        <tr th:if="${goods == null or goods.isEmpty()}">
+            <td colspan="11" class="left">—</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7" class="right" style="font-weight:bold;">Итого:</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${totalWithoutVat != null} ? ${#numbers.formatDecimal(totalWithoutVat, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${totalWithVat != null} ? ${#numbers.formatDecimal(totalWithVat, 1, 2)} : '0.00'">0.00</td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Discrepancy note ───────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${hasDiscrepancy}">
+    <h3 class="discrepancy">Акт о расхождениях</h3>
+    <p th:text="${discrepancyNote} ?: 'Выявлены расхождения между документальным и фактическим количеством.'">
+        Выявлены расхождения.
+    </p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Сдал (представитель поставщика):</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+            <div class="mt-8">М.П.</div>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Принял (кладовщик):</p>
+            <p th:text="${responsiblePerson} ?: '________________________'">Кладовщик</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

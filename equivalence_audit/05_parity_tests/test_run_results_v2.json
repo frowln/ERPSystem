@@ -1,0 +1,411 @@
+{
+  "test_run": {
+    "run_id": "cdf4c521",
+    "timestamp": "2026-02-14T20:56:41.864865+00:00",
+    "base_url": "http://localhost:18080",
+    "auth_user": "admin@privod.com",
+    "total_tests": 43,
+    "passed": 35,
+    "failed": 8,
+    "pass_rate": "81.4%",
+    "deployed_endpoints_total": 35,
+    "deployed_endpoints_passed": 35,
+    "deployed_pass_rate": "100.0%",
+    "failure_breakdown": {
+      "controller_not_deployed": 8,
+      "validation_error": 0,
+      "server_error": 0
+    },
+    "notes": {
+      "db_fix_applied": "Created missing PostgreSQL sequences (project_code_seq, contract_number_seq, etc.) in privod2 database",
+      "not_deployed_modules": [
+        "priceCoefficient (PriceCoefficientController)",
+        "payroll (PayrollController)",
+        "selfEmployed (SelfEmployedController)",
+        "workflowEngine (AutoApprovalRuleController)"
+      ],
+      "not_deployed_reason": "These controller classes exist in backend source code but are not compiled into the running Docker image. The source was added after the last Docker image build."
+    }
+  },
+  "created_entities": {
+    "project_id": "42d7a52f-81a9-4fec-8886-5d24e839e752",
+    "contract_id": "08761f89-50ed-4e99-ba90-c30fa10f72cc",
+    "employee_id": "5314d280-ae64-4c2a-87bf-f748dd19516a",
+    "purchase_request_id": "5a28c866-2708-4a33-9ac6-7f4f6d54f663",
+    "budget_id": "31b722b5-a618-4d96-a998-3846f9bf192c",
+    "invoice_id": "5ec40c85-fb3a-4f8c-b811-4d63db2144c5",
+    "payment_id": "98b68638-340f-49d9-8572-eccbed3ddc44",
+    "warehouse_location_id": "579eb444-e7d9-436b-a9f0-7d01506c8bc0",
+    "material_id": "85ae8094-518a-4339-b6f1-739591e3a70e",
+    "task_id": "d1498cba-28ea-40ec-9010-2b2e97d13433",
+    "quality_check_id": "6db25309-f5bc-4927-b3c0-1ac52cddc65d",
+    "safety_incident_id": "05afb687-aaac-4915-8b3f-15a1e825d2d8",
+    "document_id": "436769d9-6e3a-4f1e-8a1e-f2832435b7a8",
+    "price_coefficient_id": null,
+    "payroll_template_id": null,
+    "self_employed_contractor_id": null,
+    "approval_rule_id": null
+  },
+  "results": [
+    {
+      "test": "F1.1 Create Project",
+      "method": "POST",
+      "endpoint": "/api/projects",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"code\":\"PRJ-00002\",\"name\":\"E2E Test Project cdf4c521\",\"description\":\"Automated E2E test project\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"plannedStartDate\":\"2026-03-01\",\"plannedEndDate\":\"2026-12-31\",\"city\":\"Moscow\",\"region\":\"Moscow Oblast\",\"budgetAmount\":5000000,\"contractAmount\":6000000,\"type\":\"COMMERCIAL\",\"priority\":\"HIGH\",\"createdAt\":\"2026-02-14T20:56:41.202008261Z\",\"updatedAt\":\"2026-02-14T20:56:41.202008261Z\",\"created"
+    },
+    {
+      "test": "F1.2 Get Project by ID",
+      "method": "GET",
+      "endpoint": "/api/projects/42d7a52f-81a9-4fec-8886-5d24e839e752",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"code\":\"PRJ-00002\",\"name\":\"E2E Test Project cdf4c521\",\"description\":\"Automated E2E test project\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"plannedStartDate\":\"2026-03-01\",\"plannedEndDate\":\"2026-12-31\",\"city\":\"Moscow\",\"region\":\"Moscow Oblast\",\"budgetAmount\":5000000.00,\"contractAmount\":6000000.00,\"type\":\"COMMERCIAL\",\"priority\":\"HIGH\",\"createdAt\":\"2026-02-14T20:56:41.202008Z\",\"updatedAt\":\"2026-02-14T20:56:41.202008Z\",\"created"
+    },
+    {
+      "test": "F1.3 Update Project",
+      "method": "PUT",
+      "endpoint": "/api/projects/42d7a52f-81a9-4fec-8886-5d24e839e752",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"code\":\"PRJ-00002\",\"name\":\"E2E Test Project cdf4c521 (Updated)\",\"description\":\"Updated description for E2E\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"plannedStartDate\":\"2026-03-01\",\"plannedEndDate\":\"2027-03-31\",\"city\":\"Moscow\",\"region\":\"Moscow Oblast\",\"budgetAmount\":7000000,\"contractAmount\":8000000,\"type\":\"COMMERCIAL\",\"priority\":\"CRITICAL\",\"createdAt\":\"2026-02-14T20:56:41.202008Z\",\"updatedAt\":\"2026-02-14T20:56:41.202008Z\""
+    },
+    {
+      "test": "F1.4 Change Status DRAFT->PLANNING",
+      "method": "PATCH",
+      "endpoint": "/api/projects/42d7a52f-81a9-4fec-8886-5d24e839e752/status",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"code\":\"PRJ-00002\",\"name\":\"E2E Test Project cdf4c521 (Updated)\",\"description\":\"Updated description for E2E\",\"status\":\"PLANNING\",\"statusDisplayName\":\"Планирование\",\"plannedStartDate\":\"2026-03-01\",\"plannedEndDate\":\"2027-03-31\",\"city\":\"Moscow\",\"region\":\"Moscow Oblast\",\"budgetAmount\":7000000.00,\"contractAmount\":8000000.00,\"type\":\"COMMERCIAL\",\"priority\":\"CRITICAL\",\"createdAt\":\"2026-02-14T20:56:41.202008Z\",\"updatedAt\":\"2026-02-14T20:5"
+    },
+    {
+      "test": "F2.1 Create Contract",
+      "method": "POST",
+      "endpoint": "/api/contracts",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"name\":\"E2E Contract cdf4c521\",\"number\":\"CTR-00002\",\"contractDate\":\"2026-03-15\",\"partnerName\":\"Test Partner LLC\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"amount\":3000000,\"vatRate\":20,\"vatAmount\":600000.00,\"totalWithVat\":3600000.00,\"paymentTerms\":\"30 days net\",\"plannedStartDate\":\"2026-04-01\",\"plannedEndDate\":\"2026-11-30\",\"retentionPercent\":0,\"docVersion\":1,\"totalInvoiced\""
+    },
+    {
+      "test": "F2.2 Get Contract by ID",
+      "method": "GET",
+      "endpoint": "/api/contracts/08761f89-50ed-4e99-ba90-c30fa10f72cc",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"name\":\"E2E Contract cdf4c521\",\"number\":\"CTR-00002\",\"contractDate\":\"2026-03-15\",\"partnerName\":\"Test Partner LLC\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"amount\":3000000.00,\"vatRate\":20.00,\"vatAmount\":600000.00,\"totalWithVat\":3600000.00,\"paymentTerms\":\"30 days net\",\"plannedStartDate\":\"2026-04-01\",\"plannedEndDate\":\"2026-11-30\",\"retentionPercent\":0.00,\"docVersion\":1,\"total"
+    },
+    {
+      "test": "F3.1 Create Employee",
+      "method": "POST",
+      "endpoint": "/api/employees",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"5314d280-ae64-4c2a-87bf-f748dd19516a\",\"firstName\":\"Ivan\",\"lastName\":\"Petrov-cdf4c521\",\"middleName\":\"Sergeevich\",\"fullName\":\"Petrov-cdf4c521 Ivan Sergeevich\",\"employeeNumber\":\"EMP-00002\",\"position\":\"Site Engineer\",\"hireDate\":\"2026-01-15\",\"status\":\"ACTIVE\",\"statusDisplayName\":\"Активен\",\"phone\":\"+79001234567\",\"email\":\"i.petrov.cdf4c521@test.com\",\"inn\":\"123456789012\",\"hourlyRate\":1500,\"monthlyRate\":250000,\"createdAt\":\"2026-02-14T20:56:41.339739511Z\",\"updatedAt\":\"2026-02"
+    },
+    {
+      "test": "F3.2 Get Employee by ID",
+      "method": "GET",
+      "endpoint": "/api/employees/5314d280-ae64-4c2a-87bf-f748dd19516a",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"5314d280-ae64-4c2a-87bf-f748dd19516a\",\"firstName\":\"Ivan\",\"lastName\":\"Petrov-cdf4c521\",\"middleName\":\"Sergeevich\",\"fullName\":\"Petrov-cdf4c521 Ivan Sergeevich\",\"employeeNumber\":\"EMP-00002\",\"position\":\"Site Engineer\",\"hireDate\":\"2026-01-15\",\"status\":\"ACTIVE\",\"statusDisplayName\":\"Активен\",\"phone\":\"+79001234567\",\"email\":\"i.petrov.cdf4c521@test.com\",\"inn\":\"123456789012\",\"hourlyRate\":1500.00,\"monthlyRate\":250000.00,\"createdAt\":\"2026-02-14T20:56:41.339740Z\",\"updatedAt\":\"2026"
+    },
+    {
+      "test": "F4.1 Create Purchase Request",
+      "method": "POST",
+      "endpoint": "/api/purchase-requests",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"5a28c866-2708-4a33-9ac6-7f4f6d54f663\",\"name\":\"ЗП-00002\",\"requestDate\":\"2026-04-01\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"priority\":\"HIGH\",\"priorityDisplayName\":\"Высокий\",\"requestedByName\":\"Admin Admin\",\"totalAmount\":0,\"notes\":\"E2E purchase request cdf4c521\",\"items\":[],\"createdAt\":\"2026-02-14T20:56:41.364419053Z\",\"updatedAt\":\"2026-02-14T20:56:41.364419053"
+    },
+    {
+      "test": "F4.2 Get Purchase Request by ID",
+      "method": "GET",
+      "endpoint": "/api/purchase-requests/5a28c866-2708-4a33-9ac6-7f4f6d54f663",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"5a28c866-2708-4a33-9ac6-7f4f6d54f663\",\"name\":\"ЗП-00002\",\"requestDate\":\"2026-04-01\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"priority\":\"HIGH\",\"priorityDisplayName\":\"Высокий\",\"requestedByName\":\"Admin Admin\",\"totalAmount\":0.00,\"notes\":\"E2E purchase request cdf4c521\",\"items\":[],\"createdAt\":\"2026-02-14T20:56:41.364419Z\",\"updatedAt\":\"2026-02-14T20:56:41.364419Z\","
+    },
+    {
+      "test": "F5.1 Create Budget",
+      "method": "POST",
+      "endpoint": "/api/budgets",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"31b722b5-a618-4d96-a998-3846f9bf192c\",\"name\":\"E2E Budget cdf4c521\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"plannedRevenue\":6000000,\"plannedCost\":4500000,\"plannedMargin\":1500000,\"actualRevenue\":0,\"actualCost\":0,\"actualMargin\":0,\"revenueVariance\":-6000000,\"costVariance\":-4500000,\"marginVariance\":-1500000,\"revenueVariancePercent\":-100.00,\"costVariancePercent\""
+    },
+    {
+      "test": "F5.2 Create Invoice",
+      "method": "POST",
+      "endpoint": "/api/invoices",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"5ec40c85-fb3a-4f8c-b811-4d63db2144c5\",\"number\":\"INV-00002\",\"invoiceDate\":\"2026-04-15\",\"dueDate\":\"2026-05-15\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"partnerName\":\"Test Partner LLC\",\"invoiceType\":\"ISSUED\",\"invoiceTypeDisplayName\":\"Выставленный\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"subtotal\":500000,\"vatRate\":20,\"vatAmount\":100000.00,\"totalAmount\":600000,\"paidAmount\":0,\"remainingAmount\":600000,"
+    },
+    {
+      "test": "F5.3 Create Payment",
+      "method": "POST",
+      "endpoint": "/api/payments",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"98b68638-340f-49d9-8572-eccbed3ddc44\",\"number\":\"PAY-00002\",\"paymentDate\":\"2026-04-20\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"partnerName\":\"Test Partner LLC\",\"paymentType\":\"INCOMING\",\"paymentTypeDisplayName\":\"Входящий\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"amount\":300000,\"vatAmount\":50000,\"totalAmount\":350000,\"purpose\":\"E2E payment cdf4c521\",\"bankAccount\":\"40702810000000001234\",\"invoiceId\":\"5"
+    },
+    {
+      "test": "F6.1 Create Warehouse Location",
+      "method": "POST",
+      "endpoint": "/api/warehouse/locations",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"579eb444-e7d9-436b-a9f0-7d01506c8bc0\",\"name\":\"E2E Warehouse cdf4c521\",\"code\":\"WH-cdf4c521\",\"locationType\":\"CENTRAL\",\"locationTypeDisplayName\":\"Центральный склад\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"address\":\"Moscow, Test St. 1\",\"responsibleName\":\"Admin Admin\",\"active\":true,\"createdAt\":\"2026-02-14T20:56:41.467592428Z\",\"updatedAt\":\"2026-02-14T20:56:41.467592428Z\",\"createdBy\":\"admin@privod.com\"},\"timestamp\":\"2026-02-14T20:56:41.471586178Z\",\"requestId\":\""
+    },
+    {
+      "test": "F6.2 Create Material",
+      "method": "POST",
+      "endpoint": "/api/warehouse/materials",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"85ae8094-518a-4339-b6f1-739591e3a70e\",\"name\":\"E2E Concrete cdf4c521\",\"code\":\"MAT-cdf4c521\",\"category\":\"CONCRETE\",\"categoryDisplayName\":\"Бетон и растворы\",\"unitOfMeasure\":\"m3\",\"description\":\"Test concrete material\",\"minStockLevel\":10,\"currentPrice\":5500,\"active\":true,\"createdAt\":\"2026-02-14T20:56:41.500395011Z\",\"updatedAt\":\"2026-02-14T20:56:41.500395011Z\",\"createdBy\":\"admin@privod.com\"},\"timestamp\":\"2026-02-14T20:56:41.503600303Z\",\"requestId\":\"87d33712-5205-4f45-a70c"
+    },
+    {
+      "test": "F7.1 Create Task",
+      "method": "POST",
+      "endpoint": "/api/tasks",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"d1498cba-28ea-40ec-9010-2b2e97d13433\",\"code\":\"TASK-00002\",\"title\":\"E2E Foundation Work cdf4c521\",\"description\":\"Test task for foundation laying\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"BACKLOG\",\"statusDisplayName\":\"Бэклог\",\"priority\":\"HIGH\",\"priorityDisplayName\":\"Высокий\",\"assigneeName\":\"Admin Admin\",\"reporterName\":\"Admin Admin\",\"plannedStartDate\":\"2026-04-01\",\"plannedEndDate\":\"2026-05-15\",\"estimatedHours\":160,\"actualHours\":0,\"progress\":0,\"wbsCo"
+    },
+    {
+      "test": "F7.2 Get Task by ID",
+      "method": "GET",
+      "endpoint": "/api/tasks/d1498cba-28ea-40ec-9010-2b2e97d13433",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"d1498cba-28ea-40ec-9010-2b2e97d13433\",\"code\":\"TASK-00002\",\"title\":\"E2E Foundation Work cdf4c521\",\"description\":\"Test task for foundation laying\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"BACKLOG\",\"statusDisplayName\":\"Бэклог\",\"priority\":\"HIGH\",\"priorityDisplayName\":\"Высокий\",\"assigneeName\":\"Admin Admin\",\"reporterName\":\"Admin Admin\",\"plannedStartDate\":\"2026-04-01\",\"plannedEndDate\":\"2026-05-15\",\"estimatedHours\":160.00,\"actualHours\":0.00,\"progress\":0,"
+    },
+    {
+      "test": "F8.1 Create Quality Check",
+      "method": "POST",
+      "endpoint": "/api/quality/checks",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"6db25309-f5bc-4927-b3c0-1ac52cddc65d\",\"code\":\"QC-00002\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"checkType\":\"INCOMING_MATERIAL\",\"checkTypeDisplayName\":\"Входной контроль материалов\",\"name\":\"E2E Inspection cdf4c521\",\"description\":\"Testing incoming concrete quality\",\"plannedDate\":\"2026-04-05\",\"inspectorName\":\"Admin Admin\",\"result\":\"PENDING\",\"resultDisplayName\":\"Ожидает проверки\",\"status\":\"PLANNED\",\"statusDisplayName\":\"Запланировано\",\"attachmentUrls\":[],\"crea"
+    },
+    {
+      "test": "F8.2 Create Safety Incident",
+      "method": "POST",
+      "endpoint": "/api/safety/incidents",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"05afb687-aaac-4915-8b3f-15a1e825d2d8\",\"number\":\"INC-00002\",\"incidentDate\":\"2026-04-10T14:30:00\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"locationDescription\":\"Construction site sector B\",\"severity\":\"MINOR\",\"severityDisplayName\":\"Незначительный\",\"incidentType\":\"NEAR_MISS\",\"incidentTypeDisplayName\":\"Предпосылка к инциденту\",\"status\":\"REPORTED\",\"statusDisplayName\":\"Зарегистрирован\",\"description\":\"E2E near-miss incident cdf4c521\",\"reportedByName\":\"Admin Admin"
+    },
+    {
+      "test": "F9.1 Create Document",
+      "method": "POST",
+      "endpoint": "/api/documents",
+      "status_code": 201,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"436769d9-6e3a-4f1e-8a1e-f2832435b7a8\",\"title\":\"E2E Specification cdf4c521\",\"documentNumber\":\"DOC-cdf4c521\",\"category\":\"SPECIFICATION\",\"categoryDisplayName\":\"Спецификация\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"description\":\"Test specification document\",\"fileName\":\"spec_cdf4c521.pdf\",\"fileSize\":1024000,\"mimeType\":\"application/pdf\",\"storagePath\":\"/documents"
+    },
+    {
+      "test": "F9.2 Get Document by ID",
+      "method": "GET",
+      "endpoint": "/api/documents/436769d9-6e3a-4f1e-8a1e-f2832435b7a8",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"id\":\"436769d9-6e3a-4f1e-8a1e-f2832435b7a8\",\"title\":\"E2E Specification cdf4c521\",\"documentNumber\":\"DOC-cdf4c521\",\"category\":\"SPECIFICATION\",\"categoryDisplayName\":\"Спецификация\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"description\":\"Test specification document\",\"fileName\":\"spec_cdf4c521.pdf\",\"fileSize\":1024000,\"mimeType\":\"application/pdf\",\"storagePath\":\"/documents"
+    },
+    {
+      "test": "F10.1 Create Price Coefficient",
+      "method": "POST",
+      "endpoint": "/api/price-coefficients",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: c284dd1c-9250-4190-bbe5-69453d23cdad\"},\"timestamp\":\"2026-02-14T20:56:41.595736511Z\",\"requestId\":\"07d33c65-8abc-430d-95ec-aac051d48ee3\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "F10.2 Create Payroll Template",
+      "method": "POST",
+      "endpoint": "/api/payroll/templates",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: 4402c5f0-12a0-465c-9419-072487f25bbc\"},\"timestamp\":\"2026-02-14T20:56:41.617734970Z\",\"requestId\":\"57f24b2b-9589-415b-a02c-eb5905e3101d\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "F10.3 Create Self-Employed Contractor",
+      "method": "POST",
+      "endpoint": "/api/self-employed/contractors",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: f820a50e-a06c-44b2-80c5-2d4820dd2232\"},\"timestamp\":\"2026-02-14T20:56:41.634786803Z\",\"requestId\":\"c1bad2d2-b036-4e4d-957d-6b3c7e5f3b34\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "F10.4 Create Auto-Approval Rule",
+      "method": "POST",
+      "endpoint": "/api/approval-rules",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: f82ef76b-d142-4eb9-a20b-8e3af0efc397\"},\"timestamp\":\"2026-02-14T20:56:41.650074095Z\",\"requestId\":\"2672712d-ba3a-484e-ab33-ca05f92cc926\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "B1 List Projects",
+      "method": "GET",
+      "endpoint": "/api/projects",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"code\":\"PRJ-00002\",\"name\":\"E2E Test Project cdf4c521 (Updated)\",\"description\":\"Updated description for E2E\",\"status\":\"PLANNING\",\"statusDisplayName\":\"Планирование\",\"plannedStartDate\":\"2026-03-01\",\"plannedEndDate\":\"2027-03-31\",\"city\":\"Moscow\",\"region\":\"Moscow Oblast\",\"budgetAmount\":7000000.00,\"contractAmount\":8000000.00,\"type\":\"COMMERCIAL\",\"priority\":\"CRITICAL\",\"createdAt\":\"2026-02-14T20:56:41.202008Z\",\"updatedAt\":\"202"
+    },
+    {
+      "test": "B2 List Contracts",
+      "method": "GET",
+      "endpoint": "/api/contracts",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"name\":\"E2E Contract cdf4c521\",\"number\":\"CTR-00002\",\"contractDate\":\"2026-03-15\",\"partnerName\":\"Test Partner LLC\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"amount\":3000000.00,\"vatRate\":20.00,\"vatAmount\":600000.00,\"totalWithVat\":3600000.00,\"paymentTerms\":\"30 days net\",\"plannedStartDate\":\"2026-04-01\",\"plannedEndDate\":\"2026-11-30\",\"retentionPercent\":0.00,\"docVersi"
+    },
+    {
+      "test": "B3 List Employees",
+      "method": "GET",
+      "endpoint": "/api/employees",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"5314d280-ae64-4c2a-87bf-f748dd19516a\",\"firstName\":\"Ivan\",\"lastName\":\"Petrov-cdf4c521\",\"middleName\":\"Sergeevich\",\"fullName\":\"Petrov-cdf4c521 Ivan Sergeevich\",\"employeeNumber\":\"EMP-00002\",\"position\":\"Site Engineer\",\"hireDate\":\"2026-01-15\",\"status\":\"ACTIVE\",\"statusDisplayName\":\"Активен\",\"phone\":\"+79001234567\",\"email\":\"i.petrov.cdf4c521@test.com\",\"inn\":\"123456789012\",\"hourlyRate\":1500.00,\"monthlyRate\":250000.00,\"createdAt\":\"2026-02-14T20:56:41.339740Z\",\"upda"
+    },
+    {
+      "test": "B4 List Purchase Requests",
+      "method": "GET",
+      "endpoint": "/api/purchase-requests",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"5a28c866-2708-4a33-9ac6-7f4f6d54f663\",\"name\":\"ЗП-00002\",\"requestDate\":\"2026-04-01\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"priority\":\"HIGH\",\"priorityDisplayName\":\"Высокий\",\"requestedByName\":\"Admin Admin\",\"totalAmount\":0.00},{\"id\":\"65c1c93a-591b-4fd4-bfdd-4c9d99436192\",\"name\":\"ЗП-00001\",\"requestDate\":\"2026-04-01\",\"projectId\":\"6faf9aa1-3084-4968-b1d5-c1e361a2332d\",\"status\":\"DRAFT\",\"statusDisplayNa"
+    },
+    {
+      "test": "B5 List Budgets",
+      "method": "GET",
+      "endpoint": "/api/budgets",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"31b722b5-a618-4d96-a998-3846f9bf192c\",\"name\":\"E2E Budget cdf4c521\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"plannedRevenue\":6000000.00,\"plannedCost\":4500000.00,\"plannedMargin\":1500000.00,\"actualRevenue\":0.00,\"actualCost\":0.00,\"actualMargin\":0.00,\"revenueVariance\":-6000000.00,\"costVariance\":-4500000.00,\"marginVariance\":-1500000.00,\"revenueVarianc"
+    },
+    {
+      "test": "B6 List Invoices",
+      "method": "GET",
+      "endpoint": "/api/invoices",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"5ec40c85-fb3a-4f8c-b811-4d63db2144c5\",\"number\":\"INV-00002\",\"invoiceDate\":\"2026-04-15\",\"dueDate\":\"2026-05-15\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"partnerName\":\"Test Partner LLC\",\"invoiceType\":\"ISSUED\",\"invoiceTypeDisplayName\":\"Выставленный\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"subtotal\":500000.00,\"vatRate\":20.00,\"vatAmount\":100000.00,\"totalAmount\":600000.00,\"paidAmount\":0.00,\""
+    },
+    {
+      "test": "B7 List Payments",
+      "method": "GET",
+      "endpoint": "/api/payments",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"98b68638-340f-49d9-8572-eccbed3ddc44\",\"number\":\"PAY-00002\",\"paymentDate\":\"2026-04-20\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"partnerName\":\"Test Partner LLC\",\"paymentType\":\"INCOMING\",\"paymentTypeDisplayName\":\"Входящий\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"amount\":300000.00,\"vatAmount\":50000.00,\"totalAmount\":350000.00,\"purpose\":\"E2E payment cdf4c521\",\"bankAccount\":\"407028100000000"
+    },
+    {
+      "test": "B8 List Warehouse Locations",
+      "method": "GET",
+      "endpoint": "/api/warehouse/locations",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"579eb444-e7d9-436b-a9f0-7d01506c8bc0\",\"name\":\"E2E Warehouse cdf4c521\",\"code\":\"WH-cdf4c521\",\"locationType\":\"CENTRAL\",\"locationTypeDisplayName\":\"Центральный склад\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"address\":\"Moscow, Test St. 1\",\"responsibleName\":\"Admin Admin\",\"active\":true,\"createdAt\":\"2026-02-14T20:56:41.467592Z\",\"updatedAt\":\"2026-02-14T20:56:41.467592Z\",\"createdBy\":\"admin@privod.com\"},{\"id\":\"3263b67d-547f-4333-8c18-cacd4c29ed65\",\"name\":"
+    },
+    {
+      "test": "B9 List Materials",
+      "method": "GET",
+      "endpoint": "/api/warehouse/materials",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"85ae8094-518a-4339-b6f1-739591e3a70e\",\"name\":\"E2E Concrete cdf4c521\",\"code\":\"MAT-cdf4c521\",\"category\":\"CONCRETE\",\"categoryDisplayName\":\"Бетон и растворы\",\"unitOfMeasure\":\"m3\",\"description\":\"Test concrete material\",\"minStockLevel\":10.000,\"currentPrice\":5500.00,\"active\":true,\"createdAt\":\"2026-02-14T20:56:41.500395Z\",\"updatedAt\":\"2026-02-14T20:56:41.500395Z\",\"createdBy\":\"admin@privod.com\"},{\"id\":\"5b68a5e2-61a9-4ec0-9a70-e3fa55ef3be0\",\"name\":\"E2E Concrete M3"
+    },
+    {
+      "test": "B10 List Tasks",
+      "method": "GET",
+      "endpoint": "/api/tasks",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"d1498cba-28ea-40ec-9010-2b2e97d13433\",\"code\":\"TASK-00002\",\"title\":\"E2E Foundation Work cdf4c521\",\"description\":\"Test task for foundation laying\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"status\":\"BACKLOG\",\"statusDisplayName\":\"Бэклог\",\"priority\":\"HIGH\",\"priorityDisplayName\":\"Высокий\",\"assigneeName\":\"Admin Admin\",\"reporterName\":\"Admin Admin\",\"plannedStartDate\":\"2026-04-01\",\"plannedEndDate\":\"2026-05-15\",\"estimatedHours\":160.00,\"actualHours\":0.00,\""
+    },
+    {
+      "test": "B11 List Quality Checks",
+      "method": "GET",
+      "endpoint": "/api/quality/checks",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"6db25309-f5bc-4927-b3c0-1ac52cddc65d\",\"code\":\"QC-00002\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"checkType\":\"INCOMING_MATERIAL\",\"checkTypeDisplayName\":\"Входной контроль материалов\",\"name\":\"E2E Inspection cdf4c521\",\"description\":\"Testing incoming concrete quality\",\"plannedDate\":\"2026-04-05\",\"inspectorName\":\"Admin Admin\",\"result\":\"PENDING\",\"resultDisplayName\":\"Ожидает проверки\",\"status\":\"PLANNED\",\"statusDisplayName\":\"Запланировано\",\"attachmentUr"
+    },
+    {
+      "test": "B12 List Safety Incidents",
+      "method": "GET",
+      "endpoint": "/api/safety/incidents",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"59f4ddba-b48a-44f9-a548-c2130a1f398a\",\"number\":\"INC-00001\",\"incidentDate\":\"2026-04-10T14:30:00\",\"projectId\":\"6faf9aa1-3084-4968-b1d5-c1e361a2332d\",\"locationDescription\":\"Construction site sector B\",\"severity\":\"MINOR\",\"severityDisplayName\":\"Незначительный\",\"incidentType\":\"NEAR_MISS\",\"incidentTypeDisplayName\":\"Предпосылка к инциденту\",\"status\":\"REPORTED\",\"statusDisplayName\":\"Зарегистрирован\",\"description\":\"E2E test near-miss incident - worker tripped on de"
+    },
+    {
+      "test": "B13 List Documents",
+      "method": "GET",
+      "endpoint": "/api/documents",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"content\":[{\"id\":\"436769d9-6e3a-4f1e-8a1e-f2832435b7a8\",\"title\":\"E2E Specification cdf4c521\",\"documentNumber\":\"DOC-cdf4c521\",\"category\":\"SPECIFICATION\",\"categoryDisplayName\":\"Спецификация\",\"status\":\"DRAFT\",\"statusDisplayName\":\"Черновик\",\"projectId\":\"42d7a52f-81a9-4fec-8886-5d24e839e752\",\"contractId\":\"08761f89-50ed-4e99-ba90-c30fa10f72cc\",\"description\":\"Test specification document\",\"fileName\":\"spec_cdf4c521.pdf\",\"fileSize\":1024000,\"mimeType\":\"application/pdf\",\"storagePath\""
+    },
+    {
+      "test": "B14 List Price Coefficients",
+      "method": "GET",
+      "endpoint": "/api/price-coefficients",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: a0cd3396-ff7a-49d3-8eb0-433e152accf6\"},\"timestamp\":\"2026-02-14T20:56:41.804020762Z\",\"requestId\":\"6881069d-edb1-467d-aecf-febd292b72b1\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "B15 List Payroll Templates",
+      "method": "GET",
+      "endpoint": "/api/payroll/templates",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: ebac354a-2d7f-4181-9647-ccf854ed1bf7\"},\"timestamp\":\"2026-02-14T20:56:41.814257512Z\",\"requestId\":\"52c2a5a1-bf24-4dc1-9afb-10ecd398810d\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "B16 List Self-Employed Contractors",
+      "method": "GET",
+      "endpoint": "/api/self-employed/contractors",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: ae8f74f8-8357-4f6d-830f-230ec1b0b094\"},\"timestamp\":\"2026-02-14T20:56:41.826325220Z\",\"requestId\":\"06cc0605-54bf-4a34-b857-8fe826fc832a\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "B17 List Approval Rules",
+      "method": "GET",
+      "endpoint": "/api/approval-rules",
+      "status_code": 500,
+      "pass": false,
+      "response_snippet": "{\"success\":false,\"error\":{\"code\":500,\"message\":\"An unexpected error occurred. Request ID: b3951eda-038f-4f70-bf28-aa5f01d0f93f\"},\"timestamp\":\"2026-02-14T20:56:41.841415887Z\",\"requestId\":\"a36fc4ca-65ca-4127-8a09-c2c1e732d71b\"}",
+      "failure_category": "CONTROLLER_NOT_DEPLOYED",
+      "root_cause": "NoResourceFoundException: Controller class exists in source but not compiled in running Docker image"
+    },
+    {
+      "test": "B18 Project Dashboard",
+      "method": "GET",
+      "endpoint": "/api/projects/dashboard/summary",
+      "status_code": 200,
+      "pass": true,
+      "response_snippet": "{\"success\":true,\"data\":{\"totalProjects\":2,\"statusCounts\":{\"PLANNING\":2},\"totalBudget\":14000000.00,\"totalContractAmount\":16000000.00},\"timestamp\":\"2026-02-14T20:56:41.861845262Z\",\"requestId\":\"af2d2650-806d-4988-9081-11fc733bbdae\"}"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "note": "Docker/database unavailable - could not query project_task table. Run the following command manually to populate this file: docker exec privod2-db-1 psql -U odoo -d odoo_ru -t -A -c \"SELECT json_agg(row_to_json(t)) FROM (SELECT pt.id, pt.name, pp.name as project_name, pt.stage_id, s.name as stage_name, pt.date_deadline, pt.priority FROM project_task pt LEFT JOIN project_project pp ON pt.project_id=pp.id LEFT JOIN project_task_type s ON pt.stage_id=s.id LIMIT 100) t;\"",
+  "tasks": []
+}

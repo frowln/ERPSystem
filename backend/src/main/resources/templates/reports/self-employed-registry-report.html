@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Реестр выплат самозанятым'">Реестр выплат самозанятым</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 landscape; margin: 12mm 10mm 12mm 10mm; }
+        .fns-notice { border: 1px solid #2563eb; background-color: #eff6ff; padding: 6pt 10pt;
+                      margin-bottom: 12pt; font-size: 8pt; color: #1e40af; }
+        .status-active { color: #16a34a; font-weight: bold; }
+        .status-revoked { color: #dc2626; font-weight: bold; }
+        .status-pending { color: #ca8a04; font-weight: bold; }
+        .check-ok { color: #16a34a; }
+        .check-fail { color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">РЕЕСТР ВЫПЛАТ САМОЗАНЯТЫМ (НПД)</div>
+    <div class="report-subtitle">
+        Формат ФНС — Налог на профессиональный доход (Федеральный закон № 422-ФЗ)
+    </div>
+</div>
+
+<!-- ── FNS notice ─────────────────────────────────────────────────────────── -->
+<div class="fns-notice">
+    Внимание: Выплаты самозанятым лицам осуществляются на основании чеков, сформированных в приложении
+    «Мой налог» (ФНС России). Организация обязана проверять статус плательщика НПД перед каждой выплатой.
+</div>
+
+<!-- ── Metadata ───────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер реестра:</td>
+        <td th:text="${registryNumber} ?: '—'">РС-001</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${reportDate} ?: '—'">31.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Расчётный период:</td>
+        <td>
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+        <td class="label">Проект:</td>
+        <td th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</td>
+    </tr>
+    <tr>
+        <td class="label">ИНН организации:</td>
+        <td th:text="${orgInn} ?: '—'">7701234567</td>
+        <td class="label">КПП:</td>
+        <td th:text="${orgKpp} ?: '—'">770101001</td>
+    </tr>
+</table>
+
+<!-- ── Registry table ─────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:3%;">№</th>
+            <th style="width:13%;">ФИО самозанятого</th>
+            <th style="width:9%;">ИНН</th>
+            <th style="width:7%;">Статус<br/>НПД</th>
+            <th style="width:7%;">Дата<br/>проверки</th>
+            <th style="width:9%;">Номер<br/>договора ГПХ</th>
+            <th style="width:12%;">Описание<br/>услуги/работы</th>
+            <th style="width:7%;">Дата<br/>акта</th>
+            <th style="width:9%;">Сумма<br/>выплаты, руб.</th>
+            <th style="width:9%;">Номер<br/>чека ФНС</th>
+            <th style="width:7%;">Дата<br/>чека</th>
+            <th style="width:8%;">Статус<br/>оплаты</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="entry, iter : ${entries}" th:if="${entries != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${entry.fullName}">Козлов К.К.</td>
+            <td class="center" th:text="${entry.inn}">772012345678</td>
+            <td class="center">
+                <span th:if="${entry.npdStatus == 'ACTIVE'}" class="status-active">Активен</span>
+                <span th:if="${entry.npdStatus == 'REVOKED'}" class="status-revoked">Снят</span>
+            </td>
+            <td class="center" th:text="${entry.verificationDate}">28.01.2026</td>
+            <td class="center" th:text="${entry.contractNumber}">ГПХ-045</td>
+            <td class="text-small" th:text="${entry.serviceDescription}">Отделочные работы</td>
+            <td class="center" th:text="${entry.actDate}">30.01.2026</td>
+            <td class="number" th:text="${#numbers.formatDecimal(entry.amount, 1, 2)}">85 000.00</td>
+            <td class="center text-small" th:text="${entry.receiptNumber} ?: '—'">ЧЕК-12345</td>
+            <td class="center" th:text="${entry.receiptDate} ?: '—'">30.01.2026</td>
+            <td class="center">
+                <span th:if="${entry.paymentStatus == 'PAID'}" class="status-active">Оплачено</span>
+                <span th:if="${entry.paymentStatus == 'PENDING'}" class="status-pending">Ожидает</span>
+            </td>
+        </tr>
+        <tr th:if="${entries == null or entries.isEmpty()}">
+            <td colspan="12" class="center text-muted">Выплаты самозанятым за период отсутствуют</td>
+        </tr>
+    </tbody>
+    <tfoot th:if="${entries != null and !entries.isEmpty()}">
+        <tr class="total-row">
+            <td colspan="8" class="text-right">Итого выплат:</td>
+            <td class="number" th:text="${totalAmount != null} ? ${#numbers.formatDecimal(totalAmount, 1, 2)} : '0.00'">0.00</td>
+            <td colspan="3"></td>
+        </tr>
+        <tr class="total-row">
+            <td colspan="8" class="text-right">Количество самозанятых:</td>
+            <td class="center" th:text="${totalSelfEmployed} ?: '0'">0</td>
+            <td colspan="3"></td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Verification summary ───────────────────────────────────────────────── -->
+<div class="no-break mt-8">
+    <h3>Сводка проверки статусов</h3>
+    <table class="info-grid" style="width:50%;">
+        <tr>
+            <td class="label">Всего проверено:</td>
+            <td th:text="${totalVerified} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label check-ok">Статус НПД подтверждён:</td>
+            <td th:text="${verifiedOk} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label check-fail">Статус НПД не подтверждён:</td>
+            <td th:text="${verifiedFail} ?: '0'">0</td>
+        </tr>
+        <tr>
+            <td class="label">Чеки получены:</td>
+            <td th:text="${receiptsReceived} ?: '0'">0</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Бухгалтер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Проверил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Главный бухгалтер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

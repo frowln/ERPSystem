@@ -1,0 +1,16 @@
+package com.privod.platform.modules.fleet.domain;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum AssignmentStatus {
+
+    PLANNED("Запланировано"),
+    ACTIVE("Активно"),
+    COMPLETED("Завершено"),
+    CANCELLED("Отменено");
+
+    private final String displayName;
+}

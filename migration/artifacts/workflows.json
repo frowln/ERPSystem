@@ -1,0 +1,7858 @@
+{
+  "workflows": [
+    {
+      "module": "construction_1c_integration",
+      "model": "one.c.exchange.log",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "success",
+          "label": "Успешно"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_exchange",
+          "type": "button"
+        },
+        {
+          "method": "action_view_details",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_1c_integration/models/one_c_exchange_log.py"
+    },
+    {
+      "module": "construction_ai_assistant",
+      "model": "ai.document.analysis",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "analyzing",
+          "label": "Анализируется"
+        },
+        {
+          "value": "done",
+          "label": "Завершён"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_analyze",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_reanalyze",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ai_assistant/models/ai_document_analyzer.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "abc.xyz.analysis",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитан"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/abc_xyz_analysis.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "ml.logistics.optimization",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "optimizing",
+          "label": "Оптимизация"
+        },
+        {
+          "value": "optimized",
+          "label": "Оптимизировано"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_optimize",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/logistics_optimization.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "ml.computer.vision.quality",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "analyzing",
+          "label": "Анализ"
+        },
+        {
+          "value": "analyzed",
+          "label": "Проанализировано"
+        },
+        {
+          "value": "reviewed",
+          "label": "Проверено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_analyze",
+          "type": "button"
+        },
+        {
+          "method": "action_review",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/ml_computer_vision_quality.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "ml.cost.forecasting",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитан"
+        },
+        {
+          "value": "validated",
+          "label": "Проверен"
+        },
+        {
+          "value": "archived",
+          "label": "Архив"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_forecast",
+          "type": "button"
+        },
+        {
+          "method": "action_validate",
+          "type": "button"
+        },
+        {
+          "method": "action_archive",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/ml_cost_forecasting.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "ml.forecasting",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитан"
+        },
+        {
+          "value": "validated",
+          "label": "Проверен"
+        },
+        {
+          "value": "archived",
+          "label": "Архивирован"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_refresh_data",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/ml_forecasting.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "ml.schedule.delay.prediction",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитан"
+        },
+        {
+          "value": "validated",
+          "label": "Проверен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_predict",
+          "type": "button"
+        },
+        {
+          "method": "action_validate",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/ml_schedule_delay_prediction.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "project.risk",
+      "field": "status",
+      "states": [
+        {
+          "value": "identified",
+          "label": "Идентифицирован"
+        },
+        {
+          "value": "assessed",
+          "label": "Оценен"
+        },
+        {
+          "value": "mitigated",
+          "label": "Митигирован"
+        },
+        {
+          "value": "monitored",
+          "label": "Мониторится"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_review",
+          "type": "button"
+        },
+        {
+          "method": "action_realize",
+          "type": "button"
+        },
+        {
+          "method": "action_generate_mitigation_plan",
+          "type": "button"
+        }
+      ],
+      "default": "identified",
+      "file": "construction_analytics/models/risk_management.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "project.risk.mitigation.action",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "В ожидании"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "completed",
+          "label": "Выполнено"
+        },
+        {
+          "value": "overdue",
+          "label": "Просрочено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_complete",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_analytics/models/risk_management.py"
+    },
+    {
+      "module": "construction_analytics",
+      "model": "ml.supplier.risk.scoring",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитан"
+        },
+        {
+          "value": "validated",
+          "label": "Проверен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_recalculate",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_analytics/models/supplier_risk_scoring.py"
+    },
+    {
+      "module": "construction_api",
+      "model": "idempotency.key",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "В обработке"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        },
+        {
+          "value": "failed",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_api/models/idempotency.py"
+    },
+    {
+      "module": "construction_api",
+      "model": "outbox.event",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает отправки"
+        },
+        {
+          "value": "processing",
+          "label": "В обработке"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлено"
+        },
+        {
+          "value": "failed",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_api/models/outbox_pattern.py"
+    },
+    {
+      "module": "construction_audit",
+      "model": "construction.audit.checklist",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_done",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_audit/models/audit_checklist.py"
+    },
+    {
+      "module": "construction_base",
+      "model": "compensating.transaction",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает выполнения"
+        },
+        {
+          "value": "executed",
+          "label": "Выполнена"
+        },
+        {
+          "value": "compensated",
+          "label": "Скомпенсирована"
+        },
+        {
+          "value": "failed",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_execute",
+          "type": "button"
+        },
+        {
+          "method": "action_compensate",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_base/models/compensating_transaction.py"
+    },
+    {
+      "module": "construction_base",
+      "model": "construction.project",
+      "field": "status",
+      "states": [
+        {
+          "value": "plan",
+          "label": "Планируется"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "paused",
+          "label": "Приостановлен"
+        },
+        {
+          "value": "completed",
+          "label": "Сдан"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_view_suppliers",
+          "type": "button"
+        },
+        {
+          "method": "action_view_monthly_schedules",
+          "type": "button"
+        },
+        {
+          "method": "action_view_journal_general",
+          "type": "button"
+        },
+        {
+          "method": "action_view_journal_input",
+          "type": "button"
+        },
+        {
+          "method": "action_view_ppr",
+          "type": "button"
+        },
+        {
+          "method": "action_view_tech_cards",
+          "type": "button"
+        },
+        {
+          "method": "action_view_executive_docs",
+          "type": "button"
+        },
+        {
+          "method": "action_view_permit_docs",
+          "type": "button"
+        },
+        {
+          "method": "action_view_contracts",
+          "type": "button"
+        },
+        {
+          "method": "action_create_contract",
+          "type": "button"
+        },
+        {
+          "method": "action_open_ai_assistant",
+          "type": "button"
+        },
+        {
+          "method": "action_view_tasks",
+          "type": "button"
+        },
+        {
+          "method": "action_open_dashboard",
+          "type": "button"
+        }
+      ],
+      "default": "plan",
+      "file": "construction_base/models/construction_project.py"
+    },
+    {
+      "module": "construction_base",
+      "model": "data.migration",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "ready",
+          "label": "Готова"
+        },
+        {
+          "value": "running",
+          "label": "Выполняется"
+        },
+        {
+          "value": "completed",
+          "label": "Завершена"
+        },
+        {
+          "value": "failed",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_prepare",
+          "type": "button"
+        },
+        {
+          "method": "action_run",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_base/models/data_migration.py"
+    },
+    {
+      "module": "construction_base",
+      "model": "unified.error",
+      "field": "state",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новая"
+        },
+        {
+          "value": "acknowledged",
+          "label": "Признана"
+        },
+        {
+          "value": "resolved",
+          "label": "Решена"
+        },
+        {
+          "value": "ignored",
+          "label": "Игнорируется"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_ignore",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_base/models/error_model.py"
+    },
+    {
+      "module": "construction_bim",
+      "model": "bim.4d.visualization",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "generated",
+          "label": "Сгенерировано"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_generate_visualization",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_bim/models/bim_4d_planning.py"
+    },
+    {
+      "module": "construction_bim",
+      "model": "bim.model",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "imported",
+          "label": "Импортировано"
+        },
+        {
+          "value": "processed",
+          "label": "Обработано"
+        },
+        {
+          "value": "linked",
+          "label": "Связано со спецификацией"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_import_ifc",
+          "type": "button"
+        },
+        {
+          "method": "action_view_3d",
+          "type": "button"
+        },
+        {
+          "method": "action_link_to_specification",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_bim/models/bim_model.py"
+    },
+    {
+      "module": "construction_bim",
+      "model": "bim.annotation",
+      "field": "status",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_resolve",
+          "type": "button"
+        }
+      ],
+      "default": "open",
+      "file": "construction_bim/models/bim_viewer.py"
+    },
+    {
+      "module": "construction_bim",
+      "model": "bim.clash",
+      "field": "status",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новая"
+        },
+        {
+          "value": "reviewed",
+          "label": "Просмотрена"
+        },
+        {
+          "value": "resolved",
+          "label": "Решена"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_export_pdf",
+          "type": "button"
+        },
+        {
+          "method": "action_export_excel",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_bim/models/clash_detection.py"
+    },
+    {
+      "module": "construction_certificates",
+      "model": "construction.material.certificate",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "valid",
+          "label": "Действующий"
+        },
+        {
+          "value": "expired",
+          "label": "Просрочен"
+        },
+        {
+          "value": "revoked",
+          "label": "Отозван"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_validate",
+          "type": "button",
+          "to_state": "valid"
+        },
+        {
+          "method": "action_revoke",
+          "type": "button"
+        },
+        {
+          "method": "action_renew",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_certificates/models/material_certificate.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.claim",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Подана"
+        },
+        {
+          "value": "under_review",
+          "label": "На рассмотрении"
+        },
+        {
+          "value": "accepted",
+          "label": "Принята"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонена"
+        },
+        {
+          "value": "partially_accepted",
+          "label": "Частично принята"
+        },
+        {
+          "value": "resolved",
+          "label": "Урегулирована"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_accept",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_create_task",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_contract/models/claim_management.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.contract",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "on_approval",
+          "label": "На согласовании"
+        },
+        {
+          "value": "lawyer_approved",
+          "label": "Согласовано юристом"
+        },
+        {
+          "value": "management_approved",
+          "label": "Согласовано руководством"
+        },
+        {
+          "value": "finance_approved",
+          "label": "Согласовано бухгалтерией"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_open_ai_assistant",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_approval",
+          "type": "button"
+        },
+        {
+          "method": "action_approve_lawyer",
+          "type": "button"
+        },
+        {
+          "method": "action_approve_management",
+          "type": "button"
+        },
+        {
+          "method": "action_approve_finance",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_open_sign_wizard",
+          "type": "button"
+        },
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_view_invoices",
+          "type": "button"
+        },
+        {
+          "method": "action_view_payments",
+          "type": "button"
+        },
+        {
+          "method": "action_create_version",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_contract/models/contract.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.approval",
+      "field": "stage",
+      "states": [
+        {
+          "value": "lawyer",
+          "label": "Юрист"
+        },
+        {
+          "value": "management",
+          "label": "Руководство"
+        },
+        {
+          "value": "finance",
+          "label": "Бухгалтерия"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        }
+      ],
+      "default": null,
+      "file": "construction_contract/models/contract_approval.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.approval",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_contract/models/contract_approval.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.document",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "review",
+          "label": "На рассмотрении"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "archived",
+          "label": "Архив"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_set_final",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_archive",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_contract/models/contract_document.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.lifecycle.alert",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлено"
+        },
+        {
+          "value": "acknowledged",
+          "label": "Подтверждено"
+        },
+        {
+          "value": "dismissed",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_acknowledge",
+          "type": "button"
+        },
+        {
+          "method": "action_dismiss",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_pending",
+          "type": "button",
+          "to_state": "pending"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_contract/models/contract_lifecycle_alert.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.supplement",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "pending",
+          "label": "На согласовании"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "signed",
+          "label": "Подписано"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_contract/models/contract_supplement.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "contract.approval.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "skipped",
+          "label": "Пропущено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_contract/models/contract_type.py"
+    },
+    {
+      "module": "construction_contract",
+      "model": "customer.sla.obligation",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "warning",
+          "label": "Предупреждение"
+        },
+        {
+          "value": "at_risk",
+          "label": "Под угрозой"
+        },
+        {
+          "value": "overdue",
+          "label": "Просрочено"
+        },
+        {
+          "value": "met",
+          "label": "Соблюдено"
+        },
+        {
+          "value": "missed",
+          "label": "Нарушено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_mark_completed",
+          "type": "button"
+        }
+      ],
+      "default": null,
+      "file": "construction_contract/models/customer_sla.py"
+    },
+    {
+      "module": "construction_crew_time",
+      "model": "construction.time.entry",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_crew_time/models/construction_time_entry.py"
+    },
+    {
+      "module": "construction_crew_time",
+      "model": "construction.time.sheet",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_crew_time/models/construction_time_sheet.py"
+    },
+    {
+      "module": "construction_daily_log",
+      "model": "construction.daily.log",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "На утверждении"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_fetch_weather",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_daily_log/models/daily_log.py"
+    },
+    {
+      "module": "construction_design",
+      "model": "design.drawing.register",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "issued",
+          "label": "Выдан"
+        },
+        {
+          "value": "superseded",
+          "label": "Заменён"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_issue",
+          "type": "button"
+        },
+        {
+          "method": "action_supersede",
+          "type": "button"
+        },
+        {
+          "method": "action_check_discipline_conflicts",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_design/models/design_review.py"
+    },
+    {
+      "module": "construction_design",
+      "model": "design.section",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "internal_review",
+          "label": "На внутренней проверке"
+        },
+        {
+          "value": "customer_review",
+          "label": "На согласовании с заказчиком"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "done",
+          "label": "Завершено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_send_to_internal_review",
+          "type": "button",
+          "to_state": "internal_review"
+        },
+        {
+          "method": "action_approve_internal",
+          "type": "button"
+        },
+        {
+          "method": "action_reject_internal",
+          "type": "button"
+        },
+        {
+          "method": "action_approve_customer",
+          "type": "button"
+        },
+        {
+          "method": "action_reject_customer",
+          "type": "button"
+        },
+        {
+          "method": "action_transfer_specification",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_design/models/design_section.py"
+    },
+    {
+      "module": "construction_design",
+      "model": "design.version",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Актуальная"
+        },
+        {
+          "value": "revision",
+          "label": "Доработка"
+        },
+        {
+          "value": "archived",
+          "label": "Архивная"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_set_active",
+          "type": "button",
+          "to_state": "active"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_design/models/design_section.py"
+    },
+    {
+      "module": "construction_devops",
+      "model": "deployment.log",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "success",
+          "label": "Успешно"
+        },
+        {
+          "value": "failed",
+          "label": "Провалено"
+        },
+        {
+          "value": "rolled_back",
+          "label": "Откат"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_deploy",
+          "type": "button"
+        },
+        {
+          "method": "action_rollback",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_devops/models/deployment_log.py"
+    },
+    {
+      "module": "construction_devops",
+      "model": "dr.plan",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "tested",
+          "label": "Протестирован"
+        },
+        {
+          "value": "failed",
+          "label": "Провален"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_test",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_devops/models/dr_plan.py"
+    },
+    {
+      "module": "construction_devops",
+      "model": "dr.execution",
+      "field": "status",
+      "states": [
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "success",
+          "label": "Успешно"
+        },
+        {
+          "value": "failed",
+          "label": "Провалено"
+        }
+      ],
+      "transitions": [],
+      "default": "in_progress",
+      "file": "construction_devops/models/dr_plan.py"
+    },
+    {
+      "module": "construction_dispatch",
+      "model": "construction.dispatch.order",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждена"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "done",
+          "label": "Выполнена"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменена"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_open_assign_wizard",
+          "type": "button"
+        },
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_done",
+          "type": "button",
+          "to_state": "done"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_dispatch/models/dispatch_order.py"
+    },
+    {
+      "module": "construction_documents",
+      "model": "cross.approval.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "delegated",
+          "label": "Делегировано"
+        },
+        {
+          "value": "skipped",
+          "label": "Пропущено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_delegate",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_documents/models/cross_approval_route.py"
+    },
+    {
+      "module": "construction_documents",
+      "model": "construction.ppr",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_documents/models/pto_documents.py"
+    },
+    {
+      "module": "construction_documents",
+      "model": "construction.tech.card",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_documents/models/pto_documents.py"
+    },
+    {
+      "module": "construction_documents",
+      "model": "construction.executive.doc",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_ready",
+          "type": "button"
+        },
+        {
+          "method": "action_sent",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_documents/models/pto_documents.py"
+    },
+    {
+      "module": "construction_documents",
+      "model": "construction.permit.doc",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_request",
+          "type": "button"
+        },
+        {
+          "method": "action_received",
+          "type": "button"
+        }
+      ],
+      "default": "required",
+      "file": "construction_documents/models/pto_documents.py"
+    },
+    {
+      "module": "construction_documents",
+      "model": "document.unified.storage",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "archived",
+          "label": "Архив"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_version",
+          "type": "button"
+        },
+        {
+          "method": "action_set_current_version",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_documents/models/unified_document_storage.py"
+    },
+    {
+      "module": "construction_drawing_annotation",
+      "model": "construction.drawing.annotation",
+      "field": "state",
+      "states": [
+        {
+          "value": "open",
+          "label": "Открыта"
+        },
+        {
+          "value": "resolved",
+          "label": "Решена"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_reopen",
+          "type": "button",
+          "to_state": "open"
+        }
+      ],
+      "default": "open",
+      "file": "construction_drawing_annotation/models/annotation.py"
+    },
+    {
+      "module": "construction_drawing_annotation",
+      "model": "construction.drawing",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "current",
+          "label": "Действующий"
+        },
+        {
+          "value": "superseded",
+          "label": "Замещён"
+        },
+        {
+          "value": "archived",
+          "label": "Архивный"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_set_current",
+          "type": "button",
+          "to_state": "current"
+        },
+        {
+          "method": "action_supersede",
+          "type": "button"
+        },
+        {
+          "method": "action_archive_drawing",
+          "type": "button"
+        },
+        {
+          "method": "action_create_revision",
+          "type": "button"
+        },
+        {
+          "method": "action_view_annotations",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_drawing_annotation/models/drawing.py"
+    },
+    {
+      "module": "construction_edi_sbis",
+      "model": "edi.sbis.config",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_test_connection",
+          "type": "button"
+        },
+        {
+          "method": "action_view_documents",
+          "type": "button"
+        },
+        {
+          "method": "action_view_mappings",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_edi_sbis/models/edi_sbis_config.py"
+    },
+    {
+      "module": "construction_edi_sbis",
+      "model": "edi.sbis.document",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_send",
+          "type": "button"
+        },
+        {
+          "method": "action_check_status",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button"
+        },
+        {
+          "method": "action_open_source_document",
+          "type": "button"
+        },
+        {
+          "method": "action_view_logs",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_edi_sbis/models/edi_sbis_document.py"
+    },
+    {
+      "module": "construction_edi_sbis",
+      "model": "edi.sbis.exchange.log",
+      "field": "status",
+      "states": [
+        {
+          "value": "success",
+          "label": "Успех"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [],
+      "default": "success",
+      "file": "construction_edi_sbis/models/edi_sbis_exchange_log.py"
+    },
+    {
+      "module": "construction_edo_generator",
+      "model": "edo.document",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_generate_xml",
+          "type": "button"
+        },
+        {
+          "method": "action_send_to_provider",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_edo_generator/models/edo_document.py"
+    },
+    {
+      "module": "construction_ens",
+      "model": "construction.ens.account",
+      "field": "state",
+      "states": [],
+      "transitions": [],
+      "default": "active",
+      "file": "construction_ens/models/ens_account.py"
+    },
+    {
+      "module": "construction_ens",
+      "model": "construction.ens.operation",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ens/models/ens_operation.py"
+    },
+    {
+      "module": "construction_ens",
+      "model": "construction.ens.reconciliation",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_match",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ens/models/ens_reconciliation.py"
+    },
+    {
+      "module": "construction_estimate",
+      "model": "construction.change.request",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "На рассмотрении"
+        },
+        {
+          "value": "approved",
+          "label": "Одобрен"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонен"
+        },
+        {
+          "value": "implemented",
+          "label": "Реализован"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_implement",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_estimate/models/change_request.py"
+    },
+    {
+      "module": "construction_estimate",
+      "model": "construction.estimate",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_work",
+          "label": "В работе"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_from_specification",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_view_items",
+          "type": "button"
+        },
+        {
+          "method": "action_view_related_documents",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_estimate/models/estimate.py"
+    },
+    {
+      "module": "construction_estimate",
+      "model": "construction.estimate.version",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        },
+        {
+          "value": "archived",
+          "label": "Архив"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_restore",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_estimate/models/estimate_version.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "construction.acquiring.payment",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "pending",
+          "label": "Ожидание оплаты"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "refunded",
+          "label": "Возвращен"
+        },
+        {
+          "value": "partial_refund",
+          "label": "Частичный возврат"
+        },
+        {
+          "value": "failed",
+          "label": "Ошибка"
+        },
+        {
+          "value": "expired",
+          "label": "Истек"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_payment",
+          "type": "button"
+        },
+        {
+          "method": "action_check_status",
+          "type": "button"
+        },
+        {
+          "method": "action_refund",
+          "type": "button"
+        },
+        {
+          "method": "action_partial_refund",
+          "type": "button",
+          "to_state": "partial_refund"
+        },
+        {
+          "method": "action_open_payment_url",
+          "type": "button"
+        },
+        {
+          "method": "action_copy_payment_url",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/acquiring_payment.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.payment.order",
+      "field": "status",
+      "states": [
+        {
+          "value": "Initiated",
+          "label": "Инициирован"
+        },
+        {
+          "value": "Wait For Owner Requisites",
+          "label": "Ожидание реквизитов"
+        },
+        {
+          "value": "NotAllowed",
+          "label": "Не разрешён"
+        },
+        {
+          "value": "Allowed",
+          "label": "Разрешён"
+        },
+        {
+          "value": "WaitingForSign",
+          "label": "Ожидание подписи"
+        },
+        {
+          "value": "WaitingForCreate",
+          "label": "Ожидание создания"
+        },
+        {
+          "value": "Created",
+          "label": "Создан"
+        },
+        {
+          "value": "Paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "Canceled",
+          "label": "Отменён"
+        },
+        {
+          "value": "Rejected",
+          "label": "Отклонён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_refresh_status",
+          "type": "button"
+        }
+      ],
+      "default": "Initiated",
+      "file": "construction_finance/models/bank_api_enhanced.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.acquiring.operation",
+      "field": "status",
+      "states": [
+        {
+          "value": "CREATED",
+          "label": "Создана"
+        },
+        {
+          "value": "APPROVED",
+          "label": "Одобрена"
+        },
+        {
+          "value": "ON-REFUND",
+          "label": "Возврат в процессе"
+        },
+        {
+          "value": "REFUNDED",
+          "label": "Возвращена"
+        },
+        {
+          "value": "EXPIRED",
+          "label": "Истекла"
+        },
+        {
+          "value": "REJECTED",
+          "label": "Отклонена"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_refresh_status",
+          "type": "button"
+        },
+        {
+          "method": "action_capture",
+          "type": "button"
+        },
+        {
+          "method": "action_refund",
+          "type": "button"
+        }
+      ],
+      "default": "CREATED",
+      "file": "construction_finance/models/bank_api_enhanced.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.reconciliation",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "reconciled",
+          "label": "Сверено"
+        },
+        {
+          "value": "has_differences",
+          "label": "Есть расхождения"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_reconciliation",
+          "type": "button"
+        },
+        {
+          "method": "action_reconcile",
+          "type": "button"
+        },
+        {
+          "method": "action_auto_reconcile_payments",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/bank_api_enhanced.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.document.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "all",
+          "label": "Все"
+        },
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        },
+        {
+          "value": "reconciled",
+          "label": "Сверено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_generate_registry",
+          "type": "button"
+        },
+        {
+          "method": "action_export_excel",
+          "type": "button"
+        },
+        {
+          "method": "action_export_pdf",
+          "type": "button"
+        }
+      ],
+      "default": "all",
+      "file": "construction_finance/models/bank_document_registry.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.document.registry.line",
+      "field": "state",
+      "states": [],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_finance/models/bank_document_registry.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.statement.import",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "imported",
+          "label": "Импортировано"
+        },
+        {
+          "value": "matched",
+          "label": "Сопоставлено"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_import",
+          "type": "button"
+        },
+        {
+          "method": "action_auto_match",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/bank_integration.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "bank.statement.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Не сопоставлено"
+        },
+        {
+          "value": "matched",
+          "label": "Сопоставлено"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        }
+      ],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_finance/models/bank_integration.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "construction.contract.penalty",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитано"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_paid",
+          "type": "button",
+          "to_state": "paid"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/contract_penalty.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "contractor.contract.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_generate_report",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/contractor_reports.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "contractor.contract.registry.line",
+      "field": "state",
+      "states": [],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_finance/models/contractor_reports.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "customer.contract.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_generate_report",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/customer_reports.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "customer.contract.registry.line",
+      "field": "state",
+      "states": [],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_finance/models/customer_reports.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "edo.document",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлен"
+        },
+        {
+          "value": "signed_by_us",
+          "label": "Подписан нами"
+        },
+        {
+          "value": "signed_by_partner",
+          "label": "Подписан контрагентом"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан обеими сторонами"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_send",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/edo_integration.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "construction.management.pnl",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "generated",
+          "label": "Сформирован"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_generate_pnl",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/management_pnl.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "construction.overhead.allocation",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/overhead_allocation.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "payment.calendar",
+      "field": "state",
+      "states": [
+        {
+          "value": "planned",
+          "label": "Запланирован"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_mark_paid",
+          "type": "button",
+          "to_state": "paid"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_create_payment",
+          "type": "button"
+        }
+      ],
+      "default": "planned",
+      "file": "construction_finance/models/payment_calendar.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "payment.register",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтвержден"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_open_approve_wizard",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_paid",
+          "type": "button",
+          "to_state": "paid"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_create_from_date",
+          "type": "button"
+        },
+        {
+          "method": "action_export_to_1c",
+          "type": "button"
+        },
+        {
+          "method": "action_export_invoices_pdf",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/payment_register.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "payment.schedule",
+      "field": "state",
+      "states": [
+        {
+          "value": "planned",
+          "label": "Запланирован"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "overdue",
+          "label": "Просрочен"
+        }
+      ],
+      "transitions": [],
+      "default": null,
+      "file": "construction_finance/models/payment_schedule.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "contract.retention",
+      "field": "state",
+      "states": [
+        {
+          "value": "active",
+          "label": "Действует"
+        },
+        {
+          "value": "partial",
+          "label": "Частично возвращено"
+        },
+        {
+          "value": "returned",
+          "label": "Возвращено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_return_full",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        }
+      ],
+      "default": "active",
+      "file": "construction_finance/models/retention.py"
+    },
+    {
+      "module": "construction_finance",
+      "model": "construction.tax.risk.assessment",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_assessment",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_load_default_indicators",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_finance/models/tax_risk_assessment.py"
+    },
+    {
+      "module": "construction_fleet_integration",
+      "model": "construction.equipment.control",
+      "field": "status",
+      "states": [
+        {
+          "value": "ok",
+          "label": "Исправна"
+        },
+        {
+          "value": "needs_attention",
+          "label": "Требует внимания"
+        },
+        {
+          "value": "needs_repair",
+          "label": "Требует ремонта"
+        },
+        {
+          "value": "out_of_order",
+          "label": "Неисправна"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_maintenance_request",
+          "type": "button"
+        }
+      ],
+      "default": "ok",
+      "file": "construction_fleet_integration/models/equipment_control.py"
+    },
+    {
+      "module": "construction_fleet_integration",
+      "model": "fleet.vehicle.assignment",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активно"
+        },
+        {
+          "value": "done",
+          "label": "Завершено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_done",
+          "type": "button",
+          "to_state": "done"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_fleet_integration/models/vehicle_assignment.py"
+    },
+    {
+      "module": "construction_hr",
+      "model": "construction.brigade",
+      "field": "state",
+      "states": [
+        {
+          "value": "active",
+          "label": "Действующая"
+        },
+        {
+          "value": "on_site",
+          "label": "На объекте"
+        },
+        {
+          "value": "idle",
+          "label": "Простой"
+        },
+        {
+          "value": "disbanded",
+          "label": "Расформирована"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_assign_to_project",
+          "type": "button"
+        },
+        {
+          "method": "action_disband",
+          "type": "button"
+        }
+      ],
+      "default": "active",
+      "file": "construction_hr/models/brigade.py"
+    },
+    {
+      "module": "construction_hr",
+      "model": "construction.staffing.plan",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_compute_staffing",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_hr/models/staffing_plan.py"
+    },
+    {
+      "module": "construction_hr",
+      "model": "zup.integration.config",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_test_connection",
+          "type": "button"
+        },
+        {
+          "method": "action_sync_employees",
+          "type": "button"
+        },
+        {
+          "method": "action_sync_timesheets",
+          "type": "button"
+        },
+        {
+          "method": "action_sync_payroll",
+          "type": "button"
+        },
+        {
+          "method": "action_full_sync",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_hr/models/zup_integration.py"
+    },
+    {
+      "module": "construction_hr_russian",
+      "model": "piecework.payment",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитан"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_paid",
+          "type": "button",
+          "to_state": "paid"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_hr_russian/models/piecework_payment.py"
+    },
+    {
+      "module": "construction_hr_russian",
+      "model": "construction.self.employed.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтвержден"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_pay",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_verify_npd_status",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_hr_russian/models/self_employed_registry.py"
+    },
+    {
+      "module": "construction_hr_russian",
+      "model": "construction.self.employed.registry.line",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_verify_receipt",
+          "type": "button"
+        }
+      ],
+      "default": null,
+      "file": "construction_hr_russian/models/self_employed_registry.py"
+    },
+    {
+      "module": "construction_hr_russian",
+      "model": "construction.work.order",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_paid",
+          "type": "button",
+          "to_state": "paid"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_hr_russian/models/work_order.py"
+    },
+    {
+      "module": "construction_integration",
+      "model": "contractor.portal.tender.bid",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Подана"
+        },
+        {
+          "value": "under_review",
+          "label": "На рассмотрении"
+        },
+        {
+          "value": "accepted",
+          "label": "Принята"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонена"
+        }
+      ],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_integration/models/contractor_portal.py"
+    },
+    {
+      "module": "construction_integration",
+      "model": "edi.document",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлен"
+        },
+        {
+          "value": "received",
+          "label": "Получен"
+        },
+        {
+          "value": "acknowledged",
+          "label": "Подтверждён"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонён"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_send",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_integration/models/edi_integration.py"
+    },
+    {
+      "module": "construction_integration",
+      "model": "estimate.system.import",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "imported",
+          "label": "Импортировано"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_import",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_integration/models/estimate_system_integration.py"
+    },
+    {
+      "module": "construction_integration",
+      "model": "estimate.system.export",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "exported",
+          "label": "Экспортировано"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_export",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_integration/models/estimate_system_integration.py"
+    },
+    {
+      "module": "construction_integration",
+      "model": "omnichannel.message",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлено"
+        },
+        {
+          "value": "delivered",
+          "label": "Доставлено"
+        },
+        {
+          "value": "read",
+          "label": "Прочитано"
+        },
+        {
+          "value": "failed",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_link_to_lead",
+          "type": "button"
+        },
+        {
+          "method": "action_send_reply",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_integration/models/omnichannel.py"
+    },
+    {
+      "module": "construction_integrations_enhanced",
+      "model": "bank.api.config",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_test_connection",
+          "type": "button"
+        },
+        {
+          "method": "action_sync_statements",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_integrations_enhanced/models/bank_api.py"
+    },
+    {
+      "module": "construction_integrations_enhanced",
+      "model": "onec.enhanced.config",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_test_connection",
+          "type": "button"
+        },
+        {
+          "method": "action_sync_partners",
+          "type": "button"
+        },
+        {
+          "method": "action_sync_all",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_integrations_enhanced/models/onec_enhanced.py"
+    },
+    {
+      "module": "construction_iot",
+      "model": "construction.digital.twin",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "live",
+          "label": "Активен"
+        },
+        {
+          "value": "archived",
+          "label": "Архив"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_sync",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_iot/models/digital_twin.py"
+    },
+    {
+      "module": "construction_iot",
+      "model": "construction.iot.alert",
+      "field": "state",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новая"
+        },
+        {
+          "value": "ack",
+          "label": "В работе"
+        },
+        {
+          "value": "resolved",
+          "label": "Решена"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_acknowledge",
+          "type": "button",
+          "to_state": "ack"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_iot/models/iot_alert.py"
+    },
+    {
+      "module": "construction_iot",
+      "model": "construction.iot.device",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активно"
+        },
+        {
+          "value": "inactive",
+          "label": "Неактивно"
+        },
+        {
+          "value": "maintenance",
+          "label": "На обслуживании"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_set_active",
+          "type": "button",
+          "to_state": "active"
+        },
+        {
+          "method": "action_set_inactive",
+          "type": "button",
+          "to_state": "inactive"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_iot/models/iot_device.py"
+    },
+    {
+      "module": "construction_iot",
+      "model": "iot.equipment",
+      "field": "status",
+      "states": [
+        {
+          "value": "active",
+          "label": "Работает"
+        },
+        {
+          "value": "idle",
+          "label": "Простой"
+        },
+        {
+          "value": "maintenance",
+          "label": "Обслуживание"
+        },
+        {
+          "value": "broken",
+          "label": "Неисправна"
+        },
+        {
+          "value": "offline",
+          "label": "Не в сети"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_update_location",
+          "type": "button"
+        },
+        {
+          "method": "action_update_status",
+          "type": "button"
+        }
+      ],
+      "default": "offline",
+      "file": "construction_iot/models/iot_equipment.py"
+    },
+    {
+      "module": "construction_iot",
+      "model": "iot.equipment.telemetry",
+      "field": "status",
+      "states": [
+        {
+          "value": "active",
+          "label": "Работает"
+        },
+        {
+          "value": "idle",
+          "label": "Простой"
+        },
+        {
+          "value": "maintenance",
+          "label": "Обслуживание"
+        },
+        {
+          "value": "broken",
+          "label": "Неисправна"
+        },
+        {
+          "value": "offline",
+          "label": "Не в сети"
+        }
+      ],
+      "transitions": [],
+      "default": "active",
+      "file": "construction_iot/models/iot_equipment.py"
+    },
+    {
+      "module": "construction_kep",
+      "model": "kep.certificate",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "expired",
+          "label": "Истёк"
+        },
+        {
+          "value": "revoked",
+          "label": "Отозван"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_revoke",
+          "type": "button"
+        },
+        {
+          "method": "action_view_signatures",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_kep/models/kep_certificate.py"
+    },
+    {
+      "module": "construction_kep",
+      "model": "kep.signing.request",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "pending",
+          "label": "Ожидает подписания"
+        },
+        {
+          "value": "partially_signed",
+          "label": "Частично подписан"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_send",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_kep/models/kep_signing_request.py"
+    },
+    {
+      "module": "construction_kpi",
+      "model": "construction.bonus.calculation",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитано"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        },
+        {
+          "value": "paid",
+          "label": "Выплачено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_pay",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_kpi/models/bonus_calculation.py"
+    },
+    {
+      "module": "construction_kpi",
+      "model": "construction.kpi.achievement",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "achieved",
+          "label": "Достигнут"
+        },
+        {
+          "value": "not_achieved",
+          "label": "Не достигнут"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_achieve",
+          "type": "button"
+        },
+        {
+          "method": "action_not_achieve",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_kpi/models/kpi_achievement.py"
+    },
+    {
+      "module": "construction_legal",
+      "model": "legal.remark",
+      "field": "state",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новое"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "resolved",
+          "label": "Устранено"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_reopen",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_legal/models/legal_remark.py"
+    },
+    {
+      "module": "construction_logistics",
+      "model": "construction.transfer.plan",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_logistics/models/transfer_plan.py"
+    },
+    {
+      "module": "construction_logistics",
+      "model": "construction.transfer.task",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_plan",
+          "type": "button"
+        },
+        {
+          "method": "action_start_transit",
+          "type": "button"
+        },
+        {
+          "method": "action_deliver",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_logistics/models/transfer_task.py"
+    },
+    {
+      "module": "construction_lrv",
+      "model": "construction.lrv",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждена"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_lrv/models/lrv.py"
+    },
+    {
+      "module": "construction_maintenance_integration",
+      "model": "maintenance.preventive.schedule",
+      "field": "state",
+      "states": [
+        {
+          "value": "active",
+          "label": "Активный"
+        },
+        {
+          "value": "paused",
+          "label": "Приостановлен"
+        },
+        {
+          "value": "done",
+          "label": "Завершён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_schedule_next",
+          "type": "button"
+        },
+        {
+          "method": "action_create_maintenance_request",
+          "type": "button"
+        },
+        {
+          "method": "action_pause",
+          "type": "button"
+        },
+        {
+          "method": "action_resume",
+          "type": "button"
+        },
+        {
+          "method": "action_view_requests",
+          "type": "button"
+        }
+      ],
+      "default": "active",
+      "file": "construction_maintenance_integration/models/preventive_schedule.py"
+    },
+    {
+      "module": "construction_material_analogs",
+      "model": "construction.material.analog",
+      "field": "state",
+      "states": [
+        {
+          "value": "active",
+          "label": "Активна"
+        },
+        {
+          "value": "inactive",
+          "label": "Неактивна"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_deactivate",
+          "type": "button"
+        },
+        {
+          "method": "action_find_analogs",
+          "type": "button"
+        }
+      ],
+      "default": "active",
+      "file": "construction_material_analogs/models/material_analog.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "construction.mobile.push.notification",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлено"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_mobile/models/mobile_push.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "mobile.quality.checklist",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "passed",
+          "label": "Пройден"
+        },
+        {
+          "value": "failed",
+          "label": "Не пройден"
+        },
+        {
+          "value": "requires_action",
+          "label": "Требует действий"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_from_template",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_mobile/models/mobile_quality_checklist.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "mobile.quality.checklist.item",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Не проверено"
+        },
+        {
+          "value": "passed",
+          "label": "Пройдено"
+        },
+        {
+          "value": "failed",
+          "label": "Не пройдено"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_mobile/models/mobile_quality_checklist.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "mobile.quality.defect",
+      "field": "status",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новый"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "fixed",
+          "label": "Исправлен"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [],
+      "default": "new",
+      "file": "construction_mobile/models/mobile_quality_checklist.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "construction.mobile.report",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Отправлен"
+        },
+        {
+          "value": "reviewed",
+          "label": "Проверен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_save_offline",
+          "type": "button"
+        },
+        {
+          "method": "action_sync",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_mobile/models/mobile_report.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "offline.reference.book.sync",
+      "field": "status",
+      "states": [
+        {
+          "value": "success",
+          "label": "Успешно"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [],
+      "default": "success",
+      "file": "construction_mobile/models/offline_reference_books.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "construction.offline.sync.queue",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "syncing",
+          "label": "Синхронизация"
+        },
+        {
+          "value": "synced",
+          "label": "Синхронизировано"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_sync",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve_conflict",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve_conflict_server",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve_conflict_client",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve_conflict_merge",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_mobile/models/offline_sync.py"
+    },
+    {
+      "module": "construction_mobile",
+      "model": "construction.work.journal",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        },
+        {
+          "value": "reviewed",
+          "label": "Проверено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_add_photo",
+          "type": "button"
+        },
+        {
+          "method": "action_view_photos",
+          "type": "button"
+        },
+        {
+          "method": "action_view_timeline",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_mobile/models/work_journal.py"
+    },
+    {
+      "module": "construction_monthly_schedule",
+      "model": "construction.monthly.schedule",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Подан"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_view_project",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_monthly_schedule/models/monthly_schedule.py"
+    },
+    {
+      "module": "construction_ocr",
+      "model": "document.recognition",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает распознавания"
+        },
+        {
+          "value": "processing",
+          "label": "Распознается"
+        },
+        {
+          "value": "recognized",
+          "label": "Распознан"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтвержден"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_recognition",
+          "type": "button"
+        },
+        {
+          "method": "action_confirm",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_ocr/models/document_recognition.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "commercial.proposal",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлено"
+        },
+        {
+          "value": "accepted",
+          "label": "Принято"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "converted",
+          "label": "Преобразовано в договор"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_new_version",
+          "type": "button"
+        },
+        {
+          "method": "action_generate_from_estimate",
+          "type": "button"
+        },
+        {
+          "method": "action_apply_template",
+          "type": "button"
+        },
+        {
+          "method": "action_send",
+          "type": "button"
+        },
+        {
+          "method": "action_accept",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_create_contract",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/commercial_proposal.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "contractor.selection",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "searching",
+          "label": "Поиск подрядчиков"
+        },
+        {
+          "value": "evaluating",
+          "label": "Оценка"
+        },
+        {
+          "value": "selected",
+          "label": "Подрядчик выбран"
+        },
+        {
+          "value": "contracted",
+          "label": "Договор заключен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_search",
+          "type": "button"
+        },
+        {
+          "method": "action_evaluate",
+          "type": "button"
+        },
+        {
+          "method": "action_select_contractor",
+          "type": "button"
+        },
+        {
+          "method": "action_create_contract",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/contractor_selection.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "contractor.candidate",
+      "field": "state",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новый"
+        },
+        {
+          "value": "evaluated",
+          "label": "Оценен"
+        },
+        {
+          "value": "selected",
+          "label": "Выбран"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_evaluate",
+          "type": "button"
+        },
+        {
+          "method": "action_select",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_ops/models/contractor_selection.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "defect.statement",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_review",
+          "label": "На проверке"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        },
+        {
+          "value": "in_work",
+          "label": "В работе"
+        },
+        {
+          "value": "completed",
+          "label": "Исправлено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_new_version",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_review",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_start_work",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/defect_statement.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "defect.statement.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "new",
+          "label": "Новый"
+        },
+        {
+          "value": "in_work",
+          "label": "В работе"
+        },
+        {
+          "value": "fixed",
+          "label": "Исправлено"
+        },
+        {
+          "value": "verified",
+          "label": "Проверено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_work",
+          "type": "button"
+        },
+        {
+          "method": "action_fix",
+          "type": "button"
+        },
+        {
+          "method": "action_verify",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_ops/models/defect_statement.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "fact.estimate",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_review",
+          "label": "На проверке"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_create_from_base_estimate",
+          "type": "button"
+        },
+        {
+          "method": "action_create_from_ks3",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/fact_estimate.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "preliminary.estimate",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_review",
+          "label": "На проверке"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        },
+        {
+          "value": "used",
+          "label": "Использована"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_load_from_specification",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_review",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_create_commercial_proposal",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/preliminary_estimate.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "price.request",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлено"
+        },
+        {
+          "value": "received",
+          "label": "Получены ответы"
+        },
+        {
+          "value": "analyzed",
+          "label": "Проанализировано"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_send",
+          "type": "button"
+        },
+        {
+          "method": "action_analyze_prices",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/price_request.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "price.request.response",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает ответа"
+        },
+        {
+          "value": "received",
+          "label": "Получен ответ"
+        },
+        {
+          "value": "selected",
+          "label": "Выбран"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_receive",
+          "type": "button"
+        },
+        {
+          "method": "action_select",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_ops/models/price_request.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "technical.spec",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_approval",
+          "label": "На согласовании"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "active",
+          "label": "Активно"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_load_template",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_approval",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/technical_spec.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "technical.spec.approval.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_ops/models/technical_spec.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "technical.spec.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "received",
+          "label": "Получено"
+        },
+        {
+          "value": "clarification",
+          "label": "На уточнении"
+        },
+        {
+          "value": "accepted",
+          "label": "Принято"
+        },
+        {
+          "value": "in_work",
+          "label": "В работе"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_send_to_clarification",
+          "type": "button",
+          "to_state": "clarification"
+        },
+        {
+          "method": "action_accept",
+          "type": "button"
+        },
+        {
+          "method": "action_start_work",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        }
+      ],
+      "default": "received",
+      "file": "construction_ops/models/technical_spec_registry.py"
+    },
+    {
+      "module": "construction_ops",
+      "model": "work.schedule",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_review",
+          "label": "На проверке"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "completed",
+          "label": "Завершен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit_for_review",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_ops/models/work_schedule.py"
+    },
+    {
+      "module": "construction_photo_progress",
+      "model": "construction.photo.report",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "sent",
+          "label": "Отправлен"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_send",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_collect_photos",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_photo_progress/models/photo_report.py"
+    },
+    {
+      "module": "construction_planning",
+      "model": "construction.evm",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "done",
+          "label": "Утверждён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_recalculate",
+          "type": "button"
+        },
+        {
+          "method": "action_done",
+          "type": "button",
+          "to_state": "done"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_planning/models/earned_value_management.py"
+    },
+    {
+      "module": "construction_planning",
+      "model": "construction.monte.carlo",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитано"
+        },
+        {
+          "value": "done",
+          "label": "Завершено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_set_done",
+          "type": "button",
+          "to_state": "done"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_planning/models/monte_carlo.py"
+    },
+    {
+      "module": "construction_planning",
+      "model": "construction.resource.leveling",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитано"
+        },
+        {
+          "value": "applied",
+          "label": "Применено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_apply",
+          "type": "button"
+        },
+        {
+          "method": "action_reset",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_planning/models/resource_leveling.py"
+    },
+    {
+      "module": "construction_planning",
+      "model": "construction.resource",
+      "field": "state",
+      "states": [
+        {
+          "value": "planned",
+          "label": "Запланировано"
+        },
+        {
+          "value": "assigned",
+          "label": "Назначено"
+        },
+        {
+          "value": "in_use",
+          "label": "В использовании"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_assign",
+          "type": "button"
+        },
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        }
+      ],
+      "default": "planned",
+      "file": "construction_planning/models/resource_management.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "purchase.request.approval.stage.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_procurement/models/approval_route.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "purchase.commercial.offer",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "В обработке"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "for_approval",
+          "label": "На утверждении"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждено"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_approval",
+          "type": "button",
+          "to_state": "for_approval"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_return_request_to_work",
+          "type": "button"
+        },
+        {
+          "method": "action_create_tender",
+          "type": "button"
+        },
+        {
+          "method": "action_create_tender_from_offers",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/commercial_offer.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "material.delivery.schedule",
+      "field": "state",
+      "states": [
+        {
+          "value": "planned",
+          "label": "Запланировано"
+        },
+        {
+          "value": "in_transit",
+          "label": "В пути"
+        },
+        {
+          "value": "delivered",
+          "label": "Поставлено"
+        },
+        {
+          "value": "partially_delivered",
+          "label": "Частично поставлено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm_delivery",
+          "type": "button"
+        }
+      ],
+      "default": "planned",
+      "file": "construction_procurement/models/delivery_schedule.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "material.receipt",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_copy_act",
+          "type": "button"
+        },
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/material_receipt.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "purchase.procurement.variant",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "comparison",
+          "label": "Сравнение"
+        },
+        {
+          "value": "selected",
+          "label": "Выбрано"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждено"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "ordered",
+          "label": "Заказано"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_select_offer",
+          "type": "button"
+        },
+        {
+          "method": "action_create_order",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_reject_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_return_to_work",
+          "type": "button"
+        },
+        {
+          "method": "action_clear_and_replace",
+          "type": "button"
+        },
+        {
+          "method": "action_replace_selected",
+          "type": "button",
+          "to_state": "selected"
+        },
+        {
+          "method": "action_add_to_variant",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/procurement_variant.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "purchase.request",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "На согласовании"
+        },
+        {
+          "value": "approval",
+          "label": "В согласовании"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "executed",
+          "label": "Готова к закрытию"
+        },
+        {
+          "value": "approved",
+          "label": "Согласована"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонена"
+        },
+        {
+          "value": "cancelled",
+          "label": "Аннулирована"
+        },
+        {
+          "value": "assigned",
+          "label": "Назначена"
+        },
+        {
+          "value": "ordered",
+          "label": "Заказано"
+        },
+        {
+          "value": "delivered",
+          "label": "Доставлено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_executed",
+          "type": "button",
+          "to_state": "executed"
+        },
+        {
+          "method": "action_mark_closed",
+          "type": "button",
+          "to_state": "closed"
+        },
+        {
+          "method": "action_force_complete_approval",
+          "type": "button",
+          "to_state": "approval"
+        },
+        {
+          "method": "action_return_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_assign",
+          "type": "button"
+        },
+        {
+          "method": "action_create_tender",
+          "type": "button"
+        },
+        {
+          "method": "action_create_po",
+          "type": "button"
+        },
+        {
+          "method": "action_create_procurement_variant",
+          "type": "button"
+        },
+        {
+          "method": "action_return_to_work",
+          "type": "button"
+        },
+        {
+          "method": "action_export_price_request_excel",
+          "type": "button"
+        },
+        {
+          "method": "action_export_price_request_doc",
+          "type": "button"
+        },
+        {
+          "method": "action_request_min_price_revision",
+          "type": "button"
+        },
+        {
+          "method": "action_copy",
+          "type": "button"
+        },
+        {
+          "method": "action_create_from_specification",
+          "type": "button"
+        },
+        {
+          "method": "action_mass_edit_required_date",
+          "type": "button"
+        },
+        {
+          "method": "action_select_from_budget",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/purchase_request.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "supplier.qualification",
+      "field": "status",
+      "states": [
+        {
+          "value": "pending",
+          "label": "На рассмотрении"
+        },
+        {
+          "value": "qualified",
+          "label": "Квалифицирован"
+        },
+        {
+          "value": "conditional",
+          "label": "Условно квалифицирован"
+        },
+        {
+          "value": "disqualified",
+          "label": "Дисквалифицирован"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_qualify",
+          "type": "button"
+        },
+        {
+          "method": "action_conditional_qualify",
+          "type": "button",
+          "to_state": "conditional"
+        },
+        {
+          "method": "action_disqualify",
+          "type": "button"
+        },
+        {
+          "method": "action_reset",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_procurement/models/supplier_qualification.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "supply.chain.tracking",
+      "field": "stage",
+      "states": [
+        {
+          "value": "request_created",
+          "label": "Заявка создана"
+        },
+        {
+          "value": "request_approved",
+          "label": "Заявка согласована"
+        },
+        {
+          "value": "offer_received",
+          "label": "КП получено"
+        },
+        {
+          "value": "order_created",
+          "label": "Заказ создан"
+        },
+        {
+          "value": "order_confirmed",
+          "label": "Заказ подтвержден"
+        },
+        {
+          "value": "production_started",
+          "label": "Производство начато"
+        },
+        {
+          "value": "production_completed",
+          "label": "Производство завершено"
+        },
+        {
+          "value": "shipped",
+          "label": "Отгружено"
+        },
+        {
+          "value": "in_transit",
+          "label": "В пути"
+        },
+        {
+          "value": "delivered",
+          "label": "Доставлено"
+        },
+        {
+          "value": "received",
+          "label": "Принято на объекте"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_update_stage",
+          "type": "button"
+        },
+        {
+          "method": "action_update_location",
+          "type": "button"
+        },
+        {
+          "method": "action_update_location",
+          "type": "button"
+        }
+      ],
+      "default": "request_created",
+      "file": "construction_procurement/models/supply_chain_tracking.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "purchase.tender",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_open_evaluate_wizard",
+          "type": "button"
+        },
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_select_best_prices",
+          "type": "button"
+        },
+        {
+          "method": "action_calculate_scores",
+          "type": "button"
+        },
+        {
+          "method": "action_open_price_comparison",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/tender.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "purchase.tender.bid",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_auto_select_best",
+          "type": "button"
+        },
+        {
+          "method": "action_accept",
+          "type": "button"
+        },
+        {
+          "method": "action_rerequest_invoice",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/tender.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "procurement.three.way.match",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "matched",
+          "label": "Сопоставлено"
+        },
+        {
+          "value": "partial",
+          "label": "Частичное совпадение"
+        },
+        {
+          "value": "variance",
+          "label": "Расхождение"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждено"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_match",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/three_way_match.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "procurement.three.way.match.line",
+      "field": "status",
+      "states": [
+        {
+          "value": "matched",
+          "label": "Совпадает"
+        },
+        {
+          "value": "over",
+          "label": "Превышение"
+        },
+        {
+          "value": "under",
+          "label": "Недопоставка"
+        },
+        {
+          "value": "missing",
+          "label": "Отсутствует"
+        }
+      ],
+      "transitions": [],
+      "default": null,
+      "file": "construction_procurement/models/three_way_match.py"
+    },
+    {
+      "module": "construction_procurement",
+      "model": "construction.upd",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "received",
+          "label": "Получен"
+        },
+        {
+          "value": "verified",
+          "label": "Проверен"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_receive",
+          "type": "button"
+        },
+        {
+          "method": "action_verify",
+          "type": "button"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_send_to_ocr",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_procurement/models/upd.py"
+    },
+    {
+      "module": "construction_project_enhanced",
+      "model": "task.approval",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_project_enhanced/models/project_task.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "acceptance.checklist",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "review",
+          "label": "На проверке"
+        },
+        {
+          "value": "completed",
+          "label": "Завершён"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_load_template",
+          "type": "button"
+        },
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_review",
+          "type": "button",
+          "to_state": "review"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_create_punch_items",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/acceptance_checklist.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "construction.hidden.work.act",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "archived",
+          "label": "В архиве"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_create_inspection",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/hidden_work_act.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "construction.ks11",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "На согласовании"
+        },
+        {
+          "value": "commission",
+          "label": "Приёмочная комиссия"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "registered",
+          "label": "Зарегистрирован"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_start_commission",
+          "type": "button",
+          "to_state": "commission"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_register",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/ks11.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "construction.ks2",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Представлен"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_refresh_sign_qr",
+          "type": "button"
+        },
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/ks2.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "construction.ks3",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Представлен"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_refresh_sign_qr",
+          "type": "button"
+        },
+        {
+          "method": "action_auto_fill_ks2",
+          "type": "button"
+        },
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/ks3.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "construction.ks6",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждён"
+        },
+        {
+          "value": "signed",
+          "label": "Подписан"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_sign",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_generate_ks2",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/ks6.py"
+    },
+    {
+      "module": "construction_pto",
+      "model": "construction.ks6a",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "Активен"
+        },
+        {
+          "value": "archived",
+          "label": "Архивирован"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_archive",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_pto/models/ks6a.py"
+    },
+    {
+      "module": "construction_punch_list",
+      "model": "construction.punch.item",
+      "field": "state",
+      "states": [
+        {
+          "value": "open",
+          "label": "Открыто"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "ready_for_review",
+          "label": "На проверке"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        },
+        {
+          "value": "wont_fix",
+          "label": "Не будет исправлено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start_work",
+          "type": "button"
+        },
+        {
+          "method": "action_submit_for_review",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_reopen",
+          "type": "button",
+          "to_state": "open"
+        },
+        {
+          "method": "action_wont_fix",
+          "type": "button",
+          "to_state": "wont_fix"
+        },
+        {
+          "method": "action_view_on_drawing",
+          "type": "button"
+        }
+      ],
+      "default": "open",
+      "file": "construction_punch_list/models/punch_item.py"
+    },
+    {
+      "module": "construction_pwa",
+      "model": "construction.sync.log",
+      "field": "status",
+      "states": [
+        {
+          "value": "success",
+          "label": "Успешно"
+        },
+        {
+          "value": "partial",
+          "label": "Частично"
+        },
+        {
+          "value": "error",
+          "label": "Ошибка"
+        }
+      ],
+      "transitions": [],
+      "default": "success",
+      "file": "construction_pwa/models/sync_log.py"
+    },
+    {
+      "module": "construction_reporting_calendar",
+      "model": "construction.reporting.submission",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "submitted",
+          "label": "Сдан"
+        },
+        {
+          "value": "late",
+          "label": "Просрочен"
+        },
+        {
+          "value": "overdue",
+          "label": "Просрочен (не сдан)"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_late",
+          "type": "button",
+          "to_state": "late"
+        },
+        {
+          "method": "action_reset_to_pending",
+          "type": "button",
+          "to_state": "pending"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_reporting_calendar/models/reporting_submission.py"
+    },
+    {
+      "module": "construction_reservation",
+      "model": "construction.material.reservation",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        },
+        {
+          "value": "reserved",
+          "label": "Зарезервировано"
+        },
+        {
+          "value": "released",
+          "label": "Выдано"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_reserve",
+          "type": "button"
+        },
+        {
+          "method": "action_release",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_reservation/models/material_reservation.py"
+    },
+    {
+      "module": "construction_reservation",
+      "model": "construction.material.reservation.line",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "reserved",
+          "label": "Зарезервировано"
+        },
+        {
+          "value": "partially_reserved",
+          "label": "Частично"
+        },
+        {
+          "value": "released",
+          "label": "Выдано"
+        }
+      ],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_reservation/models/reservation_line.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "fixed.asset",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "active",
+          "label": "В эксплуатации"
+        },
+        {
+          "value": "disposed",
+          "label": "Выбыло"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_calculate_depreciation_schedule",
+          "type": "button"
+        },
+        {
+          "method": "action_post_depreciation",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_accounting/models/fixed_assets.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "fixed.asset.depreciation.schedule",
+      "field": "state",
+      "states": [
+        {
+          "value": "planned",
+          "label": "Планируемая"
+        },
+        {
+          "value": "posted",
+          "label": "Проведена"
+        }
+      ],
+      "transitions": [],
+      "default": "planned",
+      "file": "construction_russian_accounting/models/fixed_assets.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "fixed.asset.revaluation",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждена"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_accounting/models/fixed_assets.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "fixed.asset.disposal",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_accounting/models/fixed_assets.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "russian.financial.report",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "computed",
+          "label": "Рассчитан"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_compute",
+          "type": "button"
+        },
+        {
+          "method": "action_export_excel",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_accounting/models/russian_reports.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "construction.tax.declaration",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "calculated",
+          "label": "Рассчитана"
+        },
+        {
+          "value": "submitted",
+          "label": "Подана"
+        },
+        {
+          "value": "accepted",
+          "label": "Принята"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_calculate",
+          "type": "button"
+        },
+        {
+          "method": "action_generate_xml",
+          "type": "button"
+        },
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_accept",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_accounting/models/tax_accounting.py"
+    },
+    {
+      "module": "construction_russian_accounting",
+      "model": "construction.tax.calendar",
+      "field": "state",
+      "states": [
+        {
+          "value": "upcoming",
+          "label": "Предстоит"
+        },
+        {
+          "value": "overdue",
+          "label": "Просрочен"
+        },
+        {
+          "value": "paid",
+          "label": "Оплачен"
+        },
+        {
+          "value": "submitted",
+          "label": "Подана декларация"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_mark_paid",
+          "type": "button",
+          "to_state": "paid"
+        },
+        {
+          "method": "action_mark_submitted",
+          "type": "button",
+          "to_state": "submitted"
+        },
+        {
+          "method": "action_generate_calendar_year",
+          "type": "button"
+        }
+      ],
+      "default": "upcoming",
+      "file": "construction_russian_accounting/models/tax_accounting.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "cash.receipt.order",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/cash_documents.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "cash.expense.order",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/cash_documents.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "construction.power.of.attorney",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "issued",
+          "label": "Выдана"
+        },
+        {
+          "value": "used",
+          "label": "Использована"
+        },
+        {
+          "value": "expired",
+          "label": "Просрочена"
+        },
+        {
+          "value": "cancelled",
+          "label": "Аннулирована"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_issue",
+          "type": "button"
+        },
+        {
+          "method": "action_use",
+          "type": "button"
+        },
+        {
+          "method": "action_expire",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        },
+        {
+          "method": "action_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_create_from_purchase",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/power_of_attorney.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "torg12",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        },
+        {
+          "value": "posted",
+          "label": "Проведено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_create_from_picking",
+          "type": "button"
+        },
+        {
+          "method": "action_create_from_invoice",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/torg12.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "ttn",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        },
+        {
+          "value": "in_transit",
+          "label": "В пути"
+        },
+        {
+          "value": "delivered",
+          "label": "Доставлено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_in_transit",
+          "type": "button",
+          "to_state": "in_transit"
+        },
+        {
+          "method": "action_delivered",
+          "type": "button",
+          "to_state": "delivered"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        },
+        {
+          "method": "action_create_from_torg12",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/ttn.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "material.receipt.act.m15",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "confirmed",
+          "label": "Подтверждено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button",
+          "to_state": "draft"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/warehouse_documents.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "material.requirement.m11",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/warehouse_documents.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "material.receipt.order.m8",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/warehouse_documents.py"
+    },
+    {
+      "module": "construction_russian_documents",
+      "model": "material.receipt.order.m4",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_reset_to_draft",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_russian_documents/models/warehouse_documents.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "quality.checklist",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "completed",
+          "label": "Завершен"
+        },
+        {
+          "value": "approved",
+          "label": "Утвержден"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_safety/models/quality_checklist.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "quality.defect",
+      "field": "state",
+      "states": [
+        {
+          "value": "reported",
+          "label": "Сообщено"
+        },
+        {
+          "value": "assigned",
+          "label": "Назначено"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "fixed",
+          "label": "Исправлено"
+        },
+        {
+          "value": "verified",
+          "label": "Проверено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_assign",
+          "type": "button"
+        },
+        {
+          "method": "action_start_work",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_fixed",
+          "type": "button",
+          "to_state": "fixed"
+        },
+        {
+          "method": "action_verify",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "reported",
+      "file": "construction_safety/models/quality_defect.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "quality.inspection",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "scheduled",
+          "label": "Запланирована"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "completed",
+          "label": "Завершена"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_safety/models/quality_inspection.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "safety.certificate",
+      "field": "state",
+      "states": [
+        {
+          "value": "valid",
+          "label": "Действителен"
+        },
+        {
+          "value": "expired",
+          "label": "Истек"
+        },
+        {
+          "value": "revoked",
+          "label": "Отозван"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_renew",
+          "type": "button"
+        },
+        {
+          "method": "action_revoke",
+          "type": "button"
+        }
+      ],
+      "default": "valid",
+      "file": "construction_safety/models/safety_certification.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "safety.incident",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "reported",
+          "label": "Сообщено"
+        },
+        {
+          "value": "investigating",
+          "label": "Расследуется"
+        },
+        {
+          "value": "investigated",
+          "label": "Расследовано"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_open_investigate_wizard",
+          "type": "button"
+        },
+        {
+          "method": "action_start_investigation",
+          "type": "button"
+        },
+        {
+          "method": "action_complete_investigation",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_safety/models/safety_incident.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "safety.corrective.action",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "В ожидании"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "completed",
+          "label": "Выполнено"
+        },
+        {
+          "value": "overdue",
+          "label": "Просрочено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_verify",
+          "type": "button"
+        }
+      ],
+      "default": "pending",
+      "file": "construction_safety/models/safety_incident.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "safety.inspection",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "scheduled",
+          "label": "Запланирована"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "completed",
+          "label": "Завершена"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыта"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_safety/models/safety_inspection.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "safety.journal.entry",
+      "field": "status",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "open",
+          "label": "Открыто"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "resolved",
+          "label": "Решено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_open",
+          "type": "button",
+          "to_state": "open"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_safety/models/safety_journal.py"
+    },
+    {
+      "module": "construction_safety",
+      "model": "safety.training",
+      "field": "state",
+      "states": [
+        {
+          "value": "scheduled",
+          "label": "Запланировано"
+        },
+        {
+          "value": "in_progress",
+          "label": "В процессе"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_start",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        }
+      ],
+      "default": "scheduled",
+      "file": "construction_safety/models/safety_training.py"
+    },
+    {
+      "module": "construction_specification",
+      "model": "construction.specification",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_review",
+          "label": "На проверке"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждена"
+        },
+        {
+          "value": "active",
+          "label": "Активна"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit_for_review",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_activate",
+          "type": "button"
+        },
+        {
+          "method": "action_view_change_requests",
+          "type": "button"
+        },
+        {
+          "method": "action_create_version",
+          "type": "button"
+        },
+        {
+          "method": "action_view_items",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_specification/models/specification.py"
+    },
+    {
+      "module": "construction_specification",
+      "model": "specification.change.request",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "На согласовании"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждено"
+        },
+        {
+          "value": "applied",
+          "label": "Применено"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_apply",
+          "type": "button"
+        },
+        {
+          "method": "action_view_new_version",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_specification/models/specification_change_request.py"
+    },
+    {
+      "module": "construction_specification",
+      "model": "spec.change.approval",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_specification/models/specification_change_request.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "stock.inventory.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "posted",
+          "label": "Проведен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_save_offline",
+          "type": "button"
+        },
+        {
+          "method": "action_sync",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_create_writeoff_document",
+          "type": "button"
+        },
+        {
+          "method": "action_create_receipt_document",
+          "type": "button"
+        },
+        {
+          "method": "action_select_from_stock",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_stock/models/inventory_registry.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "construction.m29",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_confirm",
+          "type": "button"
+        },
+        {
+          "method": "action_verify",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_select_from_stock",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_stock/models/m29.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "stock.receipt.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "posted",
+          "label": "Проведен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_select_from_stock",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_stock/models/receipt_registry.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "stock.transfer.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "posted",
+          "label": "Проведен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_select_from_stock",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_stock/models/transfer_registry.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "warehouse.discrepancy",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "reported",
+          "label": "Зарегистрировано"
+        },
+        {
+          "value": "investigating",
+          "label": "Расследуется"
+        },
+        {
+          "value": "resolved",
+          "label": "Устранено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_report",
+          "type": "button"
+        },
+        {
+          "method": "action_start_investigation",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_stock/models/warehouse_discrepancy.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "warehouse.corrective.action",
+      "field": "state",
+      "states": [
+        {
+          "value": "pending",
+          "label": "Ожидает"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "completed",
+          "label": "Выполнено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [],
+      "default": "pending",
+      "file": "construction_stock/models/warehouse_discrepancy.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "warehouse.incident",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "reported",
+          "label": "Зарегистрировано"
+        },
+        {
+          "value": "investigating",
+          "label": "Расследуется"
+        },
+        {
+          "value": "resolved",
+          "label": "Устранено"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыто"
+        }
+      ],
+      "transitions": [],
+      "default": "draft",
+      "file": "construction_stock/models/warehouse_discrepancy.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "stock.writeoff.registry",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "approved",
+          "label": "Согласован"
+        },
+        {
+          "value": "posted",
+          "label": "Проведен"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_post",
+          "type": "button"
+        },
+        {
+          "method": "action_select_from_stock",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_stock/models/writeoff_registry.py"
+    },
+    {
+      "module": "construction_stock_limits",
+      "model": "construction.stock.limit",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_check_levels",
+          "type": "button"
+        },
+        {
+          "method": "action_create_purchase_request",
+          "type": "button"
+        },
+        {
+          "method": "action_view_alerts",
+          "type": "button"
+        }
+      ],
+      "default": "normal",
+      "file": "construction_stock_limits/models/stock_limit.py"
+    },
+    {
+      "module": "construction_stock_limits",
+      "model": "construction.stock.limit.alert",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_acknowledge",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_stock_limits/models/stock_limit_alert.py"
+    },
+    {
+      "module": "construction_submittals",
+      "model": "construction.submittal",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "submitted",
+          "label": "Отправлен"
+        },
+        {
+          "value": "under_review",
+          "label": "На рассмотрении"
+        },
+        {
+          "value": "approved",
+          "label": "Утверждён"
+        },
+        {
+          "value": "approved_as_noted",
+          "label": "Утверждён с замечаниями"
+        },
+        {
+          "value": "revise_resubmit",
+          "label": "Доработать"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонён"
+        },
+        {
+          "value": "closed",
+          "label": "Закрыт"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit",
+          "type": "button"
+        },
+        {
+          "method": "action_start_review",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_approve_as_noted",
+          "type": "button"
+        },
+        {
+          "method": "action_revise",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_resubmit",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_submittals/models/submittal.py"
+    },
+    {
+      "module": "construction_support",
+      "model": "support.incident",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_start_investigation",
+          "type": "button"
+        },
+        {
+          "method": "action_mark_identified",
+          "type": "button"
+        },
+        {
+          "method": "action_start_monitoring",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_create_postmortem",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_support/models/incident.py"
+    },
+    {
+      "module": "construction_support",
+      "model": "support.status.page",
+      "field": "status",
+      "states": [],
+      "transitions": [],
+      "default": "operational",
+      "file": "construction_support/models/status_page.py"
+    },
+    {
+      "module": "construction_support",
+      "model": "support.status.component",
+      "field": "status",
+      "states": [],
+      "transitions": [],
+      "default": "operational",
+      "file": "construction_support/models/status_page.py"
+    },
+    {
+      "module": "construction_support",
+      "model": "support.ticket",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_assign_to_me",
+          "type": "button"
+        },
+        {
+          "method": "action_start_progress",
+          "type": "button"
+        },
+        {
+          "method": "action_resolve",
+          "type": "button"
+        },
+        {
+          "method": "action_close",
+          "type": "button"
+        },
+        {
+          "method": "action_escalate",
+          "type": "button"
+        }
+      ],
+      "default": "new",
+      "file": "construction_support/models/support_ticket.py"
+    },
+    {
+      "module": "construction_support",
+      "model": "system.health.check",
+      "field": "status",
+      "states": [],
+      "transitions": [],
+      "default": null,
+      "file": "construction_support/models/system_health.py"
+    },
+    {
+      "module": "construction_tolerance",
+      "model": "construction.tolerance.check",
+      "field": "state",
+      "states": [],
+      "transitions": [
+        {
+          "method": "action_approve_deviation",
+          "type": "button"
+        }
+      ],
+      "default": null,
+      "file": "construction_tolerance/models/tolerance_check.py"
+    },
+    {
+      "module": "construction_stock",
+      "model": "construction.m29.from.ks2.wizard",
+      "field": "state",
+      "states": [
+        {
+          "value": "setup",
+          "label": "Настройка"
+        },
+        {
+          "value": "preview",
+          "label": "Предварительный просмотр"
+        },
+        {
+          "value": "done",
+          "label": "Готово"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_generate_preview",
+          "type": "button",
+          "to_state": "preview"
+        },
+        {
+          "method": "action_create_m29",
+          "type": "button"
+        },
+        {
+          "method": "action_open_m29",
+          "type": "button"
+        },
+        {
+          "method": "action_back",
+          "type": "button"
+        }
+      ],
+      "default": "setup",
+      "file": "construction_stock/wizards/m29_from_ks2_wizard.py"
+    },
+    {
+      "module": "construction_base",
+      "model": "approval.workflow.mixin",
+      "field": "state",
+      "states": [
+        {
+          "value": "draft",
+          "label": "Черновик"
+        },
+        {
+          "value": "pending",
+          "label": "На согласовании"
+        },
+        {
+          "value": "in_progress",
+          "label": "В работе"
+        },
+        {
+          "value": "approved",
+          "label": "Согласовано"
+        },
+        {
+          "value": "rejected",
+          "label": "Отклонено"
+        },
+        {
+          "value": "completed",
+          "label": "Завершено"
+        },
+        {
+          "value": "cancelled",
+          "label": "Отменено"
+        }
+      ],
+      "transitions": [
+        {
+          "method": "action_submit_for_approval",
+          "type": "button"
+        },
+        {
+          "method": "action_start_work",
+          "type": "button"
+        },
+        {
+          "method": "action_approve",
+          "type": "button"
+        },
+        {
+          "method": "action_reject",
+          "type": "button"
+        },
+        {
+          "method": "action_complete",
+          "type": "button"
+        },
+        {
+          "method": "action_cancel",
+          "type": "button"
+        }
+      ],
+      "default": "draft",
+      "file": "construction_base/services/workflow_state_machine.py"
+    }
+  ],
+  "total_count": 213
+}

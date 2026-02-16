@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Еженедельный отчёт'">Еженедельный отчёт</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 12mm 15mm 12mm; }
+        .kpi-row { overflow: hidden; margin-bottom: 12pt; }
+        .kpi-card { float: left; width: 23%; margin-right: 2%; border: 1px solid #ccc;
+                    padding: 6pt; text-align: center; }
+        .kpi-card:last-child { margin-right: 0; }
+        .kpi-val { font-size: 16pt; font-weight: bold; color: #1a365d; }
+        .kpi-lbl { font-size: 7pt; color: #666; text-transform: uppercase; }
+        .kpi-green { color: #16a34a; }
+        .kpi-yellow { color: #ca8a04; }
+        .kpi-red { color: #dc2626; }
+        .section-box { border: 1px solid #ddd; padding: 8pt; margin-bottom: 10pt; }
+        .section-box h4 { margin: 0 0 6pt 0; color: #1a365d; border-bottom: 1px solid #ddd; padding-bottom: 4pt; }
+        .traffic-light { display: inline-block; width: 10pt; height: 10pt; border-radius: 5pt;
+                         margin-right: 4pt; vertical-align: middle; }
+        .tl-green { background-color: #16a34a; }
+        .tl-yellow { background-color: #ca8a04; }
+        .tl-red { background-color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ЕЖЕНЕДЕЛЬНЫЙ ОТЧЁТ</div>
+    <div class="report-subtitle">
+        Проект: <span th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</span>
+    </div>
+</div>
+
+<!-- ── Meta ────────────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Отчётная неделя:</td>
+        <td th:text="${weekNumber} ?: '—'">Неделя 4 (20.01 — 26.01.2026)</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${reportDate} ?: '—'">27.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Руководитель проекта:</td>
+        <td th:text="${projectManager} ?: '—'">Сидоров С.С.</td>
+        <td class="label">Общий статус:</td>
+        <td>
+            <span th:if="${overallStatus == 'GREEN'}" class="traffic-light tl-green"></span>
+            <span th:if="${overallStatus == 'YELLOW'}" class="traffic-light tl-yellow"></span>
+            <span th:if="${overallStatus == 'RED'}" class="traffic-light tl-red"></span>
+            <span th:text="${overallStatusText} ?: '—'">В графике</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── KPI Cards ──────────────────────────────────────────────────────────── -->
+<div class="kpi-row">
+    <div class="kpi-card">
+        <div class="kpi-val" th:text="${progressPercent != null} ? ${progressPercent} + '%' : '—'">62%</div>
+        <div class="kpi-lbl">Общий прогресс</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-val" th:text="${weekProgressPercent != null} ? '+' + ${weekProgressPercent} + '%' : '—'">+3%</div>
+        <div class="kpi-lbl">Прогресс за неделю</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-val" th:text="${workersOnSite} ?: '—'">85</div>
+        <div class="kpi-lbl">Рабочих на площадке</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-val" th:text="${openIssues} ?: '—'">3</div>
+        <div class="kpi-lbl">Открытых вопросов</div>
+    </div>
+</div>
+
+<!-- ── Section: Work completed ────────────────────────────────────────────── -->
+<div class="section-box">
+    <h4>Выполненные работы за отчётную неделю</h4>
+    <table class="data-table" th:if="${completedWorks != null and !completedWorks.isEmpty()}">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:35%;">Наименование работ</th>
+                <th style="width:15%;">Подрядчик</th>
+                <th style="width:10%;">Объём</th>
+                <th style="width:10%;">% выполн.</th>
+                <th style="width:25%;">Примечание</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="work, iter : ${completedWorks}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${work.name}">Монтаж перекрытий 5 этажа</td>
+                <td th:text="${work.contractor}">ООО «Подрядчик»</td>
+                <td class="center" th:text="${work.volume}">250 м2</td>
+                <td class="center" th:text="${work.completionPct} + '%'">100%</td>
+                <td class="text-small" th:text="${work.note} ?: ''"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${completedWorks == null or completedWorks.isEmpty()}" class="text-muted">
+        Информация не заполнена.
+    </p>
+</div>
+
+<!-- ── Section: Schedule status ────────────────────────────────────────────── -->
+<div class="section-box">
+    <h4>Статус по графику</h4>
+    <table class="info-grid" style="margin-bottom:0;">
+        <tr>
+            <td class="label">Плановый % выполнения:</td>
+            <td th:text="${plannedPercent != null} ? ${plannedPercent} + '%' : '—'">65%</td>
+        </tr>
+        <tr>
+            <td class="label">Фактический % выполнения:</td>
+            <td th:text="${progressPercent != null} ? ${progressPercent} + '%' : '—'">62%</td>
+        </tr>
+        <tr>
+            <td class="label">Отставание / Опережение:</td>
+            <td th:classappend="${scheduleVarianceDays != null and scheduleVarianceDays < 0} ? 'kpi-red' : 'kpi-green'"
+                th:text="${scheduleVarianceText} ?: '—'">Отставание 3 дня</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Section: Issues and risks ──────────────────────────────────────────── -->
+<div class="section-box">
+    <h4>Проблемы и риски</h4>
+    <table class="data-table" th:if="${issues != null and !issues.isEmpty()}">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:30%;">Описание</th>
+                <th style="width:10%;">Приоритет</th>
+                <th style="width:15%;">Ответственный</th>
+                <th style="width:10%;">Статус</th>
+                <th style="width:30%;">Меры / Решение</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="issue, iter : ${issues}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${issue.description}">Задержка поставки арматуры</td>
+                <td class="center">
+                    <span th:if="${issue.priority == 'HIGH'}" class="badge badge-high">Высокий</span>
+                    <span th:if="${issue.priority == 'MEDIUM'}" class="badge badge-medium">Средний</span>
+                    <span th:if="${issue.priority == 'LOW'}" class="badge badge-low">Низкий</span>
+                </td>
+                <td th:text="${issue.responsible}">Иванов И.И.</td>
+                <td class="center" th:text="${issue.status}">В работе</td>
+                <td class="text-small" th:text="${issue.resolution} ?: '—'">Переговоры с альтернативным поставщиком</td>
+            </tr>
+        </tbody>
+    </table>
+    <p th:if="${issues == null or issues.isEmpty()}" class="text-muted">
+        Критических проблем нет.
+    </p>
+</div>
+
+<!-- ── Section: Weather ───────────────────────────────────────────────────── -->
+<div class="section-box" th:if="${weatherDays != null and !weatherDays.isEmpty()}">
+    <h4>Погодные условия</h4>
+    <table class="data-table" style="font-size:8pt;">
+        <thead>
+            <tr>
+                <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:each="day : ${weatherDays}" class="center" th:text="${day.summary}">-5°C, ясно</td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="text-small text-muted mt-4">
+        Простои по погодным условиям: <span th:text="${weatherDowntimeDays} ?: '0'">0</span> дней
+    </p>
+</div>
+
+<!-- ── Section: Next week plan ────────────────────────────────────────────── -->
+<div class="section-box">
+    <h4>План на следующую неделю</h4>
+    <ul th:if="${nextWeekPlan != null and !nextWeekPlan.isEmpty()}">
+        <li th:each="item : ${nextWeekPlan}" th:text="${item}">Продолжение монтажа перекрытий</li>
+    </ul>
+    <p th:if="${nextWeekPlan == null or nextWeekPlan.isEmpty()}" class="text-muted">
+        План не сформирован.
+    </p>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Составил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Руководитель проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Утвердил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Директор по строительству</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

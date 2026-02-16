@@ -1,0 +1,118 @@
+{
+  "project": "privod2_next",
+  "created": "2026-02-13",
+  "assumptions": [
+    {
+      "id": "A001",
+      "category": "architecture",
+      "assumption": "Monolithic backend with modular package structure (not microservices) for MVP",
+      "rationale": "Reduces operational complexity. Can extract to microservices later if needed.",
+      "risk": "low"
+    },
+    {
+      "id": "A002",
+      "category": "auth",
+      "assumption": "JWT-based authentication with refresh tokens, RBAC via database roles/permissions",
+      "rationale": "Standard enterprise pattern. SSO/OIDC can be added later via Spring Security OAuth2.",
+      "risk": "low"
+    },
+    {
+      "id": "A003",
+      "category": "multi-tenancy",
+      "assumption": "Multi-company via organization_id FK on all domain entities (shared schema, row-level isolation)",
+      "rationale": "Matches current Odoo company_id pattern. Simpler than schema-per-tenant.",
+      "risk": "medium"
+    },
+    {
+      "id": "A004",
+      "category": "database",
+      "assumption": "PostgreSQL 16, UUID primary keys, soft delete, optimistic locking via @Version",
+      "rationale": "UUIDs avoid enumeration attacks and simplify distributed scenarios. Soft delete preserves audit trail.",
+      "risk": "low"
+    },
+    {
+      "id": "A005",
+      "category": "integration_1c",
+      "assumption": "1C integration via REST API (push/pull) with idempotency keys and reconciliation journal",
+      "rationale": "More reliable than direct DB sync. Standard for modern 1C integrations.",
+      "risk": "medium"
+    },
+    {
+      "id": "A006",
+      "category": "integration_edo",
+      "assumption": "EDO integration via Diadoc/SBIS REST APIs with document queue and retry mechanism",
+      "rationale": "Industry standard EDO operators in Russia.",
+      "risk": "medium"
+    },
+    {
+      "id": "A007",
+      "category": "frontend",
+      "assumption": "SPA with React, server-side rendering NOT required for internal ERP",
+      "rationale": "Internal tool, no SEO requirements. SPA provides best UX for data-heavy workflows.",
+      "risk": "low"
+    },
+    {
+      "id": "A008",
+      "category": "reporting",
+      "assumption": "PDF reports generated server-side via JasperReports or Apache POI for Excel",
+      "rationale": "Russian regulatory forms (KS-2, KS-3) require precise formatting. JasperReports handles this well.",
+      "risk": "low"
+    },
+    {
+      "id": "A009",
+      "category": "file_storage",
+      "assumption": "Files stored in MinIO (S3-compatible) with metadata in PostgreSQL",
+      "rationale": "Scalable, can migrate to cloud S3 later. Supports versioning and large files.",
+      "risk": "low"
+    },
+    {
+      "id": "A010",
+      "category": "russian_locale",
+      "assumption": "All user-facing text in Russian. Internationalization infrastructure present but not populated for other languages.",
+      "rationale": "Primary market is Russia. i18n can be added later if needed.",
+      "risk": "low"
+    },
+    {
+      "id": "A011",
+      "category": "data_migration",
+      "assumption": "Data migration from Odoo will be handled as a separate phase via ETL scripts reading Odoo PostgreSQL directly",
+      "rationale": "Keeps new system clean during development. Migration scripts developed after feature parity.",
+      "risk": "medium"
+    },
+    {
+      "id": "A012",
+      "category": "deployment",
+      "assumption": "Docker Compose for initial deployment, Kubernetes-ready but not required for MVP",
+      "rationale": "Docker Compose sufficient for single-server deployment. K8s adds complexity without immediate benefit.",
+      "risk": "low"
+    },
+    {
+      "id": "A013",
+      "category": "permissions",
+      "assumption": "Project-level access control: users see only projects they are members of or all projects if ADMIN role",
+      "rationale": "Matches construction industry practice where teams are project-scoped.",
+      "risk": "low"
+    },
+    {
+      "id": "A014",
+      "category": "audit",
+      "assumption": "Full audit trail on all domain entities: who changed what, when, old/new values",
+      "rationale": "Regulatory requirement for construction companies. Implemented via JPA entity listeners.",
+      "risk": "low"
+    },
+    {
+      "id": "A015",
+      "category": "modules_priority",
+      "assumption": "Module implementation order: Auth -> Org -> Projects -> Contracts -> Estimates -> Procurement -> KS-2/KS-3 -> Finance -> Documents -> Planning -> Analytics -> Integrations",
+      "rationale": "Each module depends on previous ones. Start with core domain, expand outward.",
+      "risk": "low"
+    },
+    {
+      "id": "A-DB-READONLY",
+      "category": "db_audit",
+      "assumption": "Read-only DB audit skipped because psycopg is not installed.",
+      "rationale": "Database credentials or connectivity were unavailable during automated read-only audit.",
+      "risk": "medium"
+    }
+  ]
+}

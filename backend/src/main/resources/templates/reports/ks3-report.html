@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Справка о стоимости выполненных работ (КС-3)'">КС-3</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .form-code { text-align: right; font-size: 8pt; margin-bottom: 6pt; }
+        .form-code span { border: 1px solid #000; padding: 2pt 6pt; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 120pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Form code ──────────────────────────────────────────────────────────── -->
+<div class="form-code">
+    Унифицированная форма № <span>КС-3</span>
+</div>
+
+<!-- ── Title ──────────────────────────────────────────────────────────────── -->
+<div class="report-header" style="border-bottom: none;">
+    <div class="report-title">СПРАВКА<br/>О СТОИМОСТИ ВЫПОЛНЕННЫХ РАБОТ И ЗАТРАТ</div>
+</div>
+
+<!-- ── Meta information ───────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер документа:</td>
+        <td th:text="${documentNumber} ?: '—'">001</td>
+        <td class="label">Дата составления:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Отчетный период:</td>
+        <td colspan="3">
+            с <span th:text="${periodFrom} ?: '—'">01.01.2026</span>
+            по <span th:text="${periodTo} ?: '—'">31.01.2026</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">Стройка:</td>
+        <td colspan="3" th:text="${constructionName} ?: '—'">Строительство объекта</td>
+    </tr>
+    <tr>
+        <td class="label">Объект:</td>
+        <td colspan="3" th:text="${objectName} ?: '—'">Корпус 1</td>
+    </tr>
+    <tr>
+        <td class="label">Заказчик (Генподрядчик):</td>
+        <td colspan="3" th:text="${customerOrg} ?: '—'">ООО "Заказчик"</td>
+    </tr>
+    <tr>
+        <td class="label">Подрядчик (Субподрядчик):</td>
+        <td colspan="3" th:text="${contractorOrg} ?: '—'">ООО "Подрядчик"</td>
+    </tr>
+    <tr>
+        <td class="label">Договор №:</td>
+        <td th:text="${contractNumber} ?: '—'">Д-001</td>
+        <td class="label">от:</td>
+        <td th:text="${contractDate} ?: '—'">01.01.2026</td>
+    </tr>
+</table>
+
+<!-- ── Cost table ─────────────────────────────────────────────────────────── -->
+<table class="gost-table">
+    <thead>
+        <tr>
+            <th rowspan="2" style="width:6%;">№<br/>п/п</th>
+            <th rowspan="2" style="width:28%;">Наименование<br/>пусковых комплексов,<br/>этапов, объектов, видов<br/>выполненных работ</th>
+            <th rowspan="2" style="width:12%;">Код</th>
+            <th colspan="2" style="width:27%;">Стоимость выполненных<br/>работ и затрат, руб.</th>
+            <th rowspan="2" style="width:14%;">Удержание<br/>(гарантийное),<br/>руб.</th>
+            <th rowspan="2" style="width:13%;">К оплате,<br/>руб.</th>
+        </tr>
+        <tr>
+            <th>с начала<br/>строительства</th>
+            <th>за отчетный<br/>период</th>
+        </tr>
+        <tr>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over costItems list */-->
+        <tr th:each="item, iter : ${costItems}" th:if="${costItems != null}">
+            <td th:text="${iter.count}">1</td>
+            <td class="left" th:text="${item.name}">СМР</td>
+            <td th:text="${item.code} ?: '—'">001</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.cumulativeTotal, 1, 2)}">500000.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.periodTotal, 1, 2)}">150000.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.retention, 1, 2)}">7500.00</td>
+            <td class="right" th:text="${#numbers.formatDecimal(item.payable, 1, 2)}">142500.00</td>
+        </tr>
+        <!--/* Placeholder row when no data */-->
+        <tr th:if="${costItems == null or costItems.isEmpty()}">
+            <td>1</td>
+            <td class="left">—</td>
+            <td>—</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+            <td class="right">0.00</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="right" style="font-weight:bold;">Итого:</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${cumulativeSubtotal != null} ? ${#numbers.formatDecimal(cumulativeSubtotal, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${periodSubtotal != null} ? ${#numbers.formatDecimal(periodSubtotal, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${retentionTotal != null} ? ${#numbers.formatDecimal(retentionTotal, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${payableTotal != null} ? ${#numbers.formatDecimal(payableTotal, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+        <tr>
+            <td colspan="3" class="right">НДС (<span th:text="${vatRate} ?: '20'">20</span>%):</td>
+            <td class="right"
+                th:text="${cumulativeVat != null} ? ${#numbers.formatDecimal(cumulativeVat, 1, 2)} : '0.00'">0.00</td>
+            <td class="right"
+                th:text="${periodVat != null} ? ${#numbers.formatDecimal(periodVat, 1, 2)} : '0.00'">0.00</td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="3" class="right" style="font-weight:bold;">Всего с НДС:</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${cumulativeTotalWithVat != null} ? ${#numbers.formatDecimal(cumulativeTotalWithVat, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${periodTotalWithVat != null} ? ${#numbers.formatDecimal(periodTotalWithVat, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${retentionTotal != null} ? ${#numbers.formatDecimal(retentionTotal, 1, 2)} : '0.00'">0.00</td>
+            <td class="right" style="font-weight:bold;"
+                th:text="${payableTotalWithVat != null} ? ${#numbers.formatDecimal(payableTotalWithVat, 1, 2)} : '0.00'">0.00</td>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Заказчик (Генподрядчик):</p>
+            <p th:text="${customerOrg} ?: '________________________'">ООО "Заказчик"</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Подрядчик (Субподрядчик):</p>
+            <p th:text="${contractorOrg} ?: '________________________'">ООО "Подрядчик"</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(должность, подпись, расшифровка)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

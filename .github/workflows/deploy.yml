@@ -1,0 +1,282 @@
+# =============================================================================
+# PRIVOD NEXT -- Deployment Pipeline
+# Staging: auto-deploy on develop branch
+# Production: manual approval on main branch
+# =============================================================================
+
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main, develop]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/erpsystem
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Staging: Auto-deploy from develop branch
+  # ---------------------------------------------------------------------------
+  deploy-staging:
+    name: Deploy to Staging
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'develop'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine image tag
+        id: tag
+        run: echo "sha=$(echo ${{ github.event.workflow_run.head_sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            set -euo pipefail
+
+            cd /opt/privod-next
+
+            # Pull latest images
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            export BACKEND_IMAGE="${{ env.IMAGE_PREFIX }}/backend:${{ steps.tag.outputs.sha }}"
+            export FRONTEND_IMAGE="${{ env.IMAGE_PREFIX }}/frontend:${{ steps.tag.outputs.sha }}"
+
+            # Update .env with new image tags
+            sed -i "s|BACKEND_IMAGE=.*|BACKEND_IMAGE=${BACKEND_IMAGE}|" .env
+            sed -i "s|FRONTEND_IMAGE=.*|FRONTEND_IMAGE=${FRONTEND_IMAGE}|" .env
+
+            # Pull and restart services
+            docker compose -f docker-compose.prod.yml pull backend frontend
+            docker compose -f docker-compose.prod.yml up -d --no-deps backend frontend
+
+            # Wait for health checks
+            echo "Waiting for services to become healthy..."
+            sleep 15
+
+            # Verify backend health
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+                echo "Backend is healthy!"
+                break
+              fi
+              if [ $i -eq 30 ]; then
+                echo "ERROR: Backend health check failed after 60 seconds"
+                docker compose -f docker-compose.prod.yml logs --tail=50 backend
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Verify frontend health
+            curl -sf http://localhost:80/ > /dev/null && echo "Frontend is healthy!" || echo "WARNING: Frontend health check failed"
+
+            # Clean up old images
+            docker image prune -f
+
+            echo "Staging deployment complete: ${{ steps.tag.outputs.sha }}"
+
+      - name: Run staging smoke test
+        run: |
+          echo "Running smoke tests against staging..."
+          for i in $(seq 1 10); do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "${{ vars.STAGING_URL }}/actuator/health" 2>/dev/null || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "Staging smoke test passed!"
+              exit 0
+            fi
+            echo "Attempt $i: HTTP $STATUS, retrying..."
+            sleep 5
+          done
+          echo "WARNING: Staging smoke test could not verify health endpoint"
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "Staging deployment failed for commit ${{ github.event.workflow_run.head_sha }}. <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View logs>"
+            }
+        continue-on-error: true
+
+  # ---------------------------------------------------------------------------
+  # Production: Manual approval required
+  # ---------------------------------------------------------------------------
+  deploy-production:
+    name: Deploy to Production
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine image tag
+        id: tag
+        run: echo "sha=$(echo ${{ github.event.workflow_run.head_sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Create database backup
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /opt/privod-next
+
+            BACKUP_FILE="backup_$(date +%Y%m%d_%H%M%S).sql.gz"
+            echo "Creating database backup: ${BACKUP_FILE}"
+
+            docker compose -f docker-compose.prod.yml exec -T postgres \
+              pg_dump -U "${POSTGRES_USER:-privod}" "${POSTGRES_DB:-privod2}" \
+              | gzip > "/opt/privod-next/backups/${BACKUP_FILE}"
+
+            echo "Backup created: ${BACKUP_FILE}"
+
+            # Keep only last 10 backups
+            ls -1t /opt/privod-next/backups/backup_*.sql.gz | tail -n +11 | xargs -r rm
+            echo "Backup cleanup complete"
+
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            set -euo pipefail
+
+            cd /opt/privod-next
+
+            # Login to registry
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            export BACKEND_IMAGE="${{ env.IMAGE_PREFIX }}/backend:${{ steps.tag.outputs.sha }}"
+            export FRONTEND_IMAGE="${{ env.IMAGE_PREFIX }}/frontend:${{ steps.tag.outputs.sha }}"
+
+            # Update .env with new image tags
+            sed -i "s|BACKEND_IMAGE=.*|BACKEND_IMAGE=${BACKEND_IMAGE}|" .env
+            sed -i "s|FRONTEND_IMAGE=.*|FRONTEND_IMAGE=${FRONTEND_IMAGE}|" .env
+
+            # Rolling update: pull new images first
+            docker compose -f docker-compose.prod.yml pull backend frontend
+
+            # Restart backend first, wait for health
+            docker compose -f docker-compose.prod.yml up -d --no-deps backend
+            echo "Waiting for backend to become healthy..."
+            for i in $(seq 1 45); do
+              if curl -sf http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+                echo "Backend is healthy after restart!"
+                break
+              fi
+              if [ $i -eq 45 ]; then
+                echo "ERROR: Backend health check failed. Rolling back..."
+                docker compose -f docker-compose.prod.yml logs --tail=100 backend
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Now restart frontend
+            docker compose -f docker-compose.prod.yml up -d --no-deps frontend
+            sleep 5
+
+            # Verify frontend
+            curl -sf http://localhost:80/ > /dev/null && echo "Frontend is healthy!" || echo "WARNING: Frontend health check inconclusive"
+
+            # Clean up old images
+            docker image prune -f
+
+            echo "Production deployment complete: ${{ steps.tag.outputs.sha }}"
+
+      - name: Verify production health
+        run: |
+          echo "Verifying production health..."
+          for i in $(seq 1 15); do
+            STATUS=$(curl -sf -o /dev/null -w "%{http_code}" "${{ vars.PRODUCTION_URL }}/actuator/health" 2>/dev/null || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "Production health verified!"
+              exit 0
+            fi
+            echo "Attempt $i: HTTP $STATUS, retrying..."
+            sleep 5
+          done
+          echo "ERROR: Production health verification failed"
+          exit 1
+
+      - name: Create GitHub release tag
+        if: success()
+        run: |
+          SHORT_SHA=$(echo "${{ github.event.workflow_run.head_sha }}" | cut -c1-7)
+          TAG="deploy-$(date +%Y%m%d-%H%M)-${SHORT_SHA}"
+          git tag "${TAG}" "${{ github.event.workflow_run.head_sha }}"
+          git push origin "${TAG}"
+          echo "Tagged deployment: ${TAG}"
+
+      - name: Notify on success
+        if: success()
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "Production deployment successful! Commit: ${{ github.event.workflow_run.head_sha }}\n<${{ vars.PRODUCTION_URL }}|Open App> | <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>"
+            }
+        continue-on-error: true
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "ALERT: Production deployment FAILED for commit ${{ github.event.workflow_run.head_sha }}. Manual intervention may be required.\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>"
+            }
+        continue-on-error: true

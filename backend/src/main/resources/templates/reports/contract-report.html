@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Карточка договора'">Карточка договора</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 20mm 15mm 20mm 15mm; }
+        .contract-badge { display: inline-block; padding: 3pt 10pt; border: 2px solid #1a365d;
+                          font-weight: bold; color: #1a365d; font-size: 11pt; }
+        .section-title { background-color: #e8e8e8; padding: 4pt 8pt; font-weight: bold;
+                         margin-top: 14pt; margin-bottom: 6pt; font-size: 10pt; }
+        .detail-table { width: 100%; border-collapse: collapse; margin-bottom: 10pt; }
+        .detail-table td { padding: 4pt 8pt; border-bottom: 1px solid #eee; vertical-align: top; }
+        .detail-table td.dt-label { width: 35%; font-weight: bold; color: #333; background-color: #fafafa; }
+        .milestone-done { color: #16a34a; }
+        .milestone-pending { color: #ca8a04; }
+        .milestone-overdue { color: #dc2626; }
+        .progress-bar { width: 100%; height: 10pt; background-color: #e5e7eb; border-radius: 5pt; }
+        .progress-fill { height: 10pt; background-color: #2563eb; border-radius: 5pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">КАРТОЧКА ДОГОВОРА</div>
+    <div class="report-subtitle">
+        Дата формирования: <span th:text="${reportDate} ?: '—'">31.01.2026</span>
+    </div>
+</div>
+
+<!-- ── Contract status badge ──────────────────────────────────────────────── -->
+<div class="text-center mb-8">
+    <span class="contract-badge" th:text="${contractStatus} ?: 'Действующий'">Действующий</span>
+</div>
+
+<!-- ── Section 1: General information ─────────────────────────────────────── -->
+<div class="section-title">1. Общие сведения</div>
+<table class="detail-table">
+    <tr>
+        <td class="dt-label">Номер договора:</td>
+        <td th:text="${contractNumber} ?: '—'">Д-2026-001</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Дата заключения:</td>
+        <td th:text="${contractDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Тип договора:</td>
+        <td th:text="${contractType} ?: '—'">Договор подряда</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Предмет договора:</td>
+        <td th:text="${contractSubject} ?: '—'">Выполнение строительно-монтажных работ</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Проект:</td>
+        <td th:text="${projectName} ?: '—'">Жилой комплекс «Панорама»</td>
+    </tr>
+</table>
+
+<!-- ── Section 2: Parties ─────────────────────────────────────────────────── -->
+<div class="section-title">2. Стороны договора</div>
+<table class="detail-table">
+    <tr>
+        <td class="dt-label">Заказчик:</td>
+        <td th:text="${customerOrg} ?: '—'">ООО «Заказчик»</td>
+    </tr>
+    <tr>
+        <td class="dt-label">ИНН заказчика:</td>
+        <td th:text="${customerInn} ?: '—'">7701234567</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Подрядчик:</td>
+        <td th:text="${contractorOrg} ?: '—'">ООО «СтройПроект»</td>
+    </tr>
+    <tr>
+        <td class="dt-label">ИНН подрядчика:</td>
+        <td th:text="${contractorInn} ?: '—'">7707654321</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Ответственный от заказчика:</td>
+        <td th:text="${customerContact} ?: '—'">Иванов И.И.</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Ответственный от подрядчика:</td>
+        <td th:text="${contractorContact} ?: '—'">Петров П.П.</td>
+    </tr>
+</table>
+
+<!-- ── Section 3: Financial terms ─────────────────────────────────────────── -->
+<div class="section-title">3. Финансовые условия</div>
+<table class="detail-table">
+    <tr>
+        <td class="dt-label">Сумма договора (без НДС):</td>
+        <td th:text="${contractSumWithoutVat != null} ? ${#numbers.formatDecimal(contractSumWithoutVat, 1, 2)} + ' руб.' : '—'">10 000 000.00 руб.</td>
+    </tr>
+    <tr>
+        <td class="dt-label">НДС (<span th:text="${vatRate} ?: '20'">20</span>%):</td>
+        <td th:text="${vatAmount != null} ? ${#numbers.formatDecimal(vatAmount, 1, 2)} + ' руб.' : '—'">2 000 000.00 руб.</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Сумма договора (с НДС):</td>
+        <td style="font-weight:bold;" th:text="${contractSumWithVat != null} ? ${#numbers.formatDecimal(contractSumWithVat, 1, 2)} + ' руб.' : '—'">12 000 000.00 руб.</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Аванс:</td>
+        <td th:text="${advanceAmount != null} ? ${#numbers.formatDecimal(advanceAmount, 1, 2)} + ' руб. (' + ${advancePercent} + '%)' : '—'">3 600 000.00 руб. (30%)</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Оплачено:</td>
+        <td th:text="${paidAmount != null} ? ${#numbers.formatDecimal(paidAmount, 1, 2)} + ' руб.' : '—'">7 200 000.00 руб.</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Остаток к оплате:</td>
+        <td th:text="${remainingAmount != null} ? ${#numbers.formatDecimal(remainingAmount, 1, 2)} + ' руб.' : '—'">4 800 000.00 руб.</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Порядок оплаты:</td>
+        <td th:text="${paymentTerms} ?: '—'">30% аванс, 70% по актам КС-2</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Гарантийное удержание:</td>
+        <td th:text="${retentionTerms} ?: 'Не предусмотрено'">5% от стоимости работ, срок 24 мес.</td>
+    </tr>
+</table>
+
+<!-- ── Section 4: Schedule ────────────────────────────────────────────────── -->
+<div class="section-title">4. Сроки исполнения</div>
+<table class="detail-table">
+    <tr>
+        <td class="dt-label">Дата начала работ:</td>
+        <td th:text="${startDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Дата окончания работ:</td>
+        <td th:text="${endDate} ?: '—'">31.12.2026</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Гарантийный срок:</td>
+        <td th:text="${warrantyPeriod} ?: '—'">24 месяца</td>
+    </tr>
+    <tr>
+        <td class="dt-label">Текущий прогресс:</td>
+        <td>
+            <div class="progress-bar" th:if="${progressPercent != null}">
+                <div class="progress-fill" th:style="'width:' + ${progressPercent} + '%'"></div>
+            </div>
+            <span th:text="${progressPercent != null} ? ${progressPercent} + '%' : '—'">60%</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── Section 5: Milestones ──────────────────────────────────────────────── -->
+<div class="section-title">5. Вехи (этапы)</div>
+<table class="data-table" th:if="${milestones != null and !milestones.isEmpty()}">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:30%;">Этап</th>
+            <th style="width:12%;">Плановая дата</th>
+            <th style="width:12%;">Факт. дата</th>
+            <th style="width:15%;">Сумма, руб.</th>
+            <th style="width:10%;">Статус</th>
+            <th style="width:16%;">Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="ms, iter : ${milestones}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${ms.name}">Фундаментные работы</td>
+            <td class="center" th:text="${ms.plannedDate}">15.03.2026</td>
+            <td class="center" th:text="${ms.actualDate} ?: '—'">12.03.2026</td>
+            <td class="number" th:text="${ms.amount != null} ? ${#numbers.formatDecimal(ms.amount, 1, 2)} : '—'">2 000 000.00</td>
+            <td class="center">
+                <span th:if="${ms.status == 'DONE'}" class="milestone-done">Выполнен</span>
+                <span th:if="${ms.status == 'PENDING'}" class="milestone-pending">В работе</span>
+                <span th:if="${ms.status == 'OVERDUE'}" class="milestone-overdue">Просрочен</span>
+            </td>
+            <td class="text-small" th:text="${ms.note} ?: ''"></td>
+        </tr>
+    </tbody>
+</table>
+<p th:if="${milestones == null or milestones.isEmpty()}" class="text-muted">Вехи не определены.</p>
+
+<!-- ── Section 6: Supplementary agreements ────────────────────────────────── -->
+<div class="section-title">6. Дополнительные соглашения</div>
+<table class="data-table" th:if="${supplements != null and !supplements.isEmpty()}">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:15%;">Номер ДС</th>
+            <th style="width:12%;">Дата</th>
+            <th style="width:38%;">Предмет</th>
+            <th style="width:15%;">Изменение суммы, руб.</th>
+            <th style="width:15%;">Изменение сроков</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="s, iter : ${supplements}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${s.number}">ДС-1</td>
+            <td class="center" th:text="${s.date}">01.06.2026</td>
+            <td th:text="${s.subject}">Изменение объёмов работ</td>
+            <td class="number" th:text="${s.amountChange != null} ? ${#numbers.formatDecimal(s.amountChange, 1, 2)} : '—'">+500 000.00</td>
+            <td class="center" th:text="${s.scheduleChange} ?: '—'">+30 дней</td>
+        </tr>
+    </tbody>
+</table>
+<p th:if="${supplements == null or supplements.isEmpty()}" class="text-muted">Дополнительные соглашения отсутствуют.</p>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Подготовил:</p>
+            <p th:text="${preparedBy} ?: '________________________'">Специалист договорного отдела</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Утвердил:</p>
+            <p th:text="${approvedBy} ?: '________________________'">Руководитель проекта</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

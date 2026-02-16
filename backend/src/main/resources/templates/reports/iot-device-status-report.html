@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Отчет о состоянии IoT-устройств'">IoT-устройства</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 10mm 15mm 10mm; }
+        .status-ok { color: #16a34a; font-weight: bold; }
+        .status-warn { color: #ca8a04; font-weight: bold; }
+        .status-error { color: #dc2626; font-weight: bold; }
+        .status-offline { color: #666; font-weight: bold; }
+        .summary-cards { overflow: hidden; margin-bottom: 12pt; }
+        .summary-card { float: left; width: 23%; margin-right: 2%; border: 1px solid #ccc;
+                        padding: 6pt; text-align: center; background: #fafafa; }
+        .summary-card .card-value { font-size: 16pt; font-weight: bold; }
+        .summary-card .card-label { font-size: 8pt; color: #555; }
+    </style>
+</head>
+<body>
+
+<!-- ── Company header ────────────────────────────────────────────────────── -->
+<div class="report-header">
+    <div class="org-name" th:text="${organizationName} ?: 'Организация'">Организация</div>
+    <div class="report-title">ОТЧЕТ О СОСТОЯНИИ IoT-УСТРОЙСТВ</div>
+    <div class="report-subtitle" th:text="${reportSubtitle} ?: ''"></div>
+</div>
+
+<!-- ── Meta information ──────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер отчета:</td>
+        <td th:text="${documentNumber} ?: '—'">001</td>
+        <td class="label">Дата формирования:</td>
+        <td th:text="${documentDate} ?: '—'">01.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Проект:</td>
+        <td colspan="3" th:text="${projectName} ?: '—'">Жилой комплекс</td>
+    </tr>
+    <tr>
+        <td class="label">Площадка:</td>
+        <td colspan="3" th:text="${siteName} ?: '—'">Строительная площадка №1</td>
+    </tr>
+</table>
+
+<!-- ── Summary cards ─────────────────────────────────────────────────────── -->
+<div class="summary-cards">
+    <div class="summary-card">
+        <div class="card-value" th:text="${totalDevices} ?: '0'">0</div>
+        <div class="card-label">Всего устройств</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-value status-ok" th:text="${onlineCount} ?: '0'">0</div>
+        <div class="card-label">В сети</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-value status-warn" th:text="${warningCount} ?: '0'">0</div>
+        <div class="card-label">Предупреждения</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-value status-error" th:text="${alertCount} ?: '0'">0</div>
+        <div class="card-label">Тревоги</div>
+    </div>
+</div>
+
+<!-- ── Devices table ─────────────────────────────────────────────────────── -->
+<table class="data-table">
+    <thead>
+        <tr>
+            <th style="width:5%;">№</th>
+            <th style="width:15%;">ID устройства</th>
+            <th style="width:14%;">Тип</th>
+            <th style="width:12%;">Расположение</th>
+            <th style="width:10%;">Статус</th>
+            <th style="width:14%;">Последнее<br/>показание</th>
+            <th style="width:10%;">Последняя<br/>связь</th>
+            <th style="width:8%;">Батарея,<br/>%</th>
+            <th style="width:6%;">Тревоги</th>
+            <th style="width:6%;">Версия<br/>ПО</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--/* Iterate over devices */-->
+        <tr th:each="device, iter : ${devices}" th:if="${devices != null}">
+            <td class="center" th:text="${iter.count}">1</td>
+            <td th:text="${device.deviceId}">SEN-001</td>
+            <td th:text="${device.deviceType} ?: '—'">Датчик температуры</td>
+            <td th:text="${device.location} ?: '—'">Этаж 3</td>
+            <td class="center">
+                <span th:if="${device.status == 'ONLINE'}" class="status-ok">В сети</span>
+                <span th:if="${device.status == 'WARNING'}" class="status-warn">Внимание</span>
+                <span th:if="${device.status == 'ERROR'}" class="status-error">Ошибка</span>
+                <span th:if="${device.status == 'OFFLINE'}" class="status-offline">Не в сети</span>
+            </td>
+            <td th:text="${device.lastReading} ?: '—'">23.5C</td>
+            <td class="center" th:text="${device.lastSeen} ?: '—'">10:35</td>
+            <td class="center" th:text="${device.batteryLevel} ?: '—'">85</td>
+            <td class="center" th:text="${device.alertsCount} ?: '0'">0</td>
+            <td class="center" th:text="${device.firmwareVersion} ?: '—'">1.2.3</td>
+        </tr>
+        <!--/* Placeholder when no data */-->
+        <tr th:if="${devices == null or devices.isEmpty()}">
+            <td class="center">1</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td class="center">—</td>
+            <td>—</td>
+            <td class="center">—</td>
+            <td class="center">—</td>
+            <td class="center">0</td>
+            <td class="center">—</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ── Alerts section ────────────────────────────────────────────────────── -->
+<div class="no-break mt-8" th:if="${alerts != null and !alerts.isEmpty()}">
+    <h3>Активные тревоги</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:15%;">Устройство</th>
+                <th style="width:12%;">Время</th>
+                <th style="width:10%;">Уровень</th>
+                <th style="width:58%;">Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="alert, iter : ${alerts}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${alert.deviceId}">SEN-001</td>
+                <td class="center" th:text="${alert.timestamp}">10:30</td>
+                <td class="center">
+                    <span th:class="${'badge badge-' + (alert.severity ?: 'info')}"
+                          th:text="${alert.severityLabel} ?: 'Инфо'">Инфо</span>
+                </td>
+                <td th:text="${alert.description}">Превышение допустимой температуры</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Signatures ────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Ответственный за мониторинг:</p>
+            <p th:text="${monitoringOfficer} ?: '________________________'">Инженер АСУ</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Руководитель проекта:</p>
+            <p th:text="${projectManager} ?: '________________________'">Руководитель</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

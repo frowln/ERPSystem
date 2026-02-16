@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/privod_next}
+    username: ${SPRING_DATASOURCE_USERNAME:privod}
+    password: ${SPRING_DATASOURCE_PASSWORD:privod_secret}
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:redis}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+
+  jpa:
+    hibernate:
+      # Schema must be managed by Flyway; Hibernate should only validate in runtime environments.
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration,classpath:db/seed
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    mail:
+      enabled: false
+    minio:
+      enabled: false
+    redis:
+      enabled: false
+
+logging:
+  level:
+    com.privod: INFO
+    org.hibernate.SQL: WARN

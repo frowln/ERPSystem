@@ -1,0 +1,71 @@
+{
+  "total": 11,
+  "jobs": [
+    {
+      "class": "FleetMaintenanceJob",
+      "method": "checkMaintenanceSchedule",
+      "schedule": "cron = \"0 0 7 * * *\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/FleetMaintenanceJob.java"
+    },
+    {
+      "class": "SupportSlaCheckJob",
+      "method": "checkSupportTicketSla",
+      "schedule": "cron = \"0 */30 * * * *\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/SupportSlaCheckJob.java"
+    },
+    {
+      "class": "PaymentSlaCheckJob",
+      "method": "checkPaymentSla",
+      "schedule": "cron = \"0 0 10 * * MON-FRI\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/PaymentSlaCheckJob.java"
+    },
+    {
+      "class": "ContractAlertJob",
+      "method": "checkExpiringContracts",
+      "schedule": "cron = \"0 0 8 * * MON-FRI\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/ContractAlertJob.java"
+    },
+    {
+      "class": "SafetyInspectionReminderJob",
+      "method": "remindOverdueInspections",
+      "schedule": "cron = \"0 0 7 * * MON-FRI\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/SafetyInspectionReminderJob.java"
+    },
+    {
+      "class": "TaskOverdueCheckJob",
+      "method": "checkOverdueTasks",
+      "schedule": "cron = \"0 30 8 * * MON-FRI\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/TaskOverdueCheckJob.java"
+    },
+    {
+      "class": "AnalyticsAggregationJob",
+      "method": "aggregateAnalytics",
+      "schedule": "cron = \"0 0 2 * * *\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/AnalyticsAggregationJob.java"
+    },
+    {
+      "class": "CertificateExpirationJob",
+      "method": "checkExpiringCertificates",
+      "schedule": "cron = \"0 0 6 * * *\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/CertificateExpirationJob.java"
+    },
+    {
+      "class": "DailyLogReminderJob",
+      "method": "remindDailyLogs",
+      "schedule": "cron = \"0 0 17 * * MON-FRI\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/DailyLogReminderJob.java"
+    },
+    {
+      "class": "StockLevelAlertJob",
+      "method": "checkLowStockLevels",
+      "schedule": "cron = \"0 0 9 * * MON-FRI\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/StockLevelAlertJob.java"
+    },
+    {
+      "class": "ReportingDeadlineJob",
+      "method": "checkReportingDeadlines",
+      "schedule": "cron = \"0 0 9 * * MON\"",
+      "file": "/Users/damirkasimov/Desktop/privod2/privod2_next/backend/src/main/java/com/privod/platform/infrastructure/scheduler/jobs/ReportingDeadlineJob.java"
+    }
+  ]
+}

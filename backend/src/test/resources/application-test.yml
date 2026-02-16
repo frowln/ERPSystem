@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16-alpine:///privod_test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    secret: TEST_SECRET_KEY_MUST_BE_AT_LEAST_256_BITS_LONG_FOR_HS256_SIGNING_ALGORITHM
+    expiration-ms: 86400000
+    refresh-expiration-ms: 604800000
+
+logging:
+  level:
+    com.privod: DEBUG
+    org.testcontainers: INFO

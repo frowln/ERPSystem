@@ -1,0 +1,6936 @@
+{
+  "total": 770,
+  "note": "UUID-based FK references",
+  "relations": [
+    {
+      "src_entity": "AuditLog",
+      "src_table": "audit_logs",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "infra.audit",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "AuditLog",
+      "src_table": "audit_logs",
+      "field": "userId",
+      "column": "user_id",
+      "module": "infra.audit",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "DocumentAuditEntry",
+      "src_table": "cde_document_audit_entries",
+      "field": "documentContainerId",
+      "column": "document_container_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "documentContainer"
+    },
+    {
+      "src_entity": "DocumentAuditEntry",
+      "src_table": "cde_document_audit_entries",
+      "field": "performedById",
+      "column": "performed_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "performedBy"
+    },
+    {
+      "src_entity": "DocumentContainer",
+      "src_table": "cde_document_containers",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DocumentContainer",
+      "src_table": "cde_document_containers",
+      "field": "currentRevisionId",
+      "column": "current_revision_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "currentRevision"
+    },
+    {
+      "src_entity": "DocumentRevision",
+      "src_table": "cde_document_revisions",
+      "field": "documentContainerId",
+      "column": "document_container_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "documentContainer"
+    },
+    {
+      "src_entity": "DocumentRevision",
+      "src_table": "cde_document_revisions",
+      "field": "fileId",
+      "column": "file_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "file"
+    },
+    {
+      "src_entity": "DocumentRevision",
+      "src_table": "cde_document_revisions",
+      "field": "uploadedById",
+      "column": "uploaded_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "uploadedBy"
+    },
+    {
+      "src_entity": "DocumentRevision",
+      "src_table": "cde_document_revisions",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "DocumentRevision",
+      "src_table": "cde_document_revisions",
+      "field": "supersededById",
+      "column": "superseded_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "supersededBy"
+    },
+    {
+      "src_entity": "RevisionSet",
+      "src_table": "cde_revision_sets",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "RevisionSet",
+      "src_table": "cde_revision_sets",
+      "field": "issuedById",
+      "column": "issued_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "issuedBy"
+    },
+    {
+      "src_entity": "Transmittal",
+      "src_table": "cde_transmittals",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Transmittal",
+      "src_table": "cde_transmittals",
+      "field": "fromOrganizationId",
+      "column": "from_organization_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "fromOrganization"
+    },
+    {
+      "src_entity": "Transmittal",
+      "src_table": "cde_transmittals",
+      "field": "toOrganizationId",
+      "column": "to_organization_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "toOrganization"
+    },
+    {
+      "src_entity": "Transmittal",
+      "src_table": "cde_transmittals",
+      "field": "sentById",
+      "column": "sent_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "sentBy"
+    },
+    {
+      "src_entity": "TransmittalItem",
+      "src_table": "cde_transmittal_items",
+      "field": "transmittalId",
+      "column": "transmittal_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "transmittal"
+    },
+    {
+      "src_entity": "TransmittalItem",
+      "src_table": "cde_transmittal_items",
+      "field": "documentContainerId",
+      "column": "document_container_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "documentContainer"
+    },
+    {
+      "src_entity": "TransmittalItem",
+      "src_table": "cde_transmittal_items",
+      "field": "revisionId",
+      "column": "revision_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "revision"
+    },
+    {
+      "src_entity": "TransmittalItem",
+      "src_table": "cde_transmittal_items",
+      "field": "respondedById",
+      "column": "responded_by_id",
+      "module": "cde",
+      "type": "uuid_fk",
+      "inferred_target": "respondedBy"
+    },
+    {
+      "src_entity": "GeneralJournal",
+      "src_table": "general_journals",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "journal",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "GeneralJournal",
+      "src_table": "general_journals",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "journal",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "GeneralJournalEntry",
+      "src_table": "general_journal_entries",
+      "field": "journalId",
+      "column": "journal_id",
+      "module": "journal",
+      "type": "uuid_fk",
+      "inferred_target": "journal"
+    },
+    {
+      "src_entity": "Department",
+      "src_table": "departments",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "organization",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Department",
+      "src_table": "departments",
+      "field": "headId",
+      "column": "head_id",
+      "module": "organization",
+      "type": "uuid_fk",
+      "inferred_target": "head"
+    },
+    {
+      "src_entity": "Department",
+      "src_table": "departments",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "organization",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "Organization",
+      "src_table": "organizations",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "organization",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "PartnerEnrichment",
+      "src_table": "partner_enrichments",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "organization",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "PartnerEnrichmentLog",
+      "src_table": "partner_enrichment_logs",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "organization",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "AccountEntry",
+      "src_table": "account_entries",
+      "field": "journalId",
+      "column": "journal_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "journal"
+    },
+    {
+      "src_entity": "AccountEntry",
+      "src_table": "account_entries",
+      "field": "debitAccountId",
+      "column": "debit_account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "debitAccount"
+    },
+    {
+      "src_entity": "AccountEntry",
+      "src_table": "account_entries",
+      "field": "creditAccountId",
+      "column": "credit_account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "creditAccount"
+    },
+    {
+      "src_entity": "AccountEntry",
+      "src_table": "account_entries",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "AccountEntry",
+      "src_table": "account_entries",
+      "field": "periodId",
+      "column": "period_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "period"
+    },
+    {
+      "src_entity": "AccountPeriod",
+      "src_table": "account_periods",
+      "field": "closedById",
+      "column": "closed_by_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "closedBy"
+    },
+    {
+      "src_entity": "AccountPlan",
+      "src_table": "account_plans",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "CostAllocation",
+      "src_table": "cost_allocations",
+      "field": "costCenterId",
+      "column": "cost_center_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "costCenter"
+    },
+    {
+      "src_entity": "CostAllocation",
+      "src_table": "cost_allocations",
+      "field": "periodId",
+      "column": "period_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "period"
+    },
+    {
+      "src_entity": "CostAllocation",
+      "src_table": "cost_allocations",
+      "field": "accountId",
+      "column": "account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "account"
+    },
+    {
+      "src_entity": "CostCenter",
+      "src_table": "cost_centers",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CostCenter",
+      "src_table": "cost_centers",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "DepreciationSchedule",
+      "src_table": "depreciation_schedules",
+      "field": "assetId",
+      "column": "asset_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "asset"
+    },
+    {
+      "src_entity": "DepreciationSchedule",
+      "src_table": "depreciation_schedules",
+      "field": "periodId",
+      "column": "period_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "period"
+    },
+    {
+      "src_entity": "EnsAccount",
+      "src_table": "ens_accounts",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "EnsOperation",
+      "src_table": "ens_operations",
+      "field": "ensAccountId",
+      "column": "ens_account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "ensAccount"
+    },
+    {
+      "src_entity": "EnsPayment",
+      "src_table": "ens_payments",
+      "field": "ensAccountId",
+      "column": "ens_account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "ensAccount"
+    },
+    {
+      "src_entity": "EnsReconciliation",
+      "src_table": "ens_reconciliations",
+      "field": "ensAccountId",
+      "column": "ens_account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "ensAccount"
+    },
+    {
+      "src_entity": "EnsReconciliation",
+      "src_table": "ens_reconciliations",
+      "field": "periodId",
+      "column": "period_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "period"
+    },
+    {
+      "src_entity": "EnsReconciliation",
+      "src_table": "ens_reconciliations",
+      "field": "reconciledById",
+      "column": "reconciled_by_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "reconciledBy"
+    },
+    {
+      "src_entity": "FixedAsset",
+      "src_table": "fixed_assets",
+      "field": "accountId",
+      "column": "account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "account"
+    },
+    {
+      "src_entity": "JournalEntry",
+      "src_table": "journal_entries",
+      "field": "journalId",
+      "column": "journal_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "journal"
+    },
+    {
+      "src_entity": "JournalEntry",
+      "src_table": "journal_entries",
+      "field": "postedById",
+      "column": "posted_by_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "postedBy"
+    },
+    {
+      "src_entity": "JournalLine",
+      "src_table": "journal_lines",
+      "field": "entryId",
+      "column": "entry_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "entry"
+    },
+    {
+      "src_entity": "JournalLine",
+      "src_table": "journal_lines",
+      "field": "accountId",
+      "column": "account_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "account"
+    },
+    {
+      "src_entity": "JournalLine",
+      "src_table": "journal_lines",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "ReconciliationAct",
+      "src_table": "reconciliation_acts",
+      "field": "counterpartyId",
+      "column": "counterparty_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "counterparty"
+    },
+    {
+      "src_entity": "ReconciliationAct",
+      "src_table": "reconciliation_acts",
+      "field": "periodId",
+      "column": "period_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "period"
+    },
+    {
+      "src_entity": "TaxDeclaration",
+      "src_table": "tax_declarations",
+      "field": "periodId",
+      "column": "period_id",
+      "module": "accounting",
+      "type": "uuid_fk",
+      "inferred_target": "period"
+    },
+    {
+      "src_entity": "NotificationSetting",
+      "src_table": "notification_settings",
+      "field": "userId",
+      "column": "user_id",
+      "module": "settings",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "DesignReview",
+      "src_table": "design_reviews",
+      "field": "designVersionId",
+      "column": "design_version_id",
+      "module": "design",
+      "type": "uuid_fk",
+      "inferred_target": "designVersion"
+    },
+    {
+      "src_entity": "DesignReview",
+      "src_table": "design_reviews",
+      "field": "reviewerId",
+      "column": "reviewer_id",
+      "module": "design",
+      "type": "uuid_fk",
+      "inferred_target": "reviewer"
+    },
+    {
+      "src_entity": "DesignSection",
+      "src_table": "design_sections",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "design",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DesignSection",
+      "src_table": "design_sections",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "design",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "DesignVersion",
+      "src_table": "design_versions",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "design",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DesignVersion",
+      "src_table": "design_versions",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "design",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "PlanFactLine",
+      "src_table": "plan_fact_lines",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "planfact",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DailyLog",
+      "src_table": "daily_logs",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "dailylog",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DailyLog",
+      "src_table": "daily_logs",
+      "field": "shiftSupervisorId",
+      "column": "shift_supervisor_id",
+      "module": "dailylog",
+      "type": "uuid_fk",
+      "inferred_target": "shiftSupervisor"
+    },
+    {
+      "src_entity": "DailyLogEntry",
+      "src_table": "daily_log_entries",
+      "field": "dailyLogId",
+      "column": "daily_log_id",
+      "module": "dailylog",
+      "type": "uuid_fk",
+      "inferred_target": "dailyLog"
+    },
+    {
+      "src_entity": "DailyLogEntry",
+      "src_table": "daily_log_entries",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "dailylog",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "DailyLogPhoto",
+      "src_table": "daily_log_photos",
+      "field": "dailyLogId",
+      "column": "daily_log_id",
+      "module": "dailylog",
+      "type": "uuid_fk",
+      "inferred_target": "dailyLog"
+    },
+    {
+      "src_entity": "DailyLogPhoto",
+      "src_table": "daily_log_photos",
+      "field": "takenById",
+      "column": "taken_by_id",
+      "module": "dailylog",
+      "type": "uuid_fk",
+      "inferred_target": "takenBy"
+    },
+    {
+      "src_entity": "ApiKey",
+      "src_table": "api_keys",
+      "field": "userId",
+      "column": "user_id",
+      "module": "apiManagement",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "WebhookDelivery",
+      "src_table": "webhook_deliveries",
+      "field": "webhookConfigId",
+      "column": "webhook_config_id",
+      "module": "apiManagement",
+      "type": "uuid_fk",
+      "inferred_target": "webhookConfig"
+    },
+    {
+      "src_entity": "Delivery",
+      "src_table": "deliveries",
+      "field": "routeId",
+      "column": "route_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "route"
+    },
+    {
+      "src_entity": "Delivery",
+      "src_table": "deliveries",
+      "field": "purchaseOrderId",
+      "column": "purchase_order_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "purchaseOrder"
+    },
+    {
+      "src_entity": "Delivery",
+      "src_table": "deliveries",
+      "field": "vehicleId",
+      "column": "vehicle_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "vehicle"
+    },
+    {
+      "src_entity": "Delivery",
+      "src_table": "deliveries",
+      "field": "driverId",
+      "column": "driver_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "driver"
+    },
+    {
+      "src_entity": "DeliveryItem",
+      "src_table": "delivery_items",
+      "field": "deliveryId",
+      "column": "delivery_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "delivery"
+    },
+    {
+      "src_entity": "DeliveryItem",
+      "src_table": "delivery_items",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "DispatchItem",
+      "src_table": "dispatch_items",
+      "field": "orderId",
+      "column": "order_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "order"
+    },
+    {
+      "src_entity": "DispatchItem",
+      "src_table": "dispatch_items",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "DispatchItem",
+      "src_table": "dispatch_items",
+      "field": "fromWarehouseId",
+      "column": "from_warehouse_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "fromWarehouse"
+    },
+    {
+      "src_entity": "DispatchItem",
+      "src_table": "dispatch_items",
+      "field": "toWarehouseId",
+      "column": "to_warehouse_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "toWarehouse"
+    },
+    {
+      "src_entity": "MaterialReservation",
+      "src_table": "material_reservations",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "MaterialReservation",
+      "src_table": "material_reservations",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "MaterialReservation",
+      "src_table": "material_reservations",
+      "field": "reservedById",
+      "column": "reserved_by_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "reservedBy"
+    },
+    {
+      "src_entity": "MaterialReservation",
+      "src_table": "material_reservations",
+      "field": "workOrderId",
+      "column": "work_order_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "workOrder"
+    },
+    {
+      "src_entity": "SupplierRating",
+      "src_table": "supplier_ratings",
+      "field": "supplierId",
+      "column": "supplier_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "supplier"
+    },
+    {
+      "src_entity": "SupplierRating",
+      "src_table": "supplier_ratings",
+      "field": "evaluatedById",
+      "column": "evaluated_by_id",
+      "module": "procurementExt",
+      "type": "uuid_fk",
+      "inferred_target": "evaluatedBy"
+    },
+    {
+      "src_entity": "Contract",
+      "src_table": "contracts",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "Contract",
+      "src_table": "contracts",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Contract",
+      "src_table": "contracts",
+      "field": "typeId",
+      "column": "type_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "type"
+    },
+    {
+      "src_entity": "Contract",
+      "src_table": "contracts",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "Contract",
+      "src_table": "contracts",
+      "field": "parentVersionId",
+      "column": "parent_version_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "parentVersion"
+    },
+    {
+      "src_entity": "ContractApproval",
+      "src_table": "contract_approvals",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ContractApproval",
+      "src_table": "contract_approvals",
+      "field": "approverId",
+      "column": "approver_id",
+      "module": "contract",
+      "type": "uuid_fk",
+      "inferred_target": "approver"
+    },
+    {
+      "src_entity": "PortalDocument",
+      "src_table": "portal_documents",
+      "field": "portalUserId",
+      "column": "portal_user_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "portalUser"
+    },
+    {
+      "src_entity": "PortalDocument",
+      "src_table": "portal_documents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PortalDocument",
+      "src_table": "portal_documents",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "PortalDocument",
+      "src_table": "portal_documents",
+      "field": "sharedById",
+      "column": "shared_by_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "sharedBy"
+    },
+    {
+      "src_entity": "PortalMessage",
+      "src_table": "portal_messages",
+      "field": "fromPortalUserId",
+      "column": "from_portal_user_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "fromPortalUser"
+    },
+    {
+      "src_entity": "PortalMessage",
+      "src_table": "portal_messages",
+      "field": "toPortalUserId",
+      "column": "to_portal_user_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "toPortalUser"
+    },
+    {
+      "src_entity": "PortalMessage",
+      "src_table": "portal_messages",
+      "field": "fromInternalUserId",
+      "column": "from_internal_user_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "fromInternalUser"
+    },
+    {
+      "src_entity": "PortalMessage",
+      "src_table": "portal_messages",
+      "field": "toInternalUserId",
+      "column": "to_internal_user_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "toInternalUser"
+    },
+    {
+      "src_entity": "PortalMessage",
+      "src_table": "portal_messages",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PortalMessage",
+      "src_table": "portal_messages",
+      "field": "parentMessageId",
+      "column": "parent_message_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "parentMessage"
+    },
+    {
+      "src_entity": "PortalProject",
+      "src_table": "portal_projects",
+      "field": "portalUserId",
+      "column": "portal_user_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "portalUser"
+    },
+    {
+      "src_entity": "PortalProject",
+      "src_table": "portal_projects",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PortalProject",
+      "src_table": "portal_projects",
+      "field": "grantedById",
+      "column": "granted_by_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "grantedBy"
+    },
+    {
+      "src_entity": "PortalUser",
+      "src_table": "portal_users",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "PortalUser",
+      "src_table": "portal_users",
+      "field": "invitedById",
+      "column": "invited_by_id",
+      "module": "portal",
+      "type": "uuid_fk",
+      "inferred_target": "invitedBy"
+    },
+    {
+      "src_entity": "CalendarEvent",
+      "src_table": "calendar_events",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CalendarEvent",
+      "src_table": "calendar_events",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "CalendarEvent",
+      "src_table": "calendar_events",
+      "field": "organizerId",
+      "column": "organizer_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "organizer"
+    },
+    {
+      "src_entity": "CalendarEventAttendee",
+      "src_table": "calendar_event_attendees",
+      "field": "eventId",
+      "column": "event_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "event"
+    },
+    {
+      "src_entity": "CalendarEventAttendee",
+      "src_table": "calendar_event_attendees",
+      "field": "userId",
+      "column": "user_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "ConstructionSchedule",
+      "src_table": "construction_schedules",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ScheduleItem",
+      "src_table": "schedule_items",
+      "field": "scheduleId",
+      "column": "schedule_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "schedule"
+    },
+    {
+      "src_entity": "ScheduleItem",
+      "src_table": "schedule_items",
+      "field": "parentItemId",
+      "column": "parent_item_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "parentItem"
+    },
+    {
+      "src_entity": "ScheduleItem",
+      "src_table": "schedule_items",
+      "field": "predecessorItemId",
+      "column": "predecessor_item_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "predecessorItem"
+    },
+    {
+      "src_entity": "ScheduleItem",
+      "src_table": "schedule_items",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "WorkCalendar",
+      "src_table": "work_calendars",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WorkCalendarDay",
+      "src_table": "work_calendar_days",
+      "field": "calendarId",
+      "column": "calendar_id",
+      "module": "calendar",
+      "type": "uuid_fk",
+      "inferred_target": "calendar"
+    },
+    {
+      "src_entity": "PunchItem",
+      "src_table": "punch_items",
+      "field": "punchListId",
+      "column": "punch_list_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "punchList"
+    },
+    {
+      "src_entity": "PunchItem",
+      "src_table": "punch_items",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "PunchItem",
+      "src_table": "punch_items",
+      "field": "verifiedById",
+      "column": "verified_by_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "verifiedBy"
+    },
+    {
+      "src_entity": "PunchItemComment",
+      "src_table": "punch_item_comments",
+      "field": "punchItemId",
+      "column": "punch_item_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "punchItem"
+    },
+    {
+      "src_entity": "PunchItemComment",
+      "src_table": "punch_item_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "PunchList",
+      "src_table": "punch_lists",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PunchList",
+      "src_table": "punch_lists",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "punchlist",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "CertificateLine",
+      "src_table": "certificate_lines",
+      "field": "certificateId",
+      "column": "certificate_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "certificate"
+    },
+    {
+      "src_entity": "MaterialCertificate",
+      "src_table": "material_certificates",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "MaterialCertificate",
+      "src_table": "material_certificates",
+      "field": "verifiedById",
+      "column": "verified_by_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "verifiedBy"
+    },
+    {
+      "src_entity": "NonConformance",
+      "src_table": "non_conformances",
+      "field": "qualityCheckId",
+      "column": "quality_check_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "qualityCheck"
+    },
+    {
+      "src_entity": "NonConformance",
+      "src_table": "non_conformances",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "NonConformance",
+      "src_table": "non_conformances",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "QualityCertificate",
+      "src_table": "quality_certificates",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "QualityCertificate",
+      "src_table": "quality_certificates",
+      "field": "supplierId",
+      "column": "supplier_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "supplier"
+    },
+    {
+      "src_entity": "QualityCertificate",
+      "src_table": "quality_certificates",
+      "field": "verifiedById",
+      "column": "verified_by_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "verifiedBy"
+    },
+    {
+      "src_entity": "QualityCheck",
+      "src_table": "quality_checks",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "QualityCheck",
+      "src_table": "quality_checks",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "QualityCheck",
+      "src_table": "quality_checks",
+      "field": "specItemId",
+      "column": "spec_item_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "specItem"
+    },
+    {
+      "src_entity": "QualityCheck",
+      "src_table": "quality_checks",
+      "field": "inspectorId",
+      "column": "inspector_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "inspector"
+    },
+    {
+      "src_entity": "ToleranceCheck",
+      "src_table": "tolerance_checks",
+      "field": "toleranceRuleId",
+      "column": "tolerance_rule_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "toleranceRule"
+    },
+    {
+      "src_entity": "ToleranceCheck",
+      "src_table": "tolerance_checks",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ToleranceCheck",
+      "src_table": "tolerance_checks",
+      "field": "checkedById",
+      "column": "checked_by_id",
+      "module": "quality",
+      "type": "uuid_fk",
+      "inferred_target": "checkedBy"
+    },
+    {
+      "src_entity": "LoginAttempt",
+      "src_table": "login_attempts",
+      "field": "userId",
+      "column": "user_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MfaAttempt",
+      "src_table": "mfa_attempts",
+      "field": "userId",
+      "column": "user_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MfaConfig",
+      "src_table": "mfa_configs",
+      "field": "userId",
+      "column": "user_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "OidcUserMapping",
+      "src_table": "oidc_user_mappings",
+      "field": "oidcProviderId",
+      "column": "oidc_provider_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "oidcProvider"
+    },
+    {
+      "src_entity": "OidcUserMapping",
+      "src_table": "oidc_user_mappings",
+      "field": "internalUserId",
+      "column": "internal_user_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "internalUser"
+    },
+    {
+      "src_entity": "User",
+      "src_table": "users",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "UserSession",
+      "src_table": "user_sessions",
+      "field": "userId",
+      "column": "user_id",
+      "module": "auth",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "Notification",
+      "src_table": "notifications",
+      "field": "userId",
+      "column": "user_id",
+      "module": "notification",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "Notification",
+      "src_table": "notifications",
+      "field": "sourceId",
+      "column": "source_id",
+      "module": "notification",
+      "type": "uuid_fk",
+      "inferred_target": "source"
+    },
+    {
+      "src_entity": "NotificationBatch",
+      "src_table": "notification_batches",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "notification",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "ExternalDocument",
+      "src_table": "external_documents",
+      "field": "linkedEntityId",
+      "column": "linked_entity_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "linkedEntity"
+    },
+    {
+      "src_entity": "OneCExchangeLog",
+      "src_table": "onec_exchange_logs",
+      "field": "configId",
+      "column": "config_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "config"
+    },
+    {
+      "src_entity": "OneCMapping",
+      "src_table": "onec_mappings",
+      "field": "privodId",
+      "column": "privod_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "privod"
+    },
+    {
+      "src_entity": "SbisDocument",
+      "src_table": "sbis_documents",
+      "field": "internalDocumentId",
+      "column": "internal_document_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "internalDocument"
+    },
+    {
+      "src_entity": "SbisPartnerMapping",
+      "src_table": "sbis_partner_mappings",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "SyncJob",
+      "src_table": "sync_jobs",
+      "field": "endpointId",
+      "column": "endpoint_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "endpoint"
+    },
+    {
+      "src_entity": "SyncMapping",
+      "src_table": "sync_mappings",
+      "field": "endpointId",
+      "column": "endpoint_id",
+      "module": "integration",
+      "type": "uuid_fk",
+      "inferred_target": "endpoint"
+    },
+    {
+      "src_entity": "ChangeEvent",
+      "src_table": "change_events",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ChangeEvent",
+      "src_table": "change_events",
+      "field": "identifiedById",
+      "column": "identified_by_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "identifiedBy"
+    },
+    {
+      "src_entity": "ChangeEvent",
+      "src_table": "change_events",
+      "field": "linkedRfiId",
+      "column": "linked_rfi_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "linkedRfi"
+    },
+    {
+      "src_entity": "ChangeEvent",
+      "src_table": "change_events",
+      "field": "linkedIssueId",
+      "column": "linked_issue_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "linkedIssue"
+    },
+    {
+      "src_entity": "ChangeEvent",
+      "src_table": "change_events",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ChangeOrder",
+      "src_table": "change_orders",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ChangeOrder",
+      "src_table": "change_orders",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ChangeOrder",
+      "src_table": "change_orders",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "ChangeOrder",
+      "src_table": "change_orders",
+      "field": "changeOrderRequestId",
+      "column": "change_order_request_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "changeOrderRequest"
+    },
+    {
+      "src_entity": "ChangeOrderItem",
+      "src_table": "change_order_items",
+      "field": "changeOrderId",
+      "column": "change_order_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "changeOrder"
+    },
+    {
+      "src_entity": "ChangeOrderItem",
+      "src_table": "change_order_items",
+      "field": "costCodeId",
+      "column": "cost_code_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "costCode"
+    },
+    {
+      "src_entity": "ChangeOrderItem",
+      "src_table": "change_order_items",
+      "field": "wbsNodeId",
+      "column": "wbs_node_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "wbsNode"
+    },
+    {
+      "src_entity": "ChangeOrderRequest",
+      "src_table": "change_order_requests",
+      "field": "changeEventId",
+      "column": "change_event_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "changeEvent"
+    },
+    {
+      "src_entity": "ChangeOrderRequest",
+      "src_table": "change_order_requests",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ChangeOrderRequest",
+      "src_table": "change_order_requests",
+      "field": "requestedById",
+      "column": "requested_by_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "requestedBy"
+    },
+    {
+      "src_entity": "ChangeOrderRequest",
+      "src_table": "change_order_requests",
+      "field": "reviewedById",
+      "column": "reviewed_by_id",
+      "module": "changeManagement",
+      "type": "uuid_fk",
+      "inferred_target": "reviewedBy"
+    },
+    {
+      "src_entity": "Applicant",
+      "src_table": "applicants",
+      "field": "jobPositionId",
+      "column": "job_position_id",
+      "module": "recruitment",
+      "type": "uuid_fk",
+      "inferred_target": "jobPosition"
+    },
+    {
+      "src_entity": "Applicant",
+      "src_table": "applicants",
+      "field": "stageId",
+      "column": "stage_id",
+      "module": "recruitment",
+      "type": "uuid_fk",
+      "inferred_target": "stage"
+    },
+    {
+      "src_entity": "Interview",
+      "src_table": "interviews",
+      "field": "applicantId",
+      "column": "applicant_id",
+      "module": "recruitment",
+      "type": "uuid_fk",
+      "inferred_target": "applicant"
+    },
+    {
+      "src_entity": "Interview",
+      "src_table": "interviews",
+      "field": "interviewerId",
+      "column": "interviewer_id",
+      "module": "recruitment",
+      "type": "uuid_fk",
+      "inferred_target": "interviewer"
+    },
+    {
+      "src_entity": "JobPosition",
+      "src_table": "job_positions",
+      "field": "departmentId",
+      "column": "department_id",
+      "module": "recruitment",
+      "type": "uuid_fk",
+      "inferred_target": "department"
+    },
+    {
+      "src_entity": "CrmActivity",
+      "src_table": "crm_activities",
+      "field": "leadId",
+      "column": "lead_id",
+      "module": "crm",
+      "type": "uuid_fk",
+      "inferred_target": "lead"
+    },
+    {
+      "src_entity": "CrmActivity",
+      "src_table": "crm_activities",
+      "field": "userId",
+      "column": "user_id",
+      "module": "crm",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "CrmLead",
+      "src_table": "crm_leads",
+      "field": "stageId",
+      "column": "stage_id",
+      "module": "crm",
+      "type": "uuid_fk",
+      "inferred_target": "stage"
+    },
+    {
+      "src_entity": "CrmLead",
+      "src_table": "crm_leads",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "crm",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "CrmLead",
+      "src_table": "crm_leads",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "crm",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CrmTeam",
+      "src_table": "crm_teams",
+      "field": "leaderId",
+      "column": "leader_id",
+      "module": "crm",
+      "type": "uuid_fk",
+      "inferred_target": "leader"
+    },
+    {
+      "src_entity": "EvmSnapshot",
+      "src_table": "evm_snapshots",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ResourceAllocation",
+      "src_table": "resource_allocations",
+      "field": "wbsNodeId",
+      "column": "wbs_node_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "wbsNode"
+    },
+    {
+      "src_entity": "ResourceAllocation",
+      "src_table": "resource_allocations",
+      "field": "resourceId",
+      "column": "resource_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "resource"
+    },
+    {
+      "src_entity": "ScheduleBaseline",
+      "src_table": "schedule_baselines",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ScheduleBaseline",
+      "src_table": "schedule_baselines",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "WbsDependency",
+      "src_table": "wbs_dependencies",
+      "field": "predecessorId",
+      "column": "predecessor_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "predecessor"
+    },
+    {
+      "src_entity": "WbsDependency",
+      "src_table": "wbs_dependencies",
+      "field": "successorId",
+      "column": "successor_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "successor"
+    },
+    {
+      "src_entity": "WbsNode",
+      "src_table": "wbs_nodes",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WbsNode",
+      "src_table": "wbs_nodes",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "WbsNode",
+      "src_table": "wbs_nodes",
+      "field": "costCodeId",
+      "column": "cost_code_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "costCode"
+    },
+    {
+      "src_entity": "WbsNode",
+      "src_table": "wbs_nodes",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "planning",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "JobExecution",
+      "src_table": "job_executions",
+      "field": "jobId",
+      "column": "job_id",
+      "module": "scheduler",
+      "type": "uuid_fk",
+      "inferred_target": "job"
+    },
+    {
+      "src_entity": "ConstructionPermit",
+      "src_table": "construction_permits",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "OccupancyPermit",
+      "src_table": "occupancy_permits",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Prescription",
+      "src_table": "prescriptions",
+      "field": "inspectionId",
+      "column": "inspection_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "inspection"
+    },
+    {
+      "src_entity": "Prescription",
+      "src_table": "prescriptions",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "RegulatoryInspection",
+      "src_table": "regulatory_inspections",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "RegulatoryReport",
+      "src_table": "regulatory_reports",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "RegulatoryReport",
+      "src_table": "regulatory_reports",
+      "field": "preparedById",
+      "column": "prepared_by_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "preparedBy"
+    },
+    {
+      "src_entity": "RegulatoryReport",
+      "src_table": "regulatory_reports",
+      "field": "submittedById",
+      "column": "submitted_by_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "submittedBy"
+    },
+    {
+      "src_entity": "ReportingDeadline",
+      "src_table": "reporting_deadlines",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "ReportingDeadline",
+      "src_table": "reporting_deadlines",
+      "field": "submittedById",
+      "column": "submitted_by_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "submittedBy"
+    },
+    {
+      "src_entity": "ReportingSubmission",
+      "src_table": "reporting_submissions",
+      "field": "deadlineId",
+      "column": "deadline_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "deadline"
+    },
+    {
+      "src_entity": "ReportingSubmission",
+      "src_table": "reporting_submissions",
+      "field": "submittedById",
+      "column": "submitted_by_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "submittedBy"
+    },
+    {
+      "src_entity": "ReportingSubmission",
+      "src_table": "reporting_submissions",
+      "field": "correctedSubmissionId",
+      "column": "corrected_submission_id",
+      "module": "regulatory",
+      "type": "uuid_fk",
+      "inferred_target": "correctedSubmission"
+    },
+    {
+      "src_entity": "Activity",
+      "src_table": "chatter_activities",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "Activity",
+      "src_table": "chatter_activities",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "Activity",
+      "src_table": "chatter_activities",
+      "field": "completedById",
+      "column": "completed_by_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "completedBy"
+    },
+    {
+      "src_entity": "Attachment",
+      "src_table": "chatter_attachments",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "Attachment",
+      "src_table": "chatter_attachments",
+      "field": "uploadedById",
+      "column": "uploaded_by_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "uploadedBy"
+    },
+    {
+      "src_entity": "Comment",
+      "src_table": "chatter_comments",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "Comment",
+      "src_table": "chatter_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "Comment",
+      "src_table": "chatter_comments",
+      "field": "parentCommentId",
+      "column": "parent_comment_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "parentComment"
+    },
+    {
+      "src_entity": "EntityChangeLog",
+      "src_table": "chatter_entity_change_logs",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "EntityChangeLog",
+      "src_table": "chatter_entity_change_logs",
+      "field": "changedById",
+      "column": "changed_by_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "changedBy"
+    },
+    {
+      "src_entity": "Follower",
+      "src_table": "chatter_followers",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "Follower",
+      "src_table": "chatter_followers",
+      "field": "userId",
+      "column": "user_id",
+      "module": "chatter",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "Document",
+      "src_table": "documents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Document",
+      "src_table": "documents",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Document",
+      "src_table": "documents",
+      "field": "parentVersionId",
+      "column": "parent_version_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "parentVersion"
+    },
+    {
+      "src_entity": "Document",
+      "src_table": "documents",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "DocumentAccess",
+      "src_table": "document_access",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "DocumentAccess",
+      "src_table": "document_access",
+      "field": "userId",
+      "column": "user_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "DocumentAccess",
+      "src_table": "document_access",
+      "field": "grantedById",
+      "column": "granted_by_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "grantedBy"
+    },
+    {
+      "src_entity": "DocumentComment",
+      "src_table": "document_comments",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "DocumentComment",
+      "src_table": "document_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "document",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "KepCertificate",
+      "src_table": "kep_certificates",
+      "field": "ownerId",
+      "column": "owner_id",
+      "module": "kep",
+      "type": "uuid_fk",
+      "inferred_target": "owner"
+    },
+    {
+      "src_entity": "KepSignature",
+      "src_table": "kep_signatures",
+      "field": "certificateId",
+      "column": "certificate_id",
+      "module": "kep",
+      "type": "uuid_fk",
+      "inferred_target": "certificate"
+    },
+    {
+      "src_entity": "KepSignature",
+      "src_table": "kep_signatures",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "kep",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "KepSigningRequest",
+      "src_table": "kep_signing_requests",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "kep",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "KepSigningRequest",
+      "src_table": "kep_signing_requests",
+      "field": "requesterId",
+      "column": "requester_id",
+      "module": "kep",
+      "type": "uuid_fk",
+      "inferred_target": "requester"
+    },
+    {
+      "src_entity": "KepSigningRequest",
+      "src_table": "kep_signing_requests",
+      "field": "signerId",
+      "column": "signer_id",
+      "module": "kep",
+      "type": "uuid_fk",
+      "inferred_target": "signer"
+    },
+    {
+      "src_entity": "BidComparison",
+      "src_table": "bid_comparisons",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "BidComparison",
+      "src_table": "bid_comparisons",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "BidComparison",
+      "src_table": "bid_comparisons",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "BidComparison",
+      "src_table": "bid_comparisons",
+      "field": "winnerVendorId",
+      "column": "winner_vendor_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "winnerVendor"
+    },
+    {
+      "src_entity": "BidCriteria",
+      "src_table": "bid_criteria",
+      "field": "bidComparisonId",
+      "column": "bid_comparison_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "bidComparison"
+    },
+    {
+      "src_entity": "BidScore",
+      "src_table": "bid_scores",
+      "field": "bidComparisonId",
+      "column": "bid_comparison_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "bidComparison"
+    },
+    {
+      "src_entity": "BidScore",
+      "src_table": "bid_scores",
+      "field": "criteriaId",
+      "column": "criteria_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "criteria"
+    },
+    {
+      "src_entity": "BidScore",
+      "src_table": "bid_scores",
+      "field": "vendorId",
+      "column": "vendor_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "vendor"
+    },
+    {
+      "src_entity": "BidScore",
+      "src_table": "bid_scores",
+      "field": "scoredById",
+      "column": "scored_by_id",
+      "module": "bidScoring",
+      "type": "uuid_fk",
+      "inferred_target": "scoredBy"
+    },
+    {
+      "src_entity": "AnalogRequest",
+      "src_table": "analog_requests",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "AnalogRequest",
+      "src_table": "analog_requests",
+      "field": "originalMaterialId",
+      "column": "original_material_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "originalMaterial"
+    },
+    {
+      "src_entity": "AnalogRequest",
+      "src_table": "analog_requests",
+      "field": "requestedById",
+      "column": "requested_by_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "requestedBy"
+    },
+    {
+      "src_entity": "AnalogRequest",
+      "src_table": "analog_requests",
+      "field": "approvedAnalogId",
+      "column": "approved_analog_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "approvedAnalog"
+    },
+    {
+      "src_entity": "AnalogRequest",
+      "src_table": "analog_requests",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "MaterialAnalog",
+      "src_table": "material_analogs",
+      "field": "originalMaterialId",
+      "column": "original_material_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "originalMaterial"
+    },
+    {
+      "src_entity": "MaterialAnalog",
+      "src_table": "material_analogs",
+      "field": "analogMaterialId",
+      "column": "analog_material_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "analogMaterial"
+    },
+    {
+      "src_entity": "MaterialAnalog",
+      "src_table": "material_analogs",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "SpecItem",
+      "src_table": "spec_items",
+      "field": "specificationId",
+      "column": "specification_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "specification"
+    },
+    {
+      "src_entity": "Specification",
+      "src_table": "specifications",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Specification",
+      "src_table": "specifications",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Specification",
+      "src_table": "specifications",
+      "field": "parentVersionId",
+      "column": "parent_version_id",
+      "module": "specification",
+      "type": "uuid_fk",
+      "inferred_target": "parentVersion"
+    },
+    {
+      "src_entity": "CommissioningChecklist",
+      "src_table": "commissioning_checklists",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CommissioningChecklist",
+      "src_table": "commissioning_checklists",
+      "field": "inspectorId",
+      "column": "inspector_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "inspector"
+    },
+    {
+      "src_entity": "CommissioningChecklist",
+      "src_table": "commissioning_checklists",
+      "field": "signedOffById",
+      "column": "signed_off_by_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "signedOffBy"
+    },
+    {
+      "src_entity": "HandoverPackage",
+      "src_table": "handover_packages",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "HandoverPackage",
+      "src_table": "handover_packages",
+      "field": "recipientContactId",
+      "column": "recipient_contact_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "recipientContact"
+    },
+    {
+      "src_entity": "HandoverPackage",
+      "src_table": "handover_packages",
+      "field": "preparedById",
+      "column": "prepared_by_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "preparedBy"
+    },
+    {
+      "src_entity": "HandoverPackage",
+      "src_table": "handover_packages",
+      "field": "acceptedById",
+      "column": "accepted_by_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "acceptedBy"
+    },
+    {
+      "src_entity": "WarrantyClaim",
+      "src_table": "warranty_claims",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WarrantyClaim",
+      "src_table": "warranty_claims",
+      "field": "handoverPackageId",
+      "column": "handover_package_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "handoverPackage"
+    },
+    {
+      "src_entity": "WarrantyClaim",
+      "src_table": "warranty_claims",
+      "field": "reportedById",
+      "column": "reported_by_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "reportedBy"
+    },
+    {
+      "src_entity": "WarrantyClaim",
+      "src_table": "warranty_claims",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "closeout",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "IoTAlert",
+      "src_table": "iot_alerts",
+      "field": "deviceId",
+      "column": "device_id",
+      "module": "iot",
+      "type": "uuid_fk",
+      "inferred_target": "device"
+    },
+    {
+      "src_entity": "IoTAlert",
+      "src_table": "iot_alerts",
+      "field": "acknowledgedById",
+      "column": "acknowledged_by_id",
+      "module": "iot",
+      "type": "uuid_fk",
+      "inferred_target": "acknowledgedBy"
+    },
+    {
+      "src_entity": "IoTDashboard",
+      "src_table": "iot_dashboards",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "iot",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "IoTDashboard",
+      "src_table": "iot_dashboards",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "iot",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "IoTDevice",
+      "src_table": "iot_devices",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "iot",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "IoTSensorData",
+      "src_table": "iot_sensor_data",
+      "field": "deviceId",
+      "column": "device_id",
+      "module": "iot",
+      "type": "uuid_fk",
+      "inferred_target": "device"
+    },
+    {
+      "src_entity": "SearchHistory",
+      "src_table": "search_history",
+      "field": "userId",
+      "column": "user_id",
+      "module": "search",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "SearchHistory",
+      "src_table": "search_history",
+      "field": "clickedEntityId",
+      "column": "clicked_entity_id",
+      "module": "search",
+      "type": "uuid_fk",
+      "inferred_target": "clickedEntity"
+    },
+    {
+      "src_entity": "SearchIndex",
+      "src_table": "search_index",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "search",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "SearchIndex",
+      "src_table": "search_index",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "search",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "SearchIndex",
+      "src_table": "search_index",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "search",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "SafetyCertificate",
+      "src_table": "safety_certificates",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "SafetyIncident",
+      "src_table": "safety_incidents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "SafetyIncident",
+      "src_table": "safety_incidents",
+      "field": "reportedById",
+      "column": "reported_by_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "reportedBy"
+    },
+    {
+      "src_entity": "SafetyIncident",
+      "src_table": "safety_incidents",
+      "field": "investigatorId",
+      "column": "investigator_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "investigator"
+    },
+    {
+      "src_entity": "SafetyIncident",
+      "src_table": "safety_incidents",
+      "field": "injuredEmployeeId",
+      "column": "injured_employee_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "injuredEmployee"
+    },
+    {
+      "src_entity": "SafetyInspection",
+      "src_table": "safety_inspections",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "SafetyInspection",
+      "src_table": "safety_inspections",
+      "field": "inspectorId",
+      "column": "inspector_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "inspector"
+    },
+    {
+      "src_entity": "SafetyTraining",
+      "src_table": "safety_trainings",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "SafetyTraining",
+      "src_table": "safety_trainings",
+      "field": "instructorId",
+      "column": "instructor_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "instructor"
+    },
+    {
+      "src_entity": "SafetyViolation",
+      "src_table": "safety_violations",
+      "field": "inspectionId",
+      "column": "inspection_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "inspection"
+    },
+    {
+      "src_entity": "SafetyViolation",
+      "src_table": "safety_violations",
+      "field": "incidentId",
+      "column": "incident_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "incident"
+    },
+    {
+      "src_entity": "SafetyViolation",
+      "src_table": "safety_violations",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "safety",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "Project",
+      "src_table": "projects",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Project",
+      "src_table": "projects",
+      "field": "customerId",
+      "column": "customer_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "customer"
+    },
+    {
+      "src_entity": "Project",
+      "src_table": "projects",
+      "field": "managerId",
+      "column": "manager_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "manager"
+    },
+    {
+      "src_entity": "ProjectCollaborator",
+      "src_table": "project_collaborators",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ProjectCollaborator",
+      "src_table": "project_collaborators",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "ProjectMember",
+      "src_table": "project_members",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ProjectMember",
+      "src_table": "project_members",
+      "field": "userId",
+      "column": "user_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "ProjectUpdate",
+      "src_table": "project_updates",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ProjectUpdate",
+      "src_table": "project_updates",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "project",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "BusinessTrip",
+      "src_table": "business_trips",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "BusinessTrip",
+      "src_table": "business_trips",
+      "field": "orderId",
+      "column": "order_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "order"
+    },
+    {
+      "src_entity": "CrewTimeReport",
+      "src_table": "crew_time_reports",
+      "field": "crewId",
+      "column": "crew_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "crew"
+    },
+    {
+      "src_entity": "CrewTimeReport",
+      "src_table": "crew_time_reports",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CrewTimeReport",
+      "src_table": "crew_time_reports",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "EmploymentContract",
+      "src_table": "employment_contracts",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "EmploymentOrder",
+      "src_table": "employment_orders",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "EmploymentOrder",
+      "src_table": "employment_orders",
+      "field": "signedById",
+      "column": "signed_by_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "signedBy"
+    },
+    {
+      "src_entity": "HrCrewAssignment",
+      "src_table": "hr_crew_assignments",
+      "field": "crewId",
+      "column": "crew_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "crew"
+    },
+    {
+      "src_entity": "HrCrewAssignment",
+      "src_table": "hr_crew_assignments",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "HrEmployeeCertificate",
+      "src_table": "hr_employee_certificates",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "HrEmployeeCertificate",
+      "src_table": "hr_employee_certificates",
+      "field": "certificateTypeId",
+      "column": "certificate_type_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "certificateType"
+    },
+    {
+      "src_entity": "HrTimesheetEntry",
+      "src_table": "hr_timesheet_entries",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "HrTimesheetEntry",
+      "src_table": "hr_timesheet_entries",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "HrTimesheetEntry",
+      "src_table": "hr_timesheet_entries",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "HrTimesheetEntry",
+      "src_table": "hr_timesheet_entries",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "MilitaryRecord",
+      "src_table": "military_records",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "PersonalCard",
+      "src_table": "personal_cards",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "SickLeave",
+      "src_table": "sick_leaves",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "SickLeave",
+      "src_table": "sick_leaves",
+      "field": "previousSickLeaveId",
+      "column": "previous_sick_leave_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "previousSickLeave"
+    },
+    {
+      "src_entity": "StaffingTable",
+      "src_table": "staffing_table",
+      "field": "departmentId",
+      "column": "department_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "department"
+    },
+    {
+      "src_entity": "SzvTd",
+      "src_table": "szv_td_reports",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "TimesheetPeriod",
+      "src_table": "timesheet_periods",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "TimesheetPeriod",
+      "src_table": "timesheet_periods",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "Vacation",
+      "src_table": "vacations",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "Vacation",
+      "src_table": "vacations",
+      "field": "orderId",
+      "column": "order_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "order"
+    },
+    {
+      "src_entity": "Vacation",
+      "src_table": "vacations",
+      "field": "substitutingEmployeeId",
+      "column": "substituting_employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "substitutingEmployee"
+    },
+    {
+      "src_entity": "WorkBook",
+      "src_table": "work_books",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hrRussian",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "Faq",
+      "src_table": "faqs",
+      "field": "categoryId",
+      "column": "category_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "category"
+    },
+    {
+      "src_entity": "KnowledgeBase",
+      "src_table": "knowledge_base",
+      "field": "categoryId",
+      "column": "category_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "category"
+    },
+    {
+      "src_entity": "KnowledgeBase",
+      "src_table": "knowledge_base",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "SupportTicket",
+      "src_table": "support_tickets",
+      "field": "reporterId",
+      "column": "reporter_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "reporter"
+    },
+    {
+      "src_entity": "SupportTicket",
+      "src_table": "support_tickets",
+      "field": "assigneeId",
+      "column": "assignee_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "assignee"
+    },
+    {
+      "src_entity": "TicketCategory",
+      "src_table": "ticket_categories",
+      "field": "defaultAssigneeId",
+      "column": "default_assignee_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "defaultAssignee"
+    },
+    {
+      "src_entity": "TicketComment",
+      "src_table": "ticket_comments",
+      "field": "ticketId",
+      "column": "ticket_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "ticket"
+    },
+    {
+      "src_entity": "TicketComment",
+      "src_table": "ticket_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "support",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "GeoLocation",
+      "src_table": "geo_locations",
+      "field": "userId",
+      "column": "user_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "GeoLocation",
+      "src_table": "geo_locations",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "GeoLocation",
+      "src_table": "geo_locations",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "MobileDevice",
+      "src_table": "mobile_devices",
+      "field": "userId",
+      "column": "user_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "OfflineAction",
+      "src_table": "offline_actions",
+      "field": "userId",
+      "column": "user_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "OfflineAction",
+      "src_table": "offline_actions",
+      "field": "deviceId",
+      "column": "device_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "device"
+    },
+    {
+      "src_entity": "OfflineAction",
+      "src_table": "offline_actions",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "PhotoCapture",
+      "src_table": "photo_captures",
+      "field": "userId",
+      "column": "user_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "PhotoCapture",
+      "src_table": "photo_captures",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PhotoCapture",
+      "src_table": "photo_captures",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "PushNotification",
+      "src_table": "push_notifications",
+      "field": "deviceId",
+      "column": "device_id",
+      "module": "mobile",
+      "type": "uuid_fk",
+      "inferred_target": "device"
+    },
+    {
+      "src_entity": "MonthlySchedule",
+      "src_table": "monthly_schedules",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "monthlySchedule",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "MonthlySchedule",
+      "src_table": "monthly_schedules",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "monthlySchedule",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "MonthlyScheduleLine",
+      "src_table": "monthly_schedule_lines",
+      "field": "scheduleId",
+      "column": "schedule_id",
+      "module": "monthlySchedule",
+      "type": "uuid_fk",
+      "inferred_target": "schedule"
+    },
+    {
+      "src_entity": "ImmutableRecord",
+      "src_table": "immutable_records",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "ImmutableRecord",
+      "src_table": "immutable_records",
+      "field": "previousRecordId",
+      "column": "previous_record_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "previousRecord"
+    },
+    {
+      "src_entity": "ImmutableRecord",
+      "src_table": "immutable_records",
+      "field": "recordedById",
+      "column": "recorded_by_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "recordedBy"
+    },
+    {
+      "src_entity": "ImmutableRecord",
+      "src_table": "immutable_records",
+      "field": "supersededById",
+      "column": "superseded_by_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "supersededBy"
+    },
+    {
+      "src_entity": "RecordSupersession",
+      "src_table": "record_supersessions",
+      "field": "originalRecordId",
+      "column": "original_record_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "originalRecord"
+    },
+    {
+      "src_entity": "RecordSupersession",
+      "src_table": "record_supersessions",
+      "field": "supersedingRecordId",
+      "column": "superseding_record_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "supersedingRecord"
+    },
+    {
+      "src_entity": "RecordSupersession",
+      "src_table": "record_supersessions",
+      "field": "supersededById",
+      "column": "superseded_by_id",
+      "module": "immutableAudit",
+      "type": "uuid_fk",
+      "inferred_target": "supersededBy"
+    },
+    {
+      "src_entity": "PurchaseRequest",
+      "src_table": "purchase_requests",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PurchaseRequest",
+      "src_table": "purchase_requests",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "PurchaseRequest",
+      "src_table": "purchase_requests",
+      "field": "specificationId",
+      "column": "specification_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "specification"
+    },
+    {
+      "src_entity": "PurchaseRequest",
+      "src_table": "purchase_requests",
+      "field": "requestedById",
+      "column": "requested_by_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "requestedBy"
+    },
+    {
+      "src_entity": "PurchaseRequest",
+      "src_table": "purchase_requests",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "PurchaseRequest",
+      "src_table": "purchase_requests",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "PurchaseRequestItem",
+      "src_table": "purchase_request_items",
+      "field": "requestId",
+      "column": "request_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "request"
+    },
+    {
+      "src_entity": "PurchaseRequestItem",
+      "src_table": "purchase_request_items",
+      "field": "specItemId",
+      "column": "spec_item_id",
+      "module": "procurement",
+      "type": "uuid_fk",
+      "inferred_target": "specItem"
+    },
+    {
+      "src_entity": "AiConversation",
+      "src_table": "ai_conversations",
+      "field": "userId",
+      "column": "user_id",
+      "module": "ai",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "AiConversation",
+      "src_table": "ai_conversations",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ai",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "AiDocumentAnalysis",
+      "src_table": "ai_document_analyses",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "ai",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "AiMessage",
+      "src_table": "ai_messages",
+      "field": "conversationId",
+      "column": "conversation_id",
+      "module": "ai",
+      "type": "uuid_fk",
+      "inferred_target": "conversation"
+    },
+    {
+      "src_entity": "AiPrediction",
+      "src_table": "ai_predictions",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ai",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "AiUsageLog",
+      "src_table": "ai_usage_logs",
+      "field": "userId",
+      "column": "user_id",
+      "module": "ai",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "Act",
+      "src_table": "act",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Act",
+      "src_table": "act",
+      "field": "executorId",
+      "column": "executor_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "executor"
+    },
+    {
+      "src_entity": "Act",
+      "src_table": "act",
+      "field": "customerId",
+      "column": "customer_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "customer"
+    },
+    {
+      "src_entity": "Act",
+      "src_table": "act",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Act",
+      "src_table": "act",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "EdoDocument",
+      "src_table": "edo_documents",
+      "field": "senderId",
+      "column": "sender_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "sender"
+    },
+    {
+      "src_entity": "EdoDocument",
+      "src_table": "edo_documents",
+      "field": "receiverId",
+      "column": "receiver_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "receiver"
+    },
+    {
+      "src_entity": "EdoDocument",
+      "src_table": "edo_documents",
+      "field": "linkedDocumentId",
+      "column": "linked_document_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "linkedDocument"
+    },
+    {
+      "src_entity": "EdoExchangeLog",
+      "src_table": "edo_exchange_logs",
+      "field": "edoDocumentId",
+      "column": "edo_document_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "edoDocument"
+    },
+    {
+      "src_entity": "EdoExchangeLog",
+      "src_table": "edo_exchange_logs",
+      "field": "performedById",
+      "column": "performed_by_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "performedBy"
+    },
+    {
+      "src_entity": "EdoGeneratedDocument",
+      "src_table": "edo_generated_document",
+      "field": "sourceDocumentId",
+      "column": "source_document_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "sourceDocument"
+    },
+    {
+      "src_entity": "EdoSignature",
+      "src_table": "edo_signatures",
+      "field": "edoDocumentId",
+      "column": "edo_document_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "edoDocument"
+    },
+    {
+      "src_entity": "EdoSignature",
+      "src_table": "edo_signatures",
+      "field": "signerId",
+      "column": "signer_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "signer"
+    },
+    {
+      "src_entity": "InventoryAct",
+      "src_table": "inventory_act",
+      "field": "warehouseId",
+      "column": "warehouse_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "warehouse"
+    },
+    {
+      "src_entity": "InventoryAct",
+      "src_table": "inventory_act",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "InventoryAct",
+      "src_table": "inventory_act",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "KepSignatureRequest",
+      "src_table": "kep_signature_request",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "KepSignatureRequest",
+      "src_table": "kep_signature_request",
+      "field": "requestedById",
+      "column": "requested_by_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "requestedBy"
+    },
+    {
+      "src_entity": "KepSignatureRequest",
+      "src_table": "kep_signature_request",
+      "field": "requestedToId",
+      "column": "requested_to_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "requestedTo"
+    },
+    {
+      "src_entity": "OcrTask",
+      "src_table": "ocr_task",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "OcrTask",
+      "src_table": "ocr_task",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PowerOfAttorney",
+      "src_table": "power_of_attorney",
+      "field": "issuedToId",
+      "column": "issued_to_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "issuedTo"
+    },
+    {
+      "src_entity": "PowerOfAttorney",
+      "src_table": "power_of_attorney",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "PowerOfAttorney",
+      "src_table": "power_of_attorney",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "SchetFaktura",
+      "src_table": "schet_faktura",
+      "field": "sellerId",
+      "column": "seller_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "seller"
+    },
+    {
+      "src_entity": "SchetFaktura",
+      "src_table": "schet_faktura",
+      "field": "buyerId",
+      "column": "buyer_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "buyer"
+    },
+    {
+      "src_entity": "SchetFaktura",
+      "src_table": "schet_faktura",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "SchetFaktura",
+      "src_table": "schet_faktura",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Torg12",
+      "src_table": "torg12",
+      "field": "supplierId",
+      "column": "supplier_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "supplier"
+    },
+    {
+      "src_entity": "Torg12",
+      "src_table": "torg12",
+      "field": "receiverId",
+      "column": "receiver_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "receiver"
+    },
+    {
+      "src_entity": "Torg12",
+      "src_table": "torg12",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Torg12",
+      "src_table": "torg12",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Upd",
+      "src_table": "upd",
+      "field": "sellerId",
+      "column": "seller_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "seller"
+    },
+    {
+      "src_entity": "Upd",
+      "src_table": "upd",
+      "field": "buyerId",
+      "column": "buyer_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "buyer"
+    },
+    {
+      "src_entity": "Upd",
+      "src_table": "upd",
+      "field": "signedById",
+      "column": "signed_by_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "signedBy"
+    },
+    {
+      "src_entity": "Upd",
+      "src_table": "upd",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Upd",
+      "src_table": "upd",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Waybill",
+      "src_table": "waybill",
+      "field": "senderId",
+      "column": "sender_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "sender"
+    },
+    {
+      "src_entity": "Waybill",
+      "src_table": "waybill",
+      "field": "receiverId",
+      "column": "receiver_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "receiver"
+    },
+    {
+      "src_entity": "Waybill",
+      "src_table": "waybill",
+      "field": "carrierId",
+      "column": "carrier_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "carrier"
+    },
+    {
+      "src_entity": "Waybill",
+      "src_table": "waybill",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Waybill",
+      "src_table": "waybill",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WriteOffAct",
+      "src_table": "write_off_act",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "WriteOffAct",
+      "src_table": "write_off_act",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "WriteOffAct",
+      "src_table": "write_off_act",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "russianDoc",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CompletionPercentage",
+      "src_table": "completion_percentages",
+      "field": "revenueContractId",
+      "column": "revenue_contract_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "revenueContract"
+    },
+    {
+      "src_entity": "CompletionPercentage",
+      "src_table": "completion_percentages",
+      "field": "calculatedById",
+      "column": "calculated_by_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "calculatedBy"
+    },
+    {
+      "src_entity": "RevenueAdjustment",
+      "src_table": "revenue_adjustments",
+      "field": "recognitionPeriodId",
+      "column": "recognition_period_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "recognitionPeriod"
+    },
+    {
+      "src_entity": "RevenueAdjustment",
+      "src_table": "revenue_adjustments",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "RevenueContract",
+      "src_table": "revenue_contracts",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "RevenueContract",
+      "src_table": "revenue_contracts",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "RevenueContract",
+      "src_table": "revenue_contracts",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "RevenueRecognitionPeriod",
+      "src_table": "revenue_recognition_periods",
+      "field": "revenueContractId",
+      "column": "revenue_contract_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "revenueContract"
+    },
+    {
+      "src_entity": "RevenueRecognitionPeriod",
+      "src_table": "revenue_recognition_periods",
+      "field": "calculatedById",
+      "column": "calculated_by_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "calculatedBy"
+    },
+    {
+      "src_entity": "RevenueRecognitionPeriod",
+      "src_table": "revenue_recognition_periods",
+      "field": "reviewedById",
+      "column": "reviewed_by_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "reviewedBy"
+    },
+    {
+      "src_entity": "RevenueRecognitionPeriod",
+      "src_table": "revenue_recognition_periods",
+      "field": "postedById",
+      "column": "posted_by_id",
+      "module": "revenueRecognition",
+      "type": "uuid_fk",
+      "inferred_target": "postedBy"
+    },
+    {
+      "src_entity": "Milestone",
+      "src_table": "milestones",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ProjectTask",
+      "src_table": "project_tasks",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ProjectTask",
+      "src_table": "project_tasks",
+      "field": "parentTaskId",
+      "column": "parent_task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "parentTask"
+    },
+    {
+      "src_entity": "ProjectTask",
+      "src_table": "project_tasks",
+      "field": "assigneeId",
+      "column": "assignee_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "assignee"
+    },
+    {
+      "src_entity": "ProjectTask",
+      "src_table": "project_tasks",
+      "field": "reporterId",
+      "column": "reporter_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "reporter"
+    },
+    {
+      "src_entity": "ProjectTask",
+      "src_table": "project_tasks",
+      "field": "specItemId",
+      "column": "spec_item_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "specItem"
+    },
+    {
+      "src_entity": "TaskActivity",
+      "src_table": "task_activities",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "TaskActivity",
+      "src_table": "task_activities",
+      "field": "activityTypeId",
+      "column": "activity_type_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "activityType"
+    },
+    {
+      "src_entity": "TaskActivity",
+      "src_table": "task_activities",
+      "field": "userId",
+      "column": "user_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "TaskApproval",
+      "src_table": "task_approvals",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "TaskApproval",
+      "src_table": "task_approvals",
+      "field": "approverId",
+      "column": "approver_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "approver"
+    },
+    {
+      "src_entity": "TaskChecklist",
+      "src_table": "task_checklists",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "TaskChecklist",
+      "src_table": "task_checklists",
+      "field": "completedById",
+      "column": "completed_by_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "completedBy"
+    },
+    {
+      "src_entity": "TaskComment",
+      "src_table": "task_comments",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "TaskComment",
+      "src_table": "task_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "TaskDependency",
+      "src_table": "task_dependencies",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "TaskDependency",
+      "src_table": "task_dependencies",
+      "field": "dependsOnTaskId",
+      "column": "depends_on_task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "dependsOnTask"
+    },
+    {
+      "src_entity": "TaskRecurrence",
+      "src_table": "task_recurrences",
+      "field": "taskId",
+      "column": "task_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "task"
+    },
+    {
+      "src_entity": "TaskStage",
+      "src_table": "task_stages",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "TaskTag",
+      "src_table": "task_tags",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "task",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CrewAssignment",
+      "src_table": "crew_assignments",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "CrewAssignment",
+      "src_table": "crew_assignments",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CrewTimeEntry",
+      "src_table": "crew_time_entries",
+      "field": "crewId",
+      "column": "crew_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "crew"
+    },
+    {
+      "src_entity": "CrewTimeEntry",
+      "src_table": "crew_time_entries",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "CrewTimeEntry",
+      "src_table": "crew_time_entries",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CrewTimeSheet",
+      "src_table": "crew_time_sheets",
+      "field": "crewId",
+      "column": "crew_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "crew"
+    },
+    {
+      "src_entity": "CrewTimeSheet",
+      "src_table": "crew_time_sheets",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CrewTimeSheet",
+      "src_table": "crew_time_sheets",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "Employee",
+      "src_table": "employees",
+      "field": "userId",
+      "column": "user_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "Employee",
+      "src_table": "employees",
+      "field": "departmentId",
+      "column": "department_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "department"
+    },
+    {
+      "src_entity": "Employee",
+      "src_table": "employees",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "EmployeeCertificate",
+      "src_table": "employee_certificates",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "Timesheet",
+      "src_table": "timesheets",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "Timesheet",
+      "src_table": "timesheets",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Timesheet",
+      "src_table": "timesheets",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "hr",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "BidPackage",
+      "src_table": "bid_packages",
+      "field": "opportunityId",
+      "column": "opportunity_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "opportunity"
+    },
+    {
+      "src_entity": "BidPackage",
+      "src_table": "bid_packages",
+      "field": "bidManagerId",
+      "column": "bid_manager_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "bidManager"
+    },
+    {
+      "src_entity": "BidPackage",
+      "src_table": "bid_packages",
+      "field": "technicalLeadId",
+      "column": "technical_lead_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "technicalLead"
+    },
+    {
+      "src_entity": "Opportunity",
+      "src_table": "opportunities",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Opportunity",
+      "src_table": "opportunities",
+      "field": "ownerId",
+      "column": "owner_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "owner"
+    },
+    {
+      "src_entity": "Opportunity",
+      "src_table": "opportunities",
+      "field": "wonProjectId",
+      "column": "won_project_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "wonProject"
+    },
+    {
+      "src_entity": "Prequalification",
+      "src_table": "prequalifications",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "Prequalification",
+      "src_table": "prequalifications",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "TenderSubmission",
+      "src_table": "tender_submissions",
+      "field": "bidPackageId",
+      "column": "bid_package_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "bidPackage"
+    },
+    {
+      "src_entity": "TenderSubmission",
+      "src_table": "tender_submissions",
+      "field": "submittedById",
+      "column": "submitted_by_id",
+      "module": "portfolio",
+      "type": "uuid_fk",
+      "inferred_target": "submittedBy"
+    },
+    {
+      "src_entity": "ActOsvidetelstvovanie",
+      "src_table": "acts_osvidetelstvovanie",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ActOsvidetelstvovanie",
+      "src_table": "acts_osvidetelstvovanie",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "ActOsvidetelstvovanie",
+      "src_table": "acts_osvidetelstvovanie",
+      "field": "inspectorId",
+      "column": "inspector_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "inspector"
+    },
+    {
+      "src_entity": "AsBuiltDoc",
+      "src_table": "as_built_docs",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "AsBuiltDoc",
+      "src_table": "as_built_docs",
+      "field": "originalDrawingId",
+      "column": "original_drawing_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "originalDrawing"
+    },
+    {
+      "src_entity": "AsBuiltDoc",
+      "src_table": "as_built_docs",
+      "field": "acceptedById",
+      "column": "accepted_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "acceptedBy"
+    },
+    {
+      "src_entity": "ExecutiveScheme",
+      "src_table": "executive_schemes",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ExecutiveScheme",
+      "src_table": "executive_schemes",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "ExecutiveScheme",
+      "src_table": "executive_schemes",
+      "field": "verifiedById",
+      "column": "verified_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "verifiedBy"
+    },
+    {
+      "src_entity": "HiddenWorkAct",
+      "src_table": "hidden_work_acts",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "HiddenWorkAct",
+      "src_table": "hidden_work_acts",
+      "field": "inspectorId",
+      "column": "inspector_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "inspector"
+    },
+    {
+      "src_entity": "HiddenWorkAct",
+      "src_table": "hidden_work_acts",
+      "field": "contractorId",
+      "column": "contractor_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "contractor"
+    },
+    {
+      "src_entity": "InspectionPoint",
+      "src_table": "inspection_points",
+      "field": "qualityPlanId",
+      "column": "quality_plan_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "qualityPlan"
+    },
+    {
+      "src_entity": "Ks11AcceptanceAct",
+      "src_table": "ks11_acceptance_acts",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Ks6Journal",
+      "src_table": "ks6_journals",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Ks6Journal",
+      "src_table": "ks6_journals",
+      "field": "responsibleEngineerId",
+      "column": "responsible_engineer_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "responsibleEngineer"
+    },
+    {
+      "src_entity": "Ks6aRecord",
+      "src_table": "ks6a_records",
+      "field": "ks6JournalId",
+      "column": "ks6_journal_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "ks6Journal"
+    },
+    {
+      "src_entity": "LabTest",
+      "src_table": "lab_tests",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "LabTest",
+      "src_table": "lab_tests",
+      "field": "performedById",
+      "column": "performed_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "performedBy"
+    },
+    {
+      "src_entity": "PtoDocument",
+      "src_table": "pto_documents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PtoDocument",
+      "src_table": "pto_documents",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "PtoDocumentVersion",
+      "src_table": "pto_document_versions",
+      "field": "documentId",
+      "column": "document_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "document"
+    },
+    {
+      "src_entity": "PtoDocumentVersion",
+      "src_table": "pto_document_versions",
+      "field": "uploadedById",
+      "column": "uploaded_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "uploadedBy"
+    },
+    {
+      "src_entity": "QualityPlan",
+      "src_table": "quality_plans",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "QualityPlan",
+      "src_table": "quality_plans",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "Submittal",
+      "src_table": "submittals",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Submittal",
+      "src_table": "submittals",
+      "field": "submittedById",
+      "column": "submitted_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "submittedBy"
+    },
+    {
+      "src_entity": "Submittal",
+      "src_table": "submittals",
+      "field": "reviewedById",
+      "column": "reviewed_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "reviewedBy"
+    },
+    {
+      "src_entity": "SubmittalComment",
+      "src_table": "submittal_comments",
+      "field": "submittalId",
+      "column": "submittal_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "submittal"
+    },
+    {
+      "src_entity": "SubmittalComment",
+      "src_table": "submittal_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "TechnicalSolution",
+      "src_table": "technical_solutions",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "TechnicalSolution",
+      "src_table": "technical_solutions",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "TechnicalSolution",
+      "src_table": "technical_solutions",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "WorkPermit",
+      "src_table": "work_permits",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WorkPermit",
+      "src_table": "work_permits",
+      "field": "issuedById",
+      "column": "issued_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "issuedBy"
+    },
+    {
+      "src_entity": "WorkPermit",
+      "src_table": "work_permits",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "pto",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "BimClash",
+      "src_table": "bim_clashes",
+      "field": "modelAId",
+      "column": "model_a_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "modelA"
+    },
+    {
+      "src_entity": "BimClash",
+      "src_table": "bim_clashes",
+      "field": "modelBId",
+      "column": "model_b_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "modelB"
+    },
+    {
+      "src_entity": "BimClash",
+      "src_table": "bim_clashes",
+      "field": "resolvedById",
+      "column": "resolved_by_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "resolvedBy"
+    },
+    {
+      "src_entity": "BimElement",
+      "src_table": "bim_elements",
+      "field": "modelId",
+      "column": "model_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "model"
+    },
+    {
+      "src_entity": "BimModel",
+      "src_table": "bim_models",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "BimModel",
+      "src_table": "bim_models",
+      "field": "uploadedById",
+      "column": "uploaded_by_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "uploadedBy"
+    },
+    {
+      "src_entity": "BimVersion",
+      "src_table": "bim_versions",
+      "field": "modelId",
+      "column": "model_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "model"
+    },
+    {
+      "src_entity": "BimVersion",
+      "src_table": "bim_versions",
+      "field": "uploadedById",
+      "column": "uploaded_by_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "uploadedBy"
+    },
+    {
+      "src_entity": "BimViewer",
+      "src_table": "bim_viewers",
+      "field": "modelId",
+      "column": "model_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "model"
+    },
+    {
+      "src_entity": "DesignDrawing",
+      "src_table": "design_drawings",
+      "field": "packageId",
+      "column": "package_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "package"
+    },
+    {
+      "src_entity": "DesignPackage",
+      "src_table": "design_packages",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DesignPackage",
+      "src_table": "design_packages",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "DrawingAnnotation",
+      "src_table": "drawing_annotations",
+      "field": "drawingId",
+      "column": "drawing_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "drawing"
+    },
+    {
+      "src_entity": "DrawingAnnotation",
+      "src_table": "drawing_annotations",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "DrawingAnnotation",
+      "src_table": "drawing_annotations",
+      "field": "resolvedById",
+      "column": "resolved_by_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "resolvedBy"
+    },
+    {
+      "src_entity": "DrawingMarkup",
+      "src_table": "drawing_markups",
+      "field": "drawingId",
+      "column": "drawing_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "drawing"
+    },
+    {
+      "src_entity": "DrawingMarkup",
+      "src_table": "drawing_markups",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "PhotoAlbum",
+      "src_table": "photo_albums",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PhotoAlbum",
+      "src_table": "photo_albums",
+      "field": "coverPhotoId",
+      "column": "cover_photo_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "coverPhoto"
+    },
+    {
+      "src_entity": "PhotoComparison",
+      "src_table": "photo_comparisons",
+      "field": "beforePhotoId",
+      "column": "before_photo_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "beforePhoto"
+    },
+    {
+      "src_entity": "PhotoComparison",
+      "src_table": "photo_comparisons",
+      "field": "afterPhotoId",
+      "column": "after_photo_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "afterPhoto"
+    },
+    {
+      "src_entity": "PhotoComparison",
+      "src_table": "photo_comparisons",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PhotoProgress",
+      "src_table": "photo_progress",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "PhotoProgress",
+      "src_table": "photo_progress",
+      "field": "takenById",
+      "column": "taken_by_id",
+      "module": "bim",
+      "type": "uuid_fk",
+      "inferred_target": "takenBy"
+    },
+    {
+      "src_entity": "DailyReport",
+      "src_table": "daily_reports",
+      "field": "workOrderId",
+      "column": "work_order_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "workOrder"
+    },
+    {
+      "src_entity": "DailyReport",
+      "src_table": "daily_reports",
+      "field": "submittedById",
+      "column": "submitted_by_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "submittedBy"
+    },
+    {
+      "src_entity": "Defect",
+      "src_table": "defects",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Defect",
+      "src_table": "defects",
+      "field": "detectedById",
+      "column": "detected_by_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "detectedBy"
+    },
+    {
+      "src_entity": "Defect",
+      "src_table": "defects",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "DispatchOrder",
+      "src_table": "dispatch_orders",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "DispatchOrder",
+      "src_table": "dispatch_orders",
+      "field": "vehicleId",
+      "column": "vehicle_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "vehicle"
+    },
+    {
+      "src_entity": "DispatchOrder",
+      "src_table": "dispatch_orders",
+      "field": "driverId",
+      "column": "driver_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "driver"
+    },
+    {
+      "src_entity": "FieldInstruction",
+      "src_table": "field_instructions",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "FieldInstruction",
+      "src_table": "field_instructions",
+      "field": "issuedById",
+      "column": "issued_by_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "issuedBy"
+    },
+    {
+      "src_entity": "FieldInstruction",
+      "src_table": "field_instructions",
+      "field": "receivedById",
+      "column": "received_by_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "receivedBy"
+    },
+    {
+      "src_entity": "ShiftHandover",
+      "src_table": "shift_handovers",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ShiftHandover",
+      "src_table": "shift_handovers",
+      "field": "fromShiftLeaderId",
+      "column": "from_shift_leader_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "fromShiftLeader"
+    },
+    {
+      "src_entity": "ShiftHandover",
+      "src_table": "shift_handovers",
+      "field": "toShiftLeaderId",
+      "column": "to_shift_leader_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "toShiftLeader"
+    },
+    {
+      "src_entity": "WeatherRecord",
+      "src_table": "weather_records",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WorkOrder",
+      "src_table": "work_orders",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WorkOrder",
+      "src_table": "work_orders",
+      "field": "assignedCrewId",
+      "column": "assigned_crew_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "assignedCrew"
+    },
+    {
+      "src_entity": "WorkOrder",
+      "src_table": "work_orders",
+      "field": "foremanId",
+      "column": "foreman_id",
+      "module": "ops",
+      "type": "uuid_fk",
+      "inferred_target": "foreman"
+    },
+    {
+      "src_entity": "GeneratedReport",
+      "src_table": "generated_reports",
+      "field": "templateId",
+      "column": "template_id",
+      "module": "report",
+      "type": "uuid_fk",
+      "inferred_target": "template"
+    },
+    {
+      "src_entity": "GeneratedReport",
+      "src_table": "generated_reports",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "report",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "GeneratedReport",
+      "src_table": "generated_reports",
+      "field": "generatedById",
+      "column": "generated_by_id",
+      "module": "report",
+      "type": "uuid_fk",
+      "inferred_target": "generatedBy"
+    },
+    {
+      "src_entity": "PrintForm",
+      "src_table": "print_forms",
+      "field": "templateId",
+      "column": "template_id",
+      "module": "report",
+      "type": "uuid_fk",
+      "inferred_target": "template"
+    },
+    {
+      "src_entity": "Budget",
+      "src_table": "budgets",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Budget",
+      "src_table": "budgets",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "BudgetItem",
+      "src_table": "budget_items",
+      "field": "budgetId",
+      "column": "budget_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "budget"
+    },
+    {
+      "src_entity": "CashFlowEntry",
+      "src_table": "cash_flow_entries",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CashFlowEntry",
+      "src_table": "cash_flow_entries",
+      "field": "paymentId",
+      "column": "payment_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "payment"
+    },
+    {
+      "src_entity": "CashFlowEntry",
+      "src_table": "cash_flow_entries",
+      "field": "invoiceId",
+      "column": "invoice_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "invoice"
+    },
+    {
+      "src_entity": "Invoice",
+      "src_table": "invoices",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Invoice",
+      "src_table": "invoices",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Invoice",
+      "src_table": "invoices",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "Invoice",
+      "src_table": "invoices",
+      "field": "ks2Id",
+      "column": "ks2_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "ks2"
+    },
+    {
+      "src_entity": "Invoice",
+      "src_table": "invoices",
+      "field": "ks3Id",
+      "column": "ks3_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "ks3"
+    },
+    {
+      "src_entity": "InvoiceLine",
+      "src_table": "invoice_lines",
+      "field": "invoiceId",
+      "column": "invoice_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "invoice"
+    },
+    {
+      "src_entity": "Payment",
+      "src_table": "payments",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Payment",
+      "src_table": "payments",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Payment",
+      "src_table": "payments",
+      "field": "partnerId",
+      "column": "partner_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "partner"
+    },
+    {
+      "src_entity": "Payment",
+      "src_table": "payments",
+      "field": "invoiceId",
+      "column": "invoice_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "invoice"
+    },
+    {
+      "src_entity": "Payment",
+      "src_table": "payments",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "finance",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "MaintenanceRequest",
+      "src_table": "maintenance_requests",
+      "field": "equipmentId",
+      "column": "equipment_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "equipment"
+    },
+    {
+      "src_entity": "MaintenanceRequest",
+      "src_table": "maintenance_requests",
+      "field": "maintenanceTeamId",
+      "column": "maintenance_team_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "maintenanceTeam"
+    },
+    {
+      "src_entity": "MaintenanceRequest",
+      "src_table": "maintenance_requests",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "MaintenanceRequest",
+      "src_table": "maintenance_requests",
+      "field": "stageId",
+      "column": "stage_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "stage"
+    },
+    {
+      "src_entity": "MaintenanceTeam",
+      "src_table": "maintenance_teams",
+      "field": "leadId",
+      "column": "lead_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "lead"
+    },
+    {
+      "src_entity": "PreventiveSchedule",
+      "src_table": "preventive_schedules",
+      "field": "equipmentId",
+      "column": "equipment_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "equipment"
+    },
+    {
+      "src_entity": "PreventiveSchedule",
+      "src_table": "preventive_schedules",
+      "field": "maintenanceTeamId",
+      "column": "maintenance_team_id",
+      "module": "maintenance",
+      "type": "uuid_fk",
+      "inferred_target": "maintenanceTeam"
+    },
+    {
+      "src_entity": "M29Document",
+      "src_table": "m29_documents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "m29",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "M29Document",
+      "src_table": "m29_documents",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "m29",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "M29Document",
+      "src_table": "m29_documents",
+      "field": "warehouseLocationId",
+      "column": "warehouse_location_id",
+      "module": "m29",
+      "type": "uuid_fk",
+      "inferred_target": "warehouseLocation"
+    },
+    {
+      "src_entity": "M29Document",
+      "src_table": "m29_documents",
+      "field": "ks2Id",
+      "column": "ks2_id",
+      "module": "m29",
+      "type": "uuid_fk",
+      "inferred_target": "ks2"
+    },
+    {
+      "src_entity": "M29Line",
+      "src_table": "m29_lines",
+      "field": "m29Id",
+      "column": "m29_id",
+      "module": "m29",
+      "type": "uuid_fk",
+      "inferred_target": "m29"
+    },
+    {
+      "src_entity": "M29Line",
+      "src_table": "m29_lines",
+      "field": "specItemId",
+      "column": "spec_item_id",
+      "module": "m29",
+      "type": "uuid_fk",
+      "inferred_target": "specItem"
+    },
+    {
+      "src_entity": "Estimate",
+      "src_table": "estimates",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Estimate",
+      "src_table": "estimates",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Estimate",
+      "src_table": "estimates",
+      "field": "specificationId",
+      "column": "specification_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "specification"
+    },
+    {
+      "src_entity": "EstimateItem",
+      "src_table": "estimate_items",
+      "field": "estimateId",
+      "column": "estimate_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "estimate"
+    },
+    {
+      "src_entity": "EstimateItem",
+      "src_table": "estimate_items",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "EstimateItem",
+      "src_table": "estimate_items",
+      "field": "specItemId",
+      "column": "spec_item_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "specItem"
+    },
+    {
+      "src_entity": "EstimateVersion",
+      "src_table": "estimate_versions",
+      "field": "estimateId",
+      "column": "estimate_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "estimate"
+    },
+    {
+      "src_entity": "EstimateVersion",
+      "src_table": "estimate_versions",
+      "field": "parentVersionId",
+      "column": "parent_version_id",
+      "module": "estimate",
+      "type": "uuid_fk",
+      "inferred_target": "parentVersion"
+    },
+    {
+      "src_entity": "EquipmentInspection",
+      "src_table": "equipment_inspections",
+      "field": "vehicleId",
+      "column": "vehicle_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "vehicle"
+    },
+    {
+      "src_entity": "EquipmentInspection",
+      "src_table": "equipment_inspections",
+      "field": "inspectorId",
+      "column": "inspector_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "inspector"
+    },
+    {
+      "src_entity": "FuelRecord",
+      "src_table": "fuel_records",
+      "field": "vehicleId",
+      "column": "vehicle_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "vehicle"
+    },
+    {
+      "src_entity": "FuelRecord",
+      "src_table": "fuel_records",
+      "field": "operatorId",
+      "column": "operator_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "operator"
+    },
+    {
+      "src_entity": "FuelRecord",
+      "src_table": "fuel_records",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "MaintenanceRecord",
+      "src_table": "maintenance_records",
+      "field": "vehicleId",
+      "column": "vehicle_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "vehicle"
+    },
+    {
+      "src_entity": "MaintenanceRecord",
+      "src_table": "maintenance_records",
+      "field": "performedById",
+      "column": "performed_by_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "performedBy"
+    },
+    {
+      "src_entity": "Vehicle",
+      "src_table": "vehicles",
+      "field": "currentProjectId",
+      "column": "current_project_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "currentProject"
+    },
+    {
+      "src_entity": "Vehicle",
+      "src_table": "vehicles",
+      "field": "currentLocationId",
+      "column": "current_location_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "currentLocation"
+    },
+    {
+      "src_entity": "Vehicle",
+      "src_table": "vehicles",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "VehicleAssignment",
+      "src_table": "vehicle_assignments",
+      "field": "vehicleId",
+      "column": "vehicle_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "vehicle"
+    },
+    {
+      "src_entity": "VehicleAssignment",
+      "src_table": "vehicle_assignments",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "VehicleAssignment",
+      "src_table": "vehicle_assignments",
+      "field": "assignedById",
+      "column": "assigned_by_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "assignedBy"
+    },
+    {
+      "src_entity": "VehicleAssignment",
+      "src_table": "vehicle_assignments",
+      "field": "operatorId",
+      "column": "operator_id",
+      "module": "fleet",
+      "type": "uuid_fk",
+      "inferred_target": "operator"
+    },
+    {
+      "src_entity": "AutomationExecution",
+      "src_table": "automation_executions",
+      "field": "automationRuleId",
+      "column": "automation_rule_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "automationRule"
+    },
+    {
+      "src_entity": "AutomationExecution",
+      "src_table": "automation_executions",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "AutomationRule",
+      "src_table": "automation_rules",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "WorkflowDefinition",
+      "src_table": "workflow_definitions",
+      "field": "organizationId",
+      "column": "organization_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "organization"
+    },
+    {
+      "src_entity": "WorkflowDefinition",
+      "src_table": "workflow_definitions",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "WorkflowStep",
+      "src_table": "workflow_steps",
+      "field": "workflowDefinitionId",
+      "column": "workflow_definition_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "workflowDefinition"
+    },
+    {
+      "src_entity": "WorkflowTransition",
+      "src_table": "workflow_transitions",
+      "field": "workflowStepId",
+      "column": "workflow_step_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "workflowStep"
+    },
+    {
+      "src_entity": "WorkflowTransition",
+      "src_table": "workflow_transitions",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "WorkflowTransition",
+      "src_table": "workflow_transitions",
+      "field": "transitionedById",
+      "column": "transitioned_by_id",
+      "module": "workflowEngine",
+      "type": "uuid_fk",
+      "inferred_target": "transitionedBy"
+    },
+    {
+      "src_entity": "SystemEvent",
+      "src_table": "system_events",
+      "field": "userId",
+      "column": "user_id",
+      "module": "monitoring",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "InventoryCheck",
+      "src_table": "inventory_checks",
+      "field": "locationId",
+      "column": "location_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "location"
+    },
+    {
+      "src_entity": "InventoryCheck",
+      "src_table": "inventory_checks",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "InventoryCheck",
+      "src_table": "inventory_checks",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "InventoryCheckLine",
+      "src_table": "inventory_check_lines",
+      "field": "checkId",
+      "column": "check_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "check"
+    },
+    {
+      "src_entity": "InventoryCheckLine",
+      "src_table": "inventory_check_lines",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "StockEntry",
+      "src_table": "stock_entries",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "StockEntry",
+      "src_table": "stock_entries",
+      "field": "locationId",
+      "column": "location_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "location"
+    },
+    {
+      "src_entity": "StockLimit",
+      "src_table": "stock_limits",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "StockLimit",
+      "src_table": "stock_limits",
+      "field": "warehouseLocationId",
+      "column": "warehouse_location_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "warehouseLocation"
+    },
+    {
+      "src_entity": "StockLimitAlert",
+      "src_table": "stock_limit_alerts",
+      "field": "stockLimitId",
+      "column": "stock_limit_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "stockLimit"
+    },
+    {
+      "src_entity": "StockLimitAlert",
+      "src_table": "stock_limit_alerts",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "StockLimitAlert",
+      "src_table": "stock_limit_alerts",
+      "field": "acknowledgedById",
+      "column": "acknowledged_by_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "acknowledgedBy"
+    },
+    {
+      "src_entity": "StockMovement",
+      "src_table": "stock_movements",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "StockMovement",
+      "src_table": "stock_movements",
+      "field": "sourceLocationId",
+      "column": "source_location_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "sourceLocation"
+    },
+    {
+      "src_entity": "StockMovement",
+      "src_table": "stock_movements",
+      "field": "destinationLocationId",
+      "column": "destination_location_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "destinationLocation"
+    },
+    {
+      "src_entity": "StockMovement",
+      "src_table": "stock_movements",
+      "field": "purchaseRequestId",
+      "column": "purchase_request_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "purchaseRequest"
+    },
+    {
+      "src_entity": "StockMovement",
+      "src_table": "stock_movements",
+      "field": "m29Id",
+      "column": "m29_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "m29"
+    },
+    {
+      "src_entity": "StockMovement",
+      "src_table": "stock_movements",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "StockMovementLine",
+      "src_table": "stock_movement_lines",
+      "field": "movementId",
+      "column": "movement_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "movement"
+    },
+    {
+      "src_entity": "StockMovementLine",
+      "src_table": "stock_movement_lines",
+      "field": "materialId",
+      "column": "material_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "material"
+    },
+    {
+      "src_entity": "WarehouseLocation",
+      "src_table": "warehouse_locations",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "WarehouseLocation",
+      "src_table": "warehouse_locations",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "WarehouseLocation",
+      "src_table": "warehouse_locations",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "warehouse",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "Issue",
+      "src_table": "pm_issues",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Issue",
+      "src_table": "pm_issues",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "Issue",
+      "src_table": "pm_issues",
+      "field": "reportedById",
+      "column": "reported_by_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "reportedBy"
+    },
+    {
+      "src_entity": "Issue",
+      "src_table": "pm_issues",
+      "field": "resolvedById",
+      "column": "resolved_by_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "resolvedBy"
+    },
+    {
+      "src_entity": "Issue",
+      "src_table": "pm_issues",
+      "field": "linkedRfiId",
+      "column": "linked_rfi_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "linkedRfi"
+    },
+    {
+      "src_entity": "Issue",
+      "src_table": "pm_issues",
+      "field": "linkedSubmittalId",
+      "column": "linked_submittal_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "linkedSubmittal"
+    },
+    {
+      "src_entity": "IssueComment",
+      "src_table": "pm_issue_comments",
+      "field": "issueId",
+      "column": "issue_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "issue"
+    },
+    {
+      "src_entity": "IssueComment",
+      "src_table": "pm_issue_comments",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "Rfi",
+      "src_table": "rfis",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Rfi",
+      "src_table": "rfis",
+      "field": "assignedToId",
+      "column": "assigned_to_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "assignedTo"
+    },
+    {
+      "src_entity": "Rfi",
+      "src_table": "rfis",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "Rfi",
+      "src_table": "rfis",
+      "field": "answeredById",
+      "column": "answered_by_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "answeredBy"
+    },
+    {
+      "src_entity": "Rfi",
+      "src_table": "rfis",
+      "field": "relatedDrawingId",
+      "column": "related_drawing_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "relatedDrawing"
+    },
+    {
+      "src_entity": "RfiResponse",
+      "src_table": "rfi_responses",
+      "field": "rfiId",
+      "column": "rfi_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "rfi"
+    },
+    {
+      "src_entity": "RfiResponse",
+      "src_table": "rfi_responses",
+      "field": "responderId",
+      "column": "responder_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "responder"
+    },
+    {
+      "src_entity": "SubmittalPackage",
+      "src_table": "pm_submittal_packages",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "SubmittalReview",
+      "src_table": "pm_submittal_reviews",
+      "field": "submittalId",
+      "column": "submittal_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "submittal"
+    },
+    {
+      "src_entity": "SubmittalReview",
+      "src_table": "pm_submittal_reviews",
+      "field": "reviewerId",
+      "column": "reviewer_id",
+      "module": "pmWorkflow",
+      "type": "uuid_fk",
+      "inferred_target": "reviewer"
+    },
+    {
+      "src_entity": "LegalCase",
+      "src_table": "legal_cases",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "LegalCase",
+      "src_table": "legal_cases",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "LegalCase",
+      "src_table": "legal_cases",
+      "field": "responsibleId",
+      "column": "responsible_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "responsible"
+    },
+    {
+      "src_entity": "LegalCase",
+      "src_table": "legal_cases",
+      "field": "lawyerId",
+      "column": "lawyer_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "lawyer"
+    },
+    {
+      "src_entity": "LegalDecision",
+      "src_table": "legal_decisions",
+      "field": "caseId",
+      "column": "case_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "case"
+    },
+    {
+      "src_entity": "LegalRemark",
+      "src_table": "legal_remarks",
+      "field": "caseId",
+      "column": "case_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "case"
+    },
+    {
+      "src_entity": "LegalRemark",
+      "src_table": "legal_remarks",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "legal",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "AuditPermissionChange",
+      "src_table": "permission_audit_log",
+      "field": "userId",
+      "column": "user_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "AuditPermissionChange",
+      "src_table": "permission_audit_log",
+      "field": "targetUserId",
+      "column": "target_user_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "targetUser"
+    },
+    {
+      "src_entity": "AuditPermissionChange",
+      "src_table": "permission_audit_log",
+      "field": "groupId",
+      "column": "group_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "group"
+    },
+    {
+      "src_entity": "FieldAccess",
+      "src_table": "field_access_rules",
+      "field": "groupId",
+      "column": "group_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "group"
+    },
+    {
+      "src_entity": "ModelAccess",
+      "src_table": "model_access_rules",
+      "field": "groupId",
+      "column": "group_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "group"
+    },
+    {
+      "src_entity": "PermissionGroup",
+      "src_table": "permission_groups",
+      "field": "parentGroupId",
+      "column": "parent_group_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "parentGroup"
+    },
+    {
+      "src_entity": "RecordRule",
+      "src_table": "record_rules",
+      "field": "groupId",
+      "column": "group_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "group"
+    },
+    {
+      "src_entity": "UserGroup",
+      "src_table": "user_groups",
+      "field": "userId",
+      "column": "user_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "UserGroup",
+      "src_table": "user_groups",
+      "field": "groupId",
+      "column": "group_id",
+      "module": "permission",
+      "type": "uuid_fk",
+      "inferred_target": "group"
+    },
+    {
+      "src_entity": "ContractClaim",
+      "src_table": "contract_claims",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ContractClaim",
+      "src_table": "contract_claims",
+      "field": "filedById",
+      "column": "filed_by_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "filedBy"
+    },
+    {
+      "src_entity": "ContractGuarantee",
+      "src_table": "contract_guarantees",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ContractInsurance",
+      "src_table": "contract_insurances",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ContractMilestone",
+      "src_table": "contract_milestones",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ContractSla",
+      "src_table": "contract_slas",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "ContractSupplement",
+      "src_table": "contract_supplements",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "LegalDocument",
+      "src_table": "legal_documents",
+      "field": "caseId",
+      "column": "case_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "case"
+    },
+    {
+      "src_entity": "LegalDocument",
+      "src_table": "legal_documents",
+      "field": "uploadedById",
+      "column": "uploaded_by_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "uploadedBy"
+    },
+    {
+      "src_entity": "SlaViolation",
+      "src_table": "sla_violations",
+      "field": "slaId",
+      "column": "sla_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "sla"
+    },
+    {
+      "src_entity": "Tolerance",
+      "src_table": "tolerances",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "contractExt",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CallParticipant",
+      "src_table": "call_participants",
+      "field": "callSessionId",
+      "column": "call_session_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "callSession"
+    },
+    {
+      "src_entity": "CallParticipant",
+      "src_table": "call_participants",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "CallSession",
+      "src_table": "call_sessions",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CallSession",
+      "src_table": "call_sessions",
+      "field": "channelId",
+      "column": "channel_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "channel"
+    },
+    {
+      "src_entity": "CallSession",
+      "src_table": "call_sessions",
+      "field": "initiatorId",
+      "column": "initiator_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "initiator"
+    },
+    {
+      "src_entity": "Channel",
+      "src_table": "channels",
+      "field": "creatorId",
+      "column": "creator_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "creator"
+    },
+    {
+      "src_entity": "Channel",
+      "src_table": "channels",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ChannelMember",
+      "src_table": "channel_members",
+      "field": "channelId",
+      "column": "channel_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "channel"
+    },
+    {
+      "src_entity": "ChannelMember",
+      "src_table": "channel_members",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MailActivity",
+      "src_table": "mail_activities",
+      "field": "recordId",
+      "column": "record_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "record"
+    },
+    {
+      "src_entity": "MailActivity",
+      "src_table": "mail_activities",
+      "field": "activityTypeId",
+      "column": "activity_type_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "activityType"
+    },
+    {
+      "src_entity": "MailActivity",
+      "src_table": "mail_activities",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MailActivity",
+      "src_table": "mail_activities",
+      "field": "assignedUserId",
+      "column": "assigned_user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "assignedUser"
+    },
+    {
+      "src_entity": "MailFollower",
+      "src_table": "mail_followers",
+      "field": "recordId",
+      "column": "record_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "record"
+    },
+    {
+      "src_entity": "MailFollower",
+      "src_table": "mail_followers",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MailFollower",
+      "src_table": "mail_followers",
+      "field": "channelId",
+      "column": "channel_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "channel"
+    },
+    {
+      "src_entity": "MailNotification",
+      "src_table": "mail_notifications",
+      "field": "messageId",
+      "column": "message_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "message"
+    },
+    {
+      "src_entity": "MailNotification",
+      "src_table": "mail_notifications",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MailSubtype",
+      "src_table": "mail_subtypes",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "MailTracking",
+      "src_table": "mail_tracking",
+      "field": "messageId",
+      "column": "message_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "message"
+    },
+    {
+      "src_entity": "Message",
+      "src_table": "messages",
+      "field": "channelId",
+      "column": "channel_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "channel"
+    },
+    {
+      "src_entity": "Message",
+      "src_table": "messages",
+      "field": "authorId",
+      "column": "author_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "author"
+    },
+    {
+      "src_entity": "Message",
+      "src_table": "messages",
+      "field": "parentMessageId",
+      "column": "parent_message_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "parentMessage"
+    },
+    {
+      "src_entity": "MessageFavorite",
+      "src_table": "message_favorites",
+      "field": "messageId",
+      "column": "message_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "message"
+    },
+    {
+      "src_entity": "MessageFavorite",
+      "src_table": "message_favorites",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "MessageReaction",
+      "src_table": "message_reactions",
+      "field": "messageId",
+      "column": "message_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "message"
+    },
+    {
+      "src_entity": "MessageReaction",
+      "src_table": "message_reactions",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "UserStatus",
+      "src_table": "user_statuses",
+      "field": "userId",
+      "column": "user_id",
+      "module": "messaging",
+      "type": "uuid_fk",
+      "inferred_target": "user"
+    },
+    {
+      "src_entity": "Ks2Document",
+      "src_table": "ks2_documents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Ks2Document",
+      "src_table": "ks2_documents",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Ks2Document",
+      "src_table": "ks2_documents",
+      "field": "signedById",
+      "column": "signed_by_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "signedBy"
+    },
+    {
+      "src_entity": "Ks2Line",
+      "src_table": "ks2_lines",
+      "field": "ks2Id",
+      "column": "ks2_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "ks2"
+    },
+    {
+      "src_entity": "Ks2Line",
+      "src_table": "ks2_lines",
+      "field": "specItemId",
+      "column": "spec_item_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "specItem"
+    },
+    {
+      "src_entity": "Ks3Document",
+      "src_table": "ks3_documents",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Ks3Document",
+      "src_table": "ks3_documents",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Ks3Document",
+      "src_table": "ks3_documents",
+      "field": "signedById",
+      "column": "signed_by_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "signedBy"
+    },
+    {
+      "src_entity": "Ks3Ks2Link",
+      "src_table": "ks3_ks2_links",
+      "field": "ks3Id",
+      "column": "ks3_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "ks3"
+    },
+    {
+      "src_entity": "Ks3Ks2Link",
+      "src_table": "ks3_ks2_links",
+      "field": "ks2Id",
+      "column": "ks2_id",
+      "module": "closing",
+      "type": "uuid_fk",
+      "inferred_target": "ks2"
+    },
+    {
+      "src_entity": "LeaveAllocation",
+      "src_table": "leave_allocations",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "leave",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "LeaveAllocation",
+      "src_table": "leave_allocations",
+      "field": "leaveTypeId",
+      "column": "leave_type_id",
+      "module": "leave",
+      "type": "uuid_fk",
+      "inferred_target": "leaveType"
+    },
+    {
+      "src_entity": "LeaveRequest",
+      "src_table": "leave_requests",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "leave",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "LeaveRequest",
+      "src_table": "leave_requests",
+      "field": "leaveTypeId",
+      "column": "leave_type_id",
+      "module": "leave",
+      "type": "uuid_fk",
+      "inferred_target": "leaveType"
+    },
+    {
+      "src_entity": "LeaveRequest",
+      "src_table": "leave_requests",
+      "field": "approverId",
+      "column": "approver_id",
+      "module": "leave",
+      "type": "uuid_fk",
+      "inferred_target": "approver"
+    },
+    {
+      "src_entity": "AbcXyzAnalysis",
+      "src_table": "abc_xyz_analyses",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "AbcXyzAnalysis",
+      "src_table": "abc_xyz_analyses",
+      "field": "entityId",
+      "column": "entity_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "entity"
+    },
+    {
+      "src_entity": "AnalyticsReport",
+      "src_table": "analytics_reports",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "BiDashboard",
+      "src_table": "bi_dashboards",
+      "field": "ownerId",
+      "column": "owner_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "owner"
+    },
+    {
+      "src_entity": "BiWidget",
+      "src_table": "bi_widgets",
+      "field": "dashboardId",
+      "column": "dashboard_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "dashboard"
+    },
+    {
+      "src_entity": "BonusCalculation",
+      "src_table": "bonus_calculations",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "BonusCalculation",
+      "src_table": "bonus_calculations",
+      "field": "approvedById",
+      "column": "approved_by_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "approvedBy"
+    },
+    {
+      "src_entity": "Dashboard",
+      "src_table": "dashboards",
+      "field": "ownerId",
+      "column": "owner_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "owner"
+    },
+    {
+      "src_entity": "DashboardWidget",
+      "src_table": "dashboard_widgets",
+      "field": "dashboardId",
+      "column": "dashboard_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "dashboard"
+    },
+    {
+      "src_entity": "KpiAchievement",
+      "src_table": "kpi_achievements",
+      "field": "employeeId",
+      "column": "employee_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "employee"
+    },
+    {
+      "src_entity": "KpiAchievement",
+      "src_table": "kpi_achievements",
+      "field": "kpiId",
+      "column": "kpi_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "kpi"
+    },
+    {
+      "src_entity": "KpiSnapshot",
+      "src_table": "kpi_snapshots",
+      "field": "kpiId",
+      "column": "kpi_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "kpi"
+    },
+    {
+      "src_entity": "KpiSnapshot",
+      "src_table": "kpi_snapshots",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ReportExecution",
+      "src_table": "report_executions",
+      "field": "reportId",
+      "column": "report_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "report"
+    },
+    {
+      "src_entity": "ReportExecution",
+      "src_table": "report_executions",
+      "field": "executedById",
+      "column": "executed_by_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "executedBy"
+    },
+    {
+      "src_entity": "SavedReport",
+      "src_table": "saved_reports",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "analytics",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "ExportJob",
+      "src_table": "export_jobs",
+      "field": "requestedById",
+      "column": "requested_by_id",
+      "module": "dataExchange",
+      "type": "uuid_fk",
+      "inferred_target": "requestedBy"
+    },
+    {
+      "src_entity": "ExportJob",
+      "src_table": "export_jobs",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "dataExchange",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ImportJob",
+      "src_table": "import_jobs",
+      "field": "mappingId",
+      "column": "mapping_id",
+      "module": "dataExchange",
+      "type": "uuid_fk",
+      "inferred_target": "mapping"
+    },
+    {
+      "src_entity": "ImportJob",
+      "src_table": "import_jobs",
+      "field": "startedById",
+      "column": "started_by_id",
+      "module": "dataExchange",
+      "type": "uuid_fk",
+      "inferred_target": "startedBy"
+    },
+    {
+      "src_entity": "ImportJob",
+      "src_table": "import_jobs",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "dataExchange",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "ImportMapping",
+      "src_table": "import_mappings",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "dataExchange",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    },
+    {
+      "src_entity": "BudgetLine",
+      "src_table": "budget_lines",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "BudgetLine",
+      "src_table": "budget_lines",
+      "field": "costCodeId",
+      "column": "cost_code_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "costCode"
+    },
+    {
+      "src_entity": "CashFlowProjection",
+      "src_table": "cash_flow_projections",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Commitment",
+      "src_table": "commitments",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "Commitment",
+      "src_table": "commitments",
+      "field": "vendorId",
+      "column": "vendor_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "vendor"
+    },
+    {
+      "src_entity": "Commitment",
+      "src_table": "commitments",
+      "field": "contractId",
+      "column": "contract_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "contract"
+    },
+    {
+      "src_entity": "Commitment",
+      "src_table": "commitments",
+      "field": "costCodeId",
+      "column": "cost_code_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "costCode"
+    },
+    {
+      "src_entity": "CommitmentItem",
+      "src_table": "commitment_items",
+      "field": "commitmentId",
+      "column": "commitment_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "commitment"
+    },
+    {
+      "src_entity": "CommitmentItem",
+      "src_table": "commitment_items",
+      "field": "costCodeId",
+      "column": "cost_code_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "costCode"
+    },
+    {
+      "src_entity": "CostCode",
+      "src_table": "cost_codes",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CostCode",
+      "src_table": "cost_codes",
+      "field": "parentId",
+      "column": "parent_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "parent"
+    },
+    {
+      "src_entity": "CostForecast",
+      "src_table": "cost_forecasts",
+      "field": "projectId",
+      "column": "project_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "project"
+    },
+    {
+      "src_entity": "CostForecast",
+      "src_table": "cost_forecasts",
+      "field": "createdById",
+      "column": "created_by_id",
+      "module": "costManagement",
+      "type": "uuid_fk",
+      "inferred_target": "createdBy"
+    }
+  ]
+}

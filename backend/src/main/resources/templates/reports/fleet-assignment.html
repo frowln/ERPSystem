@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Путевой лист'">Путевой лист</title>
+    <link rel="stylesheet" th:href="@{/templates/reports/report-base.css}"
+          href="report-base.css" type="text/css"/>
+    <style>
+        @page { size: A4 portrait; margin: 15mm 12mm 15mm 12mm; }
+        .form-code { text-align: right; font-size: 8pt; margin-bottom: 6pt; }
+        .form-code span { border: 1px solid #000; padding: 2pt 6pt; }
+        .underline { border-bottom: 1px solid #000; display: inline-block; min-width: 100pt; }
+        .vehicle-info { border: 1px solid #333; padding: 8pt; margin-bottom: 12pt; }
+        .fuel-section td { padding: 4pt 6pt; }
+    </style>
+</head>
+<body>
+
+<!-- ── Form code ──────────────────────────────────────────────────────────── -->
+<div class="form-code">
+    Типовая межотраслевая форма <span>№ 3</span>
+</div>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="report-header" style="border-bottom: none;">
+    <div class="org-name" th:text="${organizationName} ?: 'ООО «СтройПроект»'">ООО «СтройПроект»</div>
+    <div class="report-title">ПУТЕВОЙ ЛИСТ<br/>СТРОИТЕЛЬНОЙ МАШИНЫ</div>
+</div>
+
+<!-- ── Meta ────────────────────────────────────────────────────────────────── -->
+<table class="info-grid">
+    <tr>
+        <td class="label">Номер путевого листа:</td>
+        <td th:text="${sheetNumber} ?: '—'">ПЛ-001</td>
+        <td class="label">Дата выдачи:</td>
+        <td th:text="${issueDate} ?: '—'">15.01.2026</td>
+    </tr>
+    <tr>
+        <td class="label">Срок действия:</td>
+        <td colspan="3">
+            с <span th:text="${validFrom} ?: '—'">15.01.2026</span>
+            по <span th:text="${validTo} ?: '—'">15.01.2026</span>
+        </td>
+    </tr>
+</table>
+
+<!-- ── Vehicle information ────────────────────────────────────────────────── -->
+<div class="vehicle-info">
+    <h3 style="margin-bottom:6pt;">Транспортное средство / Машина</h3>
+    <table class="info-grid" style="margin-bottom:0;">
+        <tr>
+            <td class="label">Марка:</td>
+            <td th:text="${vehicleMake} ?: '—'">КАМАЗ 65115</td>
+            <td class="label">Гос. номер:</td>
+            <td th:text="${vehiclePlate} ?: '—'">А 123 ВС 77</td>
+        </tr>
+        <tr>
+            <td class="label">Тип:</td>
+            <td th:text="${vehicleType} ?: '—'">Самосвал</td>
+            <td class="label">Гаражный №:</td>
+            <td th:text="${garageNumber} ?: '—'">015</td>
+        </tr>
+        <tr>
+            <td class="label">Водитель (машинист):</td>
+            <td th:text="${driverName} ?: '—'">Петров П.П.</td>
+            <td class="label">Удостоверение №:</td>
+            <td th:text="${licenseNumber} ?: '—'">77 01 123456</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ── Medical check ──────────────────────────────────────────────────────── -->
+<div class="no-break mb-8">
+    <h3>Медицинский осмотр</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Перед выездом:</td>
+            <td th:text="${medCheckBefore} ?: 'Допущен'">Допущен</td>
+            <td class="label">Время:</td>
+            <td th:text="${medCheckTimeBefore} ?: '—'">07:00</td>
+        </tr>
+        <tr>
+            <td class="label">По возвращении:</td>
+            <td th:text="${medCheckAfter} ?: '—'">—</td>
+            <td class="label">Время:</td>
+            <td th:text="${medCheckTimeAfter} ?: '—'">—</td>
+        </tr>
+    </table>
+    <div class="signature-row" style="margin-top:6pt;">
+        <div class="signature-left">
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись медработника)</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── Technical condition ─────────────────────────────────────────────────── -->
+<div class="no-break mb-8">
+    <h3>Техническое состояние</h3>
+    <table class="info-grid">
+        <tr>
+            <td class="label">Техническое состояние:</td>
+            <td th:text="${technicalCondition} ?: 'Исправен'">Исправен</td>
+        </tr>
+        <tr>
+            <td class="label">Механик:</td>
+            <td th:text="${mechanicName} ?: '—'">Сидоров С.С.</td>
+        </tr>
+    </table>
+    <div class="signature-row" style="margin-top:6pt;">
+        <div class="signature-left">
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись механика)</p>
+        </div>
+    </div>
+</div>
+
+<!-- ── Odometer and fuel ──────────────────────────────────────────────────── -->
+<div class="no-break mb-8">
+    <h3>Показания одометра и расход ГСМ</h3>
+    <table class="data-table" style="width:80%;">
+        <thead>
+            <tr>
+                <th style="width:30%;">Показатель</th>
+                <th style="width:23%;">При выезде</th>
+                <th style="width:23%;">При возвращении</th>
+                <th style="width:24%;">Итого</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Показание одометра, км</td>
+                <td class="number" th:text="${odometerStart != null} ? ${#numbers.formatDecimal(odometerStart, 1, 0)} : '—'">125 430</td>
+                <td class="number" th:text="${odometerEnd != null} ? ${#numbers.formatDecimal(odometerEnd, 1, 0)} : '—'">125 580</td>
+                <td class="number" th:text="${odometerTotal != null} ? ${#numbers.formatDecimal(odometerTotal, 1, 0)} : '—'">150</td>
+            </tr>
+            <tr>
+                <td>Моточасы</td>
+                <td class="number" th:text="${engineHoursStart != null} ? ${#numbers.formatDecimal(engineHoursStart, 1, 1)} : '—'">5 420.5</td>
+                <td class="number" th:text="${engineHoursEnd != null} ? ${#numbers.formatDecimal(engineHoursEnd, 1, 1)} : '—'">5 428.5</td>
+                <td class="number" th:text="${engineHoursTotal != null} ? ${#numbers.formatDecimal(engineHoursTotal, 1, 1)} : '—'">8.0</td>
+            </tr>
+            <tr>
+                <td>Остаток топлива, л</td>
+                <td class="number" th:text="${fuelStart != null} ? ${#numbers.formatDecimal(fuelStart, 1, 1)} : '—'">180.0</td>
+                <td class="number" th:text="${fuelEnd != null} ? ${#numbers.formatDecimal(fuelEnd, 1, 1)} : '—'">130.0</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Выдано топлива, л</td>
+                <td colspan="2" class="center" th:text="${fuelIssued != null} ? ${#numbers.formatDecimal(fuelIssued, 1, 1)} : '0.0'">0.0</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Расход топлива по норме, л</td>
+                <td colspan="2" class="center" th:text="${fuelNorm != null} ? ${#numbers.formatDecimal(fuelNorm, 1, 1)} : '—'">48.0</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Расход топлива фактический, л</td>
+                <td colspan="2" class="center" th:text="${fuelActual != null} ? ${#numbers.formatDecimal(fuelActual, 1, 1)} : '—'">50.0</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Route / Assignment ─────────────────────────────────────────────────── -->
+<div class="no-break mb-8">
+    <h3>Маршрут движения / Задание</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:5%;">№</th>
+                <th style="width:25%;">Откуда</th>
+                <th style="width:25%;">Куда</th>
+                <th style="width:10%;">Время<br/>выезда</th>
+                <th style="width:10%;">Время<br/>прибытия</th>
+                <th style="width:25%;">Выполненная работа / Груз</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="trip, iter : ${trips}" th:if="${trips != null}">
+                <td class="center" th:text="${iter.count}">1</td>
+                <td th:text="${trip.from}">База</td>
+                <td th:text="${trip.to}">Объект «Панорама»</td>
+                <td class="center" th:text="${trip.departureTime}">08:00</td>
+                <td class="center" th:text="${trip.arrivalTime}">08:45</td>
+                <td th:text="${trip.work} ?: '—'">Доставка щебня, 10 т</td>
+            </tr>
+            <tr th:if="${trips == null or trips.isEmpty()}">
+                <td class="center">1</td>
+                <td>—</td><td>—</td><td class="center">—</td>
+                <td class="center">—</td><td>—</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ── Signatures ─────────────────────────────────────────────────────────── -->
+<div class="signature-block">
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Диспетчер:</p>
+            <p th:text="${dispatcher} ?: '________________________'">Диспетчер</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+        <div class="signature-right">
+            <p class="text-bold">Водитель (машинист):</p>
+            <p th:text="${driverName} ?: '________________________'">Водитель</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+    <div class="signature-row">
+        <div class="signature-left">
+            <p class="text-bold">Работу принял (прораб):</p>
+            <p th:text="${foremanName} ?: '________________________'">Прораб</p>
+            <div class="signature-line"></div>
+            <p class="signature-caption">(подпись, расшифровка подписи)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
