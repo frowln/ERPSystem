@@ -61,3 +61,61 @@ export interface ChangeOrderLineItem {
   amount: number;
   costCode?: string;
 }
+
+export interface AffectedWbsNode {
+  wbsNodeId: string;
+  wbsCode: string;
+  wbsName: string;
+  impactDays: number;
+}
+
+export interface ChangeOrderImpactItem {
+  changeOrderId: string;
+  number: string;
+  title: string;
+  scheduleImpactDays: number;
+  affectsCriticalPath: boolean;
+}
+
+export interface ChangeOrderScheduleImpact {
+  totalScheduleImpactDays: number;
+  criticalPathImpactDays: number;
+  changeOrdersOnCriticalPath: number;
+  totalChangeOrders: number;
+  affectedNodes: AffectedWbsNode[];
+  changeOrderImpacts: ChangeOrderImpactItem[];
+}
+
+export interface BudgetImpactByType {
+  type: string;
+  amount: number;
+  count: number;
+}
+
+export interface BudgetImpactMonthly {
+  month: string;
+  additions: number;
+  deductions: number;
+  cumulativeChange: number;
+  amount: number;
+  count: number;
+}
+
+export interface MonthlyTrendPoint {
+  month: string;
+  events: number;
+  orders: number;
+  cumulativeCost: number;
+}
+
+export interface SourceBreakdown {
+  source: string;
+  count: number;
+  totalCostImpact: number;
+}
+
+export interface TypeBreakdown {
+  type: string;
+  count: number;
+  totalAmount: number;
+}

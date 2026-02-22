@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -59,4 +60,10 @@ public class HiddenWorkAct extends BaseEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "act_number", length = 50)
+    private String actNumber;
+
+    @Column(name = "signed_at")
+    private Instant signedAt;
 }

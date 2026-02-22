@@ -38,4 +38,16 @@ export const specificationsApi = {
     const response = await apiClient.put<Specification>(`/specifications/${id}`, data);
     return response.data;
   },
+
+  getSupplySummary: async (specId: string): Promise<{ total: number; fullyCovered: number; partiallyCovered: number; notCovered: number }> => {
+    const items = await specificationsApi.getSpecItems(specId);
+    const fullyCovered = items.filter(i => i.supplyStatus === 'FULLY_COVERED').length;
+    const partiallyCovered = items.filter(i => i.supplyStatus === 'PARTIALLY_COVERED').length;
+    const notCovered = items.filter(i => !i.supplyStatus || i.supplyStatus === 'NOT_COVERED').length;
+    return { total: items.length, fullyCovered, partiallyCovered, notCovered };
+  },
+
+  recalculateSupplyStatus: async (specId: string): Promise<void> => {
+    await apiClient.post(`/specifications/${specId}/recalculate-supply`);
+  },
 };

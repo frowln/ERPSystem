@@ -22,6 +22,11 @@ public record SpecItemResponse(
         String procurementStatus,
         String estimateStatus,
         boolean isCustomerProvided,
+        String supplyStatus,
+        BigDecimal coveredQuantity,
+        BigDecimal bestPrice,
+        String bestVendorName,
+        UUID budgetItemId,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -41,6 +46,11 @@ public record SpecItemResponse(
                 item.getProcurementStatus(),
                 item.getEstimateStatus(),
                 item.isCustomerProvided(),
+                item.getSupplyStatus(),
+                item.getCoveredQuantity(),
+                item.getBestPrice(),
+                item.getBestVendorName(),
+                item.getBudgetItemId(),
                 item.getCreatedAt(),
                 item.getUpdatedAt()
         );

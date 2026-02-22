@@ -64,3 +64,56 @@ export interface AutomationExecution {
   inputData?: string;
   outputData?: string;
 }
+
+// Approval inbox types
+export type ApprovalInstanceStatus = 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'ESCALATED';
+
+export interface ApprovalInstance {
+  id: string;
+  entityType: string;
+  entityId: string;
+  entityNumber?: string;
+  currentStepName?: string;
+  status: ApprovalInstanceStatus;
+  slaDeadline?: string;
+  isOverdue?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Condition builder types
+export type ConditionOperator = 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'in_list';
+export type ConditionLogic = 'AND' | 'OR';
+
+export interface ConditionRow {
+  id: string;
+  field: string;
+  operator: ConditionOperator;
+  value: string;
+}
+
+export interface ConditionGroup {
+  id: string;
+  logic: ConditionLogic;
+  conditions: ConditionRow[];
+}
+
+export interface ConditionConfig {
+  logic: ConditionLogic;
+  groups: ConditionGroup[];
+}
+
+// Rule template types
+export type RuleTemplateCategory = 'APPROVAL' | 'NOTIFICATION' | 'ASSIGNMENT' | 'ESCALATION' | 'BUDGET';
+
+export interface RuleTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: RuleTemplateCategory;
+  icon: string;
+  triggerType: TriggerType;
+  actionType: ActionType;
+  defaultConditions: ConditionConfig;
+  defaultActionConfig: Record<string, unknown>;
+}

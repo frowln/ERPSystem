@@ -18,6 +18,8 @@ import java.util.UUID;
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSpecificationExecutor<Contract> {
 
+    Optional<Contract> findByIdAndDeletedFalse(UUID id);
+
     Optional<Contract> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
 
     Optional<Contract> findByOrganizationIdAndNumberAndDeletedFalse(UUID organizationId, String number);
@@ -29,6 +31,8 @@ public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSp
     Page<Contract> findByOrganizationIdAndPartnerIdAndDeletedFalse(UUID organizationId, UUID partnerId, Pageable pageable);
 
     Page<Contract> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
+
+    List<Contract> findByProjectIdAndDeletedFalse(UUID projectId);
 
     Page<Contract> findByStatusAndDeletedFalse(ContractStatus status, Pageable pageable);
 

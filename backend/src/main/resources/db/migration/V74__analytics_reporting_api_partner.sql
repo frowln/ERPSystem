@@ -324,6 +324,55 @@ CREATE TABLE IF NOT EXISTS webhook_deliveries (
     ))
 );
 
+-- Compatibility with legacy schema from V27 (`webhook_id`, `event_type`, `attempt`)
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS webhook_config_id UUID;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS event VARCHAR(100);
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS sent_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS attempt_count INTEGER;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'webhook_deliveries'
+          AND column_name = 'webhook_id'
+    ) THEN
+        EXECUTE 'UPDATE webhook_deliveries
+                 SET webhook_config_id = COALESCE(webhook_config_id, webhook_id)
+                 WHERE webhook_config_id IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'webhook_deliveries'
+          AND column_name = 'event_type'
+    ) THEN
+        EXECUTE 'UPDATE webhook_deliveries
+                 SET event = COALESCE(event, event_type)
+                 WHERE event IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'webhook_deliveries'
+          AND column_name = 'attempt'
+    ) THEN
+        EXECUTE 'UPDATE webhook_deliveries
+                 SET attempt_count = COALESCE(attempt_count, attempt)
+                 WHERE attempt_count IS NULL';
+    END IF;
+
+    EXECUTE 'UPDATE webhook_deliveries
+             SET attempt_count = COALESCE(attempt_count, 0)';
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_webhook_delivery_config ON webhook_deliveries(webhook_config_id);
 CREATE INDEX IF NOT EXISTS idx_webhook_delivery_status ON webhook_deliveries(status);
 CREATE INDEX IF NOT EXISTS idx_webhook_delivery_event ON webhook_deliveries(event);

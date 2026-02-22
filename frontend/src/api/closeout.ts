@@ -3,10 +3,14 @@ import type { PaginatedResponse, PaginationParams } from '@/types';
 import type {
   CommissioningChecklist,
   ChecklistStatus,
+  CommissioningChecklistTemplate,
   HandoverPackage,
   HandoverStatus,
   WarrantyClaim,
   WarrantyClaimStatus,
+  AsBuiltWbsProgress,
+  WarrantyObligation,
+  ZosDocument,
 } from '@/modules/closeout/types';
 
 interface BackendCommissioningChecklistResponse {
@@ -463,4 +467,84 @@ export const closeoutApi = {
 
   changeWarrantyStatus: async (id: string, status: WarrantyClaimStatus): Promise<WarrantyClaim> =>
     closeoutApi.updateWarrantyClaim(id, { status }),
+
+  // ---- As-Built Tracker ----
+
+  getAsBuiltProgress: async (projectId: string): Promise<AsBuiltWbsProgress[]> => {
+    const response = await apiClient.get<AsBuiltWbsProgress[]>(`/closeout/as-built/${projectId}/progress`);
+    return response.data;
+  },
+
+  // ---- Commissioning Templates ----
+
+  getCommissioningTemplates: async (params?: { size?: number }): Promise<PaginatedResponse<CommissioningChecklistTemplate>> => {
+    const response = await apiClient.get<PaginatedResponse<CommissioningChecklistTemplate>>('/commissioning-templates', { params });
+    return response.data;
+  },
+
+  createCommissioningTemplate: async (data: Partial<CommissioningChecklistTemplate>): Promise<CommissioningChecklistTemplate> => {
+    const response = await apiClient.post<CommissioningChecklistTemplate>('/commissioning-templates', data);
+    return response.data;
+  },
+
+  updateCommissioningTemplate: async (id: string, data: Partial<CommissioningChecklistTemplate>): Promise<CommissioningChecklistTemplate> => {
+    const response = await apiClient.put<CommissioningChecklistTemplate>(`/commissioning-templates/${id}`, data);
+    return response.data;
+  },
+
+  deleteCommissioningTemplate: async (id: string): Promise<void> => {
+    await apiClient.delete(`/commissioning-templates/${id}`);
+  },
+
+  // ---- Warranty Obligations ----
+
+  getWarrantyDashboard: async (): Promise<{
+    totalActive: number;
+    totalExpiringSoon: number;
+    totalExpired: number;
+    upcomingExpirations: WarrantyObligation[];
+  }> => {
+    const response = await apiClient.get('/closeout/warranty-obligations/dashboard');
+    return response.data;
+  },
+
+  getWarrantyObligations: async (params?: { size?: number }): Promise<PaginatedResponse<WarrantyObligation>> => {
+    const response = await apiClient.get<PaginatedResponse<WarrantyObligation>>('/closeout/warranty-obligations', { params });
+    return response.data;
+  },
+
+  createWarrantyObligation: async (data: Partial<WarrantyObligation>): Promise<WarrantyObligation> => {
+    const response = await apiClient.post<WarrantyObligation>('/closeout/warranty-obligations', data);
+    return response.data;
+  },
+
+  updateWarrantyObligation: async (id: string, data: Partial<WarrantyObligation>): Promise<WarrantyObligation> => {
+    const response = await apiClient.put<WarrantyObligation>(`/closeout/warranty-obligations/${id}`, data);
+    return response.data;
+  },
+
+  deleteWarrantyObligation: async (id: string): Promise<void> => {
+    await apiClient.delete(`/closeout/warranty-obligations/${id}`);
+  },
+
+  // ---- ZOS Documents ----
+
+  getZosDocuments: async (params?: { size?: number }): Promise<PaginatedResponse<ZosDocument>> => {
+    const response = await apiClient.get<PaginatedResponse<ZosDocument>>('/closeout/zos-documents', { params });
+    return response.data;
+  },
+
+  createZosDocument: async (data: Partial<ZosDocument>): Promise<ZosDocument> => {
+    const response = await apiClient.post<ZosDocument>('/closeout/zos-documents', data);
+    return response.data;
+  },
+
+  updateZosDocument: async (id: string, data: Partial<ZosDocument>): Promise<ZosDocument> => {
+    const response = await apiClient.put<ZosDocument>(`/closeout/zos-documents/${id}`, data);
+    return response.data;
+  },
+
+  deleteZosDocument: async (id: string): Promise<void> => {
+    await apiClient.delete(`/closeout/zos-documents/${id}`);
+  },
 };

@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
 
@@ -22,12 +23,16 @@ import java.util.UUID;
         @Index(name = "idx_spec_status", columnList = "status"),
         @Index(name = "idx_spec_parent_version", columnList = "parent_version_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Specification extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;

@@ -6,6 +6,9 @@ import type {
   KepSignature,
   KepSigningStatus,
   CreateKepSigningRequest,
+  OcspValidationResult,
+  MchDDocument,
+  CreateMchDRequest,
 } from './types';
 
 export interface KepCertificateFilters extends PaginationParams {
@@ -102,5 +105,33 @@ export const kepApi = {
 
   deleteSigningRequest: async (id: string): Promise<void> => {
     await apiClient.delete(`/v1/kep/signing-requests/${id}`);
+  },
+
+  // ---- OCSP Validation ----
+
+  validateCertificateOcsp: async (id: string): Promise<OcspValidationResult> => {
+    const response = await apiClient.post<OcspValidationResult>(`/v1/kep/certificates/${id}/ocsp`);
+    return response.data;
+  },
+
+  // ---- Machine-Readable Power of Attorney (MChD) ----
+
+  getMchDList: async (params?: PaginationParams): Promise<PaginatedResponse<MchDDocument>> => {
+    const response = await apiClient.get<PaginatedResponse<MchDDocument>>('/v1/kep/mchd', { params });
+    return response.data;
+  },
+
+  createMchD: async (data: CreateMchDRequest): Promise<MchDDocument> => {
+    const response = await apiClient.post<MchDDocument>('/v1/kep/mchd', data);
+    return response.data;
+  },
+
+  revokeMchD: async (id: string): Promise<MchDDocument> => {
+    const response = await apiClient.post<MchDDocument>(`/v1/kep/mchd/${id}/revoke`);
+    return response.data;
+  },
+
+  deleteMchD: async (id: string): Promise<void> => {
+    await apiClient.delete(`/v1/kep/mchd/${id}`);
   },
 };

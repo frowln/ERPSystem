@@ -171,6 +171,57 @@ export interface ReportingDeadline {
   updatedAt: string;
 }
 
+// Prescriptions
+export type PrescriptionStatus =
+  | 'RECEIVED'
+  | 'UNDER_REVIEW'
+  | 'IN_PROGRESS'
+  | 'RESPONSE_SUBMITTED'
+  | 'COMPLETED'
+  | 'APPEALED'
+  | 'OVERDUE'
+  | 'CLOSED';
+
+export type RegulatoryBodyType =
+  | 'GIT'
+  | 'ROSTEKHNADZOR'
+  | 'STROYNADZOR'
+  | 'MCHS'
+  | 'ROSPOTREBNADZOR'
+  | 'ENVIRONMENTAL'
+  | 'OTHER';
+
+export interface Prescription {
+  id: string;
+  number: string;
+  description: string;
+  regulatoryBodyType?: RegulatoryBodyType;
+  regulatoryBodyTypeDisplayName?: string;
+  status: PrescriptionStatus;
+  projectId?: string;
+  projectName?: string;
+  responsibleName?: string;
+  receivedDate?: string;
+  deadline?: string;
+  appealDeadline?: string;
+  fineAmount?: number;
+  correctiveActionCost?: number;
+  violationCount: number;
+  regulatoryReference?: string;
+  notes?: string;
+  evidenceUrl?: string;
+  responseLetterUrl?: string;
+  overdue?: boolean;
+  daysUntilDeadline?: number;
+  appealWindowOpen?: boolean;
+  appealFiled?: boolean;
+  appealDate?: string;
+  responseSubmittedAt?: string;
+  completedAt?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 export interface ReportingSubmission {
   id: string;
   deadlineId: string;

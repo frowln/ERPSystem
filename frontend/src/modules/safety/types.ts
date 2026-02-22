@@ -86,3 +86,29 @@ export interface CreateIncidentRequest {
   description: string;
   injuredPersons: number;
 }
+
+export type TrainingStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+export type TrainingType = 'INITIAL' | 'PRIMARY' | 'PERIODIC' | 'UNSCHEDULED' | 'SPECIAL';
+
+export interface SafetyTraining {
+  id: string;
+  title: string;
+  trainingType: TrainingType;
+  trainingTypeDisplayName: string;
+  status: TrainingStatus;
+  projectId?: string;
+  projectName?: string;
+  date: string;
+  instructorId?: string;
+  instructorName?: string;
+  participants?: string;
+  participantCount: number;
+  topics?: string;
+  duration?: number;
+  notes?: string;
+  gostNumber?: string;
+  completedAt?: string;
+  nextScheduledDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

@@ -124,13 +124,13 @@ const PayrollTemplateFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.common.basicInfo')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.payrollTemplate.labelCode')} error={errors.code?.message} required>
-              <Input placeholder="ШТ-ИС-01" hasError={!!errors.code} {...register('code')} />
+              <Input placeholder={t('forms.payrollTemplate.placeholderCode')} hasError={!!errors.code} {...register('code')} />
             </FormField>
             <FormField label={t('forms.payrollTemplate.labelType')} error={errors.type?.message} required>
               <Select options={typeOptions} placeholder={t('forms.payrollTemplate.placeholderType')} hasError={!!errors.type} {...register('type')} />
             </FormField>
             <FormField label={t('forms.payrollTemplate.labelName')} error={errors.name?.message} required className="sm:col-span-2">
-              <Input placeholder="Инженер-строитель" hasError={!!errors.name} {...register('name')} />
+              <Input placeholder={t('forms.payrollTemplate.placeholderName')} hasError={!!errors.name} {...register('name')} />
             </FormField>
           </div>
         </section>

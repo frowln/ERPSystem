@@ -144,13 +144,13 @@ const PriceCoefficientFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.common.basicInfo')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.priceCoefficient.labelCode')} error={errors.code?.message} required>
-              <Input placeholder="КР-МСК-2026" hasError={!!errors.code} {...register('code')} />
+              <Input placeholder={t('forms.priceCoefficient.placeholderCode')} hasError={!!errors.code} {...register('code')} />
             </FormField>
             <FormField label={t('forms.priceCoefficient.labelType')} error={errors.type?.message} required>
               <Select options={typeOptions} placeholder={t('forms.priceCoefficient.placeholderType')} hasError={!!errors.type} {...register('type')} />
             </FormField>
             <FormField label={t('forms.priceCoefficient.labelName')} error={errors.name?.message} required className="sm:col-span-2">
-              <Input placeholder="Региональный коэффициент Москва" hasError={!!errors.name} {...register('name')} />
+              <Input placeholder={t('forms.priceCoefficient.placeholderName')} hasError={!!errors.name} {...register('name')} />
             </FormField>
             <FormField label={t('forms.priceCoefficient.labelValue')} error={errors.value?.message} required>
               <Input type="text" inputMode="decimal" placeholder="1.35" hasError={!!errors.value} {...register('value')} />

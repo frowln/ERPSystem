@@ -109,4 +109,22 @@ public class Vehicle extends BaseEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "useful_life_years", precision = 5, scale = 2)
+    private BigDecimal usefulLifeYears;
+
+    @Column(name = "annual_working_hours", precision = 8, scale = 2)
+    private BigDecimal annualWorkingHours;
+
+    @Column(name = "avg_monthly_maintenance_cost", precision = 12, scale = 2)
+    private BigDecimal avgMonthlyMaintenanceCost;
+
+    @Column(name = "monthly_insurance_cost", precision = 12, scale = 2)
+    private BigDecimal monthlyInsuranceCost;
+
+    @Column(name = "monthly_operator_cost", precision = 12, scale = 2)
+    private BigDecimal monthlyOperatorCost;
+
+    @Column(name = "market_rental_rate_per_hour", precision = 10, scale = 2)
+    private BigDecimal marketRentalRatePerHour;
 }

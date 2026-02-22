@@ -4,13 +4,17 @@ import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.Contract;
 import com.privod.platform.modules.contract.repository.ContractRepository;
+import com.privod.platform.modules.finance.domain.Invoice;
+import com.privod.platform.modules.finance.domain.InvoiceMatchingStatus;
 import com.privod.platform.modules.finance.domain.Payment;
 import com.privod.platform.modules.finance.domain.PaymentStatus;
 import com.privod.platform.modules.finance.domain.PaymentType;
+import com.privod.platform.modules.finance.repository.InvoiceRepository;
 import com.privod.platform.modules.finance.repository.PaymentRepository;
 import com.privod.platform.modules.finance.web.dto.CreatePaymentRequest;
 import com.privod.platform.modules.finance.web.dto.PaymentResponse;
 import com.privod.platform.modules.finance.web.dto.PaymentSummaryResponse;
+import com.privod.platform.modules.finance.web.dto.ThreeWayMatchResult;
 import com.privod.platform.modules.finance.web.dto.UpdatePaymentRequest;
 import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,9 +40,12 @@ import java.util.UUID;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final InvoiceRepository invoiceRepository;
     private final ContractRepository contractRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
+    private final BudgetItemSyncService budgetItemSyncService;
+    private final InvoiceMatchingEngine invoiceMatchingEngine;
 
     @Transactional(readOnly = true)
     public Page<PaymentResponse> listPayments(UUID projectId, PaymentStatus status,
@@ -136,6 +143,7 @@ public class PaymentService {
         validateProjectTenant(projectId, organizationId);
 
         Payment payment = Payment.builder()
+                .organizationId(organizationId)
                 .number(number)
                 .paymentDate(request.paymentDate())
                 .projectId(projectId)
@@ -227,6 +235,7 @@ public class PaymentService {
             throw new IllegalStateException(
                     String.format("Невозможно утвердить платёж из статуса %s", oldStatus.getDisplayName()));
         }
+        enforceThreeWayMatch(payment, organizationId);
 
         payment.setStatus(PaymentStatus.APPROVED);
         payment.setApprovedAt(Instant.now());
@@ -248,10 +257,16 @@ public class PaymentService {
                     String.format("Невозможно отметить платёж как оплаченный из статуса %s",
                             oldStatus.getDisplayName()));
         }
+        enforceThreeWayMatch(payment, organizationId);
 
         payment.setStatus(PaymentStatus.PAID);
         payment.setPaidAt(Instant.now());
         payment = paymentRepository.save(payment);
+        if (payment.getContractId() != null
+                && payment.getTotalAmount() != null
+                && payment.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
+            budgetItemSyncService.onPaymentRegistered(payment.getContractId(), payment.getTotalAmount());
+        }
         auditService.logStatusChange("Payment", payment.getId(), oldStatus.name(), PaymentStatus.PAID.name());
 
         log.info("Платёж оплачен: {} ({})", payment.getNumber(), payment.getId());
@@ -305,6 +320,49 @@ public class PaymentService {
 
     private List<UUID> getOrganizationProjectIds(UUID organizationId) {
         return projectRepository.findAllIdsByOrganizationIdAndDeletedFalse(organizationId);
+    }
+
+    private void enforceThreeWayMatch(Payment payment, UUID organizationId) {
+        if (payment.getPaymentType() != PaymentType.OUTGOING || payment.getInvoiceId() == null) {
+            return;
+        }
+
+        Invoice invoice = invoiceRepository.findByIdAndDeletedFalse(payment.getInvoiceId())
+                .orElseThrow(() -> new EntityNotFoundException("Счёт не найден: " + payment.getInvoiceId()));
+        validateProjectTenant(invoice.getProjectId(), organizationId);
+
+        if (payment.getProjectId() != null
+                && invoice.getProjectId() != null
+                && !payment.getProjectId().equals(invoice.getProjectId())) {
+            throw new IllegalStateException("Платёж и счёт относятся к разным проектам");
+        }
+
+        ThreeWayMatchResult result = invoiceMatchingEngine.validateThreeWayMatch(invoice.getId());
+        invoice.setMatchingConfidence(result.overallConfidence());
+        invoice.setMatchingStatus(resolveMatchingStatus(result));
+        invoiceRepository.save(invoice);
+
+        if (result.hasPurchaseOrder() && result.hasReceipt() && result.linesMatchTotal()) {
+            return;
+        }
+
+        String details = result.discrepancies().stream()
+                .map(ThreeWayMatchResult.Discrepancy::description)
+                .filter(Objects::nonNull)
+                .reduce((a, b) -> a + "; " + b)
+                .orElse("есть расхождения по данным счёта");
+
+        throw new IllegalStateException("Оплата заблокирована: 3-way matching не пройден (" + details + ")");
+    }
+
+    private InvoiceMatchingStatus resolveMatchingStatus(ThreeWayMatchResult result) {
+        if (result.hasPurchaseOrder() && result.hasReceipt() && result.linesMatchTotal()) {
+            return InvoiceMatchingStatus.FULLY_MATCHED;
+        }
+        if (result.hasPurchaseOrder() || result.hasReceipt() || result.linesMatchTotal()) {
+            return InvoiceMatchingStatus.PARTIALLY_MATCHED;
+        }
+        return InvoiceMatchingStatus.UNMATCHED;
     }
 
     private void validateProjectTenant(UUID projectId, UUID organizationId) {

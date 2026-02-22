@@ -81,3 +81,46 @@ export interface ResourceAllocation {
   plannedCost: number;
   actualCost: number;
 }
+
+export interface EvmTrendPoint {
+  snapshotDate: string;
+  pv: number;
+  ev: number;
+  ac: number;
+  spi: number;
+  cpi: number;
+  eac: number;
+  etc: number;
+}
+
+export interface EacMethods {
+  projectId: string;
+  bac: number;
+  eacCpi: number;
+  eacSpiCpi: number;
+  eacBottom: number;
+  ieac: number;
+}
+
+export interface WorkVolumeSummary {
+  wbsNodeId: string;
+  wbsCode: string;
+  wbsName: string;
+  nodeType: string;
+  unitOfMeasure: string;
+  plannedVolume: number;
+  actualVolume: number;
+  remainingVolume: number;
+  todayVolume: number;
+  percentComplete: number;
+  entries: WorkVolumeEntry[];
+}
+
+export interface WorkVolumeEntry {
+  id: string;
+  wbsNodeId: string;
+  date: string;
+  quantity: number;
+  notes?: string;
+  createdBy?: string;
+}

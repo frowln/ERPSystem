@@ -44,6 +44,7 @@ public class InvoiceService {
     private final ContractRepository contractRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
+    private final BudgetItemSyncService budgetItemSyncService;
 
     @Transactional(readOnly = true)
     public Page<InvoiceResponse> listInvoices(UUID projectId, InvoiceStatus status,
@@ -148,6 +149,7 @@ public class InvoiceService {
         validateProjectTenant(projectId, organizationId);
 
         Invoice invoice = Invoice.builder()
+                .organizationId(organizationId)
                 .number(number)
                 .invoiceDate(request.invoiceDate())
                 .dueDate(request.dueDate())
@@ -155,8 +157,9 @@ public class InvoiceService {
                 .contractId(request.contractId())
                 .partnerId(partnerId)
                 .partnerName(partnerName)
+                .disciplineMark(request.disciplineMark())
                 .invoiceType(request.invoiceType())
-                .status(InvoiceStatus.DRAFT)
+                .status(InvoiceStatus.NEW)
                 .subtotal(subtotal)
                 .vatRate(vatRate)
                 .vatAmount(vatAmount)
@@ -164,6 +167,8 @@ public class InvoiceService {
                 .remainingAmount(totalAmount)
                 .ks2Id(request.ks2Id())
                 .ks3Id(request.ks3Id())
+                .matchedPoId(request.contractId())
+                .matchedReceiptId(request.ks2Id() != null ? request.ks2Id() : request.ks3Id())
                 .notes(request.notes())
                 .build();
 
@@ -180,8 +185,8 @@ public class InvoiceService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Invoice invoice = getInvoiceOrThrow(id, organizationId);
 
-        if (invoice.getStatus() != InvoiceStatus.DRAFT) {
-            throw new IllegalStateException("Редактирование счёта возможно только в статусе Черновик");
+        if (invoice.getStatus() != InvoiceStatus.NEW && invoice.getStatus() != InvoiceStatus.DRAFT) {
+            throw new IllegalStateException("Редактирование счёта возможно только в статусе Новый/Черновик");
         }
 
         if (request.invoiceDate() != null) {
@@ -205,6 +210,9 @@ public class InvoiceService {
         if (request.partnerName() != null) {
             invoice.setPartnerName(request.partnerName());
         }
+        if (request.disciplineMark() != null) {
+            invoice.setDisciplineMark(request.disciplineMark());
+        }
         if (request.subtotal() != null) {
             invoice.setSubtotal(request.subtotal());
         }
@@ -223,6 +231,10 @@ public class InvoiceService {
         if (request.notes() != null) {
             invoice.setNotes(request.notes());
         }
+
+        // Keep 3-way references synchronized with core document links.
+        invoice.setMatchedPoId(invoice.getContractId());
+        invoice.setMatchedReceiptId(invoice.getKs2Id() != null ? invoice.getKs2Id() : invoice.getKs3Id());
 
         // Recalculate VAT amount
         if (invoice.getSubtotal() != null && invoice.getVatRate() != null) {
@@ -248,14 +260,19 @@ public class InvoiceService {
         Invoice invoice = getInvoiceOrThrow(id, organizationId);
         InvoiceStatus oldStatus = invoice.getStatus();
 
-        if (!invoice.getStatus().canTransitionTo(InvoiceStatus.SENT)) {
+        if (!invoice.getStatus().canTransitionTo(InvoiceStatus.UNDER_REVIEW)) {
             throw new IllegalStateException(
                     String.format("Невозможно отправить счёт из статуса %s", oldStatus.getDisplayName()));
         }
 
-        invoice.setStatus(InvoiceStatus.SENT);
+        invoice.setStatus(InvoiceStatus.UNDER_REVIEW);
         invoice = invoiceRepository.save(invoice);
-        auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), InvoiceStatus.SENT.name());
+        if (invoice.getContractId() != null
+                && invoice.getTotalAmount() != null
+                && invoice.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
+            budgetItemSyncService.onInvoiceCreated(invoice.getContractId(), invoice.getTotalAmount());
+        }
+        auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), InvoiceStatus.UNDER_REVIEW.name());
 
         log.info("Счёт отправлен: {} ({})", invoice.getNumber(), invoice.getId());
         return InvoiceResponse.fromEntity(invoice);
@@ -266,8 +283,11 @@ public class InvoiceService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Invoice invoice = getInvoiceOrThrow(id, organizationId);
 
-        if (invoice.getStatus() == InvoiceStatus.DRAFT
+        if (invoice.getStatus() == InvoiceStatus.NEW
+                || invoice.getStatus() == InvoiceStatus.DRAFT
                 || invoice.getStatus() == InvoiceStatus.PAID
+                || invoice.getStatus() == InvoiceStatus.CLOSED
+                || invoice.getStatus() == InvoiceStatus.REJECTED
                 || invoice.getStatus() == InvoiceStatus.CANCELLED) {
             throw new IllegalStateException(
                     String.format("Невозможно зарегистрировать оплату для счёта в статусе %s",
@@ -293,6 +313,9 @@ public class InvoiceService {
         }
 
         invoice = invoiceRepository.save(invoice);
+        if (invoice.getContractId() != null && amount.compareTo(BigDecimal.ZERO) > 0) {
+            budgetItemSyncService.onPaymentRegistered(invoice.getContractId(), amount);
+        }
 
         if (oldStatus != invoice.getStatus()) {
             auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), invoice.getStatus().name());
@@ -328,16 +351,46 @@ public class InvoiceService {
         Invoice invoice = getInvoiceOrThrow(id, organizationId);
         InvoiceStatus oldStatus = invoice.getStatus();
 
-        if (!invoice.getStatus().canTransitionTo(InvoiceStatus.CANCELLED)) {
+        InvoiceStatus targetStatus = invoice.getStatus().canTransitionTo(InvoiceStatus.REJECTED)
+                ? InvoiceStatus.REJECTED
+                : InvoiceStatus.CANCELLED;
+
+        if (!invoice.getStatus().canTransitionTo(targetStatus)) {
             throw new IllegalStateException(
                     String.format("Невозможно отменить счёт из статуса %s", oldStatus.getDisplayName()));
         }
 
-        invoice.setStatus(InvoiceStatus.CANCELLED);
+        invoice.setStatus(targetStatus);
         invoice = invoiceRepository.save(invoice);
-        auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), InvoiceStatus.CANCELLED.name());
+        auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), targetStatus.name());
 
         log.info("Счёт отменён: {} ({})", invoice.getNumber(), invoice.getId());
+        return InvoiceResponse.fromEntity(invoice);
+    }
+
+    @Transactional
+    public InvoiceResponse changeStatus(UUID id, InvoiceStatus targetStatus) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Invoice invoice = getInvoiceOrThrow(id, organizationId);
+        InvoiceStatus oldStatus = invoice.getStatus();
+
+        if (!oldStatus.canTransitionTo(targetStatus)) {
+            throw new IllegalStateException(
+                    String.format("Невозможно перевести счёт из статуса %s в %s",
+                            oldStatus.getDisplayName(), targetStatus.getDisplayName()));
+        }
+
+        invoice.setStatus(targetStatus);
+        invoice = invoiceRepository.save(invoice);
+
+        if (targetStatus == InvoiceStatus.APPROVED
+                && invoice.getContractId() != null
+                && invoice.getTotalAmount() != null
+                && invoice.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
+            budgetItemSyncService.onInvoiceCreated(invoice.getContractId(), invoice.getTotalAmount());
+        }
+
+        auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), targetStatus.name());
         return InvoiceResponse.fromEntity(invoice);
     }
 

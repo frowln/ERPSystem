@@ -34,6 +34,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Payment extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "number", unique = true, length = 50)
     private String number;
 

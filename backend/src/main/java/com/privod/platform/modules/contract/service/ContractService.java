@@ -5,6 +5,7 @@ import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.ApprovalStatus;
 import com.privod.platform.modules.contract.domain.Contract;
 import com.privod.platform.modules.contract.domain.ContractApproval;
+import com.privod.platform.modules.contract.domain.ContractDirection;
 import com.privod.platform.modules.contract.domain.ContractStatus;
 import com.privod.platform.modules.contract.domain.ContractType;
 import com.privod.platform.modules.contract.repository.ContractApprovalRepository;
@@ -17,6 +18,7 @@ import com.privod.platform.modules.contract.web.dto.ContractResponse;
 import com.privod.platform.modules.contract.web.dto.CreateContractRequest;
 import com.privod.platform.modules.contract.web.dto.RejectContractRequest;
 import com.privod.platform.modules.contract.web.dto.UpdateContractRequest;
+import com.privod.platform.modules.finance.service.BudgetItemSyncService;
 import com.privod.platform.modules.project.domain.Project;
 import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -48,10 +50,12 @@ public class ContractService {
     private final ContractApprovalRepository contractApprovalRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
+    private final BudgetItemSyncService budgetItemSyncService;
 
     @Transactional(readOnly = true)
     public Page<ContractResponse> listContracts(String search, ContractStatus status,
-                                                 UUID projectId, UUID partnerId, Pageable pageable) {
+                                                 UUID projectId, UUID partnerId,
+                                                 ContractDirection direction, Pageable pageable) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         validateProjectTenant(projectId, organizationId);
 
@@ -60,6 +64,7 @@ public class ContractService {
                 .and(ContractSpecification.hasStatus(status))
                 .and(ContractSpecification.belongsToProject(projectId))
                 .and(ContractSpecification.hasPartner(partnerId))
+                .and(ContractSpecification.hasDirection(direction))
                 .and(ContractSpecification.searchByNameOrNumber(search));
 
         return contractRepository.findAll(spec, pageable).map(ContractResponse::fromEntity);
@@ -104,6 +109,10 @@ public class ContractService {
                 .plannedEndDate(request.plannedEndDate())
                 .responsibleId(request.responsibleId())
                 .retentionPercent(request.retentionPercent() != null ? request.retentionPercent() : BigDecimal.ZERO)
+                .prepaymentPercent(request.prepaymentPercent() != null ? request.prepaymentPercent() : BigDecimal.ZERO)
+                .paymentDelayDays(request.paymentDelayDays() != null ? request.paymentDelayDays() : 0)
+                .guaranteePeriodMonths(request.guaranteePeriodMonths())
+                .direction(request.direction() != null ? ContractDirection.valueOf(request.direction()) : null)
                 .notes(request.notes())
                 .build();
 
@@ -170,6 +179,18 @@ public class ContractService {
         if (request.retentionPercent() != null) {
             contract.setRetentionPercent(request.retentionPercent());
         }
+        if (request.prepaymentPercent() != null) {
+            contract.setPrepaymentPercent(request.prepaymentPercent());
+        }
+        if (request.paymentDelayDays() != null) {
+            contract.setPaymentDelayDays(request.paymentDelayDays());
+        }
+        if (request.guaranteePeriodMonths() != null) {
+            contract.setGuaranteePeriodMonths(request.guaranteePeriodMonths());
+        }
+        if (request.direction() != null) {
+            contract.setDirection(ContractDirection.valueOf(request.direction()));
+        }
         if (request.notes() != null) {
             contract.setNotes(request.notes());
         }
@@ -209,6 +230,7 @@ public class ContractService {
         }
 
         contract = contractRepository.save(contract);
+        budgetItemSyncService.onContractStatusChanged(contract.getId());
         auditService.logStatusChange("Contract", contract.getId(), oldStatus.name(), newStatus.name());
 
         log.info("Contract status changed: {} from {} to {} ({})",
@@ -280,6 +302,7 @@ public class ContractService {
         ContractStatus newStatus = determineStatusAfterApproval(contract, request.stage());
         contract.setStatus(newStatus);
         contract = contractRepository.save(contract);
+        budgetItemSyncService.onContractStatusChanged(contract.getId());
 
         auditService.logStatusChange("Contract", contract.getId(), oldStatus.name(), newStatus.name());
 
@@ -313,6 +336,7 @@ public class ContractService {
         contract.setStatus(ContractStatus.REJECTED);
         contract.setRejectionReason(request.reason());
         contract = contractRepository.save(contract);
+        budgetItemSyncService.onContractStatusChanged(contract.getId());
 
         auditService.logStatusChange("Contract", contract.getId(), oldStatus.name(), ContractStatus.REJECTED.name());
 
@@ -332,6 +356,7 @@ public class ContractService {
         ContractStatus oldStatus = contract.getStatus();
         contract.setStatus(ContractStatus.SIGNED);
         contract = contractRepository.save(contract);
+        budgetItemSyncService.onContractStatusChanged(contract.getId());
 
         auditService.logStatusChange("Contract", contract.getId(), oldStatus.name(), ContractStatus.SIGNED.name());
 
@@ -352,6 +377,7 @@ public class ContractService {
         contract.setStatus(ContractStatus.ACTIVE);
         contract.setActualStartDate(LocalDate.now());
         contract = contractRepository.save(contract);
+        budgetItemSyncService.onContractStatusChanged(contract.getId());
 
         auditService.logStatusChange("Contract", contract.getId(), oldStatus.name(), ContractStatus.ACTIVE.name());
 
@@ -372,6 +398,7 @@ public class ContractService {
         contract.setStatus(ContractStatus.CLOSED);
         contract.setActualEndDate(LocalDate.now());
         contract = contractRepository.save(contract);
+        budgetItemSyncService.onContractStatusChanged(contract.getId());
 
         auditService.logStatusChange("Contract", contract.getId(), oldStatus.name(), ContractStatus.CLOSED.name());
 

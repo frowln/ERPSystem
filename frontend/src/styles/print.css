@@ -1,0 +1,174 @@
+/* =============================================================================
+ * Print Stylesheets — PRIVOD ERP
+ * Applied via @media print for KS-2, KS-3, Payroll, PurchaseRequest pages
+ * ============================================================================= */
+
+@media print {
+  /* ── Global resets ───────────────────────────────────────────────────────── */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  body {
+    font-size: 10pt;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ── Hide non-print elements ────────────────────────────────────────────── */
+  nav,
+  aside,
+  header:not(.print-header),
+  .no-print,
+  [data-no-print],
+  button,
+  .fixed,
+  .sticky,
+  [role='navigation'],
+  [role='banner'],
+  [role='complementary'] {
+    display: none !important;
+  }
+
+  /* Keep print-visible buttons (e.g., status badges rendered as text) */
+  .print-visible {
+    display: block !important;
+  }
+
+  /* ── Layout ─────────────────────────────────────────────────────────────── */
+  main,
+  .print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ── Tables ─────────────────────────────────────────────────────────────── */
+  table {
+    width: 100% !important;
+    border-collapse: collapse;
+    page-break-inside: auto;
+    font-size: 9pt;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  th,
+  td {
+    border: 1px solid #ccc !important;
+    padding: 4px 8px !important;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 600;
+    background: #f5f5f5 !important;
+  }
+
+  /* Numeric columns right-aligned */
+  td.tabular-nums,
+  td[data-numeric] {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Page breaks ────────────────────────────────────────────────────────── */
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+
+  /* ── KS-2 / KS-3 specific ──────────────────────────────────────────────── */
+  .ks-document-header {
+    text-align: center;
+    margin-bottom: 12pt;
+  }
+
+  .ks-document-header h1 {
+    font-size: 14pt;
+    margin: 0;
+  }
+
+  .ks-document-header p {
+    font-size: 10pt;
+    color: #333 !important;
+  }
+
+  .ks-totals-row td {
+    font-weight: 700;
+    border-top: 2px solid #000 !important;
+  }
+
+  /* ── Signature block ────────────────────────────────────────────────────── */
+  .print-signatures {
+    display: flex !important;
+    justify-content: space-between;
+    margin-top: 40pt;
+    page-break-inside: avoid;
+  }
+
+  .print-signature-block {
+    width: 45%;
+    border-top: 1px solid #000;
+    padding-top: 4pt;
+    text-align: center;
+    font-size: 9pt;
+  }
+
+  /* ── Links: show URL ────────────────────────────────────────────────────── */
+  a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 8pt;
+    color: #666 !important;
+  }
+
+  a[href^='#']::after,
+  a[href^='javascript']::after {
+    content: '';
+  }
+
+  /* ── Page margins ───────────────────────────────────────────────────────── */
+  @page {
+    size: A4;
+    margin: 15mm 10mm 15mm 20mm;
+  }
+
+  @page :first {
+    margin-top: 20mm;
+  }
+
+  /* ── Dark mode cleanup ──────────────────────────────────────────────────── */
+  .dark * {
+    background: transparent !important;
+    color: #000 !important;
+  }
+}

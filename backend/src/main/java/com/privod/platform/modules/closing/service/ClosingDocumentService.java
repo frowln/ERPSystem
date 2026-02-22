@@ -21,6 +21,7 @@ import com.privod.platform.modules.closing.web.dto.Ks3Response;
 import com.privod.platform.modules.closing.web.dto.UpdateKs2LineRequest;
 import com.privod.platform.modules.closing.web.dto.UpdateKs2Request;
 import com.privod.platform.modules.closing.web.dto.UpdateKs3Request;
+import com.privod.platform.modules.finance.service.BudgetItemSyncService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,7 @@ public class ClosingDocumentService {
     private final Ks3DocumentRepository ks3DocumentRepository;
     private final Ks3Ks2LinkRepository ks3Ks2LinkRepository;
     private final AuditService auditService;
+    private final BudgetItemSyncService budgetItemSyncService;
 
     // ========================================================================
     // KS-2 Methods
@@ -251,6 +253,7 @@ public class ClosingDocumentService {
         doc.setStatus(ClosingDocumentStatus.SIGNED);
         doc.setSignedAt(Instant.now());
         doc = ks2DocumentRepository.save(doc);
+        budgetItemSyncService.onKs2Signed(doc.getContractId());
         auditService.logStatusChange("Ks2Document", doc.getId(), oldStatus.name(), ClosingDocumentStatus.SIGNED.name());
 
         log.info("КС-2 подписан: {} ({})", doc.getName(), doc.getId());

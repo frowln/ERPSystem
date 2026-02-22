@@ -9,6 +9,7 @@ import com.privod.platform.modules.finance.web.dto.BudgetResponse;
 import com.privod.platform.modules.finance.web.dto.BudgetSummaryResponse;
 import com.privod.platform.modules.finance.web.dto.CreateBudgetItemRequest;
 import com.privod.platform.modules.finance.web.dto.CreateBudgetRequest;
+import com.privod.platform.modules.finance.web.dto.UpdateBudgetItemRequest;
 import com.privod.platform.modules.finance.web.dto.UpdateBudgetRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -146,6 +147,17 @@ public class BudgetController {
         BudgetItemResponse response = budgetService.addBudgetItem(budgetId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok(response));
+    }
+
+    @PutMapping("/{budgetId}/items/{itemId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Update a budget item")
+    public ResponseEntity<ApiResponse<BudgetItemResponse>> updateItem(
+            @PathVariable UUID budgetId,
+            @PathVariable UUID itemId,
+            @Valid @RequestBody UpdateBudgetItemRequest request) {
+        BudgetItemResponse response = budgetService.updateBudgetItem(budgetId, itemId, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @DeleteMapping("/{budgetId}/items/{itemId}")

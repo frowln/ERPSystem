@@ -7,6 +7,19 @@ export type DesignPackageStatus = 'DRAFT' | 'ISSUED' | 'IN_REVIEW' | 'APPROVED' 
 export type ClashSeverity = 'CRITICAL' | 'MAJOR' | 'MINOR' | 'INFO';
 export type ClashStatus = 'NEW' | 'IN_PROGRESS' | 'RESOLVED' | 'APPROVED' | 'IGNORED';
 
+export type BimLinkedEntityType = 'ISSUE' | 'RFI' | 'CHANGE_ORDER' | 'DEFECT';
+
+export interface BimLinkedItem {
+  id: string;
+  clashId: string;
+  entityType: BimLinkedEntityType;
+  entityId: string;
+  entityTitle: string;
+  entityStatus: string;
+  linkedAt: string;
+  linkedBy?: string;
+}
+
 export interface BimModel {
   id: string;
   name: string;
@@ -166,5 +179,27 @@ export const bimApi = {
   ignoreClash: async (id: string, reason: string): Promise<Clash> => {
     const response = await apiClient.post<Clash>(`/bim/clashes/${id}/ignore`, { reason });
     return response.data;
+  },
+
+  // Cross-module linking
+  getLinkedClashes: async (entityType: BimLinkedEntityType, entityId: string): Promise<(Clash & { linkId: string })[]> => {
+    const response = await apiClient.get<(Clash & { linkId: string })[]>(`/bim/clashes/linked`, {
+      params: { entityType, entityId },
+    });
+    return response.data;
+  },
+
+  getClashLinkedItems: async (clashId: string): Promise<BimLinkedItem[]> => {
+    const response = await apiClient.get<BimLinkedItem[]>(`/bim/clashes/${clashId}/linked-items`);
+    return response.data;
+  },
+
+  linkItemToClash: async (clashId: string, data: { entityType: BimLinkedEntityType; entityId: string }): Promise<BimLinkedItem> => {
+    const response = await apiClient.post<BimLinkedItem>(`/bim/clashes/${clashId}/linked-items`, data);
+    return response.data;
+  },
+
+  unlinkItemFromClash: async (clashId: string, linkId: string): Promise<void> => {
+    await apiClient.delete(`/bim/clashes/${clashId}/linked-items/${linkId}`);
   },
 };

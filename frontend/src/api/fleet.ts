@@ -72,6 +72,162 @@ export interface InspectionRecord {
   nextInspectionDate: string;
 }
 
+export type WaybillStatus = 'DRAFT' | 'ISSUED' | 'IN_PROGRESS' | 'COMPLETED' | 'CLOSED';
+
+export interface MaintenanceScheduleRule {
+  id: string;
+  name: string;
+  description?: string;
+  vehicleId?: string;
+  vehicleName?: string;
+  maintenanceType: string;
+  maintenanceTypeDisplayName?: string;
+  intervalHours?: number;
+  intervalMileage?: number;
+  intervalDays?: number;
+  leadTimeHours?: number;
+  leadTimeMileage?: number;
+  leadTimeDays?: number;
+  appliesToAllVehicles: boolean;
+  isActive: boolean;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface MaintenanceDueItem {
+  id: string;
+  vehicleId: string;
+  vehicleName: string;
+  ruleId: string;
+  ruleName: string;
+  maintenanceType: string;
+  triggerReason: string;
+  currentHours?: number;
+  thresholdHours?: number;
+  currentMileage?: number;
+  thresholdMileage?: number;
+  overdue: boolean;
+}
+
+export interface ComplianceItem {
+  vehicleId: string;
+  vehicleCode: string;
+  vehicleName: string;
+  expiryDate: string;
+  daysRemaining: number;
+  expired: boolean;
+}
+
+export interface ComplianceDashboard {
+  totalVehicles: number;
+  overdueMaintenanceCount: number;
+  approachingMaintenanceCount: number;
+  expiredInsuranceCount: number;
+  expiringInsuranceCount: number;
+  expiredTechInspectionCount: number;
+  expiringTechInspectionCount: number;
+  insuranceAlerts: ComplianceItem[];
+  techInspectionAlerts: ComplianceItem[];
+}
+
+export interface EquipmentUsageLog {
+  id: string;
+  vehicleId: string;
+  vehicleName?: string;
+  projectId?: string;
+  projectName?: string;
+  operatorName?: string;
+  usageDate: string;
+  hoursWorked: number;
+  hoursStart?: number;
+  hoursEnd?: number;
+  fuelConsumed?: number;
+  description?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface MachineHourRate {
+  vehicleId: string;
+  purchasePrice: number;
+  usefulLifeYears: number;
+  annualWorkingHours: number;
+  fuelConsumptionRate: number;
+  depreciationPerHour: number;
+  annualDepreciation: number;
+  fuelPerHour: number;
+  annualFuelCost: number;
+  maintenancePerHour: number;
+  annualMaintenanceCost: number;
+  insurancePerHour: number;
+  annualInsuranceCost: number;
+  operatorPerHour: number;
+  annualOperatorCost: number;
+  totalRatePerHour: number;
+  annualTotalCost: number;
+}
+
+export interface OwnVsRent {
+  vehicleId: string;
+  ownRatePerHour: number;
+  ownMonthlyCost: number;
+  ownAnnualCost: number;
+  marketRentalRatePerHour: number;
+  rentMonthlyCost: number;
+  rentAnnualCost: number;
+  recommendation: 'OWN' | 'RENT' | 'NEUTRAL';
+  savingsAnnual: number;
+  savingsPercent: number;
+}
+
+export interface FleetWaybill {
+  id: string;
+  number: string;
+  vehicleId: string;
+  vehicleName?: string;
+  vehicleLicensePlate?: string;
+  projectId?: string;
+  projectName?: string;
+  waybillDate: string;
+  driverName?: string;
+  routeDescription?: string;
+  departurePoint?: string;
+  destinationPoint?: string;
+  departureTime?: string;
+  returnTime?: string;
+  mileageStart?: number;
+  mileageEnd?: number;
+  distance?: number;
+  engineHoursStart?: number;
+  engineHoursEnd?: number;
+  engineHoursWorked?: number;
+  fuelDispensed?: number;
+  fuelConsumed?: number;
+  fuelNorm?: number;
+  fuelRemaining?: number;
+  fuelVariancePercent?: number;
+  medicalExamPassed: boolean;
+  medicalExaminer?: string;
+  mechanicApproved: boolean;
+  mechanicName?: string;
+  notes?: string;
+  status: WaybillStatus;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UsageLogFilters extends PaginationParams {
+  vehicleId?: string;
+  projectId?: string;
+}
+
+export interface WaybillFilters extends PaginationParams {
+  status?: WaybillStatus;
+  vehicleId?: string;
+}
+
 export interface VehicleFilters extends PaginationParams {
   type?: VehicleType;
   status?: VehicleStatus;
@@ -122,5 +278,109 @@ export const fleetApi = {
 
   deleteVehicle: async (id: string): Promise<void> => {
     await apiClient.delete(`/fleet/vehicles/${id}`);
+  },
+
+  // Maintenance Schedule
+  getScheduleRules: async (params?: PaginationParams): Promise<PaginatedResponse<MaintenanceScheduleRule>> => {
+    const response = await apiClient.get<PaginatedResponse<MaintenanceScheduleRule>>('/fleet/maintenance/schedule-rules', { params });
+    return response.data;
+  },
+
+  createScheduleRule: async (data: Record<string, unknown>): Promise<MaintenanceScheduleRule> => {
+    const response = await apiClient.post<MaintenanceScheduleRule>('/fleet/maintenance/schedule-rules', data);
+    return response.data;
+  },
+
+  updateScheduleRule: async (id: string, data: Record<string, unknown>): Promise<MaintenanceScheduleRule> => {
+    const response = await apiClient.put<MaintenanceScheduleRule>(`/fleet/maintenance/schedule-rules/${id}`, data);
+    return response.data;
+  },
+
+  deleteScheduleRule: async (id: string): Promise<void> => {
+    await apiClient.delete(`/fleet/maintenance/schedule-rules/${id}`);
+  },
+
+  toggleScheduleRule: async (id: string, active: boolean): Promise<MaintenanceScheduleRule> => {
+    const response = await apiClient.patch<MaintenanceScheduleRule>(`/fleet/maintenance/schedule-rules/${id}/toggle`, { active });
+    return response.data;
+  },
+
+  getDueMaintenanceItems: async (): Promise<MaintenanceDueItem[]> => {
+    const response = await apiClient.get<MaintenanceDueItem[]>('/fleet/maintenance/due-items');
+    return response.data;
+  },
+
+  getComplianceDashboard: async (): Promise<ComplianceDashboard> => {
+    const response = await apiClient.get<ComplianceDashboard>('/fleet/maintenance/compliance');
+    return response.data;
+  },
+
+  // Usage Logs
+  getUsageLogs: async (params?: UsageLogFilters): Promise<PaginatedResponse<EquipmentUsageLog>> => {
+    const response = await apiClient.get<PaginatedResponse<EquipmentUsageLog>>('/fleet/usage-logs', { params });
+    return response.data;
+  },
+
+  getUsageLog: async (id: string): Promise<EquipmentUsageLog> => {
+    const response = await apiClient.get<EquipmentUsageLog>(`/fleet/usage-logs/${id}`);
+    return response.data;
+  },
+
+  createUsageLog: async (data: Record<string, unknown>): Promise<EquipmentUsageLog> => {
+    const response = await apiClient.post<EquipmentUsageLog>('/fleet/usage-logs', data);
+    return response.data;
+  },
+
+  updateUsageLog: async (id: string, data: Record<string, unknown>): Promise<EquipmentUsageLog> => {
+    const response = await apiClient.put<EquipmentUsageLog>(`/fleet/usage-logs/${id}`, data);
+    return response.data;
+  },
+
+  deleteUsageLog: async (id: string): Promise<void> => {
+    await apiClient.delete(`/fleet/usage-logs/${id}`);
+  },
+
+  getMachineHourRate: async (vehicleId: string, fuelPrice?: number): Promise<MachineHourRate> => {
+    const response = await apiClient.get<MachineHourRate>(`/fleet/vehicles/${vehicleId}/machine-hour-rate`, {
+      params: fuelPrice != null ? { fuelPrice } : undefined,
+    });
+    return response.data;
+  },
+
+  getOwnVsRent: async (vehicleId: string, fuelPrice?: number): Promise<OwnVsRent> => {
+    const response = await apiClient.get<OwnVsRent>(`/fleet/vehicles/${vehicleId}/own-vs-rent`, {
+      params: fuelPrice != null ? { fuelPrice } : undefined,
+    });
+    return response.data;
+  },
+
+  // Waybills
+  getWaybills: async (params?: WaybillFilters): Promise<PaginatedResponse<FleetWaybill>> => {
+    const response = await apiClient.get<PaginatedResponse<FleetWaybill>>('/fleet/waybills', { params });
+    return response.data;
+  },
+
+  getWaybill: async (id: string): Promise<FleetWaybill> => {
+    const response = await apiClient.get<FleetWaybill>(`/fleet/waybills/${id}`);
+    return response.data;
+  },
+
+  createWaybill: async (data: Record<string, unknown>): Promise<FleetWaybill> => {
+    const response = await apiClient.post<FleetWaybill>('/fleet/waybills', data);
+    return response.data;
+  },
+
+  updateWaybill: async (id: string, data: Record<string, unknown>): Promise<FleetWaybill> => {
+    const response = await apiClient.put<FleetWaybill>(`/fleet/waybills/${id}`, data);
+    return response.data;
+  },
+
+  changeWaybillStatus: async (id: string, status: WaybillStatus): Promise<FleetWaybill> => {
+    const response = await apiClient.patch<FleetWaybill>(`/fleet/waybills/${id}/status`, { status });
+    return response.data;
+  },
+
+  deleteWaybill: async (id: string): Promise<void> => {
+    await apiClient.delete(`/fleet/waybills/${id}`);
   },
 };

@@ -6,7 +6,12 @@ import type {
   SafetyViolation,
   CreateIncidentRequest,
   IncidentStatus,
+  SafetyTraining,
+  TrainingStatus,
+  TrainingType,
 } from '@/modules/safety/types';
+
+export type { SafetyTraining, TrainingStatus, TrainingType };
 
 export interface SafetyFilters extends PaginationParams {
   status?: string;
@@ -95,5 +100,62 @@ export const safetyApi = {
 
   deleteIncident: async (id: string): Promise<void> => {
     await apiClient.delete(`/safety/incidents/${id}`);
+  },
+
+  // Trainings
+  getTrainings: async (params?: SafetyFilters): Promise<PaginatedResponse<SafetyTraining>> => {
+    const response = await apiClient.get<PaginatedResponse<SafetyTraining>>('/safety/trainings', { params });
+    return response.data;
+  },
+
+  getTraining: async (id: string): Promise<SafetyTraining> => {
+    const response = await apiClient.get<SafetyTraining>(`/safety/trainings/${id}`);
+    return response.data;
+  },
+
+  createTraining: async (data: {
+    title: string;
+    trainingType: TrainingType;
+    projectId?: string;
+    date: string;
+    instructorId?: string;
+    instructorName?: string;
+    participants?: string;
+    topics?: string;
+    duration?: number;
+    notes?: string;
+  }): Promise<SafetyTraining> => {
+    const response = await apiClient.post<SafetyTraining>('/safety/trainings', data);
+    return response.data;
+  },
+
+  updateTraining: async (id: string, data: {
+    title?: string;
+    trainingType?: TrainingType;
+    projectId?: string;
+    date?: string;
+    instructorId?: string;
+    instructorName?: string;
+    participants?: string;
+    topics?: string;
+    duration?: number;
+    notes?: string;
+  }): Promise<SafetyTraining> => {
+    const response = await apiClient.put<SafetyTraining>(`/safety/trainings/${id}`, data);
+    return response.data;
+  },
+
+  completeTraining: async (id: string): Promise<SafetyTraining> => {
+    const response = await apiClient.patch<SafetyTraining>(`/safety/trainings/${id}/complete`);
+    return response.data;
+  },
+
+  cancelTraining: async (id: string): Promise<SafetyTraining> => {
+    const response = await apiClient.patch<SafetyTraining>(`/safety/trainings/${id}/cancel`);
+    return response.data;
+  },
+
+  deleteTraining: async (id: string): Promise<void> => {
+    await apiClient.delete(`/safety/trainings/${id}`);
   },
 };

@@ -48,6 +48,16 @@ public class InvoiceLine extends BaseEntity {
     @Column(name = "unit_of_measure", length = 50)
     private String unitOfMeasure;
 
+    @Column(name = "budget_item_id")
+    private UUID budgetItemId;
+
+    @Column(name = "cp_item_id")
+    private UUID cpItemId;
+
+    @Column(name = "selected_for_cp")
+    @Builder.Default
+    private boolean selectedForCp = false;
+
     public BigDecimal calculateAmount() {
         BigDecimal qty = quantity != null ? quantity : BigDecimal.ZERO;
         BigDecimal price = unitPrice != null ? unitPrice : BigDecimal.ZERO;

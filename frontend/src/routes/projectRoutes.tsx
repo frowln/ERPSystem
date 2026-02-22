@@ -28,14 +28,20 @@ const ContractBoardPage = lazy(() => import('@/modules/contracts/ContractBoardPa
 // Estimates
 const EstimateListPage = lazy(() => import('@/modules/estimates/EstimateListPage'));
 const EstimateDetailPage = lazy(() => import('@/modules/estimates/EstimateDetailPage'));
+const EstimateFormPage = lazy(() => import('@/modules/estimates/EstimateFormPage'));
 const EstimatePivotPage = lazy(() => import('@/modules/estimates/EstimatePivotPage'));
+const EstimateNormativeView = lazy(() => import('@/modules/estimates/EstimateNormativeView'));
+const EstimateFmReconciliation = lazy(() => import('@/modules/estimates/EstimateFmReconciliation'));
 
 // Specifications
 const SpecificationListPage = lazy(() => import('@/modules/specifications/SpecificationListPage'));
 const SpecificationDetailPage = lazy(() => import('@/modules/specifications/SpecificationDetailPage'));
 const SpecificationFormPage = lazy(() => import('@/modules/specifications/SpecificationFormPage'));
+const CompetitiveListPage = lazy(() => import('@/modules/specifications/CompetitiveListPage'));
 const MaterialAnalogsPage = lazy(() => import('@/modules/specifications/MaterialAnalogsPage'));
 const AnalogRequestsPage = lazy(() => import('@/modules/specifications/AnalogRequestsPage'));
+const SpecificationSplitView = lazy(() => import('@/modules/specifications/SpecificationSplitView'));
+const SpecSupplyDashboard = lazy(() => import('@/modules/specifications/SpecSupplyDashboard'));
 
 // RFI
 const RfiListPage = lazy(() => import('@/modules/rfi/RfiListPage'));
@@ -131,13 +137,20 @@ export function projectRoutes() {
       {/* Estimates */}
       <Route path="estimates" element={<EstimateListPage />} />
       <Route path="estimates/pivot" element={<EstimatePivotPage />} />
+      <Route path="estimates/new" element={<EstimateFormPage />} />
       <Route path="estimates/:id" element={<EstimateDetailPage />} />
+      <Route path="estimates/:id/edit" element={<EstimateFormPage />} />
+      <Route path="estimates/:id/normative" element={<EstimateNormativeView />} />
+      <Route path="estimates/:id/fm-reconciliation" element={<EstimateFmReconciliation />} />
 
       {/* Specifications */}
       <Route path="specifications" element={<SpecificationListPage />} />
       <Route path="specifications/new" element={<SpecificationFormPage />} />
       <Route path="specifications/:id" element={<SpecificationDetailPage />} />
       <Route path="specifications/:id/edit" element={<SpecificationFormPage />} />
+      <Route path="specifications/:specId/competitive-list/:id" element={<CompetitiveListPage />} />
+      <Route path="specifications/:id/split" element={<SpecificationSplitView />} />
+      <Route path="specifications/:id/supply-dashboard" element={<SpecSupplyDashboard />} />
       <Route path="specifications/analogs" element={<MaterialAnalogsPage />} />
       <Route path="specifications/analog-requests" element={<AnalogRequestsPage />} />
 

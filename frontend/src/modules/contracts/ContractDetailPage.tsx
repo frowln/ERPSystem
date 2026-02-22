@@ -30,8 +30,9 @@ import { contractsApi } from '@/api/contracts';
 import { formatMoney, formatMoneyCompact, formatDate, formatDateLong, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { Contract, ContractStatus, ContractApproval } from '@/types';
+import ContractBudgetItemsTab from './ContractBudgetItemsTab';
 
-type DetailTab = 'overview' | 'approval' | 'documents' | 'FINANCE';
+type DetailTab = 'overview' | 'approval' | 'documents' | 'FINANCE' | 'fmItems';
 
 type ContractDocument = {
   id: string;
@@ -143,6 +144,7 @@ const ContractDetailPage: React.FC = () => {
           { id: 'approval', label: t('contracts.detail.tabApproval') },
           { id: 'documents', label: t('contracts.detail.tabDocuments') },
           { id: 'FINANCE', label: t('contracts.detail.tabFinance') },
+          { id: 'fmItems', label: t('contracts.detail.tabFmItems') },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as DetailTab)}
@@ -434,6 +436,14 @@ const ContractDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {activeTab === 'fmItems' && id && (
+        <ContractBudgetItemsTab
+          contractId={id}
+          projectId={c?.projectId}
+          contractDirection={c?.contractDirection === 'CLIENT' ? 'CLIENT' : 'CONTRACTOR'}
+        />
       )}
 
       {/* Status change modal */}

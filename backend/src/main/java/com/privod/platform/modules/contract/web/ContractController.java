@@ -2,6 +2,7 @@ package com.privod.platform.modules.contract.web;
 
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
+import com.privod.platform.modules.contract.domain.ContractDirection;
 import com.privod.platform.modules.contract.domain.ContractStatus;
 import com.privod.platform.modules.contract.service.ContractService;
 import com.privod.platform.modules.contract.web.dto.ApproveContractRequest;
@@ -54,9 +55,10 @@ public class ContractController {
             @RequestParam(required = false) ContractStatus status,
             @RequestParam(required = false) UUID projectId,
             @RequestParam(required = false) UUID partnerId,
+            @RequestParam(required = false) ContractDirection direction,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<ContractResponse> page = contractService.listContracts(search, status, projectId, partnerId, pageable);
+        Page<ContractResponse> page = contractService.listContracts(search, status, projectId, partnerId, direction, pageable);
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
     }
 

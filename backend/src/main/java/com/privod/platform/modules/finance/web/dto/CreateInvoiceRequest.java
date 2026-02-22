@@ -40,6 +40,9 @@ public record CreateInvoiceRequest(
 
         UUID ks3Id,
 
+        @Size(max = 50)
+        String disciplineMark,
+
         String notes
 ) {
 }

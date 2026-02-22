@@ -29,7 +29,30 @@ CREATE TABLE IF NOT EXISTS stock_limits (
     CONSTRAINT chk_sl_reorder_qty CHECK (reorder_quantity IS NULL OR reorder_quantity >= 0)
 );
 
-CREATE UNIQUE INDEX uq_stock_limit_material_location ON stock_limits(material_id, warehouse_location_id) WHERE deleted = FALSE;
+-- Compatibility with legacy schema from V38 (`warehouse_id` instead of `warehouse_location_id`)
+ALTER TABLE stock_limits ADD COLUMN IF NOT EXISTS warehouse_location_id UUID;
+ALTER TABLE stock_limits ADD COLUMN IF NOT EXISTS unit VARCHAR(50);
+ALTER TABLE stock_limits ADD COLUMN IF NOT EXISTS last_alert_at TIMESTAMP;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'stock_limits'
+          AND column_name = 'warehouse_id'
+    ) THEN
+        EXECUTE 'UPDATE stock_limits
+                 SET warehouse_location_id = COALESCE(warehouse_location_id, warehouse_id)
+                 WHERE warehouse_location_id IS NULL';
+    END IF;
+END $$;
+
+DROP INDEX IF EXISTS uq_stock_limit_wh_mat;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_stock_limit_material_location
+    ON stock_limits(material_id, warehouse_location_id)
+    WHERE deleted = FALSE;
 CREATE INDEX IF NOT EXISTS idx_sl_material ON stock_limits(material_id);
 CREATE INDEX IF NOT EXISTS idx_sl_warehouse_location ON stock_limits(warehouse_location_id);
 CREATE INDEX IF NOT EXISTS idx_sl_active ON stock_limits(is_active);
@@ -44,7 +67,7 @@ CREATE TRIGGER update_stock_limits_updated_at
 -- =============================================================================
 -- Stock Limit Alerts (Оповещения о лимитах запасов)
 -- =============================================================================
-CREATE TABLE stock_limit_alerts (
+CREATE TABLE IF NOT EXISTS stock_limit_alerts (
     id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     stock_limit_id          UUID NOT NULL REFERENCES stock_limits(id) ON DELETE CASCADE,
     material_id             UUID NOT NULL REFERENCES materials(id),
@@ -73,6 +96,7 @@ CREATE INDEX IF NOT EXISTS idx_sla_severity ON stock_limit_alerts(severity);
 CREATE INDEX IF NOT EXISTS idx_sla_resolved ON stock_limit_alerts(is_resolved);
 CREATE INDEX IF NOT EXISTS idx_sla_deleted ON stock_limit_alerts(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_stock_limit_alerts_updated_at ON stock_limit_alerts;
 CREATE TRIGGER update_stock_limit_alerts_updated_at
     BEFORE UPDATE ON stock_limit_alerts
     FOR EACH ROW
@@ -110,6 +134,74 @@ CREATE TABLE IF NOT EXISTS material_certificates (
     ))
 );
 
+-- Compatibility with legacy schema from V33 (`supplier`, `valid_from`, `valid_to`, `is_valid`)
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS material_id UUID;
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS issued_by VARCHAR(500);
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS issued_date DATE;
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS expiry_date DATE;
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS status VARCHAR(30);
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP;
+ALTER TABLE material_certificates ADD COLUMN IF NOT EXISTS notes TEXT;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'material_certificates'
+          AND column_name = 'supplier'
+    ) THEN
+        EXECUTE 'UPDATE material_certificates
+                 SET issued_by = COALESCE(issued_by, supplier)
+                 WHERE issued_by IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'material_certificates'
+          AND column_name = 'valid_from'
+    ) THEN
+        EXECUTE 'UPDATE material_certificates
+                 SET issued_date = COALESCE(issued_date, valid_from)
+                 WHERE issued_date IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'material_certificates'
+          AND column_name = 'valid_to'
+    ) THEN
+        EXECUTE 'UPDATE material_certificates
+                 SET expiry_date = COALESCE(expiry_date, valid_to)
+                 WHERE expiry_date IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'material_certificates'
+          AND column_name = 'is_valid'
+    ) THEN
+        EXECUTE 'UPDATE material_certificates
+                 SET status = COALESCE(
+                     status,
+                     CASE WHEN is_valid THEN ''VALID'' ELSE ''EXPIRED'' END
+                 )
+                 WHERE status IS NULL';
+    END IF;
+
+    EXECUTE 'UPDATE material_certificates
+             SET status = COALESCE(status, ''PENDING_VERIFICATION'')';
+    EXECUTE 'UPDATE material_certificates
+             SET issued_date = COALESCE(issued_date, CURRENT_DATE)';
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_mc_material ON material_certificates(material_id);
 CREATE INDEX IF NOT EXISTS idx_mc_certificate_number ON material_certificates(certificate_number);
 CREATE INDEX IF NOT EXISTS idx_mc_certificate_type ON material_certificates(certificate_type);
@@ -127,7 +219,7 @@ CREATE TRIGGER update_material_certificates_updated_at
 -- =============================================================================
 -- Certificate Lines (Строки сертификата)
 -- =============================================================================
-CREATE TABLE certificate_lines (
+CREATE TABLE IF NOT EXISTS certificate_lines (
     id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     certificate_id          UUID NOT NULL REFERENCES material_certificates(id) ON DELETE CASCADE,
     parameter_name          VARCHAR(500) NOT NULL,
@@ -147,6 +239,7 @@ CREATE TABLE certificate_lines (
 CREATE INDEX IF NOT EXISTS idx_cl_certificate ON certificate_lines(certificate_id);
 CREATE INDEX IF NOT EXISTS idx_cl_deleted ON certificate_lines(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_certificate_lines_updated_at ON certificate_lines;
 CREATE TRIGGER update_certificate_lines_updated_at
     BEFORE UPDATE ON certificate_lines
     FOR EACH ROW
@@ -180,6 +273,49 @@ CREATE TABLE IF NOT EXISTS material_analogs (
     CONSTRAINT chk_ma_price_ratio CHECK (price_ratio IS NULL OR price_ratio >= 0)
 );
 
+-- Compatibility with legacy schema from V38
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS original_material_name VARCHAR(500);
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS analog_material_name VARCHAR(500);
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS substitution_type VARCHAR(30);
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS quality_rating VARCHAR(30);
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP;
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS conditions TEXT;
+ALTER TABLE material_analogs ADD COLUMN IF NOT EXISTS is_active BOOLEAN;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'material_analogs'
+          AND column_name = 'quality_notes'
+    ) THEN
+        EXECUTE 'UPDATE material_analogs
+                 SET conditions = COALESCE(conditions, quality_notes)
+                 WHERE conditions IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'material_analogs'
+          AND column_name = 'is_approved'
+    ) THEN
+        EXECUTE 'UPDATE material_analogs
+                 SET is_active = COALESCE(is_active, is_approved, TRUE)
+                 WHERE is_active IS NULL';
+    END IF;
+
+    EXECUTE 'UPDATE material_analogs
+             SET substitution_type = COALESCE(substitution_type, ''FULL'')';
+    EXECUTE 'UPDATE material_analogs
+             SET quality_rating = COALESCE(quality_rating, ''EQUAL'')';
+    EXECUTE 'UPDATE material_analogs
+             SET is_active = COALESCE(is_active, TRUE)';
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_ma_original_material ON material_analogs(original_material_id);
 CREATE INDEX IF NOT EXISTS idx_ma_analog_material ON material_analogs(analog_material_id);
 CREATE INDEX IF NOT EXISTS idx_ma_substitution_type ON material_analogs(substitution_type);
@@ -196,7 +332,7 @@ CREATE TRIGGER update_material_analogs_updated_at
 -- =============================================================================
 -- Analog Requests (Заявки на аналоги)
 -- =============================================================================
-CREATE TABLE analog_requests (
+CREATE TABLE IF NOT EXISTS analog_requests (
     id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     project_id              UUID NOT NULL,
     original_material_id    UUID NOT NULL,
@@ -223,6 +359,7 @@ CREATE INDEX IF NOT EXISTS idx_ar_requested_by ON analog_requests(requested_by_i
 CREATE INDEX IF NOT EXISTS idx_ar_approved_analog ON analog_requests(approved_analog_id);
 CREATE INDEX IF NOT EXISTS idx_ar_deleted ON analog_requests(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_analog_requests_updated_at ON analog_requests;
 CREATE TRIGGER update_analog_requests_updated_at
     BEFORE UPDATE ON analog_requests
     FOR EACH ROW
@@ -260,6 +397,7 @@ CREATE INDEX IF NOT EXISTS idx_tr_category ON tolerance_rules(category);
 CREATE INDEX IF NOT EXISTS idx_tr_active ON tolerance_rules(is_active);
 CREATE INDEX IF NOT EXISTS idx_tr_deleted ON tolerance_rules(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_tolerance_rules_updated_at ON tolerance_rules;
 CREATE TRIGGER update_tolerance_rules_updated_at
     BEFORE UPDATE ON tolerance_rules
     FOR EACH ROW
@@ -289,6 +427,78 @@ CREATE TABLE IF NOT EXISTS tolerance_checks (
 
     CONSTRAINT chk_tc_status CHECK (status IN ('PASS', 'FAIL', 'NEEDS_RECHECK'))
 );
+
+-- Compatibility with legacy schema from V39 (`tolerance_id`, `measured_by_id`, `measured_at`)
+ALTER TABLE tolerance_checks ADD COLUMN IF NOT EXISTS tolerance_rule_id UUID;
+ALTER TABLE tolerance_checks ADD COLUMN IF NOT EXISTS project_id UUID;
+ALTER TABLE tolerance_checks ADD COLUMN IF NOT EXISTS deviation NUMERIC(16, 4);
+ALTER TABLE tolerance_checks ADD COLUMN IF NOT EXISTS checked_by_id UUID;
+ALTER TABLE tolerance_checks ADD COLUMN IF NOT EXISTS checked_at TIMESTAMP;
+ALTER TABLE tolerance_checks ADD COLUMN IF NOT EXISTS status VARCHAR(30);
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'tolerance_checks'
+          AND column_name = 'tolerance_id'
+    ) THEN
+        EXECUTE 'UPDATE tolerance_checks
+                 SET tolerance_rule_id = COALESCE(tolerance_rule_id, tolerance_id)
+                 WHERE tolerance_rule_id IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'tolerance_checks'
+          AND column_name = 'measured_by_id'
+    ) THEN
+        EXECUTE 'UPDATE tolerance_checks
+                 SET checked_by_id = COALESCE(checked_by_id, measured_by_id)
+                 WHERE checked_by_id IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'tolerance_checks'
+          AND column_name = 'measured_at'
+    ) THEN
+        EXECUTE 'UPDATE tolerance_checks
+                 SET checked_at = COALESCE(checked_at, measured_at)
+                 WHERE checked_at IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = 'tolerances'
+    ) AND EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'tolerance_checks'
+          AND column_name = 'tolerance_id'
+    ) THEN
+        EXECUTE 'UPDATE tolerance_checks tc
+                 SET project_id = COALESCE(tc.project_id, t.project_id)
+                 FROM tolerances t
+                 WHERE tc.project_id IS NULL
+                   AND tc.tolerance_id = t.id';
+    END IF;
+
+    EXECUTE 'UPDATE tolerance_checks
+             SET status = COALESCE(
+                 status,
+                 CASE WHEN is_within_tolerance THEN ''PASS'' ELSE ''FAIL'' END
+             )';
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_tc_rule ON tolerance_checks(tolerance_rule_id);
 CREATE INDEX IF NOT EXISTS idx_tc_project ON tolerance_checks(project_id);

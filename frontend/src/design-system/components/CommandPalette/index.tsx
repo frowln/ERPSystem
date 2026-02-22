@@ -163,12 +163,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose })
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-command-palette bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
       {/* Dialog */}
-      <div className="fixed inset-x-4 top-[15vh] z-50 mx-auto max-w-xl animate-slide-up">
+      <div className="fixed inset-x-4 top-[15vh] z-command-palette mx-auto max-w-xl animate-slide-up">
         <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
           {/* Search input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">

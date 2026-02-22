@@ -29,6 +29,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AiConversation extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 

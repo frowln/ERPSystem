@@ -39,6 +39,10 @@ public record ContractResponse(
         BigDecimal balance,
         boolean expired,
         String notes,
+        BigDecimal prepaymentPercent,
+        Integer paymentDelayDays,
+        Integer guaranteePeriodMonths,
+        String direction,
         Instant createdAt,
         Instant updatedAt,
         String createdBy
@@ -75,6 +79,10 @@ public record ContractResponse(
                 contract.getBalance(),
                 contract.isExpired(),
                 contract.getNotes(),
+                contract.getPrepaymentPercent(),
+                contract.getPaymentDelayDays(),
+                contract.getGuaranteePeriodMonths(),
+                contract.getDirection() != null ? contract.getDirection().name() : null,
                 contract.getCreatedAt(),
                 contract.getUpdatedAt(),
                 contract.getCreatedBy()

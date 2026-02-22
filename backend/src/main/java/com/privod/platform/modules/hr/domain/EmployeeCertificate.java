@@ -52,10 +52,30 @@ public class EmployeeCertificate extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
+    @Builder.Default
+    private CertificateStatus status = CertificateStatus.VALID;
+
     public boolean isExpired() {
         if (expiryDate == null) {
             return false;
         }
         return LocalDate.now().isAfter(expiryDate);
+    }
+
+    public void recalculateStatus() {
+        if (expiryDate == null) {
+            this.status = CertificateStatus.VALID;
+            return;
+        }
+        LocalDate today = LocalDate.now();
+        if (today.isAfter(expiryDate)) {
+            this.status = CertificateStatus.EXPIRED;
+        } else if (today.plusDays(90).isAfter(expiryDate)) {
+            this.status = CertificateStatus.EXPIRING;
+        } else {
+            this.status = CertificateStatus.VALID;
+        }
     }
 }

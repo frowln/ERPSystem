@@ -19,6 +19,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     Page<Employee> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
 
+    List<Employee> findAllByOrganizationId(UUID organizationId);
+
     Page<Employee> findByStatusAndDeletedFalse(EmployeeStatus status, Pageable pageable);
 
     Optional<Employee> findByUserIdAndDeletedFalse(UUID userId);
@@ -42,6 +44,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT e FROM Employee e JOIN CrewAssignment ca ON ca.employeeId = e.id " +
             "WHERE ca.projectId = :projectId AND ca.active = true AND e.deleted = false")
     List<Employee> findByProjectId(@Param("projectId") UUID projectId);
+
+    @Query("SELECT e FROM Employee e JOIN CrewAssignment ca ON ca.employeeId = e.id " +
+            "WHERE ca.projectId = :projectId AND ca.active = true AND e.deleted = false " +
+            "AND e.organizationId = :organizationId")
+    List<Employee> findByProjectIdAndOrganizationId(@Param("projectId") UUID projectId,
+                                                     @Param("organizationId") UUID organizationId);
 
     @Query(value = "SELECT nextval('employee_number_seq')", nativeQuery = true)
     long getNextNumberSequence();

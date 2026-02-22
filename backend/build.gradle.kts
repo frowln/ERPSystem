@@ -65,6 +65,16 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
+    // AWS S3 SDK (S3StorageService + StorageConfig)
+    implementation(platform("software.amazon.awssdk:bom:2.25.0"))
+    implementation("software.amazon.awssdk:s3")
+
+    // Apache Tika (FileValidationService — MIME type detection)
+    implementation("org.apache.tika:tika-core:2.9.1")
+
+    // Redis (RedisWebSocketBroadcast — optional at runtime)
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // OpenAPI / Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion")
 

@@ -29,6 +29,10 @@ const contractSchema = z.object({
   plannedStartDate: z.string().min(1, t('forms.contract.validation.startDateRequired')),
   plannedEndDate: z.string().min(1, t('forms.contract.validation.endDateRequired')),
   retentionPercent: z.string().transform((val) => Number(val)).optional(),
+  prepaymentPercent: z.string().transform((val) => Number(val)).optional(),
+  paymentDelayDays: z.string().transform((val) => Number(val)).optional(),
+  guaranteePeriodMonths: z.string().transform((val) => Number(val)).optional(),
+  direction: z.string().optional(),
   notes: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
 });
 
@@ -101,6 +105,10 @@ const ContractFormPage: React.FC = () => {
           plannedStartDate: existingContract.plannedStartDate ?? '',
           plannedEndDate: existingContract.plannedEndDate ?? '',
           retentionPercent: String(existingContract.retentionPercent),
+          prepaymentPercent: String(existingContract.prepaymentPercent ?? 0),
+          paymentDelayDays: String(existingContract.paymentDelayDays ?? 0),
+          guaranteePeriodMonths: String(existingContract.guaranteePeriodMonths ?? ''),
+          direction: existingContract.direction ?? '',
           notes: existingContract.notes ?? '',
         }
       : {
@@ -116,6 +124,10 @@ const ContractFormPage: React.FC = () => {
           plannedStartDate: '',
           plannedEndDate: '',
           retentionPercent: '5',
+          prepaymentPercent: '0',
+          paymentDelayDays: '0',
+          guaranteePeriodMonths: '',
+          direction: '',
           notes: '',
         },
   });
@@ -303,6 +315,16 @@ const ContractFormPage: React.FC = () => {
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.contract.sectionAdditional')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <FormField label={t('forms.contract.labelDirection')}>
+              <Select
+                options={[
+                  { value: '', label: t('forms.contract.directionNone') },
+                  { value: 'CONTRACTOR', label: t('contracts.direction.contractor') },
+                  { value: 'CLIENT', label: t('contracts.direction.client') },
+                ]}
+                {...register('direction')}
+              />
+            </FormField>
             <FormField label={t('forms.contract.labelPaymentTerms')} error={errors.paymentTerms?.message}>
               <Input
                 placeholder={t('forms.contract.placeholderPaymentTerms')}
@@ -317,6 +339,30 @@ const ContractFormPage: React.FC = () => {
                 placeholder="5"
                 hasError={!!errors.retentionPercent}
                 {...register('retentionPercent')}
+              />
+            </FormField>
+            <FormField label={t('forms.contract.labelPrepayment')}>
+              <Input
+                type="text"
+                inputMode="numeric"
+                placeholder="30"
+                {...register('prepaymentPercent')}
+              />
+            </FormField>
+            <FormField label={t('forms.contract.labelPaymentDelay')}>
+              <Input
+                type="text"
+                inputMode="numeric"
+                placeholder="30"
+                {...register('paymentDelayDays')}
+              />
+            </FormField>
+            <FormField label={t('forms.contract.labelGuarantee')}>
+              <Input
+                type="text"
+                inputMode="numeric"
+                placeholder="12"
+                {...register('guaranteePeriodMonths')}
               />
             </FormField>
             <FormField

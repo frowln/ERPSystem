@@ -42,6 +42,15 @@ public record UpdateContractRequest(
         @DecimalMin(value = "0", message = "Процент удержания не может быть отрицательным")
         BigDecimal retentionPercent,
 
+        @DecimalMin(value = "0", message = "Процент предоплаты не может быть отрицательным")
+        BigDecimal prepaymentPercent,
+
+        Integer paymentDelayDays,
+
+        Integer guaranteePeriodMonths,
+
+        String direction,
+
         String notes
 ) {
 }

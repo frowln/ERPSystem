@@ -178,6 +178,98 @@ CREATE TABLE IF NOT EXISTS reconciliation_acts (
     deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+-- Compatibility with legacy accounting schema from V34
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS act_number VARCHAR(50);
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS contract_id UUID;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS period_start DATE;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS period_end DATE;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS our_balance NUMERIC(18,2) DEFAULT 0;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS counterparty_debit NUMERIC(18,2) DEFAULT 0;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS counterparty_credit NUMERIC(18,2) DEFAULT 0;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS counterparty_balance NUMERIC(18,2) DEFAULT 0;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS discrepancy NUMERIC(18,2) DEFAULT 0;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS signed_by_us BOOLEAN;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS signed_by_counterparty BOOLEAN;
+ALTER TABLE reconciliation_acts ADD COLUMN IF NOT EXISTS signed_date DATE;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'reconciliation_acts'
+          AND column_name = 'their_debit'
+    ) THEN
+        EXECUTE 'UPDATE reconciliation_acts
+                 SET counterparty_debit = COALESCE(counterparty_debit, their_debit)
+                 WHERE counterparty_debit IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'reconciliation_acts'
+          AND column_name = 'their_credit'
+    ) THEN
+        EXECUTE 'UPDATE reconciliation_acts
+                 SET counterparty_credit = COALESCE(counterparty_credit, their_credit)
+                 WHERE counterparty_credit IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'reconciliation_acts'
+          AND column_name = 'difference'
+    ) THEN
+        EXECUTE 'UPDATE reconciliation_acts
+                 SET discrepancy = COALESCE(discrepancy, difference)
+                 WHERE discrepancy IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'reconciliation_acts'
+          AND column_name = 'period_id'
+    ) AND to_regclass('public.account_periods') IS NOT NULL THEN
+        EXECUTE 'UPDATE reconciliation_acts ra
+                 SET period_start = COALESCE(ra.period_start, make_date(ap.year, ap.month, 1)),
+                     period_end = COALESCE(
+                         ra.period_end,
+                         (make_date(ap.year, ap.month, 1) + INTERVAL ''1 month - 1 day'')::date
+                     )
+                 FROM account_periods ap
+                 WHERE ra.period_id = ap.id';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'reconciliation_acts'
+          AND column_name = 'signed_at'
+    ) THEN
+        EXECUTE 'UPDATE reconciliation_acts
+                 SET signed_date = COALESCE(signed_date, signed_at::date)
+                 WHERE signed_date IS NULL';
+    END IF;
+
+    EXECUTE 'UPDATE reconciliation_acts
+             SET act_number = COALESCE(act_number, ''RA-'' || left(id::text, 8))';
+    EXECUTE 'UPDATE reconciliation_acts
+             SET period_start = COALESCE(period_start, CURRENT_DATE),
+                 period_end = COALESCE(period_end, CURRENT_DATE)';
+    EXECUTE 'UPDATE reconciliation_acts
+             SET counterparty_debit = COALESCE(counterparty_debit, 0),
+                 counterparty_credit = COALESCE(counterparty_credit, 0),
+                 discrepancy = COALESCE(discrepancy, 0)';
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_rec_counterparty ON reconciliation_acts(counterparty_id);
 CREATE INDEX IF NOT EXISTS idx_rec_contract ON reconciliation_acts(contract_id);
 CREATE INDEX IF NOT EXISTS idx_rec_period ON reconciliation_acts(period_start, period_end);

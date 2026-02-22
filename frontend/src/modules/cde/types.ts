@@ -61,3 +61,29 @@ export interface TransmittalItem {
   responseStatus?: string;
   responseComment?: string;
 }
+
+export interface ArchivePolicy {
+  id: string;
+  name: string;
+  description?: string;
+  classification?: Classification;
+  retentionDays: number;
+  autoArchive: boolean;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface RevisionSet {
+  id: string;
+  name: string;
+  description?: string;
+  projectId?: string;
+  projectName?: string;
+  issuedDate?: string;
+  issuedByName?: string;
+  revisionIds: string[];
+  revisionCount: number;
+  createdAt: string;
+  updatedAt?: string;
+}

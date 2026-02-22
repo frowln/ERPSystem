@@ -3,6 +3,7 @@ package com.privod.platform.modules.estimate.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.estimate.domain.Estimate;
 import com.privod.platform.modules.estimate.domain.EstimateItem;
 import com.privod.platform.modules.estimate.domain.EstimateStatus;
@@ -86,7 +87,9 @@ public class EstimateService {
 
     @Transactional
     public EstimateResponse createEstimate(CreateEstimateRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Estimate estimate = Estimate.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .projectId(request.projectId())
                 .contractId(request.contractId())
@@ -188,11 +191,13 @@ public class EstimateService {
 
     @Transactional
     public EstimateResponse createFromSpecification(CreateFromSpecRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Specification specification = specificationRepository.findById(request.specificationId())
                 .filter(s -> !s.isDeleted())
                 .orElseThrow(() -> new EntityNotFoundException("Спецификация не найдена: " + request.specificationId()));
 
         Estimate estimate = Estimate.builder()
+                .organizationId(organizationId)
                 .name(request.name())
                 .projectId(specification.getProjectId())
                 .contractId(request.contractId() != null ? request.contractId() : specification.getContractId())

@@ -39,4 +39,9 @@ public record CertificateResponse(
                 cert.getUpdatedAt()
         );
     }
+
+    public static CertificateResponse fromEntity(EmployeeCertificate cert, String employeeName) {
+        // employeeName is available for context but not included in record fields
+        return fromEntity(cert);
+    }
 }

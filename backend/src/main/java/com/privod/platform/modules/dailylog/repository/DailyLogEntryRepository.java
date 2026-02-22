@@ -19,5 +19,7 @@ public interface DailyLogEntryRepository extends JpaRepository<DailyLogEntry, UU
 
     List<DailyLogEntry> findByDailyLogIdAndEntryTypeAndDeletedFalse(UUID dailyLogId, EntryType entryType);
 
+    List<DailyLogEntry> findByDailyLogIdInAndEntryTypeAndDeletedFalse(List<UUID> dailyLogIds, EntryType entryType);
+
     long countByDailyLogIdAndDeletedFalse(UUID dailyLogId);
 }

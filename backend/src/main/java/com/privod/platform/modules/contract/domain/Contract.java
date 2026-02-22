@@ -125,6 +125,24 @@ public class Contract extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "budget_item_id")
+    private UUID budgetItemId;
+
+    @Column(name = "prepayment_percent", precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal prepaymentPercent = BigDecimal.ZERO;
+
+    @Column(name = "payment_delay_days")
+    @Builder.Default
+    private Integer paymentDelayDays = 0;
+
+    @Column(name = "guarantee_period_months")
+    private Integer guaranteePeriodMonths;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "direction", length = 30)
+    private ContractDirection direction;
+
     public boolean canTransitionTo(ContractStatus newStatus) {
         return this.status.canTransitionTo(newStatus);
     }

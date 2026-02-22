@@ -32,6 +32,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChangeOrder extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
 

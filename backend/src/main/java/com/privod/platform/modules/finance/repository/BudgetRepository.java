@@ -20,6 +20,8 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID>, JpaSpecif
 
     Optional<Budget> findByIdAndDeletedFalse(UUID id);
 
+    Optional<Budget> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID organizationId);
+
     Page<Budget> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
     Page<Budget> findByProjectIdInAndDeletedFalse(List<UUID> projectIds, Pageable pageable);

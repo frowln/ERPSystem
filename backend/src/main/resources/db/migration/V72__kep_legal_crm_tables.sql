@@ -181,6 +181,102 @@ CREATE TABLE IF NOT EXISTS legal_cases (
     CONSTRAINT chk_legal_case_amount CHECK (amount IS NULL OR amount >= 0)
 );
 
+-- Compatibility with legacy schema from V39
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS title VARCHAR(500);
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS case_type VARCHAR(30);
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS amount NUMERIC(18, 2);
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS currency VARCHAR(10);
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS responsible_id UUID;
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS court_name VARCHAR(500);
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS filing_date DATE;
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS hearing_date DATE;
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS resolution_date DATE;
+ALTER TABLE legal_cases ADD COLUMN IF NOT EXISTS outcome TEXT;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'legal_cases'
+          AND column_name = 'subject'
+    ) THEN
+        EXECUTE 'UPDATE legal_cases
+                 SET title = COALESCE(title, left(subject, 500)),
+                     description = COALESCE(description, subject)
+                 WHERE title IS NULL OR description IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'legal_cases'
+          AND column_name = 'claim_amount'
+    ) THEN
+        EXECUTE 'UPDATE legal_cases
+                 SET amount = COALESCE(amount, claim_amount)
+                 WHERE amount IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'legal_cases'
+          AND column_name = 'court'
+    ) THEN
+        EXECUTE 'UPDATE legal_cases
+                 SET court_name = COALESCE(court_name, court)
+                 WHERE court_name IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'legal_cases'
+          AND column_name = 'filed_at'
+    ) THEN
+        EXECUTE 'UPDATE legal_cases
+                 SET filing_date = COALESCE(filing_date, filed_at)
+                 WHERE filing_date IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'legal_cases'
+          AND column_name = 'next_hearing_date'
+    ) THEN
+        EXECUTE 'UPDATE legal_cases
+                 SET hearing_date = COALESCE(hearing_date, next_hearing_date)
+                 WHERE hearing_date IS NULL';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'legal_cases'
+          AND column_name = 'result'
+    ) THEN
+        EXECUTE 'UPDATE legal_cases
+                 SET outcome = COALESCE(outcome, result)
+                 WHERE outcome IS NULL';
+    END IF;
+
+    EXECUTE 'UPDATE legal_cases
+             SET case_type = COALESCE(case_type, ''DISPUTE'')';
+    EXECUTE 'UPDATE legal_cases
+             SET title = COALESCE(title, case_number, ''Legal case'')';
+    EXECUTE 'UPDATE legal_cases
+             SET currency = COALESCE(currency, ''RUB'')';
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_legal_case_number ON legal_cases(case_number);
 CREATE INDEX IF NOT EXISTS idx_legal_case_project ON legal_cases(project_id);
 CREATE INDEX IF NOT EXISTS idx_legal_case_contract ON legal_cases(contract_id);

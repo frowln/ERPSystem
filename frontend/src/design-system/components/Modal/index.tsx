@@ -11,7 +11,7 @@ interface ModalProps {
   title?: string;
   description?: string;
   size?: ModalSize;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   footer?: React.ReactNode;
   closeOnOverlayClick?: boolean;
 }
@@ -109,6 +109,33 @@ export const Modal: React.FC<ModalProps> = ({
     };
   }, [open, handleKeyDown]);
 
+  // Guard: return focus to modal if it escapes
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const handleFocusIn = (e: FocusEvent) => {
+      if (contentRef.current && !contentRef.current.contains(e.target as Node)) {
+        const focusable = getFocusableElements();
+        (focusable[0] ?? contentRef.current)?.focus();
+      }
+    };
+
+    document.addEventListener('focusin', handleFocusIn);
+    return () => document.removeEventListener('focusin', handleFocusIn);
+  }, [open, getFocusableElements]);
+
+  // Set inert on sibling content to prevent screen-reader escape
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const root = document.getElementById('root');
+    if (root) root.setAttribute('inert', '');
+
+    return () => {
+      if (root) root.removeAttribute('inert');
+    };
+  }, [open]);
+
   useEffect(() => {
     if (!open) return undefined;
 
@@ -127,7 +154,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
       {/* Overlay */}
       <div
         ref={overlayRef}

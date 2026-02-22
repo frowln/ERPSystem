@@ -12,6 +12,8 @@ import type {
   ComplianceCheck,
   CreatePermitRequest,
   CreateInspectionRequest,
+  Prescription,
+  PrescriptionStatus,
 } from '@/modules/regulatory/types';
 
 export interface PermitFilters extends PaginationParams {
@@ -127,6 +129,41 @@ export const regulatoryApi = {
 
   createComplianceCheck: async (data: Partial<ComplianceCheck>): Promise<ComplianceCheck> => {
     const response = await apiClient.post<ComplianceCheck>('/regulatory/compliance', data);
+    return response.data;
+  },
+
+  // Prescriptions
+  getPrescriptions: async (params?: { size?: number; search?: string }): Promise<PaginatedResponse<Prescription>> => {
+    const response = await apiClient.get<PaginatedResponse<Prescription>>('/regulatory/prescriptions', { params });
+    return response.data;
+  },
+
+  getPrescription: async (id: string): Promise<Prescription> => {
+    const response = await apiClient.get<Prescription>(`/regulatory/prescriptions/${id}`);
+    return response.data;
+  },
+
+  createPrescription: async (data: Partial<Prescription>): Promise<Prescription> => {
+    const response = await apiClient.post<Prescription>('/regulatory/prescriptions', data);
+    return response.data;
+  },
+
+  updatePrescription: async (id: string, data: Partial<Prescription>): Promise<Prescription> => {
+    const response = await apiClient.put<Prescription>(`/regulatory/prescriptions/${id}`, data);
+    return response.data;
+  },
+
+  changePrescriptionStatus: async (id: string, status: PrescriptionStatus): Promise<Prescription> => {
+    const response = await apiClient.patch<Prescription>(`/regulatory/prescriptions/${id}/status`, { status });
+    return response.data;
+  },
+
+  deletePrescription: async (id: string): Promise<void> => {
+    await apiClient.delete(`/regulatory/prescriptions/${id}`);
+  },
+
+  fileAppeal: async (id: string): Promise<Prescription> => {
+    const response = await apiClient.post<Prescription>(`/regulatory/prescriptions/${id}/appeal`);
     return response.data;
   },
 };

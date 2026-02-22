@@ -21,6 +21,7 @@ import com.privod.platform.modules.project.web.dto.UpdateProjectRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,34 +86,7 @@ public class ProjectService {
             throw new AccessDeniedException("Cannot create a project in another organization");
         }
 
-        String code = generateProjectCode();
-
-        Project project = Project.builder()
-                .code(code)
-                .name(request.name())
-                .description(request.description())
-                .status(ProjectStatus.DRAFT)
-                .organizationId(currentOrgId)
-                .customerId(request.customerId())
-                .managerId(request.managerId())
-                .plannedStartDate(request.plannedStartDate())
-                .plannedEndDate(request.plannedEndDate())
-                .address(request.address())
-                .city(request.city())
-                .region(request.region())
-                .latitude(request.latitude())
-                .longitude(request.longitude())
-                .budgetAmount(request.budgetAmount())
-                .contractAmount(request.contractAmount())
-                .type(request.type())
-                .category(request.category())
-                .priority(request.priority() != null ? request.priority() : ProjectPriority.NORMAL)
-                .build();
-
-        project = projectRepository.save(project);
-        auditService.logCreate("Project", project.getId());
-
-        log.info("Project created: {} - {} ({})", project.getCode(), project.getName(), project.getId());
+        Project project = createWithUniqueCode(request, currentOrgId);
         return ProjectResponse.fromEntity(project);
     }
 
@@ -338,8 +313,63 @@ public class ProjectService {
     }
 
     private String generateProjectCode() {
+        return generateProjectCode("PRJ");
+    }
+
+    private String generateProjectCode(String prefix) {
         long seq = projectRepository.getNextCodeSequence();
-        return String.format("PRJ-%05d", seq);
+        return String.format("%s-%05d", prefix, seq);
+    }
+
+    private Project createWithUniqueCode(CreateProjectRequest request, UUID organizationId) {
+        final int maxAttempts = 10;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            String code = attempt <= 5
+                    ? generateProjectCode()
+                    : generateProjectCode("PX");
+            if (projectRepository.findByCode(code).isPresent()) {
+                continue;
+            }
+
+            Project project = Project.builder()
+                    .code(code)
+                    .name(request.name())
+                    .description(request.description())
+                    .status(ProjectStatus.DRAFT)
+                    .organizationId(organizationId)
+                    .customerId(request.customerId())
+                    .managerId(request.managerId())
+                    .plannedStartDate(request.plannedStartDate())
+                    .plannedEndDate(request.plannedEndDate())
+                    .address(request.address())
+                    .city(request.city())
+                    .region(request.region())
+                    .latitude(request.latitude())
+                    .longitude(request.longitude())
+                    .budgetAmount(request.budgetAmount())
+                    .contractAmount(request.contractAmount())
+                    .type(request.type())
+                    .category(request.category())
+                    .priority(request.priority() != null ? request.priority() : ProjectPriority.NORMAL)
+                    .build();
+
+            try {
+                project = projectRepository.save(project);
+                auditService.logCreate("Project", project.getId());
+                log.info("Project created: {} - {} ({})", project.getCode(), project.getName(), project.getId());
+                return project;
+            } catch (DataIntegrityViolationException ex) {
+                String msg = ex.getMostSpecificCause() != null
+                        ? ex.getMostSpecificCause().getMessage()
+                        : ex.getMessage();
+                String safeMsg = msg == null ? "" : msg.toLowerCase(Locale.ROOT);
+                if (!(safeMsg.contains("projects_code_key") || safeMsg.contains("idx_project_code") || safeMsg.contains("code"))) {
+                    throw ex;
+                }
+                log.warn("Project code collision on attempt {} with code {}. Retrying.", attempt, code);
+            }
+        }
+        throw new IllegalStateException("Could not generate unique project code after retries");
     }
 
     private void validateDates(LocalDate start, LocalDate end) {

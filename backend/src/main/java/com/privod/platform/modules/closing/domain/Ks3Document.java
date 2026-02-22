@@ -83,6 +83,32 @@ public class Ks3Document extends BaseEntity {
     @Column(name = "signed_at")
     private Instant signedAt;
 
+    @Column(name = "edo_document_id")
+    private UUID edoDocumentId;
+
+    @Column(name = "edo_status", length = 30)
+    private String edoStatus;
+
+    @Column(name = "edo_sent_at")
+    private Instant edoSentAt;
+
+    @Column(name = "edo_delivered_at")
+    private Instant edoDeliveredAt;
+
+    @Column(name = "edo_signed_at")
+    private Instant edoSignedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "onec_posting_status", length = 20)
+    @Builder.Default
+    private OneCPostingStatus oneCPostingStatus = OneCPostingStatus.NOT_SENT;
+
+    @Column(name = "onec_document_id", length = 255)
+    private String oneCDocumentId;
+
+    @Column(name = "onec_posted_at")
+    private Instant oneCPostedAt;
+
     public void computeName() {
         this.name = "КС-3 №" + this.number + " от " + this.documentDate;
     }

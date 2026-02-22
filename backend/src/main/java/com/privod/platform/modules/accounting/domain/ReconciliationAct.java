@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "AccountingReconciliationAct")
 @Table(name = "reconciliation_acts", indexes = {
         @Index(name = "idx_reconciliation_act_counterparty", columnList = "counterparty_id"),
         @Index(name = "idx_reconciliation_act_period", columnList = "period_id"),

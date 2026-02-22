@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Repository("accountingReconciliationActRepository")
 public interface ReconciliationActRepository extends JpaRepository<ReconciliationAct, UUID> {
 
     Page<ReconciliationAct> findByDeletedFalse(Pageable pageable);

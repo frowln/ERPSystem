@@ -18,6 +18,8 @@ public interface ChangeEventRepository extends JpaRepository<ChangeEvent, UUID>,
 
     Page<ChangeEvent> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
+    List<ChangeEvent> findByProjectIdAndOrganizationIdAndDeletedFalse(UUID projectId, UUID organizationId);
+
     Page<ChangeEvent> findByProjectIdAndStatusAndDeletedFalse(UUID projectId, ChangeEventStatus status, Pageable pageable);
 
     long countByProjectIdAndDeletedFalse(UUID projectId);

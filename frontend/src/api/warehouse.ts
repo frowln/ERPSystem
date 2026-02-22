@@ -210,4 +210,27 @@ export const warehouseApi = {
     const response = await apiClient.get<StockMovement[]>('/warehouse/movements/board');
     return response.data;
   },
+
+  // Inter-site transfers
+  createInterSiteTransfer: async (data: {
+    movementDate?: string;
+    sourceLocationId: string;
+    destinationLocationId: string;
+    sourceProjectId?: string;
+    destinationProjectId?: string;
+    responsibleId?: string;
+    notes?: string;
+    lines: { materialId: string; quantity: number }[];
+  }): Promise<StockMovement> => {
+    const response = await apiClient.post<StockMovement>('/warehouse/movements/inter-site-transfer', data);
+    return response.data;
+  },
+
+  // Barcode lookup
+  lookupMaterialByBarcode: async (barcode: string): Promise<Material> => {
+    const response = await apiClient.get<Material>('/warehouse/materials/barcode-lookup', {
+      params: { barcode },
+    });
+    return response.data;
+  },
 };

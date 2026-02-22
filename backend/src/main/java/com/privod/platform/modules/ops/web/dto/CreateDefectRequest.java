@@ -12,6 +12,8 @@ public record CreateDefectRequest(
         @NotNull(message = "ID проекта обязателен")
         UUID projectId,
 
+        UUID qualityCheckId,
+
         @NotBlank(message = "Название обязательно")
         @Size(max = 500, message = "Название не должно превышать 500 символов")
         String title,
@@ -26,6 +28,11 @@ public record CreateDefectRequest(
         String photoUrls,
         UUID detectedById,
         UUID assignedToId,
-        LocalDate fixDeadline
+        UUID contractorId,
+        LocalDate fixDeadline,
+        Integer slaDeadlineHours,
+        UUID drawingId,
+        Double pinX,
+        Double pinY
 ) {
 }

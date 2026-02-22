@@ -150,7 +150,7 @@ const SimulationFormPage: React.FC = () => {
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.simulation.sectionParams')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.simulation.labelName')} error={errors.name?.message} required className="sm:col-span-2">
-              <Input placeholder="Симуляция сроков проекта" hasError={!!errors.name} {...register('name')} />
+              <Input placeholder={t('forms.simulation.placeholderName')} hasError={!!errors.name} {...register('name')} />
             </FormField>
             <FormField label={t('forms.simulation.labelProject')} error={errors.projectId?.message}>
               <Select options={projectOptions} hasError={!!errors.projectId} {...register('projectId')} />
@@ -190,7 +190,7 @@ const SimulationFormPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                   <FormField label={t('forms.simulation.labelTaskName')} className="sm:col-span-4">
                     <Input
-                      placeholder="Земляные работы"
+                      placeholder={t('forms.simulation.placeholderTaskName')}
                       value={task.name}
                       onChange={(e) => updateTask(task.id, 'name', e.target.value)}
                     />

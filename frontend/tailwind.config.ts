@@ -65,6 +65,17 @@ const config: Config = {
           700: '#1d4ed8',
         },
       },
+      zIndex: {
+        dropdown: '100',
+        sticky: '200',
+        fixed: '300',
+        overlay: '400',
+        modal: '500',
+        popover: '600',
+        tooltip: '700',
+        toast: '800',
+        'command-palette': '900',
+      },
       boxShadow: {
         xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
         sm: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',

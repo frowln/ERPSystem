@@ -52,6 +52,17 @@ export function formatNumber(value: number | null | undefined): string {
 }
 
 /**
+ * Format quantity with specified decimal places: 150,500
+ */
+export function formatQuantity(value: number | null | undefined, decimals = 3): string {
+  if (value == null) return '—';
+  return new Intl.NumberFormat('ru-RU', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+/**
  * Format percentage
  */
 export function formatPercent(value: number | null | undefined): string {

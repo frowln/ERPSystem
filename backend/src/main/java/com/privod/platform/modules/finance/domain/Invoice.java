@@ -34,6 +34,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Invoice extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "number", unique = true, length = 50)
     private String number;
 
@@ -55,6 +58,9 @@ public class Invoice extends BaseEntity {
     @Column(name = "partner_name", length = 500)
     private String partnerName;
 
+    @Column(name = "discipline_mark", length = 50)
+    private String disciplineMark;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "invoice_type", nullable = false, length = 20)
     private InvoiceType invoiceType;
@@ -62,7 +68,12 @@ public class Invoice extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
-    private InvoiceStatus status = InvoiceStatus.DRAFT;
+    private InvoiceStatus status = InvoiceStatus.NEW;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "matching_status", length = 30)
+    @Builder.Default
+    private InvoiceMatchingStatus matchingStatus = InvoiceMatchingStatus.UNMATCHED;
 
     @Column(name = "subtotal", precision = 18, scale = 2)
     private BigDecimal subtotal;
@@ -93,13 +104,32 @@ public class Invoice extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "prepayment_percent", precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal prepaymentPercent = BigDecimal.ZERO;
+
+    @Column(name = "payment_delay_days")
+    @Builder.Default
+    private Integer paymentDelayDays = 0;
+
+    @Column(name = "matched_po_id")
+    private UUID matchedPoId;
+
+    @Column(name = "matched_receipt_id")
+    private UUID matchedReceiptId;
+
+    @Column(name = "matching_confidence", precision = 5, scale = 2)
+    private BigDecimal matchingConfidence;
+
     public boolean isOverdue() {
         if (dueDate == null) {
             return false;
         }
         return LocalDate.now().isAfter(dueDate)
                 && status != InvoiceStatus.PAID
-                && status != InvoiceStatus.CANCELLED;
+                && status != InvoiceStatus.CANCELLED
+                && status != InvoiceStatus.CLOSED
+                && status != InvoiceStatus.REJECTED;
     }
 
     public BigDecimal getPaymentPercent() {

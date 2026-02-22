@@ -12,7 +12,7 @@ BEGIN;
 -- 1. Генеральный подряд с заказчиком на ЖК Солнечный
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -26,7 +26,8 @@ SELECT
     NULL,
     'ООО "ДевелопМосква" (Заказчик)',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     400000000.00,
     20.00,
@@ -42,12 +43,12 @@ FROM projects p, contract_types ct, users u
 WHERE p.code = 'PRJ-00001'
   AND ct.code = 'GENERAL'
   AND u.email = 'petrov@stroyinvest.ru'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 2. Субподряд на монолитные работы ЖК Солнечный
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -61,7 +62,8 @@ SELECT
     org.id,
     'ООО "СубСтрой"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     95000000.00,
     20.00,
@@ -78,12 +80,12 @@ WHERE p.code = 'PRJ-00001'
   AND ct.code = 'SUBCONTRACT'
   AND u.email = 'petrov@stroyinvest.ru'
   AND org.inn = '7702345678'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 3. Субподряд на электромонтаж ЖК Солнечный
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -97,7 +99,8 @@ SELECT
     org.id,
     'ИП Кузнецов А.В. "Электромонтаж"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'SIGNED',
     28000000.00,
     20.00,
@@ -114,12 +117,12 @@ WHERE p.code = 'PRJ-00001'
   AND ct.code = 'SUBCONTRACT'
   AND u.email = 'volkov@stroyinvest.ru'
   AND org.inn = '770512345678'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 4. Поставка бетона ЖК Солнечный
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -133,7 +136,8 @@ SELECT
     org.id,
     'АО "БетонПром"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     42000000.00,
     20.00,
@@ -150,12 +154,12 @@ WHERE p.code = 'PRJ-00001'
   AND ct.code = 'SUPPLY'
   AND u.email = 'volkov@stroyinvest.ru'
   AND org.inn = '7703456789'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 5. Поставка арматуры ЖК Солнечный
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -169,7 +173,8 @@ SELECT
     org.id,
     'ООО "МеталлСнаб"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     35000000.00,
     20.00,
@@ -186,7 +191,7 @@ WHERE p.code = 'PRJ-00001'
   AND ct.code = 'SUPPLY'
   AND u.email = 'volkov@stroyinvest.ru'
   AND org.inn = '7704567890'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================
 -- ПРОЕКТ 2: БЦ "Горизонт" (PRJ-00002)
@@ -195,7 +200,7 @@ ON CONFLICT (number) DO NOTHING;
 -- 6. Генеральный подряд на БЦ Горизонт
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -209,7 +214,8 @@ SELECT
     NULL,
     'ООО "Горизонт Девелопмент" (Заказчик)',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     958333333.33,
     20.00,
@@ -225,12 +231,12 @@ FROM projects p, contract_types ct, users u
 WHERE p.code = 'PRJ-00002'
   AND ct.code = 'GENERAL'
   AND u.email = 'petrov@stroyinvest.ru'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 7. Субподряд на монолит БЦ Горизонт
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -244,7 +250,8 @@ SELECT
     org.id,
     'ООО "СубСтрой"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     220000000.00,
     20.00,
@@ -261,12 +268,12 @@ WHERE p.code = 'PRJ-00002'
   AND ct.code = 'SUBCONTRACT'
   AND u.email = 'petrov@stroyinvest.ru'
   AND org.inn = '7702345678'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 8. Поставка бетона БЦ Горизонт
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -280,7 +287,8 @@ SELECT
     org.id,
     'АО "БетонПром"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     85000000.00,
     20.00,
@@ -297,12 +305,12 @@ WHERE p.code = 'PRJ-00002'
   AND ct.code = 'SUPPLY'
   AND u.email = 'volkov@stroyinvest.ru'
   AND org.inn = '7703456789'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 9. Поставка металлоконструкций БЦ Горизонт
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -316,7 +324,8 @@ SELECT
     org.id,
     'ООО "МеталлСнаб"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'ACTIVE',
     72000000.00,
     20.00,
@@ -333,12 +342,12 @@ WHERE p.code = 'PRJ-00002'
   AND ct.code = 'SUPPLY'
   AND u.email = 'volkov@stroyinvest.ru'
   AND org.inn = '7704567890'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 10. Субподряд на электромонтаж БЦ Горизонт
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -352,7 +361,8 @@ SELECT
     org.id,
     'ИП Кузнецов А.В. "Электромонтаж"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'DRAFT',
     55000000.00,
     20.00,
@@ -369,7 +379,7 @@ WHERE p.code = 'PRJ-00002'
   AND ct.code = 'SUBCONTRACT'
   AND u.email = 'volkov@stroyinvest.ru'
   AND org.inn = '770512345678'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- =============================================================================
 -- ПРОЕКТ 3: Школа №45 (PRJ-00003) — фаза планирования
@@ -378,7 +388,7 @@ ON CONFLICT (number) DO NOTHING;
 -- 11. Генеральный подряд на капремонт школы (проект договора)
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -392,7 +402,8 @@ SELECT
     NULL,
     'Департамент образования г. Москвы',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'DRAFT',
     63333333.33,
     20.00,
@@ -408,12 +419,12 @@ FROM projects p, contract_types ct, users u
 WHERE p.code = 'PRJ-00003'
   AND ct.code = 'GENERAL'
   AND u.email = 'petrov@stroyinvest.ru'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- 12. Планируемый субподряд на кровельные работы школы
 INSERT INTO contracts (
     id, name, number, contract_date, partner_id, partner_name,
-    project_id, type_id, status,
+    project_id, organization_id, type_id, status,
     amount, vat_rate, vat_amount, total_with_vat,
     payment_terms, planned_start_date, planned_end_date,
     responsible_id, retention_percent,
@@ -427,7 +438,8 @@ SELECT
     org.id,
     'ООО "СубСтрой"',
     p.id,
-    ct.id,
+p.organization_id,
+ct.id,
     'DRAFT',
     12000000.00,
     20.00,
@@ -444,6 +456,6 @@ WHERE p.code = 'PRJ-00003'
   AND ct.code = 'SUBCONTRACT'
   AND u.email = 'petrov@stroyinvest.ru'
   AND org.inn = '7702345678'
-ON CONFLICT (number) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 COMMIT;

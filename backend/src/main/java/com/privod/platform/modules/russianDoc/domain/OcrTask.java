@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -45,6 +46,9 @@ public class OcrTask extends BaseEntity {
     @Builder.Default
     private OcrTaskStatus status = OcrTaskStatus.PENDING;
 
+    @Column(name = "document_type", length = 50)
+    private String documentType;
+
     @Column(name = "recognized_text", columnDefinition = "TEXT")
     private String recognizedText;
 
@@ -63,4 +67,13 @@ public class OcrTask extends BaseEntity {
 
     @Column(name = "project_id")
     private UUID projectId;
+
+    @Column(name = "total_lines_detected")
+    private Integer totalLinesDetected;
+
+    @Column(name = "average_confidence", precision = 8, scale = 2)
+    private BigDecimal averageConfidence;
+
+    @Column(name = "processing_time_ms")
+    private Long processingTimeMs;
 }

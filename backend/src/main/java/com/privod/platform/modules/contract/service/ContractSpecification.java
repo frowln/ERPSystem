@@ -1,6 +1,7 @@
 package com.privod.platform.modules.contract.service;
 
 import com.privod.platform.modules.contract.domain.Contract;
+import com.privod.platform.modules.contract.domain.ContractDirection;
 import com.privod.platform.modules.contract.domain.ContractStatus;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -51,6 +52,13 @@ public final class ContractSpecification {
                     cb.like(cb.lower(root.get("name")), pattern),
                     cb.like(cb.lower(root.get("number")), pattern)
             );
+        };
+    }
+
+    public static Specification<Contract> hasDirection(ContractDirection direction) {
+        return (root, query, cb) -> {
+            if (direction == null) return cb.conjunction();
+            return cb.equal(root.get("direction"), direction);
         };
     }
 }

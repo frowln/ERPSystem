@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react';
+import type { ErrorEvent } from '@sentry/core';
 
 /**
  * Initialize Sentry error monitoring.
@@ -27,7 +28,7 @@ export function initSentry() {
       'ChunkLoadError',
     ],
 
-    beforeSend(event) {
+    beforeSend(event: ErrorEvent) {
       // Strip PII from URLs
       if (event.request?.url) {
         event.request.url = event.request.url.replace(/token=[^&]+/, 'token=***');

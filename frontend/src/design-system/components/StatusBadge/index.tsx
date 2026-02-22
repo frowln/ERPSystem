@@ -261,6 +261,13 @@ export const paymentTypeLabels: Record<string, string> = i18nLabels(
 // =============================================================================
 
 export const invoiceStatusColorMap: Record<string, BadgeColor> = {
+  NEW: 'gray',
+  UNDER_REVIEW: 'blue',
+  LINKED_TO_POSITION: 'purple',
+  ON_APPROVAL: 'yellow',
+  APPROVED: 'cyan',
+  CLOSED: 'green',
+  REJECTED: 'red',
   DRAFT: 'gray',
   SENT: 'blue',
   PARTIALLY_PAID: 'orange',
@@ -271,7 +278,21 @@ export const invoiceStatusColorMap: Record<string, BadgeColor> = {
 
 export const invoiceStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.invoiceStatus',
-  ['DRAFT', 'SENT', 'PARTIALLY_PAID', 'PAID', 'OVERDUE', 'CANCELLED'],
+  [
+    'NEW',
+    'UNDER_REVIEW',
+    'LINKED_TO_POSITION',
+    'ON_APPROVAL',
+    'APPROVED',
+    'PAID',
+    'CLOSED',
+    'REJECTED',
+    'DRAFT',
+    'SENT',
+    'PARTIALLY_PAID',
+    'OVERDUE',
+    'CANCELLED',
+  ],
 );
 
 export const invoiceTypeColorMap: Record<string, BadgeColor> = {
@@ -312,6 +333,49 @@ export const stockMovementTypeColorMap: Record<string, BadgeColor> = {
 export const stockMovementTypeLabels: Record<string, string> = i18nLabels(
   'statusLabels.stockMovementType',
   ['RECEIPT', 'ISSUE', 'TRANSFER', 'ADJUSTMENT', 'RETURN', 'WRITE_OFF'],
+);
+
+// =============================================================================
+// WAREHOUSE ORDER
+// =============================================================================
+
+export const warehouseOrderStatusColorMap: Record<string, BadgeColor> = {
+  DRAFT: 'gray',
+  CONFIRMED: 'green',
+  CANCELLED: 'red',
+};
+
+export const warehouseOrderStatusLabels: Record<string, string> = i18nLabels(
+  'statusLabels.warehouseOrderStatus',
+  ['DRAFT', 'CONFIRMED', 'CANCELLED'],
+);
+
+export const warehouseOrderTypeColorMap: Record<string, BadgeColor> = {
+  RECEIPT: 'green',
+  ISSUE: 'red',
+  INTERNAL_TRANSFER: 'blue',
+  RETURN: 'purple',
+};
+
+export const warehouseOrderTypeLabels: Record<string, string> = i18nLabels(
+  'statusLabels.warehouseOrderType',
+  ['RECEIPT', 'ISSUE', 'INTERNAL_TRANSFER', 'RETURN'],
+);
+
+// =============================================================================
+// LIMIT FENCE SHEET
+// =============================================================================
+
+export const limitFenceSheetStatusColorMap: Record<string, BadgeColor> = {
+  ACTIVE: 'green',
+  EXHAUSTED: 'red',
+  CLOSED: 'gray',
+  CANCELLED: 'gray',
+};
+
+export const limitFenceSheetStatusLabels: Record<string, string> = i18nLabels(
+  'statusLabels.limitFenceSheetStatus',
+  ['ACTIVE', 'EXHAUSTED', 'CLOSED', 'CANCELLED'],
 );
 
 // =============================================================================
@@ -1330,6 +1394,56 @@ export const crmLeadPriorityLabels: Record<string, string> = i18nLabels(
 // =============================================================================
 // StatusBadge Component
 // =============================================================================
+
+// Re-export prescription & regulatory body type config for consumers
+// that import from the barrel (e.g. @/design-system/components/StatusBadge)
+export const prescriptionStatusColorMap: Record<string, BadgeColor> = {
+  RECEIVED: 'yellow',
+  UNDER_REVIEW: 'blue',
+  IN_PROGRESS: 'cyan',
+  RESPONSE_SUBMITTED: 'purple',
+  COMPLETED: 'green',
+  APPEALED: 'orange',
+  OVERDUE: 'red',
+  CLOSED: 'gray',
+};
+
+export const prescriptionStatusLabels: Record<string, string> = i18nLabels(
+  'statusLabels.prescriptionStatus',
+  ['RECEIVED', 'UNDER_REVIEW', 'IN_PROGRESS', 'RESPONSE_SUBMITTED', 'COMPLETED', 'APPEALED', 'OVERDUE', 'CLOSED'],
+);
+
+export const regulatoryBodyTypeColorMap: Record<string, BadgeColor> = {
+  GIT: 'blue',
+  ROSTEKHNADZOR: 'red',
+  STROYNADZOR: 'orange',
+  MCHS: 'red',
+  ROSPOTREBNADZOR: 'green',
+  ENVIRONMENTAL: 'cyan',
+  OTHER: 'gray',
+};
+
+export const regulatoryBodyTypeLabels: Record<string, string> = i18nLabels(
+  'statusLabels.regulatoryBodyType',
+  ['GIT', 'ROSTEKHNADZOR', 'STROYNADZOR', 'MCHS', 'ROSPOTREBNADZOR', 'ENVIRONMENTAL', 'OTHER'],
+);
+
+// =============================================================================
+// WAYBILL
+// =============================================================================
+
+export const waybillStatusColorMap: Record<string, BadgeColor> = {
+  DRAFT: 'gray',
+  ISSUED: 'blue',
+  IN_PROGRESS: 'cyan',
+  COMPLETED: 'green',
+  CLOSED: 'purple',
+};
+
+export const waybillStatusLabels: Record<string, string> = i18nLabels(
+  'statusLabels.waybillStatus',
+  ['DRAFT', 'ISSUED', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'],
+);
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,

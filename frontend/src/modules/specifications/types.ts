@@ -18,6 +18,8 @@ export interface Specification {
   updatedAt: string;
 }
 
+export type SupplyStatus = 'FULLY_COVERED' | 'PARTIALLY_COVERED' | 'NOT_COVERED';
+
 export interface SpecItem {
   id: string;
   specificationId: string;
@@ -31,6 +33,11 @@ export interface SpecItem {
   procurementStatus: string;
   estimateStatus: string;
   isCustomerProvided: boolean;
+  supplyStatus?: SupplyStatus;
+  coveredQuantity?: number;
+  bestPrice?: number;
+  bestVendorName?: string;
+  budgetItemId?: string;
   notes?: string;
 }
 

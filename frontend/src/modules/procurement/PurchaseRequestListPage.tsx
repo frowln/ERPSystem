@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Plus, Search, X } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Plus, Search, X, CheckCircle, XCircle, UserPlus } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -34,6 +35,7 @@ const TAB_STATUS_GROUPS: Record<Exclude<TabId, 'all' | 'my'>, PurchaseRequestSta
 
 const PurchaseRequestListPage: React.FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const currentUser = useAuthStore((state) => state.user);
 
   const [activeTab, setActiveTab] = useState<TabId>('all');
@@ -215,6 +217,80 @@ const PurchaseRequestListPage: React.FC = () => {
     [],
   );
 
+  // Bulk action mutations
+  const bulkApproveMutation = useMutation({
+    mutationFn: async (rows: PurchaseRequest[]) => {
+      const results = await Promise.allSettled(
+        rows.map((r) => procurementApi.approvePurchaseRequestStatus(r.id)),
+      );
+      const failed = results.filter((r) => r.status === 'rejected').length;
+      return { total: rows.length, failed };
+    },
+    onSuccess: ({ total, failed }) => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
+      if (failed === 0) toast.success(t('procurement.requestList.bulkApproveSuccess', { count: String(total) }));
+      else toast.error(t('procurement.requestList.bulkApprovePartial', { success: String(total - failed), failed: String(failed) }));
+    },
+    onError: () => toast.error(t('procurement.requestList.bulkApproveError')),
+  });
+
+  const bulkRejectMutation = useMutation({
+    mutationFn: async (rows: PurchaseRequest[]) => {
+      const results = await Promise.allSettled(
+        rows.map((r) => procurementApi.rejectPurchaseRequest(r.id, t('procurement.requestList.bulkRejectReason'))),
+      );
+      const failed = results.filter((r) => r.status === 'rejected').length;
+      return { total: rows.length, failed };
+    },
+    onSuccess: ({ total, failed }) => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
+      if (failed === 0) toast.success(t('procurement.requestList.bulkRejectSuccess', { count: String(total) }));
+      else toast.error(t('procurement.requestList.bulkRejectPartial', { success: String(total - failed), failed: String(failed) }));
+    },
+    onError: () => toast.error(t('procurement.requestList.bulkRejectError')),
+  });
+
+  const bulkAssignMutation = useMutation({
+    mutationFn: async (rows: PurchaseRequest[]) => {
+      if (!currentUserId) throw new Error('No current user');
+      const results = await Promise.allSettled(
+        rows.map((r) => procurementApi.assignPurchaseRequest(r.id, currentUserId)),
+      );
+      const failed = results.filter((r) => r.status === 'rejected').length;
+      return { total: rows.length, failed };
+    },
+    onSuccess: ({ total, failed }) => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-requests'] });
+      if (failed === 0) toast.success(t('procurement.requestList.bulkAssignSuccess', { count: String(total) }));
+      else toast.error(t('procurement.requestList.bulkAssignPartial', { success: String(total - failed), failed: String(failed) }));
+    },
+    onError: () => toast.error(t('procurement.requestList.bulkAssignError')),
+  });
+
+  const bulkActions = useMemo(
+    () => [
+      {
+        label: t('procurement.requestList.bulkApprove'),
+        icon: <CheckCircle size={14} />,
+        variant: 'primary' as const,
+        onClick: (rows: PurchaseRequest[]) => bulkApproveMutation.mutate(rows),
+      },
+      {
+        label: t('procurement.requestList.bulkReject'),
+        icon: <XCircle size={14} />,
+        variant: 'danger' as const,
+        onClick: (rows: PurchaseRequest[]) => bulkRejectMutation.mutate(rows),
+      },
+      {
+        label: t('procurement.requestList.bulkAssignToMe'),
+        icon: <UserPlus size={14} />,
+        variant: 'secondary' as const,
+        onClick: (rows: PurchaseRequest[]) => bulkAssignMutation.mutate(rows),
+      },
+    ],
+    [bulkApproveMutation, bulkRejectMutation, bulkAssignMutation],
+  );
+
   const handleRowClick = useCallback(
     (request: PurchaseRequest) => navigate(`/procurement/${request.id}`),
     [navigate],
@@ -320,6 +396,7 @@ const PurchaseRequestListPage: React.FC = () => {
           enableColumnVisibility
           enableDensityToggle
           enableExport
+          bulkActions={bulkActions}
           pageSize={20}
           emptyTitle={hasActiveFilters ? t('empty.noResults') : t('procurement.requestList.emptyTitle')}
           emptyDescription={hasActiveFilters ? t('empty.noResultsDescription') : t('procurement.requestList.emptyDescription')}

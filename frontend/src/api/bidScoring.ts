@@ -215,4 +215,9 @@ export const bidScoringApi = {
     const response = await apiClient.get<VendorRanking>(`/bid-scoring/comparisons/${comparisonId}/winner`);
     return response.data;
   },
+
+  upsertScoresBatch: async (data: { scores: CreateBidScorePayload[] }): Promise<BidScore[]> => {
+    const response = await apiClient.put<BidScore[]>('/bid-scoring/scores/batch', data.scores);
+    return response.data;
+  },
 };

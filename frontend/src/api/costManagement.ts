@@ -1,6 +1,18 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
-import type { Commitment, CostDashboard, CashFlowEntry, CostCode, CommitmentStatus } from '@/modules/costManagement/types';
+import type {
+  Commitment,
+  CostDashboard,
+  CashFlowEntry,
+  CostCode,
+  CommitmentStatus,
+  CashFlowScenario,
+  CashFlowForecastBucket,
+  VarianceSummary,
+  ProfitabilityForecast,
+  ProfitabilityPortfolio,
+  ProfitabilitySnapshot,
+} from '@/modules/costManagement/types';
 
 export interface CommitmentFilters extends PaginationParams {
   status?: CommitmentStatus;
@@ -48,5 +60,63 @@ export const costManagementApi = {
       params: projectId ? { projectId } : undefined,
     });
     return response.data;
+  },
+
+  // Cash Flow Forecast Scenarios
+  getScenarios: async (params?: PaginationParams): Promise<PaginatedResponse<CashFlowScenario>> => {
+    const response = await apiClient.get<PaginatedResponse<CashFlowScenario>>('/cost-management/cf-scenarios', { params });
+    return response.data;
+  },
+
+  createScenario: async (data: Partial<CashFlowScenario>): Promise<CashFlowScenario> => {
+    const response = await apiClient.post<CashFlowScenario>('/cost-management/cf-scenarios', data);
+    return response.data;
+  },
+
+  updateScenario: async (id: string, data: Partial<CashFlowScenario>): Promise<CashFlowScenario> => {
+    const response = await apiClient.put<CashFlowScenario>(`/cost-management/cf-scenarios/${id}`, data);
+    return response.data;
+  },
+
+  deleteScenario: async (id: string): Promise<void> => {
+    await apiClient.delete(`/cost-management/cf-scenarios/${id}`);
+  },
+
+  getForecastBuckets: async (scenarioId: string): Promise<CashFlowForecastBucket[]> => {
+    const response = await apiClient.get<CashFlowForecastBucket[]>(`/cost-management/cf-scenarios/${scenarioId}/buckets`);
+    return response.data;
+  },
+
+  getVarianceSummary: async (scenarioId: string): Promise<VarianceSummary> => {
+    const response = await apiClient.get<VarianceSummary>(`/cost-management/cf-scenarios/${scenarioId}/variance`);
+    return response.data;
+  },
+
+  generateForecast: async (scenarioId: string): Promise<void> => {
+    await apiClient.post(`/cost-management/cf-scenarios/${scenarioId}/generate`);
+  },
+
+  // Profitability
+  getProfitabilityForecasts: async (params?: PaginationParams): Promise<PaginatedResponse<ProfitabilityForecast>> => {
+    const response = await apiClient.get<PaginatedResponse<ProfitabilityForecast>>('/cost-management/profitability/forecasts', { params });
+    return response.data;
+  },
+
+  getPortfolioSummary: async (): Promise<ProfitabilityPortfolio> => {
+    const response = await apiClient.get<ProfitabilityPortfolio>('/cost-management/profitability/portfolio');
+    return response.data;
+  },
+
+  getProfitabilitySnapshots: async (projectId: string): Promise<ProfitabilitySnapshot[]> => {
+    const response = await apiClient.get<ProfitabilitySnapshot[]>(`/cost-management/profitability/snapshots/${projectId}`);
+    return response.data;
+  },
+
+  recalculateProfitability: async (projectId: string): Promise<void> => {
+    await apiClient.post(`/cost-management/profitability/recalculate/${projectId}`);
+  },
+
+  recalculateAllProfitability: async (): Promise<void> => {
+    await apiClient.post('/cost-management/profitability/recalculate-all');
   },
 };

@@ -30,6 +30,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Budget extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 

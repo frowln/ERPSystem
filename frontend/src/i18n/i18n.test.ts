@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { t, getLocale, setLocale } from './index';
+import { t, getLocale, setLocale, getMessages } from './index';
 
 describe('i18n', () => {
   it('defaults to Russian locale', () => {
@@ -10,8 +10,8 @@ describe('i18n', () => {
     expect(t('common.save')).toBe('Сохранить');
   });
 
-  it('returns key for missing translation', () => {
-    expect(t('nonexistent.key')).toBe('nonexistent.key');
+  it('humanizes missing translation keys', () => {
+    expect(t('nonexistent.key')).toBe('Key');
   });
 
   it('interpolates parameters', () => {
@@ -37,5 +37,13 @@ describe('i18n', () => {
 
   it('handles nested keys', () => {
     expect(t('settings.themes.light')).toBe('Светлая');
+  });
+
+  it('does not expose placeholder values equal to dotted i18n keys', () => {
+    const messages = getMessages() as Record<string, any>;
+    const previous = messages.common.save;
+    messages.common.save = 'common.save';
+    expect(t('common.save')).toBe('Save');
+    messages.common.save = previous;
   });
 });

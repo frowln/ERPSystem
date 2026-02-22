@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './print.css';
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -66,6 +68,24 @@
     outline-offset: 2px;
   }
 
+  /* Mobile touch targets: WCAG 2.1 minimum 44x44px */
+  @media (pointer: coarse) {
+    input[type='checkbox'],
+    input[type='radio'] {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    a,
+    button,
+    [role='button'],
+    select,
+    summary {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
   /* Remove default input styles */
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
@@ -79,6 +99,12 @@
 }
 
 @layer utilities {
+  /* Tabular numbers for aligned financial columns */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
   .truncate-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

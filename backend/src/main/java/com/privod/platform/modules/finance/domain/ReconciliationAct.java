@@ -21,7 +21,7 @@ import java.util.UUID;
  * Акт сверки взаиморасчётов с контрагентом.
  * Reconciliation act — compares expected vs actual payments/invoices for a period.
  */
-@Entity
+@Entity(name = "FinanceReconciliationAct")
 @Table(name = "reconciliation_acts", indexes = {
         @Index(name = "idx_rec_counterparty", columnList = "counterparty_id"),
         @Index(name = "idx_rec_contract", columnList = "contract_id"),

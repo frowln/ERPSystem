@@ -8,6 +8,12 @@ import type {
   PortalAccess,
   CreatePortalUserRequest,
   SendPortalMessageRequest,
+  PortalKs2Draft,
+  PortalKs2DraftStatus,
+  CreatePortalKs2DraftRequest,
+  PortalTask,
+  PortalTaskStatus,
+  CreatePortalTaskRequest,
 } from '@/modules/portal/types';
 
 export interface PortalFilters extends PaginationParams {
@@ -95,6 +101,47 @@ export const portalApi = {
     recentActivity: { description: string; date: string }[];
   }> => {
     const response = await apiClient.get('/portal/dashboard/stats');
+    return response.data;
+  },
+
+  // Portal KS-2 Drafts
+  getKs2Drafts: async (params?: { status?: PortalKs2DraftStatus; size?: number }): Promise<PaginatedResponse<PortalKs2Draft>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalKs2Draft>>('/portal/ks2-drafts', { params });
+    return response.data;
+  },
+
+  createKs2Draft: async (data: CreatePortalKs2DraftRequest): Promise<PortalKs2Draft> => {
+    const response = await apiClient.post<PortalKs2Draft>('/portal/ks2-drafts', data);
+    return response.data;
+  },
+
+  submitKs2Draft: async (id: string): Promise<PortalKs2Draft> => {
+    const response = await apiClient.post<PortalKs2Draft>(`/portal/ks2-drafts/${id}/submit`);
+    return response.data;
+  },
+
+  reviewKs2Draft: async (id: string, data: { approved: boolean; reviewComment?: string }): Promise<PortalKs2Draft> => {
+    const response = await apiClient.post<PortalKs2Draft>(`/portal/ks2-drafts/${id}/review`, data);
+    return response.data;
+  },
+
+  deleteKs2Draft: async (id: string): Promise<void> => {
+    await apiClient.delete(`/portal/ks2-drafts/${id}`);
+  },
+
+  // Portal Tasks
+  getTasks: async (params?: { status?: PortalTaskStatus; size?: number }): Promise<PaginatedResponse<PortalTask>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalTask>>('/portal/tasks', { params });
+    return response.data;
+  },
+
+  createTask: async (data: CreatePortalTaskRequest): Promise<PortalTask> => {
+    const response = await apiClient.post<PortalTask>('/portal/tasks', data);
+    return response.data;
+  },
+
+  updateTaskStatus: async (id: string, status: PortalTaskStatus, note?: string): Promise<PortalTask> => {
+    const response = await apiClient.patch<PortalTask>(`/portal/tasks/${id}/status`, { status, completionNote: note });
     return response.data;
   },
 };

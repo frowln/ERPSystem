@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -30,6 +31,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SafetyTraining extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "title", nullable = false, length = 500)
     private String title;
@@ -66,4 +70,17 @@ public class SafetyTraining extends BaseEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "participant_count")
+    @Builder.Default
+    private Integer participantCount = 0;
+
+    @Column(name = "completed_at")
+    private Instant completedAt;
+
+    @Column(name = "signature_data", columnDefinition = "TEXT")
+    private String signatureData;
+
+    @Column(name = "next_scheduled_date")
+    private LocalDate nextScheduledDate;
 }

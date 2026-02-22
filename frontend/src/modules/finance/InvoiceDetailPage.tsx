@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Calendar,
   User,
@@ -11,6 +11,7 @@ import {
   Receipt,
   Edit,
   Trash2,
+  GitCompareArrows,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -24,9 +25,14 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { financeApi } from '@/api/finance';
 import { formatMoney, formatDateLong, formatDate } from '@/lib/format';
+import { cn } from '@/lib/cn';
 import { guardDemoModeAction } from '@/lib/demoMode';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
+
+const InvoiceMatchingPanel = lazy(() => import('./InvoiceMatchingPanel'));
+
+type InvoiceTab = 'details' | 'matching';
 
 interface InvoiceLineItem {
   id: string;
@@ -70,14 +76,23 @@ interface Invoice {
 }
 
 const statusActions: Record<string, { label: string; target: string }[]> = {
-  draft: [{ label: t('finance.invoiceDetail.actionSend'), target: 'SENT' }],
-  sent: [{ label: t('finance.invoiceDetail.actionMarkPayment'), target: 'PARTIALLY_PAID' }],
-  partially_paid: [{ label: t('finance.invoiceDetail.actionFullyPaid'), target: 'PAID' }],
+  NEW: [{ label: 'Отправить на рассмотрение', target: 'UNDER_REVIEW' }],
+  UNDER_REVIEW: [{ label: 'Привязать к позиции', target: 'LINKED_TO_POSITION' }],
+  LINKED_TO_POSITION: [{ label: 'На согласование', target: 'ON_APPROVAL' }],
+  ON_APPROVAL: [
+    { label: 'Согласовать', target: 'APPROVED' },
+    { label: 'Отклонить', target: 'REJECTED' },
+  ],
+  APPROVED: [{ label: 'Закрыть', target: 'CLOSED' }],
+  DRAFT: [{ label: t('finance.invoiceDetail.actionSend'), target: 'UNDER_REVIEW' }],
+  SENT: [{ label: 'Согласовать', target: 'APPROVED' }],
+  PARTIALLY_PAID: [{ label: t('finance.invoiceDetail.actionFullyPaid'), target: 'PAID' }],
 };
 
 const InvoiceDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: invoice } = useQuery<Invoice>({
     queryKey: ['INVOICE', id],
@@ -89,6 +104,7 @@ const InvoiceDetailPage: React.FC = () => {
   });
 
   const inv = invoice;
+  const [activeTab, setActiveTab] = useState<InvoiceTab>('details');
   const [statusOverride, setStatusOverride] = useState<Invoice['status'] | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const effectiveStatus = statusOverride ?? inv?.status ?? '';
@@ -97,12 +113,28 @@ const InvoiceDetailPage: React.FC = () => {
   const lineItems: InvoiceLineItem[] = inv?.lineItems ?? [];
   const linkedPayments: LinkedPayment[] = inv?.linkedPayments ?? [];
 
+  const statusMutation = useMutation({
+    mutationFn: (targetStatus: string) => financeApi.changeInvoiceStatus(id!, targetStatus),
+    onSuccess: (updated) => {
+      setStatusOverride(null);
+      queryClient.invalidateQueries({ queryKey: ['INVOICE', id] });
+      queryClient.invalidateQueries({ queryKey: ['INVOICES'] });
+      toast.success(
+        t('finance.invoiceDetail.toastStatusUpdated', {
+          status: invoiceStatusLabels[updated.status] ?? updated.status,
+        }),
+      );
+    },
+    onError: () => {
+      toast.error(t('errors.unexpectedError'));
+    },
+  });
+
   if (!inv) return null;
 
   const handleStatusChange = (targetStatus: string) => {
     if (guardDemoModeAction(t('finance.invoiceDetail.demoChangeStatus'))) return;
-    setStatusOverride(targetStatus);
-    toast.success(t('finance.invoiceDetail.toastStatusUpdated', { status: invoiceStatusLabels[targetStatus] ?? targetStatus }));
+    statusMutation.mutate(targetStatus);
   };
 
   const handleDelete = () => {
@@ -152,6 +184,36 @@ const InvoiceDetailPage: React.FC = () => {
         }
       />
 
+      {/* Tabs */}
+      <div className="flex gap-1 mb-6 border-b border-neutral-200 dark:border-neutral-700">
+        {([
+          { key: 'details' as InvoiceTab, label: t('finance.invoiceDetail.tabDetails'), icon: <Receipt size={14} /> },
+          { key: 'matching' as InvoiceTab, label: t('invoiceMatching.tab'), icon: <GitCompareArrows size={14} /> },
+        ]).map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setActiveTab(tab.key)}
+            className={cn(
+              'flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors',
+              activeTab === tab.key
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300',
+            )}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'matching' && id && (
+        <Suspense fallback={<div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-500 border-t-transparent mx-auto mt-8" />}>
+          <InvoiceMatchingPanel invoiceId={id} />
+        </Suspense>
+      )}
+
+      {activeTab === 'details' && (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Summary card */}
@@ -260,6 +322,7 @@ const InvoiceDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
 
       <ConfirmDialog
         open={deleteDialogOpen}

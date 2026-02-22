@@ -6,6 +6,7 @@ import type {
   AutomationRule,
   AutomationExecution,
   EntityType,
+  ApprovalInstance,
 } from './types';
 
 export interface ApprovalRuleFilters extends PaginationParams {
@@ -60,5 +61,22 @@ export const workflowApi = {
 
   deleteApprovalRule: async (id: string): Promise<void> => {
     await apiClient.delete(`/approval-rules/${id}`);
+  },
+
+  // ---- Approval Inbox ----
+
+  getApprovalInbox: async (params?: PaginationParams): Promise<PaginatedResponse<ApprovalInstance>> => {
+    const response = await apiClient.get<PaginatedResponse<ApprovalInstance>>('/approval-instances', { params });
+    return response.data;
+  },
+
+  submitDecision: async (id: string, data: { decision: string; comments?: string }): Promise<ApprovalInstance> => {
+    const response = await apiClient.post<ApprovalInstance>(`/approval-instances/${id}/decision`, data);
+    return response.data;
+  },
+
+  cancelApproval: async (id: string): Promise<ApprovalInstance> => {
+    const response = await apiClient.post<ApprovalInstance>(`/approval-instances/${id}/cancel`);
+    return response.data;
   },
 };

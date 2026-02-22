@@ -33,6 +33,9 @@ public record UpdateInvoiceRequest(
 
         UUID ks3Id,
 
+        @Size(max = 50)
+        String disciplineMark,
+
         String notes
 ) {
 }

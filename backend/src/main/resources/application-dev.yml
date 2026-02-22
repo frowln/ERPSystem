@@ -3,14 +3,39 @@ spring:
     # Dev must use the same migration source-of-truth as other environments.
     # Keeping Flyway off + ddl-auto=update creates drift and breaks seed parity (RBAC, etc).
     enabled: true
-    locations: classpath:db/migration,classpath:db/seed
+    # Recovery strategy may need clean() when local DB was drifted manually.
+    clean-disabled: false
+    locations: classpath:db/migration
+    ignore-migration-patterns: "*:missing"
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:16379}
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:11025}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    com.privod: TRACE
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    com.privod: DEBUG
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    mail:
+      enabled: false

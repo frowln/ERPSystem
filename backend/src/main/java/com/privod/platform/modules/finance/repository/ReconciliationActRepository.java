@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+@Repository("financeReconciliationActRepository")
 public interface ReconciliationActRepository extends JpaRepository<ReconciliationAct, UUID>,
         JpaSpecificationExecutor<ReconciliationAct> {
 
@@ -28,12 +28,12 @@ public interface ReconciliationActRepository extends JpaRepository<Reconciliatio
 
     List<ReconciliationAct> findByContractIdAndDeletedFalse(UUID contractId);
 
-    @Query("SELECT ra FROM ReconciliationAct ra WHERE ra.deleted = false AND " +
+    @Query("SELECT ra FROM FinanceReconciliationAct ra WHERE ra.deleted = false AND " +
             "ra.periodStart >= :dateFrom AND ra.periodEnd <= :dateTo")
     Page<ReconciliationAct> findByPeriod(@Param("dateFrom") LocalDate dateFrom,
                                           @Param("dateTo") LocalDate dateTo, Pageable pageable);
 
-    @Query("SELECT COALESCE(SUM(ra.discrepancy), 0) FROM ReconciliationAct ra " +
+    @Query("SELECT COALESCE(SUM(ra.discrepancy), 0) FROM FinanceReconciliationAct ra " +
             "WHERE ra.counterpartyId = :counterpartyId AND ra.status = 'DISPUTED' AND ra.deleted = false")
     BigDecimal sumDiscrepancyByCounterparty(@Param("counterpartyId") UUID counterpartyId);
 

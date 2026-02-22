@@ -21,23 +21,37 @@ setup('authenticate as admin user', async ({ page }) => {
   const password = process.env.TEST_USER_PASSWORD || 'admin123';
 
   // Navigate to login
-  await page.goto('/login');
+  await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
-  // Wait for the login form to be visible
-  await expect(page.locator('form')).toBeVisible({ timeout: 15_000 });
+  // Wait for the login controls to be visible (login page has no native <form> wrapper).
+  const emailInput = page.getByLabel(/email|почта/i).first();
+  await expect(emailInput).toBeVisible({ timeout: 20_000 });
 
   // Fill credentials
-  await page.getByLabel(/email|почта/i).fill(email);
-  await page.locator('input[name="password"]').fill(password);
+  await emailInput.fill(email);
+  const passwordInput = page.locator('input[type="password"], input[name="password"]').first();
+  await expect(passwordInput).toBeVisible({ timeout: 15_000 });
+  await passwordInput.fill(password);
 
   // Submit
-  await page.getByRole('button', { name: /sign in|войти|вход/i }).click();
+  await page.getByRole('button', { name: /sign in|log in|login|войти|вход/i }).click();
 
   // Wait for redirect to dashboard (URL should no longer be /login)
   await page.waitForURL('**/', { timeout: 15_000 });
 
-  // Verify we are logged in by checking that auth_token exists in localStorage
-  const token = await page.evaluate(() => localStorage.getItem('auth_token'));
+  // Verify we are logged in by checking persisted auth token in localStorage.
+  const token = await page.evaluate(() => {
+    const persisted = localStorage.getItem('privod-auth');
+    if (persisted) {
+      try {
+        const parsed = JSON.parse(persisted);
+        return parsed?.state?.token ?? parsed?.token ?? null;
+      } catch {
+        // fall through to legacy key
+      }
+    }
+    return localStorage.getItem('auth_token');
+  });
   expect(token).toBeTruthy();
 
   // Save the storage state (localStorage + cookies)

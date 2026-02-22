@@ -39,6 +39,50 @@ CREATE TABLE IF NOT EXISTS dispatch_orders (
     CONSTRAINT chk_dispatch_fuel CHECK (fuel_used IS NULL OR fuel_used >= 0)
 );
 
+-- Compatibility with older schema from V38 (dispatch_orders had `code` but no `order_number`)
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS order_number VARCHAR(50);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS vehicle_id UUID REFERENCES vehicles(id);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS driver_id UUID REFERENCES users(id);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS loading_point VARCHAR(500);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS unloading_point VARCHAR(500);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS material_name VARCHAR(300);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS quantity NUMERIC(12, 3);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS unit VARCHAR(30);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS scheduled_date DATE;
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS scheduled_time VARCHAR(10);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS actual_departure_at TIMESTAMP;
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS actual_arrival_at TIMESTAMP;
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS distance NUMERIC(10, 2);
+ALTER TABLE dispatch_orders ADD COLUMN IF NOT EXISTS fuel_used NUMERIC(10, 2);
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'dispatch_orders'
+          AND column_name = 'code'
+    ) THEN
+        EXECUTE 'UPDATE dispatch_orders
+                 SET order_number = COALESCE(order_number, code)
+                 WHERE order_number IS NULL';
+    END IF;
+
+    EXECUTE 'UPDATE dispatch_orders
+             SET order_number = ''DO-'' || left(id::text, 8)
+             WHERE order_number IS NULL';
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'uq_dispatch_order_number'
+    ) THEN
+        ALTER TABLE dispatch_orders
+            ADD CONSTRAINT uq_dispatch_order_number UNIQUE (order_number);
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_dispatch_order_number ON dispatch_orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_dispatch_project ON dispatch_orders(project_id);
 CREATE INDEX IF NOT EXISTS idx_dispatch_vehicle ON dispatch_orders(vehicle_id);
@@ -56,7 +100,7 @@ CREATE TRIGGER update_dispatch_orders_updated_at
 -- =============================================================================
 -- Dispatch Routes
 -- =============================================================================
-CREATE TABLE dispatch_routes (
+CREATE TABLE IF NOT EXISTS dispatch_routes (
     id                          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name                        VARCHAR(300) NOT NULL,
     from_location               VARCHAR(500) NOT NULL,
@@ -79,6 +123,7 @@ CREATE INDEX IF NOT EXISTS idx_dispatch_route_name ON dispatch_routes(name);
 CREATE INDEX IF NOT EXISTS idx_dispatch_route_active ON dispatch_routes(is_active);
 CREATE INDEX IF NOT EXISTS idx_dispatch_route_not_deleted ON dispatch_routes(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_dispatch_routes_updated_at ON dispatch_routes;
 CREATE TRIGGER update_dispatch_routes_updated_at
     BEFORE UPDATE ON dispatch_routes
     FOR EACH ROW
@@ -87,7 +132,7 @@ CREATE TRIGGER update_dispatch_routes_updated_at
 -- =============================================================================
 -- Design Versions
 -- =============================================================================
-CREATE TABLE design_versions (
+CREATE TABLE IF NOT EXISTS design_versions (
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     project_id          UUID NOT NULL REFERENCES projects(id),
     document_id         UUID,
@@ -119,6 +164,7 @@ CREATE INDEX IF NOT EXISTS idx_dv_status ON design_versions(status);
 CREATE INDEX IF NOT EXISTS idx_dv_discipline ON design_versions(discipline);
 CREATE INDEX IF NOT EXISTS idx_dv_active ON design_versions(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_design_versions_updated_at ON design_versions;
 CREATE TRIGGER update_design_versions_updated_at
     BEFORE UPDATE ON design_versions
     FOR EACH ROW
@@ -127,7 +173,7 @@ CREATE TRIGGER update_design_versions_updated_at
 -- =============================================================================
 -- Design Reviews
 -- =============================================================================
-CREATE TABLE design_reviews (
+CREATE TABLE IF NOT EXISTS design_reviews (
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     design_version_id   UUID NOT NULL REFERENCES design_versions(id),
     reviewer_id         UUID NOT NULL REFERENCES users(id),
@@ -152,6 +198,7 @@ CREATE INDEX IF NOT EXISTS idx_dr_reviewer ON design_reviews(reviewer_id);
 CREATE INDEX IF NOT EXISTS idx_dr_status ON design_reviews(status);
 CREATE INDEX IF NOT EXISTS idx_dr_active ON design_reviews(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_design_reviews_updated_at ON design_reviews;
 CREATE TRIGGER update_design_reviews_updated_at
     BEFORE UPDATE ON design_reviews
     FOR EACH ROW
@@ -160,7 +207,7 @@ CREATE TRIGGER update_design_reviews_updated_at
 -- =============================================================================
 -- Design Sections
 -- =============================================================================
-CREATE TABLE design_sections (
+CREATE TABLE IF NOT EXISTS design_sections (
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     project_id      UUID NOT NULL REFERENCES projects(id),
     name            VARCHAR(300) NOT NULL,
@@ -183,6 +230,7 @@ CREATE INDEX IF NOT EXISTS idx_ds_parent ON design_sections(parent_id);
 CREATE INDEX IF NOT EXISTS idx_ds_discipline ON design_sections(discipline);
 CREATE INDEX IF NOT EXISTS idx_ds_active ON design_sections(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_design_sections_updated_at ON design_sections;
 CREATE TRIGGER update_design_sections_updated_at
     BEFORE UPDATE ON design_sections
     FOR EACH ROW
@@ -191,7 +239,7 @@ CREATE TRIGGER update_design_sections_updated_at
 -- =============================================================================
 -- KPI Achievements
 -- =============================================================================
-CREATE TABLE kpi_achievements (
+CREATE TABLE IF NOT EXISTS kpi_achievements (
     id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     employee_id             UUID NOT NULL REFERENCES users(id),
     kpi_id                  UUID NOT NULL REFERENCES kpi_definitions(id),
@@ -216,6 +264,7 @@ CREATE INDEX IF NOT EXISTS idx_kpi_ach_kpi ON kpi_achievements(kpi_id);
 CREATE INDEX IF NOT EXISTS idx_kpi_ach_period ON kpi_achievements(period);
 CREATE INDEX IF NOT EXISTS idx_kpi_ach_active ON kpi_achievements(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_kpi_achievements_updated_at ON kpi_achievements;
 CREATE TRIGGER update_kpi_achievements_updated_at
     BEFORE UPDATE ON kpi_achievements
     FOR EACH ROW
@@ -224,7 +273,7 @@ CREATE TRIGGER update_kpi_achievements_updated_at
 -- =============================================================================
 -- Bonus Calculations
 -- =============================================================================
-CREATE TABLE bonus_calculations (
+CREATE TABLE IF NOT EXISTS bonus_calculations (
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     employee_id         UUID NOT NULL REFERENCES users(id),
     employee_name       VARCHAR(300),
@@ -255,6 +304,7 @@ CREATE INDEX IF NOT EXISTS idx_bonus_period ON bonus_calculations(period);
 CREATE INDEX IF NOT EXISTS idx_bonus_status ON bonus_calculations(status);
 CREATE INDEX IF NOT EXISTS idx_bonus_active ON bonus_calculations(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_bonus_calculations_updated_at ON bonus_calculations;
 CREATE TRIGGER update_bonus_calculations_updated_at
     BEFORE UPDATE ON bonus_calculations
     FOR EACH ROW
@@ -263,7 +313,7 @@ CREATE TRIGGER update_bonus_calculations_updated_at
 -- =============================================================================
 -- Crew Time Entries
 -- =============================================================================
-CREATE TABLE crew_time_entries (
+CREATE TABLE IF NOT EXISTS crew_time_entries (
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     crew_id             UUID NOT NULL,
     employee_id         UUID NOT NULL REFERENCES users(id),
@@ -290,6 +340,7 @@ CREATE INDEX IF NOT EXISTS idx_cte_project ON crew_time_entries(project_id);
 CREATE INDEX IF NOT EXISTS idx_cte_work_date ON crew_time_entries(work_date);
 CREATE INDEX IF NOT EXISTS idx_cte_active ON crew_time_entries(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_crew_time_entries_updated_at ON crew_time_entries;
 CREATE TRIGGER update_crew_time_entries_updated_at
     BEFORE UPDATE ON crew_time_entries
     FOR EACH ROW
@@ -298,7 +349,7 @@ CREATE TRIGGER update_crew_time_entries_updated_at
 -- =============================================================================
 -- Crew Time Sheets
 -- =============================================================================
-CREATE TABLE crew_time_sheets (
+CREATE TABLE IF NOT EXISTS crew_time_sheets (
     id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     crew_id             UUID NOT NULL,
     project_id          UUID NOT NULL REFERENCES projects(id),
@@ -330,6 +381,7 @@ CREATE INDEX IF NOT EXISTS idx_cts_status ON crew_time_sheets(status);
 CREATE INDEX IF NOT EXISTS idx_cts_period ON crew_time_sheets(period_start, period_end);
 CREATE INDEX IF NOT EXISTS idx_cts_active ON crew_time_sheets(deleted) WHERE deleted = FALSE;
 
+DROP TRIGGER IF EXISTS update_crew_time_sheets_updated_at ON crew_time_sheets;
 CREATE TRIGGER update_crew_time_sheets_updated_at
     BEFORE UPDATE ON crew_time_sheets
     FOR EACH ROW

@@ -190,6 +190,7 @@ export interface PaginationParams {
   size?: number;
   sort?: string;
   direction?: 'ASC' | 'DESC';
+  projectId?: string;
 }
 
 export interface ProjectFilters extends PaginationParams {
@@ -251,6 +252,8 @@ export interface Contract {
   projectName?: string;
   typeId: string;
   typeName?: string;
+  contractDirection?: 'CLIENT' | 'CONTRACTOR';
+  direction?: 'CLIENT' | 'CONTRACTOR';
   status: ContractStatus;
   amount: number;
   vatRate: number;
@@ -264,6 +267,9 @@ export interface Contract {
   responsibleId?: string;
   responsibleName?: string;
   retentionPercent: number;
+  prepaymentPercent?: number;
+  paymentDelayDays?: number;
+  guaranteePeriodMonths?: number;
   totalInvoiced: number;
   totalPaid: number;
   balance: number;
@@ -318,6 +324,11 @@ export interface SpecItem {
   procurementStatus: string;
   estimateStatus: string;
   isCustomerProvided: boolean;
+  supplyStatus?: 'FULLY_COVERED' | 'PARTIALLY_COVERED' | 'NOT_COVERED';
+  coveredQuantity?: number;
+  bestPrice?: number;
+  bestVendorName?: string;
+  budgetItemId?: string;
   notes?: string;
 }
 
@@ -331,6 +342,8 @@ export interface Estimate {
   projectName?: string;
   specificationId: string;
   specificationName?: string;
+  contractId?: string;
+  notes?: string;
   status: EstimateStatus;
   totalAmount: number;
   orderedAmount: number;
@@ -357,8 +370,78 @@ export interface EstimateItem {
   deliveredAmount: number;
 }
 
+// Local estimate (normative-based)
+export type LocalEstimateStatus = 'DRAFT' | 'CALCULATED' | 'APPROVED';
+
+export interface LocalEstimate {
+  id: string;
+  name: string;
+  projectId?: string;
+  contractId?: string;
+  objectName?: string;
+  calculationMethod: string;
+  region?: string;
+  baseYear?: string;
+  priceLevelQuarter?: string;
+  status: LocalEstimateStatus;
+  totalDirectCost: number;
+  totalOverhead: number;
+  totalEstimatedProfit: number;
+  totalWithVat: number;
+  vatRate: number;
+  calculatedAt?: string;
+  lineCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LocalEstimateLine {
+  id: string;
+  estimateId: string;
+  lineNumber: number;
+  rateId?: string;
+  justification?: string;
+  name: string;
+  unit?: string;
+  quantity: number;
+  baseLaborCost: number;
+  baseMaterialCost: number;
+  baseEquipmentCost: number;
+  baseOverheadCost: number;
+  baseTotal: number;
+  currentLaborCost: number;
+  currentMaterialCost: number;
+  currentEquipmentCost: number;
+  currentOverheadCost: number;
+  currentTotal: number;
+  laborIndex: number;
+  materialIndex: number;
+  equipmentIndex: number;
+  notes?: string;
+  normativeCode?: string;
+  normHours?: number;
+  basePrice2001?: number;
+  priceIndex?: number;
+  currentPrice?: number;
+  directCosts?: number;
+  overheadCosts?: number;
+  estimatedProfit?: number;
+  budgetItemId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FmReconciliationItem {
+  section: string;
+  estimateTotal: number;
+  fmTotal: number;
+  delta: number;
+  deltaPercent: number;
+}
+
 // Closing document types
 export type ClosingDocStatus = 'DRAFT' | 'SUBMITTED' | 'SIGNED' | 'CLOSED';
+export type OneCPostingStatus = 'NOT_SENT' | 'SENT' | 'POSTED' | 'ERROR';
 
 export interface Ks2Document {
   id: string;
@@ -373,6 +456,27 @@ export interface Ks2Document {
   totalAmount: number;
   totalQuantity: number;
   lineCount: number;
+  totalVatAmount?: number;
+  totalWithVat?: number;
+  oneCPostingStatus?: OneCPostingStatus;
+  oneCPostingStatusDisplayName?: string;
+  createdByName?: string;
+  createdAt?: string;
+  notes?: string;
+}
+
+export interface Ks2Line {
+  id: string;
+  sequence: number;
+  name: string;
+  unitOfMeasure: string;
+  quantity: number;
+  unitPrice: number;
+  amount: number;
+  vatRate: number;
+  vatAmount: number;
+  totalWithVat: number;
+  notes?: string;
 }
 
 export interface Ks3Document {
@@ -383,13 +487,19 @@ export interface Ks3Document {
   periodFrom: string;
   periodTo: string;
   projectId: string;
+  projectName?: string;
   contractId: string;
+  contractName?: string;
   status: ClosingDocStatus;
   totalAmount: number;
   retentionPercent: number;
   retentionAmount: number;
   netAmount: number;
   ks2Count: number;
+  ks2DocumentIds?: string[];
+  oneCPostingStatus?: OneCPostingStatus;
+  oneCPostingStatusDisplayName?: string;
+  notes?: string;
 }
 
 // Purchase Request types
@@ -438,12 +548,203 @@ export interface Budget {
   plannedRevenue: number; plannedCost: number; plannedMargin: number;
   actualRevenue: number; actualCost: number; actualMargin: number;
   revenueVariancePercent: number; costVariancePercent: number;
+  period?: string;
   createdAt: string;
 }
 export type BudgetCategory = 'MATERIALS' | 'LABOR' | 'EQUIPMENT' | 'SUBCONTRACT' | 'OVERHEAD' | 'OTHER';
+export type BudgetItemDocStatus = 'PLANNED' | 'TENDERED' | 'CONTRACTED' | 'ACT_SIGNED' | 'INVOICED' | 'PAID';
+export type BudgetItemPriceSource = 'MANUAL' | 'WORKS_TENDER' | 'MATERIALS_TENDER' | 'ESTIMATE' | 'INVOICE';
+export type BudgetItemType = 'WORKS' | 'MATERIALS' | 'EQUIPMENT' | 'OVERHEAD' | 'OTHER';
+
 export interface BudgetItem {
-  id: string; budgetId: string; category: BudgetCategory; name: string;
-  plannedAmount: number; actualAmount: number; committedAmount: number; remainingAmount: number;
+  id: string;
+  budgetId: string;
+  category: BudgetCategory;
+  name: string;
+  plannedAmount: number;
+  actualAmount: number;
+  committedAmount: number;
+  remainingAmount: number;
+  section?: boolean;
+  parentId?: string;
+  itemType?: BudgetItemType;
+  unit?: string;
+  quantity?: number;
+  costPrice?: number;
+  estimatePrice?: number;
+  customerPrice?: number;
+  salePrice?: number;
+  coefficient?: number;
+  vatRate?: number;
+  vatAmount?: number;
+  totalWithVat?: number;
+  docStatus?: BudgetItemDocStatus;
+  priceSourceType?: BudgetItemPriceSource;
+  priceSourceId?: string;
+  disciplineMark?: string;
+  contractedAmount?: number;
+  actSignedAmount?: number;
+  paidAmount?: number;
+  invoicedAmount?: number;
+  marginAmount?: number;
+  marginPercent?: number;
+  sectionId?: string;
+  notes?: string;
+}
+
+export interface BudgetSnapshot {
+  id: string;
+  budgetId: string;
+  snapshotName: string;
+  snapshotDate: string;
+  createdById?: string;
+  totalCost: number;
+  totalCustomer: number;
+  totalMargin: number;
+  marginPercent: number;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface SnapshotComparison {
+  snapshotId: string;
+  snapshotName: string;
+  snapshotDate: string;
+  snapshotTotalCost: number;
+  snapshotTotalCustomer: number;
+  snapshotTotalMargin: number;
+  currentTotalCost: number;
+  currentTotalCustomer: number;
+  currentTotalMargin: number;
+  deltaCost: number;
+  deltaCustomer: number;
+  deltaMargin: number;
+  items: SnapshotItemDelta[];
+}
+
+export interface SnapshotItemDelta {
+  itemId: string;
+  name: string;
+  snapshotCostPrice?: number;
+  currentCostPrice?: number;
+  deltaCostPrice?: number;
+  snapshotCustomerPrice?: number;
+  currentCustomerPrice?: number;
+  deltaCustomerPrice?: number;
+  snapshotQuantity?: number;
+  currentQuantity?: number;
+  deltaQuantity?: number;
+  snapshotMarginAmount?: number;
+  currentMarginAmount?: number;
+  deltaMarginAmount?: number;
+  changeType: 'ADDED' | 'REMOVED' | 'CHANGED';
+}
+
+export interface FinanceExpenseItem {
+  id: string;
+  budgetId?: string;
+  name: string;
+  section?: boolean;
+  itemType?: string;
+  disciplineMark?: string;
+  docStatus?: BudgetItemDocStatus;
+  costPrice?: number;
+  estimatePrice?: number;
+  salePrice?: number;
+  plannedAmount: number;
+  contractedAmount: number;
+  actSignedAmount: number;
+  invoicedAmount?: number;
+  paidAmount: number;
+  contractId?: string;
+  contractNumber?: string;
+  contractPartnerName?: string;
+  budgetName?: string;
+  projectId?: string;
+  projectName?: string;
+  quantity?: number;
+  unit?: string;
+}
+
+export type ContractDirection = 'CLIENT' | 'CONTRACTOR';
+
+export interface ContractBudgetItem {
+  id: string;
+  contractId: string;
+  budgetItemId: string;
+  budgetItemName: string;
+  budgetItemUnit?: string;
+  disciplineMark?: string;
+  allocatedQuantity?: number;
+  allocatedAmount?: number;
+  coveragePercent?: number;
+  totalQuantity?: number;
+  notes?: string;
+  createdAt?: string;
+}
+
+export type CompetitiveListStatus = 'DRAFT' | 'COLLECTING' | 'EVALUATING' | 'DECIDED' | 'APPROVED';
+
+export interface CompetitiveList {
+  id: string;
+  specificationId: string;
+  specItemId?: string;
+  name?: string;
+  title: string;
+  status: CompetitiveListStatus;
+  entries: CompetitiveListEntry[];
+  winnerId?: string;
+  winnerJustification?: string;
+  minProposalsRequired?: number;
+  budgetItemId?: string;
+  bestPrice?: number;
+  bestVendorName?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CompetitiveListEntry {
+  id: string;
+  competitiveListId: string;
+  specItemId?: string;
+  supplierName: string;
+  vendorName?: string;
+  unitPrice: number;
+  quantity?: number;
+  totalPrice: number;
+  deliveryDays?: number;
+  paymentTerms?: string;
+  prepaymentPercent?: number;
+  paymentDelayDays?: number;
+  warrantyMonths?: number;
+  score?: number;
+  rankPosition?: number;
+  selectionReason?: string;
+  notes?: string;
+  isWinner?: boolean;
+}
+
+export interface InvoiceLine {
+  id: string;
+  name: string;
+  quantity?: number;
+  unit?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  amount?: number;
+  unitOfMeasure?: string;
+  notes?: string;
+  isSelectedForCp?: boolean;
+  cpItemId?: string;
+}
+
+export interface ProjectSection {
+  id: string;
+  code: string;
+  name: string;
+  enabled: boolean;
+  custom?: boolean;
+  sequence?: number;
 }
 
 // Payment
@@ -456,13 +757,59 @@ export interface Payment {
 }
 
 // Invoice
-export type InvoiceStatus = 'DRAFT' | 'SENT' | 'PARTIALLY_PAID' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+export type InvoiceStatus =
+  | 'NEW'
+  | 'UNDER_REVIEW'
+  | 'LINKED_TO_POSITION'
+  | 'ON_APPROVAL'
+  | 'APPROVED'
+  | 'PAID'
+  | 'CLOSED'
+  | 'REJECTED'
+  | 'DRAFT'
+  | 'SENT'
+  | 'PARTIALLY_PAID'
+  | 'OVERDUE'
+  | 'CANCELLED';
 export type InvoiceType = 'ISSUED' | 'RECEIVED';
+export type InvoiceMatchingStatus = 'UNMATCHED' | 'PARTIALLY_MATCHED' | 'FULLY_MATCHED';
 export interface Invoice {
   id: string; number: string; invoiceDate: string; dueDate?: string;
   projectId: string; projectName?: string; partnerName: string;
+  disciplineMark?: string;
   invoiceType: InvoiceType; status: InvoiceStatus;
+  matchingStatus?: InvoiceMatchingStatus;
+  matchingConfidence?: number;
+  matchedPoId?: string;
+  matchedReceiptId?: string;
   totalAmount: number; paidAmount: number; remainingAmount: number; createdAt: string;
+}
+
+// Invoice Matching
+export interface InvoiceMatchCandidate {
+  invoiceLineId: string;
+  invoiceLineName: string;
+  budgetItemId: string;
+  budgetItemName: string;
+  confidence: number;
+  matchDescription: string;
+}
+
+export interface ThreeWayMatchDiscrepancy {
+  type: string;
+  description: string;
+  expected?: number | null;
+  actual?: number | null;
+  difference?: number | null;
+}
+
+export interface ThreeWayMatchResult {
+  invoiceId: string;
+  overallConfidence: number;
+  hasPurchaseOrder: boolean;
+  hasReceipt: boolean;
+  linesMatchTotal: boolean;
+  discrepancies: ThreeWayMatchDiscrepancy[];
 }
 
 // Warehouse
@@ -493,3 +840,60 @@ export interface ProjectTask { id: string; code: string; title: string; projectN
 export type DocumentCategory = 'CONTRACT' | 'ESTIMATE' | 'SPECIFICATION' | 'DRAWING' | 'PERMIT' | 'ACT' | 'INVOICE' | 'PROTOCOL' | 'CORRESPONDENCE' | 'PHOTO' | 'REPORT' | 'OTHER';
 export type DocumentStatus = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'ACTIVE' | 'ARCHIVED' | 'CANCELLED';
 export interface Document { id: string; title: string; documentNumber?: string; category: DocumentCategory; status: DocumentStatus; projectName?: string; fileName: string; fileSize: number; authorName: string; docVersion: number; createdAt: string; expiryDate?: string; }
+
+// Commercial Proposal
+export type ProposalStatus = 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'ACTIVE';
+export type CpItemStatus =
+  | 'UNPROCESSED'
+  | 'INVOICES_COLLECTED'
+  | 'COMPETITIVE_LIST_FILLED'
+  | 'PRICE_SELECTED'
+  | 'ON_APPROVAL'
+  | 'APPROVED'
+  | 'IN_FINANCIAL_MODEL'
+  | 'PENDING'
+  | 'INVOICE_SELECTED'
+  | 'APPROVED_SUPPLY'
+  | 'APPROVED_PROJECT'
+  | 'CONFIRMED';
+
+export interface CommercialProposal {
+  id: string;
+  name: string;
+  budgetId: string;
+  specificationId?: string;
+  projectId?: string;
+  projectName?: string;
+  status: ProposalStatus;
+  totalCostPrice: number;
+  totalCustomerPrice?: number;
+  totalMargin?: number;
+  marginPercent?: number;
+  notes?: string;
+  approvedAt?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CommercialProposalItem {
+  id: string;
+  proposalId: string;
+  budgetItemId: string;
+  budgetItemName?: string;
+  budgetItemUnit?: string;
+  itemType: 'MATERIAL' | 'WORK';
+  disciplineMark?: string;
+  quantity: number;
+  costPrice: number;
+  tradingCoefficient: number;
+  estimateItemId?: string;
+  selectedInvoiceLineId?: string;
+  competitiveListEntryId?: string;
+  competitiveListId?: string;
+  specItemId?: string;
+  unitPrice?: number;
+  unit?: string;
+  vendorName?: string;
+  status: CpItemStatus;
+  notes?: string;
+}

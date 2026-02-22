@@ -125,6 +125,94 @@ export interface EdoStatusData {
   lastReceivedAt: string | null;
 }
 
+// --- Gov Registries specific ---
+
+export interface RegistryConfigData {
+  id: number;
+  registryType: string;
+  enabled: boolean;
+  apiUrl: string;
+  apiKey: string;
+  description: string;
+  lastCheckAt: string | null;
+  status: 'ACTIVE' | 'INACTIVE' | 'ERROR';
+}
+
+export interface CheckResultData {
+  id: number;
+  registryType: string;
+  inn: string;
+  checkDate: string;
+  status: string;
+  riskLevel: string;
+  details: Record<string, unknown>;
+  source: string;
+}
+
+export interface CounterpartyCheckSummaryData {
+  inn: string;
+  companyName: string;
+  overallRisk: string;
+  results: CheckResultData[];
+  checkedAt: string;
+}
+
+// --- SMS specific ---
+
+export interface SmsConfigData {
+  id: number;
+  provider: string;
+  enabled: boolean;
+  apiUrl: string;
+  apiKey: string;
+  senderName: string;
+  balance: number;
+  lastSyncAt: string | null;
+}
+
+export interface SmsMessageData {
+  id: number;
+  recipient: string;
+  text: string;
+  status: string;
+  sentAt: string;
+  deliveredAt: string | null;
+  provider: string;
+  cost: number;
+}
+
+export interface SendSmsForm {
+  recipient: string;
+  text: string;
+}
+
+// --- WebDAV specific ---
+
+export interface WebDavConfigData {
+  id: number;
+  serverUrl: string;
+  username: string;
+  password: string;
+  basePath: string;
+  enabled: boolean;
+  autoSync: boolean;
+  syncIntervalMinutes: number;
+  lastSyncAt: string | null;
+  status: string;
+}
+
+export interface WebDavFileData {
+  id: number;
+  remotePath: string;
+  localPath: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  syncStatus: string;
+  lastModified: string;
+  syncedAt: string;
+}
+
 // ---------------------------------------------------------------------------
 // API
 // ---------------------------------------------------------------------------
@@ -283,6 +371,82 @@ export const integrationsApi = {
     },
     getDocumentStatus: async (id: string): Promise<unknown> => {
       const response = await apiClient.get(`/integrations/edo/${id}/status`);
+      return response.data;
+    },
+  },
+
+  // Gov Registries endpoints
+  govRegistries: {
+    getConfigs: async (): Promise<{ content: RegistryConfigData[] }> => {
+      const response = await apiClient.get('/integrations/gov-registries/configs');
+      return response.data;
+    },
+    updateConfig: async (id: number, data: Partial<RegistryConfigData>): Promise<RegistryConfigData> => {
+      const response = await apiClient.put(`/integrations/gov-registries/configs/${id}`, data);
+      return response.data;
+    },
+    checkCounterparty: async (inn: string): Promise<CounterpartyCheckSummaryData> => {
+      const response = await apiClient.post('/integrations/gov-registries/check', null, { params: { inn } });
+      return response.data;
+    },
+    getCheckHistory: async (params?: Record<string, unknown>): Promise<{ content: CheckResultData[]; totalElements: number }> => {
+      const response = await apiClient.get('/integrations/gov-registries/history', { params });
+      return response.data;
+    },
+    getCheckResult: async (id: number): Promise<CheckResultData> => {
+      const response = await apiClient.get(`/integrations/gov-registries/results/${id}`);
+      return response.data;
+    },
+  },
+
+  // SMS endpoints
+  sms: {
+    getConfig: async (): Promise<SmsConfigData> => {
+      const response = await apiClient.get('/integrations/sms/config');
+      return response.data;
+    },
+    updateConfig: async (data: Partial<SmsConfigData>): Promise<SmsConfigData> => {
+      const response = await apiClient.put('/integrations/sms/config', data);
+      return response.data;
+    },
+    getMessages: async (params?: Record<string, unknown>): Promise<{ content: SmsMessageData[]; totalElements: number }> => {
+      const response = await apiClient.get('/integrations/sms/messages', { params });
+      return response.data;
+    },
+    sendMessage: async (data: SendSmsForm): Promise<SmsMessageData> => {
+      const response = await apiClient.post('/integrations/sms/send', data);
+      return response.data;
+    },
+    getBalance: async (): Promise<{ balance: number; currency: string }> => {
+      const response = await apiClient.get('/integrations/sms/balance');
+      return response.data;
+    },
+  },
+
+  // WebDAV endpoints
+  webdav: {
+    getConfig: async (): Promise<WebDavConfigData> => {
+      const response = await apiClient.get('/integrations/webdav/config');
+      return response.data;
+    },
+    updateConfig: async (data: Partial<WebDavConfigData>): Promise<WebDavConfigData> => {
+      const response = await apiClient.put('/integrations/webdav/config', data);
+      return response.data;
+    },
+    getFiles: async (params?: Record<string, unknown>): Promise<{ content: WebDavFileData[]; totalElements: number }> => {
+      const response = await apiClient.get('/integrations/webdav/files', { params });
+      return response.data;
+    },
+    syncAll: async (): Promise<{ totalFiles: number; synced: number; failed: number; conflicts: number; duration: number }> => {
+      const response = await apiClient.post('/integrations/webdav/sync');
+      return response.data;
+    },
+    syncFile: async (id: number): Promise<WebDavFileData> => {
+      const response = await apiClient.post(`/integrations/webdav/files/${id}/sync`);
+      return response.data;
+    },
+    testConnection: async (): Promise<ConnectionTestResult> => {
+      const response = await apiClient.post('/integrations/webdav/test-connection');
       return response.data;
     },
   },

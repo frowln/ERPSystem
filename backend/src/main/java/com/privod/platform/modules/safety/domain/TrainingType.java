@@ -13,4 +13,8 @@ public enum TrainingType {
     SPECIAL("Целевой");
 
     private final String displayName;
+
+    public boolean isAutoScheduled() {
+        return this == PERIODIC;
+    }
 }

@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,12 +25,16 @@ import java.util.UUID;
         @Index(name = "idx_estimate_contract", columnList = "contract_id"),
         @Index(name = "idx_estimate_status", columnList = "status")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Estimate extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 500)
     private String name;

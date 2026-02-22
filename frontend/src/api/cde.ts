@@ -5,6 +5,8 @@ import type {
   DocumentRevision,
   Transmittal,
   TransmittalItem,
+  ArchivePolicy,
+  RevisionSet,
   LifecycleState,
   Classification,
   Discipline,
@@ -120,5 +122,45 @@ export const cdeApi = {
 
   removeTransmittalItem: async (transmittalId: string, itemId: string): Promise<void> => {
     await apiClient.delete(`/cde/transmittals/${transmittalId}/items/${itemId}`);
+  },
+
+  // Archive Policies
+  getArchivePolicies: async (): Promise<PaginatedResponse<ArchivePolicy>> => {
+    const response = await apiClient.get<PaginatedResponse<ArchivePolicy>>('/cde/archive-policies');
+    return response.data;
+  },
+
+  createArchivePolicy: async (data: Partial<ArchivePolicy>): Promise<ArchivePolicy> => {
+    const response = await apiClient.post<ArchivePolicy>('/cde/archive-policies', data);
+    return response.data;
+  },
+
+  updateArchivePolicy: async (id: string, data: Partial<ArchivePolicy>): Promise<ArchivePolicy> => {
+    const response = await apiClient.put<ArchivePolicy>(`/cde/archive-policies/${id}`, data);
+    return response.data;
+  },
+
+  deleteArchivePolicy: async (id: string): Promise<void> => {
+    await apiClient.delete(`/cde/archive-policies/${id}`);
+  },
+
+  runArchiveNow: async (): Promise<{ archivedCount: number }> => {
+    const response = await apiClient.post<{ archivedCount: number }>('/cde/archive-policies/run');
+    return response.data;
+  },
+
+  // Revision Sets
+  getRevisionSets: async (params?: PaginationParams): Promise<PaginatedResponse<RevisionSet>> => {
+    const response = await apiClient.get<PaginatedResponse<RevisionSet>>('/cde/revision-sets', { params });
+    return response.data;
+  },
+
+  getRevisionSet: async (id: string): Promise<RevisionSet> => {
+    const response = await apiClient.get<RevisionSet>(`/cde/revision-sets/${id}`);
+    return response.data;
+  },
+
+  deleteRevisionSet: async (id: string): Promise<void> => {
+    await apiClient.delete(`/cde/revision-sets/${id}`);
   },
 };

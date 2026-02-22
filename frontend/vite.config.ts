@@ -11,6 +11,32 @@ export default defineConfig({
   },
   test: {
     setupFiles: ['./src/test-setup.ts'],
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text', 'text-summary', 'lcov', 'json-summary', 'json'],
+      reportsDirectory: './coverage',
+      thresholds: {
+        lines: 20,
+        branches: 20,
+        functions: 20,
+        statements: 20,
+      },
+      include: [
+        'src/api/**/*.ts',
+        'src/stores/**/*.ts',
+        'src/hooks/**/*.ts',
+        'src/lib/**/*.ts',
+        'src/i18n/**/*.ts',
+        'src/config/**/*.ts',
+      ],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.spec.{ts,tsx}',
+        'src/**/test/**',
+        'src/**/*.d.ts',
+        'src/vite-env.d.ts',
+      ],
+    },
   },
   server: {
     port: 3000,

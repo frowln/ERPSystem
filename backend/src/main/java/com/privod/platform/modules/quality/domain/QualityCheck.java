@@ -45,6 +45,9 @@ public class QualityCheck extends BaseEntity {
     @Column(name = "task_id")
     private UUID taskId;
 
+    @Column(name = "wbs_node_id")
+    private UUID wbsNodeId;
+
     @Column(name = "spec_item_id")
     private UUID specItemId;
 

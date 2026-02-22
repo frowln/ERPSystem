@@ -89,6 +89,28 @@ public class DispatchService {
     }
 
     @Transactional
+    public DispatchOrderResponse updateOrder(UUID id, CreateDispatchOrderRequest request) {
+        DispatchOrder order = getOrderOrThrow(id);
+        if (request.projectId() != null) order.setProjectId(request.projectId());
+        if (request.vehicleId() != null) order.setVehicleId(request.vehicleId());
+        if (request.driverId() != null) order.setDriverId(request.driverId());
+        if (request.loadingPoint() != null) order.setLoadingPoint(request.loadingPoint());
+        if (request.unloadingPoint() != null) order.setUnloadingPoint(request.unloadingPoint());
+        if (request.materialName() != null) order.setMaterialName(request.materialName());
+        if (request.quantity() != null) order.setQuantity(request.quantity());
+        if (request.unit() != null) order.setUnit(request.unit());
+        if (request.scheduledDate() != null) order.setScheduledDate(request.scheduledDate());
+        if (request.scheduledTime() != null) order.setScheduledTime(request.scheduledTime());
+        if (request.distance() != null) order.setDistance(request.distance());
+        if (request.notes() != null) order.setNotes(request.notes());
+
+        order = dispatchOrderRepository.save(order);
+        auditService.logUpdate("DispatchOrder", order.getId(), "multiple", null, null);
+        log.info("Диспетчерское задание обновлено: {} ({})", order.getOrderNumber(), order.getId());
+        return DispatchOrderResponse.fromEntity(order);
+    }
+
+    @Transactional
     public DispatchOrderResponse transitionStatus(UUID id, DispatchStatus targetStatus) {
         DispatchOrder order = getOrderOrThrow(id);
         DispatchStatus oldStatus = order.getStatus();

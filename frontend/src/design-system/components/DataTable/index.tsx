@@ -298,8 +298,8 @@ export function DataTable<T>({
           emptyDescription={emptyDescription}
         />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full" aria-label={tableLabel}>
+        <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+          <table className="w-full table-auto" aria-label={tableLabel}>
             <caption className="sr-only">{tableLabel}</caption>
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -358,7 +358,11 @@ export function DataTable<T>({
                     )}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className={cn('text-neutral-700 dark:text-neutral-300 whitespace-nowrap', densityPadding[density])}>
+                      <td key={cell.id} className={cn(
+                        'text-neutral-700 dark:text-neutral-300 whitespace-nowrap',
+                        densityPadding[density],
+                        Boolean((cell.column.columnDef.meta as Record<string, unknown> | undefined)?.numeric) && 'tabular-nums text-right',
+                      )}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}

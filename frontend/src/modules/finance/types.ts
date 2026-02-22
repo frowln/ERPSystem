@@ -91,7 +91,20 @@ export interface ApprovePaymentRequest {
 }
 
 // Invoice types
-export type InvoiceStatus = 'DRAFT' | 'SENT' | 'PARTIALLY_PAID' | 'PAID' | 'OVERDUE' | 'CANCELLED';
+export type InvoiceStatus =
+  | 'NEW'
+  | 'UNDER_REVIEW'
+  | 'LINKED_TO_POSITION'
+  | 'ON_APPROVAL'
+  | 'APPROVED'
+  | 'PAID'
+  | 'CLOSED'
+  | 'REJECTED'
+  | 'DRAFT'
+  | 'SENT'
+  | 'PARTIALLY_PAID'
+  | 'OVERDUE'
+  | 'CANCELLED';
 export type InvoiceType = 'ISSUED' | 'RECEIVED';
 
 export interface Invoice {

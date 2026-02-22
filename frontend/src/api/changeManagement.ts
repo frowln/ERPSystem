@@ -1,6 +1,18 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
-import type { ChangeEvent, ChangeOrder, ChangeOrderLineItem, ChangeEventStatus, ChangeOrderStatus } from '@/modules/changeManagement/types';
+import type {
+  ChangeEvent,
+  ChangeOrder,
+  ChangeOrderLineItem,
+  ChangeEventStatus,
+  ChangeOrderStatus,
+  ChangeOrderScheduleImpact,
+  BudgetImpactByType,
+  BudgetImpactMonthly,
+  SourceBreakdown,
+  TypeBreakdown,
+  MonthlyTrendPoint,
+} from '@/modules/changeManagement/types';
 
 export interface ChangeEventFilters extends PaginationParams {
   status?: ChangeEventStatus;
@@ -57,5 +69,45 @@ export const changeManagementApi = {
 
   deleteChangeOrder: async (id: string): Promise<void> => {
     await apiClient.delete(`/change-orders/${id}`);
+  },
+
+  // Dashboard analytics
+  getBudgetImpact: async (projectId: string): Promise<{
+    originalContractAmount: number;
+    totalApprovedAdditions: number;
+    totalApprovedDeductions: number;
+    netChangeAmount: number;
+    revisedContractAmount: number;
+    changePercentage: number;
+    byType: BudgetImpactByType[];
+    monthlyImpact: BudgetImpactMonthly[];
+    totalApproved: number;
+    totalPending: number;
+  }> => {
+    const response = await apiClient.get(`/change-management/budget-impact`, {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  getScheduleImpact: async (projectId: string): Promise<ChangeOrderScheduleImpact> => {
+    const response = await apiClient.get<ChangeOrderScheduleImpact>(`/change-management/schedule-impact`, {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  getTrends: async (projectId: string): Promise<{
+    bySource: SourceBreakdown[];
+    byType: TypeBreakdown[];
+    totalEvents: number;
+    totalOrders: number;
+    cumulativeCost: number;
+    monthlyTrends: MonthlyTrendPoint[];
+  }> => {
+    const response = await apiClient.get(`/change-management/trends`, {
+      params: { projectId },
+    });
+    return response.data;
   },
 };

@@ -22,6 +22,8 @@ public interface ChangeOrderRepository extends JpaRepository<ChangeOrder, UUID>,
 
     Page<ChangeOrder> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
+    List<ChangeOrder> findByProjectIdAndOrganizationIdAndDeletedFalse(UUID projectId, UUID organizationId);
+
     Page<ChangeOrder> findByContractIdAndDeletedFalse(UUID contractId, Pageable pageable);
 
     List<ChangeOrder> findByContractIdAndStatusAndDeletedFalse(UUID contractId, ChangeOrderStatus status);

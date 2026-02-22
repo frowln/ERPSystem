@@ -50,6 +50,12 @@ public class Ks2Line extends BaseEntity {
     @Column(name = "unit_of_measure", length = 50)
     private String unitOfMeasure;
 
+    @Column(name = "vat_rate", precision = 5, scale = 2)
+    private BigDecimal vatRate;
+
+    @Column(name = "vat_amount", precision = 18, scale = 2)
+    private BigDecimal vatAmount;
+
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 

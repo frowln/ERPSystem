@@ -1,6 +1,7 @@
 package com.privod.platform.modules.specification.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.specification.domain.SpecItem;
 import com.privod.platform.modules.specification.domain.SpecItemType;
 import com.privod.platform.modules.specification.domain.Specification;
@@ -69,8 +70,10 @@ public class SpecificationService {
     @Transactional
     public SpecificationResponse createSpecification(CreateSpecificationRequest request) {
         String name = generateSpecName();
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
 
         Specification specification = Specification.builder()
+                .organizationId(organizationId)
                 .name(name)
                 .projectId(request.projectId())
                 .contractId(request.contractId())
@@ -196,7 +199,9 @@ public class SpecificationService {
 
         // Create new version
         String name = generateSpecName();
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Specification newVersion = Specification.builder()
+                .organizationId(organizationId)
                 .name(name)
                 .projectId(original.getProjectId())
                 .contractId(original.getContractId())
@@ -374,6 +379,34 @@ public class SpecificationService {
                 equipmentPlanned,
                 workPlanned
         );
+    }
+
+    // === Supply Status ===
+
+    @Transactional(readOnly = true)
+    public SpecificationSummaryResponse getSupplySummary(UUID specId) {
+        return getItemsSummary(specId);
+    }
+
+    @Transactional
+    public void recalculateSupplyStatus(UUID specId) {
+        List<SpecItem> items = specItemRepository.findBySpecificationIdAndDeletedFalseOrderBySequenceAsc(specId);
+
+        for (SpecItem item : items) {
+            BigDecimal qty = item.getQuantity();
+            BigDecimal covered = item.getCoveredQuantity() != null ? item.getCoveredQuantity() : BigDecimal.ZERO;
+
+            if (covered.compareTo(BigDecimal.ZERO) == 0) {
+                item.setSupplyStatus("NOT_COVERED");
+            } else if (covered.compareTo(qty) >= 0) {
+                item.setSupplyStatus("FULLY_COVERED");
+            } else {
+                item.setSupplyStatus("PARTIALLY_COVERED");
+            }
+            specItemRepository.save(item);
+        }
+
+        log.info("Supply status recalculated for specification: {}", specId);
     }
 
     private Specification getSpecificationOrThrow(UUID id) {

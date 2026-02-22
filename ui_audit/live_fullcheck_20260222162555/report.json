@@ -1,0 +1,182 @@
+[
+  {
+    "name": "01-dashboard",
+    "url": "http://localhost:3000/",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "02-budgets-list",
+    "url": "http://localhost:3000/budgets",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "03-budget-detail-all",
+    "url": "http://localhost:3000/budgets/a0339781-50d8-4474-a25d-98c7535deebb",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "04-budget-detail-materials",
+    "url": "http://localhost:3000/budgets/a0339781-50d8-4474-a25d-98c7535deebb",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "05-budget-detail-works",
+    "url": "http://localhost:3000/budgets/a0339781-50d8-4474-a25d-98c7535deebb",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "06-budget-add-item-modal",
+    "url": "http://localhost:3000/budgets/a0339781-50d8-4474-a25d-98c7535deebb",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "07-contracts-list",
+    "url": "http://localhost:3000/contracts",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "08-contract-form-new",
+    "url": "http://localhost:3000/contracts/new",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "09-contract-detail-overview",
+    "url": "http://localhost:3000/contracts/2d4f5ca3-1edd-4c52-8116-8bd804a6c012",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "10-contract-detail-fm-items",
+    "url": "http://localhost:3000/contracts/2d4f5ca3-1edd-4c52-8116-8bd804a6c012",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "11-contract-detail-finance-tab",
+    "url": "http://localhost:3000/contracts/2d4f5ca3-1edd-4c52-8116-8bd804a6c012",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "12-commercial-proposals-list",
+    "url": "http://localhost:3000/commercial-proposals",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "13-commercial-proposal-detail-materials",
+    "url": "http://localhost:3000/commercial-proposals/0fe16cd1-d777-4c1b-a9bb-616e3465811e",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "14-commercial-proposal-detail-works",
+    "url": "http://localhost:3000/commercial-proposals/0fe16cd1-d777-4c1b-a9bb-616e3465811e",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "15-commercial-proposal-form-new",
+    "url": "http://localhost:3000/commercial-proposals/new",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "16-invoices-list",
+    "url": "http://localhost:3000/invoices",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "17-invoice-detail",
+    "url": "http://localhost:3000/invoices/4f72de1e-a839-4d03-ac5f-e097d222aae5",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "18-invoice-form-new",
+    "url": "http://localhost:3000/invoices/new",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "19-estimates-list",
+    "url": "http://localhost:3000/estimates",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "20-estimate-detail",
+    "url": "http://localhost:3000/estimates/2793f9d0-d996-406f-9795-bb1b9d7bcbd4",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "21-estimate-form-new",
+    "url": "http://localhost:3000/estimates/new",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "22-specifications-list",
+    "url": "http://localhost:3000/specifications",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "23-specification-detail",
+    "url": "http://localhost:3000/specifications/5d35744f-9620-4cc0-b829-c385b84057fe",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "24-specification-form-new",
+    "url": "http://localhost:3000/specifications/new",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "25-material-analogs",
+    "url": "http://localhost:3000/specifications/analogs",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "26-competitive-list-detail",
+    "url": "http://localhost:3000/specifications/5d35744f-9620-4cc0-b829-c385b84057fe/competitive-list/b956bea9-4814-4125-9c4c-82ad7666a0e5",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "27-competitive-list-selected-position",
+    "url": "http://localhost:3000/specifications/5d35744f-9620-4cc0-b829-c385b84057fe/competitive-list/b956bea9-4814-4125-9c4c-82ad7666a0e5",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "28-payments-list",
+    "url": "http://localhost:3000/payments",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "29-payment-detail",
+    "url": "http://localhost:3000/payments/7d768eb9-4bfb-470b-8eb6-61b8a2707468",
+    "dottedCount": 0,
+    "dotted": []
+  },
+  {
+    "name": "30-payment-form-new",
+    "url": "http://localhost:3000/payments/new",
+    "dottedCount": 0,
+    "dotted": []
+  }
+]

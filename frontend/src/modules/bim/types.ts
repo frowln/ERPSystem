@@ -64,3 +64,16 @@ export interface Clash {
   modelId1?: string;
   modelId2?: string;
 }
+
+export type BimLinkedEntityType = 'ISSUE' | 'RFI' | 'CHANGE_ORDER' | 'DEFECT';
+
+export interface BimLinkedItem {
+  id: string;
+  clashId: string;
+  entityType: BimLinkedEntityType;
+  entityId: string;
+  entityTitle: string;
+  entityStatus: string;
+  linkedAt: string;
+  linkedBy?: string;
+}

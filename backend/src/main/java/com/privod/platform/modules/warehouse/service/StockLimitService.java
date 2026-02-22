@@ -195,6 +195,27 @@ public class StockLimitService {
                 .map(StockLimitAlertResponse::fromEntity);
     }
 
+    @Transactional(readOnly = true)
+    public Page<StockLimitAlertResponse> listAlerts(StockAlertSeverity severity, Boolean resolved, Pageable pageable) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        if (resolved != null && !resolved) {
+            return stockLimitAlertRepository.findByOrganizationIdAndIsResolvedFalseAndDeletedFalse(organizationId, pageable)
+                    .map(StockLimitAlertResponse::fromEntity);
+        }
+        return stockLimitAlertRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
+                .map(StockLimitAlertResponse::fromEntity);
+    }
+
+    @Transactional
+    public StockLimitAlertResponse acknowledgeAlert(UUID alertId) {
+        return acknowledgeAlert(alertId, null);
+    }
+
+    @Transactional
+    public StockLimitAlertResponse resolveAlert(UUID alertId) {
+        return acknowledgeAlert(alertId, null);
+    }
+
     @Transactional
     public StockLimitAlertResponse acknowledgeAlert(UUID alertId, UUID acknowledgedById) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();

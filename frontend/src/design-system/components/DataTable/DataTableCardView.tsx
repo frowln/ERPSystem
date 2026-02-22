@@ -93,15 +93,15 @@ function MobileCard<T>({ row, columns, onClick, isSelected }: MobileCardProps<T>
         </div>
       )}
 
-      {/* Secondary fields — label-value pairs */}
-      <div className="space-y-1.5">
+      {/* Secondary fields — label-value pairs in responsive grid */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-4 gap-y-1.5">
         {secondary.map((cell) => {
           const header = cell.column.columnDef.header;
           const label = typeof header === 'string' ? header : cell.column.id;
           return (
-            <div key={cell.id} className="flex items-center justify-between gap-3">
+            <div key={cell.id} className="flex items-baseline justify-between gap-2 min-w-0">
               <span className="text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0">{label}</span>
-              <span className="text-xs text-neutral-700 dark:text-neutral-300 text-right truncate">
+              <span className="text-xs text-neutral-700 dark:text-neutral-300 text-right truncate min-w-0">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </span>
             </div>

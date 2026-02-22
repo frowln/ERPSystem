@@ -1,6 +1,7 @@
 package com.privod.platform.modules.finance.web.dto;
 
 import com.privod.platform.modules.finance.domain.Invoice;
+import com.privod.platform.modules.finance.domain.InvoiceMatchingStatus;
 import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.domain.InvoiceType;
 
@@ -19,10 +20,14 @@ public record InvoiceResponse(
         UUID contractId,
         UUID partnerId,
         String partnerName,
+        String disciplineMark,
         InvoiceType invoiceType,
         String invoiceTypeDisplayName,
         InvoiceStatus status,
         String statusDisplayName,
+        InvoiceMatchingStatus matchingStatus,
+        String matchingStatusDisplayName,
+        BigDecimal matchingConfidence,
         BigDecimal subtotal,
         BigDecimal vatRate,
         BigDecimal vatAmount,
@@ -33,6 +38,8 @@ public record InvoiceResponse(
         boolean overdue,
         UUID ks2Id,
         UUID ks3Id,
+        UUID matchedPoId,
+        UUID matchedReceiptId,
         String notes,
         Instant createdAt,
         Instant updatedAt,
@@ -53,10 +60,14 @@ public record InvoiceResponse(
                 invoice.getContractId(),
                 invoice.getPartnerId(),
                 invoice.getPartnerName(),
+                invoice.getDisciplineMark(),
                 invoice.getInvoiceType(),
                 invoice.getInvoiceType().getDisplayName(),
                 invoice.getStatus(),
                 invoice.getStatus().getDisplayName(),
+                invoice.getMatchingStatus(),
+                invoice.getMatchingStatus() != null ? invoice.getMatchingStatus().getDisplayName() : null,
+                invoice.getMatchingConfidence(),
                 invoice.getSubtotal(),
                 invoice.getVatRate(),
                 invoice.getVatAmount(),
@@ -67,6 +78,8 @@ public record InvoiceResponse(
                 invoice.isOverdue(),
                 invoice.getKs2Id(),
                 invoice.getKs3Id(),
+                invoice.getMatchedPoId(),
+                invoice.getMatchedReceiptId(),
                 invoice.getNotes(),
                 invoice.getCreatedAt(),
                 invoice.getUpdatedAt(),

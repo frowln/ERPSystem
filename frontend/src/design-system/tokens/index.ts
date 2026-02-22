@@ -5,3 +5,5 @@ export { spacing, borderRadius } from './spacing';
 export { shadows } from './shadows';
 export type { ShadowScale } from './shadows';
 export { layout, tw } from './layout';
+export { zIndex } from './zIndex';
+export type { ZIndexToken } from './zIndex';

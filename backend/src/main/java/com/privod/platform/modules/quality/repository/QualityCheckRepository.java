@@ -20,6 +20,8 @@ public interface QualityCheckRepository extends JpaRepository<QualityCheck, UUID
 
     Page<QualityCheck> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
+    List<QualityCheck> findByWbsNodeIdAndDeletedFalse(UUID wbsNodeId);
+
     Page<QualityCheck> findByDeletedFalse(Pageable pageable);
 
     List<QualityCheck> findByProjectIdAndStatusAndDeletedFalse(UUID projectId, CheckStatus status);

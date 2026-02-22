@@ -32,6 +32,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class WbsNode extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
 
@@ -101,4 +104,10 @@ public class WbsNode extends BaseEntity {
 
     @Column(name = "late_finish")
     private LocalDate lateFinish;
+
+    @Column(name = "planned_volume", precision = 18, scale = 4)
+    private BigDecimal plannedVolume;
+
+    @Column(name = "volume_unit_of_measure", length = 50)
+    private String volumeUnitOfMeasure;
 }

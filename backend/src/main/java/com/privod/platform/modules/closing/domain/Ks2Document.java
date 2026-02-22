@@ -69,6 +69,50 @@ public class Ks2Document extends BaseEntity {
     @Column(name = "signed_at")
     private Instant signedAt;
 
+    @Column(name = "total_with_vat", precision = 18, scale = 2)
+    @Builder.Default
+    private BigDecimal totalWithVat = BigDecimal.ZERO;
+
+    @Column(name = "total_vat_amount", precision = 18, scale = 2)
+    @Builder.Default
+    private BigDecimal totalVatAmount = BigDecimal.ZERO;
+
+    @Column(name = "edo_document_id")
+    private UUID edoDocumentId;
+
+    @Column(name = "edo_status", length = 30)
+    private String edoStatus;
+
+    @Column(name = "edo_sent_at")
+    private Instant edoSentAt;
+
+    @Column(name = "edo_delivered_at")
+    private Instant edoDeliveredAt;
+
+    @Column(name = "edo_signed_at")
+    private Instant edoSignedAt;
+
+    @Column(name = "pipeline_generated")
+    @Builder.Default
+    private Boolean pipelineGenerated = false;
+
+    @Column(name = "pipeline_generated_at")
+    private Instant pipelineGeneratedAt;
+
+    @Column(name = "source_daily_log_ids", columnDefinition = "TEXT")
+    private String sourceDailyLogIds;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "onec_posting_status", length = 20)
+    @Builder.Default
+    private OneCPostingStatus oneCPostingStatus = OneCPostingStatus.NOT_SENT;
+
+    @Column(name = "onec_document_id", length = 255)
+    private String oneCDocumentId;
+
+    @Column(name = "onec_posted_at")
+    private Instant oneCPostedAt;
+
     public void computeName() {
         this.name = "КС-2 №" + this.number + " от " + this.documentDate;
     }

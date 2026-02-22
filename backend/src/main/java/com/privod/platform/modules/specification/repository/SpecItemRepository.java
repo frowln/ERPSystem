@@ -22,4 +22,9 @@ public interface SpecItemRepository extends JpaRepository<SpecItem, UUID> {
 
     @Query("SELECT COALESCE(SUM(si.plannedAmount), 0) FROM SpecItem si WHERE si.specificationId = :specId AND si.deleted = false")
     BigDecimal sumPlannedAmountBySpecificationId(@Param("specId") UUID specificationId);
+
+    @Query("SELECT si FROM SpecItem si JOIN Specification s ON si.specificationId = s.id " +
+            "WHERE s.projectId = :projectId AND si.itemType = com.privod.platform.modules.specification.domain.SpecItemType.WORK " +
+            "AND si.deleted = false AND s.deleted = false ORDER BY si.sequence ASC")
+    List<SpecItem> findCurrentWorkItemsByProjectId(@Param("projectId") UUID projectId);
 }

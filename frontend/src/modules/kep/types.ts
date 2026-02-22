@@ -74,3 +74,44 @@ export interface CreateKepSigningRequest {
   dueDate?: string;
   projectId?: string;
 }
+
+// OCSP validation
+export type OcspStatus = 'GOOD' | 'REVOKED' | 'UNKNOWN' | 'ERROR';
+
+export interface OcspValidationResult {
+  status: OcspStatus;
+  message?: string;
+  checkedAt: string;
+  responderUrl?: string;
+}
+
+// Machine-readable power of attorney (MChD)
+export type MchDStatus = 'ACTIVE' | 'EXPIRED' | 'REVOKED' | 'SUSPENDED';
+
+export interface MchDDocument {
+  id: string;
+  number: string;
+  principalInn: string;
+  principalName: string;
+  representativeInn: string;
+  representativeName: string;
+  scope: string;
+  status: MchDStatus;
+  validFrom: string;
+  validTo: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateMchDRequest {
+  number: string;
+  principalInn: string;
+  principalName: string;
+  representativeInn: string;
+  representativeName: string;
+  scope: string;
+  validFrom: string;
+  validTo: string;
+  notes?: string;
+}

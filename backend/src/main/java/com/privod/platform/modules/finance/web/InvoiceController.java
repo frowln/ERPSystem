@@ -7,6 +7,7 @@ import com.privod.platform.modules.finance.domain.InvoiceType;
 import com.privod.platform.modules.finance.service.InvoiceService;
 import com.privod.platform.modules.finance.web.dto.CreateInvoiceLineRequest;
 import com.privod.platform.modules.finance.web.dto.CreateInvoiceRequest;
+import com.privod.platform.modules.finance.web.dto.ChangeInvoiceStatusRequest;
 import com.privod.platform.modules.finance.web.dto.InvoiceLineResponse;
 import com.privod.platform.modules.finance.web.dto.InvoiceResponse;
 import com.privod.platform.modules.finance.web.dto.InvoiceSummaryResponse;
@@ -88,6 +89,16 @@ public class InvoiceController {
     @Operation(summary = "Mark invoice as sent")
     public ResponseEntity<ApiResponse<InvoiceResponse>> send(@PathVariable UUID id) {
         InvoiceResponse response = invoiceService.sendInvoice(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Change invoice status")
+    public ResponseEntity<ApiResponse<InvoiceResponse>> changeStatus(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChangeInvoiceStatusRequest request) {
+        InvoiceResponse response = invoiceService.changeStatus(id, request.status());
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 

@@ -69,4 +69,22 @@ public class SpecItem extends BaseEntity {
     @Column(name = "is_customer_provided", nullable = false)
     @Builder.Default
     private boolean isCustomerProvided = false;
+
+    // Supply status fields (Phase 6)
+    @Column(name = "supply_status", length = 30)
+    @Builder.Default
+    private String supplyStatus = "NOT_COVERED";
+
+    @Column(name = "covered_quantity", precision = 18, scale = 4)
+    @Builder.Default
+    private BigDecimal coveredQuantity = BigDecimal.ZERO;
+
+    @Column(name = "best_price", precision = 18, scale = 2)
+    private BigDecimal bestPrice;
+
+    @Column(name = "best_vendor_name", length = 500)
+    private String bestVendorName;
+
+    @Column(name = "budget_item_id")
+    private UUID budgetItemId;
 }

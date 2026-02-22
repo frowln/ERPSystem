@@ -12,3 +12,4 @@ export { PaymentApproveWizard } from './PaymentApproveWizard';
 export { CashFlowForecastWizard } from './CashFlowForecastWizard';
 export { PaymentCalendarWizard } from './PaymentCalendarWizard';
 export { default as CashFlowChartPage } from './CashFlowChartPage';
+export { default as FmPage } from './FmPage';

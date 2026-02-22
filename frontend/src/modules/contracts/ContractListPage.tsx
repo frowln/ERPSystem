@@ -17,6 +17,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { contractsApi } from '@/api/contracts';
 import { formatMoney, formatDate } from '@/lib/format';
 import { guardDemoModeAction, isDemoMode } from '@/lib/demoMode';
+import ContractDirectionTabs, { type ContractDirectionFilter } from './ContractDirectionTabs';
 import type { Contract } from '@/types';
 
 type TabId = 'all' | 'DRAFT' | 'ON_APPROVAL' | 'SIGNED' | 'ACTIVE' | 'CLOSED';
@@ -34,6 +35,7 @@ const ContractListPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabId>('all');
+  const [directionFilter, setDirectionFilter] = useState<ContractDirectionFilter>('ALL');
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [pendingCancellation, setPendingCancellation] = useState<{ ids: string[]; names: string[] } | null>(null);
@@ -75,6 +77,10 @@ const ContractListPage: React.FC = () => {
       filtered = filtered.filter((c) => c.status === 'CLOSED');
     }
 
+    if (directionFilter !== 'ALL') {
+      filtered = filtered.filter((c) => c.direction === directionFilter || c.contractDirection === directionFilter);
+    }
+
     if (typeFilter) {
       filtered = filtered.filter((c) => c.typeName === typeFilter);
     }
@@ -90,7 +96,7 @@ const ContractListPage: React.FC = () => {
     }
 
     return filtered;
-  }, [contracts, activeTab, typeFilter, search]);
+  }, [contracts, activeTab, directionFilter, typeFilter, search]);
 
   const tabCounts = useMemo(() => ({
     all: contracts.length,
@@ -243,8 +249,9 @@ const ContractListPage: React.FC = () => {
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
-      {/* Filters */}
+      {/* Direction + Filters */}
       <div className="flex items-center gap-3 mb-4">
+        <ContractDirectionTabs value={directionFilter} onChange={setDirectionFilter} />
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input

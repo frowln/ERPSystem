@@ -14,6 +14,7 @@ import {
   HardDrive,
   Globe,
   Zap,
+  Gauge,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -194,6 +195,43 @@ const MonitoringDashboardPage: React.FC = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Prometheus Metrics Export */}
+      <div className="mb-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
+                <Gauge size={20} className="text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  {t('monitoring.prometheusTitle')}
+                </h4>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {t('monitoring.prometheusDescription')}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full animate-pulse bg-success-500" />
+                <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                  {t('monitoring.prometheusExporting')}
+                </span>
+              </div>
+              <a
+                href="/actuator/prometheus"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                /actuator/prometheus
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Recent events */}

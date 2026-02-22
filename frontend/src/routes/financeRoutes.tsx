@@ -1,11 +1,16 @@
 import React, { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 // Budgets
 const BudgetListPage = lazy(() => import('@/modules/finance/BudgetListPage'));
 const BudgetDetailPage = lazy(() => import('@/modules/finance/BudgetDetailPage'));
 const BudgetFormPage = lazy(() => import('@/modules/finance/BudgetFormPage'));
+const FmPage = lazy(() => import('@/modules/finance/FmPage'));
+const FmDashboardPage = lazy(() => import('@/modules/finance/FmDashboardPage'));
+const CommercialProposalListPage = lazy(() => import('@/modules/commercialProposal/CommercialProposalListPage'));
+const CommercialProposalCreatePage = lazy(() => import('@/modules/commercialProposal/CommercialProposalCreatePage'));
+const CommercialProposalDetailPage = lazy(() => import('@/modules/commercialProposal/CommercialProposalDetailPage'));
 
 // Invoices
 const InvoiceListPage = lazy(() => import('@/modules/finance/InvoiceListPage'));
@@ -91,6 +96,11 @@ export function financeRoutes() {
       <Route path="budgets/new" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetFormPage /></ProtectedRoute>} />
       <Route path="budgets/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetDetailPage /></ProtectedRoute>} />
       <Route path="budgets/:id/edit" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetFormPage /></ProtectedRoute>} />
+      <Route path="budgets/:id/fm" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FmPage /></ProtectedRoute>} />
+      <Route path="budgets/:id/dashboard" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FmDashboardPage /></ProtectedRoute>} />
+      <Route path="commercial-proposals" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><CommercialProposalListPage /></ProtectedRoute>} />
+      <Route path="commercial-proposals/new" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><CommercialProposalCreatePage /></ProtectedRoute>} />
+      <Route path="commercial-proposals/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><CommercialProposalDetailPage /></ProtectedRoute>} />
 
       {/* Invoices (FINANCE+) */}
       <Route path="invoices" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><InvoiceListPage /></ProtectedRoute>} />
@@ -176,6 +186,25 @@ export function financeRoutes() {
       <Route path="monte-carlo/new" element={<SimulationFormPage />} />
       <Route path="monte-carlo/:id" element={<SimulationDetailPage />} />
       <Route path="monte-carlo/:id/edit" element={<SimulationFormPage />} />
+
+      {/* Legacy deep-link aliases from old /finance/* URLs */}
+      <Route path="finance/budgets" element={<Navigate to="/budgets" replace />} />
+      <Route path="finance/budgets/new" element={<Navigate to="/budgets/new" replace />} />
+      <Route path="finance/budgets/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetDetailPage /></ProtectedRoute>} />
+      <Route path="finance/budgets/:id/edit" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetFormPage /></ProtectedRoute>} />
+      <Route path="finance/budgets/:id/fm" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FmPage /></ProtectedRoute>} />
+      <Route path="finance/commercial-proposals" element={<Navigate to="/commercial-proposals" replace />} />
+      <Route path="finance/commercial-proposals/new" element={<Navigate to="/commercial-proposals/new" replace />} />
+      <Route path="finance/commercial-proposals/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><CommercialProposalDetailPage /></ProtectedRoute>} />
+      <Route path="finance/contracts" element={<Navigate to="/contracts" replace />} />
+      <Route path="finance/estimates" element={<Navigate to="/estimates" replace />} />
+      <Route path="finance/specifications" element={<Navigate to="/specifications" replace />} />
+      <Route path="finance/invoices" element={<Navigate to="/invoices" replace />} />
+      <Route path="finance/invoices/new" element={<Navigate to="/invoices/new" replace />} />
+      <Route path="finance/invoices/:id" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><InvoiceDetailPage /></ProtectedRoute>} />
+      <Route path="finance/payments" element={<Navigate to="/payments" replace />} />
+      <Route path="finance/payments/new" element={<Navigate to="/payments/new" replace />} />
+      <Route path="finance/payments/:id" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><PaymentDetailPage /></ProtectedRoute>} />
     </>
   );
 }

@@ -96,3 +96,59 @@ export interface SendPortalMessageRequest {
   recipientId: string;
   projectId?: string;
 }
+
+// Portal KS-2 Drafts
+export type PortalKs2DraftStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'CONVERTED';
+
+export interface PortalKs2Draft {
+  id: string;
+  projectId: string;
+  projectName: string;
+  draftNumber?: string;
+  status: PortalKs2DraftStatus;
+  reportingPeriodStart?: string;
+  reportingPeriodEnd?: string;
+  totalAmount?: number;
+  workDescription?: string;
+  reviewComment?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreatePortalKs2DraftRequest {
+  projectId: string;
+  draftNumber?: string;
+  reportingPeriodStart?: string;
+  reportingPeriodEnd?: string;
+  totalAmount?: number;
+  workDescription?: string;
+}
+
+// Portal Tasks
+export type PortalTaskStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+export type PortalTaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+
+export interface PortalTask {
+  id: string;
+  portalUserId: string;
+  portalUserName: string;
+  projectId?: string;
+  projectName?: string;
+  title: string;
+  description?: string;
+  status: PortalTaskStatus;
+  priority: PortalTaskPriority;
+  dueDate?: string;
+  completionNote?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreatePortalTaskRequest {
+  portalUserId: string;
+  projectId?: string;
+  title: string;
+  description?: string;
+  priority: PortalTaskPriority;
+  dueDate?: string;
+}

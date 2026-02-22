@@ -33,6 +33,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChangeEvent extends BaseEntity {
 
+    @Column(name = "organization_id")
+    private UUID organizationId;
+
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
 

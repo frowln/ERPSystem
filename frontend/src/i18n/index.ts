@@ -112,6 +112,36 @@ function resolve(obj: Record<string, unknown>, path: string): string | undefined
 }
 
 /**
+ * Human-friendly fallback for missing translation keys.
+ * Turns `commercialProposal.colCostPrice` -> `Cost price` instead of showing the raw key.
+ */
+function humanizeMissingKey(key: string, locale: Locale): string {
+  const segment = key.split('.').pop() || key;
+  const normalized = segment
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!normalized) {
+    return locale === 'ru' ? 'Нет перевода' : 'Missing translation';
+  }
+
+  const base = normalized.toLowerCase();
+  return base.charAt(0).toUpperCase() + base.slice(1);
+}
+
+/**
+ * Some dictionaries can accidentally contain placeholder values equal to the key
+ * path (e.g. "estimates.list.title"). Treat them as missing translations.
+ */
+function isPlaceholderValue(value: string | undefined, key: string): boolean {
+  if (!value) return true;
+  if (value === key) return true;
+  return /^[a-z][a-z0-9]*(\.[a-z0-9_-]+)+$/i.test(value);
+}
+
+/**
  * Translate a key with optional parameter interpolation.
  *
  * Usage:
@@ -123,18 +153,25 @@ function resolve(obj: Record<string, unknown>, path: string): string | undefined
  */
 export function t(key: string, params?: Record<string, string | number>): string {
   let value = resolve(messages[currentLocale] as unknown as Record<string, unknown>, key);
+  if (isPlaceholderValue(value, key)) {
+    value = undefined;
+  }
 
   // Fallback to default locale
   if (value === undefined && currentLocale !== DEFAULT_LOCALE) {
     value = resolve(messages[DEFAULT_LOCALE] as unknown as Record<string, unknown>, key);
+    if (isPlaceholderValue(value, key)) {
+      value = undefined;
+    }
   }
 
   // Fallback to key itself
+  // Never expose raw keys like `commercialProposal.colCostPrice` in UI.
   if (value === undefined) {
     if (import.meta.env?.DEV) {
       console.warn(`Missing translation key: "${key}" for locale "${currentLocale}"`);
     }
-    return key;
+    return humanizeMissingKey(key, currentLocale);
   }
 
   // Interpolate parameters

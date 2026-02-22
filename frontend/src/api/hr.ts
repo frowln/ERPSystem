@@ -9,6 +9,42 @@ import type {
 export interface EmployeeFilters extends PaginationParams {
   status?: string;
   search?: string;
+  jobTitle?: string;
+}
+
+export interface Certificate {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  name: string;
+  certificateType: string;
+  issueDate: string;
+  expiryDate: string;
+  status: 'VALID' | 'EXPIRING' | 'EXPIRED';
+  issuedBy?: string;
+  number?: string;
+  expired?: boolean;
+  expiring?: boolean;
+}
+
+export interface CertificationTypeBreakdown {
+  certType: string;
+  displayName?: string;
+  total: number;
+  valid: number;
+  expiring: number;
+  expired: number;
+}
+
+export interface CertificationDashboard {
+  totalCertificates: number;
+  validCount: number;
+  expiringCount: number;
+  expiredCount: number;
+  compliancePercent?: number;
+  expiringCertificates: Certificate[];
+  expiredCertificates: Certificate[];
+  byType: Record<string, CertificationTypeBreakdown>;
 }
 
 export const hrApi = {
@@ -39,6 +75,11 @@ export const hrApi = {
 
   getCrews: async (params?: PaginationParams): Promise<PaginatedResponse<any>> => {
     const response = await apiClient.get<PaginatedResponse<any>>('/crews', { params });
+    return response.data;
+  },
+
+  getCertificationDashboard: async (params?: { status?: string; certType?: string; search?: string }): Promise<CertificationDashboard> => {
+    const response = await apiClient.get<CertificationDashboard>('/employees/certifications/dashboard', { params });
     return response.data;
   },
 };

@@ -15,6 +15,8 @@ public interface ChangeOrderItemRepository extends JpaRepository<ChangeOrderItem
 
     List<ChangeOrderItem> findByChangeOrderIdAndDeletedFalseOrderBySortOrderAsc(UUID changeOrderId);
 
+    List<ChangeOrderItem> findByChangeOrderIdInAndDeletedFalse(List<UUID> changeOrderIds);
+
     long countByChangeOrderIdAndDeletedFalse(UUID changeOrderId);
 
     @Query("SELECT COALESCE(SUM(i.totalPrice), 0) FROM ChangeOrderItem i " +

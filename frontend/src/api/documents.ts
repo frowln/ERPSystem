@@ -9,6 +9,8 @@ export interface DocumentFilters extends PaginationParams {
   category?: string;
   status?: string;
   search?: string;
+  projectId?: string;
+  contractId?: string;
 }
 
 export interface UpsertDocumentRequest {
