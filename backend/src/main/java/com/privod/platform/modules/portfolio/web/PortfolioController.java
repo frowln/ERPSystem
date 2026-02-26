@@ -91,6 +91,14 @@ public class PortfolioController {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
+    @GetMapping("/opportunities/{id}/activities")
+    @Operation(summary = "List activities for an opportunity")
+    public ResponseEntity<ApiResponse<java.util.List<java.util.Map<String, Object>>>> getOpportunityActivities(
+            @PathVariable UUID id) {
+        portfolioService.getOpportunity(id);
+        return ResponseEntity.ok(ApiResponse.ok(java.util.Collections.emptyList()));
+    }
+
     @PostMapping("/opportunities")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'SALES_MANAGER')")
     @Operation(summary = "Create a new opportunity")
