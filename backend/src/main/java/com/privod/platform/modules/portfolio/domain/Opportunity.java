@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -84,9 +86,11 @@ public class Opportunity extends BaseEntity {
     private UUID wonProjectId;
 
     @Column(name = "tags", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String tags;
 
     @Column(name = "go_no_go_checklist", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String goNoGoChecklist;
 
     @Column(name = "checklist_score")
