@@ -100,16 +100,7 @@ const OpportunityDetailPage: React.FC = () => {
   const stageLabels = getStageLabels();
   const activityTypeLabels = getActivityTypeLabels();
 
-  if (isLoading || !opportunity) {
-    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>;
-  }
-
-  const o = opportunity;
-  const acts = activities ?? [];
   const [stageOverride, setStageOverride] = useState<Opportunity['stage'] | null>(null);
-  const effectiveStage = stageOverride ?? o.stage;
-
-  // Go/No-Go checklist state
   const [goNoGoOpen, setGoNoGoOpen] = useState(false);
   const [checklist, setChecklist] = useState<GoNoGoChecklist>(defaultChecklist);
   const [analogResult, setAnalogResult] = useState<{ analogCount: number; avgEstimatedValue?: number; avgWinProbability?: number; recommendation: string } | null>(null);
@@ -131,13 +122,21 @@ const OpportunityDetailPage: React.FC = () => {
     onError: () => toast.error(t('portfolio.goNoGo.analogError')),
   });
 
-  const stageActions = useMemo(() => {
+  if (isLoading || !opportunity) {
+    return <div className="animate-fade-in p-8 text-center text-neutral-500 dark:text-neutral-400">{t('common.loading')}</div>;
+  }
+
+  const o = opportunity;
+  const acts = activities ?? [];
+  const effectiveStage = stageOverride ?? o.stage;
+
+  const stageActions = (() => {
     const idx = stageFlow.indexOf(effectiveStage);
     if (idx >= 0 && idx < stageFlow.length - 1) {
       return [{ label: t('portfolio.opportunityDetail.moveToStage', { stage: stageLabels[stageFlow[idx + 1]] }), targetStage: stageFlow[idx + 1] }];
     }
     return [];
-  }, [effectiveStage]);
+  })();
 
   const currentStageIdx = stageFlow.indexOf(effectiveStage);
 
