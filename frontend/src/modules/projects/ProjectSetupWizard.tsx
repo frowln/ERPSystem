@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select, Textarea, Checkbox } from '@/design-system/components/FormField';
+import { permissionsApi } from '@/api/permissions';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
 
@@ -29,14 +31,6 @@ const getProjectTypeOptions = () => [
   { value: 'RENOVATION', label: t('projects.types.renovation') },
 ];
 
-const getUserOptions = () => [
-  { value: 'u1', label: 'Иванов А.С.' },
-  { value: 'u2', label: 'Петров В.К.' },
-  { value: 'u3', label: 'Сидоров М.Н.' },
-  { value: 'u4', label: 'Козлов Д.А.' },
-  { value: 'u5', label: 'Новикова Е.В.' },
-  { value: 'u6', label: 'Кузнецов И.П.' },
-];
 
 const getRoleOptions = () => [
   { value: 'pm', label: t('projects.wizard.rolePm') },
@@ -79,7 +73,8 @@ const getSteps = () => [
 
 export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, onClose }) => {
   const projectTypeOptions = getProjectTypeOptions();
-  const userOptions = getUserOptions();
+  const { data: usersData } = useQuery({ queryKey: ['users'], queryFn: () => permissionsApi.getUsers() });
+  const userOptions = (usersData?.content ?? []).map((u) => ({ value: u.id, label: u.fullName ?? u.email }));
   const roleOptions = getRoleOptions();
   const budgetCategories = getBudgetCategories();
   const defaultFolders = getDefaultFolders();

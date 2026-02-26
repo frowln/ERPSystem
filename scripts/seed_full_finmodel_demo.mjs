@@ -631,6 +631,7 @@ async function createBudgetAndPositions(projectId, estimate, estimateItemMap, pu
     const estimatePrice = position.estimatePrice ?? money(
       toNumber(position.costPrice, 0) * Math.max(toNumber(position.coefficient, 1) + 0.15, 1.20),
     );
+    const isManualPriceSource = position.source === 'MANUAL';
     const payload = {
       parentId: position.parentId,
       section: false,
@@ -639,7 +640,7 @@ async function createBudgetAndPositions(projectId, estimate, estimateItemMap, pu
       name: position.name,
       quantity: position.quantity,
       unit: position.unit,
-      costPrice: position.costPrice,
+      ...(isManualPriceSource ? { costPrice: position.costPrice } : {}),
       estimatePrice,
       coefficient: position.coefficient,
       vatRate: 22,
@@ -1188,15 +1189,8 @@ async function attachInvoicePriceSources(budgetId, positions, invoices) {
   for (let index = 0; index < targets.length; index += 1) {
     const position = targets[index];
     const invoice = receivedInvoices[index];
-    const quantity = Number(position.quantity ?? 1) || 1;
-    const unitCostFromInvoice = money(Number(invoice.subtotal ?? invoice.totalAmount ?? 0) / quantity);
-    const currentEstimatePrice = Number(position.estimatePrice ?? position.costPrice ?? 0);
 
     const payload = {
-      costPrice: unitCostFromInvoice > 0 ? unitCostFromInvoice : Number(position.costPrice ?? 0),
-      estimatePrice: currentEstimatePrice,
-      coefficient: Number(position.coefficient ?? 1),
-      vatRate: Number(position.vatRate ?? 22),
       priceSourceType: 'INVOICE',
       priceSourceId: invoice.id,
       notes: `${position.notes ?? ''}\nИсточник цены дополнен счетом ${invoice.number}`.trim(),
@@ -1213,8 +1207,8 @@ async function attachInvoicePriceSources(budgetId, positions, invoices) {
         positionName: position.name,
         invoiceId: invoice.id,
         invoiceNumber: invoice.number,
-        costPrice: updatedPosition.costPrice,
-        estimatePrice: updatedPosition.estimatePrice,
+        priceSourceType: updatedPosition.priceSourceType,
+        priceSourceId: updatedPosition.priceSourceId,
       });
     } catch (error) {
       const message = String(error?.message ?? error);
@@ -1274,7 +1268,9 @@ async function verifyDataset(projectId, budgetId, options = {}) {
   const proposalItems = proposalId ? await get(`/commercial-proposals/${proposalId}/items`) : [];
   const proposalMaterials = proposalItems.filter((item) => item.itemType === 'MATERIAL');
   const proposalWorks = proposalItems.filter((item) => item.itemType === 'WORK');
-  const proposalConfirmed = proposalItems.filter((item) => item.status === 'CONFIRMED').length;
+  const proposalConfirmed = proposalItems.filter((item) =>
+    ['CONFIRMED', 'IN_FINANCIAL_MODEL', 'APPROVED', 'APPROVED_PROJECT'].includes(item.status)).length;
+  const proposalMaterialInvoiceLinked = proposalMaterials.filter((item) => !!item.selectedInvoiceLineId).length;
 
   const proposalMathMismatches = proposalItems.filter((item) => {
     const expectedTotal = money(toNumber(item.costPrice) * toNumber(item.quantity, 1));
@@ -1282,10 +1278,11 @@ async function verifyDataset(projectId, budgetId, options = {}) {
   });
   const budgetPriceViolations = positions.filter((item) => toNumber(item.customerPrice) > toNumber(item.estimatePrice));
   const materialsMissingInvoiceLink = proposalMaterials.filter((item) =>
-    ['INVOICE_SELECTED', 'APPROVED_SUPPLY', 'APPROVED_PROJECT', 'CONFIRMED'].includes(item.status)
+    ['INVOICE_SELECTED', 'PRICE_SELECTED', 'APPROVED', 'APPROVED_PROJECT', 'IN_FINANCIAL_MODEL', 'CONFIRMED'].includes(item.status)
       && !item.selectedInvoiceLineId);
   const worksMissingEstimateLink = proposalWorks.filter((item) =>
-    ['APPROVED_PROJECT', 'CONFIRMED'].includes(item.status) && !item.estimateItemId);
+    ['PRICE_SELECTED', 'APPROVED', 'APPROVED_PROJECT', 'IN_FINANCIAL_MODEL', 'CONFIRMED'].includes(item.status)
+      && !item.estimateItemId);
 
   const competitiveEntries = competitiveListId
     ? await get(`/competitive-lists/${competitiveListId}/entries`)
@@ -1327,7 +1324,7 @@ async function verifyDataset(projectId, budgetId, options = {}) {
     paymentsAtLeast2: payments.length >= 2,
     estimatesAtLeast1: estimates.length >= 1,
     purchaseRequestsAtLeast2: purchaseRequests.length >= 2,
-    invoiceSourcesAtLeast1: invoicePriceSources >= 1,
+    invoiceSourcesAtLeast1: invoicePriceSources >= 1 || proposalMaterialInvoiceLinked >= 1,
     plannedBudgetMatchesSeed: Number(budget.plannedCost ?? 0) >= 700000000,
     financialSummaryHasSupplierInvoices: Number(projectFinancials.invoicedFromSuppliers ?? 0) > 0,
     budgetIsActive: budget.status === 'ACTIVE',

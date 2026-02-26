@@ -68,6 +68,7 @@ import {
   TrendingUp,
   Activity,
   Trophy,
+  TableProperties,
   Settings,
   UserCog,
   Plug,
@@ -87,6 +88,9 @@ import {
   CalendarClock,
   Database,
   History,
+  Bug,
+  Store,
+  Building2,
 } from 'lucide-react';
 import type React from 'react';
 import { t } from '@/i18n';
@@ -144,8 +148,12 @@ export const navigation: NavGroup[] = [
   ]),
   navGroup('projects', FolderKanban, [
     navItem('projects-list', FolderKanban, '/projects'),
+    navItem('counterparties', Building2, '/counterparties'),
     navItem('CONTRACTS', FileSignature, '/contracts'),
     navItem('estimates', Calculator, '/estimates'),
+    navItem('estimates-pricing-databases', TableProperties, '/estimates/pricing/databases'),
+    navItem('estimates-pricing-rates', TableProperties, '/estimates/pricing/rates'),
+    navItem('estimates-pricing-calc', TableProperties, '/estimates/pricing/calculate'),
     navItem('specifications', ClipboardList, '/specifications'),
     navItem('spec-analogs', ArrowLeftRight, '/specifications/analogs'),
     navItem('spec-analog-requests', RefreshCw, '/specifications/analog-requests'),
@@ -191,7 +199,9 @@ export const navigation: NavGroup[] = [
     navItem('data-1c-logs', History, '/data-exchange/1c-logs'),
   ]),
   navGroup('finance', Banknote, [
+    navItem('fin-fm', TableProperties, '/financial-models'),
     navItem('fin-budgets', Wallet, '/budgets'),
+    navItem('fin-commercial-proposals', FileText, '/commercial-proposals'),
     navItem('fin-invoices', Receipt, '/invoices'),
     navItem('fin-payments', CreditCard, '/payments'),
     navItem('fin-cashflow', TrendingDown, '/cash-flow'),
@@ -277,6 +287,7 @@ export const navigation: NavGroup[] = [
   ]),
   navGroup('QUALITY', ShieldCheck, [
     navItem('qa-quality', ShieldCheck, '/quality'),
+    navItem('qa-defects', Bug, '/defects'),
     navItem('qa-punchlist', ListChecks, '/punchlist/items'),
     navItem('qa-punchlist-dash', BarChart3, '/punchlist/dashboard'),
     navItem('qa-permits', FileCheck, '/regulatory/permits'),
@@ -341,5 +352,7 @@ export const navigation: NavGroup[] = [
     navItem('adm-favorites', Star, '/messaging/favorites'),
     navItem('adm-api-keys', Key, '/settings/api-keys'),
     navItem('adm-webhooks', Webhook, '/settings/webhooks'),
+    navItem('adm-subscription', CreditCard, '/settings/subscription'),
+    navItem('adm-marketplace', Store, '/marketplace'),
   ]),
 ];

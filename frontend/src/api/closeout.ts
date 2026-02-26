@@ -11,6 +11,17 @@ import type {
   AsBuiltWbsProgress,
   WarrantyObligation,
   ZosDocument,
+  CommissioningItem,
+  CommissioningItemStatus,
+  StroyNadzorDocument,
+  StroyNadzorDocStatus,
+  WarrantyRecord,
+  WarrantyDefectReport,
+  WarrantyClaimTimelineEntry,
+  ExecutiveSchema,
+  ExecutiveSchemaStatus,
+  ExecutiveSchemaVersion,
+  ZosFormData,
 } from '@/modules/closeout/types';
 
 interface BackendCommissioningChecklistResponse {
@@ -546,5 +557,141 @@ export const closeoutApi = {
 
   deleteZosDocument: async (id: string): Promise<void> => {
     await apiClient.delete(`/closeout/zos-documents/${id}`);
+  },
+
+  // ---- Commissioning Readiness Checklist Items ----
+
+  getCommissioningItems: async (projectId?: string): Promise<CommissioningItem[]> => {
+    const response = await apiClient.get<CommissioningItem[]>('/closeout/commissioning-items', {
+      params: projectId ? { projectId } : undefined,
+    });
+    return response.data;
+  },
+
+  updateCommissioningItemStatus: async (id: string, status: CommissioningItemStatus): Promise<void> => {
+    await apiClient.patch(`/closeout/commissioning-items/${id}/status`, { status });
+  },
+
+  updateCommissioningItem: async (
+    id: string,
+    data: { status?: CommissioningItemStatus; notes?: string; responsibleName?: string },
+  ): Promise<CommissioningItem> => {
+    const response = await apiClient.patch<CommissioningItem>(`/closeout/commissioning-items/${id}`, data);
+    return response.data;
+  },
+
+  // ---- Stroy-nadzor Documents ----
+
+  getStroyNadzorDocuments: async (projectId?: string): Promise<StroyNadzorDocument[]> => {
+    const response = await apiClient.get<StroyNadzorDocument[]>('/closeout/stroynadzor-documents', {
+      params: projectId ? { projectId } : undefined,
+    });
+    return response.data;
+  },
+
+  updateStroyNadzorDocStatus: async (id: string, status: StroyNadzorDocStatus, fileName?: string): Promise<void> => {
+    await apiClient.patch(`/closeout/stroynadzor-documents/${id}/status`, { status, fileName });
+  },
+
+  uploadStroyNadzorDocument: async (projectId: string, itemId: string, file: File): Promise<StroyNadzorDocument> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('projectId', projectId);
+    const response = await apiClient.post<StroyNadzorDocument>(
+      `/closeout/stroynadzor-documents/${itemId}/upload`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+    return response.data;
+  },
+
+  generateStroyNadzorPackage: async (projectId: string): Promise<Blob> => {
+    const response = await apiClient.get(`/closeout/stroynadzor-documents/package/${projectId}`, {
+      responseType: 'blob',
+    });
+    return response.data as Blob;
+  },
+
+  // ---- Warranty Records (tracking) ----
+
+  getWarrantyRecords: async (projectId?: string): Promise<WarrantyRecord[]> => {
+    const response = await apiClient.get<WarrantyRecord[]>('/closeout/warranty-records', {
+      params: projectId ? { projectId } : undefined,
+    });
+    return response.data;
+  },
+
+  createWarrantyDefectReport: async (warrantyRecordId: string, data: WarrantyDefectReport): Promise<void> => {
+    await apiClient.post(`/closeout/warranty-records/${warrantyRecordId}/defects`, data);
+  },
+
+  getWarrantyClaimTimeline: async (warrantyRecordId: string): Promise<WarrantyClaimTimelineEntry[]> => {
+    const response = await apiClient.get<WarrantyClaimTimelineEntry[]>(
+      `/closeout/warranty-records/${warrantyRecordId}/timeline`,
+    );
+    return response.data;
+  },
+
+  // ---- Executive Schemas ----
+
+  getExecutiveSchemas: async (projectId?: string): Promise<ExecutiveSchema[]> => {
+    const response = await apiClient.get<ExecutiveSchema[]>('/closeout/executive-schemas', {
+      params: projectId ? { projectId } : undefined,
+    });
+    return response.data;
+  },
+
+  uploadExecutiveSchema: async (
+    file: File,
+    metadata: {
+      schemaName: string;
+      workType: string;
+      schemaType?: string;
+      system?: string;
+      floorLevel?: string;
+    },
+  ): Promise<ExecutiveSchema> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('schemaName', metadata.schemaName);
+    formData.append('workType', metadata.workType);
+    if (metadata.schemaType) formData.append('schemaType', metadata.schemaType);
+    if (metadata.system) formData.append('system', metadata.system);
+    if (metadata.floorLevel) formData.append('floorLevel', metadata.floorLevel);
+    const response = await apiClient.post<ExecutiveSchema>('/closeout/executive-schemas/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  updateSchemaStatus: async (id: string, status: ExecutiveSchemaStatus): Promise<ExecutiveSchema> => {
+    const response = await apiClient.patch<ExecutiveSchema>(`/closeout/executive-schemas/${id}/status`, { status });
+    return response.data;
+  },
+
+  getSchemaVersionHistory: async (schemaId: string): Promise<ExecutiveSchemaVersion[]> => {
+    const response = await apiClient.get<ExecutiveSchemaVersion[]>(
+      `/closeout/executive-schemas/${schemaId}/versions`,
+    );
+    return response.data;
+  },
+
+  linkSchemaToModel: async (schemaId: string, bimElementId: string): Promise<void> => {
+    await apiClient.post(`/closeout/executive-schemas/${schemaId}/link-bim`, { bimElementId });
+  },
+
+  // ---- ZOS Extended ----
+
+  generateZosFromForm: async (data: ZosFormData): Promise<ZosDocument> => {
+    const response = await apiClient.post<ZosDocument>('/closeout/zos-documents/generate', data);
+    return response.data;
+  },
+
+  exportZosPdf: async (projectId: string, zosId: string): Promise<Blob> => {
+    const response = await apiClient.get(`/closeout/zos-documents/${zosId}/export`, {
+      params: { projectId, format: 'pdf' },
+      responseType: 'blob',
+    });
+    return response.data as Blob;
   },
 };

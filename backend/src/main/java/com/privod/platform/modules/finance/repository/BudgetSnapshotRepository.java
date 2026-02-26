@@ -16,5 +16,10 @@ public interface BudgetSnapshotRepository extends JpaRepository<BudgetSnapshot, 
 
     Optional<BudgetSnapshot> findByIdAndDeletedFalse(UUID id);
 
+    Optional<BudgetSnapshot> findFirstByBudgetIdAndSnapshotTypeAndDeletedFalseOrderBySnapshotDateDesc(
+            UUID budgetId,
+            BudgetSnapshot.SnapshotType snapshotType
+    );
+
     long countByBudgetIdAndDeletedFalse(UUID budgetId);
 }

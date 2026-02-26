@@ -1,8 +1,9 @@
 import React, { lazy } from 'react';
-import { Navigate, Route } from 'react-router-dom';
+import { Navigate, Route, useParams } from 'react-router-dom';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
-// Budgets
+// Budgets / FM
+const FinancialModelsPage = lazy(() => import('@/modules/finance/FinancialModelsPage'));
 const BudgetListPage = lazy(() => import('@/modules/finance/BudgetListPage'));
 const BudgetDetailPage = lazy(() => import('@/modules/finance/BudgetDetailPage'));
 const BudgetFormPage = lazy(() => import('@/modules/finance/BudgetFormPage'));
@@ -25,6 +26,16 @@ const PaymentFormPage = lazy(() => import('@/modules/finance/PaymentFormPage'));
 // Cash Flow
 const CashFlowPage = lazy(() => import('@/modules/finance/CashFlowPage'));
 const CashFlowChartPage = lazy(() => import('@/modules/finance/CashFlowChartPage'));
+
+// Bank Statement / Factoring / Treasury / Tax / Export
+const BankStatementMatchingPage = lazy(() => import('@/modules/finance/BankStatementMatchingPage'));
+const FactoringCalculatorPage = lazy(() => import('@/modules/finance/FactoringCalculatorPage'));
+const TreasuryCalendarPage = lazy(() => import('@/modules/finance/TreasuryCalendarPage'));
+const TaxCalendarPage = lazy(() => import('@/modules/finance/TaxCalendarPage'));
+const BankExportPage = lazy(() => import('@/modules/finance/BankExportPage'));
+
+// Execution Chain
+const ExecutionChainPage = lazy(() => import('@/modules/finance/ExecutionChainPage'));
 
 // Accounting
 const AccountingDashboardPage = lazy(() => import('@/modules/accounting/AccountingDashboardPage'));
@@ -88,13 +99,26 @@ const SimulationFormPage = lazy(() => import('@/modules/monteCarlo/SimulationFor
 const FINANCE_ROLES = ['ADMIN', 'PROJECT_MANAGER', 'MANAGER', 'ACCOUNTANT', 'FINANCE_MANAGER', 'FINANCIAL_CONTROLLER'] as const;
 const BUDGET_ROLES = ['ADMIN', 'PROJECT_MANAGER', 'MANAGER', 'COST_MANAGER', 'FINANCE_MANAGER', 'FINANCIAL_CONTROLLER'] as const;
 
+const BudgetRootRedirect: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  if (!id) {
+    return <Navigate to="/budgets" replace />;
+  }
+  return <Navigate to={`/budgets/${id}`} replace />;
+};
+
 export function financeRoutes() {
   return (
     <>
+      {/* Finance root */}
+      <Route path="finance" element={<Navigate to="/budgets" replace />} />
+
       {/* Budgets (MANAGER+) */}
+      <Route path="financial-models" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FinancialModelsPage /></ProtectedRoute>} />
       <Route path="budgets" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetListPage /></ProtectedRoute>} />
       <Route path="budgets/new" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetFormPage /></ProtectedRoute>} />
       <Route path="budgets/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetDetailPage /></ProtectedRoute>} />
+      <Route path="budgets/:id/overview" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetRootRedirect /></ProtectedRoute>} />
       <Route path="budgets/:id/edit" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetFormPage /></ProtectedRoute>} />
       <Route path="budgets/:id/fm" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FmPage /></ProtectedRoute>} />
       <Route path="budgets/:id/dashboard" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FmDashboardPage /></ProtectedRoute>} />
@@ -117,6 +141,24 @@ export function financeRoutes() {
       {/* Cash Flow (FINANCE+) */}
       <Route path="cash-flow" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><CashFlowPage /></ProtectedRoute>} />
       <Route path="cash-flow/charts" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><CashFlowChartPage /></ProtectedRoute>} />
+
+      {/* Bank Statement Matching (FINANCE+) */}
+      <Route path="bank-statement-matching" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><BankStatementMatchingPage /></ProtectedRoute>} />
+
+      {/* Factoring Calculator (FINANCE+) */}
+      <Route path="factoring-calculator" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><FactoringCalculatorPage /></ProtectedRoute>} />
+
+      {/* Treasury Calendar (FINANCE+) */}
+      <Route path="treasury-calendar" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><TreasuryCalendarPage /></ProtectedRoute>} />
+
+      {/* Tax Calendar (FINANCE+) */}
+      <Route path="tax-calendar" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><TaxCalendarPage /></ProtectedRoute>} />
+
+      {/* Bank Export (FINANCE+) */}
+      <Route path="bank-export" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><BankExportPage /></ProtectedRoute>} />
+
+      {/* Execution Chain — cross-cutting Estimate→Budget→KS-2→Invoice→Payment */}
+      <Route path="execution-chain" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><ExecutionChainPage /></ProtectedRoute>} />
 
       {/* Accounting (FINANCE+) */}
       <Route path="accounting" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><AccountingDashboardPage /></ProtectedRoute>} />
@@ -190,7 +232,7 @@ export function financeRoutes() {
       {/* Legacy deep-link aliases from old /finance/* URLs */}
       <Route path="finance/budgets" element={<Navigate to="/budgets" replace />} />
       <Route path="finance/budgets/new" element={<Navigate to="/budgets/new" replace />} />
-      <Route path="finance/budgets/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetDetailPage /></ProtectedRoute>} />
+      <Route path="finance/budgets/:id" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetRootRedirect /></ProtectedRoute>} />
       <Route path="finance/budgets/:id/edit" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><BudgetFormPage /></ProtectedRoute>} />
       <Route path="finance/budgets/:id/fm" element={<ProtectedRoute requiredRoles={[...BUDGET_ROLES]}><FmPage /></ProtectedRoute>} />
       <Route path="finance/commercial-proposals" element={<Navigate to="/commercial-proposals" replace />} />

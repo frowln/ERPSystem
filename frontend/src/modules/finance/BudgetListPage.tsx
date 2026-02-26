@@ -6,6 +6,7 @@ import { Plus, Search } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import {
   StatusBadge,
   budgetStatusColorMap,
@@ -25,7 +26,12 @@ const BudgetListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
 
-  const { data: budgetsData, isLoading } = useQuery({
+  const {
+    data: budgetsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['budgets'],
     queryFn: () => financeApi.getBudgets(),
   });
@@ -228,19 +234,29 @@ const BudgetListPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <DataTable<Budget>
-        data={filteredBudgets}
-        columns={columns}
-        loading={isLoading}
-        onRowClick={handleRowClick}
-        enableRowSelection
-        enableColumnVisibility
-        enableDensityToggle
-        enableExport
-        pageSize={20}
-        emptyTitle={t('finance.budgetList.emptyTitle')}
-        emptyDescription={t('finance.budgetList.emptyDescription')}
-      />
+      {isError ? (
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.noConnection')}
+          description={t('errors.serverErrorRetry')}
+          actionLabel={t('common.retry')}
+          onAction={() => void refetch()}
+        />
+      ) : (
+        <DataTable<Budget>
+          data={filteredBudgets}
+          columns={columns}
+          loading={isLoading}
+          onRowClick={handleRowClick}
+          enableRowSelection
+          enableColumnVisibility
+          enableDensityToggle
+          enableExport
+          pageSize={20}
+          emptyTitle={t('finance.budgetList.emptyTitle')}
+          emptyDescription={t('finance.budgetList.emptyDescription')}
+        />
+      )}
     </div>
   );
 };

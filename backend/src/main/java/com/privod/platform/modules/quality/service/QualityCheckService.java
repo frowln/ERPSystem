@@ -1,6 +1,7 @@
 package com.privod.platform.modules.quality.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.quality.domain.CheckResult;
 import com.privod.platform.modules.quality.domain.CheckStatus;
 import com.privod.platform.modules.quality.domain.QualityCheck;
@@ -46,9 +47,11 @@ public class QualityCheckService {
 
     @Transactional
     public QualityCheckResponse createCheck(CreateQualityCheckRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String code = generateCode();
 
         QualityCheck check = QualityCheck.builder()
+                .organizationId(organizationId)
                 .code(code)
                 .projectId(request.projectId())
                 .taskId(request.taskId())

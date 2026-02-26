@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/privod_next}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/privod2}
     username: ${SPRING_DATASOURCE_USERNAME:privod}
-    password: ${SPRING_DATASOURCE_PASSWORD:privod_secret}
+    password: ${SPRING_DATASOURCE_PASSWORD:privod_dev}
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:redis}

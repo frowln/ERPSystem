@@ -3,7 +3,12 @@ package com.privod.platform.modules.specification.service;
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.commercialProposal.domain.CommercialProposalItem;
+import com.privod.platform.modules.commercialProposal.domain.ProposalStatus;
+import com.privod.platform.modules.commercialProposal.repository.CommercialProposalRepository;
 import com.privod.platform.modules.commercialProposal.repository.CommercialProposalItemRepository;
+import com.privod.platform.modules.finance.domain.Budget;
+import com.privod.platform.modules.finance.domain.BudgetStatus;
+import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.specification.domain.CompetitiveList;
 import com.privod.platform.modules.specification.domain.CompetitiveListEntry;
 import com.privod.platform.modules.specification.domain.CompetitiveListStatus;
@@ -43,6 +48,8 @@ public class CompetitiveListService {
     private final CompetitiveListEntryRepository competitiveListEntryRepository;
     private final SpecificationRepository specificationRepository;
     private final CommercialProposalItemRepository commercialProposalItemRepository;
+    private final CommercialProposalRepository commercialProposalRepository;
+    private final BudgetRepository budgetRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -110,6 +117,12 @@ public class CompetitiveListService {
         CompetitiveList cl = getOrThrow(id);
         CompetitiveListStatus oldStatus = cl.getStatus();
         CompetitiveListStatus newStatus = request.status();
+
+        if (!oldStatus.canTransitionTo(newStatus)) {
+            throw new IllegalStateException(
+                    String.format("Недопустимый переход статуса КЛ: %s -> %s",
+                            oldStatus.getDisplayName(), newStatus.getDisplayName()));
+        }
 
         // Validate: cannot set DECIDED if any specItem has < minProposalsRequired entries
         if (newStatus == CompetitiveListStatus.DECIDED) {
@@ -292,7 +305,21 @@ public class CompetitiveListService {
 
     @Transactional
     public void applyToCp(UUID listId, UUID cpId) {
-        getOrThrow(listId);
+        CompetitiveList cl = getOrThrow(listId);
+        if (cl.getStatus() != CompetitiveListStatus.DECIDED && cl.getStatus() != CompetitiveListStatus.APPROVED) {
+            throw new IllegalStateException("Применение в КП доступно только для КЛ со статусом Решение принято/Утверждён");
+        }
+
+        var proposal = commercialProposalRepository.findByIdAndDeletedFalse(cpId)
+                .orElseThrow(() -> new EntityNotFoundException("КП не найдено: " + cpId));
+        if (proposal.getStatus() != ProposalStatus.DRAFT && proposal.getStatus() != ProposalStatus.IN_REVIEW) {
+            throw new IllegalStateException("Применение КЛ допустимо только для КП в статусе Черновик/На рассмотрении");
+        }
+        Budget budget = budgetRepository.findByIdAndDeletedFalse(proposal.getBudgetId())
+                .orElseThrow(() -> new EntityNotFoundException("Бюджет не найден: " + proposal.getBudgetId()));
+        if (budget.getStatus() == BudgetStatus.FROZEN || budget.getStatus() == BudgetStatus.CLOSED) {
+            throw new IllegalStateException("Нельзя применять КЛ: бюджет заморожен или закрыт");
+        }
 
         List<CompetitiveListEntry> winners = competitiveListEntryRepository
                 .findByCompetitiveListIdAndIsWinnerTrue(listId);

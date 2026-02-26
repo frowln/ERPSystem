@@ -30,7 +30,7 @@ import java.util.UUID;
         @Index(name = "idx_wo_warehouse", columnList = "warehouse_id"),
         @Index(name = "idx_wo_stock_movement", columnList = "stock_movement_id"),
         @Index(name = "idx_wo_number", columnList = "order_number"),
-        @Index(name = "idx_wo_status", columnList = "status")
+        @Index(name = "idx_warehouse_order_status", columnList = "status")
 })
 @Getter
 @Setter

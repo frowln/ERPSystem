@@ -9,8 +9,11 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { rfiApi } from '@/api/rfi';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 import type { Rfi, RfiPriority } from './types';
+import type { Project, PaginatedResponse } from '@/types';
 
 const rfiSchema = z.object({
   subject: z.string().min(1, t('forms.rfi.validation.subjectRequired')).max(300, t('forms.common.maxChars', { count: '300' })),
@@ -45,28 +48,27 @@ const categoryOptions = [
   { value: 'OTHER', label: t('forms.rfi.categories.other') },
 ];
 
-// TODO: load from API when project/user list endpoints are available
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
-// TODO: load from API when user list endpoints are available
-const assigneeOptions = [
-  { value: '', label: t('forms.rfi.unassigned') },
-  { value: 'u1', label: 'Иванов И.И.' },
-  { value: 'u2', label: 'Петров П.П.' },
-  { value: 'u3', label: 'Сидоров С.С.' },
-  { value: 'u4', label: 'Козлов К.К.' },
-];
-
 const RfiFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+  });
+
+  const { data: usersData } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => permissionsApi.getUsers({ page: 0, size: 100 }),
+  });
+
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
+  const assigneeOptions = [
+    { value: '', label: t('forms.rfi.unassigned') },
+    ...(usersData?.content ?? []).map((u) => ({ value: u.id, label: `${u.lastName} ${u.firstName[0]}.` })),
+  ];
 
   const { data: existingRfi } = useQuery<Rfi>({
     queryKey: ['RFI', id],

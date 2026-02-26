@@ -18,6 +18,11 @@ const MaintenancePage = lazy(() => import('@/modules/fleet/MaintenancePage'));
 const FuelPage = lazy(() => import('@/modules/fleet/FuelPage'));
 const FleetVehicleFormPage = lazy(() => import('@/modules/fleet/FleetVehicleFormPage'));
 const FleetMaintenanceBoardPage = lazy(() => import('@/modules/fleet/FleetMaintenanceBoardPage'));
+const WaybillsPage = lazy(() => import('@/modules/fleet/WaybillsPage'));
+const FuelAccountingPage = lazy(() => import('@/modules/fleet/FuelAccountingPage'));
+const MaintenanceToRepairPage = lazy(() => import('@/modules/fleet/MaintenanceToRepairPage'));
+const GpsTrackingPage = lazy(() => import('@/modules/fleet/GpsTrackingPage'));
+const DriverRatingPage = lazy(() => import('@/modules/fleet/DriverRatingPage'));
 
 // IoT
 const DevicesPage = lazy(() => import('@/modules/iot/DevicesPage'));
@@ -71,6 +76,11 @@ export function operationsRoutes() {
       <Route path="fleet/maintenance" element={<MaintenancePage />} />
       <Route path="fleet/maintenance/board" element={<FleetMaintenanceBoardPage />} />
       <Route path="fleet/fuel" element={<FuelPage />} />
+      <Route path="fleet/waybills-esm" element={<WaybillsPage />} />
+      <Route path="fleet/fuel-accounting" element={<FuelAccountingPage />} />
+      <Route path="fleet/maint-repair" element={<MaintenanceToRepairPage />} />
+      <Route path="fleet/gps-tracking" element={<GpsTrackingPage />} />
+      <Route path="fleet/driver-rating" element={<DriverRatingPage />} />
 
       {/* IoT */}
       <Route path="iot/devices" element={<DevicesPage />} />

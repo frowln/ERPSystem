@@ -10,9 +10,11 @@ import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.domain.InvoiceType;
 import com.privod.platform.modules.finance.repository.InvoiceLineRepository;
 import com.privod.platform.modules.finance.repository.InvoiceRepository;
+import com.privod.platform.modules.finance.repository.PaymentRepository;
 import com.privod.platform.modules.finance.web.dto.CreateInvoiceLineRequest;
 import com.privod.platform.modules.finance.web.dto.CreateInvoiceRequest;
 import com.privod.platform.modules.finance.web.dto.InvoiceLineResponse;
+import com.privod.platform.modules.finance.web.dto.PaymentResponse;
 import com.privod.platform.modules.finance.web.dto.InvoiceResponse;
 import com.privod.platform.modules.finance.web.dto.InvoiceSummaryResponse;
 import com.privod.platform.modules.finance.web.dto.UpdateInvoiceRequest;
@@ -41,6 +43,7 @@ public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final InvoiceLineRepository invoiceLineRepository;
+    private final PaymentRepository paymentRepository;
     private final ContractRepository contractRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
@@ -148,13 +151,14 @@ public class InvoiceService {
         }
         validateProjectTenant(projectId, organizationId);
 
+        UUID effectiveContractId = request.contractId();
         Invoice invoice = Invoice.builder()
                 .organizationId(organizationId)
                 .number(number)
                 .invoiceDate(request.invoiceDate())
                 .dueDate(request.dueDate())
                 .projectId(projectId)
-                .contractId(request.contractId())
+                .contractId(effectiveContractId)
                 .partnerId(partnerId)
                 .partnerName(partnerName)
                 .disciplineMark(request.disciplineMark())
@@ -167,7 +171,7 @@ public class InvoiceService {
                 .remainingAmount(totalAmount)
                 .ks2Id(request.ks2Id())
                 .ks3Id(request.ks3Id())
-                .matchedPoId(request.contractId())
+                .matchedPoId(effectiveContractId)
                 .matchedReceiptId(request.ks2Id() != null ? request.ks2Id() : request.ks3Id())
                 .notes(request.notes())
                 .build();
@@ -184,6 +188,7 @@ public class InvoiceService {
     public InvoiceResponse updateInvoice(UUID id, UpdateInvoiceRequest request) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Invoice invoice = getInvoiceOrThrow(id, organizationId);
+        UUID oldContractId = invoice.getContractId();
 
         if (invoice.getStatus() != InvoiceStatus.NEW && invoice.getStatus() != InvoiceStatus.DRAFT) {
             throw new IllegalStateException("Редактирование счёта возможно только в статусе Новый/Черновик");
@@ -248,6 +253,11 @@ public class InvoiceService {
         invoice.setRemainingAmount(invoice.calculateRemainingAmount());
 
         invoice = invoiceRepository.save(invoice);
+        if (!Objects.equals(oldContractId, invoice.getContractId())) {
+            budgetItemSyncService.onInvoiceContractChanged(oldContractId, invoice.getContractId());
+        } else {
+            budgetItemSyncService.onInvoiceFinancialStateChanged(invoice.getContractId());
+        }
         auditService.logUpdate("Invoice", invoice.getId(), "multiple", null, null);
 
         log.info("Счёт обновлён: {} ({})", invoice.getNumber(), invoice.getId());
@@ -267,11 +277,7 @@ public class InvoiceService {
 
         invoice.setStatus(InvoiceStatus.UNDER_REVIEW);
         invoice = invoiceRepository.save(invoice);
-        if (invoice.getContractId() != null
-                && invoice.getTotalAmount() != null
-                && invoice.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
-            budgetItemSyncService.onInvoiceCreated(invoice.getContractId(), invoice.getTotalAmount());
-        }
+        budgetItemSyncService.onInvoiceFinancialStateChanged(invoice.getContractId());
         auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), InvoiceStatus.UNDER_REVIEW.name());
 
         log.info("Счёт отправлен: {} ({})", invoice.getNumber(), invoice.getId());
@@ -313,9 +319,7 @@ public class InvoiceService {
         }
 
         invoice = invoiceRepository.save(invoice);
-        if (invoice.getContractId() != null && amount.compareTo(BigDecimal.ZERO) > 0) {
-            budgetItemSyncService.onPaymentRegistered(invoice.getContractId(), amount);
-        }
+        budgetItemSyncService.onPaymentFinancialStateChanged(invoice.getContractId());
 
         if (oldStatus != invoice.getStatus()) {
             auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), invoice.getStatus().name());
@@ -339,6 +343,7 @@ public class InvoiceService {
 
         invoice.setStatus(InvoiceStatus.OVERDUE);
         invoice = invoiceRepository.save(invoice);
+        budgetItemSyncService.onInvoiceFinancialStateChanged(invoice.getContractId());
         auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), InvoiceStatus.OVERDUE.name());
 
         log.info("Счёт отмечен как просроченный: {} ({})", invoice.getNumber(), invoice.getId());
@@ -362,6 +367,7 @@ public class InvoiceService {
 
         invoice.setStatus(targetStatus);
         invoice = invoiceRepository.save(invoice);
+        budgetItemSyncService.onInvoiceFinancialStateChanged(invoice.getContractId());
         auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), targetStatus.name());
 
         log.info("Счёт отменён: {} ({})", invoice.getNumber(), invoice.getId());
@@ -382,13 +388,7 @@ public class InvoiceService {
 
         invoice.setStatus(targetStatus);
         invoice = invoiceRepository.save(invoice);
-
-        if (targetStatus == InvoiceStatus.APPROVED
-                && invoice.getContractId() != null
-                && invoice.getTotalAmount() != null
-                && invoice.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
-            budgetItemSyncService.onInvoiceCreated(invoice.getContractId(), invoice.getTotalAmount());
-        }
+        budgetItemSyncService.onInvoiceFinancialStateChanged(invoice.getContractId());
 
         auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), targetStatus.name());
         return InvoiceResponse.fromEntity(invoice);
@@ -425,6 +425,16 @@ public class InvoiceService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<PaymentResponse> getInvoicePayments(UUID invoiceId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInvoiceOrThrow(invoiceId, organizationId);
+        return paymentRepository.findByInvoiceIdAndDeletedFalse(invoiceId)
+                .stream()
+                .map(PaymentResponse::fromEntity)
+                .toList();
+    }
+
     @Transactional
     public InvoiceLineResponse addInvoiceLine(UUID invoiceId, CreateInvoiceLineRequest request) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
@@ -444,6 +454,27 @@ public class InvoiceService {
         auditService.logCreate("InvoiceLine", line.getId());
 
         log.info("Строка счёта добавлена: {} в счёт {}", line.getName(), invoiceId);
+        return InvoiceLineResponse.fromEntity(line);
+    }
+
+    @Transactional
+    public InvoiceLineResponse linkInvoiceLine(UUID invoiceId, UUID lineId, com.privod.platform.modules.finance.web.dto.LinkInvoiceLineRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getInvoiceOrThrow(invoiceId, organizationId);
+        InvoiceLine line = invoiceLineRepository.findById(lineId)
+                .filter(l -> !l.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Строка счёта не найдена: " + lineId));
+
+        if (!line.getInvoiceId().equals(invoiceId)) {
+            throw new IllegalArgumentException("Строка не принадлежит указанному счёту");
+        }
+
+        line.setBudgetItemId(request.budgetItemId());
+        line.setCpItemId(request.cpItemId());
+        line = invoiceLineRepository.save(line);
+        auditService.logUpdate("InvoiceLine", line.getId(), "link", null, null);
+
+        log.info("Строка счёта {} обновлена привязка (ФМ: {})", lineId, request.budgetItemId());
         return InvoiceLineResponse.fromEntity(line);
     }
 

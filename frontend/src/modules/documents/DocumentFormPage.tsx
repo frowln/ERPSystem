@@ -12,6 +12,8 @@ import { documentsApi, type UpsertDocumentRequest } from '@/api/documents';
 import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 
+const PD_SECTIONS = ['AR', 'KR', 'OViK', 'VK', 'EOM', 'SS', 'TH', 'GP', 'POS', 'EN', 'OTHER'] as const;
+
 const documentSchema = z.object({
   title: z.string().min(1, t('forms.document.validation.titleRequired')).max(300, t('forms.common.maxChars', { count: '300' })),
   description: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
@@ -21,8 +23,8 @@ const documentSchema = z.object({
   projectId: z.string().min(1, t('forms.document.validation.projectRequired')),
   documentNumber: z.string().max(200, t('forms.common.maxChars', { count: '200' })).optional(),
   tags: z.string().max(500, t('forms.common.maxChars', { count: '500' })).optional(),
-  file: z.string().optional(),
   notes: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
+  pdSection: z.string().optional(),
 });
 
 type DocumentFormData = z.input<typeof documentSchema>;
@@ -38,19 +40,12 @@ const categoryOptions = [
   { value: 'OTHER', label: t('forms.document.documentTypes.other') },
 ];
 
-const getFileNameFromPath = (value?: string): string | undefined => {
-  if (!value) return undefined;
-  const cleaned = value.trim();
-  if (!cleaned) return undefined;
-  const parts = cleaned.split(/[/\\]/);
-  return parts[parts.length - 1] || undefined;
-};
-
 const DocumentFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = Boolean(id);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
   const { data: existingDocument } = useQuery({
     queryKey: ['DOCUMENT', id],
@@ -74,10 +69,22 @@ const DocumentFormPage: React.FC = () => {
     [projectsData],
   );
 
+  const pdSectionOptions = useMemo(
+    () => [
+      { value: '', label: t('documents.pdSection.placeholder') },
+      ...PD_SECTIONS.map((s) => ({
+        value: s,
+        label: t(`documents.pdSection.${s.toLowerCase()}` as 'documents.pdSection.ar'),
+      })),
+    ],
+    [],
+  );
+
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<DocumentFormData>({
     resolver: zodResolver(documentSchema),
@@ -88,10 +95,12 @@ const DocumentFormPage: React.FC = () => {
       projectId: '',
       documentNumber: '',
       tags: '',
-      file: '',
       notes: '',
+      pdSection: '',
     },
   });
+
+  const watchedCategory = watch('category');
 
   useEffect(() => {
     if (!existingDocument) return;
@@ -105,18 +114,14 @@ const DocumentFormPage: React.FC = () => {
       tags: Array.isArray(existingDocument.tags)
         ? existingDocument.tags.join(', ')
         : (existingDocument.tags ?? ''),
-      file: existingDocument.fileName ?? '',
       notes: existingDocument.notes ?? '',
+      pdSection: (existingDocument as unknown as Record<string, unknown>).pdSection as string ?? '',
     });
+    setSelectedFile(null);
   }, [existingDocument, reset]);
 
   const createMutation = useMutation({
     mutationFn: (payload: UpsertDocumentRequest) => documentsApi.createDocument(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['DOCUMENTS'] });
-      toast.success(t('forms.document.createSuccess'));
-      navigate('/documents');
-    },
     onError: () => {
       toast.error(t('forms.document.createError'));
     },
@@ -124,20 +129,22 @@ const DocumentFormPage: React.FC = () => {
 
   const updateMutation = useMutation({
     mutationFn: (payload: UpsertDocumentRequest) => documentsApi.updateDocument(id!, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['DOCUMENTS'] });
-      queryClient.invalidateQueries({ queryKey: ['DOCUMENT', id] });
-      toast.success(t('forms.document.updateSuccess'));
-      navigate('/documents');
-    },
     onError: () => {
       toast.error(t('forms.document.updateError'));
     },
   });
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const uploadMutation = useMutation({
+    mutationFn: ({ documentId, file }: { documentId: string; file: File }) =>
+      documentsApi.uploadDocumentFile(documentId, file),
+    onError: () => {
+      toast.error(t('forms.document.uploadError'));
+    },
+  });
 
-  const onSubmit = (data: DocumentFormData) => {
+  const isSubmitting = createMutation.isPending || updateMutation.isPending || uploadMutation.isPending;
+
+  const onSubmit = async (data: DocumentFormData) => {
     const payload: UpsertDocumentRequest = {
       title: data.title.trim(),
       description: data.description?.trim() || undefined,
@@ -145,16 +152,40 @@ const DocumentFormPage: React.FC = () => {
       projectId: data.projectId,
       documentNumber: data.documentNumber?.trim() || undefined,
       tags: data.tags?.trim() || undefined,
-      fileName: getFileNameFromPath(data.file),
+      fileName: selectedFile?.name || existingDocument?.fileName,
+      fileSize: selectedFile?.size || existingDocument?.fileSize,
+      mimeType: selectedFile?.type || existingDocument?.mimeType,
       notes: data.notes?.trim() || undefined,
-    };
+      pdSection: data.pdSection?.trim() || undefined,
+    } as UpsertDocumentRequest;
 
     if (isEdit) {
-      updateMutation.mutate(payload);
+      try {
+        const updated = await updateMutation.mutateAsync(payload);
+        if (selectedFile) {
+          await uploadMutation.mutateAsync({ documentId: updated.id, file: selectedFile });
+        }
+        queryClient.invalidateQueries({ queryKey: ['DOCUMENTS'] });
+        queryClient.invalidateQueries({ queryKey: ['DOCUMENT', updated.id] });
+        toast.success(t('forms.document.updateSuccess'));
+        navigate('/documents');
+      } catch {
+        // toast handled by mutations
+      }
       return;
     }
 
-    createMutation.mutate(payload);
+    try {
+      const created = await createMutation.mutateAsync(payload);
+      if (selectedFile) {
+        await uploadMutation.mutateAsync({ documentId: created.id, file: selectedFile });
+      }
+      queryClient.invalidateQueries({ queryKey: ['DOCUMENTS'] });
+      toast.success(t('forms.document.createSuccess'));
+      navigate('/documents');
+    } catch {
+      // toast handled by mutations
+    }
   };
 
   return (
@@ -207,20 +238,35 @@ const DocumentFormPage: React.FC = () => {
             <FormField label={t('forms.document.labelVersion')}>
               <Input value={String(existingDocument?.docVersion ?? 1)} disabled />
             </FormField>
+            {(watchedCategory === 'DRAWING' || watchedCategory === 'SPECIFICATION') && (
+              <FormField label={t('documents.pdSection.label')} error={errors.pdSection?.message}>
+                <Select
+                  options={pdSectionOptions}
+                  hasError={!!errors.pdSection}
+                  {...register('pdSection')}
+                />
+              </FormField>
+            )}
           </div>
         </section>
 
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.document.sectionFileTags')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FormField label={t('forms.document.labelFile')} error={errors.file?.message} className="sm:col-span-2">
+            <FormField label={t('forms.document.labelFile')} className="sm:col-span-2">
               <Input
                 type="file"
-                hasError={!!errors.file}
-                {...register('file')}
+                onChange={(event) => {
+                  const file = event.target.files?.[0] ?? null;
+                  setSelectedFile(file);
+                }}
               />
               <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                {t('forms.document.fileUploadHint')}
+                {selectedFile
+                  ? `${t('forms.document.fileSelected')}: ${selectedFile.name}`
+                  : existingDocument?.fileName
+                    ? `${t('forms.document.currentFile')}: ${existingDocument.fileName}`
+                    : t('forms.document.fileUploadHint')}
               </p>
             </FormField>
             <FormField label={t('forms.document.labelTags')} error={errors.tags?.message} className="sm:col-span-2">

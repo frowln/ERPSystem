@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { PivotTable, type AggregationType } from '@/design-system/components/PivotTable';
+import { hrApi } from '@/api/hr';
 import { t } from '@/i18n';
+import type { Timesheet } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,74 +17,43 @@ interface TimesheetRecord extends Record<string, unknown> {
   week: string;
   hours: number;
   projectName: string;
-  department: string;
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
 // ---------------------------------------------------------------------------
 
-const getEmployees = () => [
-  t('mockData.employeeKozlov'),
-  t('mockData.employeePetrov'),
-  t('mockData.employeeSidorov'),
-  t('mockData.employeeMorozova'),
-  t('mockData.employeeBelov'),
-  t('mockData.employeeIvanovDN'),
-  t('mockData.employeeNovikova'),
-  t('mockData.employeeFedorov'),
-];
+/** Compute ISO-week label from a date string (e.g. "2026-02-16" -> "W08") */
+function getWeekLabel(dateStr: string): string {
+  const d = new Date(dateStr);
+  const startOfYear = new Date(d.getFullYear(), 0, 1);
+  const days = Math.floor((d.getTime() - startOfYear.getTime()) / 86_400_000);
+  const weekNum = Math.ceil((days + startOfYear.getDay() + 1) / 7);
+  return `W${String(weekNum).padStart(2, '0')}`;
+}
 
-const getWeeks = () => [t('mockData.week1'), t('mockData.week2'), t('mockData.week3'), t('mockData.week4')];
-const getTimesheetData = (): TimesheetRecord[] => {
-  const e = getEmployees();
-  const w = getWeeks();
-  const pSol = t('mockData.projectSolnechny');
-  const pGor = t('mockData.projectGorizont');
-  const pBri = t('mockData.projectBridgeVyatka');
-  const dCon = t('mockData.deptConstruction');
-  const dElc = t('mockData.deptElectrical');
-  const dFin = t('mockData.deptFinishing');
-  const dLog = t('mockData.deptLogistics');
-  const dPto = t('mockData.deptPto');
-  return [
-    // Week 1
-    { id: '1', employee: e[0], week: w[0], hours: 42, projectName: pSol, department: dCon },
-    { id: '2', employee: e[1], week: w[0], hours: 40, projectName: pSol, department: dCon },
-    { id: '3', employee: e[2], week: w[0], hours: 45, projectName: pBri, department: dCon },
-    { id: '4', employee: e[3], week: w[0], hours: 38, projectName: pGor, department: dElc },
-    { id: '5', employee: e[4], week: w[0], hours: 40, projectName: pGor, department: dFin },
-    { id: '6', employee: e[5], week: w[0], hours: 36, projectName: pSol, department: dLog },
-    { id: '7', employee: e[6], week: w[0], hours: 40, projectName: pGor, department: dPto },
-    { id: '8', employee: e[7], week: w[0], hours: 44, projectName: pBri, department: dCon },
-    // Week 2
-    { id: '9', employee: e[0], week: w[1], hours: 44, projectName: pSol, department: dCon },
-    { id: '10', employee: e[1], week: w[1], hours: 40, projectName: pSol, department: dCon },
-    { id: '11', employee: e[2], week: w[1], hours: 48, projectName: pBri, department: dCon },
-    { id: '12', employee: e[3], week: w[1], hours: 40, projectName: pGor, department: dElc },
-    { id: '13', employee: e[4], week: w[1], hours: 42, projectName: pGor, department: dFin },
-    { id: '14', employee: e[5], week: w[1], hours: 40, projectName: pSol, department: dLog },
-    { id: '15', employee: e[6], week: w[1], hours: 38, projectName: pGor, department: dPto },
-    { id: '16', employee: e[7], week: w[1], hours: 40, projectName: pBri, department: dCon },
-    // Week 3
-    { id: '17', employee: e[0], week: w[2], hours: 40, projectName: pSol, department: dCon },
-    { id: '18', employee: e[1], week: w[2], hours: 44, projectName: pSol, department: dCon },
-    { id: '19', employee: e[2], week: w[2], hours: 40, projectName: pBri, department: dCon },
-    { id: '20', employee: e[3], week: w[2], hours: 42, projectName: pGor, department: dElc },
-    { id: '21', employee: e[4], week: w[2], hours: 40, projectName: pGor, department: dFin },
-    { id: '22', employee: e[5], week: w[2], hours: 40, projectName: pSol, department: dLog },
-    { id: '23', employee: e[6], week: w[2], hours: 40, projectName: pGor, department: dPto },
-    { id: '24', employee: e[7], week: w[2], hours: 46, projectName: pBri, department: dCon },
-    // Week 4
-    { id: '25', employee: e[0], week: w[3], hours: 43, projectName: pSol, department: dCon },
-    { id: '26', employee: e[1], week: w[3], hours: 41, projectName: pSol, department: dCon },
-    { id: '27', employee: e[2], week: w[3], hours: 44, projectName: pBri, department: dCon },
-    { id: '28', employee: e[3], week: w[3], hours: 39, projectName: pGor, department: dElc },
-    { id: '29', employee: e[4], week: w[3], hours: 40, projectName: pGor, department: dFin },
-    { id: '30', employee: e[5], week: w[3], hours: 37, projectName: pSol, department: dLog },
-    { id: '31', employee: e[6], week: w[3], hours: 41, projectName: pGor, department: dPto },
-    { id: '32', employee: e[7], week: w[3], hours: 45, projectName: pBri, department: dCon },
-  ];
-};
+/** Map raw API timesheets into PivotTable records grouped by employee + week */
+function mapTimesheets(raw: Timesheet[]): TimesheetRecord[] {
+  // Aggregate hours per (employee, week, project)
+  const map = new Map<string, TimesheetRecord>();
+  raw.forEach((ts) => {
+    const weekLabel = getWeekLabel(ts.workDate);
+    const key = `${ts.employeeName}__${weekLabel}`;
+    const existing = map.get(key);
+    if (existing) {
+      existing.hours += ts.hoursWorked + (ts.overtimeHours ?? 0);
+    } else {
+      map.set(key, {
+        id: key,
+        employee: ts.employeeName,
+        week: weekLabel,
+        hours: ts.hoursWorked + (ts.overtimeHours ?? 0),
+        projectName: ts.projectName,
+      });
+    }
+  });
+  return Array.from(map.values());
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -90,12 +62,28 @@ const getTimesheetData = (): TimesheetRecord[] => {
 const TimesheetPivotPage: React.FC = () => {
   const [aggregation, setAggregation] = useState<AggregationType>('sum');
 
-  const employees = getEmployees();
-  const weeks = getWeeks();
-  const timesheetData = getTimesheetData();
+  const { data: timesheetsData, isLoading } = useQuery({
+    queryKey: ['timesheets', 'pivot'],
+    queryFn: () => hrApi.getTimesheets({ size: 500 }),
+  });
+
+  const timesheetData = useMemo(
+    () => mapTimesheets(timesheetsData?.content ?? []),
+    [timesheetsData],
+  );
+
+  const employees = useMemo(
+    () => [...new Set(timesheetData.map((r) => r.employee))].sort(),
+    [timesheetData],
+  );
+
+  const weeks = useMemo(
+    () => [...new Set(timesheetData.map((r) => r.week))].sort(),
+    [timesheetData],
+  );
 
   const totalHours = timesheetData.reduce((s, d) => s + d.hours, 0);
-  const avgPerWeek = totalHours / weeks.length;
+  const avgPerWeek = weeks.length > 0 ? totalHours / weeks.length : 0;
   const overtimeCount = timesheetData.filter((d) => d.hours > 40).length;
 
   return (
@@ -157,18 +145,22 @@ const TimesheetPivotPage: React.FC = () => {
         </div>
       </div>
 
-      <PivotTable<TimesheetRecord>
-        data={timesheetData}
-        rowField="employee"
-        columnField="week"
-        valueField="hours"
-        aggregation={aggregation}
-        rowLabel={t('hr.timesheetPivot.pivotRowLabel')}
-        rowOrder={employees}
-        columnOrder={weeks}
-        formatValue={aggregation === 'count' ? (v) => String(Math.round(v)) : (v) => `${Math.round(v)} ${t('hr.timesheetPivot.hoursSuffix')}`}
-        title={t('hr.timesheetPivot.pivotTitle')}
-      />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16 text-neutral-400">{t('common.loading')}</div>
+      ) : (
+        <PivotTable<TimesheetRecord>
+          data={timesheetData}
+          rowField="employee"
+          columnField="week"
+          valueField="hours"
+          aggregation={aggregation}
+          rowLabel={t('hr.timesheetPivot.pivotRowLabel')}
+          rowOrder={employees}
+          columnOrder={weeks}
+          formatValue={aggregation === 'count' ? (v) => String(Math.round(v)) : (v) => `${Math.round(v)} ${t('hr.timesheetPivot.hoursSuffix')}`}
+          title={t('hr.timesheetPivot.pivotTitle')}
+        />
+      )}
     </div>
   );
 };

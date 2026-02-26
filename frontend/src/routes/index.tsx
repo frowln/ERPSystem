@@ -13,6 +13,10 @@ import { documentRoutes } from './documentRoutes';
 import { operationsRoutes } from './operationsRoutes';
 import { settingsRoutes } from './settingsRoutes';
 import { portfolioRoutes } from './portfolioRoutes';
+import { closeoutRoutes } from './closeoutRoutes';
+import { execDocsRoutes } from './execDocsRoutes';
+import { marketplaceRoutes } from './marketplaceRoutes';
+import { defectsRoutes } from './defectsRoutes';
 
 // ---------------------------------------------------------------------------
 // Core pages (kept here — shared across domains)
@@ -76,6 +80,13 @@ export const AppRoutes: React.FC = () => {
           {operationsRoutes()}
           {settingsRoutes()}
           {portfolioRoutes()}
+          {closeoutRoutes()}
+          {execDocsRoutes()}
+          {marketplaceRoutes()}
+          {defectsRoutes()}
+
+          {/* Prevent blank content area on unknown authenticated routes */}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         {/* Catch all */}

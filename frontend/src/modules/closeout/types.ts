@@ -121,3 +121,135 @@ export interface ZosDocument {
   createdAt: string;
   updatedAt?: string;
 }
+
+// Commissioning readiness checklist item
+export type CommissioningItemStatus = 'completed' | 'in_progress' | 'not_started' | 'n_a';
+
+export interface CommissioningItem {
+  id: string;
+  section: string;
+  itemName: string;
+  requirement?: string;
+  status: CommissioningItemStatus;
+  responsibleName: string;
+  notes?: string;
+  completedDate?: string;
+}
+
+// Stroy-nadzor document package
+export type StroyNadzorDocStatus = 'attached' | 'pending' | 'missing' | 'expired';
+
+export interface StroyNadzorDocument {
+  id: string;
+  documentName: string;
+  category: string;
+  required: boolean;
+  status: StroyNadzorDocStatus;
+  fileName?: string;
+  fileSize?: number;
+  uploadDate?: string;
+  expiryDate?: string;
+  notes?: string;
+}
+
+// Warranty tracking record
+export type WarrantyRecordStatus = 'active' | 'expiring' | 'expired' | 'claims_pending';
+
+export interface WarrantyRecord {
+  id: string;
+  projectId: string;
+  projectName: string;
+  system?: string;
+  warrantyStart: string;
+  warrantyEnd: string;
+  defectPeriodDays: number;
+  status: WarrantyRecordStatus;
+  defectsCount: number;
+  defectsResolved: number;
+  contractorName: string;
+  warrantyTerms: string;
+}
+
+// Warranty defect report
+export interface WarrantyDefectReport {
+  system: string;
+  description: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  photoUrls?: string[];
+}
+
+// Warranty claim timeline entry
+export interface WarrantyClaimTimelineEntry {
+  id: string;
+  warrantyRecordId: string;
+  date: string;
+  event: string;
+  description?: string;
+  user?: string;
+}
+
+// Executive schemas
+export type ExecutiveSchemaStatus = 'draft' | 'review' | 'approved' | 'issued' | 'archived';
+export type ExecutiveSchemaType = 'PLAN' | 'SECTION' | 'DETAIL' | 'FACADE';
+
+export interface ExecutiveSchema {
+  id: string;
+  schemaName: string;
+  schemaType?: ExecutiveSchemaType;
+  workType: string;
+  system?: string;
+  floorLevel?: string;
+  version: number;
+  createdDate: string;
+  linkedBimElementId?: string;
+  linkedBimElementName?: string;
+  status: ExecutiveSchemaStatus;
+  fileUrl?: string;
+}
+
+// Executive schema version history entry
+export interface ExecutiveSchemaVersion {
+  id: string;
+  schemaId: string;
+  version: number;
+  status: ExecutiveSchemaStatus;
+  changedByName?: string;
+  changedAt: string;
+  comment?: string;
+}
+
+// ZOS extended form data (for form generation)
+export interface ZosFormData {
+  projectId: string;
+  documentNumber: string;
+  title: string;
+  objectName?: string;
+  objectAddress?: string;
+  permitNumber?: string;
+  permitDate?: string;
+  designDocReferences?: string;
+  system?: string;
+  issuedDate?: string;
+  issuedByName?: string;
+  issuedByOrganization?: string;
+  conclusionText?: string;
+  complianceSections?: ZosComplianceSection[];
+  remarks?: string;
+  signatures?: ZosSignature[];
+}
+
+export interface ZosComplianceSection {
+  id: string;
+  sectionName: string;
+  compliant: boolean;
+  notes?: string;
+}
+
+export interface ZosSignature {
+  id: string;
+  role: string;
+  fullName: string;
+  organization?: string;
+  signed: boolean;
+  signedDate?: string;
+}

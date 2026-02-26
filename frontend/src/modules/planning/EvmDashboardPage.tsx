@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TrendingUp, TrendingDown, Activity, DollarSign, Target } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
+import { Select } from '@/design-system/components/FormField';
 import { formatMoneyCompact, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { planningApi } from '@/api/planning';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 import type { EvmMetrics } from './types';
+import type { Project, PaginatedResponse } from '@/types';
 
 const defaultEvmMetrics: EvmMetrics = {
   projectId: '',
@@ -48,12 +51,21 @@ function TrafficLight({ status }: { status: 'green' | 'yellow' | 'red' }) {
 }
 
 const EvmDashboardPage: React.FC = () => {
-  // TODO: allow project selection via dropdown
-  const projectId = '1';
+  const [projectId, setProjectId] = useState('');
+
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+  });
+
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
+
+  const selectedProjectId = projectId || projectOptions[0]?.value || '1';
 
   const { data } = useQuery<EvmMetrics>({
-    queryKey: ['evm-metrics', projectId],
-    queryFn: () => planningApi.getEvmMetrics(projectId),
+    queryKey: ['evm-metrics', selectedProjectId],
+    queryFn: () => planningApi.getEvmMetrics(selectedProjectId),
+    enabled: !!selectedProjectId,
   });
 
   const evm = data ?? defaultEvmMetrics;
@@ -72,6 +84,15 @@ const EvmDashboardPage: React.FC = () => {
           { label: t('planning.evm.breadcrumbPlanning') },
           { label: t('planning.evm.breadcrumbEvm') },
         ]}
+        actions={
+          <Select
+            options={projectOptions}
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
+            placeholder={t('planning.evm.selectProject')}
+            className="w-56"
+          />
+        }
       />
 
       {/* Top metric cards */}

@@ -1,6 +1,7 @@
 package com.privod.platform.modules.hr.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.hr.domain.Timesheet;
 import com.privod.platform.modules.hr.domain.TimesheetStatus;
 import com.privod.platform.modules.hr.repository.TimesheetRepository;
@@ -56,7 +57,10 @@ public class TimesheetService {
 
     @Transactional
     public TimesheetResponse createTimesheet(CreateTimesheetRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+
         Timesheet ts = Timesheet.builder()
+                .organizationId(organizationId)
                 .employeeId(request.employeeId())
                 .projectId(request.projectId())
                 .workDate(request.workDate())

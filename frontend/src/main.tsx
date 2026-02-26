@@ -23,11 +23,67 @@ const queryClient = new QueryClient({
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element not found');
 
-// Register Service Worker for PWA support
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
+function registerServiceWorkerProd(): void {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js');
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        // Apply waiting update immediately to avoid mixed old/new bundles.
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+
+        registration.addEventListener('updatefound', () => {
+          const installing = registration.installing;
+          if (!installing) return;
+          installing.addEventListener('statechange', () => {
+            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+              installing.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+      })
+      .catch((error) => {
+        if (import.meta.env.DEV) {
+          console.warn('Failed to register service worker:', error);
+        }
+      });
   });
+}
+
+async function cleanupServiceWorkerDev(): Promise<void> {
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  await Promise.all(registrations.map((registration) => registration.unregister()));
+
+  if ('caches' in window) {
+    const cacheKeys = await caches.keys();
+    const appCachePrefixes = ['privod-app-shell-', 'privod-api-cache-'];
+    await Promise.all(
+      cacheKeys
+        .filter((key) => appCachePrefixes.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key)),
+    );
+  }
+}
+
+// Service worker handling:
+// - PROD: register and auto-activate updates to prevent stale chunks/404s.
+// - DEV: remove previously installed SW/caches so local development is deterministic.
+if ('serviceWorker' in navigator) {
+  if (import.meta.env.PROD) {
+    registerServiceWorkerProd();
+  } else {
+    window.addEventListener('load', () => {
+      void cleanupServiceWorkerDev();
+    });
+  }
 }
 
 ReactDOM.createRoot(root).render(

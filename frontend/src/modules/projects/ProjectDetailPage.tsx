@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Edit3, ChevronDown } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -11,16 +11,18 @@ import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import { useProjectFinancials } from './hooks/useProjectFinancials';
 import { ProjectOverviewTab } from './ProjectOverviewTab';
-import { ProjectFinanceTab } from './ProjectFinanceTab';
+import { ProjectFinanceTab } from './ProjectFinanceTab/ProjectFinanceTab';
 import { ProjectTeamTab } from './ProjectTeamTab';
 import { ProjectDocumentsTab } from './ProjectDocumentsTab';
 import type { ProjectStatus } from '@/types';
+import toast from 'react-hot-toast';
 
 type DetailTab = 'overview' | 'team' | 'documents' | 'FINANCE';
 
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<DetailTab>('overview');
   const [statusModalOpen, setStatusModalOpen] = useState(false);
 
@@ -44,6 +46,23 @@ const ProjectDetailPage: React.FC = () => {
 
   const computed = useProjectFinancials(project, financials);
   const statuses: ProjectStatus[] = ['DRAFT', 'PLANNING', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED'];
+
+  const changeStatusMutation = useMutation({
+    mutationFn: (status: ProjectStatus) => projectsApi.changeStatus(id!, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['PROJECT', id] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      toast.success(t('projects.statusUpdated'));
+      setStatusModalOpen(false);
+    },
+    onError: (error: unknown) => {
+      const message =
+        typeof error === 'object' && error && 'message' in error
+          ? String((error as { message?: string }).message)
+          : t('errors.unexpectedError');
+      toast.error(message);
+    },
+  });
 
   return (
     <div className="animate-fade-in">
@@ -81,7 +100,7 @@ const ProjectDetailPage: React.FC = () => {
         <ProjectOverviewTab project={project} financials={computed} financialsLoading={financialsLoading} />
       )}
       {activeTab === 'team' && (
-        <ProjectTeamTab members={members ?? []} />
+        <ProjectTeamTab members={members ?? []} projectId={id!} />
       )}
       {activeTab === 'documents' && (
         <ProjectDocumentsTab project={project} />
@@ -101,8 +120,8 @@ const ProjectDetailPage: React.FC = () => {
           {statuses.map((status) => (
             <button
               key={status}
-              disabled={status === project?.status}
-              onClick={() => setStatusModalOpen(false)}
+              disabled={status === project?.status || changeStatusMutation.isPending}
+              onClick={() => changeStatusMutation.mutate(status)}
               className={cn(
                 'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors',
                 status === project?.status

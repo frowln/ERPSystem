@@ -15,6 +15,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { contractsApi } from '@/api/contracts';
+import { projectsApi } from '@/api/projects';
 import { formatMoney, formatDate } from '@/lib/format';
 import { guardDemoModeAction, isDemoMode } from '@/lib/demoMode';
 import ContractDirectionTabs, { type ContractDirectionFilter } from './ContractDirectionTabs';
@@ -53,14 +54,29 @@ const ContractListPage: React.FC = () => {
 
   const { data: contractsData, isLoading } = useQuery({
     queryKey: ['CONTRACTS'],
-    queryFn: () => contractsApi.getContracts(),
+    queryFn: () => contractsApi.getContracts({ size: 500 }),
   });
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['PROJECTS', 'all'],
+    queryFn: () => projectsApi.getProjects({ size: 500 }),
+  });
+
+  const projectNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of (projectsData?.content ?? [])) {
+      map.set(p.id, p.name);
+    }
+    return map;
+  }, [projectsData]);
 
   const contracts = useMemo(() => {
     const content = contractsData?.content ?? [];
-    if (content.length > 0) return content;
-    return [];
-  }, [contractsData]);
+    return content.map((c) => ({
+      ...c,
+      projectName: c.projectName ?? (c.projectId ? projectNameMap.get(c.projectId) : undefined),
+    }));
+  }, [contractsData, projectNameMap]);
 
   const filteredContracts = useMemo(() => {
     let filtered = contracts;
@@ -146,7 +162,7 @@ const ContractListPage: React.FC = () => {
         header: t('contracts.list.colProject'),
         size: 180,
         cell: ({ getValue }) => (
-          <span className="text-neutral-600">{getValue<string>()}</span>
+          <span className="text-neutral-600">{getValue<string>() ?? '\u2014'}</span>
         ),
       },
       {
@@ -154,7 +170,7 @@ const ContractListPage: React.FC = () => {
         header: t('contracts.list.colType'),
         size: 130,
         cell: ({ getValue }) => (
-          <span className="text-neutral-600">{getValue<string>()}</span>
+          <span className="text-neutral-600">{getValue<string>() ?? '\u2014'}</span>
         ),
       },
       {

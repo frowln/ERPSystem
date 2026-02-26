@@ -1,6 +1,7 @@
 package com.privod.platform.modules.changeManagement.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.changeManagement.domain.ChangeEvent;
 import com.privod.platform.modules.changeManagement.domain.ChangeEventSource;
 import com.privod.platform.modules.changeManagement.domain.ChangeEventStatus;
@@ -50,9 +51,11 @@ public class ChangeEventService {
 
     @Transactional
     public ChangeEventResponse createChangeEvent(CreateChangeEventRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String number = generateEventNumber();
 
         ChangeEvent event = ChangeEvent.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .number(number)
                 .title(request.title())

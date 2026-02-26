@@ -3,6 +3,7 @@ package com.privod.platform.modules.document.service;
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.CustomUserDetails;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.infrastructure.storage.StorageService;
 import com.privod.platform.modules.auth.domain.User;
 import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.contract.domain.Contract;
@@ -33,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,6 +52,7 @@ public class DocumentService {
     private final ContractRepository contractRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final StorageService storageService;
 
     @Transactional(readOnly = true)
     public Page<DocumentResponse> listDocuments(UUID projectId, DocumentCategory category,
@@ -77,6 +80,55 @@ public class DocumentService {
                 .map(DocumentAccessResponse::fromEntity)
                 .toList();
         return DocumentResponse.fromEntity(document, accessList);
+    }
+
+    @Transactional
+    public DocumentResponse uploadFile(UUID id, MultipartFile file) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Document document = getDocumentOrThrow(id, organizationId);
+
+        String previousStoragePath = document.getStoragePath();
+        String storagePath = storageService.upload(file, "documents");
+
+        document.setStoragePath(storagePath);
+        document.setFileName(file.getOriginalFilename());
+        document.setFileSize(file.getSize());
+        document.setMimeType(file.getContentType());
+
+        document = documentRepository.save(document);
+        auditService.logUpdate("Document", document.getId(), "storagePath", previousStoragePath, storagePath);
+
+        if (previousStoragePath != null
+                && !previousStoragePath.isBlank()
+                && !previousStoragePath.equals(storagePath)
+                && !isExternalUrl(previousStoragePath)) {
+            try {
+                storageService.delete(previousStoragePath);
+            } catch (RuntimeException ex) {
+                log.warn("Не удалось удалить старый файл документа {} по ключу {}: {}",
+                        document.getId(), previousStoragePath, ex.getMessage());
+            }
+        }
+
+        log.info("File uploaded for document {}: {}", document.getId(), storagePath);
+        return DocumentResponse.fromEntity(document);
+    }
+
+    @Transactional(readOnly = true)
+    public String getDownloadUrl(UUID id) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Document document = getDocumentOrThrow(id, organizationId);
+        String storagePath = document.getStoragePath();
+
+        if (storagePath == null || storagePath.isBlank()) {
+            throw new IllegalStateException("Файл документа не загружен");
+        }
+
+        if (isExternalUrl(storagePath)) {
+            return storagePath;
+        }
+
+        return storageService.getPresignedUrl(storagePath);
     }
 
     @Transactional
@@ -414,5 +466,9 @@ public class DocumentService {
         if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
             throw new EntityNotFoundException("Пользователь не найден: " + userId);
         }
+    }
+
+    private boolean isExternalUrl(String storagePath) {
+        return storagePath.startsWith("http://") || storagePath.startsWith("https://");
     }
 }

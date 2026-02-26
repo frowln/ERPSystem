@@ -1,6 +1,7 @@
 package com.privod.platform.modules.quality.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.quality.domain.NonConformance;
 import com.privod.platform.modules.quality.domain.NonConformanceStatus;
 import com.privod.platform.modules.quality.repository.NonConformanceRepository;
@@ -45,9 +46,11 @@ public class NonConformanceService {
 
     @Transactional
     public NonConformanceResponse createNonConformance(CreateNonConformanceRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String code = generateCode();
 
         NonConformance nc = NonConformance.builder()
+                .organizationId(organizationId)
                 .code(code)
                 .qualityCheckId(request.qualityCheckId())
                 .projectId(request.projectId())

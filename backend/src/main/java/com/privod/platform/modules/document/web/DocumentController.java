@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,6 +66,23 @@ public class DocumentController {
     public ResponseEntity<ApiResponse<DocumentResponse>> getById(@PathVariable UUID id) {
         DocumentResponse response = documentService.getDocument(id);
         return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PostMapping(value = "/{id}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER', 'DOCUMENT_MANAGER')")
+    @Operation(summary = "Upload/replace document file")
+    public ResponseEntity<ApiResponse<DocumentResponse>> uploadFile(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile file) {
+        DocumentResponse response = documentService.uploadFile(id, file);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @GetMapping("/{id}/download-url")
+    @Operation(summary = "Get presigned document download URL")
+    public ResponseEntity<ApiResponse<String>> getDownloadUrl(@PathVariable UUID id) {
+        String url = documentService.getDownloadUrl(id);
+        return ResponseEntity.ok(ApiResponse.ok(url));
     }
 
     @PostMapping

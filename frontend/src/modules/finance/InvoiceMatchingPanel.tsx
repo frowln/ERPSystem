@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CheckCircle2,
   XCircle,
@@ -160,11 +160,23 @@ const MatchColumn: React.FC<{
 const FuzzyMatchPanel: React.FC<{ invoiceId: string }> = ({ invoiceId }) => {
   const [budgetId, setBudgetId] = useState('');
   const [searchTriggered, setSearchTriggered] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: candidates, isLoading } = useQuery<InvoiceMatchCandidate[]>({
     queryKey: ['invoice-match', invoiceId, budgetId],
     queryFn: () => financeApi.matchInvoiceToPositions(invoiceId, budgetId),
     enabled: searchTriggered && !!budgetId,
+  });
+
+  const linkMutation = useMutation({
+    mutationFn: ({ lineId, budgetItemId }: { lineId: string; budgetItemId: string }) =>
+      financeApi.linkInvoiceLine(invoiceId, lineId, budgetItemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['INVOICE_LINES', invoiceId] });
+      queryClient.invalidateQueries({ queryKey: ['INVOICE', invoiceId] });
+      // maybe also invalidate three-way-match
+      queryClient.invalidateQueries({ queryKey: ['three-way-match', invoiceId] });
+    },
   });
 
   return (
@@ -213,6 +225,9 @@ const FuzzyMatchPanel: React.FC<{ invoiceId: string }> = ({ invoiceId }) => {
                 <th className="text-left px-3 py-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">
                   {t('invoiceMatching.colDescription')}
                 </th>
+                <th className="text-right px-3 py-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                  {t('common.actions')}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -232,6 +247,16 @@ const FuzzyMatchPanel: React.FC<{ invoiceId: string }> = ({ invoiceId }) => {
                   </td>
                   <td className="px-3 py-2.5 text-xs text-neutral-500 dark:text-neutral-400">
                     {c.matchDescription}
+                  </td>
+                  <td className="px-3 py-2.5 text-right">
+                    <Button
+                      variant="primary"
+                      size="xs"
+                      loading={linkMutation.isPending && linkMutation.variables?.lineId === c.invoiceLineId && linkMutation.variables?.budgetItemId === c.budgetItemId}
+                      onClick={() => linkMutation.mutate({ lineId: c.invoiceLineId, budgetItemId: c.budgetItemId })}
+                    >
+                      {t('invoiceMatching.link')}
+                    </Button>
                   </td>
                 </tr>
               ))}

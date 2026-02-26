@@ -149,6 +149,17 @@ public class BudgetController {
                 .body(ApiResponse.ok(response));
     }
 
+    @PostMapping("/{budgetId}/items/import-estimate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Import items from an estimate into the budget")
+    public ResponseEntity<ApiResponse<List<BudgetItemResponse>>> importFromEstimate(
+            @PathVariable UUID budgetId,
+            @RequestParam UUID estimateId) {
+        List<BudgetItemResponse> response = budgetService.importFromEstimate(budgetId, estimateId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(response));
+    }
+
     @PutMapping("/{budgetId}/items/{itemId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
     @Operation(summary = "Update a budget item")
@@ -168,5 +179,33 @@ public class BudgetController {
             @PathVariable UUID itemId) {
         budgetService.deleteBudgetItem(budgetId, itemId);
         return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    // === Own Cost Generation, ROI, Margin Scenario ===
+
+    @PostMapping("/{id}/generate-own-costs")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Generate own-cost lines (overhead, contingency, temp structures)")
+    public ResponseEntity<ApiResponse<List<BudgetItemResponse>>> generateOwnCosts(@PathVariable UUID id) {
+        List<BudgetItemResponse> items = budgetService.generateOwnCostLines(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(items));
+    }
+
+    @GetMapping("/{id}/roi")
+    @Operation(summary = "Calculate ROI for a budget")
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> calculateROI(@PathVariable UUID id) {
+        java.util.Map<String, Object> result = budgetService.calculateROI(id);
+        return ResponseEntity.ok(ApiResponse.ok(result));
+    }
+
+    @PostMapping("/{id}/margin-scenario")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Simulate margin scenario for a budget")
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> simulateMarginScenario(
+            @PathVariable UUID id,
+            @RequestBody java.util.Map<String, Object> body) {
+        java.math.BigDecimal targetMarginPercent = new java.math.BigDecimal(body.get("targetMarginPercent").toString());
+        java.util.Map<String, Object> result = budgetService.simulateMarginScenario(id, targetMarginPercent);
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 }

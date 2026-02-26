@@ -79,4 +79,33 @@ public class CommercialProposal extends BaseEntity {
     @Column(name = "margin_percent", precision = 8, scale = 4)
     @Builder.Default
     private BigDecimal marginPercent = BigDecimal.ZERO;
+
+    @Column(name = "doc_version", nullable = false)
+    @Builder.Default
+    private Integer docVersion = 1;
+
+    @Column(name = "parent_version_id")
+    private UUID parentVersionId;
+
+    @Column(name = "is_current", nullable = false)
+    @Builder.Default
+    private boolean current = true;
+
+    @Column(name = "company_name", length = 500)
+    private String companyName;
+
+    @Column(name = "company_inn", length = 20)
+    private String companyInn;
+
+    @Column(name = "company_kpp", length = 20)
+    private String companyKpp;
+
+    @Column(name = "company_address", length = 1000)
+    private String companyAddress;
+
+    @Column(name = "signatory_name", length = 300)
+    private String signatoryName;
+
+    @Column(name = "signatory_position", length = 300)
+    private String signatoryPosition;
 }

@@ -270,4 +270,26 @@ public class PortfolioController {
         portfolioService.deleteTenderSubmission(id);
         return ResponseEntity.ok(ApiResponse.ok());
     }
+
+    // ======================== Go/No-Go Checklist ========================
+
+    @PatchMapping("/opportunities/{id}/checklist")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'SALES_MANAGER')")
+    @Operation(summary = "Update Go/No-Go checklist for an opportunity")
+    public ResponseEntity<ApiResponse<OpportunityResponse>> updateGoNoGoChecklist(
+            @PathVariable UUID id,
+            @RequestBody java.util.Map<String, Object> body) {
+        String checklistJson = (String) body.get("checklistJson");
+        Integer score = body.get("score") != null ? ((Number) body.get("score")).intValue() : null;
+        OpportunityResponse response = portfolioService.updateGoNoGoChecklist(id, checklistJson, score);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @GetMapping("/opportunities/{id}/analog-assessment")
+    @Operation(summary = "Assess opportunity margin by analog projects")
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> getAnalogAssessment(
+            @PathVariable UUID id) {
+        java.util.Map<String, Object> result = portfolioService.assessMarginByAnalog(id);
+        return ResponseEntity.ok(ApiResponse.ok(result));
+    }
 }

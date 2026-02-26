@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowUpRight } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -22,6 +23,7 @@ const CpPushToFmDialog: React.FC<CpPushToFmDialogProps> = ({
   proposal,
   confirmedItems,
 }) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const pushMutation = useMutation({
@@ -88,18 +90,63 @@ const CpPushToFmDialog: React.FC<CpPushToFmDialogProps> = ({
                 <tr>
                   <th className="text-left px-3 py-2 text-neutral-500 dark:text-neutral-400">{t('common.name')}</th>
                   <th className="text-right px-3 py-2 text-neutral-500 dark:text-neutral-400">{t('competitiveList.entry.price')}</th>
+                  <th className="text-left px-3 py-2 text-neutral-500 dark:text-neutral-400">{t('commercialProposal.colPriceSource')}</th>
                 </tr>
               </thead>
               <tbody>
-                {confirmedItems.slice(0, 20).map((item) => (
-                  <tr key={item.id} className="border-t border-neutral-100 dark:border-neutral-800">
-                    <td className="px-3 py-1.5 text-neutral-800 dark:text-neutral-200">{item.budgetItemName ?? item.budgetItemId}</td>
-                    <td className="px-3 py-1.5 text-right text-neutral-600 dark:text-neutral-400 tabular-nums">{formatMoney(item.costPrice)}</td>
-                  </tr>
-                ))}
+                {confirmedItems.slice(0, 20).map((item) => {
+                  const source = item.estimateItemId
+                    ? {
+                        label: t('commercialProposal.priceFromEstimate'),
+                        className: 'bg-blue-50 text-blue-700',
+                        onClick: () => navigate(item.estimateId ? `/estimates/${item.estimateId}` : '/estimates'),
+                      }
+                    : item.competitiveListEntryId || item.competitiveListId
+                      ? {
+                          label: t('commercialProposal.priceFromCompetitiveList'),
+                          className: 'bg-purple-50 text-purple-700',
+                          onClick: () => {
+                            if (item.competitiveListId && proposal.specificationId) {
+                              navigate(`/specifications/${proposal.specificationId}/competitive-list/${item.competitiveListId}`);
+                            } else if (proposal.specificationId) {
+                              navigate(`/specifications/${proposal.specificationId}`);
+                            } else {
+                              navigate('/specifications');
+                            }
+                          },
+                        }
+                      : item.selectedInvoiceLineId
+                        ? {
+                            label: t('commercialProposal.priceFromInvoice'),
+                            className: 'bg-green-50 text-green-700',
+                            onClick: () => navigate(item.invoiceId ? `/invoices/${item.invoiceId}` : '/invoices'),
+                          }
+                        : {
+                            label: t('commercialProposal.priceManual'),
+                            className: 'bg-neutral-100 text-neutral-600',
+                            onClick: undefined,
+                          };
+
+                  return (
+                    <tr key={item.id} className="border-t border-neutral-100 dark:border-neutral-800">
+                      <td className="px-3 py-1.5 text-neutral-800 dark:text-neutral-200">{item.budgetItemName ?? item.budgetItemId}</td>
+                      <td className="px-3 py-1.5 text-right text-neutral-600 dark:text-neutral-400 tabular-nums">{formatMoney(item.costPrice)}</td>
+                      <td className="px-3 py-1.5">
+                        <button
+                          type="button"
+                          onClick={source.onClick}
+                          disabled={!source.onClick}
+                          className={`inline-flex items-center text-xs px-2 py-0.5 rounded-full font-medium ${source.className} ${source.onClick ? 'hover:opacity-80' : 'cursor-default'}`}
+                        >
+                          {source.label}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
                 {confirmedItems.length > 20 && (
                   <tr>
-                    <td colSpan={2} className="px-3 py-1.5 text-center text-neutral-400 italic">
+                    <td colSpan={3} className="px-3 py-1.5 text-center text-neutral-400 italic">
                       ...{t('common.andMore', { count: String(confirmedItems.length - 20) })}
                     </td>
                   </tr>

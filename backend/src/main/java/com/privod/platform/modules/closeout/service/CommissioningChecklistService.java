@@ -1,6 +1,7 @@
 package com.privod.platform.modules.closeout.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.closeout.domain.ChecklistStatus;
 import com.privod.platform.modules.closeout.domain.CommissioningChecklist;
 import com.privod.platform.modules.closeout.repository.CommissioningChecklistRepository;
@@ -59,8 +60,11 @@ public class CommissioningChecklistService {
 
     @Transactional
     public CommissioningChecklistResponse create(CreateCommissioningChecklistRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+
         CommissioningChecklist checklist = CommissioningChecklist.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .name(request.name())
                 .system(request.system())
                 .status(ChecklistStatus.NOT_STARTED)

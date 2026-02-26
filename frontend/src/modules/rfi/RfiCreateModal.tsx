@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { rfiApi } from '@/api/rfi';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 import type { CreateRfiRequest } from './types';
 import toast from 'react-hot-toast';
@@ -20,23 +22,20 @@ const getPriorityOptions = () => [
   { value: 'CRITICAL', label: t('rfi.modalPriorityCritical') },
 ];
 
-// Mock data -- will be replaced by API data
-const assigneeOptions = [
-  { value: 'u1', label: 'Иванов А.С.' },
-  { value: 'u2', label: 'Петров В.К.' },
-  { value: 'u3', label: 'Сидоров М.Н.' },
-  { value: 'u4', label: 'Козлов Д.А.' },
-];
-
-// Mock data -- will be replaced by API data
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
 export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => permissionsApi.getUsers(),
+  });
+  const assigneeOptions = (usersData?.content ?? []).map(u => ({ value: u.id, label: u.fullName ?? u.email }));
   const [subject, setSubject] = useState('');
   const [question, setQuestion] = useState('');
   const [priority, setPriority] = useState('MEDIUM');

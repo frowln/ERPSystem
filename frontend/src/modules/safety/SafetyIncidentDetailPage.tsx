@@ -151,7 +151,6 @@ const SafetyIncidentDetailPage: React.FC = () => {
             <div className="relative">
               <div className="absolute left-3 top-0 bottom-0 w-px bg-neutral-200" />
               <div className="space-y-4">
-                {/* TODO: replace with real API call */}
                 {(inc as any)?.timeline?.map((evt: any, idx: number) => (
                   <div key={idx} className="flex items-start gap-4 relative">
                     <div className={`w-6 h-6 rounded-full ${timelineColor[evt.type]} flex items-center justify-center flex-shrink-0 z-10`}>

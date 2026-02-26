@@ -105,6 +105,12 @@ public class CommercialProposalItem {
     @Column(name = "vendor_name", length = 500)
     private String vendorName;
 
+    @Column(name = "bid_comparison_id")
+    private UUID bidComparisonId;
+
+    @Column(name = "bid_winner_vendor_id")
+    private UUID bidWinnerVendorId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

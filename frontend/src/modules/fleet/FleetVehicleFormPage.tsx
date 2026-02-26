@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { fleetApi, type VehicleStatus } from '@/api/fleet';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 
 const vehicleSchema = z.object({
@@ -64,19 +65,20 @@ const fuelTypeOptions = [
   { value: 'hybrid', label: t('forms.fleetVehicle.fuelTypes.hybrid') },
 ];
 
-const projectOptions = [
-  { value: '', label: t('forms.fleetVehicle.noProject') },
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '2', label: t('mockData.projectGorizont') },
-  { value: '3', label: t('mockData.projectBridgeVyatka') },
-  { value: '6', label: t('mockData.projectTsCentralny') },
-];
-
 const FleetVehicleFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = [
+    { value: '', label: t('forms.fleetVehicle.noProject') },
+    ...(projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name })),
+  ];
 
   const { data: existingVehicle } = useQuery({
     queryKey: ['fleetVehicle', id],

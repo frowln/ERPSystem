@@ -582,4 +582,62 @@ public class PortfolioService {
 
         return ts;
     }
+
+    // ======================== Go/No-Go Checklist ========================
+
+    @Transactional
+    public OpportunityResponse updateGoNoGoChecklist(UUID id, String checklistJson, Integer score) {
+        Opportunity opportunity = getOpportunityOrThrow(id);
+        opportunity.setGoNoGoChecklist(checklistJson);
+        opportunity.setChecklistScore(score);
+        opportunity = opportunityRepository.save(opportunity);
+        auditService.logUpdate("Opportunity", id, "goNoGoChecklist", null, checklistJson);
+        return OpportunityResponse.fromEntity(opportunity);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> assessMarginByAnalog(UUID id) {
+        Opportunity opportunity = getOpportunityOrThrow(id);
+        UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+
+        // Find completed opportunities of same type and region
+        List<Opportunity> analogs = opportunityRepository.findAll(
+                Specification.where(OpportunitySpecification.notDeleted())
+                        .and(OpportunitySpecification.belongsToOrganization(orgId))
+                        .and(OpportunitySpecification.hasStage(OpportunityStage.WON))
+        );
+
+        // Filter analogs by same projectType (if set)
+        List<Opportunity> filtered = analogs.stream()
+                .filter(a -> !a.getId().equals(id))
+                .filter(a -> opportunity.getProjectType() == null
+                        || opportunity.getProjectType().equals(a.getProjectType()))
+                .toList();
+
+        if (filtered.isEmpty()) {
+            return Map.of("analogCount", 0, "recommendation", "NO_DATA");
+        }
+
+        // Calculate average margin from analogs (estimated_value / probability as proxy)
+        BigDecimal avgValue = filtered.stream()
+                .map(a -> a.getEstimatedValue() != null ? a.getEstimatedValue() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(filtered.size()), 2, RoundingMode.HALF_UP);
+
+        BigDecimal avgProbability = BigDecimal.valueOf(
+                filtered.stream()
+                        .mapToInt(a -> a.getProbability() != null ? a.getProbability() : 50)
+                        .average()
+                        .orElse(50.0)
+        ).setScale(2, RoundingMode.HALF_UP);
+
+        String recommendation = avgProbability.compareTo(new BigDecimal("60")) >= 0 ? "GO" : "NO_GO";
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("analogCount", filtered.size());
+        result.put("avgEstimatedValue", avgValue);
+        result.put("avgWinProbability", avgProbability);
+        result.put("recommendation", recommendation);
+        return result;
+    }
 }

@@ -86,6 +86,18 @@ public class Opportunity extends BaseEntity {
     @Column(name = "tags", columnDefinition = "JSONB")
     private String tags;
 
+    @Column(name = "go_no_go_checklist", columnDefinition = "JSONB")
+    private String goNoGoChecklist;
+
+    @Column(name = "checklist_score")
+    private Integer checklistScore;
+
+    @Column(name = "analog_margin_percent", precision = 8, scale = 4)
+    private BigDecimal analogMarginPercent;
+
+    @Column(name = "analog_project_id")
+    private UUID analogProjectId;
+
     public boolean canTransitionTo(OpportunityStage target) {
         return this.stage.canTransitionTo(target);
     }

@@ -1,5 +1,16 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
+import type {
+  Waybill,
+  FuelAccountingRecord,
+  FuelSummary,
+  MaintenanceScheduleRecord,
+  GpsVehicleStatus,
+  GpsVehicleTrack,
+  GeofenceAlert,
+  DriverRating,
+  DriverDetail,
+} from '@/modules/fleet/types';
 
 export type VehicleType = 'EXCAVATOR' | 'CRANE' | 'TRUCK' | 'LOADER' | 'BULLDOZER' | 'CONCRETE_MIXER' | 'GENERATOR' | 'COMPRESSOR' | 'OTHER';
 export type VehicleStatus = 'AVAILABLE' | 'IN_USE' | 'MAINTENANCE' | 'REPAIR' | 'DECOMMISSIONED';
@@ -382,5 +393,96 @@ export const fleetApi = {
 
   deleteWaybill: async (id: string): Promise<void> => {
     await apiClient.delete(`/fleet/waybills/${id}`);
+  },
+
+  // ---- Waybills (ESM-2) ----
+  getWaybillsEsm: async (params?: PaginationParams & { status?: string }): Promise<PaginatedResponse<Waybill>> => {
+    const response = await apiClient.get<PaginatedResponse<Waybill>>('/fleet/waybills-esm', { params });
+    return response.data;
+  },
+
+  createWaybillEsm: async (data: Record<string, unknown>): Promise<Waybill> => {
+    const response = await apiClient.post<Waybill>('/fleet/waybills-esm', data);
+    return response.data;
+  },
+
+  completeWaybillEsm: async (id: string, data: Record<string, unknown>): Promise<Waybill> => {
+    const response = await apiClient.patch<Waybill>(`/fleet/waybills-esm/${id}/complete`, data);
+    return response.data;
+  },
+
+  changeWaybillEsmStatus: async (id: string, status: string): Promise<Waybill> => {
+    const response = await apiClient.patch<Waybill>(`/fleet/waybills-esm/${id}/status`, { status });
+    return response.data;
+  },
+
+  printWaybillEsm: async (id: string): Promise<Blob> => {
+    const response = await apiClient.get(`/fleet/waybills-esm/${id}/print`, { responseType: 'blob' });
+    return response.data;
+  },
+
+  // ---- Fuel Accounting ----
+  getFuelAccountingRecords: async (params?: PaginationParams & { vehicleId?: string; fuelType?: string }): Promise<FuelAccountingRecord[]> => {
+    const response = await apiClient.get<FuelAccountingRecord[]>('/fleet/fuel-accounting', { params });
+    return response.data;
+  },
+
+  createFuelAccountingRecord: async (data: Record<string, unknown>): Promise<FuelAccountingRecord> => {
+    const response = await apiClient.post<FuelAccountingRecord>('/fleet/fuel-accounting', data);
+    return response.data;
+  },
+
+  getFuelSummary: async (period?: string): Promise<FuelSummary> => {
+    const response = await apiClient.get<FuelSummary>('/fleet/fuel-accounting/summary', {
+      params: period ? { period } : undefined,
+    });
+    return response.data;
+  },
+
+  // ---- Maintenance Schedule Records ----
+  getMaintenanceScheduleRecords: async (params?: { status?: string; workType?: string }): Promise<MaintenanceScheduleRecord[]> => {
+    const response = await apiClient.get<MaintenanceScheduleRecord[]>('/fleet/maintenance-schedule-records', { params });
+    return response.data;
+  },
+
+  createMaintenanceScheduleRecord: async (data: Record<string, unknown>): Promise<MaintenanceScheduleRecord> => {
+    const response = await apiClient.post<MaintenanceScheduleRecord>('/fleet/maintenance-schedule-records', data);
+    return response.data;
+  },
+
+  completeMaintenanceRecord: async (id: string, data: Record<string, unknown>): Promise<MaintenanceScheduleRecord> => {
+    const response = await apiClient.patch<MaintenanceScheduleRecord>(`/fleet/maintenance-schedule-records/${id}/complete`, data);
+    return response.data;
+  },
+
+  // ---- GPS Tracking ----
+  getGpsStatuses: async (): Promise<GpsVehicleStatus[]> => {
+    const response = await apiClient.get<GpsVehicleStatus[]>('/fleet/gps/statuses');
+    return response.data;
+  },
+
+  getVehicleTrack: async (vehicleId: string, date: string): Promise<GpsVehicleTrack> => {
+    const response = await apiClient.get<GpsVehicleTrack>(`/fleet/gps/vehicles/${vehicleId}/track`, {
+      params: { date },
+    });
+    return response.data;
+  },
+
+  getGeofenceAlerts: async (): Promise<GeofenceAlert[]> => {
+    const response = await apiClient.get<GeofenceAlert[]>('/fleet/gps/geofence-alerts');
+    return response.data;
+  },
+
+  // ---- Driver Ratings ----
+  getDriverRatings: async (period?: string): Promise<DriverRating[]> => {
+    const response = await apiClient.get<DriverRating[]>('/fleet/drivers/ratings', {
+      params: period ? { period } : undefined,
+    });
+    return response.data;
+  },
+
+  getDriverDetail: async (driverId: string): Promise<DriverDetail> => {
+    const response = await apiClient.get<DriverDetail>(`/fleet/drivers/${driverId}/detail`);
+    return response.data;
   },
 };

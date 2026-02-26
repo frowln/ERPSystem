@@ -135,6 +135,9 @@ async function main() {
 
   await context.addInitScript((state) => {
     localStorage.setItem('privod-auth', JSON.stringify({ state, version: 0 }));
+    // Primary locale key used by i18n system.
+    localStorage.setItem('privod_locale', 'ru');
+    // Legacy keys kept for backward compatibility with older code paths.
     localStorage.setItem('privod-locale', 'ru');
     localStorage.setItem('privod-lang', 'ru');
   }, authState);
@@ -163,11 +166,17 @@ async function main() {
   await gotoAndShot(page, outputDir, '04-budgets-list.png', '/budgets');
   await gotoAndShot(page, outputDir, '05-budget-detail-all.png', `/budgets/${budgetId}`);
 
-  await clickByTextIfExists(page, [/Items/i, /Позици/i]);
+  const openedBudgetItemsTab = await clickByTextIfExists(page, [/Items/i, /Позици/i, /Статьи/i]);
+  if (!openedBudgetItemsTab) {
+    throw new Error('Unable to open budget "Items" tab before screenshot 06');
+  }
   await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, '06-budget-detail-items.png'), fullPage: true });
 
-  await clickByTextIfExists(page, [/Chart/i, /Граф/i]);
+  const openedBudgetChartTab = await clickByTextIfExists(page, [/Chart/i, /Граф/i, /Диаграм/i]);
+  if (!openedBudgetChartTab) {
+    throw new Error('Unable to open budget "Chart" tab before screenshot 07');
+  }
   await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, '07-budget-detail-chart.png'), fullPage: true });
 

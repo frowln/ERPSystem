@@ -1,6 +1,7 @@
 package com.privod.platform.modules.dailylog.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.dailylog.domain.DailyLog;
 import com.privod.platform.modules.dailylog.domain.DailyLogPhoto;
 import com.privod.platform.modules.dailylog.domain.DailyLogStatus;
@@ -65,9 +66,11 @@ public class DailyLogService {
                                     request.logDate(), existing.getCode()));
                 });
 
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String code = generateCode();
 
         DailyLog dailyLog = DailyLog.builder()
+                .organizationId(organizationId)
                 .code(code)
                 .projectId(request.projectId())
                 .logDate(request.logDate())

@@ -77,3 +77,75 @@ export interface BimLinkedItem {
   linkedAt: string;
   linkedBy?: string;
 }
+
+// ---------------------------------------------------------------------------
+// Clash Detection Results
+// ---------------------------------------------------------------------------
+export interface ClashResult {
+  id: string;
+  clashNumber: string;
+  elementA: { id: string; name: string; type: string };
+  elementB: { id: string; name: string; type: string };
+  clashType: 'hard' | 'soft' | 'clearance';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'new' | 'active' | 'resolved' | 'ignored';
+  location: { x: number; y: number; z: number };
+  detectedDate: string;
+}
+
+// ---------------------------------------------------------------------------
+// Defect Heatmap
+// ---------------------------------------------------------------------------
+export interface DefectHeatmapZone {
+  id: string;
+  zoneName: string;
+  floor: string;
+  defectCount: number;
+  criticalCount: number;
+  density: number;
+  defects: { id: string; type: string; severity: string; description: string }[];
+}
+
+// ---------------------------------------------------------------------------
+// Construction Progress 4D
+// ---------------------------------------------------------------------------
+export interface ConstructionProgress4D {
+  id: string;
+  elementName: string;
+  elementType: string;
+  plannedPercent: number;
+  actualPercent: number;
+  status: 'not_started' | 'in_progress' | 'completed' | 'delayed';
+  plannedStartDate: string;
+  plannedEndDate: string;
+  actualStartDate?: string;
+  actualEndDate?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Property Sets
+// ---------------------------------------------------------------------------
+export interface BimPropertySet {
+  elementId: string;
+  elementName: string;
+  elementType: string;
+  category: string;
+  properties: { name: string; value: string; unit?: string }[];
+}
+
+// ---------------------------------------------------------------------------
+// BCF Topics
+// ---------------------------------------------------------------------------
+export interface BcfTopic {
+  id: string;
+  topicNumber: string;
+  title: string;
+  topicType: 'issue' | 'request' | 'comment' | 'solution';
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority: 'low' | 'normal' | 'high' | 'critical';
+  assignedTo: string;
+  description: string;
+  createdDate: string;
+  dueDate?: string;
+  comments: { id: string; author: string; date: string; text: string }[];
+}

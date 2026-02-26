@@ -1,6 +1,18 @@
 import { apiClient } from '@/api/client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
-import type { WbsNode, ScheduleBaseline, EvmMetrics, ResourceAllocation } from './types';
+import type {
+  WbsNode,
+  ScheduleBaseline,
+  EvmMetrics,
+  ResourceAllocation,
+  CriticalPathTask,
+  EvmIndicators,
+  ResourceAssignment,
+  ResourceHistogramEntry,
+  Baseline,
+  BaselineComparison,
+  SCurveData,
+} from './types';
 
 export interface WbsNodeFilters extends PaginationParams {
   projectId: string;
@@ -175,5 +187,81 @@ export const planningApi = {
 
   deleteResourceAllocation: async (id: string): Promise<void> => {
     await apiClient.delete(`/resource-allocations/${id}`);
+  },
+
+  // ---- Critical Path Method ----
+
+  getCriticalPathTasks: async (projectId: string): Promise<CriticalPathTask[]> => {
+    const response = await apiClient.get<CriticalPathTask[]>('/wbs-nodes/critical-path/tasks', {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  // ---- EVM Indicators (extended) ----
+
+  getEvmIndicators: async (projectId: string): Promise<EvmIndicators> => {
+    const response = await apiClient.get<EvmIndicators>('/evm-snapshots/indicators', {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  // ---- Resource Planning ----
+
+  getResourcePlan: async (projectId: string): Promise<ResourceAssignment[]> => {
+    const response = await apiClient.get<ResourceAssignment[]>('/resource-allocations/plan', {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  getResourceHistogram: async (projectId: string): Promise<ResourceHistogramEntry[]> => {
+    const response = await apiClient.get<ResourceHistogramEntry[]>('/resource-allocations/histogram', {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  assignResource: async (data: {
+    taskId: string;
+    resourceName: string;
+    resourceType: 'crew' | 'equipment' | 'material';
+    startDate: string;
+    endDate: string;
+    utilization: number;
+  }): Promise<ResourceAssignment> => {
+    const response = await apiClient.post<ResourceAssignment>('/resource-allocations/assign', data);
+    return response.data;
+  },
+
+  // ---- Baselines Management (extended) ----
+
+  getBaselinesList: async (projectId: string): Promise<Baseline[]> => {
+    const response = await apiClient.get<Baseline[]>('/schedule-baselines/list', {
+      params: { projectId },
+    });
+    return response.data;
+  },
+
+  createBaselineSnapshot: async (data: { projectId: string; name: string }): Promise<Baseline> => {
+    const response = await apiClient.post<Baseline>('/schedule-baselines/snapshot', data);
+    return response.data;
+  },
+
+  compareBaselines: async (baselineId1: string, baselineId2: string): Promise<BaselineComparison> => {
+    const response = await apiClient.get<BaselineComparison>('/schedule-baselines/compare', {
+      params: { baselineId1, baselineId2 },
+    });
+    return response.data;
+  },
+
+  // ---- S-Curve ----
+
+  getSCurveData: async (projectId: string, viewMode: string): Promise<SCurveData> => {
+    const response = await apiClient.get<SCurveData>('/evm-snapshots/s-curve', {
+      params: { projectId, viewMode },
+    });
+    return response.data;
   },
 };

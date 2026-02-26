@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { punchlistApi } from '@/api/punchlist';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 
 interface PunchItemCreateModalProps {
@@ -30,21 +31,23 @@ const getCategoryOptions = () => [
   { value: 'OTHER', label: t('punchlist.catOther') },
 ];
 
-const getPunchListOptions = () => [
-  { value: 'pl1', label: t('punchlist.listSectionA') },
-  { value: 'pl2', label: t('punchlist.listParking') },
-  { value: 'pl3', label: t('punchlist.listLandscaping') },
-];
-
-const getAssigneeOptions = () => [
-  { value: 'u1', label: t('mockData.personIvanovAS') },
-  { value: 'u2', label: t('mockData.personPetrovVK') },
-  { value: 'u3', label: t('mockData.personSidorovMN') },
-  { value: 'u4', label: t('mockData.personKozlovDA') },
-];
-
 export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+
+  const { data: punchListsData } = useQuery({
+    queryKey: ['punch-lists'],
+    queryFn: () => punchlistApi.getPunchLists(),
+    enabled: open,
+  });
+
+  const { data: usersData } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => permissionsApi.getUsers({ page: 0, size: 100 }),
+    enabled: open,
+  });
+
+  const punchListOptions = (punchListsData?.content ?? []).map((pl: any) => ({ value: pl.id, label: pl.name }));
+  const assigneeOptions = (usersData?.content ?? []).map((u) => ({ value: u.id, label: `${u.lastName} ${u.firstName[0]}.` }));
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [punchListId, setPunchListId] = useState('');
@@ -104,7 +107,7 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
       <div className="space-y-4">
         <FormField label={t('punchlist.labelPunchListField')} required>
           <Select
-            options={getPunchListOptions()}
+            options={punchListOptions}
             value={punchListId}
             onChange={(e) => setPunchListId(e.target.value)}
             placeholder={t('punchlist.placeholderSelectList')}
@@ -174,7 +177,7 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('punchlist.labelAssigneeField')}>
             <Select
-              options={getAssigneeOptions()}
+              options={assigneeOptions}
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
               placeholder={t('punchlist.placeholderSelectAssignee')}

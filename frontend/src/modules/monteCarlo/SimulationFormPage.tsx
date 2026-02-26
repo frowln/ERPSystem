@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { projectsApi } from '@/api/projects';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,14 +24,6 @@ const schema = z.object({
 
 type FormData = z.input<typeof schema>;
 
-const projectOptions = [
-  { value: '', label: t('forms.simulation.noProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
 const confidenceOptions = [
   { value: '80', label: '80%' },
   { value: '85', label: '85%' },
@@ -44,6 +37,12 @@ const SimulationFormPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({ queryKey: ['projects'], queryFn: () => projectsApi.getProjects() });
+  const projectOptions = [
+    { value: '', label: t('forms.simulation.noProject') },
+    ...(projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name })),
+  ];
 
   const { data: existing } = useQuery({
     queryKey: ['monte-carlo', id],

@@ -3,10 +3,12 @@ package com.privod.platform.modules.specification.web;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.specification.domain.SpecificationStatus;
+import com.privod.platform.modules.specification.service.SpecificationPdfParserService;
 import com.privod.platform.modules.specification.service.SpecificationService;
 import com.privod.platform.modules.specification.web.dto.ChangeSpecStatusRequest;
 import com.privod.platform.modules.specification.web.dto.CreateSpecItemRequest;
 import com.privod.platform.modules.specification.web.dto.CreateSpecificationRequest;
+import com.privod.platform.modules.specification.web.dto.ParsedSpecItemDto;
 import com.privod.platform.modules.specification.web.dto.SpecItemResponse;
 import com.privod.platform.modules.specification.web.dto.SpecificationListResponse;
 import com.privod.platform.modules.specification.web.dto.SpecificationResponse;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,7 +37,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +50,7 @@ import java.util.UUID;
 public class SpecificationController {
 
     private final SpecificationService specificationService;
+    private final SpecificationPdfParserService pdfParserService;
 
     @GetMapping
     @Operation(summary = "Список спецификаций с фильтрацией и пагинацией")
@@ -82,6 +88,14 @@ public class SpecificationController {
             @Valid @RequestBody UpdateSpecificationRequest request) {
         SpecificationResponse response = specificationService.updateSpecification(id, request);
         return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
+    @Operation(summary = "Удалить спецификацию (soft delete)")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+        specificationService.deleteSpecification(id);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PatchMapping("/{id}/status")
@@ -144,5 +158,81 @@ public class SpecificationController {
     public ResponseEntity<ApiResponse<SpecificationSummaryResponse>> getSummary(@PathVariable UUID id) {
         SpecificationSummaryResponse response = specificationService.getItemsSummary(id);
         return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    /**
+     * Parses a PDF and returns extracted rows WITHOUT a specId (for use on the create form,
+     * before the specification object has been saved).
+     */
+    @PostMapping(value = "/preview-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Предварительный просмотр: распознать спецификацию из PDF (без привязки к спецификации)")
+    public ResponseEntity<ApiResponse<List<ParsedSpecItemDto>>> previewPdf(
+            @RequestParam("file") MultipartFile file) throws IOException {
+
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(400, "Файл не может быть пустым"));
+        }
+        List<ParsedSpecItemDto> parsed = pdfParserService.parsePdf(file.getInputStream());
+        return ResponseEntity.ok(ApiResponse.ok(parsed));
+    }
+
+    /**
+     * Parses a PDF document and extracts specification rows without saving them.
+     * The frontend shows a preview and lets the user confirm before importing.
+     */
+    @PostMapping(value = "/{id}/parse-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Распознать спецификацию из PDF-документа (предварительный просмотр)")
+    public ResponseEntity<ApiResponse<List<ParsedSpecItemDto>>> parsePdf(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile file) throws IOException {
+
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(400, "Файл не может быть пустым"));
+        }
+
+        List<ParsedSpecItemDto> parsed = pdfParserService.parsePdf(file.getInputStream());
+        return ResponseEntity.ok(ApiResponse.ok(parsed));
+    }
+
+    /**
+     * Imports previously-parsed spec items into the specification.
+     * Accepts the same list returned by /parse-pdf.
+     */
+    @PostMapping("/{id}/import-pdf-items")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Сохранить позиции, извлечённые из PDF, в спецификацию")
+    public ResponseEntity<ApiResponse<List<SpecItemResponse>>> importPdfItems(
+            @PathVariable UUID id,
+            @RequestBody List<ParsedSpecItemDto> items) {
+
+        List<SpecItemResponse> saved = new java.util.ArrayList<>();
+        int sequence = specificationService.getItems(id).size() + 1;
+
+        for (ParsedSpecItemDto dto : items) {
+            CreateSpecItemRequest req = new CreateSpecItemRequest(
+                    com.privod.platform.modules.specification.domain.SpecItemType
+                            .valueOf(dto.itemType() != null ? dto.itemType() : "EQUIPMENT"),
+                    dto.name(),
+                    dto.brand(),
+                    dto.productCode(),
+                    dto.manufacturer(),
+                    dto.quantity() != null ? dto.quantity() : java.math.BigDecimal.ONE,
+                    dto.unitOfMeasure() != null ? dto.unitOfMeasure() : "шт.",
+                    null,
+                    dto.mass(),
+                    dto.notes(),
+                    sequence++,
+                    false,
+                    dto.position(),
+                    dto.sectionName()
+            );
+            saved.add(specificationService.addItem(id, req));
+        }
+
+        return ResponseEntity.ok(ApiResponse.ok(saved));
     }
 }

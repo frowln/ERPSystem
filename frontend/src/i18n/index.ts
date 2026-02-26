@@ -36,19 +36,8 @@ const STORAGE_KEY = 'privod_locale';
 let currentLocale: Locale = getInitialLocale();
 
 function getInitialLocale(): Locale {
-  if (typeof window === 'undefined') return DEFAULT_LOCALE;
-
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored && SUPPORTED_LOCALES.includes(stored as Locale)) {
-    return stored as Locale;
-  }
-
-  // Try to detect from browser language
-  const browserLang = navigator.language.split('-')[0];
-  if (SUPPORTED_LOCALES.includes(browserLang as Locale)) {
-    return browserLang as Locale;
-  }
-
+  // Product requirement: Russian-first UX across all core flows.
+  // Keep initial locale deterministic to avoid accidental EN sessions.
   return DEFAULT_LOCALE;
 }
 

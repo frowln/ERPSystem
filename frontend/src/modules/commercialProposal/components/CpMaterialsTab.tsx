@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import { financeApi } from '@/api/finance';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Button } from '@/design-system/components/Button';
-import { FileSearch, CheckCircle, XCircle } from 'lucide-react';
+import { FileSearch, CheckCircle, XCircle, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { CommercialProposalItem } from '@/types';
 import InvoiceMatchModal from './InvoiceMatchModal';
@@ -21,31 +22,40 @@ const cpItemStatusColorMap: Record<string, string> = {
   PENDING: 'gray',
   INVOICE_SELECTED: 'yellow',
   APPROVED_SUPPLY: 'blue',
+  SUPPLY_APPROVED: 'blue',
   APPROVED_PROJECT: 'cyan',
+  PROJECT_APPROVED: 'cyan',
   CONFIRMED: 'green',
 };
 
-const cpItemStatusLabels: Record<string, string> = {
-  UNPROCESSED: t('commercialProposal.itemUnprocessed'),
-  INVOICES_COLLECTED: t('commercialProposal.itemInvoicesCollected'),
-  COMPETITIVE_LIST_FILLED: t('commercialProposal.itemCompetitiveListFilled'),
-  PRICE_SELECTED: t('commercialProposal.itemPriceSelected'),
-  ON_APPROVAL: t('commercialProposal.itemOnApproval'),
-  APPROVED: t('commercialProposal.itemApproved'),
-  IN_FINANCIAL_MODEL: t('commercialProposal.itemInFinancialModel'),
-  PENDING: t('commercialProposal.itemPending'),
-  INVOICE_SELECTED: t('commercialProposal.itemInvoiceSelected'),
-  APPROVED_SUPPLY: t('commercialProposal.itemApprovedSupply'),
-  APPROVED_PROJECT: t('commercialProposal.itemApprovedProject'),
-  CONFIRMED: t('commercialProposal.itemConfirmed'),
+const cpItemStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    UNPROCESSED: t('commercialProposal.itemUnprocessed'),
+    INVOICES_COLLECTED: t('commercialProposal.itemInvoicesCollected'),
+    COMPETITIVE_LIST_FILLED: t('commercialProposal.itemCompetitiveListFilled'),
+    PRICE_SELECTED: t('commercialProposal.itemPriceSelected'),
+    ON_APPROVAL: t('commercialProposal.itemOnApproval'),
+    APPROVED: t('commercialProposal.itemApproved'),
+    IN_FINANCIAL_MODEL: t('commercialProposal.itemInFinancialModel'),
+    PENDING: t('commercialProposal.itemPending'),
+    INVOICE_SELECTED: t('commercialProposal.itemInvoiceSelected'),
+    APPROVED_SUPPLY: t('commercialProposal.itemApprovedSupply'),
+    SUPPLY_APPROVED: t('commercialProposal.itemApprovedSupply'),
+    APPROVED_PROJECT: t('commercialProposal.itemApprovedProject'),
+    PROJECT_APPROVED: t('commercialProposal.itemApprovedProject'),
+    CONFIRMED: t('commercialProposal.itemConfirmed'),
+  };
+  return labels[status] ?? status;
 };
 
 interface CpMaterialsTabProps {
   proposalId: string;
   items: CommercialProposalItem[];
+  projectId?: string;
 }
 
-const CpMaterialsTab: React.FC<CpMaterialsTabProps> = ({ proposalId, items }) => {
+const CpMaterialsTab: React.FC<CpMaterialsTabProps> = ({ proposalId, items, projectId }) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [invoiceModalItem, setInvoiceModalItem] = useState<CommercialProposalItem | null>(null);
 
@@ -122,6 +132,7 @@ const CpMaterialsTab: React.FC<CpMaterialsTabProps> = ({ proposalId, items }) =>
                   <th className="px-3 py-2 font-medium text-right">{t('commercialProposal.colQty')}</th>
                   <th className="px-3 py-2 font-medium">{t('commercialProposal.colUnit')}</th>
                   <th className="px-3 py-2 font-medium text-right">{t('commercialProposal.colCostPrice')}</th>
+                  <th className="px-3 py-2 font-medium">{t('commercialProposal.colPriceSource')}</th>
                   <th className="px-3 py-2 font-medium">{t('commercialProposal.colStatus')}</th>
                   <th className="px-3 py-2 font-medium">{t('commercialProposal.colInvoice')}</th>
                   <th className="px-3 py-2 font-medium text-right">{t('commercialProposal.colActions')}</th>
@@ -146,10 +157,50 @@ const CpMaterialsTab: React.FC<CpMaterialsTabProps> = ({ proposalId, items }) =>
                       {(item.costPrice || 0).toLocaleString('ru-RU')} ₽
                     </td>
                     <td className="px-3 py-2">
+                      {item.estimateItemId ? (
+                        <button
+                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium hover:bg-blue-100 transition-colors"
+                          onClick={() => item.estimateId
+                            ? navigate(`/estimates/${item.estimateId}`)
+                            : navigate(`/estimates${projectId ? `?projectId=${projectId}` : ''}`)}
+                          title={t('commercialProposal.priceFromEstimate')}
+                        >
+                          <ExternalLink size={10} />
+                          {t('commercialProposal.priceFromEstimate')}
+                        </button>
+                      ) : item.competitiveListEntryId || item.competitiveListId ? (
+                        <button
+                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-medium hover:bg-purple-100 transition-colors"
+                          onClick={() => item.competitiveListId
+                            ? navigate(`/specifications${projectId ? `?projectId=${projectId}` : ''}`)
+                            : navigate(`/specifications${projectId ? `?projectId=${projectId}` : ''}`)}
+                          title={t('commercialProposal.priceFromCompetitiveList')}
+                        >
+                          <ExternalLink size={10} />
+                          {t('commercialProposal.priceFromCompetitiveList')}
+                        </button>
+                      ) : item.selectedInvoiceLineId ? (
+                        <button
+                          className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700 font-medium hover:bg-green-100 transition-colors"
+                          onClick={() => item.invoiceId
+                            ? navigate(`/invoices/${item.invoiceId}`)
+                            : navigate(`/invoices${projectId ? `?projectId=${projectId}&invoiceType=RECEIVED` : '?invoiceType=RECEIVED'}`)}
+                          title={t('commercialProposal.priceFromInvoice')}
+                        >
+                          <ExternalLink size={10} />
+                          {t('commercialProposal.priceFromInvoice')}
+                        </button>
+                      ) : (
+                        <span className="inline-flex items-center text-xs px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400">
+                          {t('commercialProposal.priceManual')}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
                       <StatusBadge
                         status={item.status}
                         colorMap={cpItemStatusColorMap}
-                        label={cpItemStatusLabels[item.status] ?? item.status}
+                        label={cpItemStatusLabel(item.status)}
                       />
                     </td>
                     <td className="px-3 py-2">

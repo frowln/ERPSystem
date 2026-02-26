@@ -1,6 +1,7 @@
 package com.privod.platform.modules.pmWorkflow.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.pmWorkflow.domain.Rfi;
 import com.privod.platform.modules.pmWorkflow.domain.RfiResponse;
 import com.privod.platform.modules.pmWorkflow.domain.RfiStatus;
@@ -61,9 +62,11 @@ public class RfiService {
 
     @Transactional
     public RfiResponseDto createRfi(CreateRfiRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String number = generateRfiNumber(request.projectId());
 
         Rfi rfi = Rfi.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .number(number)
                 .subject(request.subject())

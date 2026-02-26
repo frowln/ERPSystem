@@ -16,6 +16,7 @@ import {
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { ConfirmDialog } from '@/design-system/components/ConfirmDialog';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import {
   StatusBadge,
   paymentStatusLowerColorMap,
@@ -72,7 +73,12 @@ const PaymentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: payment } = useQuery<Payment>({
+  const {
+    data: payment,
+    isLoading: isPaymentLoading,
+    isError: isPaymentError,
+    refetch: refetchPayment,
+  } = useQuery<Payment>({
     queryKey: ['PAYMENT', id],
     queryFn: async () => {
       const data = await financeApi.getPayment(id!);
@@ -88,7 +94,47 @@ const PaymentDetailPage: React.FC = () => {
   const actions = useMemo(() => statusActions[effectiveStatus] ?? [], [effectiveStatus]);
   const auditTrail: AuditEntry[] = (p as any)?.auditTrail ?? [];
 
-  if (!p) return null;
+  if (!id) {
+    return (
+      <div className="animate-fade-in">
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.badRequest')}
+          description={t('errors.invalidIdFormat')}
+        />
+      </div>
+    );
+  }
+
+  if (isPaymentLoading) {
+    return (
+      <div className="animate-fade-in flex items-center justify-center py-16 text-neutral-500 dark:text-neutral-400">
+        {t('common.loading')}
+      </div>
+    );
+  }
+
+  if (isPaymentError || !p) {
+    return (
+      <div className="animate-fade-in">
+        <PageHeader
+          title={t('finance.paymentList.title')}
+          backTo="/payments"
+          breadcrumbs={[
+            { label: t('common.home'), href: '/' },
+            { label: t('finance.paymentList.title'), href: '/payments' },
+          ]}
+        />
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.noConnection')}
+          description={t('errors.serverErrorRetry')}
+          actionLabel={t('common.retry')}
+          onAction={() => void refetchPayment()}
+        />
+      </div>
+    );
+  }
 
   const handleStatusChange = (targetStatus: string) => {
     if (guardDemoModeAction(t('finance.paymentDetail.demoChangeStatus'))) return;

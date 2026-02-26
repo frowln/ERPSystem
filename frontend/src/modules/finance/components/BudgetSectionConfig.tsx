@@ -13,6 +13,46 @@ interface BudgetSectionConfigProps {
   onClose: () => void;
 }
 
+const SECTION_PRESETS: Record<string, { code: string; name: string }[]> = {
+  residential: [
+    { code: 'АР', name: 'Архитектурные решения' },
+    { code: 'КР', name: 'Конструктивные решения' },
+    { code: 'ОВ', name: 'Отопление и вентиляция' },
+    { code: 'ВК', name: 'Водоснабжение и канализация' },
+    { code: 'ЭО', name: 'Электрооборудование' },
+    { code: 'ЭМ', name: 'Электромонтаж' },
+    { code: 'СС', name: 'Слаботочные системы' },
+    { code: 'ГП', name: 'Генплан' },
+  ],
+  industrial: [
+    { code: 'АР', name: 'Архитектурные решения' },
+    { code: 'КР', name: 'Конструктивные решения' },
+    { code: 'ОВ', name: 'Отопление и вентиляция' },
+    { code: 'ВК', name: 'Водоснабжение и канализация' },
+    { code: 'ЭО', name: 'Электрооборудование' },
+    { code: 'ЭМ', name: 'Электромонтаж' },
+    { code: 'КИП', name: 'КИПиА' },
+    { code: 'АСУ', name: 'АСУ ТП' },
+    { code: 'ТХ', name: 'Технология' },
+    { code: 'ГП', name: 'Генплан' },
+  ],
+  road: [
+    { code: 'ЗП', name: 'Земляное полотно' },
+    { code: 'ДО', name: 'Дорожная одежда' },
+    { code: 'ОДЗ', name: 'Обустройство дорожной зоны' },
+    { code: 'ЭО', name: 'Электрооборудование' },
+    { code: 'ИО', name: 'Искусственные сооружения' },
+    { code: 'ГП', name: 'Генплан' },
+  ],
+  engineering: [
+    { code: 'ВК', name: 'Водоснабжение и канализация' },
+    { code: 'ТС', name: 'Тепловые сети' },
+    { code: 'ГС', name: 'Газовые сети' },
+    { code: 'ЭС', name: 'Электрические сети' },
+    { code: 'СС', name: 'Слаботочные системы' },
+  ],
+};
+
 const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, open, onClose }) => {
   const queryClient = useQueryClient();
 
@@ -46,6 +86,10 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['project-sections', projectId] });
       toast.success(t('finance.sections.updated'));
+      onClose();
+    },
+    onError: () => {
+      toast.error(t('errors.unexpectedError'));
     },
   });
 
@@ -58,6 +102,9 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
       setNewName('');
       toast.success(t('finance.sections.added'));
     },
+    onError: () => {
+      toast.error(t('errors.unexpectedError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -66,6 +113,9 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
       queryClient.invalidateQueries({ queryKey: ['project-sections', projectId] });
       toast.success(t('finance.sections.deleted'));
     },
+    onError: () => {
+      toast.error(t('errors.unexpectedError'));
+    },
   });
 
   const seedMutation = useMutation({
@@ -73,6 +123,9 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['project-sections', projectId] });
       toast.success(t('finance.sections.seeded'));
+    },
+    onError: () => {
+      toast.error(t('errors.unexpectedError'));
     },
   });
 
@@ -98,6 +151,21 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
       return next;
     });
     setDraggedSectionId(null);
+  };
+
+  const handleApplyPreset = async (presetKey: string) => {
+    const preset = SECTION_PRESETS[presetKey];
+    if (!preset) return;
+    if (orderedSections.length > 0 && !window.confirm(t('finance.sections.presetConfirm'))) return;
+    // Delete existing custom sections, then add preset sections one by one
+    for (const section of orderedSections.filter((s) => s.custom)) {
+      await financeApi.deleteCustomSection(projectId, section.id);
+    }
+    for (const item of preset) {
+      await financeApi.addCustomSection(projectId, item);
+    }
+    queryClient.invalidateQueries({ queryKey: ['project-sections', projectId] });
+    toast.success(t('finance.sections.updated'));
   };
 
   const handleSave = () => {
@@ -130,6 +198,27 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
           </button>
         </div>
 
+        {/* Preset selector */}
+        <div className="px-6 py-3 border-b border-neutral-200 dark:border-neutral-700">
+          <label className="block text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+            {t('finance.sections.presetLabel')}
+          </label>
+          <select
+            className={cn(
+              'w-full px-2 py-1.5 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg',
+              'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100',
+            )}
+            value=""
+            onChange={(e) => { if (e.target.value) handleApplyPreset(e.target.value); }}
+          >
+            <option value="" disabled>—</option>
+            <option value="residential">{t('finance.sections.presetResidential')}</option>
+            <option value="industrial">{t('finance.sections.presetIndustrial')}</option>
+            <option value="road">{t('finance.sections.presetRoad')}</option>
+            <option value="engineering">{t('finance.sections.presetEngineering')}</option>
+          </select>
+        </div>
+
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
           {orderedSections.length === 0 ? (
@@ -158,7 +247,7 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
                 onDrop={() => handleDrop(section.id)}
                 onDragEnd={() => setDraggedSectionId(null)}
                 className={cn(
-                  'flex items-center justify-between py-2 px-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors',
+                  'flex items-center justify-between py-2 px-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-grab',
                   draggedSectionId === section.id && 'opacity-50',
                 )}
               >
@@ -190,6 +279,11 @@ const BudgetSectionConfig: React.FC<BudgetSectionConfigProps> = ({ projectId, op
             ))
           )}
         </div>
+        {orderedSections.length > 0 && (
+          <div className="px-6 pb-3">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('finance.sections.dragHint')}</p>
+          </div>
+        )}
 
         {orderedSections.length > 0 && (
           <>

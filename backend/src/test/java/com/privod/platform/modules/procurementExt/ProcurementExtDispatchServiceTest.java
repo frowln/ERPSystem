@@ -7,7 +7,7 @@ import com.privod.platform.modules.procurementExt.domain.DispatchPriority;
 import com.privod.platform.modules.procurementExt.repository.DeliveryItemRepository;
 import com.privod.platform.modules.procurementExt.repository.DeliveryRepository;
 import com.privod.platform.modules.procurementExt.repository.DispatchItemRepository;
-import com.privod.platform.modules.procurementExt.repository.DispatchOrderRepository;
+import com.privod.platform.modules.procurementExt.repository.ProcurementDispatchOrderRepository;
 import com.privod.platform.modules.procurementExt.repository.MaterialReservationRepository;
 import com.privod.platform.modules.procurementExt.repository.SupplierRatingRepository;
 import com.privod.platform.modules.procurementExt.service.ProcurementExtService;
@@ -45,7 +45,7 @@ class ProcurementExtDispatchServiceTest {
     private DeliveryItemRepository deliveryItemRepository;
 
     @Mock
-    private DispatchOrderRepository dispatchOrderRepository;
+    private ProcurementDispatchOrderRepository dispatchOrderRepository;
 
     @Mock
     private DispatchItemRepository dispatchItemRepository;

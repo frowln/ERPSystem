@@ -5,13 +5,14 @@ import { t } from '@/i18n';
 import type { BudgetItem, BudgetItemType } from '@/types';
 import InlineEditCell from './InlineEditCell';
 import CvrBar from './CvrBar';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronsUpDown, ChevronsDownUp, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface FmItemsTableProps {
   budgetId: string;
   items: BudgetItem[];
-  branch: 'ALL' | 'WORKS' | 'MATERIALS';
+  branch: 'ALL' | 'WORKS' | 'MATERIALS' | 'EQUIPMENT';
+  validationMode?: 'soft' | 'hard';
 }
 
 const fmtAmt = (v?: number | null) =>
@@ -25,30 +26,80 @@ const marginColorClass = (pct?: number | null): string => {
   return 'text-green-600 dark:text-green-400';
 };
 
-const DocStatusBadge = ({ status }: { status?: string | null }) => {
-  if (!status) return null;
-  const map: Record<string, { label: string; cls: string }> = {
-    PLANNED: { label: 'План', cls: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300' },
-    TENDERED: { label: 'Тендер', cls: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
-    CONTRACTED: { label: 'Договор', cls: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' },
-    ACT_SIGNED: { label: 'Акт', cls: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-    INVOICED: { label: 'Счёт', cls: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
-    PAID: { label: 'Оплач', cls: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  };
-  const info = map[status] || { label: status, cls: 'bg-neutral-100 text-neutral-600' };
-  return <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${info.cls}`}>{info.label}</span>;
+const docStatusCls: Record<string, string> = {
+  PLANNED: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300',
+  TENDERED: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  CONTRACTED: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+  ACT_SIGNED: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+  INVOICED: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  PAID: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
 };
 
-export default function FmItemsTable({ budgetId, items, branch }: FmItemsTableProps) {
+const docStatusI18n: Record<string, string> = {
+  PLANNED: 'finance.docStatusPlanned',
+  TENDERED: 'finance.docStatusTendered',
+  CONTRACTED: 'finance.docStatusContracted',
+  ACT_SIGNED: 'finance.docStatusActSigned',
+  INVOICED: 'finance.docStatusInvoiced',
+  PAID: 'finance.docStatusPaid',
+};
+
+const DocStatusBadge = ({ status }: { status?: string | null }) => {
+  if (!status) return null;
+  const cls = docStatusCls[status] || 'bg-neutral-100 text-neutral-600';
+  const label = docStatusI18n[status] ? t(docStatusI18n[status]) : status;
+  return <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${cls}`}>{label}</span>;
+};
+
+export default function FmItemsTable({ budgetId, items, branch, validationMode = 'soft' }: FmItemsTableProps) {
   const queryClient = useQueryClient();
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
+  // Section IDs for expand/collapse all
+  const sectionIds = useMemo(() => items.filter((i) => i.section).map((i) => i.id), [items]);
+  const allCollapsed = sectionIds.length > 0 && sectionIds.every((id) => collapsedSections.has(id));
+
+  const toggleAllSections = () => {
+    if (allCollapsed) {
+      setCollapsedSections(new Set());
+    } else {
+      setCollapsedSections(new Set(sectionIds));
+    }
+  };
+
+  // Build proper tree order: section → its children → next section → its children...
+  // This fixes ordering when all items have sequence=0 (returned in undefined DB order)
+  const treeOrderedItems = useMemo(() => {
+    const childrenByParent = new Map<string, BudgetItem[]>();
+    const sections: BudgetItem[] = [];
+    const orphans: BudgetItem[] = [];
+
+    for (const item of items) {
+      if (item.section) {
+        sections.push(item);
+      } else if (item.parentId) {
+        if (!childrenByParent.has(item.parentId)) childrenByParent.set(item.parentId, []);
+        childrenByParent.get(item.parentId)!.push(item);
+      } else {
+        orphans.push(item);
+      }
+    }
+
+    const result: BudgetItem[] = [];
+    for (const section of sections) {
+      result.push(section);
+      result.push(...(childrenByParent.get(section.id) ?? []));
+    }
+    result.push(...orphans);
+    return result;
+  }, [items]);
+
   const filteredItems = useMemo(() => {
-    if (branch === 'ALL') return items;
-    return items.filter(
+    if (branch === 'ALL') return treeOrderedItems;
+    return treeOrderedItems.filter(
       (item) => item.section || item.itemType === branch,
     );
-  }, [items, branch]);
+  }, [treeOrderedItems, branch]);
 
   const toggleSection = (id: string) => {
     setCollapsedSections((prev) => {
@@ -68,6 +119,24 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
     return result;
   }, [filteredItems, collapsedSections]);
 
+  // Section subtotals
+  const sectionTotals = useMemo(() => {
+    const map = new Map<string, { costTotal: number; estimateTotal: number; customerTotal: number; ndvTotal: number; marginTotal: number }>();
+    for (const item of items) {
+      if (item.parentId && !item.section) {
+        const prev = map.get(item.parentId) || { costTotal: 0, estimateTotal: 0, customerTotal: 0, ndvTotal: 0, marginTotal: 0 };
+        const ct = (item.customerPrice ?? 0) * (item.quantity ?? 1);
+        prev.costTotal += (item.costPrice ?? 0) * (item.quantity ?? 1);
+        prev.estimateTotal += (item.estimatePrice ?? 0) * (item.quantity ?? 1);
+        prev.customerTotal += ct;
+        prev.ndvTotal += ct * 0.22;
+        prev.marginTotal += item.marginAmount ?? 0;
+        map.set(item.parentId, prev);
+      }
+    }
+    return map;
+  }, [items]);
+
   const patchMutation = useMutation({
     mutationFn: ({ itemId, data }: { itemId: string; data: Partial<BudgetItem> }) =>
       financeApi.updateBudgetItem(budgetId, itemId, data),
@@ -86,25 +155,50 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
       if (context?.prev) {
         queryClient.setQueryData(['budget-items', budgetId], context.prev);
       }
-      toast.error('Ошибка сохранения');
+      toast.error(t('finance.fm.toasts.saveError'));
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['budget-items', budgetId] });
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (itemId: string) => financeApi.deleteBudgetItem(budgetId, itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budget-items', budgetId] });
+      toast.success(t('finance.fm.toasts.itemDeleted'));
+    },
+    onError: () => toast.error(t('errors.unexpectedError')),
+  });
+
   const handleInlineEdit = (itemId: string, field: string, value: number) => {
+    // Hard validation mode: block save if customerPrice > estimatePrice
+    if (validationMode === 'hard' && field === 'customerPrice') {
+      const item = items.find((i) => i.id === itemId);
+      if (item && item.estimatePrice != null && value > item.estimatePrice) {
+        toast.error(t('finance.fm.validationHardError'));
+        return;
+      }
+    }
     patchMutation.mutate({ itemId, data: { [field]: value } });
+  };
+
+  const handleDelete = (itemId: string) => {
+    if (window.confirm(t('finance.fm.confirmDeleteItem'))) {
+      deleteMutation.mutate(itemId);
+    }
   };
 
   // Totals
   const totals = useMemo(() => {
     const nonSection = items.filter((i) => !i.section);
     const sum = (fn: (i: BudgetItem) => number) => nonSection.reduce((acc, i) => acc + fn(i), 0);
+    const customerTotal = sum((i) => (i.customerPrice ?? 0) * (i.quantity ?? 1));
     return {
       costTotal: sum((i) => (i.costPrice ?? 0) * (i.quantity ?? 1)),
       estimateTotal: sum((i) => (i.estimatePrice ?? 0) * (i.quantity ?? 1)),
-      customerTotal: sum((i) => (i.customerPrice ?? 0) * (i.quantity ?? 1)),
+      customerTotal,
+      ndvTotal: customerTotal * 0.22,
       marginTotal: sum((i) => i.marginAmount ?? 0),
       planned: sum((i) => i.plannedAmount ?? 0),
       contracted: sum((i) => i.contractedAmount ?? 0),
@@ -122,39 +216,77 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
 
   return (
     <div className="overflow-auto">
-      <table className="w-full text-sm min-w-[1200px]">
+      {/* Expand/Collapse All toggle */}
+      {sectionIds.length > 0 && (
+        <div className="px-3 py-1.5 border-b border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900">
+          <button
+            onClick={toggleAllSections}
+            className="flex items-center gap-1.5 px-2 py-1 text-xs text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+          >
+            {allCollapsed
+              ? <><ChevronsUpDown className="w-3.5 h-3.5" /> {t('finance.fm.expandAll')}</>
+              : <><ChevronsDownUp className="w-3.5 h-3.5" /> {t('finance.fm.collapseAll')}</>
+            }
+          </button>
+        </div>
+      )}
+
+      <table className="w-full text-sm min-w-[1380px]">
         <thead className="sticky top-0 z-10">
           <tr>
-            <th className={`${thCls} text-left w-[280px]`}>{t('fm.colName')}</th>
-            <th className={`${thCls} text-center w-[50px]`}>{t('fm.colUnit')}</th>
-            <th className={`${thCls} text-right w-[70px]`}>{t('fm.colQty')}</th>
-            <th className={`${thCls} text-right w-[100px]`}>{t('fm.colCostPrice')}</th>
-            <th className={`${thCls} text-right w-[110px]`}>{t('fm.colCostTotal')}</th>
-            <th className={`${thCls} text-right w-[110px]`}>{t('fm.colEstimate')}</th>
-            <th className={`${thCls} text-right w-[100px]`}>{t('fm.colCustomerPrice')}</th>
-            <th className={`${thCls} text-right w-[110px]`}>{t('fm.colCustomerTotal')}</th>
-            <th className={`${thCls} text-right w-[90px]`}>{t('fm.colMargin')}</th>
-            <th className={`${thCls} text-right w-[60px]`}>{t('fm.colMarginPct')}</th>
-            <th className={`${thCls} text-center w-[60px]`}>{t('fm.colDocStatus')}</th>
-            <th className={`${thCls} w-[130px]`}>{t('fm.colCvr')}</th>
+            <th className={`${thCls} text-left w-[260px]`}>{t('finance.fm.colName')}</th>
+            <th className={`${thCls} text-center w-[50px]`}>{t('finance.fm.colUnit')}</th>
+            <th className={`${thCls} text-right w-[70px]`}>{t('finance.fm.colQty')}</th>
+            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colCostPrice')}</th>
+            <th className={`${thCls} text-right w-[110px]`}>{t('finance.fm.colCostTotal')}</th>
+            <th className={`${thCls} text-right w-[110px]`}>{t('finance.fm.colEstimate')}</th>
+            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colCustomerPrice')}</th>
+            <th className={`${thCls} text-right w-[110px]`}>{t('finance.fm.colCustomerTotal')}</th>
+            <th className={`${thCls} text-right w-[95px]`} title={t('finance.fm.colNdvHint')}>{t('finance.fm.colNdv')}</th>
+            <th className={`${thCls} text-right w-[90px]`}>{t('finance.fm.colMargin')}</th>
+            <th className={`${thCls} text-right w-[60px]`}>{t('finance.fm.colMarginPct')}</th>
+            <th className={`${thCls} text-center w-[60px]`}>{t('finance.fm.colDocStatus')}</th>
+            <th className={`${thCls} w-[130px]`}>{t('finance.fm.colCvr')}</th>
+            <th className={`${thCls} w-[40px]`} />
           </tr>
         </thead>
         <tbody>
           {visibleItems.map((item) => {
             if (item.section) {
               const isCollapsed = collapsedSections.has(item.id);
+              const sub = sectionTotals.get(item.id);
               return (
                 <tr
                   key={item.id}
                   className="bg-neutral-50 dark:bg-neutral-800/50 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700/50"
                   onClick={() => toggleSection(item.id)}
                 >
-                  <td className={`${tdCls} font-semibold text-neutral-800 dark:text-neutral-200`} colSpan={12}>
+                  <td className={`${tdCls} font-semibold text-neutral-800 dark:text-neutral-200`} colSpan={4}>
                     <div className="flex items-center gap-1.5">
                       {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                       {item.name}
                     </div>
                   </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-neutral-700 dark:text-neutral-300`}>
+                    {sub ? fmtAmt(sub.costTotal) : ''}
+                  </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-neutral-700 dark:text-neutral-300`}>
+                    {sub ? fmtAmt(sub.estimateTotal) : ''}
+                  </td>
+                  <td className={tdCls} />
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-neutral-700 dark:text-neutral-300`}>
+                    {sub ? fmtAmt(sub.customerTotal) : ''}
+                  </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-violet-600 dark:text-violet-400`}>
+                    {sub ? fmtAmt(sub.ndvTotal) : ''}
+                  </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold ${sub ? marginColorClass(sub.customerTotal > 0 ? (sub.marginTotal / sub.customerTotal) * 100 : 0) : ''}`}>
+                    {sub ? fmtAmt(sub.marginTotal) : ''}
+                  </td>
+                  <td className={tdCls} />
+                  <td className={tdCls} />
+                  <td className={tdCls} />
+                  <td className={tdCls} />
                 </tr>
               );
             }
@@ -166,10 +298,11 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
               item.customerPrice != null &&
               item.estimatePrice != null &&
               item.customerPrice > item.estimatePrice;
+            const isHardWarning = showWarning && validationMode === 'hard';
 
             return (
-              <tr key={item.id} className="hover:bg-blue-50/40 dark:hover:bg-neutral-800/30">
-                <td className={`${tdCls} text-neutral-800 dark:text-neutral-200 truncate max-w-[280px]`}>
+              <tr key={item.id} className="group hover:bg-blue-50/40 dark:hover:bg-neutral-800/30">
+                <td className={`${tdCls} text-neutral-800 dark:text-neutral-200 truncate max-w-[260px]`}>
                   <span className={item.parentId ? 'pl-4' : ''}>{item.name}</span>
                 </td>
                 <td className={`${tdCls} text-center text-neutral-500 dark:text-neutral-400`}>{item.unit || '—'}</td>
@@ -192,20 +325,23 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
                   {fmtAmt(estimateTotal)}
                 </td>
                 <td className={`${tdCls} text-right`}>
-                  <span className={showWarning ? 'ring-1 ring-red-400 rounded' : ''}>
+                  <span className={isHardWarning ? 'ring-2 ring-red-500 rounded' : showWarning ? 'ring-1 ring-red-400 rounded' : ''}>
                     <InlineEditCell
                       value={item.customerPrice}
                       onSave={(v) => handleInlineEdit(item.id, 'customerPrice', v)}
                     />
                   </span>
                   {showWarning && (
-                    <span className="block text-[10px] text-red-500 mt-0.5" title={t('fm.customerPriceWarning')}>
+                    <span className="block text-[10px] text-red-500 mt-0.5" title={t('finance.fm.customerPriceWarning')}>
                       !
                     </span>
                   )}
                 </td>
                 <td className={`${tdCls} text-right tabular-nums text-neutral-700 dark:text-neutral-300 font-medium`}>
                   {fmtAmt(customerTotal)}
+                </td>
+                <td className={`${tdCls} text-right tabular-nums text-violet-600 dark:text-violet-400`}>
+                  {fmtAmt(customerTotal * 0.22)}
                 </td>
                 <td className={`${tdCls} text-right tabular-nums ${marginColorClass(item.marginPercent)}`}>
                   {fmtAmt(item.marginAmount)}
@@ -224,6 +360,15 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
                     paid={item.paidAmount ?? 0}
                   />
                 </td>
+                <td className={`${tdCls} text-center`}>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+                    className="opacity-0 group-hover:opacity-100 p-1 text-neutral-400 hover:text-red-500 dark:hover:text-red-400 rounded transition-all"
+                    title={t('finance.fm.deleteItem')}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </td>
               </tr>
             );
           })}
@@ -231,7 +376,7 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
         {/* Sticky footer */}
         <tfoot className="sticky bottom-0 bg-neutral-100 dark:bg-neutral-800 font-semibold">
           <tr>
-            <td className={`${tdCls} text-neutral-900 dark:text-neutral-100`}>{t('fm.totalFooter')}</td>
+            <td className={`${tdCls} text-neutral-900 dark:text-neutral-100`}>{t('finance.fm.totalFooter')}</td>
             <td className={tdCls} />
             <td className={tdCls} />
             <td className={tdCls} />
@@ -239,6 +384,7 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
             <td className={`${tdCls} text-right tabular-nums text-neutral-900 dark:text-neutral-100`}>{fmtAmt(totals.estimateTotal)}</td>
             <td className={tdCls} />
             <td className={`${tdCls} text-right tabular-nums text-neutral-900 dark:text-neutral-100`}>{fmtAmt(totals.customerTotal)}</td>
+            <td className={`${tdCls} text-right tabular-nums text-violet-600 dark:text-violet-400 font-bold`}>{fmtAmt(totals.ndvTotal)}</td>
             <td className={`${tdCls} text-right tabular-nums ${marginColorClass(marginPct)}`}>{fmtAmt(totals.marginTotal)}</td>
             <td className={`${tdCls} text-right tabular-nums ${marginColorClass(marginPct)}`}>{marginPct.toFixed(1)}%</td>
             <td className={tdCls} />
@@ -250,6 +396,7 @@ export default function FmItemsTable({ budgetId, items, branch }: FmItemsTablePr
                 paid={totals.paid}
               />
             </td>
+            <td className={tdCls} />
           </tr>
         </tfoot>
       </table>

@@ -1,6 +1,7 @@
 package com.privod.platform.modules.closeout.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.closeout.domain.HandoverPackage;
 import com.privod.platform.modules.closeout.domain.HandoverStatus;
 import com.privod.platform.modules.closeout.repository.HandoverPackageRepository;
@@ -54,8 +55,11 @@ public class HandoverPackageService {
 
     @Transactional
     public HandoverPackageResponse create(CreateHandoverPackageRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+
         HandoverPackage pkg = HandoverPackage.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .packageNumber(request.packageNumber())
                 .title(request.title())
                 .description(request.description())

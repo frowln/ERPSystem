@@ -83,6 +83,7 @@ public class PunchListService {
         PunchList punchList = PunchList.builder()
                 .code(code)
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .name(request.name())
                 .createdById(currentUserId)
                 .dueDate(request.dueDate())

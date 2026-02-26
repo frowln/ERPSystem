@@ -2,6 +2,7 @@ package com.privod.platform.modules.specification.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.specification.domain.SpecItem;
 import com.privod.platform.modules.specification.domain.SpecItemType;
 import com.privod.platform.modules.specification.domain.Specification;
@@ -38,6 +39,7 @@ public class SpecificationService {
 
     private final SpecificationRepository specificationRepository;
     private final SpecItemRepository specItemRepository;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -53,7 +55,10 @@ public class SpecificationService {
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
-        return specificationRepository.findAll(spec, pageable).map(SpecificationListResponse::fromEntity);
+        return specificationRepository.findAll(spec, pageable).map(s -> {
+            long cnt = specItemRepository.countBySpecificationIdAndDeletedFalse(s.getId());
+            return SpecificationListResponse.fromEntity(s, cnt);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -72,14 +77,24 @@ public class SpecificationService {
         String name = generateSpecName();
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
 
+        SpecificationStatus initialStatus = request.status() != null ? request.status() : SpecificationStatus.DRAFT;
+        // Resolve project name from the project entity if not supplied by the caller
+        String resolvedProjectName = request.projectName();
+        if ((resolvedProjectName == null || resolvedProjectName.isBlank()) && request.projectId() != null) {
+            resolvedProjectName = projectRepository.findById(request.projectId())
+                    .map(p -> p.getName())
+                    .orElse(null);
+        }
         Specification specification = Specification.builder()
                 .organizationId(organizationId)
                 .name(name)
+                .title(request.title() != null && !request.title().isBlank() ? request.title() : name)
                 .projectId(request.projectId())
+                .projectName(resolvedProjectName)
                 .contractId(request.contractId())
                 .docVersion(1)
                 .isCurrent(true)
-                .status(SpecificationStatus.DRAFT)
+                .status(initialStatus)
                 .notes(request.notes())
                 .build();
 
@@ -94,8 +109,17 @@ public class SpecificationService {
     public SpecificationResponse updateSpecification(UUID id, UpdateSpecificationRequest request) {
         Specification specification = getSpecificationOrThrow(id);
 
+        if (request.title() != null) {
+            specification.setTitle(request.title().isBlank() ? null : request.title());
+        }
+        if (request.projectName() != null) {
+            specification.setProjectName(request.projectName());
+        }
         if (request.contractId() != null) {
             specification.setContractId(request.contractId());
+        }
+        if (request.status() != null && specification.canTransitionTo(request.status())) {
+            specification.setStatus(request.status());
         }
         if (request.notes() != null) {
             specification.setNotes(request.notes());
@@ -197,13 +221,15 @@ public class SpecificationService {
         original.setCurrent(false);
         specificationRepository.save(original);
 
-        // Create new version
+        // Create new version — copy all metadata from original
         String name = generateSpecName();
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         Specification newVersion = Specification.builder()
                 .organizationId(organizationId)
                 .name(name)
+                .title(original.getTitle())
                 .projectId(original.getProjectId())
+                .projectName(original.getProjectName())
                 .contractId(original.getContractId())
                 .docVersion(original.getDocVersion() + 1)
                 .isCurrent(true)
@@ -220,11 +246,16 @@ public class SpecificationService {
             SpecItem copy = SpecItem.builder()
                     .specificationId(newVersion.getId())
                     .sequence(item.getSequence())
+                    .position(item.getPosition())
+                    .sectionName(item.getSectionName())
                     .itemType(item.getItemType())
                     .name(item.getName())
+                    .brand(item.getBrand())
                     .productCode(item.getProductCode())
+                    .manufacturer(item.getManufacturer())
                     .quantity(item.getQuantity())
                     .unitOfMeasure(item.getUnitOfMeasure())
+                    .weight(item.getWeight())
                     .plannedAmount(item.getPlannedAmount())
                     .notes(item.getNotes())
                     .procurementStatus("not_started")
@@ -256,11 +287,16 @@ public class SpecificationService {
         SpecItem item = SpecItem.builder()
                 .specificationId(specId)
                 .sequence(sequence)
+                .position(request.position())
+                .sectionName(request.sectionName())
                 .itemType(request.itemType())
                 .name(request.name())
+                .brand(request.brand())
                 .productCode(request.productCode())
+                .manufacturer(request.manufacturer())
                 .quantity(request.quantity())
                 .unitOfMeasure(request.unitOfMeasure())
+                .weight(request.weight())
                 .plannedAmount(request.plannedAmount())
                 .notes(request.notes())
                 .isCustomerProvided(request.isCustomerProvided() != null ? request.isCustomerProvided() : false)
@@ -283,14 +319,23 @@ public class SpecificationService {
         if (request.name() != null) {
             item.setName(request.name());
         }
+        if (request.brand() != null) {
+            item.setBrand(request.brand());
+        }
         if (request.productCode() != null) {
             item.setProductCode(request.productCode());
+        }
+        if (request.manufacturer() != null) {
+            item.setManufacturer(request.manufacturer());
         }
         if (request.quantity() != null) {
             item.setQuantity(request.quantity());
         }
         if (request.unitOfMeasure() != null) {
             item.setUnitOfMeasure(request.unitOfMeasure());
+        }
+        if (request.weight() != null) {
+            item.setWeight(request.weight());
         }
         if (request.plannedAmount() != null) {
             item.setPlannedAmount(request.plannedAmount());
@@ -310,12 +355,33 @@ public class SpecificationService {
         if (request.isCustomerProvided() != null) {
             item.setCustomerProvided(request.isCustomerProvided());
         }
+        if (request.budgetItemId() != null) {
+            item.setBudgetItemId(request.budgetItemId());
+        }
+        if (request.position() != null) {
+            item.setPosition(request.position());
+        }
+        if (request.sectionName() != null) {
+            item.setSectionName(request.sectionName());
+        }
 
         item = specItemRepository.save(item);
         auditService.logUpdate("SpecItem", item.getId(), "multiple", null, null);
 
         log.info("Spec item updated: {} ({})", item.getName(), item.getId());
         return SpecItemResponse.fromEntity(item);
+    }
+
+    @Transactional
+    public void deleteSpecification(UUID id) {
+        Specification specification = getSpecificationOrThrow(id);
+        specification.softDelete();
+        specificationRepository.save(specification);
+        // Soft-delete all items too
+        specItemRepository.findBySpecificationIdAndDeletedFalseOrderBySequenceAsc(id)
+                .forEach(item -> { item.softDelete(); specItemRepository.save(item); });
+        auditService.logDelete("Specification", id);
+        log.info("Specification deleted: {} ({})", specification.getName(), id);
     }
 
     @Transactional
@@ -390,23 +456,8 @@ public class SpecificationService {
 
     @Transactional
     public void recalculateSupplyStatus(UUID specId) {
-        List<SpecItem> items = specItemRepository.findBySpecificationIdAndDeletedFalseOrderBySequenceAsc(specId);
-
-        for (SpecItem item : items) {
-            BigDecimal qty = item.getQuantity();
-            BigDecimal covered = item.getCoveredQuantity() != null ? item.getCoveredQuantity() : BigDecimal.ZERO;
-
-            if (covered.compareTo(BigDecimal.ZERO) == 0) {
-                item.setSupplyStatus("NOT_COVERED");
-            } else if (covered.compareTo(qty) >= 0) {
-                item.setSupplyStatus("FULLY_COVERED");
-            } else {
-                item.setSupplyStatus("PARTIALLY_COVERED");
-            }
-            specItemRepository.save(item);
-        }
-
-        log.info("Supply status recalculated for specification: {}", specId);
+        // Method kept for compatibility but does nothing now that supply fields are decoupled from SpecItem
+        log.info("Supply status calculation is now handled by the procurement module.");
     }
 
     private Specification getSpecificationOrThrow(UUID id) {

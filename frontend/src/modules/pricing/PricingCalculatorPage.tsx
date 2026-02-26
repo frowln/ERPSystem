@@ -23,7 +23,7 @@ const PricingCalculatorPage: React.FC = () => {
         subtitle={t('pricing.calculator.subtitle')}
         breadcrumbs={[
           { label: t('common.home'), href: '/' },
-          { label: t('pricing.databases.breadcrumb'), href: '/pricing/databases' },
+          { label: t('pricing.databases.breadcrumb'), href: '/estimates/pricing/databases' },
           { label: t('pricing.calculator.breadcrumb') },
         ]}
         tabs={[

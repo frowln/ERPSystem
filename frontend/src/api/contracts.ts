@@ -23,6 +23,23 @@ export interface ContractDashboard {
   byStatus: { status: string; count: number; amount: number }[];
 }
 
+export interface Counterparty {
+  id: string;
+  name: string;
+  inn: string;
+  kpp: string;
+  ogrn: string;
+  legalAddress: string;
+  actualAddress: string;
+  bankAccount: string;
+  bik: string;
+  correspondentAccount: string;
+  supplier: boolean;
+  customer: boolean;
+  active: boolean;
+  createdAt: string;
+}
+
 export const contractsApi = {
   getContracts: async (params?: ContractFilters): Promise<PaginatedResponse<Contract>> => {
     const response = await apiClient.get<PaginatedResponse<Contract>>('/contracts', { params });
@@ -59,5 +76,29 @@ export const contractsApi = {
       params: projectId ? { projectId } : undefined,
     });
     return response.data;
+  },
+
+  getCounterparties: async (params?: { search?: string; size?: number }): Promise<PaginatedResponse<Counterparty>> => {
+    const response = await apiClient.get<PaginatedResponse<Counterparty>>('/counterparties', { params });
+    return response.data;
+  },
+
+  getCounterparty: async (id: string): Promise<Counterparty> => {
+    const response = await apiClient.get<Counterparty>(`/counterparties/${id}`);
+    return response.data;
+  },
+
+  createCounterparty: async (data: Partial<Counterparty>): Promise<Counterparty> => {
+    const response = await apiClient.post<Counterparty>('/counterparties', data);
+    return response.data;
+  },
+
+  updateCounterparty: async (id: string, data: Partial<Counterparty>): Promise<Counterparty> => {
+    const response = await apiClient.put<Counterparty>(`/counterparties/${id}`, data);
+    return response.data;
+  },
+
+  deleteCounterparty: async (id: string): Promise<void> => {
+    await apiClient.delete(`/counterparties/${id}`);
   },
 };

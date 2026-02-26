@@ -74,6 +74,36 @@ export interface CreatePriceIndexRequest {
   source?: string;
 }
 
+export interface PricingImportReport {
+  databaseId: string;
+  source: string;
+  totalRows: number;
+  importedRows: number;
+  duplicateRows: number;
+  skippedRows: number;
+  errorRows: number;
+  errors: string[];
+}
+
+export interface QuarterlyPriceIndexImportRequest {
+  quarter: string;
+  source?: string;
+  entries: Array<{
+    region: string;
+    workType: string;
+    baseQuarter?: string;
+    indexValue: number;
+  }>;
+}
+
+export interface QuarterlyPriceIndexImportResult {
+  quarter: string;
+  totalEntries: number;
+  importedEntries: number;
+  duplicateEntries: number;
+  skippedEntries: number;
+}
+
 export interface PriceCalculationResult {
   rateId: string;
   rateCode: string;
@@ -132,10 +162,10 @@ export const pricingApi = {
     return response.data;
   },
 
-  importRates: async (databaseId: string, file: File): Promise<number> => {
+  importRates: async (databaseId: string, file: File): Promise<PricingImportReport> => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await apiClient.post<number>('/integrations/pricing/rates/import', formData, {
+    const response = await apiClient.post<PricingImportReport>('/integrations/pricing/rates/import', formData, {
       params: { databaseId },
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -164,6 +194,14 @@ export const pricingApi = {
 
   createIndex: async (data: CreatePriceIndexRequest): Promise<PriceIndex> => {
     const response = await apiClient.post<PriceIndex>('/integrations/pricing/indices', data);
+    return response.data;
+  },
+
+  importQuarterlyIndices: async (data: QuarterlyPriceIndexImportRequest): Promise<QuarterlyPriceIndexImportResult> => {
+    const response = await apiClient.post<QuarterlyPriceIndexImportResult>(
+      '/integrations/pricing/indices/import-quarterly',
+      data,
+    );
     return response.data;
   },
 

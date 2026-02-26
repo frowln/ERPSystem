@@ -9,10 +9,13 @@ import com.privod.platform.modules.integration.pricing.repository.PriceRateRepos
 import com.privod.platform.modules.integration.pricing.repository.PricingDatabaseRepository;
 import com.privod.platform.modules.integration.pricing.web.dto.CreatePriceIndexRequest;
 import com.privod.platform.modules.integration.pricing.web.dto.CreatePricingDatabaseRequest;
+import com.privod.platform.modules.integration.pricing.web.dto.ImportQuarterlyPriceIndicesRequest;
 import com.privod.platform.modules.integration.pricing.web.dto.PriceCalculationResponse;
 import com.privod.platform.modules.integration.pricing.web.dto.PriceIndexResponse;
+import com.privod.platform.modules.integration.pricing.web.dto.PricingImportReportResponse;
 import com.privod.platform.modules.integration.pricing.web.dto.PriceRateResponse;
 import com.privod.platform.modules.integration.pricing.web.dto.PricingDatabaseResponse;
+import com.privod.platform.modules.integration.pricing.web.dto.QuarterlyIndexImportResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -192,6 +195,14 @@ public class PricingService {
 
     @Transactional
     public PriceIndexResponse createIndex(CreatePriceIndexRequest request) {
+        if (indexRepository.existsByRegionAndWorkTypeAndBaseQuarterAndTargetQuarterAndDeletedFalse(
+                request.region(),
+                request.workType(),
+                request.baseQuarter(),
+                request.targetQuarter())) {
+            throw new IllegalArgumentException("Индекс с такой комбинацией region/workType/baseQuarter/targetQuarter уже существует");
+        }
+
         PriceIndex index = PriceIndex.builder()
                 .region(request.region())
                 .workType(request.workType())
@@ -210,14 +221,76 @@ public class PricingService {
         return PriceIndexResponse.fromEntity(index);
     }
 
+    @Transactional
+    public QuarterlyIndexImportResponse importQuarterlyIndices(ImportQuarterlyPriceIndicesRequest request) {
+        int imported = 0;
+        int duplicates = 0;
+        int skipped = 0;
+
+        for (ImportQuarterlyPriceIndicesRequest.IndexEntry entry : request.entries()) {
+            String workType = normalizeWorkType(entry.workType());
+            String baseQuarter = normalizeQuarter(entry.baseQuarter(), request.quarter());
+            String targetQuarter = normalizeQuarter(request.quarter(), request.quarter());
+
+            if (entry.region() == null || entry.region().isBlank() || entry.indexValue() == null) {
+                skipped++;
+                continue;
+            }
+
+            boolean duplicate = indexRepository.existsByRegionAndWorkTypeAndBaseQuarterAndTargetQuarterAndDeletedFalse(
+                    entry.region().trim(),
+                    workType,
+                    baseQuarter,
+                    targetQuarter
+            );
+
+            if (duplicate) {
+                duplicates++;
+                continue;
+            }
+
+            PriceIndex index = PriceIndex.builder()
+                    .region(entry.region().trim())
+                    .workType(workType)
+                    .baseQuarter(baseQuarter)
+                    .targetQuarter(targetQuarter)
+                    .indexValue(entry.indexValue())
+                    .source(request.source())
+                    .build();
+            indexRepository.save(index);
+            imported++;
+        }
+
+        log.info("Квартальный импорт индексов: quarter={}, imported={}, duplicates={}, skipped={}",
+                request.quarter(), imported, duplicates, skipped);
+
+        return new QuarterlyIndexImportResponse(
+                normalizeQuarter(request.quarter(), request.quarter()),
+                request.entries().size(),
+                imported,
+                duplicates,
+                skipped
+        );
+    }
+
     // === CSV Import ===
 
     @Transactional
     public int importRatesFromCsv(UUID databaseId, InputStream inputStream) {
+        return importRatesWithReport(databaseId, inputStream).importedRows();
+    }
+
+    @Transactional
+    public PricingImportReportResponse importRatesWithReport(UUID databaseId, InputStream inputStream) {
         getDatabaseOrThrow(databaseId);
 
-        List<PriceRate> rates = new ArrayList<>();
+        List<PriceRate> ratesToPersist = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         int lineNumber = 0;
+        int totalRows = 0;
+        int duplicateRows = 0;
+        int skippedRows = 0;
+        int errorRows = 0;
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
@@ -231,7 +304,9 @@ public class PricingService {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
+                totalRows++;
                 if (line.isBlank()) {
+                    skippedRows++;
                     continue;
                 }
 
@@ -239,12 +314,24 @@ public class PricingService {
                     String[] fields = line.split(";", -1);
                     if (fields.length < 6) {
                         log.warn("Пропуск строки {} в CSV: недостаточно полей ({})", lineNumber, fields.length);
+                        skippedRows++;
+                        continue;
+                    }
+
+                    String code = fields[0].trim();
+                    if (code.isBlank()) {
+                        skippedRows++;
+                        continue;
+                    }
+
+                    if (rateRepository.existsByDatabaseIdAndCodeAndDeletedFalse(databaseId, code)) {
+                        duplicateRows++;
                         continue;
                     }
 
                     PriceRate rate = PriceRate.builder()
                             .databaseId(databaseId)
-                            .code(fields[0].trim())
+                            .code(code)
                             .name(fields[1].trim())
                             .unit(fields[2].trim())
                             .laborCost(parseBigDecimal(fields[3]))
@@ -256,21 +343,32 @@ public class PricingService {
                             .subcategory(fields.length > 9 ? fields[9].trim() : null)
                             .build();
 
-                    rates.add(rate);
+                    ratesToPersist.add(rate);
                 } catch (Exception e) {
                     log.warn("Ошибка парсинга строки {} в CSV: {}", lineNumber, e.getMessage());
+                    errorRows++;
+                    errors.add("Строка " + lineNumber + ": " + e.getMessage());
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Ошибка чтения CSV-файла: " + e.getMessage(), e);
         }
 
-        if (!rates.isEmpty()) {
-            rateRepository.saveAll(rates);
-            log.info("Импортировано {} расценок в базу {}", rates.size(), databaseId);
+        if (!ratesToPersist.isEmpty()) {
+            rateRepository.saveAll(ratesToPersist);
+            log.info("Импортировано {} расценок в базу {}", ratesToPersist.size(), databaseId);
         }
 
-        return rates.size();
+        return new PricingImportReportResponse(
+                databaseId,
+                "CSV",
+                totalRows,
+                ratesToPersist.size(),
+                duplicateRows,
+                skippedRows,
+                errorRows,
+                errors
+        );
     }
 
     // === Export ===
@@ -368,5 +466,44 @@ public class PricingService {
 
     private String bdToString(BigDecimal value) {
         return value != null ? value.toPlainString() : "0";
+    }
+
+    private String normalizeWorkType(String rawWorkType) {
+        if (rawWorkType == null || rawWorkType.isBlank()) {
+            return "СМР";
+        }
+        String normalized = rawWorkType.trim();
+        return switch (normalized.toLowerCase()) {
+            case "construction", "смр" -> "СМР";
+            case "materials", "материалы" -> "Материалы";
+            case "equipment", "машины", "механизмы" -> "Машины";
+            default -> normalized;
+        };
+    }
+
+    private String normalizeQuarter(String rawQuarter, String fallbackQuarter) {
+        String value = (rawQuarter == null || rawQuarter.isBlank())
+                ? fallbackQuarter
+                : rawQuarter;
+        if (value == null || value.isBlank()) {
+            return getCurrentQuarter();
+        }
+
+        String normalized = value.trim().toUpperCase();
+        if (normalized.matches("\\d{4}-Q[1-4]")) {
+            return normalized;
+        }
+        if (normalized.matches("\\d{4}/Q[1-4]")) {
+            return normalized.replace('/', '-');
+        }
+        if (normalized.matches("[1-4]Q\\d{4}")) {
+            return normalized.substring(2) + "-Q" + normalized.charAt(0);
+        }
+        if (normalized.matches("\\d{4}[- ]?[1-4]")) {
+            String year = normalized.substring(0, 4);
+            char q = normalized.charAt(normalized.length() - 1);
+            return year + "-Q" + q;
+        }
+        return normalized;
     }
 }

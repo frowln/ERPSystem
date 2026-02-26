@@ -68,6 +68,11 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Callers can pass { headers: { 'x-silent-errors': 'true' } } to suppress global toasts
+    if ((error.config as { _silentErrors?: boolean })?._silentErrors) {
+      return Promise.reject(error);
+    }
+
     const status = error.response?.status;
     const errorData = error.response?.data as { message?: string; error?: { code?: number; message?: string } };
     const message =

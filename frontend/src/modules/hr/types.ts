@@ -164,3 +164,140 @@ export interface CrewTimeSheet {
   createdAt: string;
   updatedAt: string;
 }
+
+// ---------------------------------------------------------------------------
+// Staffing Schedule
+// ---------------------------------------------------------------------------
+
+export interface StaffingPosition {
+  id: string;
+  department: string;
+  position: string;
+  grade: string;
+  salaryMin: number;
+  salaryMax: number;
+  filled: number;
+  total: number;
+  vacancies: {
+    id: string;
+    status: 'open' | 'in_progress' | 'closed';
+  }[];
+}
+
+export interface CreateVacancyRequest {
+  department: string;
+  position: string;
+  grade: string;
+  salaryMin: number;
+  salaryMax: number;
+}
+
+// ---------------------------------------------------------------------------
+// Timesheet T-13 (Goskomstat form)
+// ---------------------------------------------------------------------------
+
+export interface TimesheetT13Cell {
+  employeeId: string;
+  employeeName: string;
+  day: number;
+  code: string;
+  dayHours: number;
+  nightHours: number;
+}
+
+export interface TimesheetT13Row {
+  employeeId: string;
+  employeeName: string;
+  position: string;
+  cells: TimesheetT13Cell[];
+  totalDays: number;
+  totalHours: number;
+  totalNightHours: number;
+}
+
+export interface UpdateTimesheetCellRequest {
+  employeeId: string;
+  day: number;
+  code: string;
+  dayHours: number;
+  nightHours: number;
+}
+
+// ---------------------------------------------------------------------------
+// Work Orders (Наряды)
+// ---------------------------------------------------------------------------
+
+export type HrWorkOrderType = 'task_order' | 'access_order';
+export type HrWorkOrderStatus = 'draft' | 'issued' | 'in_progress' | 'completed' | 'cancelled';
+
+export interface HrWorkOrder {
+  id: string;
+  number: string;
+  type: HrWorkOrderType;
+  projectId: string;
+  projectName: string;
+  crewName: string;
+  workDescription: string;
+  date: string;
+  endDate?: string;
+  safetyRequirements?: string;
+  hazardousConditions?: string;
+  requiredPermits?: string[];
+  status: HrWorkOrderStatus;
+}
+
+export interface CreateWorkOrderRequest {
+  type: HrWorkOrderType;
+  projectId: string;
+  crewName: string;
+  workDescription: string;
+  date: string;
+  endDate?: string;
+  safetyRequirements?: string;
+  hazardousConditions?: string;
+  requiredPermits?: string[];
+}
+
+// ---------------------------------------------------------------------------
+// Qualifications & Permits
+// ---------------------------------------------------------------------------
+
+export type QualificationStatus = 'valid' | 'expiring' | 'expired';
+
+export interface QualificationRecord {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  qualificationType: string;
+  certificateNumber: string;
+  issueDate: string;
+  expiryDate: string;
+  status: QualificationStatus;
+  daysRemaining: number;
+}
+
+export interface CreateQualificationRequest {
+  employeeId: string;
+  qualificationType: string;
+  certificateNumber: string;
+  issueDate: string;
+  expiryDate: string;
+}
+
+// ---------------------------------------------------------------------------
+// Seniority & Leave
+// ---------------------------------------------------------------------------
+
+export interface SeniorityRecord {
+  employeeId: string;
+  employeeName: string;
+  hireDate: string;
+  seniorityYears: number;
+  seniorityMonths: number;
+  seniorityDays: number;
+  baseLeave: number;
+  additionalLeave: number;
+  totalLeave: number;
+  usedLeave: number;
+  remainingLeave: number;
+}

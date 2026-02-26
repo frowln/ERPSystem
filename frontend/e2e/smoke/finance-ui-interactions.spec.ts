@@ -15,6 +15,7 @@ type Summary = {
 };
 
 const NOT_FOUND_PATTERN = /page not found|страница не найдена/i;
+const INVALID_ID_PATTERN = /invalid uuid|некорректный формат id/i;
 
 async function readSummary(): Promise<Summary> {
   const summaryPath = process.env.FINANCE_SUMMARY_FILE
@@ -27,6 +28,24 @@ async function expectNotFoundIsAbsent(route: string, bodyText: string) {
   expect(bodyText, `Detected 404 fallback on route ${route}`).not.toMatch(NOT_FOUND_PATTERN);
 }
 
+async function expectInvalidIdToastIsAbsent(route: string, pageText: string) {
+  expect(pageText, `Detected invalid-id error toast on route ${route}`).not.toMatch(INVALID_ID_PATTERN);
+}
+
+async function gotoStable(page: import('@playwright/test').Page, route: string): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await page.goto(route, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+      return;
+    } catch (error) {
+      lastError = error;
+      await page.waitForTimeout(400 * (attempt + 1));
+    }
+  }
+  throw lastError;
+}
+
 test.describe('Finance UI interactions', () => {
   test.use({ storageState: 'e2e/.auth/user.json' });
   test.describe.configure({ mode: 'serial' });
@@ -35,7 +54,7 @@ test.describe('Finance UI interactions', () => {
     const summary = await readSummary();
     const route = `/budgets/${summary.budget.id}`;
 
-    await page.goto(route);
+    await gotoStable(page, route);
     await expect(page.locator('body')).toBeVisible();
     await expectNotFoundIsAbsent(route, await page.locator('body').innerText());
 
@@ -58,7 +77,7 @@ test.describe('Finance UI interactions', () => {
     await expect(page.locator('form')).toBeVisible();
 
     const fmRoute = `/budgets/${summary.budget.id}/fm`;
-    await page.goto(fmRoute);
+    await gotoStable(page, fmRoute);
     await expect(page.locator('body')).toBeVisible();
     await expectNotFoundIsAbsent(fmRoute, await page.locator('body').innerText());
 
@@ -79,7 +98,7 @@ test.describe('Finance UI interactions', () => {
     const summary = await readSummary();
     const route = `/contracts/${summary.contracts.ids[0]}`;
 
-    await page.goto(route);
+    await gotoStable(page, route);
     await expect(page.locator('body')).toBeVisible();
     await expectNotFoundIsAbsent(route, await page.locator('body').innerText());
 
@@ -100,7 +119,7 @@ test.describe('Finance UI interactions', () => {
     const summary = await readSummary();
     const cpRoute = `/commercial-proposals/${summary.commercialProposal.id}`;
 
-    await page.goto(cpRoute);
+    await gotoStable(page, cpRoute);
     await expect(page.locator('body')).toBeVisible();
     await expectNotFoundIsAbsent(cpRoute, await page.locator('body').innerText());
 
@@ -111,7 +130,7 @@ test.describe('Finance UI interactions', () => {
     }
 
     const clRoute = `/specifications/${summary.specification.id}/competitive-list/${summary.competitiveList.id}`;
-    await page.goto(clRoute);
+    await gotoStable(page, clRoute);
     await expect(page.locator('body')).toBeVisible();
     await expectNotFoundIsAbsent(clRoute, await page.locator('body').innerText());
 
@@ -143,6 +162,8 @@ test.describe('Finance UI interactions', () => {
       '/specifications',
       `/specifications/${summary.specification.id}`,
       `/specifications/${summary.specification.id}/competitive-list/${summary.competitiveList.id}`,
+      '/specifications/analogs',
+      '/specifications/analog-requests',
       '/payments',
       ...(summary.payments?.ids?.[0] ? [`/payments/${summary.payments.ids[0]}`] : []),
       '/contracts/new',
@@ -170,9 +191,11 @@ test.describe('Finance UI interactions', () => {
     ];
 
     for (const route of routes) {
-      await page.goto(route);
+      await gotoStable(page, route);
       await expect(page.locator('body')).toBeVisible();
-      await expectNotFoundIsAbsent(route, await page.locator('body').innerText());
+      const bodyText = await page.locator('body').innerText();
+      await expectNotFoundIsAbsent(route, bodyText);
+      await expectInvalidIdToastIsAbsent(route, bodyText);
     }
   });
 });

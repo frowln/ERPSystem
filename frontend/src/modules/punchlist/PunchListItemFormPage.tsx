@@ -9,6 +9,8 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { punchlistApi } from '@/api/punchlist';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 import type { CreatePunchItemRequest, PunchCategory, PunchItem } from './types';
 
@@ -45,21 +47,6 @@ const priorityOptions = [
   { value: 'CRITICAL', label: t('forms.punchListItem.priorities.critical') },
 ];
 
-const projectOptions = [
-  { value: '1', label: t('regulatory.projectSunny') },
-  { value: '2', label: t('mockData.projectHorizon') },
-  { value: '3', label: t('regulatory.projectBridgeLabel') },
-  { value: '6', label: t('regulatory.projectCentral') },
-];
-
-const assigneeOptions = [
-  { value: '', label: t('forms.punchListItem.assigneeNotAssigned') },
-  { value: 'u1', label: t('mockData.personIvanovII') },
-  { value: 'u2', label: t('mockData.personPetrovPP') },
-  { value: 'u3', label: t('mockData.personSidorovSS') },
-  { value: 'u4', label: t('mockData.personKozlovKK') },
-];
-
 const mapUiCategoryToApiCategory: Record<UiPunchCategory, PunchCategory> = {
   DEFICIENCY: 'STRUCTURAL',
   INCOMPLETE_WORK: 'ARCHITECTURAL',
@@ -88,6 +75,21 @@ const PunchListItemFormPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => permissionsApi.getUsers(),
+  });
+  const assigneeOptions = [
+    { value: '', label: t('forms.punchListItem.assigneeNotAssigned') },
+    ...(usersData?.content ?? []).map(u => ({ value: u.id, label: `${u.lastName} ${u.firstName}` })),
+  ];
 
   const { data: existingItem } = useQuery<PunchItem>({
     queryKey: ['punchItem', id],
@@ -131,12 +133,12 @@ const PunchListItemFormPage: React.FC = () => {
       const payload: CreatePunchItemRequest = {
         title: data.title,
         description: data.description,
-        punchListId: existingItem?.punchListId ?? 'pl1',
+        punchListId: existingItem?.punchListId ?? '',
         priority: data.priority,
         category: mapUiCategoryToApiCategory[data.category],
         projectId: data.projectId,
         location: data.location?.trim() || t('forms.punchListItem.locationNotSpecified'),
-        assignedToId: data.assignedToId || 'u1',
+        assignedToId: data.assignedToId || '',
         dueDate: data.dueDate || undefined,
         notes: data.photoNote || undefined,
       };
@@ -161,7 +163,7 @@ const PunchListItemFormPage: React.FC = () => {
         location: data.location?.trim() || t('forms.punchListItem.locationNotSpecified'),
         category: mapUiCategoryToApiCategory[data.category],
         priority: data.priority,
-        assignedToId: data.assignedToId || 'u1',
+        assignedToId: data.assignedToId || '',
         dueDate: data.dueDate || undefined,
         notes: data.photoNote || undefined,
       });

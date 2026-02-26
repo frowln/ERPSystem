@@ -29,11 +29,14 @@ public record LocalEstimateDetailResponse(
         BigDecimal vatRate,
         String notes,
         Instant calculatedAt,
+        LocalEstimateResponse estimate,
         List<LocalEstimateLineResponse> lines,
         Instant createdAt,
         Instant updatedAt
 ) {
     public static LocalEstimateDetailResponse fromEntity(LocalEstimate entity, List<LocalEstimateLineResponse> lines) {
+        long lineCount = lines != null ? lines.size() : 0;
+        LocalEstimateResponse estimate = LocalEstimateResponse.fromEntity(entity, lineCount);
         return new LocalEstimateDetailResponse(
                 entity.getId(),
                 entity.getOrganizationId(),
@@ -54,6 +57,7 @@ public record LocalEstimateDetailResponse(
                 entity.getVatRate(),
                 entity.getNotes(),
                 entity.getCalculatedAt(),
+                estimate,
                 lines,
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()

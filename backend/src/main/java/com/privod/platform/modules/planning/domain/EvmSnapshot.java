@@ -72,4 +72,7 @@ public class EvmSnapshot extends BaseEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "wbs_node_id")
+    private UUID wbsNodeId;
 }

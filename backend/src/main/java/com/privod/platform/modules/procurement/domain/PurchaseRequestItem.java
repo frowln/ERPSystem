@@ -53,6 +53,20 @@ public class PurchaseRequestItem extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "status", length = 50)
+    @Builder.Default
+    private String status = "PENDING";
+
+    @Column(name = "covered_quantity", precision = 18, scale = 4)
+    @Builder.Default
+    private BigDecimal coveredQuantity = BigDecimal.ZERO;
+
+    @Column(name = "best_price", precision = 18, scale = 2)
+    private BigDecimal bestPrice;
+
+    @Column(name = "best_vendor_name", length = 500)
+    private String bestVendorName;
+
     public void computeAmount() {
         if (this.quantity != null && this.unitPrice != null) {
             this.amount = this.quantity.multiply(this.unitPrice);

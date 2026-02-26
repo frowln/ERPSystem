@@ -20,6 +20,19 @@ import type {
   PaginatedResponse,
   PaginationParams,
 } from '@/types';
+import type {
+  BankTransaction,
+  FactoringCalcResult,
+  TreasuryPayment,
+  TaxDeadline,
+  BankExportRecord,
+  ExecutionChainSummary,
+  RoiResult,
+  MarginScenario,
+  ProcurementScheduleItem,
+  MobilizationSchedule,
+  MobilizationLine,
+} from '@/modules/finance/types';
 
 export interface BudgetFilters extends PaginationParams {
   status?: string;
@@ -41,6 +54,14 @@ export interface ExpenseFilters extends PaginationParams {
 export interface CreateCommercialProposalRequest {
   budgetId: string;
   name: string;
+  specificationId?: string;
+  notes?: string;
+}
+
+export interface UpdateCommercialProposalItemRequest {
+  costPrice?: number;
+  quantity?: number;
+  tradingCoefficient?: number;
   notes?: string;
 }
 
@@ -90,6 +111,11 @@ export const financeApi = {
 
   getInvoiceLines: async (invoiceId: string): Promise<InvoiceLine[]> => {
     const response = await apiClient.get<InvoiceLine[]>(`/invoices/${invoiceId}/lines`);
+    return response.data;
+  },
+
+  getInvoicePayments: async (invoiceId: string): Promise<Payment[]> => {
+    const response = await apiClient.get<Payment[]>(`/invoices/${invoiceId}/payments`);
     return response.data;
   },
 
@@ -250,7 +276,7 @@ export const financeApi = {
 
   // Invoice Matching
   matchInvoiceToPositions: async (invoiceId: string, budgetId: string): Promise<InvoiceMatchCandidate[]> => {
-    const response = await apiClient.get<InvoiceMatchCandidate[]>(`/invoices/${invoiceId}/match`, {
+    const response = await apiClient.get<InvoiceMatchCandidate[]>(`/invoices/${invoiceId}/matches`, {
       params: { budgetId },
     });
     return response.data;
@@ -258,6 +284,11 @@ export const financeApi = {
 
   validateThreeWayMatch: async (invoiceId: string): Promise<ThreeWayMatchResult> => {
     const response = await apiClient.get<ThreeWayMatchResult>(`/invoices/${invoiceId}/three-way-match`);
+    return response.data;
+  },
+
+  linkInvoiceLine: async (invoiceId: string, lineId: string, budgetItemId: string, cpItemId?: string): Promise<InvoiceLine> => {
+    const response = await apiClient.post<InvoiceLine>(`/invoices/${invoiceId}/lines/${lineId}/link`, { budgetItemId, cpItemId });
     return response.data;
   },
 
@@ -280,6 +311,18 @@ export const financeApi = {
 
   getProposalItems: async (proposalId: string): Promise<CommercialProposalItem[]> => {
     const response = await apiClient.get<CommercialProposalItem[]>(`/commercial-proposals/${proposalId}/items`);
+    return response.data;
+  },
+
+  updateCommercialProposalItem: async (
+    proposalId: string,
+    itemId: string,
+    data: UpdateCommercialProposalItemRequest,
+  ): Promise<CommercialProposalItem> => {
+    const response = await apiClient.put<CommercialProposalItem>(
+      `/commercial-proposals/${proposalId}/items/${itemId}`,
+      data,
+    );
     return response.data;
   },
 
@@ -334,7 +377,10 @@ export const financeApi = {
   },
 
   // Budget Snapshots
-  createSnapshot: async (budgetId: string, data: { name: string; notes?: string }): Promise<BudgetSnapshot> => {
+  createSnapshot: async (
+    budgetId: string,
+    data: { name: string; snapshotType?: 'BASELINE' | 'REFORECAST' | 'SNAPSHOT'; sourceSnapshotId?: string; notes?: string },
+  ): Promise<BudgetSnapshot> => {
     const response = await apiClient.post<BudgetSnapshot>(`/budgets/${budgetId}/snapshots`, data);
     return response.data;
   },
@@ -344,9 +390,46 @@ export const financeApi = {
     return response.data;
   },
 
-  compareSnapshot: async (budgetId: string, snapshotId: string): Promise<SnapshotComparison> => {
-    const response = await apiClient.get<SnapshotComparison>(`/budgets/${budgetId}/snapshots/${snapshotId}/compare`);
+  compareSnapshot: async (
+    budgetId: string,
+    snapshotId: string,
+    targetSnapshotId?: string,
+  ): Promise<SnapshotComparison> => {
+    const response = await apiClient.get<SnapshotComparison>(
+      `/budgets/${budgetId}/snapshots/${snapshotId}/compare`,
+      { params: targetSnapshotId ? { targetSnapshotId } : undefined },
+    );
     return response.data;
+  },
+
+  importFromEstimate: async (budgetId: string, estimateId: string): Promise<BudgetItem[]> => {
+    const response = await apiClient.post<BudgetItem[]>(`/budgets/${budgetId}/items/import-estimate`, null, {
+      params: { estimateId },
+    });
+    return response.data;
+  },
+
+  createBudgetItem: async (budgetId: string, data: {
+    name: string;
+    category: string;
+    section?: boolean;
+    itemType?: string;
+    unit?: string;
+    quantity?: number;
+    costPrice?: number;
+    estimatePrice?: number;
+    customerPrice?: number;
+    plannedAmount?: number;
+    parentId?: string;
+    sectionId?: string;
+    disciplineMark?: string;
+  }): Promise<BudgetItem> => {
+    const response = await apiClient.post<BudgetItem>(`/budgets/${budgetId}/items`, data);
+    return response.data;
+  },
+
+  deleteBudgetItem: async (budgetId: string, itemId: string): Promise<void> => {
+    await apiClient.delete(`/budgets/${budgetId}/items/${itemId}`);
   },
 
   updateBudgetItem: async (budgetId: string, itemId: string, data: Partial<BudgetItem>): Promise<BudgetItem> => {
@@ -392,6 +475,183 @@ export const financeApi = {
       params: { format },
       responseType: 'blob',
     });
+    return response.data;
+  },
+
+  // Bank Statement Matching
+  uploadBankStatement: async (file: File): Promise<BankTransaction[]> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<BankTransaction[]>('/bank-statements/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  confirmMatch: async (transactionId: string, invoiceId: string): Promise<void> => {
+    await apiClient.post(`/bank-statements/transactions/${transactionId}/confirm`, { invoiceId });
+  },
+
+  rejectMatch: async (transactionId: string): Promise<void> => {
+    await apiClient.post(`/bank-statements/transactions/${transactionId}/reject`);
+  },
+
+  // Factoring Calculator
+  calculateFactoring: async (invoiceIds: string[], rate: number, commission: number): Promise<FactoringCalcResult[]> => {
+    const response = await apiClient.post<FactoringCalcResult[]>('/factoring/calculate', { invoiceIds, rate, commission });
+    return response.data;
+  },
+
+  // Treasury Calendar
+  getTreasuryPayments: async (month: number, year: number): Promise<TreasuryPayment[]> => {
+    const response = await apiClient.get<TreasuryPayment[]>('/treasury/payments', { params: { month, year } });
+    return response.data;
+  },
+
+  updatePaymentPriority: async (paymentId: string, priority: number): Promise<void> => {
+    await apiClient.put(`/treasury/payments/${paymentId}/priority`, { priority });
+  },
+
+  // Tax Calendar
+  getTaxDeadlines: async (): Promise<TaxDeadline[]> => {
+    const response = await apiClient.get<TaxDeadline[]>('/tax/deadlines');
+    return response.data;
+  },
+
+  toggleTaxNotification: async (taxId: string, enabled: boolean): Promise<void> => {
+    await apiClient.put(`/tax/deadlines/${taxId}/notification`, { enabled });
+  },
+
+  // Bank Export
+  exportBankPayments: async (paymentIds: string[], format: string): Promise<Blob> => {
+    const response = await apiClient.post('/bank-export/generate', { paymentIds, format }, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  getBankExportHistory: async (): Promise<BankExportRecord[]> => {
+    const response = await apiClient.get<BankExportRecord[]>('/bank-export/history');
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // Cross-cutting: Execution Chain (Estimate → Budget → KS-2 → Invoice → Payment)
+  // ---------------------------------------------------------------------------
+
+  // Payment Calendar
+  previewPaymentCalendar: async (params: {
+    projectId: string;
+    startDate: string;
+    endDate: string;
+    frequency: string;
+    paymentType?: string;
+    includeApproved?: boolean;
+    includePlanned?: boolean;
+    autoDistribute?: boolean;
+  }): Promise<{ date: string; description: string; amount: number; type: string }[]> => {
+    const response = await apiClient.post<{ date: string; description: string; amount: number; type: string }[]>(
+      '/finance/payment-calendar/preview',
+      params,
+    );
+    return response.data;
+  },
+
+  generatePaymentCalendar: async (params: {
+    projectId: string;
+    startDate: string;
+    endDate: string;
+    frequency: string;
+    paymentType?: string;
+    includeApproved?: boolean;
+    includePlanned?: boolean;
+    autoDistribute?: boolean;
+  }): Promise<void> => {
+    await apiClient.post('/finance/payment-calendar/generate', params);
+  },
+
+  getExecutionChain: async (projectId: string): Promise<ExecutionChainSummary> => {
+    const response = await apiClient.get<ExecutionChainSummary>(`/finance/execution-chain/${projectId}`);
+    return response.data;
+  },
+
+  // Own cost generation (Phase 8)
+  generateOwnCostLines: async (budgetId: string): Promise<unknown[]> => {
+    const response = await apiClient.post(`/budgets/${budgetId}/generate-own-costs`);
+    return response.data;
+  },
+
+  // ROI calculation (Phase 9)
+  calculateROI: async (budgetId: string): Promise<RoiResult> => {
+    const response = await apiClient.get<RoiResult>(`/budgets/${budgetId}/roi`);
+    return response.data;
+  },
+
+  // Margin scenario simulation (Phase 9)
+  simulateMarginScenario: async (budgetId: string, targetMarginPercent: number): Promise<MarginScenario> => {
+    const response = await apiClient.post<MarginScenario>(`/budgets/${budgetId}/margin-scenario`, {
+      targetMarginPercent,
+    });
+    return response.data;
+  },
+
+  // CP versioning (Phase 10)
+  createCpVersion: async (cpId: string): Promise<CommercialProposal> => {
+    const response = await apiClient.post<CommercialProposal>(`/commercial-proposals/${cpId}/version`);
+    return response.data;
+  },
+
+  updateCpCompanyDetails: async (cpId: string, details: {
+    companyName?: string; companyInn?: string; companyKpp?: string;
+    companyAddress?: string; signatoryName?: string; signatoryPosition?: string;
+  }): Promise<CommercialProposal> => {
+    const response = await apiClient.put<CommercialProposal>(
+      `/commercial-proposals/${cpId}/company-details`, details
+    );
+    return response.data;
+  },
+
+  exportCpPdf: async (cpId: string): Promise<Blob> => {
+    const response = await apiClient.get(`/commercial-proposals/${cpId}/export-pdf`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Apply bid winner to CP (Phase 7)
+  applyBidToCp: async (cpId: string, bidComparisonId: string, winnerVendorId: string, costPrice: number): Promise<{ count: number }> => {
+    const response = await apiClient.post(`/commercial-proposals/${cpId}/apply-bid/${bidComparisonId}`, {
+      winnerVendorId, costPrice,
+    });
+    return response.data;
+  },
+
+  // Procurement schedule (Phase 11)
+  getProcurementSchedule: async (projectId: string): Promise<ProcurementScheduleItem[]> => {
+    const response = await apiClient.get<ProcurementScheduleItem[]>(`/procurement-schedules?projectId=${projectId}`);
+    return response.data;
+  },
+
+  generateProcurementSchedule: async (projectId: string, specId: string, startDate: string): Promise<ProcurementScheduleItem[]> => {
+    const response = await apiClient.post<ProcurementScheduleItem[]>('/procurement-schedules/generate', {
+      projectId, specificationId: specId, projectStartDate: startDate,
+    });
+    return response.data;
+  },
+
+  // Mobilization (Phase 11)
+  getMobilizationSchedules: async (projectId: string): Promise<MobilizationSchedule[]> => {
+    const response = await apiClient.get<MobilizationSchedule[]>(`/mobilization-schedules?projectId=${projectId}`);
+    return response.data;
+  },
+
+  getMobilizationLines: async (scheduleId: string): Promise<MobilizationLine[]> => {
+    const response = await apiClient.get<MobilizationLine[]>(`/mobilization-schedules/${scheduleId}/lines`);
+    return response.data;
+  },
+
+  generateMobilization: async (projectId: string): Promise<MobilizationSchedule> => {
+    const response = await apiClient.post<MobilizationSchedule>('/mobilization-schedules/generate', { projectId });
     return response.data;
   },
 };

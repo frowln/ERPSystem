@@ -48,3 +48,7 @@ docker-compose.override.yml
 
 # --- Generated artifacts (can be regenerated) ---
 # migration/artifacts/*.json  # Keep these — they are our migration source of truth
+ui_audit/
+frontend/e2e/screenshots/
+frontend/e2e/visual/*.png
+frontend/e2e/visual/*-snapshots/

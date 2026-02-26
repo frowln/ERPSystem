@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, X, Plus, ChevronDown, ChevronRight } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
+import { qualityApi } from '@/api/quality';
 import { t } from '@/i18n';
 
 type QcStatus = 'PENDING' | 'IN_PROGRESS' | 'PASSED' | 'FAILED';
@@ -35,8 +37,29 @@ const priorityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-ne
 
 const QualityBoardPage: React.FC = () => {
   const navigate = useNavigate();
-  // TODO: replace with real API call
-  const [items, setItems] = useState<QcCard[]>([]);
+
+  const { data: checksData } = useQuery({
+    queryKey: ['qualityChecks'],
+    queryFn: () => qualityApi.getChecks({ page: 0, size: 200 }),
+  });
+
+  const apiItems: QcCard[] = useMemo(() =>
+    (checksData?.content ?? []).map((c: any) => ({
+      id: c.id,
+      code: c.code ?? c.name ?? c.id.slice(0, 8),
+      title: c.name ?? c.description ?? '',
+      status: (c.status ?? 'PENDING') as QcStatus,
+      inspectorName: c.inspectorName,
+      checkDate: c.scheduledDate ?? c.completedDate ?? '',
+      projectName: c.projectName ?? '',
+      location: c.location ?? c.area ?? '',
+      priority: (c.priority ?? 'NORMAL') as QcCard['priority'],
+    })),
+  [checksData]);
+
+  const [localItems, setLocalItems] = useState<QcCard[] | null>(null);
+  const items = localItems ?? apiItems;
+  const setItems = (updater: (prev: QcCard[]) => QcCard[]) => setLocalItems(updater(items));
   const [columns, setColumns] = useState<BoardColumn[]>(getDefaultColumns());
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');

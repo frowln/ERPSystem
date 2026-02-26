@@ -2,9 +2,10 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { searchApi } from '@/api/search';
-import { isDemoMode } from '@/lib/demoMode';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 import type { SearchResult, SearchFilters } from './types';
+import type { Project, PaginatedResponse } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -20,14 +21,6 @@ const getEntityTypes = () => [
   { value: 'MATERIAL', label: t('search.entityMaterials'), icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
   { value: 'TASK', label: t('search.entityTasks'), icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' },
 ] as const;
-
-const getProjectOptions = () => [
-  { value: '', label: t('search.allProjects') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'ЖК "Новые Горизонты"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
 
 const getSuggestions = () => [
   t('search.suggestion1'),
@@ -77,6 +70,11 @@ const GlobalSearchPage: React.FC = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
 
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+  });
+
   useEffect(() => {
     const q = searchParams.get('q') || '';
     setQuery(q);
@@ -116,24 +114,14 @@ const GlobalSearchPage: React.FC = () => {
   });
 
   const ENTITY_TYPES = getEntityTypes();
-  const PROJECT_OPTIONS = getProjectOptions();
+  const PROJECT_OPTIONS = [
+    { value: '', label: t('search.allProjects') },
+    ...(projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name })),
+  ];
   const SUGGESTIONS = getSuggestions();
   const STATUS_LABELS = getStatusLabels();
 
-  // When API is not yet connected, filter mock data client-side
-  const apiResults = data as { items?: SearchResult[]; content?: SearchResult[] } | undefined;
-  const results: SearchResult[] = apiResults?.items ?? apiResults?.content ?? (
-    isDemoMode && debouncedQuery.length >= 2
-      ? ([] as any[]).filter((r) => {
-          const matchQuery = r.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-            r.snippet.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-            r.subtitle.toLowerCase().includes(debouncedQuery.toLowerCase());
-          const matchType = selectedTypes.size === 0 || selectedTypes.has(r.entityType);
-          const matchProject = !projectId || r.projectName === PROJECT_OPTIONS.find((p) => p.value === projectId)?.label;
-          return matchQuery && matchType && matchProject;
-        })
-      : []
-  );
+  const results: SearchResult[] = data?.content ?? [];
 
   const toggleType = useCallback((value: string) => {
     setSelectedTypes((prev) => {

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { t } from '@/i18n';
 
 interface InlineEditCellProps {
   value: number | null | undefined;
@@ -76,7 +77,7 @@ export default function InlineEditCell({
     <span
       onDoubleClick={handleDoubleClick}
       className={`cursor-pointer hover:bg-blue-50 dark:hover:bg-neutral-700 px-1.5 py-0.5 rounded transition-colors ${className}`}
-      title={disabled ? '' : 'Двойной клик для редактирования'}
+      title={disabled ? '' : t('finance.fm.inlineEditHint')}
     >
       {display}
     </span>

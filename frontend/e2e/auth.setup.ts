@@ -23,8 +23,12 @@ setup('authenticate as admin user', async ({ page }) => {
   // Navigate to login
   await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
-  // Wait for the login controls to be visible (login page has no native <form> wrapper).
-  const emailInput = page.getByLabel(/email|почта/i).first();
+  // Wait for the login controls to be visible.
+  // In some deployments this field is rendered as "Логин" instead of "Email".
+  const emailInput = page
+    .getByPlaceholder(/логин|login|email|почта/i)
+    .or(page.locator('input[name="email"], input[name="username"], input[autocomplete="username"]'))
+    .first();
   await expect(emailInput).toBeVisible({ timeout: 20_000 });
 
   // Fill credentials
@@ -36,23 +40,23 @@ setup('authenticate as admin user', async ({ page }) => {
   // Submit
   await page.getByRole('button', { name: /sign in|log in|login|войти|вход/i }).click();
 
-  // Wait for redirect to dashboard (URL should no longer be /login)
-  await page.waitForURL('**/', { timeout: 15_000 });
-
-  // Verify we are logged in by checking persisted auth token in localStorage.
-  const token = await page.evaluate(() => {
-    const persisted = localStorage.getItem('privod-auth');
-    if (persisted) {
-      try {
-        const parsed = JSON.parse(persisted);
-        return parsed?.state?.token ?? parsed?.token ?? null;
-      } catch {
-        // fall through to legacy key
+  // Some builds keep user on /login page after successful auth.
+  // The reliable signal is persisted auth token in localStorage.
+  await expect.poll(async () => {
+    const token = await page.evaluate(() => {
+      const persisted = localStorage.getItem('privod-auth');
+      if (persisted) {
+        try {
+          const parsed = JSON.parse(persisted);
+          return parsed?.state?.token ?? parsed?.token ?? null;
+        } catch {
+          // fall through to legacy key
+        }
       }
-    }
-    return localStorage.getItem('auth_token');
-  });
-  expect(token).toBeTruthy();
+      return localStorage.getItem('auth_token');
+    });
+    return Boolean(token);
+  }, { timeout: 20_000 }).toBe(true);
 
   // Save the storage state (localStorage + cookies)
   await page.context().storageState({ path: authFile });

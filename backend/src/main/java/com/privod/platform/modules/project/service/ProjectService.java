@@ -150,6 +150,9 @@ public class ProjectService {
         if (request.category() != null) {
             project.setCategory(request.category());
         }
+        if (request.constructionKind() != null) {
+            project.setConstructionKind(request.constructionKind());
+        }
         if (request.priority() != null) {
             project.setPriority(request.priority());
         }
@@ -350,6 +353,7 @@ public class ProjectService {
                     .contractAmount(request.contractAmount())
                     .type(request.type())
                     .category(request.category())
+                    .constructionKind(request.constructionKind())
                     .priority(request.priority() != null ? request.priority() : ProjectPriority.NORMAL)
                     .build();
 

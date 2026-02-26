@@ -9,23 +9,29 @@ import java.util.UUID;
 public record SpecificationListResponse(
         UUID id,
         String name,
+        String title,
+        String projectName,
         UUID projectId,
-        Integer docVersion,
+        Integer version,
         boolean isCurrent,
         SpecificationStatus status,
         String statusDisplayName,
+        long itemCount,
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static SpecificationListResponse fromEntity(Specification specification) {
+    public static SpecificationListResponse fromEntity(Specification specification, long itemCount) {
         return new SpecificationListResponse(
                 specification.getId(),
                 specification.getName(),
+                specification.getDisplayName(),
+                specification.getProjectName(),
                 specification.getProjectId(),
                 specification.getDocVersion(),
                 specification.isCurrent(),
                 specification.getStatus(),
                 specification.getStatus().getDisplayName(),
+                itemCount,
                 specification.getCreatedAt(),
                 specification.getUpdatedAt()
         );

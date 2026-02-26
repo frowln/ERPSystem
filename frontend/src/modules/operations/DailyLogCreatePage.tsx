@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
-
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
 
 const getWeatherOptions = () => [
   { value: 'CLEAR', label: t('operations.dailyLogCreate.weatherClear') },
@@ -39,6 +35,10 @@ const emptyEntry: EntryForm = {
 
 const DailyLogCreatePage: React.FC = () => {
   const navigate = useNavigate();
+
+  const { data: projectsData } = useQuery({ queryKey: ['projects'], queryFn: () => projectsApi.getProjects() });
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
+
   const [projectId, setProjectId] = useState('');
   const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
   const [weather, setWeather] = useState('CLEAR');

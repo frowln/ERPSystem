@@ -12,6 +12,12 @@ import type {
   InventoryItem,
   TurnoverReportParams,
   TurnoverReportEntry,
+  M29Report,
+  LimitFenceCard,
+  WarehouseOrderAdvanced,
+  StorageLayout,
+  StorageCell,
+  MaterialDemand,
 } from '@/modules/warehouse/types';
 
 export interface MaterialFilters extends PaginationParams {
@@ -90,6 +96,23 @@ export interface M29MaterialLine {
   unit: string;
   normQty: number;
   actualQty: number;
+}
+
+export interface CreateLimitFenceCardRequest {
+  projectId: string;
+  materialName: string;
+  unit: string;
+  limitQty: number;
+  periodFrom: string;
+  periodTo: string;
+}
+
+export interface CreateWarehouseOrderAdvancedRequest {
+  type: 'incoming' | 'outgoing' | 'transfer' | 'write_off';
+  date: string;
+  warehouseName: string;
+  counterparty: string;
+  items: { materialName: string; qty: number; unit: string; price: number }[];
 }
 
 export const warehouseApi = {
@@ -230,6 +253,67 @@ export const warehouseApi = {
   lookupMaterialByBarcode: async (barcode: string): Promise<Material> => {
     const response = await apiClient.get<Material>('/warehouse/materials/barcode-lookup', {
       params: { barcode },
+    });
+    return response.data;
+  },
+
+  // M-29 Report
+  getM29Report: async (projectId: string, month: number, year: number): Promise<M29Report> => {
+    const response = await apiClient.get<M29Report>('/warehouse/reports/m29', {
+      params: { projectId, month, year },
+    });
+    return response.data;
+  },
+
+  // Limit Fence Cards
+  getLimitFenceCards: async (params?: PaginationParams): Promise<PaginatedResponse<LimitFenceCard>> => {
+    const response = await apiClient.get<PaginatedResponse<LimitFenceCard>>('/warehouse/limit-fence-cards', { params });
+    return response.data;
+  },
+
+  getLimitFenceCard: async (id: string): Promise<LimitFenceCard> => {
+    const response = await apiClient.get<LimitFenceCard>(`/warehouse/limit-fence-cards/${id}`);
+    return response.data;
+  },
+
+  createLimitFenceCard: async (data: CreateLimitFenceCardRequest): Promise<LimitFenceCard> => {
+    const response = await apiClient.post<LimitFenceCard>('/warehouse/limit-fence-cards', data);
+    return response.data;
+  },
+
+  // Warehouse Orders (advanced)
+  getWarehouseOrders: async (params?: PaginationParams): Promise<PaginatedResponse<WarehouseOrderAdvanced>> => {
+    const response = await apiClient.get<PaginatedResponse<WarehouseOrderAdvanced>>('/warehouse/orders-advanced', { params });
+    return response.data;
+  },
+
+  getWarehouseOrder: async (id: string): Promise<WarehouseOrderAdvanced> => {
+    const response = await apiClient.get<WarehouseOrderAdvanced>(`/warehouse/orders-advanced/${id}`);
+    return response.data;
+  },
+
+  createWarehouseOrder: async (data: CreateWarehouseOrderAdvancedRequest): Promise<WarehouseOrderAdvanced> => {
+    const response = await apiClient.post<WarehouseOrderAdvanced>('/warehouse/orders-advanced', data);
+    return response.data;
+  },
+
+  // Address Storage
+  getStorageLayout: async (warehouseId?: string): Promise<StorageLayout> => {
+    const response = await apiClient.get<StorageLayout>('/warehouse/storage/layout', {
+      params: warehouseId ? { warehouseId } : undefined,
+    });
+    return response.data;
+  },
+
+  getCellContents: async (cellId: string): Promise<StorageCell> => {
+    const response = await apiClient.get<StorageCell>(`/warehouse/storage/cells/${cellId}`);
+    return response.data;
+  },
+
+  // Material Demand
+  calculateDemand: async (projectId: string): Promise<MaterialDemand[]> => {
+    const response = await apiClient.get<MaterialDemand[]>('/warehouse/demand/calculate', {
+      params: { projectId },
     });
     return response.data;
   },

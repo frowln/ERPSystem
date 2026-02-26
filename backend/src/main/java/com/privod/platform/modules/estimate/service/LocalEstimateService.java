@@ -8,18 +8,20 @@ import com.privod.platform.modules.estimate.domain.LocalEstimateLine;
 import com.privod.platform.modules.estimate.domain.LocalEstimateStatus;
 import com.privod.platform.modules.estimate.domain.MinstroyIndexImport;
 import com.privod.platform.modules.estimate.domain.NormativeSection;
-import com.privod.platform.modules.estimate.domain.RateResourceItem;
 import com.privod.platform.modules.estimate.repository.LocalEstimateLineRepository;
 import com.privod.platform.modules.estimate.repository.LocalEstimateRepository;
 import com.privod.platform.modules.estimate.repository.MinstroyIndexImportRepository;
 import com.privod.platform.modules.estimate.repository.NormativeSectionRepository;
 import com.privod.platform.modules.estimate.repository.RateResourceItemRepository;
 import com.privod.platform.modules.estimate.web.dto.AddEstimateLineRequest;
+import com.privod.platform.modules.estimate.web.dto.ApplyMinstroyIndicesRequest;
+import com.privod.platform.modules.estimate.web.dto.ApplyMinstroyIndicesResponse;
 import com.privod.platform.modules.estimate.web.dto.CreateLocalEstimateRequest;
 import com.privod.platform.modules.estimate.web.dto.ImportMinstroyIndicesRequest;
 import com.privod.platform.modules.estimate.web.dto.LocalEstimateDetailResponse;
 import com.privod.platform.modules.estimate.web.dto.LocalEstimateLineResponse;
 import com.privod.platform.modules.estimate.web.dto.LocalEstimateResponse;
+import com.privod.platform.modules.estimate.web.dto.MinstroyIndexResponse;
 import com.privod.platform.modules.estimate.web.dto.NormativeSectionResponse;
 import com.privod.platform.modules.estimate.web.dto.RateResourceItemResponse;
 import com.privod.platform.modules.integration.pricing.domain.PriceIndex;
@@ -46,8 +48,12 @@ import java.util.UUID;
 @Slf4j
 public class LocalEstimateService {
 
-    private static final BigDecimal ESTIMATED_PROFIT_PERCENT = new BigDecimal("0.08");
+    private static final BigDecimal DEFAULT_PROFIT_RATE = new BigDecimal("0.08");
     private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
+
+    private BigDecimal profitRate(LocalEstimate estimate) {
+        return estimate.getProfitRate() != null ? estimate.getProfitRate() : DEFAULT_PROFIT_RATE;
+    }
 
     private final LocalEstimateRepository estimateRepository;
     private final LocalEstimateLineRepository lineRepository;
@@ -170,6 +176,14 @@ public class LocalEstimateService {
             line.setCurrentEquipmentCost(line.getBaseEquipmentCost());
             line.setCurrentOverheadCost(line.getBaseOverheadCost());
             line.setCurrentTotal(line.getBaseTotal());
+            line.setDirectCosts(line.getCurrentLaborCost()
+                    .add(line.getCurrentMaterialCost())
+                    .add(line.getCurrentEquipmentCost())
+                    .setScale(2, RoundingMode.HALF_UP));
+            line.setOverheadCosts(line.getCurrentOverheadCost());
+            line.setEstimatedProfit(line.getDirectCosts()
+                    .multiply(profitRate(estimate))
+                    .setScale(2, RoundingMode.HALF_UP));
 
             if (request.justification() == null || request.justification().isBlank()) {
                 line.setJustification(rate.getCode());
@@ -208,6 +222,7 @@ public class LocalEstimateService {
         LocalEstimate estimate = getEstimateOrThrow(estimateId);
         List<LocalEstimateLine> lines = lineRepository
                 .findByEstimateIdAndDeletedFalseOrderByLineNumberAsc(estimateId);
+        LocalEstimateStatus oldStatus = estimate.getStatus();
 
         String region = estimate.getRegion();
         String targetQuarter = estimate.getPriceLevelQuarter();
@@ -216,18 +231,9 @@ public class LocalEstimateService {
         BigDecimal totalOverhead = BigDecimal.ZERO;
 
         for (LocalEstimateLine line : lines) {
-            // Look up indices for the line
-            BigDecimal laborIdx = findIndex(region, "СМР", targetQuarter);
-            BigDecimal materialIdx = findIndex(region, "Материалы", targetQuarter);
-            BigDecimal equipmentIdx = findIndex(region, "Машины", targetQuarter);
-
-            // If specific index not found, try general СМР index for all
-            if (materialIdx.compareTo(BigDecimal.ONE) == 0) {
-                materialIdx = laborIdx;
-            }
-            if (equipmentIdx.compareTo(BigDecimal.ONE) == 0) {
-                equipmentIdx = laborIdx;
-            }
+            BigDecimal laborIdx = resolveIndex(region, targetQuarter, "СМР", "construction");
+            BigDecimal materialIdx = resolveIndex(region, targetQuarter, "Материалы", "materials");
+            BigDecimal equipmentIdx = resolveIndex(region, targetQuarter, "Машины", "equipment");
 
             line.setLaborIndex(laborIdx);
             line.setMaterialIndex(materialIdx);
@@ -244,18 +250,27 @@ public class LocalEstimateService {
                     .add(line.getCurrentEquipmentCost())
                     .add(line.getCurrentOverheadCost());
             line.setCurrentTotal(scale2(currentTotal));
+            line.setDirectCosts(scale2(line.getCurrentLaborCost()
+                    .add(line.getCurrentMaterialCost())
+                    .add(line.getCurrentEquipmentCost())));
+            line.setOverheadCosts(line.getCurrentOverheadCost());
+            line.setEstimatedProfit(scale2(line.getDirectCosts().multiply(profitRate(estimate))));
+            line.setPriceIndex(laborIdx);
+            if (line.getQuantity() != null && line.getQuantity().compareTo(BigDecimal.ZERO) > 0) {
+                line.setCurrentPrice(scale2(line.getCurrentTotal()
+                        .divide(line.getQuantity(), 2, RoundingMode.HALF_UP)));
+            } else {
+                line.setCurrentPrice(scale2(line.getCurrentTotal()));
+            }
 
             lineRepository.save(line);
 
-            BigDecimal directForLine = line.getCurrentLaborCost()
-                    .add(line.getCurrentMaterialCost())
-                    .add(line.getCurrentEquipmentCost());
-            totalDirectCost = totalDirectCost.add(directForLine);
-            totalOverhead = totalOverhead.add(line.getCurrentOverheadCost());
+            totalDirectCost = totalDirectCost.add(line.getDirectCosts());
+            totalOverhead = totalOverhead.add(line.getOverheadCosts());
         }
 
         // Estimated profit = percentage of direct costs
-        BigDecimal totalEstimatedProfit = scale2(totalDirectCost.multiply(ESTIMATED_PROFIT_PERCENT));
+        BigDecimal totalEstimatedProfit = scale2(totalDirectCost.multiply(profitRate(estimate)));
 
         BigDecimal subtotal = totalDirectCost.add(totalOverhead).add(totalEstimatedProfit);
         BigDecimal vatAmount = scale2(subtotal.multiply(estimate.getVatRate())
@@ -266,11 +281,12 @@ public class LocalEstimateService {
         estimate.setTotalOverhead(scale2(totalOverhead));
         estimate.setTotalEstimatedProfit(totalEstimatedProfit);
         estimate.setTotalWithVat(totalWithVat);
-        estimate.setStatus(LocalEstimateStatus.CALCULATED);
+        transitionEstimateStatus(estimate, LocalEstimateStatus.CALCULATED);
         estimate.setCalculatedAt(Instant.now());
 
         estimate = estimateRepository.save(estimate);
-        auditService.logStatusChange("LocalEstimate", estimate.getId(), "DRAFT", "CALCULATED");
+        auditService.logStatusChange("LocalEstimate", estimate.getId(),
+                oldStatus.name(), LocalEstimateStatus.CALCULATED.name());
 
         log.info("Локальная смета рассчитана: {} ({}) — итого с НДС: {}",
                 estimate.getName(), estimate.getId(), totalWithVat);
@@ -285,14 +301,15 @@ public class LocalEstimateService {
     public LocalEstimateResponse approveEstimate(UUID estimateId) {
         LocalEstimate estimate = getEstimateOrThrow(estimateId);
 
-        if (estimate.getStatus() != LocalEstimateStatus.CALCULATED) {
+        if (estimate.getStatus() != LocalEstimateStatus.CALCULATED
+                || !estimate.getStatus().canTransitionTo(LocalEstimateStatus.APPROVED)) {
             throw new IllegalStateException(
                     "Смета может быть утверждена только из статуса CALCULATED. Текущий статус: "
                             + estimate.getStatus());
         }
 
         LocalEstimateStatus oldStatus = estimate.getStatus();
-        estimate.setStatus(LocalEstimateStatus.APPROVED);
+        transitionEstimateStatus(estimate, LocalEstimateStatus.APPROVED);
         estimate = estimateRepository.save(estimate);
         auditService.logStatusChange("LocalEstimate", estimate.getId(),
                 oldStatus.name(), LocalEstimateStatus.APPROVED.name());
@@ -305,6 +322,9 @@ public class LocalEstimateService {
     @Transactional
     public void deleteEstimate(UUID id) {
         LocalEstimate estimate = getEstimateOrThrow(id);
+        if (estimate.getStatus() != LocalEstimateStatus.ARCHIVED) {
+            transitionEstimateStatus(estimate, LocalEstimateStatus.ARCHIVED);
+        }
         estimate.softDelete();
         estimateRepository.save(estimate);
         auditService.logDelete("LocalEstimate", id);
@@ -316,13 +336,34 @@ public class LocalEstimateService {
     @Transactional
     public int importMinstroyIndices(ImportMinstroyIndicesRequest request) {
         int count = 0;
+        int duplicates = 0;
+        String normalizedQuarter = request.normalizedQuarter();
 
         for (ImportMinstroyIndicesRequest.IndexEntry entry : request.entries()) {
+            String baseQuarter = normalizeQuarter(entry.baseQuarter(), normalizedQuarter);
+            String targetQuarter = normalizeQuarter(normalizedQuarter, normalizedQuarter);
+            String workType = normalizeWorkType(entry.workType());
+
+            if (entry.region() == null || entry.region().isBlank() || entry.indexValue() == null) {
+                continue;
+            }
+
+            boolean exists = priceIndexRepository.existsByRegionAndWorkTypeAndBaseQuarterAndTargetQuarterAndDeletedFalse(
+                    entry.region().trim(),
+                    workType,
+                    baseQuarter,
+                    targetQuarter
+            );
+            if (exists) {
+                duplicates++;
+                continue;
+            }
+
             PriceIndex index = PriceIndex.builder()
-                    .region(entry.region())
-                    .workType(entry.workType())
-                    .baseQuarter(entry.baseQuarter())
-                    .targetQuarter(request.quarter())
+                    .region(entry.region().trim())
+                    .workType(workType)
+                    .baseQuarter(baseQuarter)
+                    .targetQuarter(targetQuarter)
                     .indexValue(entry.indexValue())
                     .source(request.source())
                     .build();
@@ -332,7 +373,7 @@ public class LocalEstimateService {
         }
 
         MinstroyIndexImport importRecord = MinstroyIndexImport.builder()
-                .quarter(request.quarter())
+                .quarter(normalizedQuarter)
                 .importSource(request.source())
                 .importDate(Instant.now())
                 .indicesCount(count)
@@ -342,8 +383,99 @@ public class LocalEstimateService {
         importRepository.save(importRecord);
         auditService.logCreate("MinstroyIndexImport", importRecord.getId());
 
-        log.info("Импортировано {} индексов Минстроя за квартал {}", count, request.quarter());
+        log.info("Импортировано {} индексов Минстроя за квартал {} (duplicates={})",
+                count, normalizedQuarter, duplicates);
         return count;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MinstroyIndexResponse> getMinstroyIndices(String region, int quarter, int year) {
+        String targetQuarter = year + "-Q" + quarter;
+        List<PriceIndex> indices;
+        if (region != null && !region.isBlank()) {
+            indices = priceIndexRepository.findByRegionAndDeletedFalse(region.trim())
+                    .stream()
+                    .filter(i -> targetQuarter.equalsIgnoreCase(i.getTargetQuarter()))
+                    .toList();
+        } else {
+            indices = priceIndexRepository.findByTargetQuarter(targetQuarter)
+                    .stream()
+                    .filter(i -> !i.isDeleted())
+                    .toList();
+        }
+
+        return indices.stream()
+                .map(i -> new MinstroyIndexResponse(
+                        i.getRegion(),
+                        quarter,
+                        year,
+                        mapWorkTypeToIndexType(i.getWorkType()),
+                        i.getIndexValue().doubleValue()
+                ))
+                .toList();
+    }
+
+    @Transactional
+    public ApplyMinstroyIndicesResponse applyMinstroyIndices(UUID estimateId, ApplyMinstroyIndicesRequest request) {
+        LocalEstimate estimate = getEstimateOrThrow(estimateId);
+        List<LocalEstimateLine> lines = lineRepository.findByEstimateIdAndDeletedFalseOrderByLineNumberAsc(estimateId);
+        if (lines.isEmpty() || request.indices().isEmpty()) {
+            return new ApplyMinstroyIndicesResponse(estimateId, 0, List.of());
+        }
+
+        String estimateRegion = estimate.getRegion();
+        ApplyMinstroyIndicesRequest.IndexItem fallbackIndex = request.indices().get(0);
+        ApplyMinstroyIndicesRequest.IndexItem preferredIndex = request.indices().stream()
+                .filter(i -> estimateRegion != null && estimateRegion.equalsIgnoreCase(i.region()))
+                .findFirst()
+                .orElse(fallbackIndex);
+
+        BigDecimal factor = BigDecimal.valueOf(preferredIndex.value());
+        List<ApplyMinstroyIndicesResponse.ItemResult> results = new java.util.ArrayList<>();
+
+        for (LocalEstimateLine line : lines) {
+            BigDecimal oldPrice = scale2(line.getCurrentTotal());
+            line.setLaborIndex(factor);
+            line.setMaterialIndex(factor);
+            line.setEquipmentIndex(factor);
+            line.setCurrentLaborCost(scale2(line.getBaseLaborCost().multiply(factor)));
+            line.setCurrentMaterialCost(scale2(line.getBaseMaterialCost().multiply(factor)));
+            line.setCurrentEquipmentCost(scale2(line.getBaseEquipmentCost().multiply(factor)));
+            line.setCurrentOverheadCost(scale2(line.getBaseOverheadCost().multiply(factor)));
+            line.setCurrentTotal(scale2(line.getCurrentLaborCost()
+                    .add(line.getCurrentMaterialCost())
+                    .add(line.getCurrentEquipmentCost())
+                    .add(line.getCurrentOverheadCost())));
+            line.setDirectCosts(scale2(line.getCurrentLaborCost()
+                    .add(line.getCurrentMaterialCost())
+                    .add(line.getCurrentEquipmentCost())));
+            line.setOverheadCosts(line.getCurrentOverheadCost());
+            line.setEstimatedProfit(scale2(line.getDirectCosts().multiply(profitRate(estimate))));
+            line.setPriceIndex(factor);
+
+            if (line.getQuantity() != null && line.getQuantity().compareTo(BigDecimal.ZERO) > 0) {
+                line.setCurrentPrice(scale2(line.getCurrentTotal()
+                        .divide(line.getQuantity(), 2, RoundingMode.HALF_UP)));
+            } else {
+                line.setCurrentPrice(scale2(line.getCurrentTotal()));
+            }
+
+            lineRepository.save(line);
+
+            results.add(new ApplyMinstroyIndicesResponse.ItemResult(
+                    line.getName(),
+                    oldPrice.doubleValue(),
+                    line.getCurrentTotal().doubleValue(),
+                    factor.doubleValue()
+            ));
+        }
+
+        recalculateEstimateTotalsFromLines(estimate, lines);
+        transitionEstimateStatus(estimate, LocalEstimateStatus.CALCULATED);
+        estimate.setCalculatedAt(Instant.now());
+        estimateRepository.save(estimate);
+
+        return new ApplyMinstroyIndicesResponse(estimateId, request.indices().size(), results);
     }
 
     // === Normative Data ===
@@ -378,13 +510,35 @@ public class LocalEstimateService {
                         "Локальная смета не найдена: " + id));
     }
 
-    private BigDecimal findIndex(String region, String workType, String targetQuarter) {
-        if (region == null || targetQuarter == null) {
+    private BigDecimal resolveIndex(String region, String targetQuarter, String... workTypeFallbacks) {
+        if (targetQuarter == null || targetQuarter.isBlank()) {
             return BigDecimal.ONE;
         }
-        Optional<PriceIndex> indexOpt = priceIndexRepository
-                .findByRegionAndWorkTypeAndTargetQuarter(region, workType, targetQuarter);
-        return indexOpt.map(PriceIndex::getIndexValue).orElse(BigDecimal.ONE);
+
+        if (region != null && !region.isBlank()) {
+            for (String workType : workTypeFallbacks) {
+                Optional<PriceIndex> regional = priceIndexRepository
+                        .findByRegionAndWorkTypeAndTargetQuarter(region.trim(), workType, targetQuarter);
+                if (regional.isPresent()) {
+                    return regional.get().getIndexValue();
+                }
+            }
+        }
+
+        List<PriceIndex> targetQuarterIndices = priceIndexRepository.findByTargetQuarter(targetQuarter)
+                .stream()
+                .filter(i -> !i.isDeleted())
+                .toList();
+        for (String workType : workTypeFallbacks) {
+            Optional<PriceIndex> anyRegion = targetQuarterIndices.stream()
+                    .filter(i -> i.getWorkType().equalsIgnoreCase(workType))
+                    .findFirst();
+            if (anyRegion.isPresent()) {
+                return anyRegion.get().getIndexValue();
+            }
+        }
+
+        return BigDecimal.ONE;
     }
 
     private BigDecimal safeMultiply(BigDecimal value, BigDecimal multiplier) {
@@ -396,5 +550,91 @@ public class LocalEstimateService {
 
     private BigDecimal scale2(BigDecimal value) {
         return value.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private void transitionEstimateStatus(LocalEstimate estimate, LocalEstimateStatus targetStatus) {
+        LocalEstimateStatus current = estimate.getStatus();
+        if (current == targetStatus) {
+            return;
+        }
+        if (!current.canTransitionTo(targetStatus)) {
+            throw new IllegalStateException("Недопустимый переход статуса локальной сметы: "
+                    + current + " -> " + targetStatus);
+        }
+        estimate.setStatus(targetStatus);
+    }
+
+    private void recalculateEstimateTotalsFromLines(LocalEstimate estimate, List<LocalEstimateLine> lines) {
+        BigDecimal totalDirect = BigDecimal.ZERO;
+        BigDecimal totalOverhead = BigDecimal.ZERO;
+        for (LocalEstimateLine line : lines) {
+            totalDirect = totalDirect.add(line.getDirectCosts() != null
+                    ? line.getDirectCosts()
+                    : line.getCurrentLaborCost().add(line.getCurrentMaterialCost()).add(line.getCurrentEquipmentCost()));
+            totalOverhead = totalOverhead.add(line.getOverheadCosts() != null
+                    ? line.getOverheadCosts()
+                    : line.getCurrentOverheadCost());
+        }
+
+        BigDecimal totalEstimatedProfit = scale2(totalDirect.multiply(profitRate(estimate)));
+        BigDecimal subtotal = totalDirect.add(totalOverhead).add(totalEstimatedProfit);
+        BigDecimal vatAmount = scale2(subtotal.multiply(estimate.getVatRate())
+                .divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP));
+        BigDecimal totalWithVat = scale2(subtotal.add(vatAmount));
+
+        estimate.setTotalDirectCost(scale2(totalDirect));
+        estimate.setTotalOverhead(scale2(totalOverhead));
+        estimate.setTotalEstimatedProfit(totalEstimatedProfit);
+        estimate.setTotalWithVat(totalWithVat);
+    }
+
+    private String normalizeWorkType(String rawWorkType) {
+        if (rawWorkType == null || rawWorkType.isBlank()) {
+            return "СМР";
+        }
+        String normalized = rawWorkType.trim();
+        return switch (normalized.toLowerCase()) {
+            case "construction", "смр" -> "СМР";
+            case "materials", "материалы" -> "Материалы";
+            case "equipment", "машины", "механизмы" -> "Машины";
+            case "installation", "монтаж" -> "Монтаж";
+            default -> normalized;
+        };
+    }
+
+    private String normalizeQuarter(String rawQuarter, String fallbackQuarter) {
+        String value = (rawQuarter == null || rawQuarter.isBlank()) ? fallbackQuarter : rawQuarter;
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        String normalized = value.trim().toUpperCase();
+        if (normalized.matches("\\d{4}-Q[1-4]")) {
+            return normalized;
+        }
+        if (normalized.matches("\\d{4}/Q[1-4]")) {
+            return normalized.replace('/', '-');
+        }
+        if (normalized.matches("[1-4]Q\\d{4}")) {
+            return normalized.substring(2) + "-Q" + normalized.charAt(0);
+        }
+        if (normalized.matches("\\d{4}[- ]?[1-4]")) {
+            String year = normalized.substring(0, 4);
+            char q = normalized.charAt(normalized.length() - 1);
+            return year + "-Q" + q;
+        }
+        return normalized;
+    }
+
+    private String mapWorkTypeToIndexType(String workType) {
+        if (workType == null) {
+            return "construction";
+        }
+        return switch (workType.toLowerCase()) {
+            case "материалы", "materials" -> "materials";
+            case "машины", "механизмы", "equipment" -> "equipment";
+            case "монтаж", "installation" -> "installation";
+            default -> "construction";
+        };
     }
 }

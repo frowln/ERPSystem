@@ -3,6 +3,7 @@ package com.privod.platform.modules.finance.domain;
 import com.privod.platform.infrastructure.persistence.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BudgetSnapshot extends BaseEntity {
 
+    public enum SnapshotType {
+        BASELINE,
+        REFORECAST,
+        SNAPSHOT
+    }
+
     @Column(name = "budget_id", nullable = false)
     private UUID budgetId;
 
@@ -33,6 +40,14 @@ public class BudgetSnapshot extends BaseEntity {
 
     @Column(name = "snapshot_name", nullable = false, length = 200)
     private String snapshotName;
+
+    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(name = "snapshot_type", nullable = false, length = 20)
+    @Builder.Default
+    private SnapshotType snapshotType = SnapshotType.SNAPSHOT;
+
+    @Column(name = "source_snapshot_id")
+    private UUID sourceSnapshotId;
 
     @Column(name = "snapshot_date", nullable = false)
     @Builder.Default

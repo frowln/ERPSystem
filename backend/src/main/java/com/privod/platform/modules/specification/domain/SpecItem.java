@@ -36,6 +36,14 @@ public class SpecItem extends BaseEntity {
     @Builder.Default
     private Integer sequence = 0;
 
+    /** Position number from the PDF spec table, e.g. "1", "1.1", "А1" */
+    @Column(name = "position", length = 20)
+    private String position;
+
+    /** Section grouping from the PDF, e.g. "СИСТЕМА ОТОПЛЕНИЯ (ОВ)" */
+    @Column(name = "section_name", length = 500)
+    private String sectionName;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "item_type", nullable = false, length = 20)
     private SpecItemType itemType;
@@ -43,8 +51,14 @@ public class SpecItem extends BaseEntity {
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
+    @Column(name = "brand", length = 255)
+    private String brand;
+
     @Column(name = "product_code", length = 100)
     private String productCode;
+
+    @Column(name = "manufacturer", length = 255)
+    private String manufacturer;
 
     @Column(name = "quantity", nullable = false, precision = 16, scale = 3)
     private BigDecimal quantity;
@@ -54,6 +68,9 @@ public class SpecItem extends BaseEntity {
 
     @Column(name = "planned_amount", precision = 18, scale = 2)
     private BigDecimal plannedAmount;
+
+    @Column(name = "weight", precision = 10, scale = 3)
+    private BigDecimal weight;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
@@ -69,21 +86,6 @@ public class SpecItem extends BaseEntity {
     @Column(name = "is_customer_provided", nullable = false)
     @Builder.Default
     private boolean isCustomerProvided = false;
-
-    // Supply status fields (Phase 6)
-    @Column(name = "supply_status", length = 30)
-    @Builder.Default
-    private String supplyStatus = "NOT_COVERED";
-
-    @Column(name = "covered_quantity", precision = 18, scale = 4)
-    @Builder.Default
-    private BigDecimal coveredQuantity = BigDecimal.ZERO;
-
-    @Column(name = "best_price", precision = 18, scale = 2)
-    private BigDecimal bestPrice;
-
-    @Column(name = "best_vendor_name", length = 500)
-    private String bestVendorName;
 
     @Column(name = "budget_item_id")
     private UUID budgetItemId;

@@ -21,7 +21,11 @@ const LegalTemplateListPage = lazy(() => import('@/modules/legal/LegalTemplateLi
 
 // KEP
 const KepCertificateListPage = lazy(() => import('@/modules/kep/KepCertificateListPage'));
+const KepCertificateDetailPage = lazy(() => import('@/modules/kep/KepCertificateDetailPage'));
 const KepSigningRequestListPage = lazy(() => import('@/modules/kep/KepSigningRequestListPage'));
+const KepSigningPage = lazy(() => import('@/modules/kep/KepSigningPage'));
+const KepVerificationPage = lazy(() => import('@/modules/kep/KepVerificationPage'));
+const MchDListPage = lazy(() => import('@/modules/kep/MchDListPage'));
 
 // Analytics
 const AnalyticsDashboardPage = lazy(() => import('@/modules/analytics/AnalyticsDashboardPage'));
@@ -76,7 +80,11 @@ export function portfolioRoutes() {
 
       {/* KEP */}
       <Route path="kep/certificates" element={<KepCertificateListPage />} />
+      <Route path="kep/certificates/:id" element={<KepCertificateDetailPage />} />
       <Route path="kep/signing-requests" element={<KepSigningRequestListPage />} />
+      <Route path="kep/signing" element={<KepSigningPage />} />
+      <Route path="kep/verification" element={<KepVerificationPage />} />
+      <Route path="kep/mchd" element={<MchDListPage />} />
 
       {/* Analytics */}
       <Route path="analytics" element={<AnalyticsDashboardPage />} />

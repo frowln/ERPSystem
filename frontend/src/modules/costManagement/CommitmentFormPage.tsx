@@ -148,8 +148,7 @@ const CommitmentFormPage: React.FC = () => {
   const updateMutation = useMutation({
     mutationFn: (data: CommitmentFormData) => {
       const parsed = commitmentSchema.parse(data);
-      // TODO: Add updateCommitment to costManagementApi when backend supports full update
-      return costManagementApi.createCommitment({
+      return costManagementApi.updateCommitment(id!, {
         title: data.name,
         type: parsed.commitmentType,
         vendorName: data.vendorId,

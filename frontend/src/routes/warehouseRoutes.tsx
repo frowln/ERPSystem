@@ -12,6 +12,11 @@ const InventoryPage = lazy(() => import('@/modules/warehouse/InventoryPage'));
 const MovementBoardPage = lazy(() => import('@/modules/warehouse/MovementBoardPage'));
 const StockLimitsPage = lazy(() => import('@/modules/warehouse/StockLimitsPage'));
 const StockAlertsPage = lazy(() => import('@/modules/warehouse/StockAlertsPage'));
+const M29ReportPage = lazy(() => import('@/modules/warehouse/M29ReportPage'));
+const LimitFenceCardsPage = lazy(() => import('@/modules/warehouse/LimitFenceCardsPage'));
+const WarehouseOrdersPage = lazy(() => import('@/modules/warehouse/WarehouseOrdersPage'));
+const AddressStoragePage = lazy(() => import('@/modules/warehouse/AddressStoragePage'));
+const MaterialDemandPage = lazy(() => import('@/modules/warehouse/MaterialDemandPage'));
 
 export function warehouseRoutes() {
   return (
@@ -29,6 +34,11 @@ export function warehouseRoutes() {
       <Route path="warehouse/inventory" element={<InventoryPage />} />
       <Route path="warehouse/stock-limits" element={<StockLimitsPage />} />
       <Route path="warehouse/stock-alerts" element={<StockAlertsPage />} />
+      <Route path="warehouse/m29-report" element={<M29ReportPage />} />
+      <Route path="warehouse/limit-fence-cards" element={<LimitFenceCardsPage />} />
+      <Route path="warehouse/warehouse-orders" element={<WarehouseOrdersPage />} />
+      <Route path="warehouse/address-storage" element={<AddressStoragePage />} />
+      <Route path="warehouse/material-demand" element={<MaterialDemandPage />} />
     </>
   );
 }

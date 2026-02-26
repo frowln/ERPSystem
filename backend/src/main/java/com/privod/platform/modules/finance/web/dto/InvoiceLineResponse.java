@@ -15,6 +15,9 @@ public record InvoiceLineResponse(
         BigDecimal unitPrice,
         BigDecimal amount,
         String unitOfMeasure,
+        UUID budgetItemId,
+        UUID cpItemId,
+        Boolean selectedForCp,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -28,6 +31,9 @@ public record InvoiceLineResponse(
                 line.getUnitPrice(),
                 line.getAmount(),
                 line.getUnitOfMeasure(),
+                line.getBudgetItemId(),
+                line.getCpItemId(),
+                line.isSelectedForCp(),
                 line.getCreatedAt(),
                 line.getUpdatedAt()
         );

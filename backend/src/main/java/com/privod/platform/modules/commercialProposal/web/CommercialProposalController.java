@@ -213,4 +213,55 @@ public class CommercialProposalController {
         CommercialProposalResponse response = service.pushToFinancialModel(id);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
+
+    // ── Versioning & Company Details ─────────────────────────────────────────
+
+    @PostMapping("/{id}/version")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Create a new version of a commercial proposal")
+    public ResponseEntity<ApiResponse<CommercialProposalResponse>> createVersion(@PathVariable UUID id) {
+        var cp = service.createVersion(id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(CommercialProposalResponse.fromEntity(cp)));
+    }
+
+    @PutMapping("/{id}/company-details")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Update company details on a commercial proposal")
+    public ResponseEntity<ApiResponse<CommercialProposalResponse>> updateCompanyDetails(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> body) {
+        var cp = service.updateCompanyDetails(id,
+                body.get("companyName"), body.get("companyInn"), body.get("companyKpp"),
+                body.get("companyAddress"), body.get("signatoryName"), body.get("signatoryPosition"));
+        return ResponseEntity.ok(ApiResponse.ok(CommercialProposalResponse.fromEntity(cp)));
+    }
+
+    @GetMapping("/{id}/export-pdf")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Export commercial proposal as PDF")
+    public ResponseEntity<byte[]> exportPdf(@PathVariable UUID id) {
+        // Stub: returns empty PDF placeholder
+        byte[] pdfContent = ("%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n" +
+                "2 0 obj<</Type/Pages/Kids[]/Count 0>>endobj\nxref\n0 3\n" +
+                "0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n" +
+                "trailer<</Size 3/Root 1 0 R>>\nstartxref\n109\n%%EOF").getBytes();
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/pdf")
+                .header("Content-Disposition", "attachment; filename=cp-" + id + ".pdf")
+                .body(pdfContent);
+    }
+
+    @PostMapping("/{id}/apply-bid/{bidComparisonId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Apply bid winner to commercial proposal work items")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> applyBidWinner(
+            @PathVariable UUID id,
+            @PathVariable UUID bidComparisonId,
+            @RequestBody Map<String, Object> body) {
+        UUID winnerVendorId = UUID.fromString((String) body.get("winnerVendorId"));
+        java.math.BigDecimal costPrice = new java.math.BigDecimal(body.get("costPrice").toString());
+        int count = service.applyBidWinnerToCp(id, bidComparisonId, winnerVendorId, costPrice);
+        return ResponseEntity.ok(ApiResponse.ok(Map.of("count", count)));
+    }
 }

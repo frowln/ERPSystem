@@ -117,7 +117,6 @@ const SafetyInspectionDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4 flex items-center gap-2">
               <AlertTriangle size={16} className="text-warning-500" />
-              {/* TODO: replace with real API call */}
               {t('safety.inspectionDetail.sectionFindings')} ({(insp as any)?.findings?.length ?? 0})
             </h3>
             <div className="space-y-3">

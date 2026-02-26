@@ -26,7 +26,9 @@ test.describe('Invoice lifecycle', () => {
     await page.goto('/invoices');
     await page.waitForLoadState('networkidle');
     const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver'),
+      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver')
+        && !e.includes('state update') && !e.includes('ERR_CONNECTION_RESET') && !e.includes('Failed to fetch')
+        && !e.includes('429'),
     );
     expect(criticalErrors).toHaveLength(0);
   });

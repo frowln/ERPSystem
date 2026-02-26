@@ -1,4 +1,34 @@
 import { apiClient } from './client';
+import type { PaginatedResponse, PaginationParams } from '@/types';
+import type { KpiItem } from '@/modules/analytics/types';
+
+export interface AuditLogEntry extends Record<string, unknown> {
+  [key: string]: unknown;
+  id: string;
+  module: string;
+  action_type: string;
+  count: number;
+  userName: string;
+  timestamp: string;
+}
+
+export interface ProjectBudgetSummary {
+  name: string;
+  budget: number;
+  actual: number;
+}
+
+export interface ProgressPoint {
+  month: string;
+  planned: number;
+  actual: number;
+}
+
+export interface BudgetCategory {
+  name: string;
+  amount: number;
+  color: string;
+}
 
 export interface ProjectStatusSummary {
   status: string;
@@ -100,6 +130,36 @@ export const analyticsApi = {
       params,
       responseType: 'blob',
     });
+    return response.data;
+  },
+
+  // KPI definitions
+  getKpis: async (params?: AnalyticsFilters): Promise<KpiItem[]> => {
+    const response = await apiClient.get<KpiItem[]>('/analytics/kpis', { params });
+    return response.data;
+  },
+
+  // Audit log
+  getAuditLog: async (params?: PaginationParams & { module?: string; actionType?: string; dateFrom?: string; dateTo?: string }): Promise<PaginatedResponse<AuditLogEntry>> => {
+    const response = await apiClient.get<PaginatedResponse<AuditLogEntry>>('/analytics/audit-log', { params });
+    return response.data;
+  },
+
+  // Project budget summaries
+  getProjectBudgets: async (params?: AnalyticsFilters): Promise<ProjectBudgetSummary[]> => {
+    const response = await apiClient.get<ProjectBudgetSummary[]>('/analytics/project-budgets', { params });
+    return response.data;
+  },
+
+  // Cumulative progress
+  getProgressData: async (params?: AnalyticsFilters): Promise<ProgressPoint[]> => {
+    const response = await apiClient.get<ProgressPoint[]>('/analytics/progress', { params });
+    return response.data;
+  },
+
+  // Budget by category
+  getBudgetCategories: async (params?: AnalyticsFilters): Promise<BudgetCategory[]> => {
+    const response = await apiClient.get<BudgetCategory[]>('/analytics/budget-categories', { params });
     return response.data;
   },
 };

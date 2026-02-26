@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Camera, MapPin, Cloud, Thermometer, Users } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { mobileApi } from '@/api/mobile';
+import { projectsApi } from '@/api/projects';
 import { formatDateTime } from '@/lib/format';
 import { guardDemoModeAction } from '@/lib/demoMode';
 import {
@@ -21,12 +23,6 @@ import type { CreateFieldReportRequest } from './types';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
 
-const getProjectOptions = () => [
-  { value: '', label: t('mobileModule.reportNew.selectProject') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
 
 const getWeatherOptions = () => [
   { value: '', label: t('mobileModule.reportNew.selectWeather') },
@@ -47,6 +43,13 @@ const parseOptionalNumber = (value: string): number | undefined => {
 
 const FieldReportCreatePage: React.FC = () => {
   const navigate = useNavigate();
+
+  const { data: projectsData } = useQuery({ queryKey: ['projects'], queryFn: () => projectsApi.getProjects() });
+  const projectOptions = [
+    { value: '', label: t('mobileModule.reportNew.selectProject') },
+    ...(projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name })),
+  ];
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [projectId, setProjectId] = useState('');
@@ -352,7 +355,7 @@ const FieldReportCreatePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField label={t('mobileModule.reportNew.labelProject')} required>
                   <Select
-                    options={getProjectOptions()}
+                    options={projectOptions}
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
                   />

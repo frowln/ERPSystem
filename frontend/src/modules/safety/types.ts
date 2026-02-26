@@ -112,3 +112,176 @@ export interface SafetyTraining {
   createdAt?: string;
   updatedAt?: string;
 }
+
+// ---------------------------------------------------------------------------
+// Safety Metrics (LTIR/TRIR Dashboard)
+// ---------------------------------------------------------------------------
+
+export type MetricsPeriod = 'month' | 'quarter' | 'year';
+
+export interface SafetyMetricTarget {
+  ltir: number;
+  trir: number;
+  dartRate: number;
+  severityRate: number;
+}
+
+export interface SafetyMetrics {
+  ltir: number;
+  trir: number;
+  dartRate: number;
+  severityRate: number;
+  nearMissFreq: number;
+  totalWorkHours: number;
+  ltiCases: number;
+  recordableIncidents: number;
+  targets: SafetyMetricTarget;
+  monthlyTrend: { month: string; ltir: number; trir: number; targetLtir: number; targetTrir: number }[];
+  projectBreakdown: {
+    projectId: string;
+    projectName: string;
+    ltir: number;
+    trir: number;
+    incidents: number;
+    workHours: number;
+  }[];
+}
+
+// ---------------------------------------------------------------------------
+// Training Journal
+// ---------------------------------------------------------------------------
+
+export type TrainingRecordType = 'initial' | 'primary' | 'repeat' | 'unscheduled' | 'targeted';
+export type TrainingResult = 'pass' | 'fail';
+
+export interface TrainingRecord {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  trainingType: TrainingRecordType;
+  date: string;
+  instructor: string;
+  result: TrainingResult;
+  nextDate: string;
+  projectId: string;
+  projectName: string;
+}
+
+export interface CreateTrainingRecordRequest {
+  employeeId: string;
+  employeeName: string;
+  trainingType: TrainingRecordType;
+  date: string;
+  instructor: string;
+  result: TrainingResult;
+  nextDate: string;
+  projectId: string;
+  projectName: string;
+}
+
+// ---------------------------------------------------------------------------
+// PPE Management (СИЗ)
+// ---------------------------------------------------------------------------
+
+export type PpeCategory = 'head' | 'body' | 'hands' | 'feet' | 'eyes' | 'respiratory';
+export type PpeCondition = 'new' | 'good' | 'worn' | 'damaged';
+export type PpeIssueStatus = 'issued' | 'returned' | 'written_off';
+
+export interface PpeItem {
+  id: string;
+  name: string;
+  category: PpeCategory;
+  size?: string;
+  quantity: number;
+  minQuantity: number;
+  condition: PpeCondition;
+  expirationDate?: string;
+}
+
+export interface PpeIssue {
+  id: string;
+  ppeItemId: string;
+  ppeItemName: string;
+  size?: string;
+  employeeId: string;
+  employeeName: string;
+  issuedDate: string;
+  returnDate?: string;
+  writeOffDate?: string;
+  condition?: PpeCondition;
+  status: PpeIssueStatus;
+}
+
+export interface IssuePpeRequest {
+  ppeItemId: string;
+  employeeId: string;
+  employeeName: string;
+  size?: string;
+  quantity?: number;
+}
+
+export interface ReturnPpeRequest {
+  status: 'returned' | 'written_off';
+}
+
+// ---------------------------------------------------------------------------
+// SOUT Cards (Спецоценка условий труда)
+// ---------------------------------------------------------------------------
+
+export type SoutHazardClass = 1 | 2 | 3 | 4;
+export type SoutSubclass = '3.1' | '3.2' | '3.3' | '3.4';
+export type SoutStatus = 'valid' | 'expiring' | 'expired';
+
+export interface SoutFactor {
+  name: string;
+  measured: number;
+  limit: number;
+  unit: string;
+}
+
+export interface SoutCard {
+  id: string;
+  workplaceId: string;
+  position: string;
+  department: string;
+  hazardClass: SoutHazardClass;
+  hazardSubclass?: SoutSubclass;
+  certificateNumber?: string;
+  factors: SoutFactor[];
+  assessmentDate: string;
+  nextAssessmentDate?: string;
+  expiryDate: string;
+  status: SoutStatus;
+}
+
+// ---------------------------------------------------------------------------
+// Accident Investigation Act N-1
+// ---------------------------------------------------------------------------
+
+export type AccidentActStatus = 'draft' | 'investigation' | 'completed';
+
+export interface AccidentActN1 {
+  id: string;
+  incidentId: string;
+  incidentNumber: string;
+  victimName: string;
+  victimPosition: string;
+  circumstances: string;
+  causes: string;
+  witnesses: string;
+  responsiblePersons: string;
+  correctiveMeasures: string;
+  createdAt: string;
+  status: AccidentActStatus;
+}
+
+export interface CreateAccidentActRequest {
+  incidentId: string;
+  victimName: string;
+  victimPosition: string;
+  circumstances: string;
+  causes: string;
+  witnesses?: string;
+  responsiblePersons: string;
+  correctiveMeasures: string;
+}

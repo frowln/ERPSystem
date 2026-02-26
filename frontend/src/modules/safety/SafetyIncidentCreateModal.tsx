@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
+import { safetyApi } from '@/api/safety';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
+import type { IncidentSeverity, IncidentType } from './types';
 
 interface SafetyIncidentCreateModalProps {
   open: boolean;
@@ -30,12 +34,6 @@ const getTypeOptions = () => [
   { value: 'OTHER', label: t('safety.incidentCreate.typeOther') },
 ];
 
-const getProjectOptions = () => [
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '3', label: t('mockData.projectBridge') },
-  { value: '6', label: t('mockData.projectCentral') },
-];
-
 export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps> = ({ open, onClose }) => {
   const [incidentType, setIncidentType] = useState('FALL');
   const [severity, setSeverity] = useState('MODERATE');
@@ -45,6 +43,38 @@ export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps>
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [injuredPersons, setInjuredPersons] = useState('0');
+
+  const queryClient = useQueryClient();
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const createMutation = useMutation({
+    mutationFn: () => {
+      return safetyApi.createIncident({
+        incidentDate: incidentDate,
+        incidentTime: incidentTime || undefined,
+        projectId: projectId,
+        location: location,
+        severity: severity as IncidentSeverity,
+        incidentType: incidentType as IncidentType,
+        description: description,
+        injuredPersons: Number(injuredPersons) || 0,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['safety-incidents'] });
+      toast.success(t('safety.incidentCreate.toastCreated'));
+      resetForm();
+      onClose();
+    },
+    onError: () => {
+      toast.error(t('safety.incidentCreate.toastError'));
+    },
+  });
 
   const resetForm = () => {
     setIncidentType('FALL');
@@ -58,9 +88,7 @@ export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps>
   };
 
   const handleSubmit = () => {
-    toast.success(t('safety.incidentCreate.toastCreated'));
-    onClose();
-    resetForm();
+    createMutation.mutate();
   };
 
   return (
@@ -84,7 +112,7 @@ export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps>
           >
             {t('safety.incidentCreate.buttonCancel')}
           </Button>
-          <Button onClick={handleSubmit} disabled={!incidentDate || !projectId || !location || !description}>
+          <Button onClick={handleSubmit} loading={createMutation.isPending} disabled={!incidentDate || !projectId || !location || !description}>
             {t('safety.incidentCreate.buttonSubmit')}
           </Button>
         </>
@@ -128,7 +156,7 @@ export const SafetyIncidentCreateModal: React.FC<SafetyIncidentCreateModalProps>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('safety.incidentCreate.labelProject')} required>
             <Select
-              options={getProjectOptions()}
+              options={projectOptions}
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               placeholder={t('safety.incidentCreate.placeholderProject')}

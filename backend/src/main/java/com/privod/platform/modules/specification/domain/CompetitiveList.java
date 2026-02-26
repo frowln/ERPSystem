@@ -44,6 +44,9 @@ public class CompetitiveList extends BaseEntity {
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
+    @Column(name = "purchase_request_id")
+    private UUID purchaseRequestId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default

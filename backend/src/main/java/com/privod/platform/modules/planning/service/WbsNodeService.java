@@ -1,6 +1,7 @@
 package com.privod.platform.modules.planning.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.planning.domain.DependencyType;
 import com.privod.platform.modules.planning.domain.WbsDependency;
 import com.privod.platform.modules.planning.domain.WbsNode;
@@ -85,7 +86,10 @@ public class WbsNodeService {
 
         validateDates(request.plannedStartDate(), request.plannedEndDate());
 
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+
         WbsNode node = WbsNode.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .parentId(request.parentId())
                 .code(request.code())

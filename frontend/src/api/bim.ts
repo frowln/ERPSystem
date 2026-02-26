@@ -1,5 +1,12 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
+import type {
+  ClashResult,
+  DefectHeatmapZone,
+  ConstructionProgress4D,
+  BimPropertySet,
+  BcfTopic,
+} from '@/modules/bim/types';
 
 export type BimModelStatus = 'ACTIVE' | 'PROCESSING' | 'REVIEW' | 'ARCHIVED' | 'ERROR';
 export type BimModelFormat = 'IFC' | 'RVT' | 'NWD' | 'NWC' | 'DWG' | 'DGN';
@@ -201,5 +208,54 @@ export const bimApi = {
 
   unlinkItemFromClash: async (clashId: string, linkId: string): Promise<void> => {
     await apiClient.delete(`/bim/clashes/${clashId}/linked-items/${linkId}`);
+  },
+
+  // Clash Detection Results
+  getClashResults: async (params?: PaginationParams): Promise<PaginatedResponse<ClashResult>> => {
+    const response = await apiClient.get<PaginatedResponse<ClashResult>>('/bim/clash-results', { params });
+    return response.data;
+  },
+
+  updateClashStatus: async (id: string, status: string): Promise<void> => {
+    await apiClient.patch(`/bim/clash-results/${id}/status`, { status });
+  },
+
+  // Defect Heatmap
+  getDefectHeatmap: async (projectId?: string): Promise<DefectHeatmapZone[]> => {
+    const response = await apiClient.get<DefectHeatmapZone[]>('/bim/defect-heatmap', {
+      params: projectId ? { projectId } : undefined,
+    });
+    return response.data;
+  },
+
+  // Construction Progress 4D
+  getConstructionProgress: async (projectId?: string, date?: string): Promise<ConstructionProgress4D[]> => {
+    const response = await apiClient.get<ConstructionProgress4D[]>('/bim/construction-progress', {
+      params: { ...(projectId ? { projectId } : {}), ...(date ? { date } : {}) },
+    });
+    return response.data;
+  },
+
+  // Property Sets
+  getPropertySets: async (projectId?: string): Promise<BimPropertySet[]> => {
+    const response = await apiClient.get<BimPropertySet[]>('/bim/property-sets', {
+      params: projectId ? { projectId } : undefined,
+    });
+    return response.data;
+  },
+
+  // BCF Topics
+  getBcfTopics: async (params?: PaginationParams): Promise<PaginatedResponse<BcfTopic>> => {
+    const response = await apiClient.get<PaginatedResponse<BcfTopic>>('/bim/bcf-topics', { params });
+    return response.data;
+  },
+
+  createBcfTopic: async (data: Partial<BcfTopic>): Promise<BcfTopic> => {
+    const response = await apiClient.post<BcfTopic>('/bim/bcf-topics', data);
+    return response.data;
+  },
+
+  addBcfComment: async (topicId: string, text: string): Promise<void> => {
+    await apiClient.post(`/bim/bcf-topics/${topicId}/comments`, { text });
   },
 };

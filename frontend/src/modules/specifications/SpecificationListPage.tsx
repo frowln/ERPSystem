@@ -61,15 +61,14 @@ const SpecificationListPage: React.FC = () => {
   const columns = useMemo<ColumnDef<Specification, unknown>[]>(
     () => [
       {
-        accessorKey: 'name',
+        id: 'title',
+        accessorFn: (row) => row.title ?? row.name,
         header: t('specifications.colName'),
         size: 300,
         cell: ({ row }) => (
           <div>
-            <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.name}</p>
-            {row.original.notes && (
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate max-w-[280px]">{row.original.notes}</p>
-            )}
+            <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.title ?? row.original.name}</p>
+            <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5 font-mono">{row.original.name}</p>
           </div>
         ),
       },
@@ -78,7 +77,7 @@ const SpecificationListPage: React.FC = () => {
         header: t('specifications.colProject'),
         size: 200,
         cell: ({ getValue }) => (
-          <span className="text-neutral-600">{getValue<string>()}</span>
+          <span className="text-neutral-600 dark:text-neutral-400">{getValue<string>() ?? '—'}</span>
         ),
       },
       {
@@ -97,26 +96,17 @@ const SpecificationListPage: React.FC = () => {
         accessorKey: 'version',
         header: t('specifications.colVersion'),
         size: 80,
-        cell: ({ getValue }) => (
-          <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">v{getValue<number>()}</span>
-        ),
+        cell: ({ getValue }) => {
+          const v = getValue<number>();
+          return <span className="font-mono text-neutral-500 dark:text-neutral-400 text-xs">{v != null ? `v${v}` : '—'}</span>;
+        },
       },
       {
         accessorKey: 'itemCount',
         header: t('specifications.colItemCount'),
-        size: 100,
+        size: 90,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{getValue<number>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'totalAmount',
-        header: t('specifications.colAmount'),
-        size: 180,
-        cell: ({ getValue }) => (
-          <span className="font-medium tabular-nums text-right block">
-            {formatMoney(getValue<number>())}
-          </span>
+          <span className="tabular-nums text-neutral-700 dark:text-neutral-300">{getValue<number>() ?? 0}</span>
         ),
       },
       {

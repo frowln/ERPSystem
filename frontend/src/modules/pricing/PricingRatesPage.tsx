@@ -61,9 +61,12 @@ const PricingRatesPage: React.FC = () => {
   const importMutation = useMutation({
     mutationFn: ({ dbId, file }: { dbId: string; file: File }) =>
       pricingApi.importRates(dbId, file),
-    onSuccess: (count) => {
-      toast.success(t('pricing.rates.toastImported', { count: String(count) }));
+    onSuccess: (report) => {
+      toast.success(t('pricing.rates.toastImported', { count: String(report.importedRows) }));
       queryClient.invalidateQueries({ queryKey: ['pricing-rates'] });
+      if (report.errorRows > 0) {
+        toast.error(t('pricing.rates.toastImportError'));
+      }
     },
     onError: () => {
       toast.error(t('pricing.rates.toastImportError'));
@@ -196,7 +199,7 @@ const PricingRatesPage: React.FC = () => {
         subtitle={t('pricing.rates.subtitle', { count: String(totalElements) })}
         breadcrumbs={[
           { label: t('common.home'), href: '/' },
-          { label: t('pricing.databases.breadcrumb'), href: '/pricing/databases' },
+          { label: t('pricing.databases.breadcrumb'), href: '/estimates/pricing/databases' },
           { label: t('pricing.rates.breadcrumb') },
         ]}
         actions={

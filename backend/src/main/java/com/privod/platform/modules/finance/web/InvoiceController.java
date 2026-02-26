@@ -11,8 +11,13 @@ import com.privod.platform.modules.finance.web.dto.ChangeInvoiceStatusRequest;
 import com.privod.platform.modules.finance.web.dto.InvoiceLineResponse;
 import com.privod.platform.modules.finance.web.dto.InvoiceResponse;
 import com.privod.platform.modules.finance.web.dto.InvoiceSummaryResponse;
+import com.privod.platform.modules.finance.web.dto.PaymentResponse;
 import com.privod.platform.modules.finance.web.dto.RegisterPaymentRequest;
 import com.privod.platform.modules.finance.web.dto.UpdateInvoiceRequest;
+import com.privod.platform.modules.finance.web.dto.LinkInvoiceLineRequest;
+import com.privod.platform.modules.finance.service.InvoiceMatchingEngine;
+import com.privod.platform.modules.finance.web.dto.InvoiceMatchCandidate;
+import com.privod.platform.modules.finance.web.dto.ThreeWayMatchResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -44,6 +49,7 @@ import java.util.UUID;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final InvoiceMatchingEngine invoiceMatchingEngine;
 
     @GetMapping
     @Operation(summary = "List invoices with filtering and pagination")
@@ -145,6 +151,13 @@ public class InvoiceController {
         return ResponseEntity.ok(ApiResponse.ok(lines));
     }
 
+    @GetMapping("/{invoiceId}/payments")
+    @Operation(summary = "Get all linked payments of an invoice")
+    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getPayments(@PathVariable UUID invoiceId) {
+        List<PaymentResponse> payments = invoiceService.getInvoicePayments(invoiceId);
+        return ResponseEntity.ok(ApiResponse.ok(payments));
+    }
+
     @PostMapping("/{invoiceId}/lines")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
     @Operation(summary = "Add a line to an invoice")
@@ -154,6 +167,31 @@ public class InvoiceController {
         InvoiceLineResponse response = invoiceService.addInvoiceLine(invoiceId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/{invoiceId}/lines/{lineId}/link")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Link an invoice line to a budget item")
+    public ResponseEntity<ApiResponse<InvoiceLineResponse>> linkLine(
+            @PathVariable UUID invoiceId,
+            @PathVariable UUID lineId,
+            @Valid @RequestBody LinkInvoiceLineRequest request) {
+        InvoiceLineResponse response = invoiceService.linkInvoiceLine(invoiceId, lineId, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @GetMapping("/{id}/three-way-match")
+    @Operation(summary = "Get 3-way match validation result")
+    public ResponseEntity<ApiResponse<ThreeWayMatchResult>> threeWayMatch(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(invoiceMatchingEngine.validateThreeWayMatch(id)));
+    }
+
+    @GetMapping("/{id}/matches")
+    @Operation(summary = "Get fuzzy match candidates for invoice lines")
+    public ResponseEntity<ApiResponse<List<InvoiceMatchCandidate>>> getMatches(
+            @PathVariable UUID id,
+            @RequestParam UUID budgetId) {
+        return ResponseEntity.ok(ApiResponse.ok(invoiceMatchingEngine.matchInvoiceToPositions(id, budgetId)));
     }
 
     @DeleteMapping("/{invoiceId}/lines/{lineId}")

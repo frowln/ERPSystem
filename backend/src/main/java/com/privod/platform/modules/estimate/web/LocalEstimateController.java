@@ -5,11 +5,14 @@ import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.estimate.domain.LocalEstimateStatus;
 import com.privod.platform.modules.estimate.service.LocalEstimateService;
 import com.privod.platform.modules.estimate.web.dto.AddEstimateLineRequest;
+import com.privod.platform.modules.estimate.web.dto.ApplyMinstroyIndicesRequest;
+import com.privod.platform.modules.estimate.web.dto.ApplyMinstroyIndicesResponse;
 import com.privod.platform.modules.estimate.web.dto.CreateLocalEstimateRequest;
 import com.privod.platform.modules.estimate.web.dto.ImportMinstroyIndicesRequest;
 import com.privod.platform.modules.estimate.web.dto.LocalEstimateDetailResponse;
 import com.privod.platform.modules.estimate.web.dto.LocalEstimateLineResponse;
 import com.privod.platform.modules.estimate.web.dto.LocalEstimateResponse;
+import com.privod.platform.modules.estimate.web.dto.MinstroyIndexResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -117,5 +120,26 @@ public class LocalEstimateController {
             @Valid @RequestBody ImportMinstroyIndicesRequest request) {
         int count = localEstimateService.importMinstroyIndices(request);
         return ResponseEntity.ok(ApiResponse.ok(count));
+    }
+
+    @GetMapping("/minstroy/indices")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER')")
+    @Operation(summary = "Получить квартальные индексы Минстроя")
+    public ResponseEntity<ApiResponse<java.util.List<MinstroyIndexResponse>>> getMinstroyIndices(
+            @RequestParam(required = false) String region,
+            @RequestParam int quarter,
+            @RequestParam int year) {
+        var indices = localEstimateService.getMinstroyIndices(region, quarter, year);
+        return ResponseEntity.ok(ApiResponse.ok(indices));
+    }
+
+    @PostMapping("/{id}/minstroy/apply")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Применить выбранные индексы Минстроя к локальной смете")
+    public ResponseEntity<ApiResponse<ApplyMinstroyIndicesResponse>> applyMinstroyIndices(
+            @PathVariable UUID id,
+            @Valid @RequestBody ApplyMinstroyIndicesRequest request) {
+        ApplyMinstroyIndicesResponse response = localEstimateService.applyMinstroyIndices(id, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

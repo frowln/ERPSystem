@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, ChevronDown, ChevronRight } from 'lucide-react';
+import { Wallet, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { formatMoneyWhole } from '@/lib/format';
 import { t } from '@/i18n';
-import type { BudgetItemDocStatus, FinanceExpenseItem } from '@/types';
+import type { BudgetItemDocStatus, BudgetItemType, FinanceExpenseItem } from '@/types';
 import type { BudgetTreeNode } from './types';
 import { DOC_STATUS_CFG, MARK_COLORS, TABLE_HEADER_CLS, TABLE_HEADER_RIGHT_CLS } from './types';
+
+type CategoryFilter = 'ALL' | BudgetItemType;
+
+const CATEGORY_TABS: { id: CategoryFilter; labelKey: string }[] = [
+  { id: 'ALL', labelKey: 'projects.finance.categoryAll' },
+  { id: 'WORKS', labelKey: 'projects.finance.categoryWorks' },
+  { id: 'MATERIALS', labelKey: 'projects.finance.categoryMaterials' },
+  { id: 'EQUIPMENT', labelKey: 'projects.finance.categoryEquipment' },
+  { id: 'OVERHEAD', labelKey: 'projects.finance.categoryOverhead' },
+  { id: 'OTHER', labelKey: 'projects.finance.categoryOther' },
+];
+
+interface LinkedContract {
+  contractId: string;
+  contractNumber: string;
+  partnerName?: string;
+  allocatedAmount?: number;
+}
 
 interface BudgetPositionsSectionProps {
   projectId: string | undefined;
@@ -17,6 +35,7 @@ interface BudgetPositionsSectionProps {
   expandedBudgetRows: Set<string>;
   toggleBudgetRow: (id: string) => void;
   isLoading: boolean;
+  contractsByBudgetItemId?: Map<string, LinkedContract[]>;
 }
 
 export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
@@ -28,8 +47,44 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
   expandedBudgetRows,
   toggleBudgetRow,
   isLoading,
+  contractsByBudgetItemId,
 }) => {
   const navigate = useNavigate();
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('ALL');
+
+  // Build a set of budget item IDs that match the category filter (for pruning section rows)
+  const matchingLeafIds = useMemo(() => {
+    if (categoryFilter === 'ALL') return null;
+    const ids = new Set<string>();
+    budgetRows.forEach(({ node }) => {
+      if (!node.item.section && (node.item as FinanceExpenseItem).itemType === categoryFilter) {
+        ids.add(node.item.id);
+      }
+    });
+    return ids;
+  }, [budgetRows, categoryFilter]);
+
+  // Filter rows: show all sections (they provide context), but only matching leaf rows
+  const filteredRows = useMemo(() => {
+    if (categoryFilter === 'ALL' || matchingLeafIds === null) return budgetRows;
+    return budgetRows.filter(({ node }) => node.item.section || matchingLeafIds.has(node.item.id));
+  }, [budgetRows, categoryFilter, matchingLeafIds]);
+
+  // Recompute totals for filtered rows
+  const filteredTotals = useMemo(() => {
+    if (categoryFilter === 'ALL') return budgetTotals;
+    let planned = 0; let contracted = 0; let actSigned = 0; let paid = 0;
+    filteredRows.forEach(({ node }) => {
+      if (!node.item.section) {
+        const item = node.item as FinanceExpenseItem;
+        planned += Number(item.plannedAmount ?? 0);
+        contracted += Number(item.contractedAmount ?? 0);
+        actSigned += Number(item.actSignedAmount ?? 0);
+        paid += Number(item.paidAmount ?? 0);
+      }
+    });
+    return { planned, contracted, actSigned, paid };
+  }, [filteredRows, categoryFilter, budgetTotals]);
 
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
@@ -43,6 +98,25 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
           </p>
         </div>
         <span className="text-xs text-neutral-400">{budgetPositionsCount} {t('projects.finance.positions')}</span>
+      </div>
+
+      {/* Category filter tabs */}
+      <div className="px-5 py-2 border-b border-neutral-100 dark:border-neutral-800 flex items-center gap-1 overflow-x-auto">
+        {CATEGORY_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setCategoryFilter(tab.id)}
+            className={cn(
+              'px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors',
+              categoryFilter === tab.id
+                ? 'bg-primary-600 text-white'
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700',
+            )}
+          >
+            {t(tab.labelKey as Parameters<typeof t>[0])}
+          </button>
+        ))}
       </div>
 
       {budgetRows.length === 0 && !isLoading && (
@@ -63,7 +137,7 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50 dark:bg-neutral-800">
                 <th className={TABLE_HEADER_CLS} style={{ width: 64 }}>{t('projects.finance.colMark')}</th>
-                <th className={TABLE_HEADER_CLS} style={{ width: '30%' }}>{t('projects.finance.colSectionPosition')}</th>
+                <th className={TABLE_HEADER_CLS} style={{ width: '28%' }}>{t('projects.finance.colSectionPosition')}</th>
                 <th className={TABLE_HEADER_RIGHT_CLS}>{t('projects.finance.colCostPrice')}</th>
                 <th className={TABLE_HEADER_RIGHT_CLS}>{t('projects.finance.colEstimate')}</th>
                 <th className={TABLE_HEADER_RIGHT_CLS}>{t('projects.finance.colClientPrice')}</th>
@@ -81,7 +155,7 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
                   <td colSpan={11} className="px-5 py-6 text-center text-sm text-neutral-400">{t('common.loading')}</td>
                 </tr>
               )}
-              {budgetRows.map(({ node, depth }) => {
+              {filteredRows.map(({ node, depth }) => {
                 const item = node.item as FinanceExpenseItem;
                 const markCls = MARK_COLORS[item.disciplineMark ?? ''] ?? 'bg-neutral-100 text-neutral-600';
                 const isSection = item.section;
@@ -92,6 +166,13 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
                 const customerPrice = Number(item.salePrice ?? 0);
                 const isExpanded = expandedBudgetRows.has(item.id);
                 const hasChildren = node.children.length > 0;
+
+                // Multiple contracts for this budget position
+                const linkedContracts = contractsByBudgetItemId?.get(item.id) ?? [];
+                // Fallback to single contract from budget item itself
+                const singleContract = (!linkedContracts.length && item.contractId && item.contractNumber)
+                  ? [{ contractId: item.contractId, contractNumber: item.contractNumber, partnerName: item.contractPartnerName }]
+                  : linkedContracts;
 
                 if (isSection) {
                   return (
@@ -149,6 +230,11 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
                     <td className="px-4 py-2.5 text-sm font-medium text-neutral-800 dark:text-neutral-200">
                       <div className="truncate" style={{ paddingLeft: `${depth * 16}px` }}>
                         {item.name}
+                        {item.itemType && item.itemType !== 'OTHER' && (
+                          <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 font-normal">
+                            {t(`finance.itemType${item.itemType.charAt(0) + item.itemType.slice(1).toLowerCase()}` as Parameters<typeof t>[0])}
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-2.5 text-sm tabular-nums text-right text-neutral-600">
@@ -191,13 +277,24 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
                       </span>
                     </td>
                     <td className="px-4 py-2.5 text-sm">
-                      {item.contractId && item.contractNumber ? (
-                        <button
-                          className="text-primary-600 hover:text-primary-700 hover:underline font-medium text-xs"
-                          onClick={() => navigate(`/contracts/${item.contractId}`)}
-                        >
-                          {item.contractNumber}
-                        </button>
+                      {singleContract.length > 0 ? (
+                        <div className="flex flex-col gap-0.5">
+                          {singleContract.map((lc) => (
+                            <button
+                              key={lc.contractId}
+                              className="flex items-center gap-1 text-primary-600 hover:text-primary-700 hover:underline font-medium text-xs text-left"
+                              onClick={() => navigate(`/contracts/${lc.contractId}`)}
+                            >
+                              <ExternalLink size={10} className="shrink-0" />
+                              <span>{lc.contractNumber}</span>
+                            </button>
+                          ))}
+                          {singleContract.length > 1 && (
+                            <span className="text-[10px] text-neutral-400">
+                              {singleContract.length} {t('projects.finance.contractsCount')}
+                            </span>
+                          )}
+                        </div>
                       ) : (
                         <button
                           className="text-xs text-neutral-400 hover:text-primary-600 transition-colors"
@@ -210,22 +307,22 @@ export const BudgetPositionsSection = React.memo<BudgetPositionsSectionProps>(({
                   </tr>
                 );
               })}
-              {budgetRows.length > 0 && (
+              {filteredRows.length > 0 && !isLoading && (
                 <tr className="border-t-2 border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 font-semibold">
                   <td colSpan={5} className="px-4 py-3 text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
                     {t('projects.finance.budgetTotal')}
                   </td>
                   <td className="px-4 py-3 text-right text-sm font-bold tabular-nums text-neutral-800 dark:text-neutral-200">
-                    {formatMoneyWhole(budgetTotals.planned)}
+                    {formatMoneyWhole(filteredTotals.planned)}
                   </td>
                   <td className="px-4 py-3 text-right text-sm font-bold tabular-nums text-primary-700">
-                    {budgetTotals.contracted ? formatMoneyWhole(budgetTotals.contracted) : <span className="text-neutral-300">&mdash;</span>}
+                    {filteredTotals.contracted ? formatMoneyWhole(filteredTotals.contracted) : <span className="text-neutral-300">&mdash;</span>}
                   </td>
                   <td className="px-4 py-3 text-right text-sm font-bold tabular-nums text-orange-600">
-                    {budgetTotals.actSigned ? formatMoneyWhole(budgetTotals.actSigned) : <span className="text-neutral-300">&mdash;</span>}
+                    {filteredTotals.actSigned ? formatMoneyWhole(filteredTotals.actSigned) : <span className="text-neutral-300">&mdash;</span>}
                   </td>
                   <td className="px-4 py-3 text-right text-sm font-bold tabular-nums text-success-700">
-                    {budgetTotals.paid ? formatMoneyWhole(budgetTotals.paid) : <span className="text-neutral-300">&mdash;</span>}
+                    {filteredTotals.paid ? formatMoneyWhole(filteredTotals.paid) : <span className="text-neutral-300">&mdash;</span>}
                   </td>
                   <td colSpan={2} />
                 </tr>

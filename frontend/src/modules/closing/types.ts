@@ -82,3 +82,157 @@ export interface CreateKs3Request {
   ks2DocumentIds: string[];
   retentionPercent: number;
 }
+
+// ---------------------------------------------------------------------------
+// KS-2 Approval Workflow
+// ---------------------------------------------------------------------------
+
+export type ApprovalStage = 'contractor' | 'technical' | 'accounting' | 'client';
+export type ApprovalStageStatus = 'pending' | 'approved' | 'rejected';
+
+export interface Ks2ApprovalStageEntry {
+  stage: ApprovalStage;
+  status: ApprovalStageStatus;
+  approverName?: string;
+  date?: string;
+  comment?: string;
+}
+
+export interface Ks2Approval {
+  id: string;
+  actId: string;
+  actNumber: string;
+  projectName: string;
+  amount: number;
+  currentStage: ApprovalStage;
+  stages: Ks2ApprovalStageEntry[];
+  createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// KS-2 Volume Verification
+// ---------------------------------------------------------------------------
+
+export type VolumeCheckStatus = 'within_limit' | 'warning' | 'exceeds';
+
+export interface Ks2VolumeCheck {
+  workItem: string;
+  unit: string;
+  estimateQty: number;
+  totalSubmitted: number;
+  thisActQty: number;
+  remaining: number;
+  status: VolumeCheckStatus;
+}
+
+// ---------------------------------------------------------------------------
+// KS-6a Journal
+// ---------------------------------------------------------------------------
+
+export interface Ks6aEntry {
+  id: string;
+  month: string;
+  workItem: string;
+  unit: string;
+  planQty: number;
+  cumulativeQty: number;
+  thisMonthQty: number;
+  progressPercent: number;
+}
+
+// ---------------------------------------------------------------------------
+// Correction Acts
+// ---------------------------------------------------------------------------
+
+export type CorrectionActStatus = 'draft' | 'approved' | 'applied';
+
+export interface CorrectionActItem {
+  workItem: string;
+  originalQty: number;
+  correctionQty: number;
+  unit: string;
+}
+
+export interface CorrectionAct {
+  id: string;
+  number: string;
+  originalActId: string;
+  originalActNumber: string;
+  date: string;
+  amount: number;
+  reason: string;
+  status: CorrectionActStatus;
+  items: CorrectionActItem[];
+}
+
+export interface CreateCorrectionActRequest {
+  originalActId: string;
+  reason: string;
+  items: Omit<CorrectionActItem, 'workItem'>[];
+}
+
+// ---------------------------------------------------------------------------
+// Cross-cutting: KS-2 Payment Status (links to Finance)
+// ---------------------------------------------------------------------------
+
+export interface Ks2PaymentInfo {
+  invoiceId?: string;
+  invoiceNumber?: string;
+  invoiceAmount?: number;
+  invoiceStatus?: string;
+  paidAmount: number;
+  remainingAmount: number;
+  paymentPercent: number;
+}
+
+// ---------------------------------------------------------------------------
+// Cross-cutting: Estimate Items for KS-2 Import
+// ---------------------------------------------------------------------------
+
+export interface EstimateItemForImport {
+  id: string;
+  estimateItemId: string;
+  name: string;
+  unitOfMeasure: string;
+  quantity: number;
+  unitPrice: number;
+  alreadySubmitted: number;
+  remaining: number;
+}
+
+// ---------------------------------------------------------------------------
+// KS-2 / KS-3 Print Forms
+// ---------------------------------------------------------------------------
+
+export interface Ks2PrintDataItem {
+  number: number;
+  workName: string;
+  unit: string;
+  qty: number;
+  price: number;
+  amount: number;
+}
+
+export interface Ks2PrintData {
+  actNumber: string;
+  date: string;
+  contractor: string;
+  client: string;
+  object: string;
+  items: Ks2PrintDataItem[];
+  total: number;
+}
+
+export interface Ks3PrintData {
+  certificateNumber: string;
+  date: string;
+  contractor: string;
+  client: string;
+  contractNumber: string;
+  contractDate: string;
+  periodFrom: string;
+  periodTo: string;
+  completedFromStart: number;
+  completedThisPeriod: number;
+  completedFromStartTotal: number;
+}

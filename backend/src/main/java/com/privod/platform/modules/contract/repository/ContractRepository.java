@@ -38,6 +38,8 @@ public interface ContractRepository extends JpaRepository<Contract, UUID>, JpaSp
 
     Page<Contract> findByPartnerIdAndDeletedFalse(UUID partnerId, Pageable pageable);
 
+    List<Contract> findByBudgetItemIdAndDeletedFalse(UUID budgetItemId);
+
     long countByProjectIdAndDeletedFalse(UUID projectId);
 
     @Query("SELECT COALESCE(SUM(c.amount), 0) FROM Contract c " +

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { fleetApi } from '@/api/fleet';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 
 const vehicleSchema = z.object({
@@ -59,16 +60,17 @@ const getStatusOptions = () => [
   { value: 'DECOMMISSIONED', label: t('fleet.createModal.statusDecommissioned') },
 ];
 
-const getProjectOptions = () => [
-  { value: '', label: t('fleet.createModal.noProject') },
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '2', label: t('mockData.projectGorizont') },
-  { value: '3', label: t('mockData.projectBridgeVyatka') },
-  { value: '6', label: t('mockData.projectTsCentralny') },
-];
-
 export const VehicleCreateModal: React.FC<VehicleCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = [
+    { value: '', label: t('fleet.createModal.noProject') },
+    ...(projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name })),
+  ];
 
   const {
     register,
@@ -186,7 +188,7 @@ export const VehicleCreateModal: React.FC<VehicleCreateModalProps> = ({ open, on
 
         <FormField label={t('fleet.createModal.labelProject')} error={errors.projectId?.message}>
           <Select
-            options={getProjectOptions()}
+            options={projectOptions}
             placeholder={t('fleet.createModal.placeholderProject')}
             hasError={!!errors.projectId}
             {...register('projectId')}

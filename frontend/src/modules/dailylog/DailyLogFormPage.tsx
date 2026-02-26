@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { dailyLogApi } from '@/api/dailylog';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 
 const dailyLogSchema = z.object({
@@ -44,14 +45,6 @@ const dailyLogSchema = z.object({
 
 type DailyLogFormData = z.input<typeof dailyLogSchema>;
 
-// Mock data — will be replaced by API data
-const getProjectOptions = () => [
-  { value: '1', label: t('dailyLogPage.projectSolnechny') },
-  { value: '2', label: t('dailyLogPage.projectHorizont') },
-  { value: '3', label: t('dailyLogPage.projectBridge') },
-  { value: '6', label: t('dailyLogPage.projectCentral') },
-];
-
 const weatherOptions = [
   { value: 'CLEAR', label: t('forms.dailyLog.weatherTypes.clear') },
   { value: 'CLOUDY', label: t('forms.dailyLog.weatherTypes.cloudy') },
@@ -72,6 +65,12 @@ const DailyLogFormPage: React.FC = () => {
     queryFn: () => dailyLogApi.getDailyLog(id!),
     enabled: isEdit,
   });
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
 
   const {
     register,
@@ -207,7 +206,7 @@ const DailyLogFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.dailyLog.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 placeholder={t('forms.dailyLog.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}

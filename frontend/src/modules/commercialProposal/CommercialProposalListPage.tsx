@@ -6,6 +6,7 @@ import { Plus, Search } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
 import { financeApi } from '@/api/finance';
@@ -22,11 +23,14 @@ const proposalStatusColorMap: Record<string, string> = {
   ACTIVE: 'blue',
 };
 
-const proposalStatusLabels: Record<string, string> = {
-  DRAFT: t('commercialProposal.statusDraft'),
-  IN_REVIEW: t('commercialProposal.statusInReview'),
-  APPROVED: t('commercialProposal.statusApproved'),
-  ACTIVE: t('commercialProposal.statusActive'),
+const proposalStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    DRAFT: t('commercialProposal.statusDraft'),
+    IN_REVIEW: t('commercialProposal.statusInReview'),
+    APPROVED: t('commercialProposal.statusApproved'),
+    ACTIVE: t('commercialProposal.statusActive'),
+  };
+  return labels[status] ?? status;
 };
 
 const CommercialProposalListPage: React.FC = () => {
@@ -36,7 +40,12 @@ const CommercialProposalListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
 
-  const { data: proposalsData, isLoading } = useQuery({
+  const {
+    data: proposalsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['COMMERCIAL_PROPOSALS', projectIdFilter],
     queryFn: () =>
       financeApi.getCommercialProposals({
@@ -93,7 +102,7 @@ const CommercialProposalListPage: React.FC = () => {
           <StatusBadge
             status={getValue<string>()}
             colorMap={proposalStatusColorMap}
-            label={proposalStatusLabels[getValue<string>()] ?? getValue<string>()}
+            label={proposalStatusLabel(getValue<string>())}
           />
         ),
       },
@@ -166,19 +175,29 @@ const CommercialProposalListPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <DataTable<CommercialProposal>
-        data={filteredProposals}
-        columns={columns}
-        loading={isLoading}
-        onRowClick={handleRowClick}
-        enableRowSelection
-        enableColumnVisibility
-        enableDensityToggle
-        enableExport
-        pageSize={20}
-        emptyTitle={t('commercialProposal.emptyTitle')}
-        emptyDescription={t('commercialProposal.emptyDescription')}
-      />
+      {isError ? (
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.noConnection')}
+          description={t('errors.serverErrorRetry')}
+          actionLabel={t('common.retry')}
+          onAction={() => void refetch()}
+        />
+      ) : (
+        <DataTable<CommercialProposal>
+          data={filteredProposals}
+          columns={columns}
+          loading={isLoading}
+          onRowClick={handleRowClick}
+          enableRowSelection
+          enableColumnVisibility
+          enableDensityToggle
+          enableExport
+          pageSize={20}
+          emptyTitle={t('commercialProposal.emptyTitle')}
+          emptyDescription={t('commercialProposal.emptyDescription')}
+        />
+      )}
     </div>
   );
 };

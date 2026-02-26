@@ -5,6 +5,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record UpdateSpecItemRequest(
         SpecItemType itemType,
@@ -12,8 +13,14 @@ public record UpdateSpecItemRequest(
         @Size(max = 500, message = "Наименование не должно превышать 500 символов")
         String name,
 
+        @Size(max = 255)
+        String brand,
+
         @Size(max = 100, message = "Код продукта не должен превышать 100 символов")
         String productCode,
+
+        @Size(max = 255)
+        String manufacturer,
 
         @PositiveOrZero(message = "Количество должно быть >= 0")
         BigDecimal quantity,
@@ -24,6 +31,9 @@ public record UpdateSpecItemRequest(
         @PositiveOrZero(message = "Плановая сумма должна быть >= 0")
         BigDecimal plannedAmount,
 
+        @PositiveOrZero
+        BigDecimal weight,
+
         String notes,
 
         Integer sequence,
@@ -32,6 +42,15 @@ public record UpdateSpecItemRequest(
 
         String estimateStatus,
 
-        Boolean isCustomerProvided
+        Boolean isCustomerProvided,
+
+        /** Back-link to the ФМ budget item created from this spec position */
+        UUID budgetItemId,
+
+        @Size(max = 20)
+        String position,
+
+        @Size(max = 500)
+        String sectionName
 ) {
 }

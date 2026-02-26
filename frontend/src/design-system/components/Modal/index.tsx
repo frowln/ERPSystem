@@ -124,18 +124,6 @@ export const Modal: React.FC<ModalProps> = ({
     return () => document.removeEventListener('focusin', handleFocusIn);
   }, [open, getFocusableElements]);
 
-  // Set inert on sibling content to prevent screen-reader escape
-  useEffect(() => {
-    if (!open) return undefined;
-
-    const root = document.getElementById('root');
-    if (root) root.setAttribute('inert', '');
-
-    return () => {
-      if (root) root.removeAttribute('inert');
-    };
-  }, [open]);
-
   useEffect(() => {
     if (!open) return undefined;
 

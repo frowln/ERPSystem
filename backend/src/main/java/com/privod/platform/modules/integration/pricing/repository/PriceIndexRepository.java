@@ -35,4 +35,14 @@ public interface PriceIndexRepository extends JpaRepository<PriceIndex, UUID> {
     Page<PriceIndex> findByFilters(@Param("region") String region,
                                     @Param("workType") String workType,
                                     Pageable pageable);
+
+    boolean existsByRegionAndWorkTypeAndBaseQuarterAndTargetQuarterAndDeletedFalse(
+            String region,
+            String workType,
+            String baseQuarter,
+            String targetQuarter
+    );
+
+    @Query("SELECT i FROM PriceIndex i WHERE i.deleted = false AND i.targetQuarter = :targetQuarter")
+    List<PriceIndex> findByTargetQuarter(@Param("targetQuarter") String targetQuarter);
 }

@@ -5,10 +5,13 @@ import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.integration.pricing.service.PricingService;
 import com.privod.platform.modules.integration.pricing.web.dto.CreatePriceIndexRequest;
 import com.privod.platform.modules.integration.pricing.web.dto.CreatePricingDatabaseRequest;
+import com.privod.platform.modules.integration.pricing.web.dto.ImportQuarterlyPriceIndicesRequest;
 import com.privod.platform.modules.integration.pricing.web.dto.PriceCalculationResponse;
 import com.privod.platform.modules.integration.pricing.web.dto.PriceIndexResponse;
+import com.privod.platform.modules.integration.pricing.web.dto.PricingImportReportResponse;
 import com.privod.platform.modules.integration.pricing.web.dto.PriceRateResponse;
 import com.privod.platform.modules.integration.pricing.web.dto.PricingDatabaseResponse;
+import com.privod.platform.modules.integration.pricing.web.dto.QuarterlyIndexImportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -95,11 +98,11 @@ public class PricingController {
     @PostMapping("/rates/import")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Импорт расценок из CSV")
-    public ResponseEntity<ApiResponse<Integer>> importRates(
+    public ResponseEntity<ApiResponse<PricingImportReportResponse>> importRates(
             @RequestParam UUID databaseId,
             @RequestParam("file") MultipartFile file) throws IOException {
-        int imported = pricingService.importRatesFromCsv(databaseId, file.getInputStream());
-        return ResponseEntity.ok(ApiResponse.ok(imported));
+        PricingImportReportResponse report = pricingService.importRatesWithReport(databaseId, file.getInputStream());
+        return ResponseEntity.ok(ApiResponse.ok(report));
     }
 
     @GetMapping("/rates/export")
@@ -135,6 +138,15 @@ public class PricingController {
             @Valid @RequestBody CreatePriceIndexRequest request) {
         PriceIndexResponse response = pricingService.createIndex(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/indices/import-quarterly")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Импорт квартальных индексов Минстроя")
+    public ResponseEntity<ApiResponse<QuarterlyIndexImportResponse>> importQuarterlyIndices(
+            @Valid @RequestBody ImportQuarterlyPriceIndicesRequest request) {
+        QuarterlyIndexImportResponse response = pricingService.importQuarterlyIndices(request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     // === Price Calculation ===

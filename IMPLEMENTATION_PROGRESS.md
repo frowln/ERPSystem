@@ -140,7 +140,7 @@
 
 ### P4-A: Auto-generation of KS-2 from Field Data
 - [x] **P4-01** Auto KS-2 pipeline from field data — Ks2PipelineService (collectVolumes from DailyLog entries by project/month → aggregate by description+unit → match to SpecItems for pricing, generateKs2 creates Ks2Document DRAFT with pipeline tracking fields + Ks2Lines + VAT from contract, batchGenerateKs2 iterates all project contracts, getPipelinePreview read-only), Ks2PipelineController at /api/ks2-pipeline (4 endpoints: POST /generate, POST /batch-generate, GET /preview, GET /volumes, @PreAuthorize ADMIN/PM/ACCOUNTANT), DTOs (Ks2PipelineRequest with yearMonth YYYY-MM validation, VolumeEntry record, PipelinePreviewResponse), Ks2Document entity updated (+pipelineGenerated/pipelineGeneratedAt/sourceDailyLogIds), DailyLogEntryRepository (+findByDailyLogIdInAndEntryTypeAndDeletedFalse), ContractRepository (+findByProjectIdAndDeletedFalse), Flyway V204 migration (+3 pipeline columns on ks2_documents), frontend Ks2PipelinePage (project/contract/period selects, volumes DataTable, MetricCards, preview modal with generate), api/ks2Pipeline.ts (4 methods), route ks2/pipeline, nav item site-ks2-pipeline, i18n ks2Pipeline section (35 keys ru+en) ✅ 2026-02-19
-- [ ] **P4-02** Built-in GESN/FER/TER cost databases — FSNB-2022 import, resource-index method (RIM), quarterly Minstroy indices auto-update, local estimate calculation
+- [x] **P4-02** Built-in GESN/FER/TER cost databases — FSNB-2022 import/report pipeline, reconciled pricing schema (`V240`), resilient RIM recalculation with index fallback, quarterly Minstroy import/dedup + scheduler hook, frontend normative/pricing routes+aliases, smoke coverage (`estimates-normative-flow.spec.ts`) ✅ 2026-02-24
 - [ ] **P4-03** OCR recognition of cost estimate documents — scan paper estimates, auto-recognize KS-2 line items, extract volumes from Excel/PDF; Apache Tika + OcrController frontend
 
 ### P4-B: Safety Compliance Engine
@@ -173,9 +173,9 @@ _Tasks will be detailed when P4 is complete._
 | P1    | 22    | 22   | 100% |
 | P2    | 19    | 19   | 100% |
 | P3    | 17    | 17   | 100% |
-| P4    | 11    | 0    | 0% |
+| P4    | 11    | 3    | 27% |
 | P5    | 16    | 0    | 0% |
-| **Total** | **99** | **72** | **73%** |
+| **Total** | **99** | **75** | **76%** |
 
 ---
 

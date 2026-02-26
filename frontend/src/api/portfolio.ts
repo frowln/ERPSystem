@@ -64,4 +64,17 @@ export const portfolioApi = {
     const response = await apiClient.get<BidComparison[]>(`/portfolio/bid-packages/${bidPackageId}/comparisons`);
     return response.data;
   },
+
+  // Go/No-Go Checklist (Phase 0)
+  updateGoNoGoChecklist: async (id: string, checklist: Record<string, boolean>, score: number): Promise<Opportunity> => {
+    const response = await apiClient.patch<Opportunity>(`/portfolio/opportunities/${id}/checklist`, {
+      checklistJson: JSON.stringify(checklist), score,
+    });
+    return response.data;
+  },
+
+  getAnalogAssessment: async (id: string): Promise<{ analogCount: number; avgEstimatedValue?: number; avgWinProbability?: number; recommendation: string }> => {
+    const response = await apiClient.get(`/portfolio/opportunities/${id}/analog-assessment`);
+    return response.data;
+  },
 };

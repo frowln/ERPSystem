@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { projectsApi } from '@/api/projects';
+import { contractsApi } from '@/api/contracts';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -41,26 +43,21 @@ const resultOptions = [
   { value: 'conditional', label: t('forms.ptoDocument.results.conditional') },
 ];
 
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
-const contractorOptions = [
-  { value: '', label: t('forms.ptoDocument.noContractor') },
-  { value: 'c1', label: 'ООО "СтройМонтаж"' },
-  { value: 'c2', label: 'ООО "ЭлектроСвязь"' },
-  { value: 'c3', label: 'ИП Сергеев' },
-  { value: 'c4', label: 'ООО "ТеплоСервис"' },
-];
 
 const PtoDocumentFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({ queryKey: ['projects'], queryFn: () => projectsApi.getProjects() });
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
+
+  const { data: contractorsData } = useQuery({ queryKey: ['counterparties'], queryFn: () => contractsApi.getCounterparties() });
+  const contractorOptions = [
+    { value: '', label: t('forms.ptoDocument.noContractor') },
+    ...(contractorsData?.content ?? []).map((c) => ({ value: c.id, label: c.name })),
+  ];
 
   const { data: existingDocumentData } = useQuery({
     queryKey: ['ptoDocument', id],

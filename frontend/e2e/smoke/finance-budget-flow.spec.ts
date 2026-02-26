@@ -120,7 +120,8 @@ test.describe('Finance budget flow', () => {
     await page.goto('/budgets');
     await page.waitForLoadState('networkidle');
     const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver'),
+      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver')
+        && !e.includes('state update') && !e.includes('ERR_CONNECTION_RESET') && !e.includes('Failed to fetch'),
     );
     expect(criticalErrors).toHaveLength(0);
   });

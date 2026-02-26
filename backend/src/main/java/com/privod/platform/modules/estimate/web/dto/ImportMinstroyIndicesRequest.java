@@ -18,4 +18,24 @@ public record ImportMinstroyIndicesRequest(
             BigDecimal indexValue
     ) {
     }
+
+    public String normalizedQuarter() {
+        if (quarter == null || quarter.isBlank()) {
+            return quarter;
+        }
+        String normalized = quarter.trim().toUpperCase();
+        if (normalized.matches("\\d{4}-Q[1-4]")) {
+            return normalized;
+        }
+        if (normalized.matches("\\d{4}/Q[1-4]")) {
+            return normalized.replace('/', '-');
+        }
+        if (normalized.matches("[1-4]Q\\d{4}")) {
+            return normalized.substring(2) + "-Q" + normalized.charAt(0);
+        }
+        if (normalized.matches("\\d{4}[- ]?[1-4]")) {
+            return normalized.substring(0, 4) + "-Q" + normalized.charAt(normalized.length() - 1);
+        }
+        return normalized;
+    }
 }

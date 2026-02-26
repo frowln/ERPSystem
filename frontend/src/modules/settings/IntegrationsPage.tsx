@@ -66,57 +66,7 @@ const iconMap: Record<string, { icon: React.ElementType; color: string; bg: stri
   edo: { icon: FileText, color: 'text-green-600', bg: 'bg-green-50' },
 };
 
-// Fallback mock data when API is unavailable
-const getFallbackIntegrations = (): IntegrationSummary[] => [
-  {
-    id: '1c',
-    name: t('mockData.integration1CName'),
-    description: t('mockData.integration1CDescription'),
-    type: '1c',
-    enabled: false,
-    configured: false,
-    status: 'DISCONNECTED',
-    lastSyncAt: null,
-    configSummary: null,
-    documentsProcessed: 0,
-  },
-  {
-    id: 'TELEGRAM',
-    name: 'Telegram Bot',
-    description: t('mockData.integrationTelegramDescription'),
-    type: 'TELEGRAM',
-    enabled: false,
-    configured: false,
-    status: 'DISCONNECTED',
-    lastSyncAt: null,
-    configSummary: null,
-    documentsProcessed: 0,
-  },
-  {
-    id: 'SBIS',
-    name: t('mockData.integrationSBISName'),
-    description: t('mockData.integrationSBISDescription'),
-    type: 'SBIS',
-    enabled: false,
-    configured: false,
-    status: 'DISCONNECTED',
-    lastSyncAt: null,
-    configSummary: null,
-    documentsProcessed: 0,
-  },
-  {
-    id: 'EDO',
-    name: t('mockData.integrationEDOName'),
-    description: t('mockData.integrationEDODescription'),
-    type: 'EDO',
-    enabled: false,
-    configured: false,
-    status: 'DISCONNECTED',
-    lastSyncAt: null,
-    configSummary: null,
-    documentsProcessed: 0,
-  },
-];
+const EMPTY_INTEGRATIONS: IntegrationSummary[] = [];
 
 // ---------------------------------------------------------------------------
 // Config modal forms
@@ -399,22 +349,11 @@ const IntegrationsPage: React.FC = () => {
 
   const { data: settingsData } = useQuery<IntegrationSettingsResponse>({
     queryKey: ['integration-settings'],
-    queryFn: async () => {
-      try {
-        return await integrationsApi.getSettings();
-      } catch {
-        return {
-          integrations: getFallbackIntegrations(),
-          totalConfigured: 0,
-          totalConnected: 0,
-          lastGlobalSync: null,
-        };
-      }
-    },
+    queryFn: () => integrationsApi.getSettings(),
     refetchInterval: 30000,
   });
 
-  const integrations: IntegrationCardData[] = (settingsData?.integrations ?? getFallbackIntegrations()).map((item) => ({
+  const integrations: IntegrationCardData[] = (settingsData?.integrations ?? EMPTY_INTEGRATIONS).map((item) => ({
     ...item,
     icon: iconMap[item.id]?.icon ?? FileText,
     iconColor: iconMap[item.id]?.color ?? 'text-neutral-600',

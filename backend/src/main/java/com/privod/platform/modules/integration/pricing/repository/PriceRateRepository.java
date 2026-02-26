@@ -23,6 +23,8 @@ public interface PriceRateRepository extends JpaRepository<PriceRate, UUID>,
 
     List<PriceRate> findByCodeAndDatabaseIdAndDeletedFalse(String code, UUID databaseId);
 
+    boolean existsByDatabaseIdAndCodeAndDeletedFalse(UUID databaseId, String code);
+
     Page<PriceRate> findByCategoryAndDeletedFalse(String category, Pageable pageable);
 
     @Query("SELECT r FROM PriceRate r WHERE r.deleted = false AND r.databaseId = :databaseId " +

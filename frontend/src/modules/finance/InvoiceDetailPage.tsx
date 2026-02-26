@@ -16,6 +16,7 @@ import {
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { ConfirmDialog } from '@/design-system/components/ConfirmDialog';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import {
   StatusBadge,
   invoiceStatusColorMap,
@@ -29,64 +30,32 @@ import { cn } from '@/lib/cn';
 import { guardDemoModeAction } from '@/lib/demoMode';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
+import type { Invoice as FinanceInvoice, InvoiceLine, InvoiceStatus, Payment } from '@/types';
 
 const InvoiceMatchingPanel = lazy(() => import('./InvoiceMatchingPanel'));
 
 type InvoiceTab = 'details' | 'matching';
 
-interface InvoiceLineItem {
-  id: string;
-  description: string;
-  quantity: number;
-  unit: string;
-  unitPrice: number;
-  total: number;
-}
+type StatusAction = { label: string; target: InvoiceStatus };
 
-interface LinkedPayment {
-  id: string;
-  number: string;
-  amount: number;
-  date: string;
-  status: string;
-}
-
-interface Invoice {
-  id: string;
-  number: string;
-  type: string;
-  status: string;
-  issueDate: string;
-  dueDate: string;
-  subtotal: number;
-  vatRate: number;
-  vatAmount: number;
-  total: number;
-  paidAmount: number;
-  contractId: string;
-  contractName: string;
-  projectName: string;
-  counterparty: string;
-  description: string;
-  createdByName: string;
-  createdAt: string;
-  updatedAt: string;
-  lineItems: InvoiceLineItem[];
-  linkedPayments: LinkedPayment[];
-}
-
-const statusActions: Record<string, { label: string; target: string }[]> = {
-  NEW: [{ label: 'Отправить на рассмотрение', target: 'UNDER_REVIEW' }],
-  UNDER_REVIEW: [{ label: 'Привязать к позиции', target: 'LINKED_TO_POSITION' }],
-  LINKED_TO_POSITION: [{ label: 'На согласование', target: 'ON_APPROVAL' }],
+const statusActions: Partial<Record<InvoiceStatus, StatusAction[]>> = {
+  NEW: [{ label: t('finance.invoiceDetail.actionSubmitReview'), target: 'UNDER_REVIEW' }],
+  UNDER_REVIEW: [{ label: t('finance.invoiceDetail.actionLinkToPosition'), target: 'LINKED_TO_POSITION' }],
+  LINKED_TO_POSITION: [{ label: t('finance.invoiceDetail.actionToApproval'), target: 'ON_APPROVAL' }],
   ON_APPROVAL: [
-    { label: 'Согласовать', target: 'APPROVED' },
-    { label: 'Отклонить', target: 'REJECTED' },
+    { label: t('finance.invoiceDetail.actionApprove'), target: 'APPROVED' },
+    { label: t('finance.invoiceDetail.actionReject'), target: 'REJECTED' },
   ],
-  APPROVED: [{ label: 'Закрыть', target: 'CLOSED' }],
-  DRAFT: [{ label: t('finance.invoiceDetail.actionSend'), target: 'UNDER_REVIEW' }],
-  SENT: [{ label: 'Согласовать', target: 'APPROVED' }],
+  APPROVED: [{ label: t('finance.invoiceDetail.actionClose'), target: 'CLOSED' }],
+  PAID: [{ label: t('finance.invoiceDetail.actionClose'), target: 'CLOSED' }],
+  REJECTED: [{ label: t('finance.invoiceDetail.actionReopen'), target: 'NEW' }],
+  DRAFT: [{ label: t('finance.invoiceDetail.actionSubmitReview'), target: 'UNDER_REVIEW' }],
+  SENT: [{ label: t('finance.invoiceDetail.actionApprove'), target: 'APPROVED' }],
   PARTIALLY_PAID: [{ label: t('finance.invoiceDetail.actionFullyPaid'), target: 'PAID' }],
+  OVERDUE: [
+    { label: t('finance.invoiceDetail.actionFullyPaid'), target: 'PAID' },
+    { label: t('finance.invoiceDetail.actionClose'), target: 'CLOSED' },
+  ],
 };
 
 const InvoiceDetailPage: React.FC = () => {
@@ -94,29 +63,44 @@ const InvoiceDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: invoice } = useQuery<Invoice>({
+  const {
+    data: invoice,
+    isLoading: isInvoiceLoading,
+    isError: isInvoiceError,
+    refetch: refetchInvoice,
+  } = useQuery<FinanceInvoice>({
     queryKey: ['INVOICE', id],
-    queryFn: async () => {
-      const data = await financeApi.getInvoice(id!);
-      return data as unknown as Invoice;
-    },
+    queryFn: () => financeApi.getInvoice(id!),
+    enabled: !!id,
+  });
+
+  const { data: invoiceLines = [] } = useQuery<InvoiceLine[]>({
+    queryKey: ['INVOICE_LINES', id],
+    queryFn: () => financeApi.getInvoiceLines(id!),
+    enabled: !!id,
+  });
+
+  const { data: linkedPayments = [] } = useQuery<Payment[]>({
+    queryKey: ['INVOICE_PAYMENTS', id],
+    queryFn: () => financeApi.getInvoicePayments(id!),
     enabled: !!id,
   });
 
   const inv = invoice;
   const [activeTab, setActiveTab] = useState<InvoiceTab>('details');
-  const [statusOverride, setStatusOverride] = useState<Invoice['status'] | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const effectiveStatus = statusOverride ?? inv?.status ?? '';
+
+  const effectiveStatus = (inv?.status ?? '') as InvoiceStatus;
   const actions = useMemo(() => statusActions[effectiveStatus] ?? [], [effectiveStatus]);
-  const remainingAmount = (inv?.total ?? 0) - (inv?.paidAmount ?? 0);
-  const lineItems: InvoiceLineItem[] = inv?.lineItems ?? [];
-  const linkedPayments: LinkedPayment[] = inv?.linkedPayments ?? [];
+  const subtotal = inv?.subtotal ?? ((inv?.totalAmount ?? 0) - (inv?.vatAmount ?? 0));
+  const vatRate = inv?.vatRate ?? 0;
+  const vatAmount = inv?.vatAmount ?? 0;
+  const totalAmount = inv?.totalAmount ?? 0;
+  const remainingAmount = inv?.remainingAmount ?? Math.max(0, totalAmount - (inv?.paidAmount ?? 0));
 
   const statusMutation = useMutation({
-    mutationFn: (targetStatus: string) => financeApi.changeInvoiceStatus(id!, targetStatus),
+    mutationFn: (targetStatus: InvoiceStatus) => financeApi.changeInvoiceStatus(id!, targetStatus),
     onSuccess: (updated) => {
-      setStatusOverride(null);
       queryClient.invalidateQueries({ queryKey: ['INVOICE', id] });
       queryClient.invalidateQueries({ queryKey: ['INVOICES'] });
       toast.success(
@@ -130,9 +114,49 @@ const InvoiceDetailPage: React.FC = () => {
     },
   });
 
-  if (!inv) return null;
+  if (!id) {
+    return (
+      <div className="animate-fade-in">
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.badRequest')}
+          description={t('errors.invalidIdFormat')}
+        />
+      </div>
+    );
+  }
 
-  const handleStatusChange = (targetStatus: string) => {
+  if (isInvoiceLoading) {
+    return (
+      <div className="animate-fade-in flex items-center justify-center py-16 text-neutral-500 dark:text-neutral-400">
+        {t('common.loading')}
+      </div>
+    );
+  }
+
+  if (isInvoiceError || !inv) {
+    return (
+      <div className="animate-fade-in">
+        <PageHeader
+          title={t('finance.invoiceList.title')}
+          backTo="/invoices"
+          breadcrumbs={[
+            { label: t('common.home'), href: '/' },
+            { label: t('finance.invoiceList.title'), href: '/invoices' },
+          ]}
+        />
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.noConnection')}
+          description={t('errors.serverErrorRetry')}
+          actionLabel={t('common.retry')}
+          onAction={() => void refetchInvoice()}
+        />
+      </div>
+    );
+  }
+
+  const handleStatusChange = (targetStatus: InvoiceStatus) => {
     if (guardDemoModeAction(t('finance.invoiceDetail.demoChangeStatus'))) return;
     statusMutation.mutate(targetStatus);
   };
@@ -151,7 +175,7 @@ const InvoiceDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={inv.number}
-        subtitle={`${inv.projectName} / ${inv.counterparty}`}
+        subtitle={`${inv.projectName ?? '—'} / ${inv.partnerName}`}
         backTo="/invoices"
         breadcrumbs={[
           { label: t('common.home'), href: '/' },
@@ -161,7 +185,7 @@ const InvoiceDetailPage: React.FC = () => {
         actions={
           <div className="flex items-center gap-2">
             <StatusBadge status={effectiveStatus} colorMap={invoiceStatusColorMap} label={invoiceStatusLabels[effectiveStatus] ?? effectiveStatus} size="md" />
-            <StatusBadge status={inv.type} colorMap={invoiceTypeColorMap} label={invoiceTypeLabels[inv.type] ?? inv.type} size="md" />
+            <StatusBadge status={inv.invoiceType} colorMap={invoiceTypeColorMap} label={invoiceTypeLabels[inv.invoiceType] ?? inv.invoiceType} size="md" />
             {actions.map((a) => (
               <Button key={a.target} variant="secondary" size="sm" onClick={() => handleStatusChange(a.target)}>{a.label}</Button>
             ))}
@@ -225,32 +249,32 @@ const InvoiceDetailPage: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('finance.invoiceDetail.subtotal')}</p>
-                <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{formatMoney(inv.subtotal)}</p>
+                <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{formatMoney(subtotal)}</p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('finance.invoiceDetail.vatLabel', { rate: String(inv.vatRate) })}</p>
-                <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{formatMoney(inv.vatAmount)}</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('finance.invoiceDetail.vatLabel', { rate: String(vatRate) })}</p>
+                <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{formatMoney(vatAmount)}</p>
               </div>
               <div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('finance.invoiceDetail.totalWithVat')}</p>
-                <p className="text-lg font-bold text-primary-600">{formatMoney(inv.total)}</p>
+                <p className="text-lg font-bold text-primary-600">{formatMoney(totalAmount)}</p>
               </div>
               <div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('finance.invoiceDetail.remainingToPay')}</p>
                 <p className="text-lg font-bold text-danger-600">{formatMoney(remainingAmount)}</p>
               </div>
             </div>
-            {inv.description && (
+            {inv.notes && (
               <div className="mt-4 pt-4 border-t border-neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('finance.invoiceDetail.description')}</p>
-                <p className="text-sm text-neutral-700 dark:text-neutral-300">{inv.description}</p>
+                <p className="text-sm text-neutral-700 dark:text-neutral-300">{inv.notes}</p>
               </div>
             )}
           </div>
 
           {/* Line items table */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('finance.invoiceDetail.lineItems', { count: String(lineItems.length) })}</h3>
+            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('finance.invoiceDetail.lineItems', { count: String(invoiceLines.length) })}</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -263,15 +287,27 @@ const InvoiceDetailPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {lineItems.map((item) => (
-                    <tr key={item.id} className="border-b border-neutral-100">
-                      <td className="py-3 pr-4 text-neutral-800 dark:text-neutral-200">{item.description}</td>
-                      <td className="py-3 px-4 text-right text-neutral-700 dark:text-neutral-300">{item.quantity}</td>
-                      <td className="py-3 px-4 text-neutral-500 dark:text-neutral-400">{item.unit}</td>
-                      <td className="py-3 px-4 text-right text-neutral-700 dark:text-neutral-300">{formatMoney(item.unitPrice)}</td>
-                      <td className="py-3 pl-4 text-right font-medium text-neutral-900 dark:text-neutral-100">{formatMoney(item.total)}</td>
+                  {invoiceLines.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-4 text-center text-sm text-neutral-500 dark:text-neutral-400">
+                        {t('finance.invoiceDetail.noLineItems')}
+                      </td>
                     </tr>
-                  ))}
+                  )}
+                  {invoiceLines.map((item) => {
+                    const quantity = item.quantity ?? 0;
+                    const unitPrice = item.unitPrice ?? ((item.amount != null && quantity > 0) ? item.amount / quantity : 0);
+                    const total = item.amount ?? item.totalPrice ?? (unitPrice * quantity);
+                    return (
+                      <tr key={item.id} className="border-b border-neutral-100">
+                        <td className="py-3 pr-4 text-neutral-800 dark:text-neutral-200">{item.name}</td>
+                        <td className="py-3 px-4 text-right text-neutral-700 dark:text-neutral-300">{quantity}</td>
+                        <td className="py-3 px-4 text-neutral-500 dark:text-neutral-400">{item.unitOfMeasure ?? item.unit ?? '—'}</td>
+                        <td className="py-3 px-4 text-right text-neutral-700 dark:text-neutral-300">{formatMoney(unitPrice)}</td>
+                        <td className="py-3 pl-4 text-right font-medium text-neutral-900 dark:text-neutral-100">{formatMoney(total)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -284,13 +320,21 @@ const InvoiceDetailPage: React.FC = () => {
               {t('finance.invoiceDetail.linkedPayments', { count: String(linkedPayments.length) })}
             </h3>
             <div className="space-y-2">
-              {linkedPayments.map((pay) => (
-                <div key={pay.id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors" onClick={() => navigate(`/payments/${pay.id}`)}>
+              {linkedPayments.length === 0 ? (
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {t('finance.invoiceDetail.noLinkedPayments')}
+                </p>
+              ) : linkedPayments.map((pay) => (
+                <div
+                  key={pay.id}
+                  className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
+                  onClick={() => navigate(`/payments/${pay.id}`)}
+                >
                   <div>
                     <p className="text-sm font-medium text-primary-600">{pay.number}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{formatDate(pay.date)}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{formatDate(pay.paymentDate)}</p>
                   </div>
-                  <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{formatMoney(pay.amount)}</p>
+                  <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{formatMoney(pay.totalAmount)}</p>
                 </div>
               ))}
             </div>
@@ -302,11 +346,11 @@ const InvoiceDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('finance.invoiceDetail.details')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<Calendar size={15} />} label={t('finance.invoiceDetail.issueDate')} value={formatDateLong(inv.issueDate)} />
-              <InfoItem icon={<Clock size={15} />} label={t('finance.invoiceDetail.dueDate')} value={formatDateLong(inv.dueDate)} />
-              <InfoItem icon={<Building2 size={15} />} label={t('finance.invoiceDetail.partner')} value={inv.counterparty} />
-              <InfoItem icon={<User size={15} />} label={t('finance.invoiceDetail.createdBy')} value={inv.createdByName} />
-              <InfoItem icon={<FileText size={15} />} label={t('finance.invoiceDetail.project')} value={inv.projectName} />
+              <InfoItem icon={<Calendar size={15} />} label={t('finance.invoiceDetail.issueDate')} value={formatDateLong(inv.invoiceDate)} />
+              <InfoItem icon={<Clock size={15} />} label={t('finance.invoiceDetail.dueDate')} value={inv.dueDate ? formatDateLong(inv.dueDate) : '—'} />
+              <InfoItem icon={<Building2 size={15} />} label={t('finance.invoiceDetail.partner')} value={inv.partnerName} />
+              <InfoItem icon={<User size={15} />} label={t('finance.invoiceDetail.createdBy')} value={inv.createdBy ?? '—'} />
+              <InfoItem icon={<FileText size={15} />} label={t('finance.invoiceDetail.project')} value={inv.projectName ?? '—'} />
             </div>
           </div>
 
@@ -315,10 +359,14 @@ const InvoiceDetailPage: React.FC = () => {
               <Link2 size={15} />
               {t('finance.invoiceDetail.linkedContract')}
             </h3>
-            <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors" onClick={() => navigate(`/contracts/${inv.contractId}`)}>
-              <FileText size={15} className="text-neutral-400" />
-              <span className="text-sm text-primary-600 hover:text-primary-700">{inv.contractName}</span>
-            </div>
+            {inv.contractId ? (
+              <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors" onClick={() => navigate(`/contracts/${inv.contractId}`)}>
+                <FileText size={15} className="text-neutral-400" />
+                <span className="text-sm text-primary-600 hover:text-primary-700">{inv.contractId}</span>
+              </div>
+            ) : (
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">—</p>
+            )}
           </div>
         </div>
       </div>
@@ -338,7 +386,7 @@ const InvoiceDetailPage: React.FC = () => {
   );
 };
 
-const InfoItem: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
+const InfoItem: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode }> = ({ icon, label, value }) => (
   <div className="flex items-start gap-3">
     <span className="text-neutral-400 mt-0.5 flex-shrink-0">{icon}</span>
     <div>

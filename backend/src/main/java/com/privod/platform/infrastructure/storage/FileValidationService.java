@@ -20,18 +20,34 @@ import java.util.Set;
 @Slf4j
 public class FileValidationService {
 
-    private static final long MAX_FILE_SIZE_BYTES = 50L * 1024 * 1024; // 50 MB
+    private static final long MAX_FILE_SIZE_BYTES = 5L * 1024 * 1024 * 1024; // 5 GB
 
     /** Allowed MIME types per upload context. */
     private static final Map<String, Set<String>> CONTEXT_ALLOWED_TYPES = Map.of(
             "document", Set.of(
+                    // Office documents
                     "application/pdf",
                     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                     "application/msword",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     "application/vnd.ms-excel",
+                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    // Archives (проектная документация часто упакована в ZIP/RAR/7z)
+                    "application/zip",
+                    "application/x-zip-compressed",
+                    "application/x-rar-compressed",
+                    "application/vnd.rar",
+                    "application/x-7z-compressed",
+                    // AutoCAD DWG
+                    "image/x-dwg",
+                    "image/vnd.dwg",
+                    "application/acad",
+                    "application/x-acad",
+                    "application/octet-stream", // generic fallback — Tika не всегда распознаёт DWG
+                    // Images
                     "image/jpeg",
-                    "image/png"
+                    "image/png",
+                    "image/svg+xml"
             ),
             "csv", Set.of("text/plain", "text/csv", "application/csv"),
             "bim", Set.of("application/octet-stream"), // IFC files are detected as octet-stream
@@ -56,7 +72,7 @@ public class FileValidationService {
 
         if (file.getSize() > MAX_FILE_SIZE_BYTES) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Размер файла превышает допустимый предел 50 МБ");
+                    "Размер файла превышает допустимый предел 5 ГБ");
         }
 
         String detectedMime = detectMimeType(file);

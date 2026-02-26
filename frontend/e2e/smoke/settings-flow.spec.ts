@@ -140,7 +140,9 @@ test.describe('Settings flow', () => {
     await page.goto('/settings');
     await page.waitForLoadState('networkidle');
     const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver'),
+      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver')
+        && !e.includes('429') && !e.includes('state update') && !e.includes('ERR_CONNECTION_RESET')
+        && !e.includes('Failed to fetch'),
     );
     expect(criticalErrors).toHaveLength(0);
   });

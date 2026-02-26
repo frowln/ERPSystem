@@ -9,6 +9,18 @@ import type {
   SafetyTraining,
   TrainingStatus,
   TrainingType,
+  SafetyMetrics,
+  MetricsPeriod,
+  TrainingRecord,
+  CreateTrainingRecordRequest,
+  PpeItem,
+  PpeIssue,
+  IssuePpeRequest,
+  ReturnPpeRequest,
+  SoutCard,
+  AccidentActN1,
+  AccidentActStatus,
+  CreateAccidentActRequest,
 } from '@/modules/safety/types';
 
 export type { SafetyTraining, TrainingStatus, TrainingType };
@@ -157,5 +169,87 @@ export const safetyApi = {
 
   deleteTraining: async (id: string): Promise<void> => {
     await apiClient.delete(`/safety/trainings/${id}`);
+  },
+
+  // ---------------------------------------------------------------------------
+  // Safety Metrics (LTIR/TRIR)
+  // ---------------------------------------------------------------------------
+  getMetrics: async (period?: MetricsPeriod): Promise<SafetyMetrics> => {
+    const response = await apiClient.get<SafetyMetrics>('/safety/metrics', {
+      params: period ? { period } : undefined,
+    });
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // Training Journal (records per-employee)
+  // ---------------------------------------------------------------------------
+  getTrainingRecords: async (params?: SafetyFilters): Promise<PaginatedResponse<TrainingRecord>> => {
+    const response = await apiClient.get<PaginatedResponse<TrainingRecord>>('/safety/training-records', { params });
+    return response.data;
+  },
+
+  createTrainingRecord: async (data: CreateTrainingRecordRequest): Promise<TrainingRecord> => {
+    const response = await apiClient.post<TrainingRecord>('/safety/training-records', data);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // PPE Management (СИЗ)
+  // ---------------------------------------------------------------------------
+  getPpeInventory: async (params?: SafetyFilters): Promise<PaginatedResponse<PpeItem>> => {
+    const response = await apiClient.get<PaginatedResponse<PpeItem>>('/safety/ppe/inventory', { params });
+    return response.data;
+  },
+
+  getPpeIssues: async (params?: SafetyFilters): Promise<PaginatedResponse<PpeIssue>> => {
+    const response = await apiClient.get<PaginatedResponse<PpeIssue>>('/safety/ppe/issues', { params });
+    return response.data;
+  },
+
+  issuePpe: async (data: IssuePpeRequest): Promise<PpeIssue> => {
+    const response = await apiClient.post<PpeIssue>('/safety/ppe/issues', data);
+    return response.data;
+  },
+
+  returnPpe: async (id: string, data: ReturnPpeRequest): Promise<PpeIssue> => {
+    const response = await apiClient.patch<PpeIssue>(`/safety/ppe/issues/${id}/return`, data);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // SOUT Cards (Спецоценка условий труда)
+  // ---------------------------------------------------------------------------
+  getSoutCards: async (params?: SafetyFilters): Promise<PaginatedResponse<SoutCard>> => {
+    const response = await apiClient.get<PaginatedResponse<SoutCard>>('/safety/sout', { params });
+    return response.data;
+  },
+
+  getSoutCard: async (id: string): Promise<SoutCard> => {
+    const response = await apiClient.get<SoutCard>(`/safety/sout/${id}`);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // Accident Investigation Act N-1
+  // ---------------------------------------------------------------------------
+  getAccidentActs: async (params?: SafetyFilters): Promise<PaginatedResponse<AccidentActN1>> => {
+    const response = await apiClient.get<PaginatedResponse<AccidentActN1>>('/safety/accident-acts', { params });
+    return response.data;
+  },
+
+  getAccidentAct: async (id: string): Promise<AccidentActN1> => {
+    const response = await apiClient.get<AccidentActN1>(`/safety/accident-acts/${id}`);
+    return response.data;
+  },
+
+  createAccidentAct: async (data: CreateAccidentActRequest): Promise<AccidentActN1> => {
+    const response = await apiClient.post<AccidentActN1>('/safety/accident-acts', data);
+    return response.data;
+  },
+
+  updateAccidentActStatus: async (id: string, status: AccidentActStatus): Promise<AccidentActN1> => {
+    const response = await apiClient.patch<AccidentActN1>(`/safety/accident-acts/${id}/status`, { status });
+    return response.data;
   },
 };

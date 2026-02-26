@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -32,6 +34,9 @@ public class RegulatoryInspection extends BaseEntity {
     @Column(name = "project_id")
     private UUID projectId;
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "inspection_date", nullable = false)
     private LocalDate inspectionDate;
 
@@ -49,9 +54,11 @@ public class RegulatoryInspection extends BaseEntity {
     @Column(name = "result", length = 20)
     private InspectionResult result;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "violations", columnDefinition = "JSONB")
     private String violations;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "prescriptions", columnDefinition = "JSONB")
     private String prescriptionsJson;
 

@@ -54,6 +54,7 @@ export interface AdminUser {
   email: string;
   firstName: string;
   lastName: string;
+  fullName?: string;
   role: string;
   status: 'ACTIVE' | 'BLOCKED' | 'PENDING';
   groups: string[];

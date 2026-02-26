@@ -4,3 +4,8 @@ export { QualityCheckCreateModal } from './QualityCheckCreateModal';
 export { default as ToleranceRulesPage } from './ToleranceRulesPage';
 export { default as ToleranceChecksPage } from './ToleranceChecksPage';
 export { default as MaterialCertificatesPage } from './MaterialCertificatesPage';
+export { default as MaterialInspectionPage } from './MaterialInspectionPage';
+export { default as ChecklistTemplatesPage } from './ChecklistTemplatesPage';
+export { default as DefectRegisterPage } from './DefectRegisterPage';
+export { default as DefectParetoPage } from './DefectParetoPage';
+export { default as AuthorSupervisionJournalPage } from './AuthorSupervisionJournalPage';

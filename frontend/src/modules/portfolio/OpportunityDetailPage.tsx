@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   User,
   Calendar,
@@ -10,6 +10,12 @@ import {
   FileText,
   MessageSquare,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  CheckSquare,
+  Square,
+  Sparkles,
+  Save,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -57,9 +63,27 @@ const getActivityTypeLabels = (): Record<string, string> => ({
   TASK: t('portfolio.opportunityDetail.activityTask'),
 });
 
+const GO_NO_GO_FIELDS = [
+  'resourceAvailability',
+  'competencyMatch',
+  'teamCapacity',
+  'riskAcceptable',
+  'marginTargetMet',
+  'regionExperience',
+  'clientHistory',
+  'equipmentAvailable',
+] as const;
+
+type GoNoGoField = typeof GO_NO_GO_FIELDS[number];
+type GoNoGoChecklist = Record<GoNoGoField, boolean>;
+
+const defaultChecklist = (): GoNoGoChecklist =>
+  Object.fromEntries(GO_NO_GO_FIELDS.map((f) => [f, false])) as GoNoGoChecklist;
+
 const OpportunityDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: opportunity, isLoading } = useQuery<Opportunity>({
     queryKey: ['opportunity', id],
@@ -84,6 +108,28 @@ const OpportunityDetailPage: React.FC = () => {
   const acts = activities ?? [];
   const [stageOverride, setStageOverride] = useState<Opportunity['stage'] | null>(null);
   const effectiveStage = stageOverride ?? o.stage;
+
+  // Go/No-Go checklist state
+  const [goNoGoOpen, setGoNoGoOpen] = useState(false);
+  const [checklist, setChecklist] = useState<GoNoGoChecklist>(defaultChecklist);
+  const [analogResult, setAnalogResult] = useState<{ analogCount: number; avgEstimatedValue?: number; avgWinProbability?: number; recommendation: string } | null>(null);
+
+  const goNoGoScore = useMemo(() => GO_NO_GO_FIELDS.filter((f) => checklist[f]).length, [checklist]);
+
+  const saveChecklistMutation = useMutation({
+    mutationFn: () => portfolioApi.updateGoNoGoChecklist(id!, checklist, goNoGoScore),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['opportunity', id] });
+      toast.success(t('portfolio.goNoGo.saved'));
+    },
+    onError: () => toast.error(t('portfolio.goNoGo.saveError')),
+  });
+
+  const analogMutation = useMutation({
+    mutationFn: () => portfolioApi.getAnalogAssessment(id!),
+    onSuccess: (data) => setAnalogResult(data),
+    onError: () => toast.error(t('portfolio.goNoGo.analogError')),
+  });
 
   const stageActions = useMemo(() => {
     const idx = stageFlow.indexOf(effectiveStage);
@@ -192,6 +238,95 @@ const OpportunityDetailPage: React.FC = () => {
             <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
               {o.description ?? t('portfolio.opportunityDetail.noDescription')}
             </div>
+          </div>
+
+          {/* Go/No-Go Checklist */}
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <button
+              type="button"
+              className="w-full flex items-center justify-between px-6 py-4 text-left"
+              onClick={() => setGoNoGoOpen(!goNoGoOpen)}
+            >
+              <div className="flex items-center gap-2">
+                <CheckSquare size={16} className="text-primary-500" />
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  {t('portfolio.goNoGo.title')}
+                </h3>
+                <span className={cn(
+                  'ml-2 text-xs font-bold px-2 py-0.5 rounded-full',
+                  goNoGoScore >= 6 ? 'bg-success-100 text-success-700' :
+                  goNoGoScore >= 4 ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-red-100 text-red-700',
+                )}>
+                  {goNoGoScore}/8
+                </span>
+              </div>
+              {goNoGoOpen ? <ChevronUp size={16} className="text-neutral-400" /> : <ChevronDown size={16} className="text-neutral-400" />}
+            </button>
+
+            {goNoGoOpen && (
+              <div className="px-6 pb-6 border-t border-neutral-100 dark:border-neutral-800 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  {GO_NO_GO_FIELDS.map((field) => (
+                    <label
+                      key={field}
+                      className="flex items-center gap-3 p-3 rounded-lg border border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
+                    >
+                      <button
+                        type="button"
+                        className="flex-shrink-0 text-neutral-400"
+                        onClick={() => setChecklist((prev) => ({ ...prev, [field]: !prev[field] }))}
+                      >
+                        {checklist[field]
+                          ? <CheckSquare size={20} className="text-primary-500" />
+                          : <Square size={20} />
+                        }
+                      </button>
+                      <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                        {t(`portfolio.goNoGo.${field}` as 'portfolio.goNoGo.resourceAvailability')}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {analogResult && (
+                  <div className="mb-4 p-3 rounded-lg bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
+                    <p className="text-xs text-primary-600 dark:text-primary-400 mb-1">
+                      {t('portfolio.goNoGo.analogCount', { count: String(analogResult.analogCount) })}
+                    </p>
+                    <span className={cn(
+                      'inline-block text-xs font-bold px-2.5 py-1 rounded-full',
+                      analogResult.recommendation === 'GO' ? 'bg-success-100 text-success-700' :
+                      analogResult.recommendation === 'CONDITIONAL' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-red-100 text-red-700',
+                    )}>
+                      {analogResult.recommendation}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    iconLeft={<Sparkles size={14} />}
+                    loading={analogMutation.isPending}
+                    onClick={() => analogMutation.mutate()}
+                  >
+                    {t('portfolio.goNoGo.analogBtn')}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    iconLeft={<Save size={14} />}
+                    loading={saveChecklistMutation.isPending}
+                    onClick={() => saveChecklistMutation.mutate()}
+                  >
+                    {t('portfolio.goNoGo.saveBtn')}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Activity timeline */}

@@ -34,11 +34,20 @@ public class Specification extends BaseEntity {
     @Column(name = "organization_id", nullable = false)
     private UUID organizationId;
 
+    /** Auto-generated identifier, e.g. SPEC-00031 */
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
+    /** User-provided display title, e.g. "Система отопления ИТП" */
+    @Column(name = "title", length = 500)
+    private String title;
+
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
+
+    /** Denormalized project name for fast list display */
+    @Column(name = "project_name", length = 300)
+    private String projectName;
 
     @Column(name = "contract_id")
     private UUID contractId;
@@ -64,5 +73,10 @@ public class Specification extends BaseEntity {
 
     public boolean canTransitionTo(SpecificationStatus newStatus) {
         return this.status.canTransitionTo(newStatus);
+    }
+
+    /** Display name: title if set, otherwise auto-generated name */
+    public String getDisplayName() {
+        return (title != null && !title.isBlank()) ? title : name;
     }
 }

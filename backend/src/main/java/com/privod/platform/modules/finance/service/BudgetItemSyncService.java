@@ -6,7 +6,10 @@ import com.privod.platform.modules.contract.repository.ContractBudgetItemReposit
 import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.BudgetItemDocStatus;
+import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
+import com.privod.platform.modules.finance.repository.InvoiceRepository;
+import com.privod.platform.modules.finance.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +34,23 @@ public class BudgetItemSyncService {
             ContractStatus.ACTIVE,
             ContractStatus.CLOSED
     );
+    private static final List<InvoiceStatus> FINANCIAL_INVOICE_STATUSES = List.of(
+            InvoiceStatus.APPROVED,
+            InvoiceStatus.PARTIALLY_PAID,
+            InvoiceStatus.PAID,
+            InvoiceStatus.OVERDUE,
+            InvoiceStatus.CLOSED
+    );
+    private static final List<InvoiceStatus> NON_FINANCIAL_INVOICE_STATUSES = List.of(
+            InvoiceStatus.CANCELLED,
+            InvoiceStatus.REJECTED
+    );
 
     private final BudgetItemRepository budgetItemRepository;
     private final ContractRepository contractRepository;
     private final ContractBudgetItemRepository contractBudgetItemRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final PaymentRepository paymentRepository;
 
     /**
      * Called when a contract status changes.
@@ -75,7 +91,7 @@ public class BudgetItemSyncService {
      */
     @Transactional
     public void onInvoiceCreated(UUID contractId, BigDecimal amount) {
-        distributeAmountToLinkedItems(contractId, amount, this::incrementInvoicedAmount);
+        onInvoiceFinancialStateChanged(contractId);
     }
 
     /**
@@ -87,51 +103,128 @@ public class BudgetItemSyncService {
      */
     @Transactional
     public void onPaymentRegistered(UUID contractId, BigDecimal amount) {
-        distributeAmountToLinkedItems(contractId, amount, this::incrementPaidAmount);
+        onPaymentFinancialStateChanged(contractId);
+    }
+
+    /**
+     * Called when invoice status/amount changes in a way that affects FM accounting.
+     */
+    @Transactional
+    public void onInvoiceFinancialStateChanged(UUID contractId) {
+        syncFinancialAmountsForContract(contractId);
+    }
+
+    /**
+     * Called when payment status/amount changes in a way that affects FM accounting.
+     */
+    @Transactional
+    public void onPaymentFinancialStateChanged(UUID contractId) {
+        syncFinancialAmountsForContract(contractId);
+    }
+
+    /**
+     * Called when invoice contract relation changes.
+     */
+    @Transactional
+    public void onInvoiceContractChanged(UUID oldContractId, UUID newContractId) {
+        syncFinancialAmountsForContract(oldContractId);
+        syncFinancialAmountsForContract(newContractId);
     }
 
     // ── Private helpers ────────────────────────────────────────────────────────
 
-    private void distributeAmountToLinkedItems(UUID contractId,
-                                               BigDecimal amount,
-                                               BiConsumer<BudgetItem, BigDecimal> incrementFn) {
-        if (contractId == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+    private void syncFinancialAmountsForContract(UUID contractId) {
+        if (contractId == null) {
             return;
         }
+        for (UUID budgetItemId : resolveLinkedBudgetItemIds(contractId)) {
+            syncFinancialAmountsForBudgetItem(budgetItemId);
+        }
+    }
 
-        List<ContractBudgetItem> links = contractBudgetItemRepository.findByContractId(contractId);
-        if (links.isEmpty()) {
-            // Backward compatibility for legacy contracts with only contracts.budget_item_id
-            contractRepository.findByIdAndDeletedFalse(contractId).ifPresent(contract -> {
-                UUID legacyBudgetItemId = contract.getBudgetItemId();
-                if (legacyBudgetItemId == null) {
-                    return;
-                }
-                budgetItemRepository.findById(legacyBudgetItemId).ifPresent(item -> {
-                    if (item.isDeleted()) {
-                        return;
-                    }
-                    incrementFn.accept(item, amount);
-                    budgetItemRepository.save(item);
-                });
-            });
+    private void syncFinancialAmountsForBudgetItem(UUID budgetItemId) {
+        if (budgetItemId == null) {
             return;
         }
-
-        Map<UUID, BigDecimal> allocations = splitAmountByLinks(links, amount);
-        for (Map.Entry<UUID, BigDecimal> allocation : allocations.entrySet()) {
-            UUID budgetItemId = allocation.getKey();
-            BigDecimal allocated = allocation.getValue();
-            if (allocated.compareTo(BigDecimal.ZERO) <= 0) {
-                continue;
+        budgetItemRepository.findById(budgetItemId).ifPresent(item -> {
+            if (item.isDeleted()) {
+                return;
             }
-            budgetItemRepository.findById(budgetItemId).ifPresent(item -> {
-                if (item.isDeleted()) {
-                    return;
+
+            List<ContractBudgetItem> allLinks = contractBudgetItemRepository.findByBudgetItemId(budgetItemId);
+            HashSet<UUID> contractIds = new HashSet<>();
+            for (ContractBudgetItem link : allLinks) {
+                contractIds.add(link.getContractId());
+            }
+            contractRepository.findByBudgetItemIdAndDeletedFalse(budgetItemId)
+                    .forEach(contract -> contractIds.add(contract.getId()));
+
+            BigDecimal totalInvoiced = BigDecimal.ZERO;
+            BigDecimal totalPaid = BigDecimal.ZERO;
+
+            for (UUID contractId : contractIds) {
+                BigDecimal contractInvoiced = nonNull(
+                        invoiceRepository.sumTotalByContractIdAndStatusIn(contractId, FINANCIAL_INVOICE_STATUSES)
+                );
+                BigDecimal contractPaidByInvoices = nonNull(
+                        invoiceRepository.sumPaidAmountByContractIdAndStatusNotIn(contractId, NON_FINANCIAL_INVOICE_STATUSES)
+                );
+                BigDecimal contractPaidByPayments = nonNull(
+                        paymentRepository.sumPaidByContractId(contractId)
+                );
+                // Keep paid source resilient to alternative flows:
+                // - invoice registerPayment path
+                // - dedicated payments path
+                BigDecimal contractPaid = contractPaidByPayments.max(contractPaidByInvoices);
+
+                List<ContractBudgetItem> contractLinks = contractBudgetItemRepository.findByContractId(contractId);
+                if (contractLinks.isEmpty()) {
+                    if (contractRepository.findByIdAndDeletedFalse(contractId)
+                            .map(contract -> budgetItemId.equals(contract.getBudgetItemId()))
+                            .orElse(false)) {
+                        totalInvoiced = totalInvoiced.add(contractInvoiced);
+                        totalPaid = totalPaid.add(contractPaid);
+                    }
+                    continue;
                 }
-                incrementFn.accept(item, allocated);
-                budgetItemRepository.save(item);
-            });
+
+                Map<UUID, BigDecimal> invoicedAllocation = splitAmountByLinks(contractLinks, contractInvoiced);
+                Map<UUID, BigDecimal> paidAllocation = splitAmountByLinks(contractLinks, contractPaid);
+                totalInvoiced = totalInvoiced.add(nonNull(invoicedAllocation.get(budgetItemId)));
+                totalPaid = totalPaid.add(nonNull(paidAllocation.get(budgetItemId)));
+            }
+
+            item.setInvoicedAmount(nonNegative(totalInvoiced).setScale(2, RoundingMode.HALF_UP));
+            item.setPaidAmount(nonNegative(totalPaid).setScale(2, RoundingMode.HALF_UP));
+            updateFinancialDocStatus(item);
+            budgetItemRepository.save(item);
+        });
+    }
+
+    private void updateFinancialDocStatus(BudgetItem item) {
+        BigDecimal invoiced = nonNull(item.getInvoicedAmount());
+        BigDecimal paid = nonNull(item.getPaidAmount());
+        if (paid.compareTo(BigDecimal.ZERO) > 0) {
+            item.setDocStatus(BudgetItemDocStatus.PAID);
+            return;
+        }
+        if (invoiced.compareTo(BigDecimal.ZERO) > 0) {
+            if (item.getDocStatus() == BudgetItemDocStatus.CONTRACTED
+                    || item.getDocStatus() == BudgetItemDocStatus.ACT_SIGNED
+                    || item.getDocStatus() == BudgetItemDocStatus.INVOICED
+                    || item.getDocStatus() == BudgetItemDocStatus.PAID) {
+                item.setDocStatus(BudgetItemDocStatus.INVOICED);
+            }
+            return;
+        }
+        if (item.getDocStatus() == BudgetItemDocStatus.INVOICED || item.getDocStatus() == BudgetItemDocStatus.PAID) {
+            if (nonNull(item.getActSignedAmount()).compareTo(BigDecimal.ZERO) > 0) {
+                item.setDocStatus(BudgetItemDocStatus.ACT_SIGNED);
+            } else if (nonNull(item.getContractedAmount()).compareTo(BigDecimal.ZERO) > 0) {
+                item.setDocStatus(BudgetItemDocStatus.CONTRACTED);
+            } else {
+                item.setDocStatus(BudgetItemDocStatus.PLANNED);
+            }
         }
     }
 
@@ -249,30 +342,11 @@ public class BudgetItemSyncService {
         });
     }
 
-    private void incrementInvoicedAmount(BudgetItem item, BigDecimal amount) {
-        BigDecimal current = nonNull(item.getInvoicedAmount());
-        item.setInvoicedAmount(current.add(nonNull(amount)));
-
-        if (item.getDocStatus() == BudgetItemDocStatus.CONTRACTED
-                || item.getDocStatus() == BudgetItemDocStatus.ACT_SIGNED) {
-            item.setDocStatus(BudgetItemDocStatus.INVOICED);
-        }
-
-        log.info("Incremented invoicedAmount by {} for budgetItem={}", amount, item.getId());
-    }
-
-    private void incrementPaidAmount(BudgetItem item, BigDecimal amount) {
-        BigDecimal current = nonNull(item.getPaidAmount());
-        item.setPaidAmount(current.add(nonNull(amount)));
-
-        if (item.getDocStatus() == BudgetItemDocStatus.INVOICED) {
-            item.setDocStatus(BudgetItemDocStatus.PAID);
-        }
-
-        log.info("Incremented paidAmount by {} for budgetItem={}", amount, item.getId());
-    }
-
     private BigDecimal nonNull(BigDecimal value) {
         return value != null ? value : BigDecimal.ZERO;
+    }
+
+    private BigDecimal nonNegative(BigDecimal value) {
+        return nonNull(value).max(BigDecimal.ZERO);
     }
 }

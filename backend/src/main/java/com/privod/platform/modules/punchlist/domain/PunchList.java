@@ -32,6 +32,9 @@ public class PunchList extends BaseEntity {
     @Column(name = "project_id")
     private UUID projectId;
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "code", unique = true, length = 50)
     private String code;
 

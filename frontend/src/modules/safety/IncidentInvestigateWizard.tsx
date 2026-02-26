@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
+import { safetyApi } from '@/api/safety';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 
@@ -27,12 +30,6 @@ const getRootCauseOptions = () => [
   { value: 'environment', label: t('safety.investigateWizard.causeEnvironment') },
 ];
 
-const getResponsibleOptions = () => [
-  { value: 'r1', label: t('safety.investigateWizard.responsibleIvanov') },
-  { value: 'r2', label: t('safety.investigateWizard.responsiblePetrov') },
-  { value: 'r3', label: t('safety.investigateWizard.responsibleSidorov') },
-  { value: 'r4', label: t('safety.investigateWizard.responsibleKozlova') },
-];
 
 const getSteps = () => [
   t('safety.investigateWizard.stepIncidentData'),
@@ -42,7 +39,7 @@ const getSteps = () => [
   t('safety.investigateWizard.stepCompletion'),
 ];
 
-export const IncidentInvestigateWizard: React.FC<IncidentInvestigateWizardProps> = ({ open, onClose }) => {
+export const IncidentInvestigateWizard: React.FC<IncidentInvestigateWizardProps> = ({ open, onClose, incidentId }) => {
   const [step, setStep] = useState(0);
   const [findings, setFindings] = useState('');
   const [rootCauses, setRootCauses] = useState<string[]>([]);
@@ -53,8 +50,29 @@ export const IncidentInvestigateWizard: React.FC<IncidentInvestigateWizardProps>
   const [newDeadline, setNewDeadline] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // TODO: replace with real API call
-  const incident = { number: '', date: '', location: '', type: '', severity: '', injured: '', description: '' };
+  const { data: incidentData } = useQuery({
+    queryKey: ['safetyIncident', incidentId],
+    queryFn: () => safetyApi.getIncident(incidentId!),
+    enabled: !!incidentId && open,
+  });
+
+  const { data: usersData } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => permissionsApi.getUsers({ page: 0, size: 100 }),
+    enabled: open,
+  });
+
+  const responsibleOptions = (usersData?.content ?? []).map((u) => ({ value: u.id, label: `${u.lastName} ${u.firstName[0]}.` }));
+
+  const incident = {
+    number: incidentData?.number ?? '',
+    date: incidentData?.incidentDate ?? '',
+    location: incidentData?.location ?? '',
+    type: incidentData?.incidentType ?? '',
+    severity: incidentData?.severity ?? '',
+    injured: String(incidentData?.injuredPersons ?? ''),
+    description: incidentData?.description ?? '',
+  };
 
   const toggleRootCause = (value: string) => {
     setRootCauses((prev) =>
@@ -255,7 +273,7 @@ export const IncidentInvestigateWizard: React.FC<IncidentInvestigateWizardProps>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm">{action.description}</p>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                      {getResponsibleOptions().find((r) => r.value === action.responsible)?.label} | {t('safety.investigateWizard.actionDeadlinePrefix')} {action.deadline}
+                      {responsibleOptions.find((r) => r.value === action.responsible)?.label} | {t('safety.investigateWizard.actionDeadlinePrefix')} {action.deadline}
                     </p>
                   </div>
                   <button onClick={() => removeAction(action.id)} className="text-xs text-danger-600 hover:underline shrink-0">
@@ -278,7 +296,7 @@ export const IncidentInvestigateWizard: React.FC<IncidentInvestigateWizardProps>
             <div className="grid grid-cols-2 gap-3">
               <FormField label={t('safety.investigateWizard.labelResponsible')}>
                 <Select
-                  options={getResponsibleOptions()}
+                  options={responsibleOptions}
                   value={newResponsible}
                   onChange={(e) => setNewResponsible(e.target.value)}
                   placeholder={t('safety.investigateWizard.placeholderResponsible')}

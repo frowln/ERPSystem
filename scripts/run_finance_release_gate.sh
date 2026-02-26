@@ -4,12 +4,56 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 API_ROOT="${API_ROOT:-http://localhost:8080/api}"
 BASE_URL="${BASE_URL:-http://localhost:3000}"
+FINANCE_GATE_FRONTEND_PORT="${FINANCE_GATE_FRONTEND_PORT:-4174}"
+FINANCE_GATE_FRONTEND_URL="${FINANCE_GATE_FRONTEND_URL:-http://127.0.0.1:${FINANCE_GATE_FRONTEND_PORT}}"
+USE_EXISTING_FRONTEND="${USE_EXISTING_FRONTEND:-false}"
 PRIVOD_EMAIL="${PRIVOD_EMAIL:-admin@privod.ru}"
 PRIVOD_PASSWORD="${PRIVOD_PASSWORD:-admin123}"
 SUMMARY_FILE="${SUMMARY_FILE:-$ROOT/scripts/seed_full_finmodel_demo_summary.json}"
+SMOKE_BASE_URL="$BASE_URL"
+FRONTEND_DEV_PID=""
 
 step() {
   printf "\n==> %s\n" "$1"
+}
+
+cleanup() {
+  if [[ -n "$FRONTEND_DEV_PID" ]] && kill -0 "$FRONTEND_DEV_PID" >/dev/null 2>&1; then
+    kill "$FRONTEND_DEV_PID" >/dev/null 2>&1 || true
+  fi
+}
+trap cleanup EXIT
+
+ensure_frontend_for_tests() {
+  if [[ "$USE_EXISTING_FRONTEND" == "true" ]]; then
+    if curl -fsS "$BASE_URL" >/dev/null 2>&1; then
+      SMOKE_BASE_URL="$BASE_URL"
+      return
+    fi
+    echo "ERROR: USE_EXISTING_FRONTEND=true, but frontend is unreachable at $BASE_URL"
+    exit 1
+  fi
+
+  SMOKE_BASE_URL="$FINANCE_GATE_FRONTEND_URL"
+  step "Start isolated frontend dev server on $SMOKE_BASE_URL"
+  (
+    cd "$ROOT/frontend"
+    npm run dev -- --host 127.0.0.1 --port "$FINANCE_GATE_FRONTEND_PORT" > /tmp/finance_gate_frontend.log 2>&1
+  ) &
+  FRONTEND_DEV_PID=$!
+
+  for _ in $(seq 1 60); do
+    if curl -fsS "$SMOKE_BASE_URL" >/dev/null 2>&1; then
+      return
+    fi
+    sleep 1
+  done
+
+  echo "ERROR: frontend dev server did not become ready at $SMOKE_BASE_URL"
+  if [[ -f /tmp/finance_gate_frontend.log ]]; then
+    tail -n 120 /tmp/finance_gate_frontend.log || true
+  fi
+  exit 1
 }
 
 step "API login health-check"
@@ -39,28 +83,24 @@ step "Seed full finance demo dataset"
 step "Backend finance regression checks"
 (
   cd "$ROOT/backend"
-  ./gradlew compileJava
-  if ! ./gradlew test \
-    --tests 'com.privod.platform.modules.commercialProposal.service.CommercialProposalServiceTest' \
-    --tests 'com.privod.platform.modules.finance.service.InvoiceMatchingServiceTest' \
-    --tests 'com.privod.platform.modules.contract.service.ContractBudgetItemServiceTest'
-  then
-    echo "WARN: backend targeted JUnit tests skipped due unrelated test-compile failures in current worktree."
-    echo "WARN: continuing with API negative checks + UI smoke as runtime release gate."
-  fi
+  ./gradlew compileJava financeGateTest
 )
 
-step "Frontend finance smoke tests (critical + interactions + negative + i18n guard)"
+ensure_frontend_for_tests
+
+step "Frontend finance smoke tests (critical + invoice lifecycle + interactions + negative + i18n guard)"
 (
   cd "$ROOT/frontend"
-  BASE_URL="$BASE_URL" \
+  BASE_URL="$SMOKE_BASE_URL" \
   API_ROOT="$API_ROOT" \
   FINANCE_SUMMARY_FILE="$SUMMARY_FILE" \
   npx playwright test \
     e2e/smoke/finance-critical-flow.spec.ts \
+    e2e/smoke/invoice-lifecycle.spec.ts \
     e2e/smoke/finance-ui-interactions.spec.ts \
     e2e/smoke/finance-negative-api.spec.ts \
     e2e/smoke/finance-i18n-guards.spec.ts \
+    e2e/smoke/estimates-normative-flow.spec.ts \
     --config=e2e/playwright.config.ts \
     --workers=1
 )
@@ -68,7 +108,7 @@ step "Frontend finance smoke tests (critical + interactions + negative + i18n gu
 step "Capture complete finance walkthrough screenshots"
 (
   cd "$ROOT/frontend"
-  BASE_URL="$BASE_URL" \
+  BASE_URL="$SMOKE_BASE_URL" \
   SUMMARY_FILE="$SUMMARY_FILE" \
   PRIVOD_EMAIL="$PRIVOD_EMAIL" \
   PRIVOD_PASSWORD="$PRIVOD_PASSWORD" \

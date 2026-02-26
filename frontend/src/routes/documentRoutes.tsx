@@ -34,7 +34,13 @@ const PtoDocumentBoardPage = lazy(() => import('@/modules/pto/PtoDocumentBoardPa
 
 // Closing documents / Site
 const Ks2ListPage = lazy(() => import('@/modules/closing/Ks2ListPage'));
+const Ks2DetailPage = lazy(() => import('@/modules/closing/Ks2DetailPage'));
 const Ks3ListPage = lazy(() => import('@/modules/closing/Ks3ListPage'));
+const Ks2ApprovalWorkflowPage = lazy(() => import('@/modules/closing/Ks2ApprovalWorkflowPage'));
+const Ks2VolumeCheckPage = lazy(() => import('@/modules/closing/Ks2VolumeCheckPage'));
+const Ks6aJournalPage = lazy(() => import('@/modules/closing/Ks6aJournalPage'));
+const CorrectionActsPage = lazy(() => import('@/modules/closing/CorrectionActsPage'));
+const KsPrintFormsPage = lazy(() => import('@/modules/closing/KsPrintFormsPage'));
 const M29ListPage = lazy(() => import('@/modules/russianDocs/M29ListPage'));
 const DailyLogPage = lazy(() => import('@/modules/dailylog/DailyLogPage'));
 const DailyLogFormPage = lazy(() => import('@/modules/dailylog/DailyLogFormPage'));
@@ -81,7 +87,13 @@ export function documentRoutes() {
       <Route path="daily-logs/new" element={<DailyLogFormPage />} />
       <Route path="daily-logs/:id/edit" element={<DailyLogFormPage />} />
       <Route path="ks2" element={<Ks2ListPage />} />
+      <Route path="ks2/:id" element={<Ks2DetailPage />} />
+      <Route path="ks2/approvals" element={<Ks2ApprovalWorkflowPage />} />
+      <Route path="ks2/volume-check" element={<Ks2VolumeCheckPage />} />
       <Route path="ks3" element={<Ks3ListPage />} />
+      <Route path="ks6a" element={<Ks6aJournalPage />} />
+      <Route path="correction-acts" element={<CorrectionActsPage />} />
+      <Route path="ks-print" element={<KsPrintFormsPage />} />
       <Route path="m29" element={<M29ListPage />} />
     </>
   );

@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { contractsApi } from '@/api/contracts';
+import { projectsApi } from '@/api/projects';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 
@@ -38,25 +39,6 @@ const contractSchema = z.object({
 
 type ContractFormData = z.input<typeof contractSchema>;
 
-// Mock data — will be replaced by API data
-const getPartnerOptions = () => [
-  { value: 'p1', label: t('common.mockVendors.stroyMontazh') },
-  { value: 'p2', label: t('common.mockVendors.elektroStroy') },
-  { value: 'p3', label: t('common.mockVendors.betonServis') },
-  { value: 'p4', label: t('common.mockVendors.proektGrupp') },
-  { value: 'p5', label: t('common.mockVendors.dorStroy') },
-  { value: 'p6', label: t('common.mockVendors.krovlyaPro') },
-  { value: 'p7', label: t('common.mockVendors.metallTrade') },
-];
-
-// Mock data — will be replaced by API data
-const getProjectOptions = () => [
-  { value: '1', label: t('common.mockProjects.solnechny') },
-  { value: '2', label: t('common.mockProjects.gorizont') },
-  { value: '3', label: t('common.mockProjects.mostVyatka') },
-  { value: '6', label: t('common.mockProjects.tsentralny') },
-];
-
 const typeOptions = [
   { value: 't1', label: t('forms.contract.contractTypes.general') },
   { value: 't2', label: t('forms.contract.contractTypes.subcontract') },
@@ -82,6 +64,18 @@ const ContractFormPage: React.FC = () => {
     queryFn: () => contractsApi.getContract(id!),
     enabled: isEdit,
   });
+
+  const { data: counterpartiesData } = useQuery({
+    queryKey: ['counterparties'],
+    queryFn: () => contractsApi.getCounterparties(),
+  });
+  const partnerOptions = (counterpartiesData?.content ?? []).map(c => ({ value: c.id, label: c.name }));
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
 
   const {
     register,
@@ -220,7 +214,7 @@ const ContractFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.contract.labelPartner')} error={errors.partnerId?.message} required>
               <Select
-                options={getPartnerOptions()}
+                options={partnerOptions}
                 placeholder={t('forms.contract.placeholderPartner')}
                 hasError={!!errors.partnerId}
                 {...register('partnerId')}
@@ -228,7 +222,7 @@ const ContractFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.contract.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 placeholder={t('forms.dailyLog.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}

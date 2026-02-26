@@ -14,4 +14,20 @@ public enum CompetitiveListStatus {
     APPROVED("Утверждён");
 
     private final String displayName;
+
+    public boolean canTransitionTo(CompetitiveListStatus target) {
+        if (target == null) {
+            return false;
+        }
+        if (this == target) {
+            return true;
+        }
+        return switch (this) {
+            case DRAFT -> target == COLLECTING;
+            case COLLECTING -> target == EVALUATING || target == DRAFT;
+            case EVALUATING -> target == DECIDED || target == COLLECTING;
+            case DECIDED -> target == APPROVED || target == EVALUATING;
+            case APPROVED -> false;
+        };
+    }
 }

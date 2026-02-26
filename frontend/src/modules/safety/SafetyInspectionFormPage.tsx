@@ -9,6 +9,8 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { safetyApi } from '@/api/safety';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 
 const inspectionSchema = z.object({
@@ -31,26 +33,26 @@ const inspectionTypeOptions = [
   { value: 'REGULATORY', label: t('forms.safetyInspection.inspectionTypes.regulatory') },
 ];
 
-const getProjectOptions = () => [
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '2', label: t('mockData.projectHorizon') },
-  { value: '3', label: t('mockData.projectBridge') },
-  { value: '6', label: t('mockData.projectCentral') },
-];
-
-const getInspectorOptions = () => [
-  { value: '', label: t('forms.safetyInspection.inspectorNotAssigned') },
-  { value: 'u1', label: t('mockData.personIvanovII') },
-  { value: 'u2', label: t('mockData.personPetrovPP') },
-  { value: 'u3', label: t('mockData.personSidorovSS') },
-  { value: 'u4', label: t('mockData.personKozlovKK') },
-];
-
 const SafetyInspectionFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => permissionsApi.getUsers(),
+  });
+  const inspectorOptions = [
+    { value: '', label: t('forms.safetyInspection.inspectorNotAssigned') },
+    ...(usersData?.content ?? []).map(u => ({ value: u.id, label: `${u.lastName} ${u.firstName}` })),
+  ];
 
   const { data: existingInspection } = useQuery({
     queryKey: ['safety-inspection', id],
@@ -167,7 +169,7 @@ const SafetyInspectionFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.safetyInspection.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 placeholder={t('forms.safetyInspection.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -175,7 +177,7 @@ const SafetyInspectionFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.safetyInspection.labelInspector')} error={errors.inspectorId?.message}>
               <Select
-                options={getInspectorOptions()}
+                options={inspectorOptions}
                 placeholder={t('forms.safetyInspection.placeholderInspector')}
                 hasError={!!errors.inspectorId}
                 {...register('inspectorId')}

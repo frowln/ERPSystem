@@ -1,10 +1,11 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FileText, Calendar, User, CheckCircle2, Wallet, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { FileText, Calendar, User, CheckCircle2, Wallet, ArrowUpRight, TrendingUp, FileDown, Copy, Building2 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import { financeApi } from '@/api/finance';
 import { formatMoney, formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
@@ -24,11 +25,14 @@ const proposalStatusColorMap: Record<string, string> = {
   ACTIVE: 'blue',
 };
 
-const proposalStatusLabels: Record<string, string> = {
-  DRAFT: t('commercialProposal.statusDraft'),
-  IN_REVIEW: t('commercialProposal.statusInReview'),
-  APPROVED: t('commercialProposal.statusApproved'),
-  ACTIVE: t('commercialProposal.statusActive'),
+const proposalStatusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    DRAFT: t('commercialProposal.statusDraft'),
+    IN_REVIEW: t('commercialProposal.statusInReview'),
+    APPROVED: t('commercialProposal.statusApproved'),
+    ACTIVE: t('commercialProposal.statusActive'),
+  };
+  return labels[status] ?? status;
 };
 
 const statusTransitions: Record<string, { label: string; target: ProposalStatus }[]> = {
@@ -48,8 +52,22 @@ const CommercialProposalDetailPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabId>('materials');
   const [pushToFmOpen, setPushToFmOpen] = useState(false);
+  const [companyDetailsOpen, setCompanyDetailsOpen] = useState(false);
+  const [companyForm, setCompanyForm] = useState({
+    companyName: '',
+    companyInn: '',
+    companyKpp: '',
+    companyAddress: '',
+    signatoryName: '',
+    signatoryPosition: '',
+  });
 
-  const { data: proposal } = useQuery({
+  const {
+    data: proposal,
+    isLoading: isProposalLoading,
+    isError: isProposalError,
+    refetch: refetchProposal,
+  } = useQuery({
     queryKey: ['COMMERCIAL_PROPOSAL', id],
     queryFn: () => financeApi.getCommercialProposal(id!),
     enabled: !!id,
@@ -71,6 +89,18 @@ const CommercialProposalDetailPage: React.FC = () => {
     [allItems],
   );
 
+  const checklist = useMemo(() => {
+    const needsInvoice = materialItems.filter((item) => !item.selectedInvoiceLineId).length;
+    const needsEstimate = workItems.filter((item) => !item.estimateItemId && !(item.costPrice > 0)).length;
+    const unapproved = allItems.filter((item) =>
+      item.status !== 'IN_FINANCIAL_MODEL'
+      && item.status !== 'APPROVED'
+      && item.status !== 'CONFIRMED'
+      && item.status !== 'APPROVED_PROJECT',
+    ).length;
+    return { needsInvoice, needsEstimate, unapproved };
+  }, [materialItems, workItems, allItems]);
+
   const confirmedItems = useMemo(
     () => allItems.filter((item) =>
       item.status === 'IN_FINANCIAL_MODEL'
@@ -78,6 +108,10 @@ const CommercialProposalDetailPage: React.FC = () => {
       || item.status === 'CONFIRMED'
       || item.status === 'APPROVED_PROJECT',
     ),
+    [allItems],
+  );
+  const firstCompetitiveListId = useMemo(
+    () => allItems.find((item) => item.competitiveListId)?.competitiveListId,
     [allItems],
   );
 
@@ -88,7 +122,7 @@ const CommercialProposalDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['COMMERCIAL_PROPOSALS'] });
       toast.success(
         t('commercialProposal.toastStatusChanged', {
-          status: proposalStatusLabels[updated.status] ?? updated.status,
+          status: proposalStatusLabel(updated.status),
         }),
       );
     },
@@ -108,7 +142,81 @@ const CommercialProposalDetailPage: React.FC = () => {
     },
   });
 
-  if (!proposal) return null;
+  const handleExportPdf = async () => {
+    try {
+      const blob = await financeApi.exportCpPdf(id!);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `cp_${id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t('errors.unexpectedError'));
+    }
+  };
+
+  const createVersionMutation = useMutation({
+    mutationFn: () => financeApi.createCpVersion(id!),
+    onSuccess: (newCp) => {
+      toast.success(t('commercialProposal.version.created'));
+      navigate(`/commercial-proposals/${newCp.id}`);
+    },
+    onError: () => toast.error(t('errors.unexpectedError')),
+  });
+
+  const updateCompanyMutation = useMutation({
+    mutationFn: (details: typeof companyForm) => financeApi.updateCpCompanyDetails(id!, details),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['COMMERCIAL_PROPOSAL', id] });
+      toast.success(t('commercialProposal.companyDetails.saved'));
+    },
+    onError: () => toast.error(t('errors.unexpectedError')),
+  });
+
+  if (!id) {
+    return (
+      <div className="animate-fade-in">
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.badRequest')}
+          description={t('errors.invalidIdFormat')}
+        />
+      </div>
+    );
+  }
+
+  if (isProposalLoading) {
+    return (
+      <div className="animate-fade-in flex items-center justify-center py-16 text-neutral-500 dark:text-neutral-400">
+        {t('common.loading')}
+      </div>
+    );
+  }
+
+  if (isProposalError || !proposal) {
+    return (
+      <div className="animate-fade-in">
+        <PageHeader
+          title={t('commercialProposal.listTitle')}
+          backTo="/commercial-proposals"
+          breadcrumbs={[
+            { label: t('common.home'), href: '/' },
+            { label: t('commercialProposal.listTitle'), href: '/commercial-proposals' },
+          ]}
+        />
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.noConnection')}
+          description={t('errors.serverErrorRetry')}
+          actionLabel={t('common.retry')}
+          onAction={() => void refetchProposal()}
+        />
+      </div>
+    );
+  }
 
   const actions = statusTransitions[proposal.status] ?? [];
 
@@ -124,12 +232,52 @@ const CommercialProposalDetailPage: React.FC = () => {
         ]}
         actions={
           <div className="flex items-center gap-2">
+            {proposal.docVersion != null && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                v{proposal.docVersion}
+              </span>
+            )}
             <StatusBadge
               status={proposal.status}
               colorMap={proposalStatusColorMap}
-              label={proposalStatusLabels[proposal.status] ?? proposal.status}
+              label={proposalStatusLabel(proposal.status)}
               size="md"
             />
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={<FileDown size={14} />}
+              onClick={handleExportPdf}
+            >
+              {t('commercialProposal.export.pdf')}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={<Copy size={14} />}
+              onClick={() => createVersionMutation.mutate()}
+              disabled={createVersionMutation.isPending}
+            >
+              {t('commercialProposal.version.create')}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={<Building2 size={14} />}
+              onClick={() => {
+                setCompanyForm({
+                  companyName: proposal.companyName ?? '',
+                  companyInn: proposal.companyInn ?? '',
+                  companyKpp: proposal.companyKpp ?? '',
+                  companyAddress: proposal.companyAddress ?? '',
+                  signatoryName: proposal.signatoryName ?? '',
+                  signatoryPosition: proposal.signatoryPosition ?? '',
+                });
+                setCompanyDetailsOpen((v) => !v);
+              }}
+            >
+              {t('commercialProposal.companyDetails.btn')}
+            </Button>
             {actions.map((a) => (
               <Button
                 key={a.target}
@@ -177,6 +325,90 @@ const CommercialProposalDetailPage: React.FC = () => {
         <CpStatusPipeline status={proposal.status} />
       </div>
 
+      {/* Company details inline form */}
+      {companyDetailsOpen && (
+        <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
+          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-3">
+            {t('commercialProposal.companyDetails.title')}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {([
+              ['companyName', t('commercialProposal.companyDetails.companyName')] as const,
+              ['companyInn', t('commercialProposal.companyDetails.companyInn')] as const,
+              ['companyKpp', t('commercialProposal.companyDetails.companyKpp')] as const,
+              ['companyAddress', t('commercialProposal.companyDetails.companyAddress')] as const,
+              ['signatoryName', t('commercialProposal.companyDetails.signatoryName')] as const,
+              ['signatoryPosition', t('commercialProposal.companyDetails.signatoryPosition')] as const,
+            ]).map(([field, label]) => (
+              <div key={field}>
+                <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">{label}</label>
+                <input
+                  type="text"
+                  value={companyForm[field]}
+                  onChange={(e) => setCompanyForm((prev) => ({ ...prev, [field]: e.target.value }))}
+                  className="w-full h-9 px-3 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end mt-3">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => updateCompanyMutation.mutate(companyForm)}
+              disabled={updateCompanyMutation.isPending}
+            >
+              {updateCompanyMutation.isPending ? t('common.saving') : t('common.save')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
+        <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+          {t('commercialProposal.pushToFm.readinessTitle')}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+          <span className={checklist.needsInvoice === 0 ? 'text-green-600' : 'text-amber-600'}>
+            {t('commercialProposal.pushToFm.checkInvoices', { count: String(checklist.needsInvoice) })}
+          </span>
+          <span className={checklist.needsEstimate === 0 ? 'text-green-600' : 'text-amber-600'}>
+            {t('commercialProposal.pushToFm.checkEstimates', { count: String(checklist.needsEstimate) })}
+          </span>
+          <span className={checklist.unapproved === 0 ? 'text-green-600' : 'text-amber-600'}>
+            {t('commercialProposal.pushToFm.checkStatuses', { count: String(checklist.unapproved) })}
+          </span>
+        </div>
+      </div>
+
+      <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
+        <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+          {t('commercialProposal.flowTitle')}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {proposal.specificationId && (
+            <Button variant="secondary" size="sm" onClick={() => navigate(`/specifications/${proposal.specificationId}`)}>
+              {t('commercialProposal.flowSpec')}
+            </Button>
+          )}
+          {proposal.specificationId && firstCompetitiveListId && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate(`/specifications/${proposal.specificationId}/competitive-list/${firstCompetitiveListId}`)}
+            >
+              {t('commercialProposal.flowCl')}
+            </Button>
+          )}
+          <Button variant="secondary" size="sm" onClick={() => navigate(`/commercial-proposals/${proposal.id}`)}>
+            {t('commercialProposal.flowCp')}
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => navigate(`/budgets/${proposal.budgetId}/fm`)}>
+            {t('commercialProposal.flowFm')}
+          </Button>
+        </div>
+      </div>
+
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         <SummaryCard
@@ -218,10 +450,10 @@ const CommercialProposalDetailPage: React.FC = () => {
         {/* Tab content */}
         <div className="lg:col-span-3">
           {activeTab === 'materials' && (
-            <CpMaterialsTab proposalId={id!} items={materialItems} />
+            <CpMaterialsTab proposalId={id!} items={materialItems} projectId={proposal.projectId} />
           )}
           {activeTab === 'works' && (
-            <CpWorksTab proposalId={id!} items={workItems} />
+            <CpWorksTab proposalId={id!} items={workItems} projectId={proposal.projectId} />
           )}
         </div>
 

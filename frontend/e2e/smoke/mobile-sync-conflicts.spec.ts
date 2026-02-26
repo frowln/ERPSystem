@@ -21,7 +21,7 @@ const queueFixture = [
       },
     ],
     remoteId: 'report-remote-1',
-    status: 'conflict',
+    status: 'CONFLICT',
     attempts: 2,
     lastError: 'Конфликт версии данных. Требуется ручное решение.',
     queuedAt: '2026-02-15T09:00:00.000Z',
@@ -60,7 +60,7 @@ test.describe('Mobile sync conflict queue', () => {
     }, QUEUE_KEY);
 
     expect(queue).toHaveLength(1);
-    expect(queue[0].status).toBe('queued');
+    expect(queue[0].status).toBe('QUEUED');
     expect(queue[0].remoteId).toBeUndefined();
   });
 
@@ -74,7 +74,7 @@ test.describe('Mobile sync conflict queue', () => {
     }, QUEUE_KEY);
 
     expect(queue).toHaveLength(1);
-    expect(queue[0].status).toBe('queued');
+    expect(queue[0].status).toBe('QUEUED');
     expect(queue[0].remoteId).toBe('report-remote-1');
   });
 
@@ -90,7 +90,7 @@ test.describe('Mobile sync conflict queue', () => {
     await conflictCard.getByRole('button', { name: 'Удалить из очереди' }).click();
 
     const dialog = page.getByRole('dialog');
-    await dialog.getByRole('button', { name: /^Удалить$/ }).click();
+    await dialog.getByRole('button', { name: /^Удалить$/ }).click({ force: true });
 
     const queue = await page.evaluate((key) => {
       const raw = window.localStorage.getItem(key);

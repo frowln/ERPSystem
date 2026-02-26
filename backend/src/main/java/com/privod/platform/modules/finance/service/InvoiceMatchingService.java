@@ -3,6 +3,7 @@ package com.privod.platform.modules.finance.service;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.Invoice;
+import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.domain.InvoiceLine;
 import com.privod.platform.modules.finance.domain.InvoiceType;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
@@ -38,6 +39,14 @@ public class InvoiceMatchingService {
     private final ProjectRepository projectRepository;
     private final BudgetItemRepository budgetItemRepository;
     private final BudgetRepository budgetRepository;
+    private static final Set<InvoiceStatus> ALLOWED_INVOICE_STATUSES = Set.of(
+            InvoiceStatus.ON_APPROVAL,
+            InvoiceStatus.APPROVED,
+            InvoiceStatus.PARTIALLY_PAID,
+            InvoiceStatus.PAID,
+            InvoiceStatus.OVERDUE,
+            InvoiceStatus.CLOSED
+    );
 
     /**
      * Find invoice lines from RECEIVED invoices for a given project that could match
@@ -82,6 +91,7 @@ public class InvoiceMatchingService {
             if (effectiveProjectId != null) {
                 predicates.add(cb.equal(root.get("projectId"), effectiveProjectId));
             }
+            predicates.add(root.get("status").in(ALLOWED_INVOICE_STATUSES));
             predicates.add(cb.equal(root.get("organizationId"), organizationId));
             return cb.and(predicates.toArray(Predicate[]::new));
         };
@@ -185,6 +195,7 @@ public class InvoiceMatchingService {
         }
 
         score += quantityClosenessBonus(budgetQuantity, line.getQuantity());
+        score += availabilityBonus(budgetQuantity, line.getQuantity());
 
         return score;
     }
@@ -213,6 +224,27 @@ public class InvoiceMatchingService {
         }
         if (ratio.compareTo(new java.math.BigDecimal("0.50")) <= 0) {
             return 10;
+        }
+        return 0;
+    }
+
+    private int availabilityBonus(java.math.BigDecimal budgetQty, java.math.BigDecimal lineQty) {
+        if (budgetQty == null || lineQty == null || budgetQty.compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            return 0;
+        }
+        if (lineQty.compareTo(java.math.BigDecimal.ZERO) <= 0) {
+            return -100;
+        }
+        if (lineQty.compareTo(budgetQty) >= 0) {
+            return 30;
+        }
+        java.math.BigDecimal coverage = lineQty
+                .divide(budgetQty, 4, java.math.RoundingMode.HALF_UP);
+        if (coverage.compareTo(new java.math.BigDecimal("0.75")) >= 0) {
+            return 18;
+        }
+        if (coverage.compareTo(new java.math.BigDecimal("0.50")) >= 0) {
+            return 8;
         }
         return 0;
     }

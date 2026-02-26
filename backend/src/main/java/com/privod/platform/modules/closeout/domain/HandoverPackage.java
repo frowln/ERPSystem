@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -32,6 +34,9 @@ public class HandoverPackage extends BaseEntity {
 
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "package_number", length = 50)
     private String packageNumber;
@@ -68,15 +73,19 @@ public class HandoverPackage extends BaseEntity {
     @Column(name = "accepted_by_id")
     private UUID acceptedById;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "document_ids", columnDefinition = "JSONB")
     private String documentIds;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "drawing_ids", columnDefinition = "JSONB")
     private String drawingIds;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "certificate_ids", columnDefinition = "JSONB")
     private String certificateIds;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "manual_ids", columnDefinition = "JSONB")
     private String manualIds;
 

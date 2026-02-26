@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select, Checkbox } from '@/design-system/components/FormField';
+import { projectsApi } from '@/api/projects';
+import { financeApi } from '@/api/finance';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
+import type { Project, PaginatedResponse } from '@/types';
 
 interface PaymentCalendarWizardProps {
   open: boolean;
   onClose: () => void;
 }
-
-const getProjectOptions = () => [
-  { value: 'p1', label: t('mockData.projectNovyeGorizonty') },
-  { value: 'p2', label: t('mockData.projectBcCentralny') },
-  { value: 'p3', label: t('mockData.projectSkladLogistik') },
-];
 
 const frequencyOptions = [
   { value: 'WEEKLY', label: t('finance.paymentCalendar.freqWeekly') },
@@ -39,6 +37,14 @@ interface PreviewRow {
 const STEPS = [t('finance.paymentCalendar.stepProject'), t('finance.paymentCalendar.stepParams'), t('finance.paymentCalendar.stepPreview'), t('finance.paymentCalendar.stepCreate')];
 
 export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ open, onClose }) => {
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+    enabled: open,
+  });
+
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
+
   const [step, setStep] = useState(0);
   const [projectId, setProjectId] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -48,16 +54,38 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
   const [includeApproved, setIncludeApproved] = useState(true);
   const [includePlanned, setIncludePlanned] = useState(true);
   const [autoDistribute, setAutoDistribute] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const calendarParams = {
+    projectId,
+    startDate,
+    endDate,
+    frequency,
+    paymentType: paymentType !== 'all' ? paymentType : undefined,
+    includeApproved,
+    includePlanned,
+    autoDistribute,
+  };
 
-  const totalAmount = ([] as any[]).reduce((sum, r) => sum + r.amount, 0);
+  const { data: previewRows = [] } = useQuery({
+    queryKey: ['payment-calendar-preview', calendarParams],
+    queryFn: () => financeApi.previewPaymentCalendar(calendarParams),
+    enabled: open && step >= 2 && !!projectId && !!startDate && !!endDate,
+  });
 
-  const handleFinish = async () => {
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    toast.success(t('finance.paymentCalendar.toastSuccess'));
-    setSubmitting(false);
-    resetAndClose();
+  const totalAmount = previewRows.reduce((sum, r) => sum + r.amount, 0);
+
+  const generateMutation = useMutation({
+    mutationFn: () => financeApi.generatePaymentCalendar(calendarParams),
+    onSuccess: () => {
+      toast.success(t('finance.paymentCalendar.toastGenerated'));
+      resetAndClose();
+    },
+    onError: () => {
+      toast.error(t('finance.paymentCalendar.toastError'));
+    },
+  });
+
+  const handleFinish = () => {
+    generateMutation.mutate();
   };
 
   const resetAndClose = () => {
@@ -92,7 +120,7 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
               {t('finance.paymentCalendar.next')}
             </Button>
           ) : (
-            <Button onClick={handleFinish} loading={submitting}>
+            <Button onClick={handleFinish} loading={generateMutation.isPending}>
               {t('finance.paymentCalendar.generate')}
             </Button>
           )}
@@ -123,7 +151,7 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
         <div className="space-y-4">
           <FormField label={t('finance.paymentCalendar.labelProject')} required>
             <Select
-              options={getProjectOptions()}
+              options={projectOptions}
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               placeholder={t('finance.paymentCalendar.selectProject')}
@@ -187,7 +215,7 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
                 </tr>
               </thead>
               <tbody>
-                {([] as any[]).map((row, idx) => (
+                {previewRows.map((row, idx) => (
                   <tr key={idx} className="border-b border-neutral-100">
                     <td className="px-3 py-2 whitespace-nowrap">{row.date}</td>
                     <td className="px-3 py-2">{row.description}</td>
@@ -213,10 +241,10 @@ export const PaymentCalendarWizard: React.FC<PaymentCalendarWizardProps> = ({ op
       {step === 3 && (
         <div className="space-y-4">
           <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 space-y-2 text-sm">
-            <p><strong>{t('finance.paymentCalendar.summaryProject')}:</strong> {getProjectOptions().find((o) => o.value === projectId)?.label}</p>
+            <p><strong>{t('finance.paymentCalendar.summaryProject')}:</strong> {projectOptions.find((o) => o.value === projectId)?.label}</p>
             <p><strong>{t('finance.paymentCalendar.summaryPeriod')}:</strong> {startDate} - {endDate}</p>
             <p><strong>{t('finance.paymentCalendar.summaryFrequency')}:</strong> {frequencyOptions.find((o) => o.value === frequency)?.label}</p>
-            <p><strong>{t('finance.paymentCalendar.summaryPayments')}:</strong> {0}</p>
+            <p><strong>{t('finance.paymentCalendar.summaryPayments')}:</strong> {previewRows.length}</p>
             <p><strong>{t('finance.paymentCalendar.summaryTotal')}:</strong> {totalAmount.toLocaleString('ru-RU')} ₽</p>
           </div>
           <div className="bg-primary-50 border border-primary-200 rounded-lg p-3">

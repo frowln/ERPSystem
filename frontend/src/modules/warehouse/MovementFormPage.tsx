@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { warehouseApi } from '@/api/warehouse';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 
 const movementSchema = z.object({
@@ -30,15 +31,6 @@ const movementSchema = z.object({
 
 type MovementFormData = z.input<typeof movementSchema>;
 
-const getMaterialOptions = () => [
-  { value: 'm1', label: t('mockData.materialRebar') },
-  { value: 'm2', label: t('mockData.materialConcrete') },
-  { value: 'm3', label: t('mockData.materialBrick') },
-  { value: 'm4', label: t('mockData.materialInsulation') },
-  { value: 'm5', label: t('mockData.materialPipe') },
-  { value: 'm6', label: t('mockData.materialCable') },
-];
-
 const movementTypeOptions = [
   { value: 'RECEIPT', label: t('forms.movement.movementTypes.receipt') },
   { value: 'ISSUE', label: t('forms.movement.movementTypes.issue') },
@@ -48,24 +40,36 @@ const movementTypeOptions = [
   { value: 'WRITE_OFF', label: t('forms.movement.movementTypes.writeOff') },
 ];
 
-const getLocationOptions = () => [
-  { value: 'loc1', label: t('mockData.locationWarehouseA') },
-  { value: 'loc2', label: t('mockData.locationWarehouseB') },
-  { value: 'loc3', label: t('mockData.locationSiteSolnechny') },
-  { value: 'loc4', label: t('mockData.locationSiteHorizon') },
-  { value: 'loc5', label: t('mockData.locationSiteBridge') },
-];
-
-const getResponsibleOptions = () => [
-  { value: 'u1', label: t('mockData.personIvanovAS') },
-  { value: 'u2', label: t('mockData.personPetrovVK') },
-  { value: 'u3', label: t('mockData.personSidorovMN') },
-  { value: 'u4', label: t('mockData.personKozlovDA') },
-];
-
 const MovementFormPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const { data: materialsData } = useQuery({
+    queryKey: ['warehouse-materials'],
+    queryFn: () => warehouseApi.getMaterials({ page: 0, size: 200 }),
+  });
+  const materialOptions = (materialsData?.content ?? []).map((m) => ({
+    value: m.id,
+    label: m.name,
+  }));
+
+  const { data: locationsData } = useQuery({
+    queryKey: ['warehouse-locations'],
+    queryFn: () => warehouseApi.getLocations({ page: 0, size: 100 }),
+  });
+  const locationOptions = (locationsData?.content ?? []).map((loc) => ({
+    value: loc.id,
+    label: loc.name,
+  }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => permissionsApi.getUsers({ page: 0, size: 100 }),
+  });
+  const responsibleOptions = (usersData?.content ?? []).map((u) => ({
+    value: u.id,
+    label: u.fullName ?? `${u.firstName} ${u.lastName}`,
+  }));
 
   const {
     register,
@@ -130,7 +134,7 @@ const MovementFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.movement.labelMaterial')} error={errors.materialId?.message} required>
               <Select
-                options={getMaterialOptions()}
+                options={materialOptions}
                 placeholder={t('forms.movement.placeholderMaterial')}
                 hasError={!!errors.materialId}
                 {...register('materialId')}
@@ -164,7 +168,7 @@ const MovementFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.movement.labelFrom')} error={errors.sourceLocation?.message}>
               <Select
-                options={getLocationOptions()}
+                options={locationOptions}
                 placeholder={t('forms.movement.placeholderFrom')}
                 hasError={!!errors.sourceLocation}
                 {...register('sourceLocation')}
@@ -172,7 +176,7 @@ const MovementFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.movement.labelTo')} error={errors.destinationLocation?.message}>
               <Select
-                options={getLocationOptions()}
+                options={locationOptions}
                 placeholder={t('forms.movement.placeholderTo')}
                 hasError={!!errors.destinationLocation}
                 {...register('destinationLocation')}
@@ -186,7 +190,7 @@ const MovementFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.movement.labelResponsible')} error={errors.responsiblePerson?.message} required>
               <Select
-                options={getResponsibleOptions()}
+                options={responsibleOptions}
                 placeholder={t('forms.movement.placeholderResponsible')}
                 hasError={!!errors.responsiblePerson}
                 {...register('responsiblePerson')}

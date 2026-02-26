@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { submittalsApi } from '@/api/submittals';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 import type { CreateSubmittalRequest } from './types';
 import toast from 'react-hot-toast';
@@ -23,22 +25,20 @@ const getTypeOptions = () => [
   { value: 'OTHER', label: t('submittals.modalTypeOther') },
 ];
 
-// Mock data -- will be replaced by API data
-const reviewerOptions = [
-  { value: 'u1', label: 'Иванов А.С.' },
-  { value: 'u2', label: 'Петров В.К.' },
-  { value: 'u3', label: 'Сидоров М.Н.' },
-];
-
-// Mock data -- will be replaced by API data
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
 export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => permissionsApi.getUsers(),
+  });
+  const reviewerOptions = (usersData?.content ?? []).map(u => ({ value: u.id, label: u.fullName ?? u.email }));
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [type, setType] = useState('SHOP_DRAWING');

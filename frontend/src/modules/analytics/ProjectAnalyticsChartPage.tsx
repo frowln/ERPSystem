@@ -1,60 +1,13 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { formatMoney, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { analyticsApi } from '@/api/analytics';
+import type { ProjectBudgetSummary, ProgressPoint, BudgetCategory } from '@/api/analytics';
 import { t } from '@/i18n';
 
-// ---------------------------------------------------------------------------
-// Mock data
-// ---------------------------------------------------------------------------
-
-interface ProjectBudget {
-  name: string;
-  budget: number;
-  actual: number;
-}
-
-const getProjectBudgets = (): ProjectBudget[] => [
-  { name: t('common.mockProjects.solnechny'), budget: 85000000, actual: 72000000 },
-  { name: t('common.mockProjects.gorizont'), budget: 42000000, actual: 38500000 },
-  { name: t('common.mockProjects.mostVyatkaShort'), budget: 120000000, actual: 95000000 },
-  { name: t('common.mockProjects.school15'), budget: 35000000, actual: 32000000 },
-  { name: t('common.mockProjects.prostor'), budget: 55000000, actual: 61000000 },
-];
-
-interface ProgressPoint {
-  month: string;
-  planned: number;
-  actual: number;
-}
-
-const getProgressData = (): ProgressPoint[] => [
-  { month: t('common.monthsShort.sep'), planned: 5,  actual: 4 },
-  { month: t('common.monthsShort.oct'), planned: 15, actual: 12 },
-  { month: t('common.monthsShort.nov'), planned: 28, actual: 24 },
-  { month: t('common.monthsShort.dec'), planned: 40, actual: 36 },
-  { month: t('common.monthsShort.jan'), planned: 52, actual: 48 },
-  { month: t('common.monthsShort.feb'), planned: 62, actual: 57 },
-  { month: t('common.monthsShort.mar'), planned: 72, actual: 0 },
-  { month: t('common.monthsShort.apr'), planned: 80, actual: 0 },
-  { month: t('common.monthsShort.may'), planned: 88, actual: 0 },
-  { month: t('common.monthsShort.jun'), planned: 95, actual: 0 },
-  { month: t('common.monthsShort.jul'), planned: 100, actual: 0 },
-];
-
-interface BudgetCategory {
-  name: string;
-  amount: number;
-  color: string;
-}
-
-const getBudgetCategories = (): BudgetCategory[] => [
-  { name: t('analytics.projectChart.catMaterials'), amount: 120000000, color: '#3b82f6' },
-  { name: t('analytics.projectChart.catWorks'), amount: 95000000, color: '#10b981' },
-  { name: t('analytics.projectChart.catEquipment'), amount: 42000000, color: '#f59e0b' },
-  { name: t('analytics.projectChart.catPayroll'), amount: 55000000, color: '#8b5cf6' },
-  { name: t('analytics.projectChart.catOverhead'), amount: 25000000, color: '#ef4444' },
-];
+// Types are imported from @/api/analytics
 
 // ---------------------------------------------------------------------------
 // SVG Chart helpers
@@ -72,7 +25,7 @@ const CHART_COLORS = {
 // Bar Chart Component
 // ---------------------------------------------------------------------------
 
-const BarChart: React.FC<{ data: ProjectBudget[] }> = ({ data }) => {
+const BarChart: React.FC<{ data: ProjectBudgetSummary[] }> = ({ data }) => {
   const [hovered, setHovered] = useState<number | null>(null);
   const maxVal = Math.max(...data.flatMap((d) => [d.budget, d.actual]));
   const chartH = 280;
@@ -352,12 +305,21 @@ const PieChart: React.FC<{ data: BudgetCategory[] }> = ({ data }) => {
 // ---------------------------------------------------------------------------
 
 const ProjectAnalyticsChartPage: React.FC = () => {
-  const budgetCategories = getBudgetCategories();
-  const projectBudgets = getProjectBudgets();
-  const progressData = getProgressData();
+  const { data: projectBudgets = [] } = useQuery({
+    queryKey: ['analytics-project-budgets'],
+    queryFn: () => analyticsApi.getProjectBudgets(),
+  });
+  const { data: progressData = [] } = useQuery({
+    queryKey: ['analytics-progress'],
+    queryFn: () => analyticsApi.getProgressData(),
+  });
+  const { data: budgetCategories = [] } = useQuery({
+    queryKey: ['analytics-budget-categories'],
+    queryFn: () => analyticsApi.getBudgetCategories(),
+  });
   const totalBudget = projectBudgets.reduce((s, p) => s + p.budget, 0);
   const totalActual = projectBudgets.reduce((s, p) => s + p.actual, 0);
-  const utilization = ((totalActual / totalBudget) * 100).toFixed(1);
+  const utilization = totalBudget > 0 ? ((totalActual / totalBudget) * 100).toFixed(1) : '0.0';
 
   return (
     <div className="animate-fade-in">

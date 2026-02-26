@@ -154,7 +154,7 @@ const PricingDatabaseListPage: React.FC = () => {
         subtitle={t('pricing.databases.subtitle', { count: String(databases.length) })}
         breadcrumbs={[
           { label: t('common.home'), href: '/' },
-          { label: t('pricing.databases.breadcrumb') },
+          { label: t('pricing.databases.breadcrumb'), href: '/estimates/pricing/databases' },
         ]}
         actions={
           <Button

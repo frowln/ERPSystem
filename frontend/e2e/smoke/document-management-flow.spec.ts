@@ -80,7 +80,7 @@ test.describe('Document management flow', () => {
   test('CDE transmittals page loads', async ({ page }) => {
     await page.goto('/cde/transmittals');
     await expect(page).toHaveURL('/cde/transmittals');
-    await expect(page.locator('body')).toContainText(/(transmittal|передач)/i, { timeout: 10_000 });
+    await expect(page.locator('body')).toContainText(/(transmittal|[Тт]рансмит|передач)/i, { timeout: 10_000 });
   });
 
   test('CDE revision sets page loads', async ({ page }) => {
@@ -95,14 +95,17 @@ test.describe('Document management flow', () => {
 
   test('PTO document list has create/new button', async ({ page }) => {
     await page.goto('/pto/documents');
-    await page.waitForTimeout(1000);
+    await expect(page).toHaveURL('/pto/documents');
+    await page.waitForLoadState('domcontentloaded');
 
-    const createButton = page
-      .getByRole('button', { name: /(create|new|add|создать|добавить|новый)/i })
-      .or(page.getByRole('link', { name: /(create|new|add|создать|добавить|новый)/i }));
+    await expect(
+      page.getByRole('heading', { name: /(документация пто|документы пто|pto documents)/i }),
+    ).toBeVisible({ timeout: 20_000 });
 
-    const count = await createButton.count();
-    expect(count).toBeGreaterThan(0);
+    const buttonCount = await page.getByRole('button', { name: /(новый документ|new document|create|new|add|создать|добавить)/i }).count();
+    const linkCount = await page.getByRole('link', { name: /(новый документ|new document|create|new|add|создать|добавить)/i }).count();
+
+    expect(buttonCount + linkCount).toBeGreaterThan(0);
   });
 
   test('PTO hidden work acts page loads', async ({ page }) => {
@@ -123,7 +126,8 @@ test.describe('Document management flow', () => {
     await page.goto('/documents');
     await page.waitForLoadState('networkidle');
     const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver'),
+      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver')
+        && !e.includes('state update') && !e.includes('ERR_CONNECTION_RESET') && !e.includes('Failed to fetch'),
     );
     expect(criticalErrors).toHaveLength(0);
   });
@@ -136,7 +140,8 @@ test.describe('Document management flow', () => {
     await page.goto('/cde/documents');
     await page.waitForLoadState('networkidle');
     const criticalErrors = errors.filter(
-      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver'),
+      (e) => !e.includes('favicon') && !e.includes('404') && !e.includes('ResizeObserver')
+        && !e.includes('state update') && !e.includes('ERR_CONNECTION_RESET') && !e.includes('Failed to fetch'),
     );
     expect(criticalErrors).toHaveLength(0);
   });

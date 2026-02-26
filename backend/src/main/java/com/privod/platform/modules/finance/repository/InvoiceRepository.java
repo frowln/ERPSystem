@@ -45,6 +45,16 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
             "WHERE i.projectId = :projectId AND i.status = 'OVERDUE' AND i.deleted = false")
     BigDecimal sumOverdueAmountByProjectId(@Param("projectId") UUID projectId);
 
+    @Query("SELECT COALESCE(SUM(i.totalAmount), 0) FROM Invoice i " +
+            "WHERE i.contractId = :contractId AND i.status IN :statuses AND i.deleted = false")
+    BigDecimal sumTotalByContractIdAndStatusIn(@Param("contractId") UUID contractId,
+                                               @Param("statuses") List<InvoiceStatus> statuses);
+
+    @Query("SELECT COALESCE(SUM(i.paidAmount), 0) FROM Invoice i " +
+            "WHERE i.contractId = :contractId AND i.status NOT IN :statuses AND i.deleted = false")
+    BigDecimal sumPaidAmountByContractIdAndStatusNotIn(@Param("contractId") UUID contractId,
+                                                       @Param("statuses") List<InvoiceStatus> statuses);
+
     @Query(value = "SELECT nextval('invoice_number_seq')", nativeQuery = true)
     long getNextNumberSequence();
 

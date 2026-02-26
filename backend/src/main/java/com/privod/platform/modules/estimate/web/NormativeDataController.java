@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class NormativeDataController {
     private final PricingService pricingService;
 
     @GetMapping("/sections")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER', 'ENGINEER')")
     @Operation(summary = "Получить разделы нормативной базы (дерево)")
     public ResponseEntity<ApiResponse<List<NormativeSectionResponse>>> getSections(
             @RequestParam UUID databaseId,
@@ -43,6 +45,7 @@ public class NormativeDataController {
     }
 
     @GetMapping("/rates/{rateId}/resources")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER', 'ENGINEER')")
     @Operation(summary = "Получить ресурсный состав расценки")
     public ResponseEntity<ApiResponse<List<RateResourceItemResponse>>> getRateResources(
             @PathVariable UUID rateId) {
@@ -51,6 +54,7 @@ public class NormativeDataController {
     }
 
     @GetMapping("/rates/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER', 'ENGINEER')")
     @Operation(summary = "Поиск расценок в нормативной базе")
     public ResponseEntity<ApiResponse<PageResponse<PriceRateResponse>>> searchRates(
             @RequestParam UUID databaseId,

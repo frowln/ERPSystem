@@ -62,6 +62,7 @@ public class ConstructionPermitService {
 
         ConstructionPermit permit = ConstructionPermit.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .permitNumber(request.permitNumber())
                 .issuedBy(request.issuedBy())
                 .issuedDate(request.issuedDate())

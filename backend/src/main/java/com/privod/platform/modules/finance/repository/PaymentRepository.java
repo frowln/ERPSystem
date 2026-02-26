@@ -42,6 +42,10 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID>, JpaSpec
     BigDecimal sumPaidByInvoiceId(@Param("invoiceId") UUID invoiceId);
 
     @Query("SELECT COALESCE(SUM(p.totalAmount), 0) FROM Payment p " +
+            "WHERE p.contractId = :contractId AND p.status = 'PAID' AND p.deleted = false")
+    BigDecimal sumPaidByContractId(@Param("contractId") UUID contractId);
+
+    @Query("SELECT COALESCE(SUM(p.totalAmount), 0) FROM Payment p " +
             "WHERE p.projectId IN :projectIds AND p.paymentType = :type " +
             "AND p.status = 'PAID' AND p.deleted = false")
     BigDecimal sumNetByProjectIdsAndType(@Param("projectIds") List<UUID> projectIds,

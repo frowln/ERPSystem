@@ -9,6 +9,13 @@ const UsersAdminPage = lazy(() => import('@/modules/settings/UsersAdminPage'));
 const PermissionsPage = lazy(() => import('@/modules/settings/PermissionsPage'));
 const IntegrationsPage = lazy(() => import('@/modules/settings/IntegrationsPage'));
 
+// KEP (Digital Signature)
+const KepCertificateListPage = lazy(() => import('@/modules/kep/KepCertificateListPage'));
+const KepCertificateDetailPage = lazy(() => import('@/modules/kep/KepCertificateDetailPage'));
+const KepSigningPage = lazy(() => import('@/modules/kep/KepSigningPage'));
+const KepVerificationPage = lazy(() => import('@/modules/kep/KepVerificationPage'));
+const MchDListPage = lazy(() => import('@/modules/kep/MchDListPage'));
+
 // Notifications
 const NotificationsPage = lazy(() => import('@/modules/notifications/NotificationsPage'));
 
@@ -29,6 +36,23 @@ const GovRegistriesPage = lazy(() => import('@/modules/integrations/GovRegistrie
 const SmsSettingsPage = lazy(() => import('@/modules/integrations/SmsSettingsPage'));
 const WebDavSettingsPage = lazy(() => import('@/modules/integrations/WebDavSettingsPage'));
 
+// 1C Integration Module
+const OneCDashboardPage = lazy(() => import('@/modules/integration1c/OneCDashboardPage'));
+const Ks2Ks3ExportPage = lazy(() => import('@/modules/integration1c/Ks2Ks3ExportPage'));
+const PaymentExportPage = lazy(() => import('@/modules/integration1c/PaymentExportPage'));
+const BankStatementImportPage = lazy(() => import('@/modules/integration1c/BankStatementImportPage'));
+const ContractorSyncPage = lazy(() => import('@/modules/integration1c/ContractorSyncPage'));
+
+// ISUP (ИСУП Минстроя)
+const IsupConfigWizardPage = lazy(() => import('@/modules/isup/IsupConfigWizardPage'));
+const IsupTransmissionDashboard = lazy(() => import('@/modules/isup/IsupTransmissionDashboard'));
+const IsupProjectMappingPage = lazy(() => import('@/modules/isup/IsupProjectMappingPage'));
+
+// Subscription
+const SubscriptionDashboardPage = lazy(() => import('@/modules/subscription/SubscriptionDashboardPage'));
+const PricingPage = lazy(() => import('@/modules/subscription/PricingPage'));
+const FeatureGatePage = lazy(() => import('@/modules/subscription/FeatureGatePage'));
+
 export function settingsRoutes() {
   return (
     <>
@@ -41,6 +65,33 @@ export function settingsRoutes() {
       <Route path="settings/api-keys" element={<ProtectedRoute requiredRoles={['ADMIN']}><ApiKeysPage /></ProtectedRoute>} />
       <Route path="settings/webhooks" element={<ProtectedRoute requiredRoles={['ADMIN']}><WebhooksPage /></ProtectedRoute>} />
       <Route path="settings/offline-queue" element={<ProtectedRoute requiredRoles={['ADMIN']}><OfflineQueuePage /></ProtectedRoute>} />
+      <Route path="settings/subscription" element={<ProtectedRoute requiredRoles={['ADMIN']}><SubscriptionDashboardPage /></ProtectedRoute>} />
+
+      {/* Pricing & Feature Gate (authenticated, any role) */}
+      <Route path="pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+      <Route path="pricing/databases" element={<Navigate to="/estimates/pricing/databases" replace />} />
+      <Route path="pricing/rates" element={<Navigate to="/estimates/pricing/rates" replace />} />
+      <Route path="pricing/calculate" element={<Navigate to="/estimates/pricing/calculate" replace />} />
+      <Route path="feature-gate" element={<ProtectedRoute><FeatureGatePage /></ProtectedRoute>} />
+
+      {/* 1C Integration Module (ADMIN only) */}
+      <Route path="settings/1c" element={<ProtectedRoute requiredRoles={['ADMIN']}><OneCDashboardPage /></ProtectedRoute>} />
+      <Route path="settings/1c/ks-export" element={<ProtectedRoute requiredRoles={['ADMIN']}><Ks2Ks3ExportPage /></ProtectedRoute>} />
+      <Route path="settings/1c/payment-export" element={<ProtectedRoute requiredRoles={['ADMIN']}><PaymentExportPage /></ProtectedRoute>} />
+      <Route path="settings/1c/bank-import" element={<ProtectedRoute requiredRoles={['ADMIN']}><BankStatementImportPage /></ProtectedRoute>} />
+      <Route path="settings/1c/sync" element={<ProtectedRoute requiredRoles={['ADMIN']}><ContractorSyncPage /></ProtectedRoute>} />
+
+      {/* ISUP (ИСУП Минстроя) */}
+      <Route path="settings/isup" element={<ProtectedRoute requiredRoles={['ADMIN']}><IsupConfigWizardPage /></ProtectedRoute>} />
+      <Route path="settings/isup/transmissions" element={<ProtectedRoute requiredRoles={['ADMIN']}><IsupTransmissionDashboard /></ProtectedRoute>} />
+      <Route path="settings/isup/mappings" element={<ProtectedRoute requiredRoles={['ADMIN']}><IsupProjectMappingPage /></ProtectedRoute>} />
+
+      {/* KEP (Digital Signature) */}
+      <Route path="settings/kep/certificates" element={<ProtectedRoute requiredRoles={['ADMIN']}><KepCertificateListPage /></ProtectedRoute>} />
+      <Route path="settings/kep/certificates/:id" element={<ProtectedRoute requiredRoles={['ADMIN']}><KepCertificateDetailPage /></ProtectedRoute>} />
+      <Route path="settings/kep/sign" element={<ProtectedRoute requiredRoles={['ADMIN']}><KepSigningPage /></ProtectedRoute>} />
+      <Route path="settings/kep/verify" element={<ProtectedRoute requiredRoles={['ADMIN']}><KepVerificationPage /></ProtectedRoute>} />
+      <Route path="settings/kep/mchd" element={<ProtectedRoute requiredRoles={['ADMIN']}><MchDListPage /></ProtectedRoute>} />
 
       {/* Notifications (authenticated) */}
       <Route path="notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />

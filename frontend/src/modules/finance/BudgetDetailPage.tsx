@@ -24,6 +24,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
+import { EmptyState } from '@/design-system/components/EmptyState';
 import {
   StatusBadge,
   budgetStatusColorMap,
@@ -32,35 +33,84 @@ import {
   budgetCategoryLabels,
 } from '@/design-system/components/StatusBadge';
 import { financeApi } from '@/api/finance';
+import { specificationsApi } from '@/api/specifications';
 import { formatMoney, formatMoneyCompact, formatPercent } from '@/lib/format';
 import { t } from '@/i18n';
-import type { Budget, BudgetItem } from '@/types';
+import type { Budget, BudgetItem, CommercialProposal, Specification } from '@/types';
 
 type DetailTab = 'overview' | 'items' | 'chart';
+
+const normalizeBudgetCategory = (category?: string | null): string | undefined => {
+  if (!category) return undefined;
+  return category.toUpperCase().replace(/\s+/g, '_');
+};
+
+const resolveBudgetCategoryLabel = (category?: string | null): string => {
+  if (!category) return '';
+  const normalized = normalizeBudgetCategory(category);
+  return (
+    budgetCategoryLabels[category]
+    ?? (normalized ? budgetCategoryLabels[normalized] : undefined)
+    ?? category
+  );
+};
 
 const BudgetDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<DetailTab>('overview');
 
-  const { data: budget } = useQuery({
+  const {
+    data: budget,
+    isLoading: isBudgetLoading,
+    isError: isBudgetError,
+    refetch: refetchBudget,
+  } = useQuery({
     queryKey: ['budget', id],
     queryFn: () => financeApi.getBudget(id!),
     enabled: !!id,
   });
 
-  const { data: items } = useQuery({
+  const {
+    data: items,
+    isLoading: isItemsLoading,
+    isError: isItemsError,
+    refetch: refetchItems,
+  } = useQuery({
     queryKey: ['budget-items', id],
     queryFn: () => financeApi.getBudgetItems(id!),
     enabled: !!id,
   });
 
+  const { data: projectSpecifications } = useQuery({
+    queryKey: ['specifications', 'by-project', budget?.projectId],
+    queryFn: () => specificationsApi.getSpecifications({ projectId: budget!.projectId, page: 0, size: 20 }),
+    enabled: !!budget?.projectId,
+  });
+
+  const { data: projectProposals } = useQuery({
+    queryKey: ['commercial-proposals', 'by-project', budget?.projectId],
+    queryFn: () => financeApi.getCommercialProposals({ projectId: budget!.projectId, page: 0, size: 30 }),
+    enabled: !!budget?.projectId,
+  });
+
   const b = budget;
   const budgetItems = items ?? [];
+  const relatedSpec = useMemo(
+    () => (projectSpecifications?.content ?? [])[0] as Specification | undefined,
+    [projectSpecifications],
+  );
+  const relatedProposal = useMemo(
+    () => {
+      const proposals = (projectProposals?.content ?? []) as CommercialProposal[];
+      return proposals.find((proposal) => proposal.budgetId === id) ?? proposals[0];
+    },
+    [projectProposals, id],
+  );
 
   const chartData = useMemo(() =>
     budgetItems.map((item) => ({
-      name: budgetCategoryLabels[item.category] ?? item.category,
+      name: resolveBudgetCategoryLabel(item.category),
       [t('finance.budgetDetail.chartPlan')]: item.plannedAmount / 1_000_000,
       [t('finance.budgetDetail.chartActual')]: item.actualAmount / 1_000_000,
       [t('finance.budgetDetail.chartCommitted')]: item.committedAmount / 1_000_000,
@@ -74,13 +124,17 @@ const BudgetDetailPage: React.FC = () => {
         accessorKey: 'category',
         header: t('finance.budgetDetail.colCategory'),
         size: 140,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={budgetCategoryColorMap}
-            label={budgetCategoryLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
+        cell: ({ getValue }) => {
+          const rawCategory = getValue<string>();
+          const normalizedCategory = normalizeBudgetCategory(rawCategory) ?? rawCategory;
+          return (
+            <StatusBadge
+              status={normalizedCategory}
+              colorMap={budgetCategoryColorMap}
+              label={resolveBudgetCategoryLabel(rawCategory)}
+            />
+          );
+        },
       },
       {
         accessorKey: 'name',
@@ -126,6 +180,49 @@ const BudgetDetailPage: React.FC = () => {
     [],
   );
 
+  if (!id) {
+    return (
+      <div className="animate-fade-in">
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.badRequest')}
+          description={t('errors.invalidIdFormat')}
+        />
+      </div>
+    );
+  }
+
+  if (isBudgetLoading) {
+    return (
+      <div className="animate-fade-in flex items-center justify-center py-16 text-neutral-500 dark:text-neutral-400">
+        {t('common.loading')}
+      </div>
+    );
+  }
+
+  if (isBudgetError || !b) {
+    return (
+      <div className="animate-fade-in">
+        <PageHeader
+          title={t('finance.budgetList.title')}
+          backTo="/budgets"
+          breadcrumbs={[
+            { label: t('common.home'), href: '/' },
+            { label: t('finance.budgetList.breadcrumbFinance') },
+            { label: t('finance.budgetList.breadcrumbBudgets'), href: '/budgets' },
+          ]}
+        />
+        <EmptyState
+          variant="ERROR"
+          title={t('errors.noConnection')}
+          description={t('errors.serverErrorRetry')}
+          actionLabel={t('common.retry')}
+          onAction={() => void refetchBudget()}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in">
       <PageHeader
@@ -140,6 +237,13 @@ const BudgetDetailPage: React.FC = () => {
         ]}
         actions={
           <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate(`/budgets/${id}/fm`)}
+            >
+              {t('finance.fm.breadcrumbFm')}
+            </Button>
             <StatusBadge
               status={b?.status ?? ''}
               colorMap={budgetStatusColorMap}
@@ -164,6 +268,32 @@ const BudgetDetailPage: React.FC = () => {
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as DetailTab)}
       />
+
+      <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
+        <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+          {t('finance.budgetDetail.flowTitle')}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {relatedSpec && (
+            <Button variant="secondary" size="sm" onClick={() => navigate(`/specifications/${relatedSpec.id}`)}>
+              {t('finance.budgetDetail.flowSpec')}
+            </Button>
+          )}
+          {relatedSpec && (
+            <Button variant="secondary" size="sm" onClick={() => navigate(`/specifications/${relatedSpec.id}/supply-dashboard`)}>
+              {t('finance.budgetDetail.flowCl')}
+            </Button>
+          )}
+          {relatedProposal && (
+            <Button variant="secondary" size="sm" onClick={() => navigate(`/commercial-proposals/${relatedProposal.id}`)}>
+              {t('finance.budgetDetail.flowCp')}
+            </Button>
+          )}
+          <Button variant="secondary" size="sm" onClick={() => navigate(`/budgets/${id}/fm`)}>
+            {t('finance.budgetDetail.flowFm')}
+          </Button>
+        </div>
+      </div>
 
       {activeTab === 'overview' && (
         <div className="space-y-6">
@@ -204,30 +334,50 @@ const BudgetDetailPage: React.FC = () => {
             />
           </div>
 
+          {isItemsError ? (
+            <EmptyState
+              variant="ERROR"
+              title={t('errors.noConnection')}
+              description={t('errors.serverErrorRetry')}
+              actionLabel={t('common.retry')}
+              onAction={() => void refetchItems()}
+            />
+          ) : (
+            <DataTable<BudgetItem>
+              data={budgetItems}
+              columns={itemColumns}
+              loading={isItemsLoading}
+              enableColumnVisibility
+              enableExport
+              pageSize={20}
+              emptyTitle={t('finance.budgetDetail.emptyItems')}
+              emptyDescription={t('finance.budgetDetail.emptyItemsDesc')}
+            />
+          )}
+        </div>
+      )}
+
+      {activeTab === 'items' && (
+        isItemsError ? (
+          <EmptyState
+            variant="ERROR"
+            title={t('errors.noConnection')}
+            description={t('errors.serverErrorRetry')}
+            actionLabel={t('common.retry')}
+            onAction={() => void refetchItems()}
+          />
+        ) : (
           <DataTable<BudgetItem>
             data={budgetItems}
             columns={itemColumns}
-            loading={false}
+            loading={isItemsLoading}
             enableColumnVisibility
             enableExport
             pageSize={20}
             emptyTitle={t('finance.budgetDetail.emptyItems')}
             emptyDescription={t('finance.budgetDetail.emptyItemsDesc')}
           />
-        </div>
-      )}
-
-      {activeTab === 'items' && (
-        <DataTable<BudgetItem>
-          data={budgetItems}
-          columns={itemColumns}
-          loading={false}
-          enableColumnVisibility
-          enableExport
-          pageSize={20}
-          emptyTitle={t('finance.budgetDetail.emptyItems')}
-          emptyDescription={t('finance.budgetDetail.emptyItemsDesc')}
-        />
+        )
       )}
 
       {activeTab === 'chart' && (

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import * as XLSX from 'xlsx';
 import { t } from '@/i18n';
 import { contractsApi } from '@/api/contracts';
 import { financeApi } from '@/api/finance';
@@ -128,6 +127,47 @@ export const ProjectFinanceTab: React.FC<Props> = ({
   const issuedInvoices = issuedInvoicesData?.content ?? [];
   const issuedInvoiceCount = issuedInvoicesData?.totalElements ?? issuedInvoices.length;
 
+  // ── Fetch ContractBudgetItems for all expense contracts ─────────────────
+  const expenseContractIds = useMemo(
+    () => contracts
+      .filter((c) => (c.direction ?? c.contractDirection) !== 'CLIENT')
+      .map((c) => c.id),
+    [contracts],
+  );
+
+  const { data: contractBudgetItemsAll = [] } = useQuery({
+    queryKey: ['contract-budget-items-all', p?.id, expenseContractIds.join(',')],
+    queryFn: async () => {
+      const results = await Promise.all(
+        expenseContractIds.map((cid) => financeApi.getContractBudgetItems(cid)),
+      );
+      return results.flat();
+    },
+    enabled: !!p?.id && expenseContractIds.length > 0,
+    staleTime: 2 * 60_000,
+  });
+
+  // Map budgetItemId → [{contractId, contractNumber, partnerName}]
+  const contractsByBudgetItemId = useMemo(() => {
+    const map = new Map<string, { contractId: string; contractNumber: string; partnerName?: string; allocatedAmount?: number }[]>();
+    const contractMap = new Map(contracts.map((c) => [c.id, c]));
+    for (const cbi of contractBudgetItemsAll) {
+      const contract = contractMap.get(cbi.contractId);
+      if (!contract) continue;
+      const bucket = map.get(cbi.budgetItemId) ?? [];
+      if (!bucket.some((b) => b.contractId === cbi.contractId)) {
+        bucket.push({
+          contractId: cbi.contractId,
+          contractNumber: contract.number,
+          partnerName: contract.partnerName,
+          allocatedAmount: cbi.allocatedAmount,
+        });
+        map.set(cbi.budgetItemId, bucket);
+      }
+    }
+    return map;
+  }, [contractBudgetItemsAll, contracts]);
+
   const expenseByItemId = useMemo(
     () => new Map(budgetPositions.map((pos) => [pos.id, pos])),
     [budgetPositions],
@@ -251,16 +291,19 @@ export const ProjectFinanceTab: React.FC<Props> = ({
   const getTypeCode = (c: Contract): string => typeCodeMap[c.typeId] ?? '';
 
   // Classify contracts by direction: CLIENT → Revenue, CONTRACTOR → Expenses
+  // Backend returns 'direction' field; contractDirection is kept for backward compat
+  const getDirection = (c: Contract) => c.direction ?? c.contractDirection;
+
   const revenueContracts = useMemo(
     () => contracts.filter((c) =>
-      c.contractDirection === 'CLIENT' || getTypeCode(c) === 'GENERAL'),
+      getDirection(c) === 'CLIENT' || getTypeCode(c) === 'GENERAL'),
     [contracts, typeCodeMap],
   );
 
   const expenseContracts = useMemo(
     () => contracts.filter((c) =>
-      c.contractDirection === 'CONTRACTOR'
-      || (c.contractDirection !== 'CLIENT' && getTypeCode(c) !== 'GENERAL')),
+      getDirection(c) === 'CONTRACTOR'
+      || (getDirection(c) !== 'CLIENT' && getTypeCode(c) !== 'GENERAL')),
     [contracts, typeCodeMap],
   );
 
@@ -294,12 +337,11 @@ export const ProjectFinanceTab: React.FC<Props> = ({
   const plannedMarginPct = revenueTotals.contractAmount > 0
     ? (plannedMargin / revenueTotals.contractAmount) * 100 : 0;
 
-  // ── Excel Export ─────────────────────────────────────────────────────────
+  // ── CSV Export ───────────────────────────────────────────────────────────
 
   const exportToExcel = useCallback(() => {
-    const wb = XLSX.utils.book_new();
-
-    // Sheet 1: Financial Summary
+    const datePart = new Date().toISOString().slice(0, 10);
+    const escapeCsv = (value: unknown): string => `"${String(value ?? '').replace(/"/g, '""')}"`;
     const summaryRows = [
       [t('projects.finance.excelReportTitle'), p?.name ?? ''],
       [t('projects.finance.excelExportDate'), new Date().toLocaleDateString('ru-RU')],
@@ -334,12 +376,6 @@ export const ProjectFinanceTab: React.FC<Props> = ({
       [t('projects.finance.excelPaidToSuppliers'), f.paidToSuppliers],
       [t('projects.finance.excelNetCashFlow'), f.cashFlow],
     ];
-
-    const ws1 = XLSX.utils.aoa_to_sheet(summaryRows);
-    ws1['!cols'] = [{ wch: 35 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }];
-    XLSX.utils.book_append_sheet(wb, ws1, t('projects.finance.excelSheetFinances'));
-
-    // Sheet 2: Payments
     const payRows = [
       [t('projects.finance.excelPaymentsForProject'), p?.name ?? ''],
       [],
@@ -350,12 +386,23 @@ export const ProjectFinanceTab: React.FC<Props> = ({
         pay.partnerName ?? '', pay.totalAmount, pay.status,
       ]),
     ];
-    const ws2 = XLSX.utils.aoa_to_sheet(payRows);
-    ws2['!cols'] = [{ wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 30 }, { wch: 18 }, { wch: 12 }];
-    XLSX.utils.book_append_sheet(wb, ws2, t('projects.finance.excelSheetPayments'));
 
-    XLSX.writeFile(wb, `${t('projects.finance.excelSheetFinances')}_${p?.code ?? 'project'}_${new Date().toISOString().slice(0, 10)}.xlsx`);
-  }, [p, revenueContracts, expenseContracts, revenueTotals, expenseTotals, f, plannedMargin, plannedMarginPct, payments, typeCodeMap]);
+    const csv = [
+      ...summaryRows.map((row) => row.map(escapeCsv).join(',')),
+      '',
+      ...payRows.map((row) => row.map(escapeCsv).join(',')),
+    ].join('\n');
+
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${t('projects.finance.excelSheetFinances')}_${p?.code ?? 'project'}_${datePart}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [p, revenueContracts, expenseContracts, revenueTotals, expenseTotals, f, plannedMargin, plannedMarginPct, payments]);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -370,6 +417,7 @@ export const ProjectFinanceTab: React.FC<Props> = ({
         expandedBudgetRows={expandedBudgetRows}
         toggleBudgetRow={toggleBudgetRow}
         isLoading={expensesLoading || budgetsLoading || budgetItemsLoading}
+          contractsByBudgetItemId={contractsByBudgetItemId}
       />
 
       <ContractsBreakdownSection

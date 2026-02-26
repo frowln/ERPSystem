@@ -395,7 +395,7 @@ const PurchaseRequestBoardPage: React.FC = () => {
         </div>
       )}
 
-      <div className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 260px)' }}>
+      <div data-testid="board" className="flex gap-4 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 260px)' }}>
         {columns.map((column) => {
           const columnItems = byColumn[column.id] ?? [];
           const isOver = dragOverCol === column.id;

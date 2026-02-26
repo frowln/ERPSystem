@@ -1,6 +1,6 @@
 {
-  "runId": "20260222211808",
-  "createdAt": "2026-02-22T21:21:12.499Z",
+  "runId": "20260224135131",
+  "createdAt": "2026-02-24T13:54:35.780Z",
   "apiRoot": "http://localhost:8080/api",
   "login": {
     "email": "admin@privod.ru",
@@ -8,101 +8,101 @@
     "organizationId": "00000000-0000-0000-0000-000000000001"
   },
   "project": {
-    "id": "331ba307-a6cf-4961-bb50-7869c759d686",
-    "code": "PRJ-00009",
-    "name": "ЖК Привод Demo 20260222211808",
+    "id": "02f351a8-ecf9-4d8d-bc4b-ae2876862967",
+    "code": "PRJ-00033",
+    "name": "ЖК Привод Demo 20260224135131",
     "status": "IN_PROGRESS"
   },
   "specification": {
-    "id": "efda5545-0470-4234-947d-2a971da0fe60",
-    "name": "SPEC-00006",
+    "id": "f6f5b3e9-2e41-4958-8dd0-e81c63ddc7cd",
+    "name": "SPEC-00030",
     "itemCount": 12
   },
   "estimate": {
-    "id": "9b5c7aed-c4e7-4a9c-a895-db646b9155d9",
-    "name": "Смета ППР и инженерные системы 20260222211808"
+    "id": "66908b61-a44a-48db-85fe-b2fb0be40991",
+    "name": "Смета ППР и инженерные системы 20260224135131"
   },
   "purchaseRequests": {
-    "worksId": "306f8893-9f70-4d61-98a8-49dab7d322a7",
-    "materialsId": "3bb0177a-1ad4-4a17-99ca-3a32ce740c47"
+    "worksId": "d3b2b102-4ec7-454f-9dff-f794ab40862d",
+    "materialsId": "a1bdf230-6f84-43de-86f4-76c8b41cd744"
   },
   "budget": {
-    "id": "5d2e0c01-a29f-417a-8079-319d7976e6fa",
-    "name": "Финансовая модель объекта 20260222211808",
+    "id": "6f92b122-5630-45d9-a89d-d0c7b9e3e41e",
+    "name": "Финансовая модель объекта 20260224135131",
     "createdPositions": 21
   },
   "contracts": {
     "total": 11,
     "contractorTotal": 10,
-    "customerContractId": "d4a3cb1f-6455-49e2-ae12-d71e957c330b",
+    "customerContractId": "1487ed16-6307-424f-8350-2933514e96d0",
     "paidFlow": 3,
     "invoicedFlow": 2,
     "activeOnly": 2,
     "signedOnly": 2,
     "draft": 1,
-    "multiLinkedContractId": "a7768228-0936-479c-91a0-74ee0d73f068",
-    "splitBudgetItemId": "1e6f8215-8a1d-43cb-8501-372934b7446a",
+    "multiLinkedContractId": "6b57b065-74e8-4622-adbc-cb317382ff50",
+    "splitBudgetItemId": "210e5344-7acf-4b8e-bf5a-5465e0cf6a86",
     "ids": [
-      "784638c5-81db-4747-b59f-f2f86bdc05d3",
-      "25aad2f3-ca97-49b5-9cbc-851223ff114f",
-      "e862856b-b6c7-4f0e-b6d8-3d4dc574ecd6",
-      "a7768228-0936-479c-91a0-74ee0d73f068",
-      "a362845a-2b98-49d0-b22e-4b38cf87717b",
-      "bc1cbc07-5b41-49ec-a067-683bb3dcd459",
-      "650910f6-6e6f-445b-a337-e6e58fc1c42f",
-      "66565e78-bf88-4290-b0dd-17e3737b1ac1",
-      "db5c50b3-8eb8-42a6-ada1-3f2ce26ce2cf",
-      "af5aa443-2181-4934-9025-98e0805898f0",
-      "d4a3cb1f-6455-49e2-ae12-d71e957c330b"
+      "61c4bf1f-7c52-4404-aaa5-ace1e0dc87d1",
+      "bf635dae-cee8-4abc-80c6-29061cccf0f7",
+      "9360703d-9086-45c0-8f77-07b9c4190a28",
+      "6b57b065-74e8-4622-adbc-cb317382ff50",
+      "bbcb0d7f-9c8e-4ada-a638-e4eaca98f8aa",
+      "34444fcb-5559-4fbc-bed8-e8c3543d095b",
+      "82fe1add-8936-47fd-b342-fa0e4c08e498",
+      "38dc82d6-9842-4ffa-a323-b57cb52b1025",
+      "830540a1-2746-4892-a218-9bdd3fe66357",
+      "57dd8c98-695d-4a21-a8f2-057af92669e8",
+      "1487ed16-6307-424f-8350-2933514e96d0"
     ]
   },
   "invoices": {
     "totalCreatedInRun": 7,
     "ids": [
-      "a09bd416-6901-46dc-b58a-eed3d2110e35",
-      "74dee94a-85e5-43bf-bd51-ffac8dbde1ed",
-      "0dfa636c-8f21-497d-a74b-d534549d7775",
-      "d2525119-1e5c-41a0-9b84-cfaf677bf099",
-      "a9b9c2f3-a076-4382-bbbb-bc441e457dc8",
-      "aa8e4afb-880c-440f-b482-55c631bd4324",
-      "343b4217-3723-4200-9fc0-fdeb06036326"
+      "14760d6b-b268-412a-996d-98d439f9d413",
+      "673f8048-8ac1-4aec-b583-1fdb6725264c",
+      "342b57bb-bfb1-432b-9f3a-da4af8bbb411",
+      "1ffa4cc6-b8e7-45ea-9e71-383569ef5e5b",
+      "9f49c527-d562-4e07-a040-15bbe81e2fc6",
+      "5d2f745e-d1e8-45c8-bb97-f799f4f8e176",
+      "6db16836-7185-4e18-8eba-aefcd7f31db4"
     ]
   },
   "invoiceSourceLinks": [
     {
-      "positionId": "0419d5c9-85aa-4a5c-bf12-844fdffdc831",
+      "positionId": "16f02a25-7354-4626-8e88-29df2d1fcb8a",
       "positionName": "СС: поставка серверного шкафа и активки",
-      "invoiceId": "a09bd416-6901-46dc-b58a-eed3d2110e35",
-      "invoiceNumber": "INV-00036",
-      "costPrice": 7800000,
-      "estimatePrice": 4716000
+      "invoiceId": "14760d6b-b268-412a-996d-98d439f9d413",
+      "invoiceNumber": "INV-00193",
+      "priceSourceType": "INVOICE",
+      "priceSourceId": "14760d6b-b268-412a-996d-98d439f9d413"
     },
     {
-      "positionId": "a495096f-03a8-4a20-b13d-a54a0e2f91ed",
+      "positionId": "7fc9b48d-a25a-4c89-bf8a-91ba9fc54b0b",
       "positionName": "ЭМ: пусконаладочные работы",
-      "invoiceId": "74dee94a-85e5-43bf-bd51-ffac8dbde1ed",
-      "invoiceNumber": "INV-00037",
-      "costPrice": 9050000,
-      "estimatePrice": 6384000
+      "invoiceId": "673f8048-8ac1-4aec-b583-1fdb6725264c",
+      "invoiceNumber": "INV-00194",
+      "priceSourceType": "INVOICE",
+      "priceSourceId": "673f8048-8ac1-4aec-b583-1fdb6725264c"
     },
     {
-      "positionId": "8dda2262-e465-49a4-8ec5-42e5f4b50824",
+      "positionId": "566a8dde-a156-4afe-ac97-f8be509ac7af",
       "positionName": "ЭО: авторский надзор",
-      "invoiceId": "0dfa636c-8f21-497d-a74b-d534549d7775",
-      "invoiceNumber": "INV-00038",
-      "costPrice": 735714.29,
-      "estimatePrice": 252000
+      "invoiceId": "342b57bb-bfb1-432b-9f3a-da4af8bbb411",
+      "invoiceNumber": "INV-00195",
+      "priceSourceType": "INVOICE",
+      "priceSourceId": "342b57bb-bfb1-432b-9f3a-da4af8bbb411"
     }
   ],
   "commercialProposal": {
-    "id": "ce436225-335f-45a3-88fa-2e5afcbbe51b",
+    "id": "21e1aa5e-cbd9-4aa5-bf99-5eab28054f70",
     "approvedItemsCount": 12,
     "selectedInvoicesCount": 6,
     "linkedEstimatesCount": 10,
     "itemsTotal": 21
   },
   "competitiveList": {
-    "id": "2deaddd9-406f-4832-a441-28c945b1598d",
+    "id": "7eb4b989-24a6-46d1-b69e-5ef303f16080",
     "totalEntriesCreated": 18,
     "winnerSelections": 8,
     "entriesTotal": 18
@@ -110,22 +110,22 @@
   "payments": {
     "totalCreatedInRun": 2,
     "ids": [
-      "98a3ae6b-90a2-49ea-9233-3acb18c3669e",
-      "74fc157f-6801-468b-94c3-daeeb7eca496"
+      "dc31e6da-a04c-46f5-b065-6689d7562c70",
+      "c83fd841-320e-4fa1-a24b-af335b83af66"
     ]
   },
   "verification": {
     "project": {
-      "id": "331ba307-a6cf-4961-bb50-7869c759d686",
-      "code": "PRJ-00009",
-      "name": "ЖК Привод Demo 20260222211808",
-      "description": "Полный интеграционный демонстрационный объект 20260222211808",
+      "id": "02f351a8-ecf9-4d8d-bc4b-ae2876862967",
+      "code": "PRJ-00033",
+      "name": "ЖК Привод Demo 20260224135131",
+      "description": "Полный интеграционный демонстрационный объект 20260224135131",
       "status": "IN_PROGRESS",
       "statusDisplayName": "В работе",
       "organizationId": "00000000-0000-0000-0000-000000000001",
       "plannedStartDate": "2027-01-15",
       "plannedEndDate": "2027-12-25",
-      "actualStartDate": "2026-02-23",
+      "actualStartDate": "2026-02-24",
       "address": "г. Москва, ул. Демонстрационная, вл. 21",
       "city": "Москва",
       "region": "Московский регион",
@@ -134,8 +134,8 @@
       "type": "RESIDENTIAL",
       "category": "Жилой комплекс",
       "priority": "HIGH",
-      "createdAt": "2026-02-22T21:18:08.546279Z",
-      "updatedAt": "2026-02-22T21:18:08.607144Z",
+      "createdAt": "2026-02-24T13:51:31.518425Z",
+      "updatedAt": "2026-02-24T13:51:31.589881Z",
       "createdBy": "admin@privod.ru",
       "computedFinancials": {
         "contractAmount": 0,
@@ -156,9 +156,9 @@
       }
     },
     "budget": {
-      "id": "5d2e0c01-a29f-417a-8079-319d7976e6fa",
-      "name": "Финансовая модель объекта 20260222211808",
-      "projectId": "331ba307-a6cf-4961-bb50-7869c759d686",
+      "id": "6f92b122-5630-45d9-a89d-d0c7b9e3e41e",
+      "name": "Финансовая модель объекта 20260224135131",
+      "projectId": "02f351a8-ecf9-4d8d-bc4b-ae2876862967",
       "status": "ACTIVE",
       "statusDisplayName": "Активный",
       "plannedRevenue": 980000000,
@@ -173,9 +173,9 @@
       "revenueVariancePercent": -100,
       "costVariancePercent": -100,
       "docVersion": 1,
-      "notes": "Авто-создано скриптом 20260222211808",
-      "createdAt": "2026-02-22T21:18:09.174757Z",
-      "updatedAt": "2026-02-22T21:18:09.946492Z",
+      "notes": "Авто-создано скриптом 20260224135131",
+      "createdAt": "2026-02-24T13:51:32.045999Z",
+      "updatedAt": "2026-02-24T13:51:32.674431Z",
       "createdBy": "admin@privod.ru"
     },
     "counts": {
@@ -191,7 +191,7 @@
       "payments": 2,
       "estimates": 1,
       "purchaseRequests": 2,
-      "invoicePriceSources": 5,
+      "invoicePriceSources": 3,
       "commercialProposals": 1,
       "proposalItems": 21,
       "proposalMaterials": 11,
@@ -208,7 +208,7 @@
       "contractsWithMultipleBudgetItems": 1
     },
     "projectFinancials": {
-      "projectId": "331ba307-a6cf-4961-bb50-7869c759d686",
+      "projectId": "02f351a8-ecf9-4d8d-bc4b-ae2876862967",
       "contractAmount": 0,
       "invoicedToCustomer": 38918000,
       "receivedPayments": 0,
@@ -231,8 +231,8 @@
       "preliminaryBudget": 980000000,
       "preliminaryContractAmount": 1030000000
     },
-    "proposalId": "ce436225-335f-45a3-88fa-2e5afcbbe51b",
-    "competitiveListId": "2deaddd9-406f-4832-a441-28c945b1598d",
+    "proposalId": "21e1aa5e-cbd9-4aa5-bf99-5eab28054f70",
+    "competitiveListId": "7eb4b989-24a6-46d1-b69e-5ef303f16080",
     "checks": {
       "positionsAtLeast20": true,
       "sectionsAtLeast10": true,
@@ -268,20 +268,20 @@
     }
   },
   "quickLinks": {
-    "frontendProject": "http://localhost:3000/projects/331ba307-a6cf-4961-bb50-7869c759d686",
-    "frontendBudget": "http://localhost:3000/budgets/5d2e0c01-a29f-417a-8079-319d7976e6fa",
+    "frontendProject": "http://localhost:3000/projects/02f351a8-ecf9-4d8d-bc4b-ae2876862967",
+    "frontendBudget": "http://localhost:3000/budgets/6f92b122-5630-45d9-a89d-d0c7b9e3e41e",
     "frontendContracts": "http://localhost:3000/contracts",
     "frontendCommercialProposals": "http://localhost:3000/commercial-proposals",
-    "frontendCommercialProposal": "http://localhost:3000/commercial-proposals/ce436225-335f-45a3-88fa-2e5afcbbe51b",
+    "frontendCommercialProposal": "http://localhost:3000/commercial-proposals/21e1aa5e-cbd9-4aa5-bf99-5eab28054f70",
     "frontendInvoices": "http://localhost:3000/invoices",
     "frontendEstimates": "http://localhost:3000/estimates",
-    "frontendEstimate": "http://localhost:3000/estimates/9b5c7aed-c4e7-4a9c-a895-db646b9155d9",
+    "frontendEstimate": "http://localhost:3000/estimates/66908b61-a44a-48db-85fe-b2fb0be40991",
     "frontendSpecifications": "http://localhost:3000/specifications",
-    "frontendSpecification": "http://localhost:3000/specifications/efda5545-0470-4234-947d-2a971da0fe60",
-    "frontendCompetitiveList": "http://localhost:3000/specifications/efda5545-0470-4234-947d-2a971da0fe60/competitive-list/2deaddd9-406f-4832-a441-28c945b1598d",
-    "backendProjectApi": "http://localhost:8080/api/projects/331ba307-a6cf-4961-bb50-7869c759d686",
-    "backendBudgetApi": "http://localhost:8080/api/budgets/5d2e0c01-a29f-417a-8079-319d7976e6fa",
-    "backendContractsApi": "http://localhost:8080/api/contracts?projectId=331ba307-a6cf-4961-bb50-7869c759d686&size=200",
-    "backendInvoicesApi": "http://localhost:8080/api/invoices?projectId=331ba307-a6cf-4961-bb50-7869c759d686&size=200"
+    "frontendSpecification": "http://localhost:3000/specifications/f6f5b3e9-2e41-4958-8dd0-e81c63ddc7cd",
+    "frontendCompetitiveList": "http://localhost:3000/specifications/f6f5b3e9-2e41-4958-8dd0-e81c63ddc7cd/competitive-list/7eb4b989-24a6-46d1-b69e-5ef303f16080",
+    "backendProjectApi": "http://localhost:8080/api/projects/02f351a8-ecf9-4d8d-bc4b-ae2876862967",
+    "backendBudgetApi": "http://localhost:8080/api/budgets/6f92b122-5630-45d9-a89d-d0c7b9e3e41e",
+    "backendContractsApi": "http://localhost:8080/api/contracts?projectId=02f351a8-ecf9-4d8d-bc4b-ae2876862967&size=200",
+    "backendInvoicesApi": "http://localhost:8080/api/invoices?projectId=02f351a8-ecf9-4d8d-bc4b-ae2876862967&size=200"
   }
 }

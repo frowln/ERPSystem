@@ -1,21 +1,9 @@
 import React, { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { PivotTable, type AggregationType } from '@/design-system/components/PivotTable';
+import { analyticsApi, type AuditLogEntry } from '@/api/analytics';
 import { t } from '@/i18n';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-interface AuditLogEntry extends Record<string, unknown> {
-  [key: string]: unknown;
-  id: string;
-  module: string;
-  action_type: string;
-  count: number;
-  userName: string;
-  timestamp: string;
-}
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -41,46 +29,6 @@ const getActionTypes = () => [
   t('analytics.auditPivot.actExport'),
 ];
 
-// Generate deterministic mock data: each module+action combination
-const generateMockData = (modules: string[], actionTypes: string[]): AuditLogEntry[] => {
-  const data: AuditLogEntry[] = [];
-  let id = 1;
-
-  // Each module has different distributions of actions (keyed by index)
-  const distributionByIndex: number[][] = [
-    /* Projects   */ [5, 24, 1, 89, 12],
-    /* Contracts  */ [8, 18, 2, 65, 15],
-    /* Estimates  */ [12, 35, 3, 78, 22],
-    /* Payments   */ [28, 14, 0, 95, 18],
-    /* Warehouse  */ [45, 32, 5, 120, 8],
-    /* Personnel  */ [6, 22, 1, 54, 7],
-    /* Documents  */ [35, 28, 8, 142, 25],
-    /* Quality    */ [18, 12, 2, 45, 5],
-    /* Procurement*/ [22, 15, 3, 68, 10],
-    /* Tasks      */ [52, 85, 12, 210, 4],
-  ];
-
-  for (let mi = 0; mi < modules.length; mi++) {
-    for (let ai = 0; ai < actionTypes.length; ai++) {
-      const cnt = distributionByIndex[mi]?.[ai] ?? 0;
-      if (cnt > 0) {
-        // Generate individual log entries to allow counting
-        for (let i = 0; i < cnt; i++) {
-          data.push({
-            id: String(id++),
-            module: modules[mi],
-            action_type: actionTypes[ai],
-            count: 1,
-            userName: 'system',
-            timestamp: '2026-02-01',
-          });
-        }
-      }
-    }
-  }
-
-  return data;
-};
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -89,7 +37,12 @@ const AuditPivotPage: React.FC = () => {
   const [aggregation, setAggregation] = useState<AggregationType>('count');
   const modules = getModules();
   const actionTypes = getActionTypes();
-  const auditData = useMemo(() => generateMockData(modules, actionTypes), []);
+
+  const { data: auditResponse } = useQuery({
+    queryKey: ['analytics-audit-log'],
+    queryFn: () => analyticsApi.getAuditLog({ page: 0, size: 5000 }),
+  });
+  const auditData: AuditLogEntry[] = useMemo(() => auditResponse?.content ?? [], [auditResponse]);
 
   const totalActions = auditData.length;
   const mostActiveModule = modules.reduce((best, mod) => {

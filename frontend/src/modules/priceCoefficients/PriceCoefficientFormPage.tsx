@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { projectsApi } from '@/api/projects';
+import { contractsApi } from '@/api/contracts';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -37,26 +39,24 @@ const typeOptions = [
   { value: 'CUSTOM', label: t('forms.priceCoefficient.types.custom') },
 ];
 
-const projectOptions = [
-  { value: '', label: t('forms.priceCoefficient.noBinding') },
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
-const contractOptions = [
-  { value: '', label: t('forms.priceCoefficient.noBinding') },
-  { value: 'c1', label: 'ДГ-2025-001 Генподряд ЖК "Солнечный"' },
-  { value: 'c2', label: 'ДС-2025-014 Субподряд электромонтаж' },
-  { value: 'c3', label: 'ДП-2025-032 Поставка бетона М300' },
-];
 
 const PriceCoefficientFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({ queryKey: ['projects'], queryFn: () => projectsApi.getProjects() });
+  const projectOptions = [
+    { value: '', label: t('forms.priceCoefficient.noBinding') },
+    ...(projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name })),
+  ];
+
+  const { data: contractsData } = useQuery({ queryKey: ['contracts'], queryFn: () => contractsApi.getContracts() });
+  const contractOptions = [
+    { value: '', label: t('forms.priceCoefficient.noBinding') },
+    ...(contractsData?.content ?? []).map((c) => ({ value: c.id, label: `${c.number} ${c.name}` })),
+  ];
 
   const { data: existing } = useQuery({
     queryKey: ['price-coefficient', id],

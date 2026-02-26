@@ -31,33 +31,40 @@ export interface UpsertDocumentRequest {
   notes?: string;
 }
 
-export interface DocumentRecord extends BaseDocument {
-  projectId?: string;
-  contractId?: string;
-  description?: string;
-  tags?: string | string[];
-  notes?: string;
-  updatedAt?: string;
-}
-
 export const documentsApi = {
-  getDocuments: async (params?: DocumentFilters): Promise<PaginatedResponse<DocumentRecord>> => {
-    const response = await apiClient.get<PaginatedResponse<DocumentRecord>>('/documents', { params });
+  getDocuments: async (params?: DocumentFilters): Promise<PaginatedResponse<BaseDocument>> => {
+    const response = await apiClient.get<PaginatedResponse<BaseDocument>>('/documents', { params });
     return response.data;
   },
 
-  getDocument: async (id: string): Promise<DocumentRecord> => {
-    const response = await apiClient.get<DocumentRecord>(`/documents/${id}`);
+  getDocument: async (id: string): Promise<BaseDocument> => {
+    const response = await apiClient.get<BaseDocument>(`/documents/${id}`);
     return response.data;
   },
 
-  createDocument: async (data: UpsertDocumentRequest): Promise<DocumentRecord> => {
-    const response = await apiClient.post<DocumentRecord>('/documents', data);
+  createDocument: async (data: UpsertDocumentRequest): Promise<BaseDocument> => {
+    const response = await apiClient.post<BaseDocument>('/documents', data);
     return response.data;
   },
 
-  updateDocument: async (id: string, data: UpsertDocumentRequest): Promise<DocumentRecord> => {
-    const response = await apiClient.put<DocumentRecord>(`/documents/${id}`, data);
+  updateDocument: async (id: string, data: UpsertDocumentRequest): Promise<BaseDocument> => {
+    const response = await apiClient.put<BaseDocument>(`/documents/${id}`, data);
+    return response.data;
+  },
+
+  uploadDocumentFile: async (id: string, file: File): Promise<BaseDocument> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<BaseDocument>(
+      `/documents/${id}/upload`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } },
+    );
+    return response.data;
+  },
+
+  getDownloadUrl: async (id: string): Promise<string> => {
+    const response = await apiClient.get<string>(`/documents/${id}/download-url`);
     return response.data;
   },
 };

@@ -4,9 +4,12 @@ import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.finance.domain.Budget;
 import com.privod.platform.modules.finance.domain.BudgetItem;
+import com.privod.platform.modules.finance.domain.BudgetItemPriceSource;
+import com.privod.platform.modules.finance.domain.BudgetSnapshot;
 import com.privod.platform.modules.finance.domain.BudgetStatus;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.finance.repository.BudgetRepository;
+import com.privod.platform.modules.finance.repository.BudgetSnapshotRepository;
 import com.privod.platform.modules.finance.web.dto.BudgetItemResponse;
 import com.privod.platform.modules.finance.web.dto.BudgetResponse;
 import com.privod.platform.modules.finance.web.dto.BudgetSummaryResponse;
@@ -26,6 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +44,11 @@ public class BudgetService {
 
     private final BudgetRepository budgetRepository;
     private final BudgetItemRepository budgetItemRepository;
+    private final BudgetSnapshotRepository snapshotRepository;
     private final ProjectRepository projectRepository;
+    private final com.privod.platform.modules.estimate.repository.EstimateRepository estimateRepository;
+    private final com.privod.platform.modules.estimate.repository.EstimateItemRepository estimateItemRepository;
+    private final BudgetSnapshotService budgetSnapshotService;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -191,6 +200,19 @@ public class BudgetService {
         budget = budgetRepository.save(budget);
         auditService.logStatusChange("Budget", budget.getId(), oldStatus.name(), BudgetStatus.APPROVED.name());
 
+        if (snapshotRepository.findFirstByBudgetIdAndSnapshotTypeAndDeletedFalseOrderBySnapshotDateDesc(
+                budget.getId(),
+                BudgetSnapshot.SnapshotType.BASELINE
+        ).isEmpty()) {
+            budgetSnapshotService.createSnapshot(
+                    budget.getId(),
+                    "BASELINE " + Instant.now(),
+                    BudgetSnapshot.SnapshotType.BASELINE,
+                    null,
+                    "Автосоздано при утверждении бюджета"
+            );
+        }
+
         log.info("Бюджет утверждён: {} ({})", budget.getName(), budget.getId());
         return BudgetResponse.fromEntity(budget);
     }
@@ -315,6 +337,14 @@ public class BudgetService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         getBudgetOrThrow(budgetId, organizationId);
 
+        BudgetItemPriceSource resolvedPriceSourceType = request.priceSourceType();
+        if (request.costPrice() != null) {
+            validateManualCostPriceSource(resolvedPriceSourceType);
+            if (resolvedPriceSourceType == null) {
+                resolvedPriceSourceType = BudgetItemPriceSource.MANUAL;
+            }
+        }
+
         BudgetItem item = BudgetItem.builder()
                 .budgetId(budgetId)
                 .sequence(request.sequence() != null ? request.sequence() : 0)
@@ -335,7 +365,7 @@ public class BudgetService {
                 .customerPrice(request.customerPrice())
                 .vatRate(request.vatRate())
                 .docStatus(request.docStatus())
-                .priceSourceType(request.priceSourceType())
+                .priceSourceType(resolvedPriceSourceType)
                 .priceSourceId(request.priceSourceId())
                 .plannedAmount(request.plannedAmount())
                 .sectionId(request.sectionId())
@@ -389,8 +419,16 @@ public class BudgetService {
         if (request.unit() != null) {
             item.setUnit(request.unit());
         }
+        BudgetItemPriceSource effectivePriceSource = request.priceSourceType() != null
+                ? request.priceSourceType()
+                : item.getPriceSourceType();
         if (request.costPrice() != null) {
+            validateManualCostPriceSource(effectivePriceSource);
             item.setCostPrice(request.costPrice());
+            if (effectivePriceSource == null) {
+                item.setPriceSourceType(BudgetItemPriceSource.MANUAL);
+                item.setPriceSourceId(null);
+            }
         }
         if (request.estimatePrice() != null) {
             item.setEstimatePrice(request.estimatePrice());
@@ -441,6 +479,69 @@ public class BudgetService {
     }
 
     @Transactional
+    public List<BudgetItemResponse> importFromEstimate(UUID budgetId, UUID estimateId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(budgetId, organizationId);
+
+        com.privod.platform.modules.estimate.domain.Estimate estimate = estimateRepository.findById(estimateId)
+                .filter(e -> !e.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Смета не найдена: " + estimateId));
+
+        if (!organizationId.equals(estimate.getOrganizationId())) {
+            throw new EntityNotFoundException("Смета не найдена: " + estimateId);
+        }
+
+        if (budget.getProjectId() != null && estimate.getProjectId() != null
+                && !budget.getProjectId().equals(estimate.getProjectId())) {
+            throw new IllegalArgumentException("Смета относится к другому проекту");
+        }
+
+        List<com.privod.platform.modules.estimate.domain.EstimateItem> estimateItems = estimateItemRepository
+                .findByEstimateIdAndDeletedFalseOrderBySequenceAsc(estimateId);
+
+        int maxSequence = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId).stream()
+                .mapToInt(i -> i.getSequence() != null ? i.getSequence() : 0)
+                .max().orElse(0);
+
+        List<BudgetItem> newItems = new java.util.ArrayList<>();
+        for (com.privod.platform.modules.estimate.domain.EstimateItem estItem : estimateItems) {
+            maxSequence++;
+            BigDecimal price = estItem.getUnitPrice() != null ? estItem.getUnitPrice() : BigDecimal.ZERO;
+            BigDecimal qty = estItem.getQuantity() != null ? estItem.getQuantity() : BigDecimal.ONE;
+
+            BudgetItem bi = BudgetItem.builder()
+                    .budgetId(budgetId)
+                    .sequence(maxSequence)
+                    .name(estItem.getName())
+                    .quantity(qty)
+                    .unit(estItem.getUnitOfMeasure())
+                    .costPrice(price)
+                    .estimatePrice(price)
+                    .salePrice(price)
+                    .customerPrice(price)
+                    .itemType(com.privod.platform.modules.finance.domain.BudgetItemType.WORKS)
+                    .category(com.privod.platform.modules.finance.domain.BudgetCategory.LABOR)
+                    .plannedAmount(price.multiply(qty).setScale(2, RoundingMode.HALF_UP))
+                    .priceSourceType(com.privod.platform.modules.finance.domain.BudgetItemPriceSource.ESTIMATE)
+                    .priceSourceId(estItem.getId())
+                    .docStatus(com.privod.platform.modules.finance.domain.BudgetItemDocStatus.PLANNED)
+                    .notes(estItem.getNotes())
+                    .build();
+
+            bi.setCustomerTotal(bi.getPlannedAmount());
+            bi.setRemainingAmount(bi.getPlannedAmount());
+            bi.recalculateMargin();
+            bi.recalculatePrices();
+            newItems.add(budgetItemRepository.save(bi));
+        }
+
+        auditService.logUpdate("Budget", budgetId, "importFromEstimate", null, "Imported " + newItems.size() + " items");
+        log.info("Импортировано {} позиций из сметы {} в бюджет {}", newItems.size(), estimateId, budgetId);
+
+        return newItems.stream().map(BudgetItemResponse::fromEntity).toList();
+    }
+
+    @Transactional
     public void deleteBudgetItem(UUID budgetId, UUID itemId) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         getBudgetOrThrow(budgetId, organizationId);
@@ -484,6 +585,13 @@ public class BudgetService {
             return null;
         }
         return customerPrice.multiply(quantity).setScale(2, java.math.RoundingMode.HALF_UP);
+    }
+
+    private void validateManualCostPriceSource(BudgetItemPriceSource priceSourceType) {
+        if (priceSourceType != null && priceSourceType != BudgetItemPriceSource.MANUAL) {
+            throw new IllegalStateException(
+                    "Себестоимость можно редактировать вручную только для позиций с источником цены MANUAL");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -576,5 +684,137 @@ public class BudgetService {
                 .filter(p -> !p.isDeleted())
                 .filter(p -> organizationId.equals(p.getOrganizationId()))
                 .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
+    }
+
+    // ======================== Own Cost Generation (Phase 8) ========================
+
+    @Transactional
+    public List<BudgetItemResponse> generateOwnCostLines(UUID budgetId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(budgetId, organizationId);
+        List<BudgetItem> existingItems = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
+
+        // Sum direct costs (MATERIALS + WORKS + EQUIPMENT non-section items)
+        BigDecimal totalDirectCost = existingItems.stream()
+                .filter(i -> !i.isSection())
+                .map(i -> {
+                    BigDecimal cost = i.getCostPrice() != null ? i.getCostPrice() : BigDecimal.ZERO;
+                    BigDecimal qty = i.getQuantity() != null ? i.getQuantity() : BigDecimal.ONE;
+                    return cost.multiply(qty);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        int nextSeq = existingItems.stream().mapToInt(i -> i.getSequence() != null ? i.getSequence() : 0).max().orElse(0) + 1;
+
+        java.util.ArrayList<BudgetItem> newItems = new java.util.ArrayList<>();
+
+        // Overhead
+        BigDecimal overheadPct = budget.getOverheadPercent() != null ? budget.getOverheadPercent() : new BigDecimal("12.00");
+        BigDecimal overheadAmount = totalDirectCost.multiply(overheadPct).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+        newItems.add(BudgetItem.builder()
+                .budgetId(budgetId).sequence(nextSeq++).category(com.privod.platform.modules.finance.domain.BudgetCategory.OVERHEAD)
+                .name("Накладные расходы (" + overheadPct + "%)").plannedAmount(overheadAmount)
+                .costPrice(overheadAmount).quantity(BigDecimal.ONE).unit("компл.").build());
+
+        // Contingency reserve
+        BigDecimal contingencyPct = budget.getContingencyPercent() != null ? budget.getContingencyPercent() : new BigDecimal("5.00");
+        BigDecimal contingencyAmount = totalDirectCost.multiply(contingencyPct).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+        newItems.add(BudgetItem.builder()
+                .budgetId(budgetId).sequence(nextSeq++).category(com.privod.platform.modules.finance.domain.BudgetCategory.OTHER)
+                .name("Резерв непредвиденных расходов (" + contingencyPct + "%)").plannedAmount(contingencyAmount)
+                .costPrice(contingencyAmount).quantity(BigDecimal.ONE).unit("компл.").build());
+
+        // Temporary structures
+        BigDecimal tempPct = budget.getTempStructuresPercent() != null ? budget.getTempStructuresPercent() : new BigDecimal("3.00");
+        BigDecimal tempAmount = totalDirectCost.multiply(tempPct).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+        newItems.add(BudgetItem.builder()
+                .budgetId(budgetId).sequence(nextSeq++).category(com.privod.platform.modules.finance.domain.BudgetCategory.OTHER)
+                .name("Временные здания и сооружения (" + tempPct + "%)").plannedAmount(tempAmount)
+                .costPrice(tempAmount).quantity(BigDecimal.ONE).unit("компл.").build());
+
+        List<BudgetItem> saved = budgetItemRepository.saveAll(newItems);
+        log.info("Generated {} own-cost lines for budget {}", saved.size(), budgetId);
+        return saved.stream().map(BudgetItemResponse::fromEntity).toList();
+    }
+
+    // ======================== ROI Calculation (Phase 9) ========================
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> calculateROI(UUID budgetId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Budget budget = getBudgetOrThrow(budgetId, organizationId);
+        List<BudgetItem> items = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
+
+        BigDecimal totalCost = items.stream().filter(i -> !i.isSection())
+                .map(i -> {
+                    BigDecimal c = i.getCostPrice() != null ? i.getCostPrice() : BigDecimal.ZERO;
+                    BigDecimal q = i.getQuantity() != null ? i.getQuantity() : BigDecimal.ONE;
+                    return c.multiply(q);
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalRevenue = items.stream().filter(i -> !i.isSection())
+                .map(i -> {
+                    BigDecimal c = i.getCustomerPrice() != null ? i.getCustomerPrice() : BigDecimal.ZERO;
+                    BigDecimal q = i.getQuantity() != null ? i.getQuantity() : BigDecimal.ONE;
+                    return c.multiply(q);
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal margin = totalRevenue.subtract(totalCost);
+        BigDecimal marginPct = totalRevenue.compareTo(BigDecimal.ZERO) > 0
+                ? margin.multiply(new BigDecimal("100")).divide(totalRevenue, 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        // ROI = margin / totalCost * 100
+        BigDecimal roi = totalCost.compareTo(BigDecimal.ZERO) > 0
+                ? margin.multiply(new BigDecimal("100")).divide(totalCost, 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalCost", totalCost);
+        result.put("totalRevenue", totalRevenue);
+        result.put("margin", margin);
+        result.put("marginPercent", marginPct);
+        result.put("roi", roi);
+        return result;
+    }
+
+    // ======================== Margin Scenario Simulation (Phase 9) ========================
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> simulateMarginScenario(UUID budgetId, BigDecimal targetMarginPercent) {
+        List<BudgetItem> items = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
+
+        BigDecimal totalCost = items.stream().filter(i -> !i.isSection())
+                .map(i -> {
+                    BigDecimal c = i.getCostPrice() != null ? i.getCostPrice() : BigDecimal.ZERO;
+                    BigDecimal q = i.getQuantity() != null ? i.getQuantity() : BigDecimal.ONE;
+                    return c.multiply(q);
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // targetRevenue = totalCost / (1 - targetMargin/100)
+        BigDecimal marginFraction = targetMarginPercent.divide(new BigDecimal("100"), 6, RoundingMode.HALF_UP);
+        BigDecimal denominator = BigDecimal.ONE.subtract(marginFraction);
+        BigDecimal targetRevenue = denominator.compareTo(BigDecimal.ZERO) > 0
+                ? totalCost.divide(denominator, 2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        BigDecimal currentRevenue = items.stream().filter(i -> !i.isSection())
+                .map(i -> {
+                    BigDecimal c = i.getCustomerPrice() != null ? i.getCustomerPrice() : BigDecimal.ZERO;
+                    BigDecimal q = i.getQuantity() != null ? i.getQuantity() : BigDecimal.ONE;
+                    return c.multiply(q);
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal revenueDelta = targetRevenue.subtract(currentRevenue);
+        BigDecimal targetMargin = targetRevenue.subtract(totalCost);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("currentRevenue", currentRevenue);
+        result.put("targetRevenue", targetRevenue);
+        result.put("revenueDelta", revenueDelta);
+        result.put("targetMargin", targetMargin);
+        result.put("targetMarginPercent", targetMarginPercent);
+        result.put("totalCost", totalCost);
+        return result;
     }
 }

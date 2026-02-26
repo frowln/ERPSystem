@@ -41,9 +41,10 @@ export const CONTRACT_TYPE_LABELS: Record<string, string> = {
   SUPPLY: t('projects.finance.contractTypeSupply'),
   SERVICE: t('projects.finance.contractTypeService'),
   DESIGN: t('projects.finance.contractTypeDesign'),
+  OTHER: t('projects.finance.contractTypeOther'),
 };
 
-export const CONTRACT_TYPE_ORDER = ['GENERAL', 'SUBCONTRACT', 'SUPPLY', 'DESIGN', 'SERVICE'];
+export const CONTRACT_TYPE_ORDER = ['GENERAL', 'SUBCONTRACT', 'SUPPLY', 'DESIGN', 'SERVICE', 'OTHER'];
 
 export const DOC_STATUS_CFG: Record<BudgetItemDocStatus, { label: string; cls: string }> = {
   PLANNED:    { label: t('finance.docStatusPlanned'),   cls: 'bg-neutral-100 text-neutral-500' },

@@ -143,6 +143,9 @@ public class BudgetItem extends BaseEntity {
     @Column(name = "price_source_id")
     private UUID priceSourceId;
 
+    @Column(name = "wbs_node_id")
+    private UUID wbsNodeId;
+
     public BigDecimal calculateRemainingAmount() {
         BigDecimal planned = plannedAmount != null ? plannedAmount : BigDecimal.ZERO;
         BigDecimal actual = actualAmount != null ? actualAmount : BigDecimal.ZERO;

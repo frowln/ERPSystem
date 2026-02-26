@@ -1,6 +1,7 @@
 package com.privod.platform.modules.ops.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.ops.domain.DailyReport;
 import com.privod.platform.modules.ops.domain.Defect;
 import com.privod.platform.modules.ops.domain.DefectSeverity;
@@ -78,9 +79,11 @@ public class OpsService {
 
     @Transactional
     public WorkOrderResponse createWorkOrder(CreateWorkOrderRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String code = generateWorkOrderCode();
 
         WorkOrder wo = WorkOrder.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .code(code)
                 .title(request.title())

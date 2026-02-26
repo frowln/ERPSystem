@@ -1,5 +1,7 @@
 package com.privod.platform.modules.finance.web.dto;
 
+import com.privod.platform.modules.finance.domain.BudgetSnapshot;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -18,7 +20,12 @@ public record SnapshotComparisonResponse(
         BigDecimal deltaCost,
         BigDecimal deltaCustomer,
         BigDecimal deltaMargin,
-        List<ItemDelta> items
+        List<ItemDelta> items,
+        UUID targetSnapshotId,
+        String targetSnapshotName,
+        BudgetSnapshot.SnapshotType targetSnapshotType,
+        Instant targetSnapshotDate,
+        boolean comparedWithCurrent
 ) {
     public record ItemDelta(
             UUID itemId,

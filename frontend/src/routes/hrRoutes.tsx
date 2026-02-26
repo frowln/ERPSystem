@@ -12,10 +12,22 @@ const TimesheetPivotPage = lazy(() => import('@/modules/hr/TimesheetPivotPage'))
 const CrewTimeSheetsPage = lazy(() => import('@/modules/hr/CrewTimeSheetsPage'));
 const CrewTimeEntriesPage = lazy(() => import('@/modules/hr/CrewTimeEntriesPage'));
 
+// HR Advanced
+const StaffingSchedulePage = lazy(() => import('@/modules/hr/StaffingSchedulePage'));
+const TimesheetT13Page = lazy(() => import('@/modules/hr/TimesheetT13Page'));
+const WorkOrderFormPage = lazy(() => import('@/modules/hr/WorkOrderFormPage'));
+const QualificationsJournalPage = lazy(() => import('@/modules/hr/QualificationsJournalPage'));
+const SeniorityLeavePage = lazy(() => import('@/modules/hr/SeniorityLeavePage'));
+
 // Safety
 const SafetyPage = lazy(() => import('@/modules/safety/SafetyDashboardPage'));
 const SafetyIncidentFormPage = lazy(() => import('@/modules/safety/SafetyIncidentFormPage'));
 const SafetyBoardPage = lazy(() => import('@/modules/safety/SafetyBoardPage'));
+const SafetyMetricsDashboard = lazy(() => import('@/modules/safety/SafetyMetricsDashboard'));
+const SafetyTrainingJournalPage = lazy(() => import('@/modules/safety/SafetyTrainingJournalPage'));
+const PpeManagementPage = lazy(() => import('@/modules/safety/PpeManagementPage'));
+const SoutCardPage = lazy(() => import('@/modules/safety/SoutCardPage'));
+const AccidentActN1Page = lazy(() => import('@/modules/safety/AccidentActN1Page'));
 
 // HR Russian
 const EmploymentContractListPage = lazy(() => import('@/modules/hrRussian/EmploymentContractListPage'));
@@ -52,6 +64,11 @@ export function hrRoutes() {
       <Route path="safety/board" element={<SafetyBoardPage />} />
       <Route path="safety/incidents/new" element={<SafetyIncidentFormPage />} />
       <Route path="safety/incidents/:id/edit" element={<SafetyIncidentFormPage />} />
+      <Route path="safety/metrics" element={<SafetyMetricsDashboard />} />
+      <Route path="safety/training-journal" element={<SafetyTrainingJournalPage />} />
+      <Route path="safety/ppe" element={<PpeManagementPage />} />
+      <Route path="safety/sout" element={<SoutCardPage />} />
+      <Route path="safety/accident-acts" element={<AccidentActN1Page />} />
 
       {/* HR Russian */}
       <Route path="hr-russian/employment-contracts" element={<EmploymentContractListPage />} />
@@ -78,6 +95,13 @@ export function hrRoutes() {
       <Route path="hr/crew-time-entries" element={<CrewTimeEntriesPage />} />
       <Route path="hr/crew-time-calendar" element={<CrewTimeCalendarPage />} />
       <Route path="hr/timesheet-pivot" element={<TimesheetPivotPage />} />
+
+      {/* HR Advanced */}
+      <Route path="hr/staffing-schedule" element={<StaffingSchedulePage />} />
+      <Route path="hr/timesheet-t13" element={<TimesheetT13Page />} />
+      <Route path="hr/work-orders" element={<WorkOrderFormPage />} />
+      <Route path="hr/qualifications" element={<QualificationsJournalPage />} />
+      <Route path="hr/seniority-leave" element={<SeniorityLeavePage />} />
     </>
   );
 }

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -40,7 +41,13 @@ public class BudgetSnapshotController {
     public ResponseEntity<ApiResponse<BudgetSnapshotResponse>> create(
             @PathVariable UUID budgetId,
             @Valid @RequestBody CreateSnapshotRequest request) {
-        BudgetSnapshotResponse response = snapshotService.createSnapshot(budgetId, request.name(), request.notes());
+        BudgetSnapshotResponse response = snapshotService.createSnapshot(
+                budgetId,
+                request.name(),
+                request.snapshotType(),
+                request.sourceSnapshotId(),
+                request.notes()
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
     }
 
@@ -57,8 +64,9 @@ public class BudgetSnapshotController {
     @Operation(summary = "Compare a snapshot with the current state")
     public ResponseEntity<ApiResponse<SnapshotComparisonResponse>> compare(
             @PathVariable UUID budgetId,
-            @PathVariable UUID snapshotId) {
-        SnapshotComparisonResponse response = snapshotService.compareWithCurrent(snapshotId);
+            @PathVariable UUID snapshotId,
+            @RequestParam(required = false) UUID targetSnapshotId) {
+        SnapshotComparisonResponse response = snapshotService.compare(budgetId, snapshotId, targetSnapshotId);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

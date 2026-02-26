@@ -94,6 +94,7 @@ export interface AdminUser {
   id: string;
   firstName: string;
   lastName: string;
+  fullName?: string;
   email: string;
   role: AdminUserRole;
   status: AdminUserStatus;

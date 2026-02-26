@@ -15,26 +15,20 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
+import { analyticsApi } from '@/api/analytics';
 import { kpiBonusesApi } from '@/api/kpiBonuses';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
+import type { Project, PaginatedResponse } from '@/types';
+import type { KpiItem as KpiItemType } from './types';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-interface KpiItem {
-  id: string;
-  name: string;
-  description: string;
-  target: number;
-  actual: number;
-  unit: string;
-  trend: 'up' | 'down' | 'neutral';
-  trendValue: string;
-  category: 'SCHEDULE' | 'COST' | 'QUALITY' | 'SAFETY' | 'PRODUCTIVITY';
+interface KpiItemDisplay extends KpiItemType {
   icon: React.ElementType;
   iconColor: string;
-  targetDirection: 'higher_better' | 'lower_better';
 }
 
 const getCategoryLabels = (): Record<string, string> => ({
@@ -47,57 +41,29 @@ const getCategoryLabels = (): Record<string, string> => ({
 });
 
 // ---------------------------------------------------------------------------
-// Mock data
+// Category icon/color mapping (UI-layer enrichment)
 // ---------------------------------------------------------------------------
 
-const getKpis = (): KpiItem[] => [
-  {
-    id: '1', name: 'SPI (Schedule Performance Index)', description: t('analytics.kpi.spiDesc'),
-    target: 1.0, actual: 0.94, unit: '', trend: 'down', trendValue: '-0.03', category: 'SCHEDULE', icon: Clock, iconColor: 'text-blue-600', targetDirection: 'higher_better',
-  },
-  {
-    id: '2', name: 'CPI (Cost Performance Index)', description: t('analytics.kpi.cpiDesc'),
-    target: 1.0, actual: 1.02, unit: '', trend: 'up', trendValue: '+0.01', category: 'COST', icon: DollarSign, iconColor: 'text-green-600', targetDirection: 'higher_better',
-  },
-  {
-    id: '3', name: t('analytics.kpi.qualityScoreName'), description: t('analytics.kpi.qualityScoreDesc'),
-    target: 95, actual: 91, unit: '%', trend: 'down', trendValue: '-2%', category: 'QUALITY', icon: CheckCircle2, iconColor: 'text-purple-600', targetDirection: 'higher_better',
-  },
-  {
-    id: '4', name: t('analytics.kpi.incidentCountName'), description: t('analytics.kpi.incidentCountDesc'),
-    target: 0, actual: 0, unit: '', trend: 'neutral', trendValue: '0', category: 'SAFETY', icon: ShieldCheck, iconColor: 'text-orange-600', targetDirection: 'lower_better',
-  },
-  {
-    id: '5', name: t('analytics.kpi.laborProductivityName'), description: t('analytics.kpi.laborProductivityDesc'),
-    target: 100, actual: 87, unit: '%', trend: 'up', trendValue: '+3%', category: 'PRODUCTIVITY', icon: Zap, iconColor: 'text-yellow-600', targetDirection: 'higher_better',
-  },
-  {
-    id: '6', name: t('analytics.kpi.scheduleLagName'), description: t('analytics.kpi.scheduleLagDesc'),
-    target: 0, actual: 5, unit: t('analytics.kpi.unitDays'), trend: 'up', trendValue: '+2', category: 'SCHEDULE', icon: Clock, iconColor: 'text-blue-600', targetDirection: 'lower_better',
-  },
-  {
-    id: '7', name: t('analytics.kpi.budgetUtilizationName'), description: t('analytics.kpi.budgetUtilizationDesc'),
-    target: 100, actual: 68, unit: '%', trend: 'up', trendValue: '+5%', category: 'COST', icon: DollarSign, iconColor: 'text-green-600', targetDirection: 'higher_better',
-  },
-  {
-    id: '8', name: t('analytics.kpi.daysWithoutIncidentName'), description: t('analytics.kpi.daysWithoutIncidentDesc'),
-    target: 365, actual: 47, unit: t('analytics.kpi.unitDays'), trend: 'up', trendValue: '+47', category: 'SAFETY', icon: ShieldCheck, iconColor: 'text-orange-600', targetDirection: 'higher_better',
-  },
-  {
-    id: '9', name: t('analytics.kpi.openRemarksName'), description: t('analytics.kpi.openRemarksDesc'),
-    target: 0, actual: 8, unit: t('analytics.kpi.unitPcs'), trend: 'down', trendValue: '-3', category: 'QUALITY', icon: Target, iconColor: 'text-purple-600', targetDirection: 'lower_better',
-  },
-  {
-    id: '10', name: t('analytics.kpi.fleetLoadName'), description: t('analytics.kpi.fleetLoadDesc'),
-    target: 85, actual: 78, unit: '%', trend: 'up', trendValue: '+2%', category: 'PRODUCTIVITY', icon: BarChart3, iconColor: 'text-yellow-600', targetDirection: 'higher_better',
-  },
-];
+const CATEGORY_ICON_MAP: Record<string, { icon: React.ElementType; color: string }> = {
+  SCHEDULE: { icon: Clock, color: 'text-blue-600' },
+  COST: { icon: DollarSign, color: 'text-green-600' },
+  QUALITY: { icon: CheckCircle2, color: 'text-purple-600' },
+  SAFETY: { icon: ShieldCheck, color: 'text-orange-600' },
+  PRODUCTIVITY: { icon: Zap, color: 'text-yellow-600' },
+};
+
+function enrichWithIcons(items: KpiItemType[]): KpiItemDisplay[] {
+  return items.map((kpi) => {
+    const mapping = CATEGORY_ICON_MAP[kpi.category] ?? { icon: BarChart3, color: 'text-neutral-600' };
+    return { ...kpi, icon: mapping.icon, iconColor: mapping.color };
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getProgress(kpi: KpiItem): number {
+function getProgress(kpi: KpiItemDisplay): number {
   if (kpi.targetDirection === 'lower_better') {
     if (kpi.target === 0) return kpi.actual === 0 ? 100 : Math.max(0, 100 - kpi.actual * 10);
     return Math.max(0, Math.min(100, ((kpi.target / Math.max(kpi.actual, 0.01)) * 100)));
@@ -132,8 +98,22 @@ const KpiPage: React.FC = () => {
   const [category, setCategory] = useState('all');
   const [project, setProject] = useState('');
 
-  const kpis = getKpis();
+  const { data: kpiData } = useQuery({
+    queryKey: ['analytics-kpis', project],
+    queryFn: () => analyticsApi.getKpis(project ? { projectId: project } : undefined),
+  });
+  const kpis = enrichWithIcons(kpiData ?? []);
   const categoryLabels = getCategoryLabels();
+
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+  });
+
+  const projectOptions = [
+    { value: '', label: t('analytics.kpi.allProjects') },
+    ...(projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name })),
+  ];
 
   // Fetch KPI achievements from the API to enrich the display
   const { data: kpiAchievements } = useQuery({
@@ -193,12 +173,7 @@ const KpiPage: React.FC = () => {
           ))}
         </div>
         <Select
-          options={[
-            { value: '', label: t('analytics.kpi.allProjects') },
-            { value: 'p1', label: t('common.mockProjects.solnechny') },
-            { value: 'p2', label: t('common.mockProjects.gorizont') },
-            { value: 'p3', label: t('common.mockProjects.mostVyatka') },
-          ]}
+          options={projectOptions}
           value={project}
           onChange={(e) => setProject(e.target.value)}
           className="w-48"

@@ -34,6 +34,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Timesheet extends BaseEntity {
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
@@ -60,4 +63,7 @@ public class Timesheet extends BaseEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "budget_item_id")
+    private UUID budgetItemId;
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Calculator,
   Wallet,
@@ -13,6 +13,7 @@ import { Button } from '@/design-system/components/Button';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { payrollApi } from './api';
+import { hrApi } from '@/api/hr';
 import { formatMoney, formatPercent } from '@/lib/format';
 import { t } from '@/i18n';
 import type { PayrollCalculation, PayrollDeduction } from './types';
@@ -25,15 +26,14 @@ const templateOptions = [
   { value: '4', label: 'ШТ-ПР-01 Прораб' },
 ];
 
-const employeeOptions = [
-  { value: '', label: t('payroll.calculation.selectEmployee') },
-  { value: 'e1', label: 'Иванов Алексей Сергеевич' },
-  { value: 'e2', label: 'Петров Василий Константинович' },
-  { value: 'e3', label: 'Сидоров Максим Николаевич' },
-  { value: 'e4', label: 'Козлов Дмитрий Александрович' },
-];
 const PayrollCalculationPage: React.FC = () => {
   const navigate = useNavigate();
+
+  const { data: employeesData } = useQuery({ queryKey: ['employees'], queryFn: () => hrApi.getEmployees() });
+  const employeeOptions = [
+    { value: '', label: t('payroll.calculation.selectEmployee') },
+    ...(employeesData?.content ?? []).map((e) => ({ value: e.id, label: e.fullName })),
+  ];
 
   const [templateId, setTemplateId] = useState('');
   const [employeeId, setEmployeeId] = useState('');

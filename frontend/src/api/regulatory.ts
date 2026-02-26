@@ -14,6 +14,14 @@ import type {
   CreateInspectionRequest,
   Prescription,
   PrescriptionStatus,
+  PrescriptionResponse,
+  ResponseTemplate,
+  SroLicense,
+  InspectionPrepItem,
+  InspectionPrepItemStatus,
+  InspectionRecord,
+  SubmitResponseRequest,
+  InspectionHistoryStats,
 } from '@/modules/regulatory/types';
 
 export interface PermitFilters extends PaginationParams {
@@ -164,6 +172,90 @@ export const regulatoryApi = {
 
   fileAppeal: async (id: string): Promise<Prescription> => {
     const response = await apiClient.post<Prescription>(`/regulatory/prescriptions/${id}/appeal`);
+    return response.data;
+  },
+
+  // Prescription Responses
+  getPrescriptionResponses: async (prescriptionId?: string): Promise<PrescriptionResponse[]> => {
+    const params = prescriptionId ? { prescriptionId } : undefined;
+    const response = await apiClient.get<PrescriptionResponse[]>('/regulatory/prescription-responses', { params });
+    return response.data;
+  },
+
+  getResponseTemplates: async (): Promise<ResponseTemplate[]> => {
+    const response = await apiClient.get<ResponseTemplate[]>('/regulatory/response-templates');
+    return response.data;
+  },
+
+  generateResponse: async (prescriptionId: string, templateId: string, details: string): Promise<PrescriptionResponse> => {
+    const response = await apiClient.post<PrescriptionResponse>('/regulatory/prescription-responses/generate', {
+      prescriptionId,
+      templateId,
+      details,
+    });
+    return response.data;
+  },
+
+  // SRO & Licenses
+  getSroLicenses: async (): Promise<SroLicense[]> => {
+    const response = await apiClient.get<SroLicense[]>('/regulatory/sro-licenses');
+    return response.data;
+  },
+
+  createSroLicense: async (data: Omit<SroLicense, 'id'>): Promise<SroLicense> => {
+    const response = await apiClient.post<SroLicense>('/regulatory/sro-licenses', data);
+    return response.data;
+  },
+
+  toggleSroNotification: async (id: string, enabled: boolean): Promise<void> => {
+    await apiClient.patch(`/regulatory/sro-licenses/${id}/notification`, { enabled });
+  },
+
+  // Inspection Preparation
+  getInspectionPrepItems: async (inspectionType?: string): Promise<InspectionPrepItem[]> => {
+    const params = inspectionType ? { inspectionType } : undefined;
+    const response = await apiClient.get<InspectionPrepItem[]>('/regulatory/inspection-prep', { params });
+    return response.data;
+  },
+
+  updatePrepItemStatus: async (id: string, status: InspectionPrepItemStatus): Promise<void> => {
+    await apiClient.patch(`/regulatory/inspection-prep/${id}/status`, { status });
+  },
+
+  // Prescription Response Submission
+  submitResponse: async (data: SubmitResponseRequest): Promise<PrescriptionResponse> => {
+    const response = await apiClient.post<PrescriptionResponse>('/regulatory/prescription-responses/submit', data);
+    return response.data;
+  },
+
+  updatePrescriptionStatus: async (id: string, status: PrescriptionStatus): Promise<Prescription> => {
+    const response = await apiClient.patch<Prescription>(`/regulatory/prescriptions/${id}/status`, { status });
+    return response.data;
+  },
+
+  // Inspection Preparation - Generate Package
+  generateInspectionPackage: async (inspectionType: string): Promise<Blob> => {
+    const response = await apiClient.post('/regulatory/inspection-prep/generate-package', { inspectionType }, {
+      responseType: 'blob',
+    });
+    return response.data as Blob;
+  },
+
+  // Inspection History
+  getInspectionHistory: async (params?: { year?: number; type?: string }): Promise<InspectionRecord[]> => {
+    const response = await apiClient.get<InspectionRecord[]>('/regulatory/inspection-history', { params });
+    return response.data;
+  },
+
+  getInspectionStats: async (year?: number): Promise<InspectionHistoryStats> => {
+    const params = year ? { year } : undefined;
+    const response = await apiClient.get<InspectionHistoryStats>('/regulatory/inspection-history/stats', { params });
+    return response.data;
+  },
+
+  // SRO License - update
+  updateSroLicense: async (id: string, data: Partial<SroLicense>): Promise<SroLicense> => {
+    const response = await apiClient.put<SroLicense>(`/regulatory/sro-licenses/${id}`, data);
     return response.data;
   },
 };

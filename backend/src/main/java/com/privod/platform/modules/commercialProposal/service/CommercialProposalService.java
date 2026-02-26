@@ -18,8 +18,10 @@ import com.privod.platform.modules.commercialProposal.web.dto.UpdateCommercialPr
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.BudgetItemPriceSource;
 import com.privod.platform.modules.finance.domain.BudgetItemType;
+import com.privod.platform.modules.finance.domain.BudgetStatus;
 import com.privod.platform.modules.finance.domain.Invoice;
 import com.privod.platform.modules.finance.domain.InvoiceLine;
+import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.domain.InvoiceType;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.finance.repository.BudgetRepository;
@@ -169,7 +171,7 @@ public class CommercialProposalService {
 
         ProposalStatus oldStatus = proposal.getStatus();
         ProposalStatus newStatus = request.status();
-        if (!isAllowedTransition(oldStatus, newStatus)) {
+        if (!oldStatus.canTransitionTo(newStatus)) {
             throw new IllegalStateException(
                     "Недопустимый переход статуса КП: " + oldStatus + " -> " + newStatus);
         }
@@ -270,6 +272,7 @@ public class CommercialProposalService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         CommercialProposal proposal = getProposalOrThrow(proposalId, organizationId);
         CommercialProposalItem item = getItemOrThrow(proposalId, itemId);
+        UUID budgetItemId = item.getBudgetItemId();
 
         if (!"MATERIAL".equals(item.getItemType())) {
             throw new IllegalStateException("Выбор счёта доступен только для позиций материалов");
@@ -285,9 +288,35 @@ public class CommercialProposalService {
         if (invoice.getInvoiceType() != InvoiceType.RECEIVED) {
             throw new IllegalArgumentException("Для материалов можно выбирать только входящие счета");
         }
+        if (!isApprovedInvoiceStatus(invoice.getStatus())) {
+            throw new IllegalStateException("Можно выбирать только счета в статусе На согласовании/Согласован/Оплачен");
+        }
         if (proposal.getProjectId() != null && invoice.getProjectId() != null
                 && !proposal.getProjectId().equals(invoice.getProjectId())) {
             throw new IllegalArgumentException("Выбранная строка счёта относится к другому проекту");
+        }
+        if (budgetItemId != null) {
+            BudgetItem budgetItem = budgetItemRepository.findById(budgetItemId)
+                    .filter(found -> !found.isDeleted())
+                    .orElseThrow(() -> new EntityNotFoundException("Позиция ФМ не найдена: " + budgetItemId));
+            BigDecimal expectedQty = nonNull(budgetItem.getQuantity());
+            BigDecimal lineQty = nonNull(selectedLine.getQuantity());
+            if (expectedQty.compareTo(BigDecimal.ZERO) > 0
+                    && lineQty.compareTo(BigDecimal.ZERO) > 0
+                    && lineQty.compareTo(expectedQty.multiply(new BigDecimal("3"))) > 0) {
+                throw new IllegalStateException("Количество в строке счёта выбивается из ожидаемого объёма позиции");
+            }
+            if (budgetItem.getSectionId() != null
+                    && invoice.getDisciplineMark() != null
+                    && budgetItem.getDisciplineMark() != null
+                    && !budgetItem.getDisciplineMark().equalsIgnoreCase(invoice.getDisciplineMark())) {
+                throw new IllegalStateException("Дисциплина счёта не совпадает с дисциплиной позиции ФМ");
+            }
+            if (selectedLine.getUnitOfMeasure() != null
+                    && budgetItem.getUnit() != null
+                    && !budgetItem.getUnit().equalsIgnoreCase(selectedLine.getUnitOfMeasure())) {
+                throw new IllegalStateException("Единица измерения строки счёта не совпадает с позицией ФМ");
+            }
         }
         if (selectedLine.isSelectedForCp()
                 && selectedLine.getCpItemId() != null
@@ -377,8 +406,10 @@ public class CommercialProposalService {
         if ("MATERIAL".equals(item.getItemType()) && item.getSelectedInvoiceLineId() == null) {
             throw new IllegalStateException("Для согласования материала сначала выберите счёт");
         }
-        if ("WORK".equals(item.getItemType()) && item.getEstimateItemId() == null) {
-            throw new IllegalStateException("Для согласования работы сначала привяжите позицию сметы");
+        if ("WORK".equals(item.getItemType())
+                && item.getEstimateItemId() == null
+                && item.getCostPrice() == null) {
+            throw new IllegalStateException("Для согласования работы требуется смета или ручная себестоимость");
         }
 
         ProposalItemStatus oldStatus = item.getStatus();
@@ -439,47 +470,6 @@ public class CommercialProposalService {
         for (CommercialProposalItem cpItem : confirmedItems) {
             cpItem.setStatus(ProposalItemStatus.IN_FINANCIAL_MODEL);
             itemRepository.save(cpItem);
-
-            // Sync confirmed item to the FM budget item
-            budgetItemRepository.findById(cpItem.getBudgetItemId())
-                    .filter(bi -> !bi.isDeleted())
-                    .ifPresent(budgetItem -> {
-                        budgetItem.setCostPrice(cpItem.getCostPrice());
-                        // Set price source based on item type
-                        BudgetItemPriceSource priceSource = "MATERIAL".equals(cpItem.getItemType())
-                                ? BudgetItemPriceSource.INVOICE
-                                : BudgetItemPriceSource.ESTIMATE;
-                        budgetItem.setPriceSourceType(priceSource);
-                        budgetItem.setPriceSourceId("MATERIAL".equals(cpItem.getItemType())
-                                ? cpItem.getSelectedInvoiceLineId()
-                                : cpItem.getEstimateItemId());
-                        if ("MATERIAL".equals(cpItem.getItemType())) {
-                            BigDecimal coeff = budgetItem.getCoefficient() != null
-                                    ? budgetItem.getCoefficient()
-                                    : BigDecimal.ONE;
-                            BigDecimal customerUnitPrice = cpItem.getCostPrice()
-                                    .multiply(coeff)
-                                    .setScale(2, RoundingMode.HALF_UP);
-                            BigDecimal estimateUnitPrice = budgetItem.getEstimatePrice() != null
-                                    ? budgetItem.getEstimatePrice()
-                                    : cpItem.getCostPrice();
-                            if (estimateUnitPrice.compareTo(customerUnitPrice) < 0) {
-                                budgetItem.setEstimatePrice(customerUnitPrice);
-                            }
-                        }
-                        if ("WORK".equals(cpItem.getItemType())) {
-                            BigDecimal coefficient = cpItem.getTradingCoefficient() != null
-                                    ? cpItem.getTradingCoefficient()
-                                    : BigDecimal.ONE;
-                            budgetItem.setCoefficient(coefficient);
-                            BigDecimal estimateUnitPrice = coefficient.compareTo(BigDecimal.ZERO) > 0
-                                    ? cpItem.getCostPrice().divide(coefficient, 2, RoundingMode.HALF_UP)
-                                    : cpItem.getCostPrice();
-                            budgetItem.setEstimatePrice(estimateUnitPrice);
-                        }
-                        budgetItem.recalculatePrices();
-                        budgetItemRepository.save(budgetItem);
-                    });
         }
 
         // Recalculate total
@@ -510,6 +500,7 @@ public class CommercialProposalService {
         item.setCompetitiveListEntryId(clEntryId);
         item.setCompetitiveListId(entry.getCompetitiveListId());
         item.setSpecItemId(entry.getSpecItemId());
+        item.setSelectedInvoiceLineId(entry.getInvoiceLineId());
         item.setUnitPrice(entry.getUnitPrice());
         item.setVendorName(entry.getVendorName());
         item.setCostPrice(entry.getUnitPrice() != null ? entry.getUnitPrice() : BigDecimal.ZERO);
@@ -536,10 +527,16 @@ public class CommercialProposalService {
     public CommercialProposalResponse pushToFinancialModel(UUID proposalId) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         CommercialProposal proposal = getProposalOrThrow(proposalId, organizationId);
+        UUID budgetId = proposal.getBudgetId();
+        var budget = budgetRepository.findByIdAndDeletedFalse(budgetId)
+                .orElseThrow(() -> new EntityNotFoundException("Бюджет не найден: " + budgetId));
 
         if (proposal.getStatus() != ProposalStatus.APPROVED && proposal.getStatus() != ProposalStatus.ACTIVE) {
             throw new IllegalStateException(
                     "Перенос в ФМ доступен только для утверждённых КП");
+        }
+        if (budget.getStatus() == BudgetStatus.FROZEN || budget.getStatus() == BudgetStatus.CLOSED) {
+            throw new IllegalStateException("Нельзя переносить в ФМ: бюджет заморожен или закрыт");
         }
 
         List<CommercialProposalItem> confirmedItems = itemRepository.findByProposalId(proposalId)
@@ -558,36 +555,43 @@ public class CommercialProposalService {
         BigDecimal totalCostPrice = BigDecimal.ZERO;
 
         for (CommercialProposalItem cpItem : confirmedItems) {
-            budgetItemRepository.findById(cpItem.getBudgetItemId())
+            validateReadyForPushToFinancialModel(cpItem);
+            BudgetItem budgetItem = budgetItemRepository.findById(cpItem.getBudgetItemId())
                     .filter(bi -> !bi.isDeleted())
-                    .ifPresent(budgetItem -> {
-                        budgetItem.setCostPrice(cpItem.getCostPrice());
+                    .orElseThrow(() -> new EntityNotFoundException("Позиция ФМ не найдена: " + cpItem.getBudgetItemId()));
+            budgetItem.setCostPrice(cpItem.getCostPrice());
 
-                        BudgetItemPriceSource priceSource;
-                        UUID priceSourceId;
-                        if (cpItem.getCompetitiveListEntryId() != null) {
-                            priceSource = BudgetItemPriceSource.COMPETITIVE_LIST;
-                            priceSourceId = cpItem.getCompetitiveListEntryId();
-                        } else if ("MATERIAL".equals(cpItem.getItemType())) {
-                            priceSource = BudgetItemPriceSource.INVOICE;
-                            priceSourceId = cpItem.getSelectedInvoiceLineId();
-                        } else {
-                            priceSource = BudgetItemPriceSource.ESTIMATE;
-                            priceSourceId = cpItem.getEstimateItemId();
-                        }
+            BudgetItemPriceSource priceSource;
+            UUID priceSourceId;
+            if (cpItem.getCompetitiveListEntryId() != null) {
+                priceSource = BudgetItemPriceSource.COMPETITIVE_LIST;
+                priceSourceId = cpItem.getCompetitiveListEntryId();
+            } else if ("MATERIAL".equals(cpItem.getItemType())) {
+                priceSource = BudgetItemPriceSource.INVOICE;
+                priceSourceId = cpItem.getSelectedInvoiceLineId();
+            } else {
+                if (cpItem.getEstimateItemId() != null) {
+                    priceSource = BudgetItemPriceSource.ESTIMATE;
+                    priceSourceId = cpItem.getEstimateItemId();
+                } else {
+                    priceSource = BudgetItemPriceSource.MANUAL;
+                    priceSourceId = null;
+                }
+            }
 
-                        budgetItem.setPriceSourceType(priceSource);
-                        budgetItem.setPriceSourceId(priceSourceId);
-                        budgetItem.recalculatePrices();
-                        budgetItem.recalculateMargin();
-                        budgetItemRepository.save(budgetItem);
-                    });
+            budgetItem.setPriceSourceType(priceSource);
+            budgetItem.setPriceSourceId(priceSourceId);
+            budgetItem.recalculatePrices();
+            budgetItem.recalculateMargin();
+            budgetItemRepository.save(budgetItem);
 
             totalCostPrice = totalCostPrice.add(
                     cpItem.getTotalCost() != null ? cpItem.getTotalCost() : BigDecimal.ZERO);
 
             // Estimate customer price from budget item
-            BudgetItem bi = budgetItemRepository.findById(cpItem.getBudgetItemId()).orElse(null);
+            BudgetItem bi = budgetItemRepository.findById(cpItem.getBudgetItemId())
+                    .filter(found -> !found.isDeleted())
+                    .orElse(null);
             if (bi != null && !bi.isDeleted()) {
                 BigDecimal custPrice = bi.getCustomerPrice() != null ? bi.getCustomerPrice() : BigDecimal.ZERO;
                 BigDecimal qty = bi.getQuantity() != null ? bi.getQuantity() : BigDecimal.ONE;
@@ -716,18 +720,183 @@ public class CommercialProposalService {
         return value != null ? value : BigDecimal.ZERO;
     }
 
-    private boolean isAllowedTransition(ProposalStatus oldStatus, ProposalStatus newStatus) {
-        if (oldStatus == null || newStatus == null) {
-            return false;
+    private void validateReadyForPushToFinancialModel(CommercialProposalItem cpItem) {
+        if (cpItem.getBudgetItemId() == null) {
+            throw new IllegalStateException("Позиция КП не привязана к позиции ФМ");
         }
-        if (oldStatus == newStatus) {
-            return true;
+        if (cpItem.getStatus() != ProposalItemStatus.IN_FINANCIAL_MODEL
+                && cpItem.getStatus() != ProposalItemStatus.APPROVED
+                && cpItem.getStatus() != ProposalItemStatus.CONFIRMED
+                && cpItem.getStatus() != ProposalItemStatus.APPROVED_PROJECT) {
+            throw new IllegalStateException("Позиция КП не готова к переносу в ФМ");
         }
-        return switch (oldStatus) {
-            case DRAFT -> newStatus == ProposalStatus.IN_REVIEW;
-            case IN_REVIEW -> newStatus == ProposalStatus.DRAFT || newStatus == ProposalStatus.APPROVED;
-            case APPROVED -> newStatus == ProposalStatus.ACTIVE;
-            case ACTIVE -> false;
-        };
+        if (cpItem.getCostPrice() == null || cpItem.getCostPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalStateException("У позиции КП отсутствует валидная себестоимость");
+        }
+        if (!"MATERIAL".equals(cpItem.getItemType())) {
+            if ("WORK".equals(cpItem.getItemType())
+                    && cpItem.getEstimateItemId() == null
+                    && cpItem.getCostPrice() == null) {
+                throw new IllegalStateException("Для работ требуется смета или ручная себестоимость");
+            }
+            return;
+        }
+
+        UUID selectedInvoiceLineId = cpItem.getSelectedInvoiceLineId();
+        UUID competitiveListEntryId = cpItem.getCompetitiveListEntryId();
+        if (selectedInvoiceLineId == null && competitiveListEntryId == null) {
+            throw new IllegalStateException(
+                    "Для переноса материала в ФМ требуется привязка к счету или конкурентному листу");
+        }
+
+        if (selectedInvoiceLineId != null) {
+            assertInvoiceApprovedForCostByLineId(selectedInvoiceLineId);
+            return;
+        }
+
+        CompetitiveListEntry entry = competitiveListEntryRepository.findById(competitiveListEntryId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Запись конкурентного листа не найдена: " + competitiveListEntryId));
+        if (entry.getInvoiceLineId() != null) {
+            assertInvoiceApprovedForCostByLineId(entry.getInvoiceLineId());
+            return;
+        }
+        if (entry.getInvoiceId() != null) {
+            assertInvoiceApprovedForCostByInvoiceId(entry.getInvoiceId());
+            return;
+        }
+        throw new IllegalStateException(
+                "Для переноса материала в ФМ запись КЛ должна быть связана с согласованным счётом");
+    }
+
+    private void assertInvoiceApprovedForCostByLineId(UUID invoiceLineId) {
+        InvoiceLine line = loadInvoiceLineOrThrow(invoiceLineId);
+        if (line.getQuantity() == null || line.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalStateException("Строка счёта имеет невалидное количество");
+        }
+        assertInvoiceApprovedForCostByInvoiceId(line.getInvoiceId());
+    }
+
+    private void assertInvoiceApprovedForCostByInvoiceId(UUID invoiceId) {
+        Invoice invoice = invoiceRepository.findByIdAndDeletedFalse(invoiceId)
+                .orElseThrow(() -> new EntityNotFoundException("Счёт не найден: " + invoiceId));
+        if (!isApprovedInvoiceStatus(invoice.getStatus())) {
+            throw new IllegalStateException(
+                    "Себестоимость материала переносится в ФМ только из согласованных счетов");
+        }
+    }
+
+    private boolean isApprovedInvoiceStatus(InvoiceStatus status) {
+        return status == InvoiceStatus.ON_APPROVAL
+                || status == InvoiceStatus.APPROVED
+                || status == InvoiceStatus.PARTIALLY_PAID
+                || status == InvoiceStatus.PAID
+                || status == InvoiceStatus.OVERDUE
+                || status == InvoiceStatus.CLOSED;
+    }
+
+    // ======================== Versioning (Phase 10) ========================
+
+    @Transactional
+    public CommercialProposal createVersion(UUID cpId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CommercialProposal original = getProposalOrThrow(cpId, organizationId);
+        original.setCurrent(false);
+        proposalRepository.save(original);
+
+        CommercialProposal newVersion = CommercialProposal.builder()
+                .organizationId(original.getOrganizationId())
+                .projectId(original.getProjectId())
+                .budgetId(original.getBudgetId())
+                .name(original.getName())
+                .status(ProposalStatus.DRAFT)
+                .totalCostPrice(original.getTotalCostPrice())
+                .totalCustomerPrice(original.getTotalCustomerPrice())
+                .totalMargin(original.getTotalMargin())
+                .marginPercent(original.getMarginPercent())
+                .specificationId(original.getSpecificationId())
+                .notes(original.getNotes())
+                .docVersion(original.getDocVersion() + 1)
+                .parentVersionId(original.getId())
+                .current(true)
+                .companyName(original.getCompanyName())
+                .companyInn(original.getCompanyInn())
+                .companyKpp(original.getCompanyKpp())
+                .companyAddress(original.getCompanyAddress())
+                .signatoryName(original.getSignatoryName())
+                .signatoryPosition(original.getSignatoryPosition())
+                .build();
+        newVersion = proposalRepository.save(newVersion);
+
+        // Copy items
+        List<CommercialProposalItem> originalItems = itemRepository.findByProposalId(cpId);
+        UUID newCpId = newVersion.getId();
+        List<CommercialProposalItem> copiedItems = originalItems.stream().map(item ->
+                CommercialProposalItem.builder()
+                        .proposalId(newCpId)
+                        .budgetItemId(item.getBudgetItemId())
+                        .itemType(item.getItemType())
+                        .selectedInvoiceLineId(item.getSelectedInvoiceLineId())
+                        .estimateItemId(item.getEstimateItemId())
+                        .tradingCoefficient(item.getTradingCoefficient())
+                        .costPrice(item.getCostPrice())
+                        .quantity(item.getQuantity())
+                        .totalCost(item.getTotalCost())
+                        .status(ProposalItemStatus.UNPROCESSED)
+                        .competitiveListEntryId(item.getCompetitiveListEntryId())
+                        .competitiveListId(item.getCompetitiveListId())
+                        .specItemId(item.getSpecItemId())
+                        .unitPrice(item.getUnitPrice())
+                        .unit(item.getUnit())
+                        .vendorName(item.getVendorName())
+                        .bidComparisonId(item.getBidComparisonId())
+                        .bidWinnerVendorId(item.getBidWinnerVendorId())
+                        .build()
+        ).toList();
+        itemRepository.saveAll(copiedItems);
+
+        log.info("Created version {} for CP {} -> {}", newVersion.getDocVersion(), cpId, newVersion.getId());
+        return newVersion;
+    }
+
+    @Transactional
+    public CommercialProposal updateCompanyDetails(UUID cpId, String companyName, String companyInn,
+                                                    String companyKpp, String companyAddress,
+                                                    String signatoryName, String signatoryPosition) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CommercialProposal cp = getProposalOrThrow(cpId, organizationId);
+        if (companyName != null) cp.setCompanyName(companyName);
+        if (companyInn != null) cp.setCompanyInn(companyInn);
+        if (companyKpp != null) cp.setCompanyKpp(companyKpp);
+        if (companyAddress != null) cp.setCompanyAddress(companyAddress);
+        if (signatoryName != null) cp.setSignatoryName(signatoryName);
+        if (signatoryPosition != null) cp.setSignatoryPosition(signatoryPosition);
+        return proposalRepository.save(cp);
+    }
+
+    // ======================== Apply Bid Winner to CP (Phase 7) ========================
+
+    @Transactional
+    public int applyBidWinnerToCp(UUID cpId, UUID bidComparisonId, UUID winnerVendorId,
+                                   java.math.BigDecimal winnerCostPrice) {
+        List<CommercialProposalItem> workItems = itemRepository.findByProposalId(cpId).stream()
+                .filter(item -> "WORK".equals(item.getItemType()))
+                .toList();
+
+        int count = 0;
+        for (CommercialProposalItem item : workItems) {
+            if (item.getBidComparisonId() == null) {
+                item.setBidComparisonId(bidComparisonId);
+                item.setBidWinnerVendorId(winnerVendorId);
+                item.setCostPrice(winnerCostPrice);
+                item.setTotalCost(winnerCostPrice.multiply(item.getQuantity()));
+                item.setStatus(ProposalItemStatus.PRICE_SELECTED);
+                itemRepository.save(item);
+                count++;
+            }
+        }
+
+        log.info("Applied bid winner {} to {} work items in CP {}", winnerVendorId, count, cpId);
+        return count;
     }
 }

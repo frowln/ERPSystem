@@ -92,6 +92,9 @@ public class Document extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "pd_section", length = 30)
+    private String pdSection;
+
     public boolean canTransitionTo(DocumentStatus newStatus) {
         return this.status.canTransitionTo(newStatus);
     }

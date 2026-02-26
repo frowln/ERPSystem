@@ -10,9 +10,11 @@ import java.util.UUID;
 public record SpecificationResponse(
         UUID id,
         String name,
+        String title,
+        String projectName,
         UUID projectId,
         UUID contractId,
-        Integer docVersion,
+        Integer version,
         boolean isCurrent,
         SpecificationStatus status,
         String statusDisplayName,
@@ -31,6 +33,8 @@ public record SpecificationResponse(
         return new SpecificationResponse(
                 specification.getId(),
                 specification.getName(),
+                specification.getDisplayName(),
+                specification.getProjectName(),
                 specification.getProjectId(),
                 specification.getContractId(),
                 specification.getDocVersion(),

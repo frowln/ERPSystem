@@ -1,6 +1,7 @@
 package com.privod.platform.modules.changeManagement.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.changeManagement.domain.ChangeOrder;
 import com.privod.platform.modules.changeManagement.domain.ChangeOrderItem;
 import com.privod.platform.modules.changeManagement.domain.ChangeOrderRequest;
@@ -79,7 +80,10 @@ public class ChangeOrderService {
         BigDecimal originalAmount = request.originalContractAmount() != null
                 ? request.originalContractAmount() : BigDecimal.ZERO;
 
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+
         ChangeOrder order = ChangeOrder.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .contractId(request.contractId())
                 .number(number)

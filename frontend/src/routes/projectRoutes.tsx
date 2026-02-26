@@ -1,5 +1,6 @@
 import React, { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 // Projects
 const ProjectListPage = lazy(() => import('@/modules/projects/ProjectListPage'));
@@ -25,6 +26,10 @@ const ContractDetailPage = lazy(() => import('@/modules/contracts/ContractDetail
 const ContractFormPage = lazy(() => import('@/modules/contracts/ContractFormPage'));
 const ContractBoardPage = lazy(() => import('@/modules/contracts/ContractBoardPage'));
 
+// Counterparties
+const CounterpartyListPage = lazy(() => import('@/modules/counterparties/CounterpartyListPage'));
+const CounterpartyFormPage = lazy(() => import('@/modules/counterparties/CounterpartyFormPage'));
+
 // Estimates
 const EstimateListPage = lazy(() => import('@/modules/estimates/EstimateListPage'));
 const EstimateDetailPage = lazy(() => import('@/modules/estimates/EstimateDetailPage'));
@@ -32,6 +37,15 @@ const EstimateFormPage = lazy(() => import('@/modules/estimates/EstimateFormPage
 const EstimatePivotPage = lazy(() => import('@/modules/estimates/EstimatePivotPage'));
 const EstimateNormativeView = lazy(() => import('@/modules/estimates/EstimateNormativeView'));
 const EstimateFmReconciliation = lazy(() => import('@/modules/estimates/EstimateFmReconciliation'));
+const EstimateImportPage = lazy(() => import('@/modules/estimates/EstimateImportPage'));
+const EstimateExportPage = lazy(() => import('@/modules/estimates/EstimateExportPage'));
+const VolumeCalculatorPage = lazy(() => import('@/modules/estimates/VolumeCalculatorPage'));
+const EstimateComparisonPage = lazy(() => import('@/modules/estimates/EstimateComparisonPage'));
+const MinstroyIndexPage = lazy(() => import('@/modules/estimates/MinstroyIndexPage'));
+const SummaryEstimatePage = lazy(() => import('@/modules/estimates/SummaryEstimatePage'));
+const PricingDatabaseListPage = lazy(() => import('@/modules/pricing/PricingDatabaseListPage'));
+const PricingRatesPage = lazy(() => import('@/modules/pricing/PricingRatesPage'));
+const PricingCalculatorPage = lazy(() => import('@/modules/pricing/PricingCalculatorPage'));
 
 // Specifications
 const SpecificationListPage = lazy(() => import('@/modules/specifications/SpecificationListPage'));
@@ -73,6 +87,13 @@ const ScheduleBaselinePage = lazy(() => import('@/modules/planning/ScheduleBasel
 const GanttChartPage = lazy(() => import('@/modules/planning/GanttChartPage'));
 const ResourceAllocationPage = lazy(() => import('@/modules/planning/ResourceAllocationPage'));
 const EvmDashboardPage = lazy(() => import('@/modules/planning/EvmDashboardPage'));
+const CriticalPathPage = lazy(() => import('@/modules/planning/CriticalPathPage'));
+const EvmIndicatorsPage = lazy(() => import('@/modules/planning/EvmIndicatorsPage'));
+const ResourcePlanningPage = lazy(() => import('@/modules/planning/ResourcePlanningPage'));
+const BaselinesPage = lazy(() => import('@/modules/planning/BaselinesPage'));
+const SCurvePage = lazy(() => import('@/modules/planning/SCurvePage'));
+const ProcurementSchedulePage = lazy(() => import('@/modules/planning/ProcurementSchedulePage'));
+const MobilizationSchedulePage = lazy(() => import('@/modules/planning/MobilizationSchedulePage'));
 
 // Workflow
 const WorkflowTemplateListPage = lazy(() => import('@/modules/workflow/WorkflowTemplateListPage'));
@@ -95,6 +116,11 @@ const BimModelDetailPage = lazy(() => import('@/modules/bim/BimModelDetailPage')
 const DesignPackagePage = lazy(() => import('@/modules/bim/DesignPackagePage'));
 const ClashDetectionPage = lazy(() => import('@/modules/bim/ClashDetectionPage'));
 const ClashBoardPage = lazy(() => import('@/modules/bim/ClashBoardPage'));
+const ClashDetectionResultsPage = lazy(() => import('@/modules/bim/ClashDetectionResultsPage'));
+const DefectHeatmapPage = lazy(() => import('@/modules/bim/DefectHeatmapPage'));
+const ConstructionProgressPage = lazy(() => import('@/modules/bim/ConstructionProgressPage'));
+const PropertySetsPage = lazy(() => import('@/modules/bim/PropertySetsPage'));
+const BcfIssuesPage = lazy(() => import('@/modules/bim/BcfIssuesPage'));
 
 // Design
 const DesignVersionListPage = lazy(() => import('@/modules/design/DesignVersionListPage'));
@@ -104,6 +130,7 @@ const DesignSectionListPage = lazy(() => import('@/modules/design/DesignSectionL
 const DesignReviewBoardPage = lazy(() => import('@/modules/design/DesignReviewBoardPage'));
 
 export function projectRoutes() {
+  const PRICING_ROLES = ['ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER'] as const;
   return (
     <>
       {/* Projects */}
@@ -127,6 +154,12 @@ export function projectRoutes() {
       <Route path="documents/new" element={<DocumentFormPage />} />
       <Route path="documents/:id/edit" element={<DocumentFormPage />} />
 
+      {/* Counterparties */}
+      <Route path="counterparties" element={<CounterpartyListPage />} />
+      <Route path="counterparties/new" element={<CounterpartyFormPage />} />
+      <Route path="counterparties/:id" element={<CounterpartyFormPage />} />
+      <Route path="counterparties/:id/edit" element={<CounterpartyFormPage />} />
+
       {/* Contracts */}
       <Route path="contracts" element={<ContractListPage />} />
       <Route path="contracts/board" element={<ContractBoardPage />} />
@@ -142,17 +175,35 @@ export function projectRoutes() {
       <Route path="estimates/:id/edit" element={<EstimateFormPage />} />
       <Route path="estimates/:id/normative" element={<EstimateNormativeView />} />
       <Route path="estimates/:id/fm-reconciliation" element={<EstimateFmReconciliation />} />
+      <Route path="estimates/import" element={<EstimateImportPage />} />
+      <Route path="estimates/export" element={<EstimateExportPage />} />
+      <Route path="estimates/volume-calculator" element={<VolumeCalculatorPage />} />
+      <Route path="estimates/comparison" element={<EstimateComparisonPage />} />
+      <Route path="estimates/minstroy" element={<MinstroyIndexPage />} />
+      <Route path="estimates/summary" element={<SummaryEstimatePage />} />
+      <Route
+        path="estimates/pricing/databases"
+        element={<ProtectedRoute requiredRoles={[...PRICING_ROLES]}><PricingDatabaseListPage /></ProtectedRoute>}
+      />
+      <Route
+        path="estimates/pricing/rates"
+        element={<ProtectedRoute requiredRoles={[...PRICING_ROLES]}><PricingRatesPage /></ProtectedRoute>}
+      />
+      <Route
+        path="estimates/pricing/calculate"
+        element={<ProtectedRoute requiredRoles={[...PRICING_ROLES]}><PricingCalculatorPage /></ProtectedRoute>}
+      />
 
       {/* Specifications */}
       <Route path="specifications" element={<SpecificationListPage />} />
       <Route path="specifications/new" element={<SpecificationFormPage />} />
-      <Route path="specifications/:id" element={<SpecificationDetailPage />} />
-      <Route path="specifications/:id/edit" element={<SpecificationFormPage />} />
-      <Route path="specifications/:specId/competitive-list/:id" element={<CompetitiveListPage />} />
-      <Route path="specifications/:id/split" element={<SpecificationSplitView />} />
-      <Route path="specifications/:id/supply-dashboard" element={<SpecSupplyDashboard />} />
       <Route path="specifications/analogs" element={<MaterialAnalogsPage />} />
       <Route path="specifications/analog-requests" element={<AnalogRequestsPage />} />
+      <Route path="specifications/:id/split" element={<SpecificationSplitView />} />
+      <Route path="specifications/:id/supply-dashboard" element={<SpecSupplyDashboard />} />
+      <Route path="specifications/:specId/competitive-list/:id" element={<CompetitiveListPage />} />
+      <Route path="specifications/:id" element={<SpecificationDetailPage />} />
+      <Route path="specifications/:id/edit" element={<SpecificationFormPage />} />
 
       {/* RFI */}
       <Route path="pm/rfis" element={<RfiListPage />} />
@@ -188,6 +239,13 @@ export function projectRoutes() {
       <Route path="planning/baseline" element={<ScheduleBaselinePage />} />
       <Route path="planning/resources" element={<ResourceAllocationPage />} />
       <Route path="planning/evm" element={<EvmDashboardPage />} />
+      <Route path="planning/critical-path" element={<CriticalPathPage />} />
+      <Route path="planning/evm-indicators" element={<EvmIndicatorsPage />} />
+      <Route path="planning/resource-planning" element={<ResourcePlanningPage />} />
+      <Route path="planning/baselines-mgmt" element={<BaselinesPage />} />
+      <Route path="planning/s-curve" element={<SCurvePage />} />
+      <Route path="projects/:projectId/procurement-schedule" element={<ProcurementSchedulePage />} />
+      <Route path="projects/:projectId/mobilization" element={<MobilizationSchedulePage />} />
 
       {/* Workflow */}
       <Route path="workflow/templates" element={<WorkflowTemplateListPage />} />
@@ -212,6 +270,11 @@ export function projectRoutes() {
       <Route path="bim/design-packages" element={<DesignPackagePage />} />
       <Route path="bim/clash-detection" element={<ClashDetectionPage />} />
       <Route path="bim/clash-detection/board" element={<ClashBoardPage />} />
+      <Route path="bim/clash-results" element={<ClashDetectionResultsPage />} />
+      <Route path="bim/defect-heatmap" element={<DefectHeatmapPage />} />
+      <Route path="bim/construction-progress" element={<ConstructionProgressPage />} />
+      <Route path="bim/property-sets" element={<PropertySetsPage />} />
+      <Route path="bim/bcf-issues" element={<BcfIssuesPage />} />
 
       {/* Design */}
       <Route path="design/versions" element={<DesignVersionListPage />} />

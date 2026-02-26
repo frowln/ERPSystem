@@ -14,7 +14,10 @@ test.describe('Documents smoke tests', () => {
     test('document container list page loads', async ({ page }) => {
       await page.goto('/cde/documents');
       await expect(page).toHaveURL('/cde/documents');
-      await expect(page.locator('body')).toContainText(/(document|документ|container|контейнер)/i, { timeout: 10_000 });
+      await expect(
+        page.getByRole('heading', { name: /(среда общих данных|common data environment|cde)/i }),
+      ).toBeVisible({ timeout: 20_000 });
+      await expect(page.locator('body')).toContainText(/(cde|document|документ|container|контейнер)/i, { timeout: 20_000 });
     });
 
     test('document container list shows content area', async ({ page }) => {
@@ -32,19 +35,17 @@ test.describe('Documents smoke tests', () => {
     test('transmittal list page loads', async ({ page }) => {
       await page.goto('/cde/transmittals');
       await expect(page).toHaveURL('/cde/transmittals');
-      await expect(page.locator('body')).toContainText(/(transmittal|передач)/i, { timeout: 10_000 });
+      await expect(page.locator('body')).toContainText(/(transmittal|[Тт]рансмит|передач)/i, { timeout: 10_000 });
     });
 
     test('document creation button is present', async ({ page }) => {
       await page.goto('/cde/documents');
       await page.waitForTimeout(1000);
 
-      const createButton = page
-        .getByRole('button', { name: /(create|new|add|upload|создать|добавить|загрузить)/i })
-        .or(page.getByRole('link', { name: /(create|new|add|upload|создать|добавить|загрузить)/i }));
+      const buttonCount = await page.getByRole('button', { name: /(upload|загрузить|create|new|add|создать|добавить)/i }).count();
+      const linkCount = await page.getByRole('link', { name: /(upload|загрузить|create|new|add|создать|добавить)/i }).count();
 
-      const count = await createButton.count();
-      expect(count).toBeGreaterThan(0);
+      expect(buttonCount + linkCount).toBeGreaterThan(0);
     });
   });
 

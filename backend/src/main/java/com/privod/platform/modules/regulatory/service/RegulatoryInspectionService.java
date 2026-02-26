@@ -71,6 +71,7 @@ public class RegulatoryInspectionService {
 
         RegulatoryInspection inspection = RegulatoryInspection.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .inspectionDate(request.inspectionDate())
                 .inspectorName(request.inspectorName())
                 .inspectorOrgan(request.inspectorOrgan())

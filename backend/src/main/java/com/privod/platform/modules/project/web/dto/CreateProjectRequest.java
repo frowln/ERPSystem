@@ -52,6 +52,9 @@ public record CreateProjectRequest(
         @Size(max = 100)
         String category,
 
+        @Size(max = 50)
+        String constructionKind,
+
         ProjectPriority priority
 ) {
 }

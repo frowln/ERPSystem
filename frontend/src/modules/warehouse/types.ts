@@ -206,3 +206,123 @@ export interface StockLimitAlert {
   createdAt: string;
   updatedAt: string;
 }
+
+// --- M-29 Report ---
+
+export interface M29ReportEntry {
+  materialId: string;
+  materialName: string;
+  unit: string;
+  planQty: number;
+  factQty: number;
+  variance: number;
+  variancePercent: number;
+}
+
+export interface M29Report {
+  projectId: string;
+  projectName: string;
+  month: number;
+  year: number;
+  entries: M29ReportEntry[];
+  totalPlan: number;
+  totalFact: number;
+}
+
+// --- Limit Fence Cards (advanced) ---
+
+export interface LimitFenceCard {
+  id: string;
+  number: string;
+  projectId: string;
+  projectName: string;
+  materialName: string;
+  unit: string;
+  limitQty: number;
+  issuedQty: number;
+  remaining: number;
+  periodFrom: string;
+  periodTo: string;
+  status: 'active' | 'exhausted' | 'expired';
+  issues: LimitFenceCardIssue[];
+}
+
+export interface LimitFenceCardIssue {
+  date: string;
+  qty: number;
+  recipient: string;
+  runningTotal: number;
+}
+
+// --- Warehouse Orders (advanced) ---
+
+export type WarehouseOrderType = 'incoming' | 'outgoing' | 'transfer' | 'write_off';
+export type WarehouseOrderStatus = 'draft' | 'approved' | 'completed' | 'cancelled';
+
+export interface WarehouseOrderAdvanced {
+  id: string;
+  number: string;
+  type: WarehouseOrderType;
+  date: string;
+  warehouseName: string;
+  counterparty: string;
+  items: WarehouseOrderItemLine[];
+  totalAmount: number;
+  status: WarehouseOrderStatus;
+}
+
+export interface WarehouseOrderItemLine {
+  materialName: string;
+  qty: number;
+  unit: string;
+  price: number;
+}
+
+// --- Address Storage ---
+
+export interface StorageCell {
+  id: string;
+  zone: string;
+  row: string;
+  shelf: string;
+  cell: string;
+  materialName?: string;
+  quantity?: number;
+  lastMovement?: string;
+  occupied: boolean;
+}
+
+export interface StorageLayout {
+  zones: StorageZone[];
+  totalCells: number;
+  occupiedCells: number;
+}
+
+export interface StorageZone {
+  name: string;
+  rows: StorageRow[];
+}
+
+export interface StorageRow {
+  name: string;
+  shelves: StorageShelf[];
+}
+
+export interface StorageShelf {
+  name: string;
+  cells: StorageCell[];
+}
+
+// --- Material Demand ---
+
+export type MaterialDemandStatus = 'sufficient' | 'low' | 'deficit';
+
+export interface MaterialDemand {
+  materialId: string;
+  materialName: string;
+  unit: string;
+  requiredQty: number;
+  inStockQty: number;
+  deficit: number;
+  status: MaterialDemandStatus;
+}

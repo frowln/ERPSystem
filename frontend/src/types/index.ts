@@ -81,12 +81,18 @@ export interface Project {
   actualStartDate?: string;
   actualEndDate?: string;
   budget: number;
+  budgetAmount?: number;
   contractAmount?: number;
   spentAmount: number;
   managerId: string;
   managerName: string;
   customerName: string;
   customerId?: string;
+  category?: string;
+  constructionKind?: string;
+  address?: string;
+  city?: string;
+  region?: string;
   progress: number;
   membersCount: number;
   computedFinancials?: ComputedFinancials;
@@ -213,22 +219,27 @@ export interface AuthResponse {
 }
 
 export interface CreateProjectRequest {
-  code: string;
   name: string;
   description?: string;
-  type: ProjectType;
-  priority: ProjectPriority;
-  plannedStartDate: string;
-  plannedEndDate: string;
-  budget: number;
+  type?: ProjectType;
+  priority?: ProjectPriority;
+  plannedStartDate?: string;
+  plannedEndDate?: string;
+  budgetAmount?: number;
   contractAmount?: number;
-  customerName: string;
   customerId?: string;
   managerId?: string;
+  category?: string;
+  constructionKind?: string;
+  address?: string;
+  city?: string;
+  region?: string;
 }
 
 export interface UpdateProjectRequest extends Partial<CreateProjectRequest> {
   status?: ProjectStatus;
+  actualStartDate?: string;
+  actualEndDate?: string;
 }
 
 // Contract types
@@ -298,7 +309,10 @@ export type SpecItemType = 'MATERIAL' | 'EQUIPMENT' | 'WORK';
 
 export interface Specification {
   id: string;
+  /** Auto-generated code, e.g. SPEC-00031 */
   name: string;
+  /** User-provided display title */
+  title?: string;
   projectId: string;
   projectName?: string;
   contractId?: string;
@@ -306,20 +320,27 @@ export interface Specification {
   isCurrent: boolean;
   status: SpecificationStatus;
   itemCount: number;
-  totalAmount: number;
+  totalAmount?: number;
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
+  parentVersionId?: string;
 }
 
 export interface SpecItem {
   id: string;
   specificationId: string;
   sequence: number;
+  position?: string;        // Позиция из таблицы ПД (1, 1.1, А1)
+  sectionName?: string;     // Раздел в спецификации (СИСТЕМА ОТОПЛЕНИЯ (ОВ))
   itemType: SpecItemType;
   name: string;
-  productCode?: string;
+  brand?: string;           // Тип/Марка
+  productCode?: string;     // Код оборудования
+  manufacturer?: string;    // Завод-изготовитель
   quantity: number;
   unitOfMeasure: string;
+  weight?: number;          // Вес, кг
   plannedAmount: number;
   procurementStatus: string;
   estimateStatus: string;
@@ -371,7 +392,7 @@ export interface EstimateItem {
 }
 
 // Local estimate (normative-based)
-export type LocalEstimateStatus = 'DRAFT' | 'CALCULATED' | 'APPROVED';
+export type LocalEstimateStatus = 'DRAFT' | 'CALCULATED' | 'APPROVED' | 'ARCHIVED';
 
 export interface LocalEstimate {
   id: string;
@@ -596,6 +617,8 @@ export interface BudgetSnapshot {
   id: string;
   budgetId: string;
   snapshotName: string;
+  snapshotType: 'BASELINE' | 'REFORECAST' | 'SNAPSHOT';
+  sourceSnapshotId?: string;
   snapshotDate: string;
   createdById?: string;
   totalCost: number;
@@ -620,6 +643,11 @@ export interface SnapshotComparison {
   deltaCustomer: number;
   deltaMargin: number;
   items: SnapshotItemDelta[];
+  targetSnapshotId?: string;
+  targetSnapshotName?: string;
+  targetSnapshotType?: 'BASELINE' | 'REFORECAST' | 'SNAPSHOT';
+  targetSnapshotDate?: string;
+  comparedWithCurrent?: boolean;
 }
 
 export interface SnapshotItemDelta {
@@ -726,6 +754,7 @@ export interface CompetitiveListEntry {
 
 export interface InvoiceLine {
   id: string;
+  invoiceId?: string;
   name: string;
   quantity?: number;
   unit?: string;
@@ -776,12 +805,21 @@ export type InvoiceMatchingStatus = 'UNMATCHED' | 'PARTIALLY_MATCHED' | 'FULLY_M
 export interface Invoice {
   id: string; number: string; invoiceDate: string; dueDate?: string;
   projectId: string; projectName?: string; partnerName: string;
+  contractId?: string;
+  partnerId?: string;
+  statusDisplayName?: string;
+  invoiceTypeDisplayName?: string;
   disciplineMark?: string;
   invoiceType: InvoiceType; status: InvoiceStatus;
   matchingStatus?: InvoiceMatchingStatus;
   matchingConfidence?: number;
   matchedPoId?: string;
   matchedReceiptId?: string;
+  subtotal?: number;
+  vatRate?: number;
+  vatAmount?: number;
+  notes?: string;
+  createdBy?: string;
   totalAmount: number; paidAmount: number; remainingAmount: number; createdAt: string;
 }
 
@@ -839,7 +877,28 @@ export interface ProjectTask { id: string; code: string; title: string; projectN
 // Documents
 export type DocumentCategory = 'CONTRACT' | 'ESTIMATE' | 'SPECIFICATION' | 'DRAWING' | 'PERMIT' | 'ACT' | 'INVOICE' | 'PROTOCOL' | 'CORRESPONDENCE' | 'PHOTO' | 'REPORT' | 'OTHER';
 export type DocumentStatus = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'ACTIVE' | 'ARCHIVED' | 'CANCELLED';
-export interface Document { id: string; title: string; documentNumber?: string; category: DocumentCategory; status: DocumentStatus; projectName?: string; fileName: string; fileSize: number; authorName: string; docVersion: number; createdAt: string; expiryDate?: string; }
+export interface Document {
+  id: string;
+  title: string;
+  documentNumber?: string;
+  category: DocumentCategory;
+  status: DocumentStatus;
+  projectId?: string;
+  projectName?: string;
+  contractId?: string;
+  description?: string;
+  fileName: string;
+  fileSize: number;
+  mimeType?: string;
+  storagePath?: string;
+  authorName: string;
+  docVersion: number;
+  tags?: string | string[];
+  notes?: string;
+  createdAt: string;
+  updatedAt?: string;
+  expiryDate?: string;
+}
 
 // Commercial Proposal
 export type ProposalStatus = 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'ACTIVE';
@@ -873,6 +932,13 @@ export interface CommercialProposal {
   approvedAt?: string;
   createdAt: string;
   updatedAt?: string;
+  docVersion?: number;
+  companyName?: string;
+  companyInn?: string;
+  companyKpp?: string;
+  companyAddress?: string;
+  signatoryName?: string;
+  signatoryPosition?: string;
 }
 
 export interface CommercialProposalItem {
@@ -887,7 +953,9 @@ export interface CommercialProposalItem {
   costPrice: number;
   tradingCoefficient: number;
   estimateItemId?: string;
+  estimateId?: string;
   selectedInvoiceLineId?: string;
+  invoiceId?: string;
   competitiveListEntryId?: string;
   competitiveListId?: string;
   specItemId?: string;

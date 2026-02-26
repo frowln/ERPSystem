@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -31,6 +33,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Issue extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
@@ -82,6 +87,7 @@ public class Issue extends BaseEntity {
     @Column(name = "linked_submittal_id")
     private UUID linkedSubmittalId;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "linked_document_ids", columnDefinition = "JSONB")
     private String linkedDocumentIds;
 
@@ -91,6 +97,7 @@ public class Issue extends BaseEntity {
     @Column(name = "resolution", columnDefinition = "TEXT")
     private String resolution;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "tags", columnDefinition = "JSONB")
     private String tags;
 

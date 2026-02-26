@@ -24,6 +24,12 @@ const CommandPalette = lazy(() =>
 const ShortcutsHelp = lazy(() =>
   import('@/design-system/components/ShortcutsHelp').then((module) => ({ default: module.ShortcutsHelp })),
 );
+const OfflineIndicator = lazy(() =>
+  import('@/design-system/components/OfflineIndicator').then((module) => ({ default: module.OfflineIndicator })),
+);
+const InstallPrompt = lazy(() =>
+  import('@/components/InstallPrompt').then((module) => ({ default: module.InstallPrompt })),
+);
 
 export const AppLayout: React.FC = () => {
   const { isAuthenticated, token } = useAuthStore();
@@ -72,6 +78,8 @@ export const AppLayout: React.FC = () => {
           {isMobile && <BottomNav />}
           <CommandPalette open={commandPaletteOpen} onClose={closeCommandPalette} />
           <ShortcutsHelp open={shortcutsHelpOpen} onClose={closeShortcutsHelp} />
+          <OfflineIndicator />
+          <InstallPrompt />
         </Suspense>
         <main
           className={cn(

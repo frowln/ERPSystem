@@ -1,6 +1,7 @@
 package com.privod.platform.modules.closeout.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.closeout.domain.WarrantyClaim;
 import com.privod.platform.modules.closeout.domain.WarrantyClaimStatus;
 import com.privod.platform.modules.closeout.repository.WarrantyClaimRepository;
@@ -58,8 +59,11 @@ public class WarrantyClaimService {
 
     @Transactional
     public WarrantyClaimResponse create(CreateWarrantyClaimRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+
         WarrantyClaim claim = WarrantyClaim.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .handoverPackageId(request.handoverPackageId())
                 .claimNumber(request.claimNumber())
                 .title(request.title())

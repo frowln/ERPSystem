@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/privod_next}
+    url: ${DB_URL:jdbc:postgresql://localhost:15432/privod2}
     username: ${DB_USERNAME:privod}
-    password: ${DB_PASSWORD:privod_secret}
+    password: ${DB_PASSWORD:privod_dev}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -15,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
     show-sql: false
     properties:
@@ -29,10 +29,12 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+    out-of-order: true
+    ignore-migration-patterns: '*:missing'
 
   mail:
     host: localhost
-    port: 1025
+    port: ${MAIL_PORT:1025}
     username:
     password:
     properties:
@@ -41,7 +43,20 @@ spring:
           auth: false
           starttls:
             enable: false
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
         from: noreply@privod.ru
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:16379}
+
+  servlet:
+    multipart:
+      max-file-size: 5GB
+      max-request-size: 10GB
 
   jackson:
     serialization:
@@ -56,10 +71,15 @@ spring:
 
 app:
   rate-limit:
-    requests-per-minute: 100
+    requests-per-minute: 600
     auth-requests-per-minute: 10
   scheduler:
     enabled: true
+  pricing:
+    minstroy:
+      auto-import:
+        enabled: ${PRICING_MINSTROY_AUTO_IMPORT_ENABLED:false}
+        cron: ${PRICING_MINSTROY_AUTO_IMPORT_CRON:0 0 3 1 * *}
   integration:
     sync-check-interval-ms: 300000  # 5 minutes - check if 1C sync is due
     sbis-sync-interval-ms: 900000   # 15 minutes - SBIS document sync
@@ -67,6 +87,10 @@ app:
     from-address: noreply@privod.ru
     from-name: "Привод - Строительная ERP"
     base-url: http://localhost:3000
+  storage:
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+    access-key: ${STORAGE_ACCESS_KEY:minioadmin}
+    secret-key: ${STORAGE_SECRET_KEY:minioadmin}
   jwt:
     secret: ${JWT_SECRET:CHANGE_ME_IN_PRODUCTION_256_BIT_SECRET_KEY_HERE}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
@@ -98,6 +122,9 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    mail:
+      enabled: false
 
 app.cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173}
@@ -105,6 +132,9 @@ app.cors:
 logging:
   level:
     com.privod: ${LOG_LEVEL:DEBUG}
+    org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
+    com.privod.platform.modules.kep.service.BouncyCastleCryptoProvider: ERROR
+    org.hibernate.tool.schema.internal.ExceptionHandlerLoggedImpl: ERROR
 
 springdoc:
   api-docs:

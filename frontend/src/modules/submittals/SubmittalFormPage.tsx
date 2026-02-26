@@ -9,6 +9,8 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { submittalsApi } from '@/api/submittals';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 import type { Submittal, SubmittalType } from './types';
 
@@ -54,29 +56,26 @@ const priorityOptions = [
   { value: 'HIGH', label: t('forms.submittal.priorities.high') },
 ];
 
-// Mock data — will be replaced by API data
-const projectOptions = [
-  { value: '1', label: 'ЖК "Солнечный"' },
-  { value: '2', label: 'БЦ "Горизонт"' },
-  { value: '3', label: 'Мост через р. Вятка' },
-  { value: '6', label: 'ТЦ "Центральный"' },
-];
-
-// Mock data — will be replaced by API data
-const userOptions = [
-  { value: '', label: t('forms.submittal.unassigned') },
-  { value: 'u1', label: 'Иванов И.И.' },
-  { value: 'u2', label: 'Петров П.П.' },
-  { value: 'u3', label: 'Сидоров С.С.' },
-  { value: 'u4', label: 'Козлов К.К.' },
-];
-
-
 const SubmittalFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => permissionsApi.getUsers(),
+  });
+  const userOptions = [
+    { value: '', label: t('forms.submittal.unassigned') },
+    ...(usersData?.content ?? []).map(u => ({ value: u.id, label: u.fullName ?? u.email })),
+  ];
 
   const { data: existingSubmittal } = useQuery<Submittal>({
     queryKey: ['submittal', id],

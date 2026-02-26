@@ -27,6 +27,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
 import { contractsApi } from '@/api/contracts';
+import { projectsApi } from '@/api/projects';
 import { formatMoney, formatMoneyCompact, formatDate, formatDateLong, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { Contract, ContractStatus, ContractApproval } from '@/types';
@@ -70,7 +71,15 @@ const ContractDetailPage: React.FC = () => {
     enabled: !!id && activeTab === 'approval',
   });
 
-  const c = contract;
+  const { data: linkedProject } = useQuery({
+    queryKey: ['PROJECT', contract?.projectId],
+    queryFn: () => projectsApi.getProject(contract!.projectId),
+    enabled: !!contract?.projectId && !contract.projectName,
+  });
+
+  const c = contract
+    ? { ...contract, projectName: contract.projectName ?? linkedProject?.name }
+    : undefined;
   const invoicedPercent = (c?.totalWithVat ?? 0) > 0 ? ((c?.totalInvoiced ?? 0) / (c?.totalWithVat ?? 1)) * 100 : 0;
   const paidPercent = (c?.totalWithVat ?? 0) > 0 ? ((c?.totalPaid ?? 0) / (c?.totalWithVat ?? 1)) * 100 : 0;
 
@@ -442,7 +451,7 @@ const ContractDetailPage: React.FC = () => {
         <ContractBudgetItemsTab
           contractId={id}
           projectId={c?.projectId}
-          contractDirection={c?.contractDirection === 'CLIENT' ? 'CLIENT' : 'CONTRACTOR'}
+          contractDirection={(c?.direction ?? c?.contractDirection) === 'CLIENT' ? 'CLIENT' : 'CONTRACTOR'}
         />
       )}
 

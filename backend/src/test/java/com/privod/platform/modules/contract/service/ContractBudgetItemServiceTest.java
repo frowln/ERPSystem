@@ -81,7 +81,7 @@ class ContractBudgetItemServiceTest {
         when(contractRepository.findByIdAndOrganizationIdAndDeletedFalse(contractId, organizationId))
                 .thenReturn(Optional.of(contract));
         when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.of(section));
-        when(budgetRepository.findByIdAndOrganizationIdAndDeletedFalse(budgetId, organizationId))
+        when(budgetRepository.findByIdAndDeletedFalse(budgetId))
                 .thenReturn(Optional.of(budget));
 
         LinkBudgetItemsRequest request = new LinkBudgetItemsRequest(List.of(
@@ -110,7 +110,7 @@ class ContractBudgetItemServiceTest {
         when(contractRepository.findByIdAndOrganizationIdAndDeletedFalse(contractId, organizationId))
                 .thenReturn(Optional.of(contract));
         when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.of(item));
-        when(budgetRepository.findByIdAndOrganizationIdAndDeletedFalse(budgetId, organizationId))
+        when(budgetRepository.findByIdAndDeletedFalse(budgetId))
                 .thenReturn(Optional.of(budget));
         when(cbiRepository.existsByContractIdAndBudgetItemId(contractId, budgetItemId)).thenReturn(false);
         when(cbiRepository.sumAllocatedQuantityByBudgetItemId(budgetItemId)).thenReturn(BigDecimal.ZERO);
@@ -151,7 +151,7 @@ class ContractBudgetItemServiceTest {
                 .thenReturn(Optional.of(contract));
         when(cbiRepository.findById(linkId)).thenReturn(Optional.of(link));
         when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.of(item));
-        when(budgetRepository.findByIdAndOrganizationIdAndDeletedFalse(budgetId, organizationId))
+        when(budgetRepository.findByIdAndDeletedFalse(budgetId))
                 .thenReturn(Optional.of(budget));
         when(cbiRepository.sumAllocatedQuantityByBudgetItemIdExcludingLinkId(budgetItemId, linkId))
                 .thenReturn(BigDecimal.ZERO);
@@ -188,7 +188,7 @@ class ContractBudgetItemServiceTest {
         when(contractRepository.findByIdAndOrganizationIdAndDeletedFalse(contractId, organizationId))
                 .thenReturn(Optional.of(contract));
         when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.of(item));
-        when(budgetRepository.findByIdAndOrganizationIdAndDeletedFalse(budgetId, organizationId))
+        when(budgetRepository.findByIdAndDeletedFalse(budgetId))
                 .thenReturn(Optional.of(budget));
         when(cbiRepository.existsByContractIdAndBudgetItemId(contractId, budgetItemId)).thenReturn(false);
         when(cbiRepository.sumAllocatedQuantityByBudgetItemId(budgetItemId)).thenReturn(new BigDecimal("50"));
@@ -224,7 +224,7 @@ class ContractBudgetItemServiceTest {
         when(contractRepository.findByIdAndOrganizationIdAndDeletedFalse(contractId, organizationId))
                 .thenReturn(Optional.of(contract));
         when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.of(item));
-        when(budgetRepository.findByIdAndOrganizationIdAndDeletedFalse(budgetId, organizationId))
+        when(budgetRepository.findByIdAndDeletedFalse(budgetId))
                 .thenReturn(Optional.of(budget));
         when(cbiRepository.existsByContractIdAndBudgetItemId(contractId, budgetItemId)).thenReturn(false);
         when(cbiRepository.sumAllocatedQuantityByBudgetItemId(budgetItemId)).thenReturn(new BigDecimal("50"));
@@ -251,7 +251,7 @@ class ContractBudgetItemServiceTest {
                 .name("Договор")
                 .number("CTR-1")
                 .status(ContractStatus.ACTIVE)
-                .contractDirection(ContractDirection.CONTRACTOR)
+                .direction(ContractDirection.CONTRACTOR)
                 .projectId(projectId)
                 .build();
         contract.setId(contractId);

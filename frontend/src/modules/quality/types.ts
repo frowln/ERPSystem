@@ -177,3 +177,127 @@ export interface ToleranceCheck {
   createdAt: string;
   updatedAt: string;
 }
+
+// --- Material Inspection ---
+
+export type MaterialInspectionResult = 'accepted' | 'rejected' | 'conditional';
+
+export interface MaterialInspectionTestResult {
+  parameter: string;
+  value: string;
+  standard: string;
+  passed: boolean;
+}
+
+export interface MaterialInspection {
+  id: string;
+  materialName: string;
+  supplier: string;
+  batchNumber: string;
+  inspectionDate: string;
+  inspectorName: string;
+  result: MaterialInspectionResult;
+  testProtocolNumber: string;
+  testResults: MaterialInspectionTestResult[];
+  notes?: string;
+  projectId: string;
+  projectName: string;
+}
+
+export interface CreateMaterialInspectionRequest {
+  materialName: string;
+  supplier: string;
+  batchNumber: string;
+  inspectorName: string;
+  inspectionDate: string;
+  testResults: MaterialInspectionTestResult[];
+  result: MaterialInspectionResult;
+  testProtocolNumber: string;
+  notes?: string;
+  projectId: string;
+}
+
+// --- Checklist Templates ---
+
+export type ChecklistWorkType = 'concreting' | 'steel_installation' | 'welding' | 'waterproofing' | 'finishing' | 'other';
+
+export interface ChecklistTemplateItem {
+  id: string;
+  order: number;
+  description: string;
+  required: boolean;
+}
+
+export interface ChecklistTemplate {
+  id: string;
+  name: string;
+  workType: ChecklistWorkType;
+  items: ChecklistTemplateItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateChecklistTemplateRequest {
+  name: string;
+  workType: ChecklistWorkType;
+  items: Omit<ChecklistTemplateItem, 'id'>[];
+}
+
+export interface UpdateChecklistTemplateRequest {
+  name?: string;
+  workType?: ChecklistWorkType;
+  items?: Omit<ChecklistTemplateItem, 'id'>[];
+}
+
+// --- Defect Register ---
+
+export type DefectSeverity = 'minor' | 'major' | 'critical';
+export type DefectStatus = 'open' | 'in_progress' | 'fixed' | 'closed';
+
+export interface DefectRegisterEntry {
+  id: string;
+  number: string;
+  location: string;
+  defectType: string;
+  severity: DefectSeverity;
+  detectedDate: string;
+  deadline: string;
+  responsibleName: string;
+  status: DefectStatus;
+  projectId: string;
+  projectName: string;
+}
+
+// --- Defect Statistics ---
+
+export interface DefectStatistics {
+  byType: { type: string; count: number; percentage: number }[];
+  bySeverity: { severity: string; count: number }[];
+  total: number;
+}
+
+// --- Author Supervision Journal ---
+
+export type ComplianceStatus = 'compliant' | 'non_compliant' | 'partial';
+
+export interface SupervisionEntry {
+  id: string;
+  number: string;
+  date: string;
+  inspectorName: string;
+  workType: string;
+  remarks: string;
+  directives: string;
+  complianceStatus: ComplianceStatus;
+  projectId: string;
+  projectName: string;
+}
+
+export interface CreateSupervisionEntryRequest {
+  date: string;
+  inspectorName: string;
+  workType: string;
+  remarks: string;
+  directives: string;
+  projectId: string;
+}

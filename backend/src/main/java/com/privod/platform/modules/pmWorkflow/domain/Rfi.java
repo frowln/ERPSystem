@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -30,6 +32,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Rfi extends BaseEntity {
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
@@ -85,13 +90,16 @@ public class Rfi extends BaseEntity {
     @Column(name = "related_spec_section", length = 255)
     private String relatedSpecSection;
 
-    @Column(name = "distribution_list", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "distribution_list", columnDefinition = "jsonb")
     private String distributionList;
 
-    @Column(name = "linked_document_ids", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "linked_document_ids", columnDefinition = "jsonb")
     private String linkedDocumentIds;
 
-    @Column(name = "tags", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "tags", columnDefinition = "jsonb")
     private String tags;
 
     public boolean canTransitionTo(RfiStatus newStatus) {

@@ -239,3 +239,120 @@ export interface ReportingSubmission {
   createdAt: string;
   updatedAt: string;
 }
+
+// =============================================================================
+// Prescription Responses
+// =============================================================================
+
+export type PrescriptionResponseStatus = 'draft' | 'sent' | 'accepted';
+
+export interface PrescriptionResponse {
+  id: string;
+  prescriptionId: string;
+  prescriptionNumber: string;
+  templateName: string;
+  responseText: string;
+  createdAt: string;
+  status: PrescriptionResponseStatus;
+}
+
+export interface ResponseTemplate {
+  id: string;
+  name: string;
+  category: string;
+  templateText: string;
+}
+
+// =============================================================================
+// SRO & Licenses Registry
+// =============================================================================
+
+export type SroLicenseStatus = 'active' | 'expiring' | 'expired';
+
+export interface SroLicense {
+  id: string;
+  organizationName: string;
+  sroType: string;
+  certificateNumber: string;
+  issueDate: string;
+  expiryDate: string;
+  status: SroLicenseStatus;
+  notifyEnabled: boolean;
+}
+
+// =============================================================================
+// Inspection Preparation
+// =============================================================================
+
+export type InspectionPrepItemStatus = 'ready' | 'pending' | 'missing';
+
+export interface InspectionPrepItem {
+  id: string;
+  documentName: string;
+  category: string;
+  status: InspectionPrepItemStatus;
+  responsibleName: string;
+  notes?: string;
+}
+
+// =============================================================================
+// Inspection History
+// =============================================================================
+
+export type InspectionRecordType = 'planned' | 'unplanned';
+export type InspectionRecordResult = 'passed' | 'violations_found' | 'pending';
+export type InspectionRecordStatus = 'completed' | 'in_progress' | 'appealed';
+
+export interface InspectionRecord {
+  id: string;
+  checkDate: string;
+  authority: string;
+  inspectionType: InspectionRecordType;
+  result: InspectionRecordResult;
+  fineAmount: number;
+  status: InspectionRecordStatus;
+  findings: string[];
+}
+
+// =============================================================================
+// Corrective Actions for Prescription Responses
+// =============================================================================
+
+export interface CorrectiveAction {
+  id: string;
+  description: string;
+  responsibleName: string;
+  dueDate?: string;
+  completed: boolean;
+}
+
+export interface SubmitResponseRequest {
+  prescriptionId: string;
+  responseText: string;
+  correctiveActions: Omit<CorrectiveAction, 'id'>[];
+  evidenceFileIds?: string[];
+}
+
+// =============================================================================
+// Inspection History Stats
+// =============================================================================
+
+export interface InspectionHistoryStats {
+  totalInspections: number;
+  violationsRate: number;
+  totalPenalties: number;
+  passedCount: number;
+  violationsCount: number;
+}
+
+// =============================================================================
+// SRO License Types (full enum)
+// =============================================================================
+
+export type SroLicenseTypeEnum =
+  | 'SRO_CONSTRUCTION'
+  | 'SRO_DESIGN'
+  | 'SRO_SURVEY'
+  | 'LICENSE_HAZARDOUS'
+  | 'LICENSE_FIRE'
+  | 'LICENSE_NUCLEAR';

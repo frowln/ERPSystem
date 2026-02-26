@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +37,9 @@ public class WarrantyClaim extends BaseEntity {
 
     @Column(name = "project_id")
     private UUID projectId;
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "handover_package_id")
     private UUID handoverPackageId;
@@ -80,6 +85,7 @@ public class WarrantyClaim extends BaseEntity {
     @Column(name = "cost_of_repair", precision = 18, scale = 2)
     private BigDecimal costOfRepair;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "attachment_ids", columnDefinition = "JSONB")
     private String attachmentIds;
 }

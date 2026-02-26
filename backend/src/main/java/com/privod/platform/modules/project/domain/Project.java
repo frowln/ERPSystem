@@ -96,6 +96,9 @@ public class Project extends BaseEntity {
     @Column(name = "category", length = 100)
     private String category;
 
+    @Column(name = "construction_kind", length = 50)
+    private String constructionKind;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false, length = 10)
     @Builder.Default

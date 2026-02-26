@@ -1,6 +1,7 @@
 package com.privod.platform.modules.pto.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.pto.domain.Submittal;
 import com.privod.platform.modules.pto.domain.SubmittalComment;
 import com.privod.platform.modules.pto.domain.SubmittalStatus;
@@ -60,10 +61,12 @@ public class SubmittalService {
 
     @Transactional
     public SubmittalResponse createSubmittal(CreateSubmittalRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String code = codeGenerator.generateSubmittalCode();
 
         Submittal submittal = Submittal.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .code(code)
                 .title(request.title())
                 .submittalType(request.submittalType())

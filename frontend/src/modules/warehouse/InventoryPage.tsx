@@ -60,6 +60,11 @@ const InventoryPage: React.FC = () => {
     queryFn: () => warehouseApi.getInventoryChecks(),
   });
 
+  const { data: locationsData } = useQuery({
+    queryKey: ['warehouse-locations'],
+    queryFn: () => warehouseApi.getLocations({ page: 0, size: 100 }),
+  });
+
   const checks = checkData?.content ?? [];
 
   const filtered = useMemo(() => {
@@ -207,11 +212,10 @@ const InventoryPage: React.FC = () => {
         <div className="space-y-4">
           <FormField label={t('warehouse.inventory.modalFieldLocation')} required>
             <Select
-              options={[
-                { value: 'wh1', label: t('mockData.locationCentralWarehouse') },
-                { value: 'st1', label: t('mockData.locationSiteSolnechny') },
-                { value: 'st2', label: t('mockData.locationSiteHorizonShort') },
-              ]}
+              options={(locationsData?.content ?? []).map((loc) => ({
+                value: loc.id,
+                label: loc.name,
+              }))}
               placeholder={t('warehouse.inventory.modalLocationPlaceholder')}
             />
           </FormField>

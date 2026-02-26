@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -31,6 +33,9 @@ public class ConstructionPermit extends BaseEntity {
 
     @Column(name = "project_id")
     private UUID projectId;
+
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
 
     @Column(name = "permit_number", unique = true, length = 100)
     private String permitNumber;
@@ -52,6 +57,7 @@ public class ConstructionPermit extends BaseEntity {
     @Column(name = "permit_type", length = 100)
     private String permitType;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "conditions", columnDefinition = "JSONB")
     private String conditions;
 

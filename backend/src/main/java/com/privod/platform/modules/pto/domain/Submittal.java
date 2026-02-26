@@ -32,6 +32,9 @@ public class Submittal extends BaseEntity {
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "code", nullable = false, length = 50, unique = true)
     private String code;
 

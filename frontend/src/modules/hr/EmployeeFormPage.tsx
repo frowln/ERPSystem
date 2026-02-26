@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { hrApi } from '@/api/hr';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 
 const employeeSchema = z.object({
@@ -43,25 +44,6 @@ const employeeSchema = z.object({
 });
 
 type EmployeeFormData = z.input<typeof employeeSchema>;
-
-const departmentOptions = [
-  { value: 'd1', label: t('forms.employee.departments.construction') },
-  { value: 'd2', label: t('forms.employee.departments.design') },
-  { value: 'd3', label: t('forms.employee.departments.supply') },
-  { value: 'd4', label: t('forms.employee.departments.pto') },
-  { value: 'd5', label: t('forms.employee.departments.finance') },
-  { value: 'd6', label: t('forms.employee.departments.legal') },
-  { value: 'd7', label: t('forms.employee.departments.hr') },
-  { value: 'd8', label: t('forms.employee.departments.it') },
-];
-
-const projectOptions = [
-  { value: '', label: t('forms.employee.noProject') },
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '2', label: t('mockData.projectGorizont') },
-  { value: '3', label: t('mockData.projectBridgeVyatka') },
-  { value: '6', label: t('mockData.projectTsCentralny') },
-];
 
 const contractTypeOptions = [
   { value: 'PERMANENT', label: t('forms.employee.contractTypes.permanent') },
@@ -100,6 +82,36 @@ const EmployeeFormPage: React.FC = () => {
       notes: '',
     },
   });
+
+  const { data: departmentsData } = useQuery({
+    queryKey: ['departments'],
+    queryFn: () => hrApi.getDepartments(),
+  });
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+
+  const departmentOptions = useMemo(
+    () =>
+      (departmentsData ?? []).map((d) => ({
+        value: d.id,
+        label: d.name,
+      })),
+    [departmentsData],
+  );
+
+  const projectOptions = useMemo(
+    () => [
+      { value: '', label: t('forms.employee.noProject') },
+      ...(projectsData?.content ?? []).map((p) => ({
+        value: p.id,
+        label: p.name,
+      })),
+    ],
+    [projectsData],
+  );
 
   const createMutation = useMutation({
     mutationFn: (data: EmployeeFormData) => {

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
-import com.privod.platform.modules.finance.domain.Budget;
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.BudgetSnapshot;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
@@ -48,10 +47,48 @@ public class BudgetSnapshotService {
 
     @Transactional
     public BudgetSnapshotResponse createSnapshot(UUID budgetId, String name, String notes) {
-        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return createSnapshot(budgetId, name, BudgetSnapshot.SnapshotType.SNAPSHOT, null, notes);
+    }
 
-        Budget budget = budgetRepository.findByIdAndDeletedFalse(budgetId)
+    @Transactional
+    public BudgetSnapshotResponse createSnapshot(UUID budgetId,
+                                                 String name,
+                                                 BudgetSnapshot.SnapshotType snapshotType,
+                                                 UUID sourceSnapshotId,
+                                                 String notes) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID userId = SecurityUtils.requireCurrentUserId();
+
+        budgetRepository.findByIdAndDeletedFalse(budgetId)
                 .orElseThrow(() -> new EntityNotFoundException("Бюджет не найден: " + budgetId));
+        BudgetSnapshot.SnapshotType effectiveType = snapshotType != null
+                ? snapshotType
+                : BudgetSnapshot.SnapshotType.SNAPSHOT;
+        if (effectiveType == BudgetSnapshot.SnapshotType.REFORECAST) {
+            if (sourceSnapshotId == null) {
+                sourceSnapshotId = snapshotRepository
+                        .findFirstByBudgetIdAndSnapshotTypeAndDeletedFalseOrderBySnapshotDateDesc(
+                                budgetId,
+                                BudgetSnapshot.SnapshotType.BASELINE
+                        )
+                        .map(BudgetSnapshot::getId)
+                        .orElseThrow(() -> new IllegalStateException(
+                                "Для REFORECAST требуется BASELINE-снимок"));
+            } else {
+                UUID requestedSourceSnapshotId = sourceSnapshotId;
+                BudgetSnapshot source = snapshotRepository.findByIdAndDeletedFalse(requestedSourceSnapshotId)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Снимок-источник не найден: " + requestedSourceSnapshotId));
+                if (!budgetId.equals(source.getBudgetId())) {
+                    throw new IllegalStateException("Снимок-источник должен относиться к тому же бюджету");
+                }
+                if (source.getSnapshotType() != BudgetSnapshot.SnapshotType.BASELINE) {
+                    throw new IllegalStateException("REFORECAST можно строить только от BASELINE");
+                }
+            }
+        } else {
+            sourceSnapshotId = null;
+        }
 
         List<BudgetItem> items = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
 
@@ -101,6 +138,9 @@ public class BudgetSnapshotService {
                 .budgetId(budgetId)
                 .organizationId(organizationId)
                 .snapshotName(name)
+                .snapshotType(effectiveType)
+                .sourceSnapshotId(sourceSnapshotId)
+                .createdById(userId)
                 .snapshotDate(Instant.now())
                 .totalCost(totalCost.setScale(2, RoundingMode.HALF_UP))
                 .totalCustomer(totalCustomer.setScale(2, RoundingMode.HALF_UP))
@@ -124,96 +164,22 @@ public class BudgetSnapshotService {
     }
 
     @Transactional(readOnly = true)
-    public SnapshotComparisonResponse compareWithCurrent(UUID snapshotId) {
+    public SnapshotComparisonResponse compare(UUID budgetId, UUID snapshotId, UUID targetSnapshotId) {
         BudgetSnapshot snapshot = snapshotRepository.findByIdAndDeletedFalse(snapshotId)
                 .orElseThrow(() -> new EntityNotFoundException("Снимок не найден: " + snapshotId));
-
-        List<BudgetItem> currentItems = budgetItemRepository
-                .findByBudgetIdAndDeletedFalseOrderBySequenceAsc(snapshot.getBudgetId());
-
-        Map<UUID, BudgetItem> currentMap = new HashMap<>();
-        BigDecimal currentTotalCost = ZERO;
-        BigDecimal currentTotalCustomer = ZERO;
-
-        for (BudgetItem item : currentItems) {
-            if (item.isSection()) continue;
-            currentMap.put(item.getId(), item);
-            BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : ONE;
-            currentTotalCost = currentTotalCost.add(
-                    (item.getCostPrice() != null ? item.getCostPrice() : ZERO).multiply(qty));
-            currentTotalCustomer = currentTotalCustomer.add(
-                    (item.getCustomerPrice() != null ? item.getCustomerPrice() : ZERO).multiply(qty));
-        }
-        BigDecimal currentTotalMargin = currentTotalCustomer.subtract(currentTotalCost);
-
-        List<Map<String, Object>> snapshotItems;
-        try {
-            snapshotItems = objectMapper.readValue(snapshot.getItemsJson(),
-                    new TypeReference<List<Map<String, Object>>>() {});
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Не удалось десериализовать данные снимка", e);
+        if (!budgetId.equals(snapshot.getBudgetId())) {
+            throw new IllegalArgumentException("Снимок не относится к указанному бюджету");
         }
 
-        List<ItemDelta> deltas = new ArrayList<>();
-        Map<UUID, Boolean> processedIds = new HashMap<>();
+        Map<UUID, SnapshotItemState> baseItems = parseSnapshotItems(snapshot.getItemsJson());
+        ComparisonTarget target = targetSnapshotId == null
+                ? buildCurrentTarget(snapshot.getBudgetId())
+                : buildSnapshotTarget(snapshot.getBudgetId(), targetSnapshotId);
 
-        for (Map<String, Object> snapItem : snapshotItems) {
-            Boolean isSection = (Boolean) snapItem.get("section");
-            if (Boolean.TRUE.equals(isSection)) continue;
-
-            UUID itemId = UUID.fromString((String) snapItem.get("id"));
-            processedIds.put(itemId, true);
-
-            BigDecimal snapCost = toBigDecimal(snapItem.get("costPrice"));
-            BigDecimal snapCust = toBigDecimal(snapItem.get("customerPrice"));
-            BigDecimal snapQty = toBigDecimal(snapItem.get("quantity"));
-            BigDecimal snapMargin = toBigDecimal(snapItem.get("marginAmount"));
-
-            BudgetItem current = currentMap.get(itemId);
-            if (current == null) {
-                deltas.add(new ItemDelta(
-                        itemId, (String) snapItem.get("name"),
-                        snapCost, null, negateOrNull(snapCost),
-                        snapCust, null, negateOrNull(snapCust),
-                        snapQty, null, negateOrNull(snapQty),
-                        snapMargin, null, negateOrNull(snapMargin),
-                        "REMOVED"
-                ));
-            } else {
-                BigDecimal curCost = current.getCostPrice();
-                BigDecimal curCust = current.getCustomerPrice();
-                BigDecimal curQty = current.getQuantity();
-                BigDecimal curMargin = current.getMarginAmount();
-
-                boolean changed = !eq(snapCost, curCost) || !eq(snapCust, curCust)
-                        || !eq(snapQty, curQty) || !eq(snapMargin, curMargin);
-
-                if (changed) {
-                    deltas.add(new ItemDelta(
-                            itemId, current.getName(),
-                            snapCost, curCost, subtract(curCost, snapCost),
-                            snapCust, curCust, subtract(curCust, snapCust),
-                            snapQty, curQty, subtract(curQty, snapQty),
-                            snapMargin, curMargin, subtract(curMargin, snapMargin),
-                            "CHANGED"
-                    ));
-                }
-            }
-        }
-
-        for (BudgetItem item : currentItems) {
-            if (item.isSection()) continue;
-            if (!processedIds.containsKey(item.getId())) {
-                deltas.add(new ItemDelta(
-                        item.getId(), item.getName(),
-                        null, item.getCostPrice(), item.getCostPrice(),
-                        null, item.getCustomerPrice(), item.getCustomerPrice(),
-                        null, item.getQuantity(), item.getQuantity(),
-                        null, item.getMarginAmount(), item.getMarginAmount(),
-                        "ADDED"
-                ));
-            }
-        }
+        List<ItemDelta> deltas = buildItemDeltas(baseItems, target.items());
+        BigDecimal targetTotalCost = target.totalCost().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal targetTotalCustomer = target.totalCustomer().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal targetTotalMargin = target.totalMargin().setScale(2, RoundingMode.HALF_UP);
 
         return new SnapshotComparisonResponse(
                 snapshot.getId(),
@@ -222,14 +188,179 @@ public class BudgetSnapshotService {
                 snapshot.getTotalCost(),
                 snapshot.getTotalCustomer(),
                 snapshot.getTotalMargin(),
-                currentTotalCost.setScale(2, RoundingMode.HALF_UP),
-                currentTotalCustomer.setScale(2, RoundingMode.HALF_UP),
-                currentTotalMargin.setScale(2, RoundingMode.HALF_UP),
-                currentTotalCost.subtract(snapshot.getTotalCost()).setScale(2, RoundingMode.HALF_UP),
-                currentTotalCustomer.subtract(snapshot.getTotalCustomer()).setScale(2, RoundingMode.HALF_UP),
-                currentTotalMargin.subtract(snapshot.getTotalMargin()).setScale(2, RoundingMode.HALF_UP),
-                deltas
+                targetTotalCost,
+                targetTotalCustomer,
+                targetTotalMargin,
+                targetTotalCost.subtract(snapshot.getTotalCost()).setScale(2, RoundingMode.HALF_UP),
+                targetTotalCustomer.subtract(snapshot.getTotalCustomer()).setScale(2, RoundingMode.HALF_UP),
+                targetTotalMargin.subtract(snapshot.getTotalMargin()).setScale(2, RoundingMode.HALF_UP),
+                deltas,
+                target.snapshotId(),
+                target.snapshotName(),
+                target.snapshotType(),
+                target.snapshotDate(),
+                target.comparedWithCurrent()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public SnapshotComparisonResponse compareWithCurrent(UUID snapshotId) {
+        BudgetSnapshot snapshot = snapshotRepository.findByIdAndDeletedFalse(snapshotId)
+                .orElseThrow(() -> new EntityNotFoundException("Снимок не найден: " + snapshotId));
+        return compare(snapshot.getBudgetId(), snapshotId, null);
+    }
+
+    private List<ItemDelta> buildItemDeltas(Map<UUID, SnapshotItemState> baseItems,
+                                            Map<UUID, SnapshotItemState> targetItems) {
+        List<ItemDelta> deltas = new ArrayList<>();
+        for (SnapshotItemState base : baseItems.values()) {
+            SnapshotItemState target = targetItems.get(base.itemId());
+            if (target == null) {
+                deltas.add(new ItemDelta(
+                        base.itemId(), base.name(),
+                        base.costPrice(), null, negateOrNull(base.costPrice()),
+                        base.customerPrice(), null, negateOrNull(base.customerPrice()),
+                        base.quantity(), null, negateOrNull(base.quantity()),
+                        base.marginAmount(), null, negateOrNull(base.marginAmount()),
+                        "REMOVED"
+                ));
+                continue;
+            }
+
+            boolean changed = !eq(base.costPrice(), target.costPrice())
+                    || !eq(base.customerPrice(), target.customerPrice())
+                    || !eq(base.quantity(), target.quantity())
+                    || !eq(base.marginAmount(), target.marginAmount());
+            if (changed) {
+                deltas.add(new ItemDelta(
+                        base.itemId(), target.name(),
+                        base.costPrice(), target.costPrice(), subtract(target.costPrice(), base.costPrice()),
+                        base.customerPrice(), target.customerPrice(), subtract(target.customerPrice(), base.customerPrice()),
+                        base.quantity(), target.quantity(), subtract(target.quantity(), base.quantity()),
+                        base.marginAmount(), target.marginAmount(), subtract(target.marginAmount(), base.marginAmount()),
+                        "CHANGED"
+                ));
+            }
+        }
+
+        for (SnapshotItemState target : targetItems.values()) {
+            if (!baseItems.containsKey(target.itemId())) {
+                deltas.add(new ItemDelta(
+                        target.itemId(), target.name(),
+                        null, target.costPrice(), target.costPrice(),
+                        null, target.customerPrice(), target.customerPrice(),
+                        null, target.quantity(), target.quantity(),
+                        null, target.marginAmount(), target.marginAmount(),
+                        "ADDED"
+                ));
+            }
+        }
+        return deltas;
+    }
+
+    private ComparisonTarget buildCurrentTarget(UUID budgetId) {
+        List<BudgetItem> currentItems = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
+        Map<UUID, SnapshotItemState> itemMap = new HashMap<>();
+        BigDecimal totalCost = ZERO;
+        BigDecimal totalCustomer = ZERO;
+        for (BudgetItem item : currentItems) {
+            if (item.isSection()) {
+                continue;
+            }
+            BigDecimal qty = item.getQuantity() != null ? item.getQuantity() : ONE;
+            BigDecimal costTotal = (item.getCostPrice() != null ? item.getCostPrice() : ZERO).multiply(qty);
+            BigDecimal customerTotal = (item.getCustomerPrice() != null ? item.getCustomerPrice() : ZERO).multiply(qty);
+            totalCost = totalCost.add(costTotal);
+            totalCustomer = totalCustomer.add(customerTotal);
+            itemMap.put(item.getId(), new SnapshotItemState(
+                    item.getId(),
+                    item.getName(),
+                    item.getCostPrice(),
+                    item.getCustomerPrice(),
+                    item.getQuantity(),
+                    item.getMarginAmount()
+            ));
+        }
+        return new ComparisonTarget(
+                null,
+                "CURRENT",
+                null,
+                Instant.now(),
+                totalCost,
+                totalCustomer,
+                totalCustomer.subtract(totalCost),
+                itemMap,
+                true
+        );
+    }
+
+    private ComparisonTarget buildSnapshotTarget(UUID budgetId, UUID targetSnapshotId) {
+        BudgetSnapshot target = snapshotRepository.findByIdAndDeletedFalse(targetSnapshotId)
+                .orElseThrow(() -> new EntityNotFoundException("Снимок не найден: " + targetSnapshotId));
+        if (!budgetId.equals(target.getBudgetId())) {
+            throw new IllegalArgumentException("Снимок сравнения относится к другому бюджету");
+        }
+        return new ComparisonTarget(
+                target.getId(),
+                target.getSnapshotName(),
+                target.getSnapshotType(),
+                target.getSnapshotDate(),
+                target.getTotalCost(),
+                target.getTotalCustomer(),
+                target.getTotalMargin(),
+                parseSnapshotItems(target.getItemsJson()),
+                false
+        );
+    }
+
+    private Map<UUID, SnapshotItemState> parseSnapshotItems(String itemsJson) {
+        List<Map<String, Object>> snapshotItems;
+        try {
+            snapshotItems = objectMapper.readValue(itemsJson, new TypeReference<List<Map<String, Object>>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Не удалось десериализовать данные снимка", e);
+        }
+        Map<UUID, SnapshotItemState> result = new HashMap<>();
+        for (Map<String, Object> snapItem : snapshotItems) {
+            Boolean isSection = (Boolean) snapItem.get("section");
+            if (Boolean.TRUE.equals(isSection)) {
+                continue;
+            }
+            UUID itemId = UUID.fromString(String.valueOf(snapItem.get("id")));
+            result.put(itemId, new SnapshotItemState(
+                    itemId,
+                    (String) snapItem.get("name"),
+                    toBigDecimal(snapItem.get("costPrice")),
+                    toBigDecimal(snapItem.get("customerPrice")),
+                    toBigDecimal(snapItem.get("quantity")),
+                    toBigDecimal(snapItem.get("marginAmount"))
+            ));
+        }
+        return result;
+    }
+
+    private record SnapshotItemState(
+            UUID itemId,
+            String name,
+            BigDecimal costPrice,
+            BigDecimal customerPrice,
+            BigDecimal quantity,
+            BigDecimal marginAmount
+    ) {
+    }
+
+    private record ComparisonTarget(
+            UUID snapshotId,
+            String snapshotName,
+            BudgetSnapshot.SnapshotType snapshotType,
+            Instant snapshotDate,
+            BigDecimal totalCost,
+            BigDecimal totalCustomer,
+            BigDecimal totalMargin,
+            Map<UUID, SnapshotItemState> items,
+            boolean comparedWithCurrent
+    ) {
     }
 
     private BigDecimal toBigDecimal(Object value) {

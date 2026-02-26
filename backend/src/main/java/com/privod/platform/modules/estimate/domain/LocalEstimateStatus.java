@@ -13,4 +13,13 @@ public enum LocalEstimateStatus {
     ARCHIVED("В архиве");
 
     private final String displayName;
+
+    public boolean canTransitionTo(LocalEstimateStatus target) {
+        return switch (this) {
+            case DRAFT -> target == CALCULATED || target == ARCHIVED;
+            case CALCULATED -> target == APPROVED || target == DRAFT || target == ARCHIVED;
+            case APPROVED -> target == ARCHIVED || target == CALCULATED;
+            case ARCHIVED -> target == DRAFT;
+        };
+    }
 }

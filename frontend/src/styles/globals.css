@@ -1,8 +1,8 @@
+@import './print.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './print.css';
 
 @layer base {
   * {

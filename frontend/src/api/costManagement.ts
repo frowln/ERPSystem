@@ -55,6 +55,11 @@ export const costManagementApi = {
     return response.data;
   },
 
+  updateCommitment: async (id: string, data: Partial<Commitment>): Promise<Commitment> => {
+    const response = await apiClient.put<Commitment>(`/cost-management/commitments/${id}`, data);
+    return response.data;
+  },
+
   getCashFlow: async (projectId?: string): Promise<CashFlowEntry[]> => {
     const response = await apiClient.get<CashFlowEntry[]>('/cost-management/cash-flow', {
       params: projectId ? { projectId } : undefined,

@@ -33,6 +33,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class NonConformance extends BaseEntity {
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "code", unique = true, length = 20)
     private String code;
 

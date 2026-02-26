@@ -1,6 +1,7 @@
 package com.privod.platform.modules.pmWorkflow.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.pmWorkflow.domain.Issue;
 import com.privod.platform.modules.pmWorkflow.domain.IssueComment;
 import com.privod.platform.modules.pmWorkflow.domain.IssueStatus;
@@ -61,9 +62,11 @@ public class IssueService {
 
     @Transactional
     public IssueResponseDto createIssue(CreateIssueRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String number = generateIssueNumber(request.projectId());
 
         Issue issue = Issue.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .number(number)
                 .title(request.title())

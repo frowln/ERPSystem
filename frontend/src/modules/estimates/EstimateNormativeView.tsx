@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Calculator, ArrowLeft, FileSpreadsheet } from 'lucide-react';
+import { Calculator, FileSpreadsheet } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -11,7 +11,6 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { estimatesApi } from '@/api/estimates';
 import { formatMoney, formatNumber } from '@/lib/format';
-import { cn } from '@/lib/cn';
 import type { LocalEstimateLine } from '@/types';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
@@ -20,12 +19,14 @@ const statusColorMap: Record<string, string> = {
   DRAFT: 'neutral',
   CALCULATED: 'info',
   APPROVED: 'success',
+  ARCHIVED: 'warning',
 };
 
 const statusLabels: Record<string, string> = {
   DRAFT: 'estimates.normative.statusDraft',
   CALCULATED: 'estimates.normative.statusCalculated',
   APPROVED: 'estimates.normative.statusApproved',
+  ARCHIVED: 'estimates.normative.statusArchived',
 };
 
 const EstimateNormativeView: React.FC = () => {

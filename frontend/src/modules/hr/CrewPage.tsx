@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Modal } from '@/design-system/components/Modal';
 import { FormField, Input, Select, Textarea } from '@/design-system/components/FormField';
 import { hrApi } from '@/api/hr';
+import { projectsApi } from '@/api/projects';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 
@@ -60,6 +61,20 @@ const CrewPage: React.FC = () => {
     queryKey: ['crews'],
     queryFn: () => hrApi.getCrews(),
   });
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+
+  const projectOptions = useMemo(
+    () =>
+      (projectsData?.content ?? []).map((p) => ({
+        value: p.id,
+        label: p.name,
+      })),
+    [projectsData],
+  );
 
   const crews = crewData?.content ?? [];
 
@@ -241,11 +256,7 @@ const CrewPage: React.FC = () => {
         <div className="space-y-4">
           <FormField label={t('hr.crews.modalFieldProject')} required>
             <Select
-              options={[
-                { value: 'p1', label: t('mockData.projectSolnechny') },
-                { value: 'p2', label: t('mockData.projectGorizont') },
-                { value: 'p3', label: t('mockData.projectBridgeVyatka') },
-              ]}
+              options={projectOptions}
               placeholder={t('hr.crews.modalFieldProjectPlaceholder')}
             />
           </FormField>

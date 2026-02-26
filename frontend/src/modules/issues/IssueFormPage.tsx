@@ -9,6 +9,8 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { issuesApi } from '@/api/issues';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
 
 const issueSchema = z.object({
@@ -42,23 +44,6 @@ const priorityOptions = [
   { value: 'CRITICAL', label: t('forms.issue.priorities.critical') },
 ];
 
-// Mock data — will be replaced by API data
-const getProjectOptions = () => [
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '2', label: t('mockData.projectGorizont') },
-  { value: '3', label: t('mockData.projectBridgeVyatka') },
-  { value: '6', label: t('mockData.projectTsCentralny') },
-];
-
-// Mock data — will be replaced by API data
-const getAssigneeOptions = () => [
-  { value: '', label: t('forms.issue.unassigned') },
-  { value: 'u1', label: t('mockData.personIvanov') },
-  { value: 'u2', label: t('mockData.personPetrov') },
-  { value: 'u3', label: t('mockData.personSidorov') },
-  { value: 'u4', label: t('mockData.personKozlov') },
-];
-
 const IssueFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -70,6 +55,21 @@ const IssueFormPage: React.FC = () => {
     queryFn: () => issuesApi.getIssue(id!),
     enabled: isEdit,
   });
+
+  const { data: projectsData } = useQuery({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects(),
+  });
+  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => permissionsApi.getUsers(),
+  });
+  const assigneeOptions = [
+    { value: '', label: t('forms.issue.unassigned') },
+    ...(usersData?.content ?? []).map(u => ({ value: u.id, label: `${u.lastName} ${u.firstName}` })),
+  ];
 
   const {
     register,
@@ -194,14 +194,14 @@ const IssueFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.issue.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
               />
             </FormField>
             <FormField label={t('forms.issue.labelAssignee')} error={errors.assignedToId?.message}>
               <Select
-                options={getAssigneeOptions()}
+                options={assigneeOptions}
                 placeholder={t('forms.issue.selectAssignee')}
                 hasError={!!errors.assignedToId}
                 {...register('assignedToId')}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,7 +8,10 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { qualityApi } from '@/api/quality';
+import { projectsApi } from '@/api/projects';
+import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
+import type { Project, PaginatedResponse } from '@/types';
 
 const getQualityCheckSchema = () => z.object({
   projectId: z.string().min(1, t('quality.checkCreate.validationSelectProject')),
@@ -28,13 +31,6 @@ interface QualityCheckCreateModalProps {
   onClose: () => void;
 }
 
-const getProjectOptions = () => [
-  { value: '1', label: t('mockData.projectSolnechny') },
-  { value: '2', label: t('mockData.projectHorizon') },
-  { value: '3', label: t('mockData.projectBridge') },
-  { value: '6', label: t('mockData.projectCentral') },
-];
-
 const getTypeOptions = () => [
   { value: 'INCOMING', label: t('quality.checkCreate.typeIncoming') },
   { value: 'IN_PROCESS', label: t('quality.checkCreate.typeHiddenWorks') },
@@ -42,16 +38,26 @@ const getTypeOptions = () => [
   { value: 'AUDIT', label: t('quality.checkCreate.typeAudit') },
 ];
 
-const getInspectorOptions = () => [
-  { value: t('mockData.personIvanovAS'), label: t('mockData.personIvanovAS') },
-  { value: t('mockData.personPetrovVK'), label: t('mockData.personPetrovVK') },
-  { value: t('mockData.personSidorovMN'), label: t('mockData.personSidorovMN') },
-  { value: t('mockData.personKozlovDA'), label: t('mockData.personKozlovDA') },
-  { value: t('mockData.personNovikovaEI'), label: t('mockData.personNovikovaEI') },
-];
-
 export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+    enabled: open,
+  });
+
+  const { data: usersData } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => permissionsApi.getUsers({ page: 0, size: 100 }),
+    enabled: open,
+  });
+
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
+  const inspectorOptions = (usersData?.content ?? []).map((u) => {
+    const name = `${u.lastName} ${u.firstName[0]}.`;
+    return { value: name, label: name };
+  });
 
   const {
     register,
@@ -127,7 +133,7 @@ export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('quality.checkCreate.labelProject')} error={errors.projectId?.message} required>
             <Select
-              options={getProjectOptions()}
+              options={projectOptions}
               placeholder={t('quality.checkCreate.placeholderProject')}
               hasError={!!errors.projectId}
               {...register('projectId')}
@@ -146,7 +152,7 @@ export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('quality.checkCreate.labelInspector')} error={errors.inspectorName?.message} required>
             <Select
-              options={getInspectorOptions()}
+              options={inspectorOptions}
               placeholder={t('quality.checkCreate.placeholderInspector')}
               hasError={!!errors.inspectorName}
               {...register('inspectorName')}

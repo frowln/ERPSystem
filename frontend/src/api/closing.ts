@@ -7,6 +7,17 @@ import type {
   PaginatedResponse,
   PaginationParams,
 } from '@/types';
+import type {
+  Ks2Approval,
+  Ks2VolumeCheck,
+  Ks6aEntry,
+  CorrectionAct,
+  CreateCorrectionActRequest,
+  Ks2PrintData,
+  Ks3PrintData,
+  Ks2PaymentInfo,
+  EstimateItemForImport,
+} from '@/modules/closing/types';
 
 export interface ClosingDocFilters extends PaginationParams {
   status?: ClosingDocStatus;
@@ -142,6 +153,92 @@ export const closingApi = {
 
   unlinkKs2FromKs3: async (ks3Id: string, ks2Id: string) => {
     const response = await apiClient.delete(`/closing/ks3/${ks3Id}/ks2/${ks2Id}`);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // KS-2 Approval Workflow
+  // ---------------------------------------------------------------------------
+
+  getKs2Approvals: async (): Promise<Ks2Approval[]> => {
+    const response = await apiClient.get<Ks2Approval[]>('/closing/ks2/approvals');
+    return response.data;
+  },
+
+  approveKs2: async (approvalId: string, comment?: string): Promise<void> => {
+    await apiClient.post(`/closing/ks2/approvals/${approvalId}/approve`, { comment });
+  },
+
+  rejectKs2: async (approvalId: string, comment: string): Promise<void> => {
+    await apiClient.post(`/closing/ks2/approvals/${approvalId}/reject`, { comment });
+  },
+
+  // ---------------------------------------------------------------------------
+  // KS-2 Volume Verification
+  // ---------------------------------------------------------------------------
+
+  checkKs2Volumes: async (actId: string): Promise<Ks2VolumeCheck[]> => {
+    const response = await apiClient.get<Ks2VolumeCheck[]>(`/closing/ks2/${actId}/volume-check`);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // KS-6a Journal
+  // ---------------------------------------------------------------------------
+
+  getKs6aEntries: async (projectId: string, year: number): Promise<Ks6aEntry[]> => {
+    const response = await apiClient.get<Ks6aEntry[]>('/closing/ks6a', {
+      params: { projectId, year },
+    });
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // Correction Acts
+  // ---------------------------------------------------------------------------
+
+  getCorrectionActs: async (): Promise<CorrectionAct[]> => {
+    const response = await apiClient.get<CorrectionAct[]>('/closing/correction-acts');
+    return response.data;
+  },
+
+  createCorrectionAct: async (data: CreateCorrectionActRequest): Promise<{ id: string }> => {
+    const response = await apiClient.post<{ id: string }>('/closing/correction-acts', data);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // KS-2 / KS-3 Print Forms
+  // ---------------------------------------------------------------------------
+
+  getKs2PrintData: async (actId: string): Promise<Ks2PrintData> => {
+    const response = await apiClient.get<Ks2PrintData>(`/closing/ks2/${actId}/print`);
+    return response.data;
+  },
+
+  getKs3PrintData: async (actId: string): Promise<Ks3PrintData> => {
+    const response = await apiClient.get<Ks3PrintData>(`/closing/ks3/${actId}/print`);
+    return response.data;
+  },
+
+  // ---------------------------------------------------------------------------
+  // Cross-cutting: KS-2 ↔ Estimate ↔ Invoice ↔ Payment
+  // ---------------------------------------------------------------------------
+
+  getKs2PaymentStatus: async (ks2Id: string): Promise<Ks2PaymentInfo> => {
+    const response = await apiClient.get<Ks2PaymentInfo>(`/closing/ks2/${ks2Id}/payment-status`);
+    return response.data;
+  },
+
+  getEstimateItemsForKs2: async (estimateId: string, ks2Id?: string): Promise<EstimateItemForImport[]> => {
+    const response = await apiClient.get<EstimateItemForImport[]>(`/estimates/${estimateId}/items-for-ks2`, {
+      params: ks2Id ? { ks2Id } : undefined,
+    });
+    return response.data;
+  },
+
+  createInvoiceFromKs2: async (ks2Id: string): Promise<{ invoiceId: string }> => {
+    const response = await apiClient.post<{ invoiceId: string }>(`/closing/ks2/${ks2Id}/create-invoice`);
     return response.data;
   },
 };

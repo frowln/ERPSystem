@@ -78,6 +78,18 @@ public class Budget extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "contingency_percent", precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal contingencyPercent = new BigDecimal("5.00");
+
+    @Column(name = "overhead_percent", precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal overheadPercent = new BigDecimal("12.00");
+
+    @Column(name = "temp_structures_percent", precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal tempStructuresPercent = new BigDecimal("3.00");
+
     public boolean canTransitionTo(BudgetStatus newStatus) {
         return this.status.canTransitionTo(newStatus);
     }

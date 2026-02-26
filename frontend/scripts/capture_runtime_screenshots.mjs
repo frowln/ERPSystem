@@ -97,6 +97,7 @@ async function captureRoleRoutes(browser, roleConfig) {
 
   await context.addInitScript((state) => {
     localStorage.setItem('privod-auth', JSON.stringify({ state, version: 0 }));
+    localStorage.setItem('privod_locale', 'ru');
     localStorage.setItem('privod-locale', 'ru');
     localStorage.setItem('privod-lang', 'ru');
   }, authState);

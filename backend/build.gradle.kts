@@ -28,6 +28,24 @@ val jjwtVersion = "0.12.6"
 val testcontainersVersion = "1.20.4"
 val springdocVersion = "2.8.0"
 
+val financeGateSourceSet = sourceSets.create("financeGateTest") {
+    java.srcDir("src/test/java")
+    java.include(
+        "com/privod/platform/modules/commercialProposal/service/CommercialProposalServiceTest.java",
+        "com/privod/platform/modules/finance/service/InvoiceMatchingServiceTest.java",
+        "com/privod/platform/modules/contract/service/ContractBudgetItemServiceTest.java",
+    )
+    resources.srcDir("src/test/resources")
+
+    compileClasspath += sourceSets["main"].output + configurations["testCompileClasspath"]
+    runtimeClasspath += output + compileClasspath + configurations["testRuntimeClasspath"]
+}
+
+configurations[financeGateSourceSet.implementationConfigurationName].extendsFrom(configurations["testImplementation"])
+configurations[financeGateSourceSet.compileOnlyConfigurationName].extendsFrom(configurations["testCompileOnly"])
+configurations[financeGateSourceSet.runtimeOnlyConfigurationName].extendsFrom(configurations["testRuntimeOnly"])
+configurations[financeGateSourceSet.annotationProcessorConfigurationName].extendsFrom(configurations["testAnnotationProcessor"])
+
 dependencies {
     // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -72,6 +90,9 @@ dependencies {
     // Apache Tika (FileValidationService — MIME type detection)
     implementation("org.apache.tika:tika-core:2.9.1")
 
+    // Apache PDFBox (SpecificationPdfParserService — PDF text extraction)
+    implementation("org.apache.pdfbox:pdfbox:3.0.2")
+
     // Redis (RedisWebSocketBroadcast — optional at runtime)
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
@@ -85,6 +106,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:$testcontainersVersion")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
+    add(financeGateSourceSet.runtimeOnlyConfigurationName, "org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<JavaCompile> {
@@ -95,5 +117,13 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.register<Test>("financeGateTest") {
+    description = "Runs isolated finance regression tests without compiling legacy test tree."
+    group = "verification"
+    testClassesDirs = financeGateSourceSet.output.classesDirs
+    classpath = financeGateSourceSet.runtimeClasspath
     useJUnitPlatform()
 }

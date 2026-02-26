@@ -16,7 +16,9 @@ import com.privod.platform.modules.estimate.domain.EstimateItem;
 import com.privod.platform.modules.estimate.repository.EstimateItemRepository;
 import com.privod.platform.modules.finance.domain.Invoice;
 import com.privod.platform.modules.finance.domain.InvoiceLine;
+import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.domain.InvoiceType;
+import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.finance.repository.InvoiceLineRepository;
@@ -111,6 +113,7 @@ class CommercialProposalServiceTest {
                 .totalAmount(new BigDecimal("1000"))
                 .build();
         invoice.setId(invoiceId);
+        invoice.setStatus(InvoiceStatus.APPROVED);
 
         InvoiceLine line = InvoiceLine.builder()
                 .invoiceId(invoiceId)
@@ -130,17 +133,56 @@ class CommercialProposalServiceTest {
         when(itemRepository.save(any(CommercialProposalItem.class))).thenAnswer(inv -> inv.getArgument(0));
         when(itemRepository.findByProposalId(proposalId)).thenReturn(List.of(item));
         when(proposalRepository.save(any(CommercialProposal.class))).thenAnswer(inv -> inv.getArgument(0));
-        when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.empty());
+        when(budgetItemRepository.findById(budgetItemId)).thenReturn(Optional.of(budgetItem()));
 
         var response = service.selectInvoice(proposalId, cpItemId, new SelectInvoiceRequest(invoiceLineId));
 
         assertThat(response.selectedInvoiceLineId()).isEqualTo(invoiceLineId);
-        assertThat(response.status()).isEqualTo(ProposalItemStatus.INVOICE_SELECTED);
+        assertThat(response.status()).isEqualTo(ProposalItemStatus.PRICE_SELECTED);
         assertThat(response.costPrice()).isEqualByComparingTo(new BigDecimal("75.00"));
         assertThat(response.totalCost()).isEqualByComparingTo(new BigDecimal("150.00"));
         assertThat(line.isSelectedForCp()).isTrue();
         assertThat(line.getCpItemId()).isEqualTo(cpItemId);
         verify(proposalRepository, atLeastOnce()).save(any(CommercialProposal.class));
+    }
+
+    @Test
+    @DisplayName("selectInvoice rejects invoice in draft status")
+    void selectInvoiceRejectsDraftInvoiceStatus() {
+        UUID invoiceId = UUID.randomUUID();
+        UUID invoiceLineId = UUID.randomUUID();
+
+        CommercialProposal proposal = proposal(ProposalStatus.IN_REVIEW);
+        CommercialProposalItem item = item("MATERIAL");
+
+        Invoice invoice = Invoice.builder()
+                .organizationId(organizationId)
+                .invoiceDate(LocalDate.of(2026, 2, 21))
+                .projectId(projectId)
+                .invoiceType(InvoiceType.RECEIVED)
+                .totalAmount(new BigDecimal("1000"))
+                .build();
+        invoice.setId(invoiceId);
+        invoice.setStatus(InvoiceStatus.DRAFT);
+
+        InvoiceLine line = InvoiceLine.builder()
+                .invoiceId(invoiceId)
+                .name("Кабель")
+                .quantity(new BigDecimal("100"))
+                .unitPrice(new BigDecimal("75.00"))
+                .amount(new BigDecimal("7500.00"))
+                .selectedForCp(false)
+                .build();
+        line.setId(invoiceLineId);
+
+        when(proposalRepository.findByIdAndDeletedFalse(proposalId)).thenReturn(Optional.of(proposal));
+        when(itemRepository.findById(cpItemId)).thenReturn(Optional.of(item));
+        when(invoiceLineRepository.findById(invoiceLineId)).thenReturn(Optional.of(line));
+        when(invoiceRepository.findByIdAndDeletedFalse(invoiceId)).thenReturn(Optional.of(invoice));
+
+        assertThatThrownBy(() -> service.selectInvoice(proposalId, cpItemId, new SelectInvoiceRequest(invoiceLineId)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Можно выбирать только счета");
     }
 
     @Test
@@ -298,6 +340,17 @@ class CommercialProposalServiceTest {
                 .totalCost(new BigDecimal("200.00"))
                 .build();
         item.setId(cpItemId);
+        return item;
+    }
+
+    private BudgetItem budgetItem() {
+        BudgetItem item = BudgetItem.builder()
+                .budgetId(budgetId)
+                .name("Строка ФМ")
+                .quantity(new BigDecimal("100"))
+                .unit("шт")
+                .build();
+        item.setId(budgetItemId);
         return item;
     }
 }

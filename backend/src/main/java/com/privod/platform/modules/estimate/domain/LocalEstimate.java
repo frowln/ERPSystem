@@ -90,4 +90,12 @@ public class LocalEstimate extends BaseEntity {
 
     @Column(name = "calculated_at")
     private Instant calculatedAt;
+
+    @Column(name = "overhead_rate", precision = 8, scale = 4)
+    @Builder.Default
+    private BigDecimal overheadRate = new BigDecimal("0.1200");
+
+    @Column(name = "profit_rate", precision = 8, scale = 4)
+    @Builder.Default
+    private BigDecimal profitRate = new BigDecimal("0.0800");
 }

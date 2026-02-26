@@ -12,3 +12,8 @@ export { M29FromKs2Wizard } from './M29FromKs2Wizard';
 export { default as MovementBoardPage } from './MovementBoardPage';
 export { default as StockLimitsPage } from './StockLimitsPage';
 export { default as StockAlertsPage } from './StockAlertsPage';
+export { default as M29ReportPage } from './M29ReportPage';
+export { default as LimitFenceCardsPage } from './LimitFenceCardsPage';
+export { default as WarehouseOrdersPage } from './WarehouseOrdersPage';
+export { default as AddressStoragePage } from './AddressStoragePage';
+export { default as MaterialDemandPage } from './MaterialDemandPage';

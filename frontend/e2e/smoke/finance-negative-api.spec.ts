@@ -70,7 +70,7 @@ async function readSummary(): Promise<SeedSummary> {
 }
 
 async function login(request: APIRequestContext): Promise<string> {
-  const apiRoot = process.env.API_ROOT || 'http://localhost:18080/api';
+  const apiRoot = process.env.API_ROOT || 'http://localhost:8080/api';
   const email = process.env.TEST_USER_EMAIL || 'admin@privod.ru';
   const password = process.env.TEST_USER_PASSWORD || 'admin123';
 
@@ -87,7 +87,7 @@ test.describe('Finance negative API constraints', () => {
   test.describe.configure({ mode: 'serial' });
 
   test('cannot assign one invoice line to two different CP items', async ({ request }) => {
-    const apiRoot = process.env.API_ROOT || 'http://localhost:18080/api';
+    const apiRoot = process.env.API_ROOT || 'http://localhost:8080/api';
     const summary = await readSummary();
     const token = await login(request);
 
@@ -119,7 +119,7 @@ test.describe('Finance negative API constraints', () => {
   });
 
   test('cannot link contract allocation above remaining FM quantity', async ({ request }) => {
-    const apiRoot = process.env.API_ROOT || 'http://localhost:18080/api';
+    const apiRoot = process.env.API_ROOT || 'http://localhost:8080/api';
     const summary = await readSummary();
     const token = await login(request);
 
@@ -147,7 +147,7 @@ test.describe('Finance negative API constraints', () => {
   });
 
   test('cannot move proposal from DRAFT directly to ACTIVE', async ({ request }) => {
-    const apiRoot = process.env.API_ROOT || 'http://localhost:18080/api';
+    const apiRoot = process.env.API_ROOT || 'http://localhost:8080/api';
     const summary = await readSummary();
     const token = await login(request);
 

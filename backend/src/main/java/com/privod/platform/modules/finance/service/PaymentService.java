@@ -262,11 +262,7 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PAID);
         payment.setPaidAt(Instant.now());
         payment = paymentRepository.save(payment);
-        if (payment.getContractId() != null
-                && payment.getTotalAmount() != null
-                && payment.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
-            budgetItemSyncService.onPaymentRegistered(payment.getContractId(), payment.getTotalAmount());
-        }
+        budgetItemSyncService.onPaymentFinancialStateChanged(payment.getContractId());
         auditService.logStatusChange("Payment", payment.getId(), oldStatus.name(), PaymentStatus.PAID.name());
 
         log.info("Платёж оплачен: {} ({})", payment.getNumber(), payment.getId());
@@ -286,6 +282,7 @@ public class PaymentService {
 
         payment.setStatus(PaymentStatus.CANCELLED);
         payment = paymentRepository.save(payment);
+        budgetItemSyncService.onPaymentFinancialStateChanged(payment.getContractId());
         auditService.logStatusChange("Payment", payment.getId(), oldStatus.name(), PaymentStatus.CANCELLED.name());
 
         log.info("Платёж отменён: {} ({})", payment.getNumber(), payment.getId());

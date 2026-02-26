@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -34,6 +36,9 @@ public class CommissioningChecklist extends BaseEntity {
     @Column(name = "project_id")
     private UUID projectId;
 
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
+
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
@@ -45,6 +50,7 @@ public class CommissioningChecklist extends BaseEntity {
     @Builder.Default
     private ChecklistStatus status = ChecklistStatus.NOT_STARTED;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "check_items", columnDefinition = "JSONB")
     private String checkItems;
 
@@ -63,6 +69,7 @@ public class CommissioningChecklist extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "attachment_ids", columnDefinition = "JSONB")
     private String attachmentIds;
 }
