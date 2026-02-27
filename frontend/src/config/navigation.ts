@@ -146,17 +146,29 @@ export const navigation: NavGroup[] = [
   navGroup('home', Home, [
     navItem('dashboard', Home, '/'),
   ]),
-  navGroup('projects', FolderKanban, [
+  navGroup('precon', Target, [
+    navItem('crm-leads', Target, '/crm/leads'),
+    navItem('fin-opportunities', Briefcase, '/portfolio/opportunities'),
     navItem('projects-list', FolderKanban, '/projects'),
     navItem('counterparties', Building2, '/counterparties'),
-    navItem('CONTRACTS', FileSignature, '/contracts'),
+  ]),
+  navGroup('pricing', Calculator, [
+    navItem('specifications', ClipboardList, '/specifications'),
     navItem('estimates', Calculator, '/estimates'),
     navItem('estimates-pricing-databases', TableProperties, '/estimates/pricing/databases'),
     navItem('estimates-pricing-rates', TableProperties, '/estimates/pricing/rates'),
     navItem('estimates-pricing-calc', TableProperties, '/estimates/pricing/calculate'),
-    navItem('specifications', ClipboardList, '/specifications'),
     navItem('spec-analogs', ArrowLeftRight, '/specifications/analogs'),
     navItem('spec-analog-requests', RefreshCw, '/specifications/analog-requests'),
+  ]),
+  navGroup('economics', Wallet, [
+    navItem('fin-budgets', Wallet, '/budgets'),
+    navItem('fin-fm', TableProperties, '/financial-models'),
+    navItem('fin-commercial-proposals', FileText, '/commercial-proposals'),
+    navItem('fin-tenders', FileSearch, '/portfolio/tenders'),
+    navItem('fin-bid-comparison', Scale, '/portfolio/bid-comparison'),
+    navItem('CONTRACTS', FileSignature, '/contracts'),
+    navItem('fin-procurement', ShoppingCart, '/procurement'),
   ]),
   navGroup('pm', Network, [
     navItem('pm-rfis', MessageSquare, '/pm/rfis'),
@@ -199,9 +211,6 @@ export const navigation: NavGroup[] = [
     navItem('data-1c-logs', History, '/data-exchange/1c-logs'),
   ]),
   navGroup('finance', Banknote, [
-    navItem('fin-fm', TableProperties, '/financial-models'),
-    navItem('fin-budgets', Wallet, '/budgets'),
-    navItem('fin-commercial-proposals', FileText, '/commercial-proposals'),
     navItem('fin-invoices', Receipt, '/invoices'),
     navItem('fin-payments', CreditCard, '/payments'),
     navItem('fin-cashflow', TrendingDown, '/cash-flow'),
@@ -217,10 +226,6 @@ export const navigation: NavGroup[] = [
     navItem('fin-rev-contracts', DollarSign, '/revenue/contracts'),
     navItem('fin-rev-periods', CalendarDays, '/revenue/periods'),
     navItem('fin-rev-dashboard', BarChart3, '/revenue/dashboard'),
-    navItem('fin-opportunities', Briefcase, '/portfolio/opportunities'),
-    navItem('fin-tenders', FileSearch, '/portfolio/tenders'),
-    navItem('fin-bid-comparison', Scale, '/portfolio/bid-comparison'),
-    navItem('fin-procurement', ShoppingCart, '/procurement'),
     navItem('fin-price-coefficients', Calculator, '/price-coefficients'),
     navItem('fin-tax-risk', AlertTriangle, '/tax-risk'),
   ]),
@@ -274,7 +279,6 @@ export const navigation: NavGroup[] = [
   ]),
   navGroup('crm', Target, [
     navItem('crm-dashboard', LayoutDashboard, '/crm/dashboard'),
-    navItem('crm-leads', Target, '/crm/leads'),
   ]),
   navGroup('kep', Shield, [
     navItem('kep-certificates', Shield, '/kep/certificates'),

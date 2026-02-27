@@ -81,9 +81,9 @@ const CrmLeadListPage: React.FC = () => {
       const lower = search.toLowerCase();
       filtered = filtered.filter(
         (l) =>
-          l.number.toLowerCase().includes(lower) ||
+          (l.number ?? '').toLowerCase().includes(lower) ||
           l.name.toLowerCase().includes(lower) ||
-          l.contactName.toLowerCase().includes(lower) ||
+          (l.partnerName ?? l.contactName ?? '').toLowerCase().includes(lower) ||
           (l.companyName ?? '').toLowerCase().includes(lower),
       );
     }

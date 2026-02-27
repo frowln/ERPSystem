@@ -9093,6 +9093,9 @@ export const ru = {
   navigation: {
     groups: {
       home: 'Главная',
+      precon: 'Предварительный этап',
+      pricing: 'Ценообразование',
+      economics: 'Экономика проекта',
       projects: 'Объекты',
       pm: 'Управление объектами',
       DOCUMENTS: 'Документы',

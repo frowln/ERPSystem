@@ -9094,6 +9094,9 @@ export const en: TranslationKeys = {
   navigation: {
     groups: {
       home: 'Home',
+      precon: 'Pre-Construction',
+      pricing: 'Pricing',
+      economics: 'Project Economics',
       projects: 'Projects',
       pm: 'Project Management',
       DOCUMENTS: 'Documents',
