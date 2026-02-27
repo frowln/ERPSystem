@@ -109,20 +109,19 @@ const CrmLeadFormPage: React.FC = () => {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: CrmLeadFormData) => {
-      const parsed = crmLeadSchema.parse(data);
+    mutationFn: (data: any) => {
       return crmApi.createLead({
-        name: parsed.name,
-        partnerName: parsed.contactName,
-        companyName: parsed.companyName || undefined,
+        name: data.name,
+        partnerName: data.contactName,
+        companyName: data.companyName || undefined,
         email: data.email || undefined,
         phone: data.phone || undefined,
         source: data.source || undefined,
-        expectedRevenue: parsed.estimatedValue,
-        probability: parsed.probability,
-        priority: parsed.priority,
+        expectedRevenue: data.estimatedValue,
+        probability: data.probability,
+        priority: data.priority,
         description: data.notes || undefined,
-      });
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
@@ -135,20 +134,19 @@ const CrmLeadFormPage: React.FC = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: CrmLeadFormData) => {
-      const parsed = crmLeadSchema.parse(data);
+    mutationFn: (data: any) => {
       return crmApi.updateLead(id!, {
-        name: parsed.name,
-        partnerName: parsed.contactName,
-        companyName: parsed.companyName || undefined,
+        name: data.name,
+        partnerName: data.contactName,
+        companyName: data.companyName || undefined,
         email: data.email || undefined,
         phone: data.phone || undefined,
         source: data.source || undefined,
-        expectedRevenue: parsed.estimatedValue,
-        probability: parsed.probability,
-        priority: parsed.priority,
+        expectedRevenue: data.estimatedValue,
+        probability: data.probability,
+        priority: data.priority,
         description: data.notes || undefined,
-      });
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
