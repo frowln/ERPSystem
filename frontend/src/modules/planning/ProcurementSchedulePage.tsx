@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { financeApi } from '@/api/finance';
+import { specificationsApi } from '@/api/specifications';
+
 import { t } from '@/i18n';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -14,6 +16,13 @@ export default function ProcurementSchedulePage() {
   const { projectId } = useParams<{ projectId: string }>();
   const queryClient = useQueryClient();
 
+  const { data: specsData } = useQuery({
+    queryKey: ['project-specs', projectId],
+    queryFn: () => specificationsApi.getSpecifications({ projectId: projectId! }),
+    enabled: !!projectId,
+  });
+  const latestSpecId = specsData?.content?.[0]?.id ?? '';
+
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['procurement-schedule', projectId],
     queryFn: () => financeApi.getProcurementSchedule(projectId!),
@@ -21,7 +30,7 @@ export default function ProcurementSchedulePage() {
   });
 
   const generateMutation = useMutation({
-    mutationFn: () => financeApi.generateProcurementSchedule(projectId!, '', new Date().toISOString().slice(0, 10)),
+    mutationFn: () => financeApi.generateProcurementSchedule(projectId!, latestSpecId, new Date().toISOString().slice(0, 10)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['procurement-schedule', projectId] });
       toast.success(t('planning.procurement.generateSuccess'));
