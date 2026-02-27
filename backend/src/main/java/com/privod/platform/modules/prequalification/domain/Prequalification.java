@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
-@Table(name = "prequalifications")
+@Entity(name = "ContractorPrequalification")
+@Table(name = "contractor_prequalifications")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Prequalification extends BaseEntity {
 

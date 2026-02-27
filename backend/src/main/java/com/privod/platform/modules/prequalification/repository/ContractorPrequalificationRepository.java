@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface PrequalificationRepository extends JpaRepository<Prequalification, UUID> {
+public interface ContractorPrequalificationRepository extends JpaRepository<Prequalification, UUID> {
     Page<Prequalification> findByOrganizationIdAndDeletedFalse(UUID orgId, Pageable pageable);
     Optional<Prequalification> findByIdAndOrganizationIdAndDeletedFalse(UUID id, UUID orgId);
 }

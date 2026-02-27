@@ -4,7 +4,7 @@ import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.prequalification.domain.Prequalification;
 import com.privod.platform.modules.prequalification.domain.PrequalificationStatus;
-import com.privod.platform.modules.prequalification.repository.PrequalificationRepository;
+import com.privod.platform.modules.prequalification.repository.ContractorPrequalificationRepository;
 import com.privod.platform.modules.prequalification.web.dto.CreatePrequalificationRequest;
 import com.privod.platform.modules.prequalification.web.dto.PrequalificationResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Service @RequiredArgsConstructor @Slf4j
 public class PrequalificationService {
-    private final PrequalificationRepository repo;
+    private final ContractorPrequalificationRepository repo;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
