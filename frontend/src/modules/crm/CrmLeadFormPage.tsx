@@ -12,6 +12,7 @@ import { crmApi } from '@/api/crm';
 import { t } from '@/i18n';
 
 const crmLeadSchema = z.object({
+  name: z.string().min(1, 'Название лида обязательно').max(300),
   companyName: z.string().max(200, t('forms.common.maxChars', { count: '200' })).optional(),
   contactName: z.string().min(1, t('forms.crmLead.validation.contactNameRequired')).max(200, t('forms.common.maxChars', { count: '200' })),
   email: z
@@ -39,21 +40,17 @@ const crmLeadSchema = z.object({
     .optional()
     .transform((val) => (val ? Number(val) : undefined))
     .refine((val) => val === undefined || (val >= 0 && val <= 100), t('forms.crmLead.validation.probabilityRange')),
-  status: z.enum([ 'NEW', 'QUALIFIED', 'PROPOSITION', 'NEGOTIATION', 'WON', 'LOST'], {
-    required_error: t('forms.crmLead.validation.statusRequired'),
-  }),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
   notes: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
 });
 
 type CrmLeadFormData = z.input<typeof crmLeadSchema>;
 
-const statusOptions = [
-  { value: 'NEW', label: t('forms.crmLead.statuses.new') },
-  { value: 'QUALIFIED', label: t('forms.crmLead.statuses.qualified') },
-  { value: 'PROPOSITION', label: t('forms.crmLead.statuses.proposition') },
-  { value: 'NEGOTIATION', label: t('forms.crmLead.statuses.negotiation') },
-  { value: 'WON', label: t('forms.crmLead.statuses.won') },
-  { value: 'LOST', label: t('forms.crmLead.statuses.lost') },
+const priorityOptions = [
+  { value: 'LOW', label: 'Низкий' },
+  { value: 'MEDIUM', label: 'Средний' },
+  { value: 'HIGH', label: 'Высокий' },
+  { value: 'CRITICAL', label: 'Критический' },
 ];
 
 const sourceOptions = [
@@ -87,17 +84,19 @@ const CrmLeadFormPage: React.FC = () => {
     resolver: zodResolver(crmLeadSchema),
     defaultValues: existingLead
       ? {
+          name: existingLead.name ?? '',
           companyName: existingLead.companyName ?? '',
-          contactName: existingLead.contactName,
-          email: existingLead.contactEmail ?? '',
-          phone: existingLead.contactPhone ?? '',
+          contactName: existingLead.partnerName ?? '',
+          email: existingLead.email ?? '',
+          phone: existingLead.phone ?? '',
           source: existingLead.source ?? '',
           estimatedValue: existingLead.expectedRevenue ? String(existingLead.expectedRevenue) : '',
           probability: existingLead.probability != null ? String(existingLead.probability) : '',
-          status: existingLead.status,
+          priority: existingLead.priority ?? undefined,
           notes: existingLead.description ?? '',
         }
       : {
+          name: '',
           companyName: '',
           contactName: '',
           email: '',
@@ -105,7 +104,7 @@ const CrmLeadFormPage: React.FC = () => {
           source: '',
           estimatedValue: '',
           probability: '',
-          status: 'NEW',
+          priority: 'MEDIUM' as const,
           notes: '',
         },
   });
@@ -114,15 +113,15 @@ const CrmLeadFormPage: React.FC = () => {
     mutationFn: (data: CrmLeadFormData) => {
       const parsed = crmLeadSchema.parse(data);
       return crmApi.createLead({
-        name: parsed.companyName || parsed.contactName,
-        contactName: parsed.contactName,
+        name: parsed.name,
+        partnerName: parsed.contactName,
         companyName: parsed.companyName || undefined,
-        contactEmail: data.email || undefined,
-        contactPhone: data.phone || undefined,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
         source: data.source || undefined,
         expectedRevenue: parsed.estimatedValue,
         probability: parsed.probability,
-        status: parsed.status,
+        priority: parsed.priority,
         description: data.notes || undefined,
       });
     },
@@ -140,15 +139,15 @@ const CrmLeadFormPage: React.FC = () => {
     mutationFn: (data: CrmLeadFormData) => {
       const parsed = crmLeadSchema.parse(data);
       return crmApi.updateLead(id!, {
-        name: parsed.companyName || parsed.contactName,
-        contactName: parsed.contactName,
+        name: parsed.name,
+        partnerName: parsed.contactName,
         companyName: parsed.companyName || undefined,
-        contactEmail: data.email || undefined,
-        contactPhone: data.phone || undefined,
+        email: data.email || undefined,
+        phone: data.phone || undefined,
         source: data.source || undefined,
         expectedRevenue: parsed.estimatedValue,
         probability: parsed.probability,
-        status: parsed.status,
+        priority: parsed.priority,
         description: data.notes || undefined,
       });
     },
@@ -189,6 +188,16 @@ const CrmLeadFormPage: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl">
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">Основная информация</h2>
+          <div className="grid grid-cols-1 gap-5 mb-5">
+            <FormField label="Название лида" error={errors.name?.message} required>
+              <Input
+                placeholder="Например: ЖК Олимп Парк - Корпус 3, Генподряд"
+                hasError={!!errors.name}
+                {...register('name')}
+              />
+            </FormField>
+          </div>
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.crmLead.sectionContact')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.crmLead.labelContactName')} error={errors.contactName?.message} required>
@@ -226,12 +235,11 @@ const CrmLeadFormPage: React.FC = () => {
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.crmLead.sectionDeal')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FormField label={t('forms.crmLead.labelStatus')} error={errors.status?.message} required>
+            <FormField label="Приоритет" error={errors.priority?.message}>
               <Select
-                options={statusOptions}
-                placeholder={t('forms.crmLead.placeholderStatus')}
-                hasError={!!errors.status}
-                {...register('status')}
+                options={priorityOptions}
+                hasError={!!errors.priority}
+                {...register('priority')}
               />
             </FormField>
             <FormField label={t('forms.crmLead.labelSource')} error={errors.source?.message}>
