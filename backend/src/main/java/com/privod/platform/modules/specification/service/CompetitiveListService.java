@@ -51,6 +51,7 @@ public class CompetitiveListService {
     private final CommercialProposalRepository commercialProposalRepository;
     private final BudgetRepository budgetRepository;
     private final AuditService auditService;
+    private final com.privod.platform.modules.procurement.repository.PurchaseRequestRepository purchaseRequestRepository;
 
     @Transactional(readOnly = true)
     public Page<CompetitiveListResponse> list(UUID projectId, Pageable pageable) {
@@ -61,6 +62,33 @@ public class CompetitiveListService {
     @Transactional(readOnly = true)
     public CompetitiveListResponse getById(UUID id) {
         CompetitiveList cl = getOrThrow(id);
+        return CompetitiveListResponse.fromEntity(cl);
+    }
+
+    @Transactional
+    public CompetitiveListResponse createFromPurchaseRequest(UUID purchaseRequestId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID userId = SecurityUtils.requireCurrentUserId();
+
+        com.privod.platform.modules.procurement.domain.PurchaseRequest pr = 
+                purchaseRequestRepository.findById(purchaseRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Заявка на закупку не найдена: " + purchaseRequestId));
+
+        CompetitiveList cl = CompetitiveList.builder()
+                .organizationId(organizationId)
+                .projectId(pr.getProjectId())
+                .specificationId(pr.getSpecificationId() != null ? pr.getSpecificationId() : UUID.randomUUID()) // Fallback if no spec
+                .purchaseRequestId(purchaseRequestId)
+                .name("Тендер по заявке " + pr.getName())
+                .status(CompetitiveListStatus.DRAFT)
+                .minProposalsRequired(3)
+                .createdById(userId)
+                .build();
+
+        cl = competitiveListRepository.save(cl);
+        auditService.logCreate("CompetitiveList", cl.getId());
+
+        log.info("Competitive list created from PR: {} ({})", cl.getName(), cl.getId());
         return CompetitiveListResponse.fromEntity(cl);
     }
 

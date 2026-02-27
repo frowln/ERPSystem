@@ -364,22 +364,40 @@ const CommercialProposalDetailPage: React.FC = () => {
         </div>
       )}
 
-      <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
-        <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-          {t('commercialProposal.pushToFm.readinessTitle')}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-          <span className={checklist.needsInvoice === 0 ? 'text-green-600' : 'text-amber-600'}>
-            {t('commercialProposal.pushToFm.checkInvoices', { count: String(checklist.needsInvoice) })}
-          </span>
-          <span className={checklist.needsEstimate === 0 ? 'text-green-600' : 'text-amber-600'}>
-            {t('commercialProposal.pushToFm.checkEstimates', { count: String(checklist.needsEstimate) })}
-          </span>
-          <span className={checklist.unapproved === 0 ? 'text-green-600' : 'text-amber-600'}>
-            {t('commercialProposal.pushToFm.checkStatuses', { count: String(checklist.unapproved) })}
-          </span>
+      {checklist.needsInvoice === 0 && checklist.needsEstimate === 0 && checklist.unapproved === 0 ? (
+        <div className="mb-6 rounded-xl border border-success-200 dark:border-success-800 bg-success-50 dark:bg-success-900/20 p-4 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-success-100 dark:bg-success-900/40 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-success-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-success-700 dark:text-success-400">
+              {t('commercialProposal.pushToFm.allReady', { defaultValue: 'Всё готово к переносу в ФМ' })}
+            </p>
+            <p className="text-xs text-success-600 dark:text-success-500 mt-0.5">
+              {t('commercialProposal.pushToFm.allReadyDesc', { defaultValue: 'Все позиции заполнены и утверждены' })}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
+          <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+            {t('commercialProposal.pushToFm.readinessTitle')}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+            <span className={checklist.needsInvoice === 0 ? 'text-green-600' : 'text-amber-600'}>
+              {t('commercialProposal.pushToFm.checkInvoices', { count: String(checklist.needsInvoice) })}
+            </span>
+            <span className={checklist.needsEstimate === 0 ? 'text-green-600' : 'text-amber-600'}>
+              {t('commercialProposal.pushToFm.checkEstimates', { count: String(checklist.needsEstimate) })}
+            </span>
+            <span className={checklist.unapproved === 0 ? 'text-green-600' : 'text-amber-600'}>
+              {t('commercialProposal.pushToFm.checkStatuses', { count: String(checklist.unapproved) })}
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-4">
         <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">

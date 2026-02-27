@@ -60,12 +60,22 @@ export const estimatesApi = {
   },
 
   createEstimateFromSpec: async (data: { specificationId: string; name?: string; contractId?: string; notes?: string }): Promise<Estimate> => {
-    const response = await apiClient.post<Estimate>('/estimates/from-spec', data);
+    const response = await apiClient.post<Estimate>('/estimates/from-specification', data);
     return response.data;
   },
 
   updateEstimate: async (id: string, data: Partial<Estimate>): Promise<Estimate> => {
     const response = await apiClient.put<Estimate>(`/estimates/${id}`, data);
+    return response.data;
+  },
+
+  updateEstimateItem: async (itemId: string, data: { unitPrice?: number; unitPriceCustomer?: number; quantity?: number; name?: string; notes?: string }): Promise<EstimateItem> => {
+    const response = await apiClient.put<EstimateItem>(`/estimates/items/${itemId}`, data);
+    return response.data;
+  },
+
+  recalculateEstimate: async (id: string): Promise<Estimate> => {
+    const response = await apiClient.post<Estimate>(`/estimates/${id}/recalculate`);
     return response.data;
   },
 
@@ -187,4 +197,24 @@ export const estimatesApi = {
     const response = await apiClient.get<SummaryEstimate>(`/estimates/summary/${projectId}`);
     return response.data;
   },
+
+  // === Normative Rate Search ===
+
+  searchNormativeRates: async (query: string, source?: 'GESN' | 'FER' | 'TER'): Promise<NormativeRateResult[]> => {
+    const response = await apiClient.get<NormativeRateResult[]>('/estimates/normative-rates/search', {
+      params: { query, source },
+    });
+    return response.data;
+  },
 };
+
+export interface NormativeRateResult {
+  code: string;
+  name: string;
+  source: 'GESN' | 'FER' | 'TER';
+  unit: string;
+  basePrice2001: number;
+  laborCost: number;
+  materialCost: number;
+  equipmentCost: number;
+}

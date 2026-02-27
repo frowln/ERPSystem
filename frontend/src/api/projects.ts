@@ -9,6 +9,7 @@ import type {
   DashboardSummary,
   ProjectStatus,
   ProjectFinancialSummary,
+  ConstructionPlan,
 } from '@/types';
 
 export const projectsApi = {
@@ -64,6 +65,16 @@ export const projectsApi = {
 
   getDashboardSummary: async (): Promise<DashboardSummary> => {
     const response = await apiClient.get<DashboardSummary>('/projects/dashboard/summary');
+    return response.data;
+  },
+
+  getConstructionPlans: async (projectId: string): Promise<ConstructionPlan[]> => {
+    const response = await apiClient.get<ConstructionPlan[]>(`/projects/${projectId}/construction-plans`);
+    return response.data;
+  },
+
+  updateConstructionPlan: async (projectId: string, planId: string, data: Partial<ConstructionPlan>): Promise<ConstructionPlan> => {
+    const response = await apiClient.put<ConstructionPlan>(`/projects/${projectId}/construction-plans/${planId}`, data);
     return response.data;
   },
 };

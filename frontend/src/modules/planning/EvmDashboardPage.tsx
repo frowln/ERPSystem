@@ -33,7 +33,7 @@ function GaugeIndicator({ value, label, thresholds }: { value: number; label: st
   return (
     <div className="flex flex-col items-center">
       <div className={cn('w-20 h-20 rounded-full flex items-center justify-center ring-4', bgColor, ringColor)}>
-        <span className={cn('text-lg font-bold tabular-nums', color)}>{value.toFixed(2)}</span>
+        <span className={cn('text-lg font-bold tabular-nums', color)}>{isFinite(value) ? value.toFixed(2) : '—'}</span>
       </div>
       <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-2 text-center">{label}</p>
     </div>
@@ -60,25 +60,28 @@ const EvmDashboardPage: React.FC = () => {
 
   const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
 
-  const selectedProjectId = projectId || projectOptions[0]?.value || '1';
+  const selectedProjectId = projectId || projectOptions[0]?.value || '';
 
   const { data } = useQuery<EvmMetrics>({
     queryKey: ['evm-metrics', selectedProjectId],
     queryFn: () => planningApi.getEvmMetrics(selectedProjectId),
     enabled: !!selectedProjectId,
+    retry: false,
+    throwOnError: false,
   });
 
   const evm = data ?? defaultEvmMetrics;
   const scheduleStatus = evm.spi >= 0.95 ? 'green' : evm.spi >= 0.85 ? 'yellow' : 'red';
   const costStatus = evm.cpi >= 0.95 ? 'green' : evm.cpi >= 0.85 ? 'yellow' : 'red';
 
-  const maxVal = Math.max(...evm.sCurveData.map((d) => Math.max(d.pv, d.ev, d.ac)));
+  const sCurve = evm.sCurveData ?? [];
+  const maxVal = sCurve.length > 0 ? Math.max(...sCurve.map((d) => Math.max(d.pv, d.ev, d.ac))) : 1;
 
   return (
     <div className="animate-fade-in">
       <PageHeader
         title={t('planning.evm.title')}
-        subtitle={`${t('planning.evm.subtitleProject')}: ${evm.projectName} / ${t('planning.evm.subtitleDataDate')}: ${evm.dataDate}`}
+        subtitle={data && evm.projectName && evm.projectName !== '---' ? `${t('planning.evm.subtitleProject')}: ${evm.projectName} / ${t('planning.evm.subtitleDataDate')}: ${evm.dataDate ?? '—'}` : t('planning.evm.selectProject')}
         breadcrumbs={[
           { label: t('planning.evm.breadcrumbHome'), href: '/' },
           { label: t('planning.evm.breadcrumbPlanning') },
@@ -186,7 +189,7 @@ const EvmDashboardPage: React.FC = () => {
 
         {/* Simple bar chart */}
         <div className="flex items-end gap-1 h-48">
-          {evm.sCurveData.map((point, idx) => (
+          {sCurve.map((point, idx) => (
             <div key={idx} className="flex-1 flex items-end gap-px">
               <div
                 className="flex-1 bg-primary-200 rounded-t-sm"
@@ -207,7 +210,7 @@ const EvmDashboardPage: React.FC = () => {
           ))}
         </div>
         <div className="flex gap-1 mt-1">
-          {evm.sCurveData.map((point, idx) => (
+          {sCurve.map((point, idx) => (
             <div key={idx} className="flex-1 text-center">
               <span className="text-[10px] text-neutral-400 leading-none">{point.period.slice(0, 3)}</span>
             </div>

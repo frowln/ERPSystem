@@ -62,6 +62,14 @@ public class EvmSnapshotController {
                 .orElse(ResponseEntity.ok(ApiResponse.ok()));
     }
 
+    @GetMapping("/indicators")
+    @Operation(summary = "Получить EVM индикаторы проекта (из последнего снимка или дефолтные)")
+    public ResponseEntity<ApiResponse<EvmSnapshotResponse>> getIndicators(@RequestParam UUID projectId) {
+        return evmSnapshotService.findLatest(projectId)
+                .map(r -> ResponseEntity.ok(ApiResponse.ok(r)))
+                .orElse(ResponseEntity.ok(ApiResponse.ok()));
+    }
+
     @GetMapping("/range")
     @Operation(summary = "Получить EVM снимки проекта за период")
     public ResponseEntity<ApiResponse<List<EvmSnapshotResponse>>> getByDateRange(

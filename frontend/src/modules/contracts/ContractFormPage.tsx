@@ -34,7 +34,19 @@ const contractSchema = z.object({
   paymentDelayDays: z.string().transform((val) => Number(val)).optional(),
   guaranteePeriodMonths: z.string().transform((val) => Number(val)).optional(),
   direction: z.string().optional(),
+  procurementLaw: z.string().optional(),
+  procurementMethod: z.string().optional(),
+  tenderNumber: z.string().max(100).optional(),
+  tenderJustification: z.string().max(2000).optional(),
   notes: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
+  insuranceType: z.string().optional(),
+  insurancePolicyNumber: z.string().max(100).optional(),
+  insuranceAmount: z.string().optional(),
+  insuranceExpiryDate: z.string().optional(),
+  performanceBondNumber: z.string().max(100).optional(),
+  performanceBondAmount: z.string().optional(),
+  paymentBondNumber: z.string().max(100).optional(),
+  paymentBondAmount: z.string().optional(),
 });
 
 type ContractFormData = z.input<typeof contractSchema>;
@@ -51,6 +63,21 @@ const vatRateOptions = [
   { value: '20', label: '20%' },
   { value: '10', label: '10%' },
   { value: '0', label: '0%' },
+];
+
+const procurementLawOptions = [
+  { value: '', label: t('contracts.procurement.commercial') },
+  { value: '44-FZ', label: t('contracts.procurement.44fz') },
+  { value: '223-FZ', label: t('contracts.procurement.223fz') },
+  { value: 'COMMERCIAL', label: t('contracts.procurement.commercial') },
+];
+
+const procurementMethodOptions = [
+  { value: '', label: '—' },
+  { value: 'OPEN_TENDER', label: t('contracts.procurement.methodOpenTender') },
+  { value: 'SINGLE_SOURCE', label: t('contracts.procurement.methodSingleSource') },
+  { value: 'AUCTION', label: t('contracts.procurement.methodAuction') },
+  { value: 'REQUEST', label: t('contracts.procurement.methodRequest') },
 ];
 
 const ContractFormPage: React.FC = () => {
@@ -103,6 +130,10 @@ const ContractFormPage: React.FC = () => {
           paymentDelayDays: String(existingContract.paymentDelayDays ?? 0),
           guaranteePeriodMonths: String(existingContract.guaranteePeriodMonths ?? ''),
           direction: existingContract.direction ?? '',
+          procurementLaw: existingContract.procurementLaw ?? '',
+          procurementMethod: existingContract.procurementMethod ?? '',
+          tenderNumber: existingContract.tenderNumber ?? '',
+          tenderJustification: existingContract.tenderJustification ?? '',
           notes: existingContract.notes ?? '',
         }
       : {
@@ -122,6 +153,10 @@ const ContractFormPage: React.FC = () => {
           paymentDelayDays: '0',
           guaranteePeriodMonths: '',
           direction: '',
+          procurementLaw: '',
+          procurementMethod: '',
+          tenderNumber: '',
+          tenderJustification: '',
           notes: '',
         },
   });
@@ -319,6 +354,31 @@ const ContractFormPage: React.FC = () => {
                 {...register('direction')}
               />
             </FormField>
+            <FormField label={t('contracts.procurement.law')}>
+              <Select
+                options={procurementLawOptions}
+                {...register('procurementLaw')}
+              />
+            </FormField>
+            <FormField label={t('contracts.procurement.method')}>
+              <Select
+                options={procurementMethodOptions}
+                {...register('procurementMethod')}
+              />
+            </FormField>
+            <FormField label={t('contracts.procurement.tenderNumber')}>
+              <Input
+                placeholder="ЗК-2024-00123"
+                {...register('tenderNumber')}
+              />
+            </FormField>
+            <FormField label={t('contracts.procurement.tenderJustification')} className="sm:col-span-2">
+              <Textarea
+                placeholder={t('contracts.procurement.tenderJustification')}
+                rows={2}
+                {...register('tenderJustification')}
+              />
+            </FormField>
             <FormField label={t('forms.contract.labelPaymentTerms')} error={errors.paymentTerms?.message}>
               <Input
                 placeholder={t('forms.contract.placeholderPaymentTerms')}
@@ -370,6 +430,46 @@ const ContractFormPage: React.FC = () => {
                 hasError={!!errors.notes}
                 {...register('notes')}
               />
+            </FormField>
+          </div>
+        </section>
+
+        {/* Section: Insurance & Bonds */}
+        <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('contracts.insurance.sectionTitle')}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <FormField label={t('contracts.insurance.type')}>
+              <Select
+                options={[
+                  { value: '', label: '—' },
+                  { value: 'CMR', label: t('contracts.insurance.types.CMR') },
+                  { value: 'BUILDERS_RISK', label: t('contracts.insurance.types.BUILDERS_RISK') },
+                  { value: 'PROFESSIONAL_LIABILITY', label: t('contracts.insurance.types.PROFESSIONAL_LIABILITY') },
+                  { value: 'COMBINED', label: t('contracts.insurance.types.COMBINED') },
+                ]}
+                {...register('insuranceType')}
+              />
+            </FormField>
+            <FormField label={t('contracts.insurance.policyNumber')}>
+              <Input placeholder="ПС-2024-00001" {...register('insurancePolicyNumber')} />
+            </FormField>
+            <FormField label={t('contracts.insurance.amount')}>
+              <Input type="text" inputMode="numeric" placeholder="0" {...register('insuranceAmount')} />
+            </FormField>
+            <FormField label={t('contracts.insurance.expiryDate')}>
+              <Input type="date" {...register('insuranceExpiryDate')} />
+            </FormField>
+            <FormField label={t('contracts.insurance.performanceBondNumber')}>
+              <Input placeholder="БГ-2024-00001" {...register('performanceBondNumber')} />
+            </FormField>
+            <FormField label={t('contracts.insurance.performanceBondAmount')}>
+              <Input type="text" inputMode="numeric" placeholder="0" {...register('performanceBondAmount')} />
+            </FormField>
+            <FormField label={t('contracts.insurance.paymentBondNumber')}>
+              <Input placeholder="БГ-2024-00002" {...register('paymentBondNumber')} />
+            </FormField>
+            <FormField label={t('contracts.insurance.paymentBondAmount')}>
+              <Input type="text" inputMode="numeric" placeholder="0" {...register('paymentBondAmount')} />
             </FormField>
           </div>
         </section>

@@ -497,7 +497,7 @@ const ProjectFormPage: React.FC = () => {
           name: '',
           constructionKind: '',
           type: '',
-          status: 'DRAFT' as ProjectStatus,
+          status: 'PLANNING' as ProjectStatus,
           address: '',
           city: '',
           region: '',
@@ -551,15 +551,36 @@ const ProjectFormPage: React.FC = () => {
       if (total > 0) toast.dismiss('doc-upload');
 
       // Auto-create FM (Financial Model) for the project
+      let budgetId: string | undefined;
       try {
-        await financeApi.createBudget({
+        const budget = await financeApi.createBudget({
           name: `ФМ — ${project.name}`,
           projectId: project.id,
           plannedRevenue: 0,
           plannedCost: 0,
         } as any);
+        budgetId = budget?.id;
       } catch (err) {
         console.warn('[createProject] Auto-FM creation failed (non-fatal):', err);
+      }
+
+      // Auto-create КП (Commercial Proposal) linked to the FM
+      if (budgetId) {
+        try {
+          await financeApi.createCommercialProposal({
+            budgetId,
+            name: `КП — ${project.name}`,
+          });
+        } catch (err) {
+          console.warn('[createProject] Auto-КП creation failed (non-fatal):', err);
+        }
+      }
+
+      // Set project status to PLANNING (pre-construction phase)
+      try {
+        await projectsApi.changeStatus(project.id, 'PLANNING' as ProjectStatus);
+      } catch (err) {
+        console.warn('[createProject] Auto-status change failed (non-fatal):', err);
       }
 
       return project;

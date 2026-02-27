@@ -60,6 +60,16 @@ public class CompetitiveListController {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
+    @PostMapping("/from-purchase-request")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Создать конкурентный лист из заявки на закупку")
+    public ResponseEntity<ApiResponse<CompetitiveListResponse>> createFromPurchaseRequest(
+            @RequestParam UUID purchaseRequestId) {
+        CompetitiveListResponse response = competitiveListService.createFromPurchaseRequest(purchaseRequestId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(response));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
     @Operation(summary = "Создать конкурентный лист")

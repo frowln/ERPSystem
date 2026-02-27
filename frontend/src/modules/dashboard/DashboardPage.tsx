@@ -80,14 +80,18 @@ const DashboardPage: React.FC = () => {
           icon={<FolderKanban size={18} />}
           label={t('dashboard.activeProjects')}
           value={String(data?.activeProjects ?? 0)}
-          trend={{ direction: 'up', value: '+3', label: t('dashboard.perMonth') }}
+          trend={(data?.activeProjects ?? 0) > 0
+            ? { direction: 'up' as const, value: String(data?.activeProjects ?? 0), label: t('dashboard.perMonth') }
+            : undefined}
           loading={isLoading}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
           label={t('dashboard.onControl')}
           value={String(data?.onWatch ?? 0)}
-          trend={{ direction: 'neutral', value: '0' }}
+          trend={(data?.onWatch ?? 0) > 0
+            ? { direction: 'neutral' as const, value: String(data?.onWatch ?? 0) }
+            : undefined}
           subtitle={t('dashboard.needAttention')}
           loading={isLoading}
         />
@@ -95,7 +99,9 @@ const DashboardPage: React.FC = () => {
           icon={<Clock size={18} />}
           label={t('dashboard.overdueProjects')}
           value={String(data?.overdue ?? 0)}
-          trend={{ direction: 'down', value: '-1' }}
+          trend={(data?.overdue ?? 0) > 0
+            ? { direction: 'down' as const, value: String(data?.overdue ?? 0) }
+            : undefined}
           subtitle={t('dashboard.projectsWord')}
           loading={isLoading}
         />

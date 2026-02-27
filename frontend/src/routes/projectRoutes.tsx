@@ -81,6 +81,10 @@ const ChangeOrderDetailPage = lazy(() => import('@/modules/changeManagement/Chan
 const ChangeOrderFormPage = lazy(() => import('@/modules/changeManagement/ChangeOrderFormPage'));
 const ChangeOrderBoardPage = lazy(() => import('@/modules/changeManagement/ChangeOrderBoardPage'));
 
+// Risk Register & Pre-Construction Meeting
+const RiskRegisterPage = lazy(() => import('@/modules/projects/RiskRegisterPage'));
+const PreConstructionMeetingPage = lazy(() => import('@/modules/projects/PreConstructionMeetingPage'));
+
 // Planning
 const WbsTreePage = lazy(() => import('@/modules/planning/WbsTreePage'));
 const ScheduleBaselinePage = lazy(() => import('@/modules/planning/ScheduleBaselinePage'));
@@ -138,6 +142,8 @@ export function projectRoutes() {
       <Route path="projects/new" element={<ProjectFormPage />} />
       <Route path="projects/:id" element={<ProjectDetailPage />} />
       <Route path="projects/:id/edit" element={<ProjectFormPage />} />
+      <Route path="projects/:id/risks" element={<RiskRegisterPage />} />
+      <Route path="projects/:id/meeting" element={<PreConstructionMeetingPage />} />
 
       {/* Tasks */}
       <Route path="tasks" element={<TaskBoardPage />} />

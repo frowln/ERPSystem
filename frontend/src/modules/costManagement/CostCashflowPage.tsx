@@ -15,7 +15,11 @@ const CostCashflowPage: React.FC = () => {
     queryFn: () => costManagementApi.getCashFlow(),
   });
 
-  const cashFlow = cashFlowData ?? [];
+  const cashFlow = Array.isArray(cashFlowData)
+    ? cashFlowData
+    : Array.isArray((cashFlowData as any)?.content)
+      ? (cashFlowData as any).content
+      : [];
 
   const metrics = useMemo(() => {
     const totalPlanned = cashFlow.reduce((s, e) => s + e.planned, 0);

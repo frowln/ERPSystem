@@ -53,6 +53,8 @@ public class BudgetService {
     private final BudgetSnapshotService budgetSnapshotService;
     private final SpecItemRepository specItemRepository;
     private final AuditService auditService;
+    private final com.privod.platform.modules.planning.repository.WbsNodeRepository wbsNodeRepository;
+    private final com.privod.platform.modules.finance.repository.BudgetItemDistributionRepository distRepo;
 
     @Transactional(readOnly = true)
     public Page<BudgetResponse> listBudgets(UUID projectId, BudgetStatus status, Pageable pageable) {
@@ -333,6 +335,62 @@ public class BudgetService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         getBudgetOrThrow(budgetId, organizationId);
         return budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
+    }
+
+    @Transactional
+    public BudgetItemResponse linkToWbsNode(UUID budgetId, UUID itemId, UUID wbsNodeId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        getBudgetOrThrow(budgetId, organizationId);
+
+        BudgetItem item = budgetItemRepository.findById(itemId)
+                .filter(i -> !i.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Статья бюджета не найдена: " + itemId));
+        if (!item.getBudgetId().equals(budgetId)) {
+            throw new IllegalArgumentException("Статья не принадлежит указанному бюджету");
+        }
+
+        item.setWbsNodeId(wbsNodeId);
+        item = budgetItemRepository.save(item);
+
+        // Generate distributions based on WbsNode dates
+        com.privod.platform.modules.planning.domain.WbsNode node = 
+                wbsNodeRepository.findById(wbsNodeId)
+                .orElseThrow(() -> new EntityNotFoundException("Задача графика не найдена: " + wbsNodeId));
+
+        if (node.getPlannedStartDate() != null && node.getPlannedEndDate() != null) {
+            generateDistributions(item, node.getPlannedStartDate(), node.getPlannedEndDate());
+        }
+
+        log.info("Статья бюджета {} привязана к задаче {}", itemId, wbsNodeId);
+        return BudgetItemResponse.fromEntity(item);
+    }
+
+    private void generateDistributions(BudgetItem item, java.time.LocalDate start, java.time.LocalDate end) {
+        // Clear existing
+        distRepo.deleteAll(distRepo.findByBudgetItemId(item.getId()));
+
+        java.time.YearMonth startMonth = java.time.YearMonth.from(start);
+        java.time.YearMonth endMonth = java.time.YearMonth.from(end);
+        long monthsBetween = java.time.temporal.ChronoUnit.MONTHS.between(startMonth, endMonth) + 1;
+
+        if (monthsBetween <= 0) monthsBetween = 1;
+
+        BigDecimal amountPerMonth = item.getPlannedAmount() != null 
+            ? item.getPlannedAmount().divide(BigDecimal.valueOf(monthsBetween), 2, RoundingMode.HALF_UP)
+            : BigDecimal.ZERO;
+
+        for (int i = 0; i < monthsBetween; i++) {
+            java.time.YearMonth current = startMonth.plusMonths(i);
+            com.privod.platform.modules.finance.domain.BudgetItemDistribution dist = 
+                com.privod.platform.modules.finance.domain.BudgetItemDistribution.builder()
+                    .budgetItemId(item.getId())
+                    .periodStart(current.atDay(1))
+                    .periodEnd(current.atEndOfMonth())
+                    .periodType("MONTH")
+                    .plannedAmount(amountPerMonth)
+                    .build();
+            distRepo.save(dist);
+        }
     }
 
     @Transactional

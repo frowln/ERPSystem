@@ -30,7 +30,11 @@ const CashFlowPage: React.FC = () => {
     queryFn: () => financeApi.getCashFlow(),
   });
 
-  const cashFlow = cashFlowData ?? [];
+  const cashFlow = Array.isArray(cashFlowData)
+    ? cashFlowData
+    : Array.isArray((cashFlowData as any)?.content)
+      ? (cashFlowData as any).content
+      : [];
 
   const totals = useMemo(() => {
     const totalIncoming = cashFlow.reduce((s, e) => s + e.incoming, 0);

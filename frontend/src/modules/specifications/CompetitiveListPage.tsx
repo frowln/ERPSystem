@@ -294,20 +294,21 @@ const CompetitiveListPage: React.FC = () => {
     const decidedCount = itemSummaries.filter((s) => s.hasWinner).length;
     const coveredItems = itemSummaries.filter((s) => s.bestPrice > 0);
     const coveredPositions = coveredItems.length;
-    const totalBestPrice = coveredItems.reduce((sum, s) => sum + s.bestPrice * s.item.quantity, 0);
-    const coveredPlanned = coveredItems.reduce((sum, s) => sum + s.item.plannedAmount, 0);
-    const savings = coveredPlanned - totalBestPrice;
+    const totalBestPrice = coveredItems.reduce((sum, s) => sum + (s.bestPrice || 0) * (s.item.quantity || 0), 0);
+    const coveredPlanned = coveredItems.reduce((sum, s) => sum + (s.item.plannedAmount || 0), 0);
+    const rawSavings = coveredPlanned > 0 ? (coveredPlanned - totalBestPrice) : 0;
+    const savings = isFinite(rawSavings) ? rawSavings : 0;
     const coveragePercent = totalPositions > 0 ? (coveredPositions / totalPositions) * 100 : 0;
-    const savingsPercent = coveredPlanned > 0 ? (savings / coveredPlanned) * 100 : 0;
+    const savingsPercent = coveredPlanned > 0 ? ((savings / coveredPlanned) * 100) : 0;
     return {
       totalPositions,
       totalProposals,
       decidedCount,
       totalBestPrice,
-      savings,
+      savings: isFinite(savings) ? savings : 0,
       coveredPositions,
       coveragePercent,
-      savingsPercent,
+      savingsPercent: isFinite(savingsPercent) ? savingsPercent : 0,
     };
   }, [allItems, allEntries, itemSummaries]);
 
@@ -444,13 +445,13 @@ const CompetitiveListPage: React.FC = () => {
         />
         <MetricCard
           icon={<Award size={18} />}
-          label={t('competitiveList.detail.savings')}
-          value={formatMoneyCompact(summary.savings)}
+          label={summary.savings < 0 ? t('competitiveList.detail.overrun', { defaultValue: 'Перерасход' }) : t('competitiveList.detail.savings')}
+          value={summary.savings === 0 && summary.coveredPositions === 0 ? '—' : formatMoneyCompact(Math.abs(summary.savings))}
           subtitle={t('competitiveList.detail.savingsCoverage', {
             covered: String(summary.coveredPositions),
             total: String(summary.totalPositions),
             percent: summary.coveragePercent.toFixed(0),
-            savingsPercent: summary.savingsPercent.toFixed(1),
+            savingsPercent: Math.abs(summary.savingsPercent).toFixed(1),
           })}
         />
       </div>
@@ -641,7 +642,7 @@ const CompetitiveListPage: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                   {entry.isWinner && <Trophy size={14} className="text-warning-500 flex-shrink-0" />}
                                   <span className="font-medium text-neutral-900 dark:text-neutral-100">
-                                    {entry.vendorName || '---'}
+                                    {entry.vendorName || entry.supplierName || entry.contractorName || t('competitiveList.detail.unknownVendor', { defaultValue: 'Не указан' })}
                                   </span>
                                 </div>
                                 {entry.selectionReason && (

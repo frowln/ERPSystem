@@ -59,4 +59,9 @@ export const crmApi = {
   deleteLead: async (id: string): Promise<void> => {
     await apiClient.delete(`/v1/crm/leads/${id}`);
   },
+
+  convertToProject: async (id: string, data: { projectName: string; projectCode: string }): Promise<CrmLead> => {
+    const response = await apiClient.post<CrmLead>(`/v1/crm/leads/${id}/convert`, data);
+    return response.data;
+  },
 };

@@ -50,6 +50,7 @@ public class ProcurementService {
     private final ContractRepository contractRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final com.privod.platform.modules.specification.repository.SpecItemRepository specItemRepository;
 
     @Transactional(readOnly = true)
     public Page<PurchaseRequestListResponse> listRequests(UUID projectId, List<PurchaseRequestStatus> statuses,
@@ -122,6 +123,52 @@ public class ProcurementService {
                 .map(PurchaseRequestItemResponse::fromEntity)
                 .toList();
         return PurchaseRequestResponse.fromEntity(pr, items);
+    }
+
+    @Transactional
+    public PurchaseRequestResponse createFromSpecItems(UUID projectId, UUID specId, List<UUID> specItemIds) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        UUID requestedById = SecurityUtils.requireCurrentUserId();
+        User requestedBy = getUserOrThrow(requestedById, organizationId);
+        validateProjectTenant(projectId, organizationId);
+
+        String name = generateRequestName();
+
+        PurchaseRequest pr = PurchaseRequest.builder()
+                .organizationId(organizationId)
+                .name(name)
+                .requestDate(java.time.LocalDate.now())
+                .projectId(projectId)
+                .specificationId(specId)
+                .status(PurchaseRequestStatus.DRAFT)
+                .priority(PurchaseRequestPriority.MEDIUM)
+                .requestedById(requestedById)
+                .requestedByName(formatFullName(requestedBy.getFirstName(), requestedBy.getLastName()))
+                .build();
+
+        pr = purchaseRequestRepository.save(pr);
+        auditService.logCreate("PurchaseRequest", pr.getId());
+
+        List<PurchaseRequestItem> items = new java.util.ArrayList<>();
+        int seq = 1;
+        for (UUID specItemId : specItemIds) {
+            com.privod.platform.modules.specification.domain.SpecItem specItem = 
+                    specItemRepository.findById(specItemId)
+                    .orElseThrow(() -> new EntityNotFoundException("SpecItem not found: " + specItemId));
+
+            PurchaseRequestItem item = PurchaseRequestItem.builder()
+                    .requestId(pr.getId())
+                    .specItemId(specItemId)
+                    .sequence(seq++)
+                    .name(specItem.getName())
+                    .quantity(specItem.getQuantity())
+                    .unitOfMeasure(specItem.getUnitOfMeasure())
+                    .build();
+            items.add(purchaseRequestItemRepository.save(item));
+        }
+
+        log.info("Заявка на закупку создана из спецификации: {} ({})", pr.getName(), pr.getId());
+        return PurchaseRequestResponse.fromEntity(pr, items.stream().map(PurchaseRequestItemResponse::fromEntity).toList());
     }
 
     @Transactional

@@ -19,6 +19,7 @@ import type {
   CommercialProposalItem,
   PaginatedResponse,
   PaginationParams,
+  ValueEngineeringItem,
 } from '@/types';
 import type {
   BankTransaction,
@@ -240,6 +241,13 @@ export const financeApi = {
     return response.data;
   },
 
+  createCompetitiveListFromPR: async (purchaseRequestId: string): Promise<CompetitiveList> => {
+    const response = await apiClient.post<CompetitiveList>('/competitive-lists/from-purchase-request', null, {
+      params: { purchaseRequestId },
+    });
+    return response.data;
+  },
+
   changeCompetitiveListStatus: async (competitiveListId: string, status: string): Promise<CompetitiveList> => {
     const response = await apiClient.post<CompetitiveList>(`/competitive-lists/${competitiveListId}/status`, { status });
     return response.data;
@@ -310,6 +318,10 @@ export const financeApi = {
   getCommercialProposal: async (id: string): Promise<CommercialProposal> => {
     const response = await apiClient.get<CommercialProposal>(`/commercial-proposals/${id}`);
     return response.data;
+  },
+
+  deleteCommercialProposal: async (id: string): Promise<void> => {
+    await apiClient.delete(`/commercial-proposals/${id}`);
   },
 
   getProposalItems: async (proposalId: string): Promise<CommercialProposalItem[]> => {
@@ -428,6 +440,13 @@ export const financeApi = {
     disciplineMark?: string;
   }): Promise<BudgetItem> => {
     const response = await apiClient.post<BudgetItem>(`/budgets/${budgetId}/items`, data);
+    return response.data;
+  },
+
+  linkBudgetItemToWbs: async (budgetId: string, itemId: string, wbsNodeId: string): Promise<BudgetItem> => {
+    const response = await apiClient.post<BudgetItem>(`/budgets/${budgetId}/items/${itemId}/link-wbs`, null, {
+      params: { wbsNodeId },
+    });
     return response.data;
   },
 
@@ -655,6 +674,22 @@ export const financeApi = {
 
   generateMobilization: async (projectId: string): Promise<MobilizationSchedule> => {
     const response = await apiClient.post<MobilizationSchedule>('/mobilization-schedules/generate', { projectId });
+    return response.data;
+  },
+
+  // Value Engineering
+  getValueEngineering: async (projectId: string): Promise<ValueEngineeringItem[]> => {
+    const response = await apiClient.get<ValueEngineeringItem[]>(`/projects/${projectId}/value-engineering`);
+    return response.data;
+  },
+
+  createValueEngineering: async (projectId: string, data: Partial<ValueEngineeringItem>): Promise<ValueEngineeringItem> => {
+    const response = await apiClient.post<ValueEngineeringItem>(`/projects/${projectId}/value-engineering`, data);
+    return response.data;
+  },
+
+  updateValueEngineering: async (projectId: string, itemId: string, data: Partial<ValueEngineeringItem>): Promise<ValueEngineeringItem> => {
+    const response = await apiClient.put<ValueEngineeringItem>(`/projects/${projectId}/value-engineering/${itemId}`, data);
     return response.data;
   },
 };

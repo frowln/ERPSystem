@@ -138,6 +138,17 @@ public class BudgetController {
         return ResponseEntity.ok(ApiResponse.ok(items));
     }
 
+    @PostMapping("/{budgetId}/items/{itemId}/link-wbs")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Привязать позицию бюджета к задаче графика (WBS)")
+    public ResponseEntity<ApiResponse<BudgetItemResponse>> linkToWbsNode(
+            @PathVariable UUID budgetId,
+            @PathVariable UUID itemId,
+            @RequestParam UUID wbsNodeId) {
+        BudgetItemResponse response = budgetService.linkToWbsNode(budgetId, itemId, wbsNodeId);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
     @PostMapping("/{budgetId}/items")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
     @Operation(summary = "Add an item to a budget")

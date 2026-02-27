@@ -78,6 +78,23 @@ const EstimateNormativeView: React.FC = () => {
         ),
       },
       {
+        accessorKey: 'normativeSource',
+        header: t('estimates.normative.normativeSource'),
+        size: 80,
+        cell: ({ getValue }) => {
+          const source = getValue<string | undefined>();
+          if (!source) return <span className="text-neutral-400">—</span>;
+          const cfg: Record<string, { label: string; cls: string }> = {
+            GESN: { label: t('estimates.normative.gesn'), cls: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+            FER: { label: t('estimates.normative.fer'), cls: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+            TER: { label: t('estimates.normative.ter'), cls: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+            MANUAL: { label: t('estimates.normative.manual'), cls: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300' },
+          };
+          const c = cfg[source] ?? cfg.MANUAL;
+          return <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${c!.cls}`}>{c!.label}</span>;
+        },
+      },
+      {
         accessorKey: 'name',
         header: t('estimates.normative.colName'),
         size: 260,

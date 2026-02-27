@@ -5,7 +5,7 @@ import { ru } from 'date-fns/locale';
  * Format money in Russian style: 1 000 000,00 ₽
  */
 export function formatMoney(value: number | null | undefined): string {
-  if (value == null) return '—';
+  if (value == null || !isFinite(value)) return '—';
   return (
     new Intl.NumberFormat('ru-RU', {
       minimumFractionDigits: 2,
@@ -30,7 +30,7 @@ export function formatMoneyWhole(value: number | null | undefined): string {
  * Format money compact: 1,5 млн ₽
  */
 export function formatMoneyCompact(value: number | null | undefined): string {
-  if (value == null) return '—';
+  if (value == null || !isFinite(value)) return '—';
   if (value >= 1_000_000_000) {
     return `${(value / 1_000_000_000).toFixed(1).replace('.', ',')} млрд ₽`;
   }
@@ -47,7 +47,7 @@ export function formatMoneyCompact(value: number | null | undefined): string {
  * Format number with space separators
  */
 export function formatNumber(value: number | null | undefined): string {
-  if (value == null) return '—';
+  if (value == null || !isFinite(value)) return '—';
   return new Intl.NumberFormat('ru-RU').format(value);
 }
 
@@ -66,7 +66,7 @@ export function formatQuantity(value: number | null | undefined, decimals = 3): 
  * Format percentage
  */
 export function formatPercent(value: number | null | undefined): string {
-  if (value == null) return '—';
+  if (value == null || !isFinite(value)) return '—';
   return `${value.toFixed(1).replace('.', ',')}%`;
 }
 

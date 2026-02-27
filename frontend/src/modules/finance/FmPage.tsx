@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useCallback } from 'react';
+import { Modal } from '@/design-system/components';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as XLSX from 'xlsx';
@@ -14,6 +15,7 @@ import SnapshotCompareTable from './budgetDetail/SnapshotCompareTable';
 import BudgetSectionConfig from './components/BudgetSectionConfig';
 import AddBudgetItemModal from './budgetDetail/AddBudgetItemModal';
 import CvrView from './budgetDetail/CvrView';
+import ValueEngineeringPanel from './ValueEngineeringPanel';
 import { Camera, Download, Settings, Plus, ShieldCheck, ShieldAlert, FileSpreadsheet, Upload, AlertCircle, X, FileSignature, Wallet, SlidersHorizontal } from 'lucide-react';
 
 // ─── ЛСР xlsx parser ─────────────────────────────────────────────────────────
@@ -106,7 +108,7 @@ function parseLsrXlsx(file: File): Promise<LsrRow[]> {
   });
 }
 
-type FmTab = 'ALL' | 'WORKS' | 'MATERIALS' | 'EQUIPMENT' | 'CVR' | 'SNAPSHOTS';
+type FmTab = 'ALL' | 'WORKS' | 'MATERIALS' | 'EQUIPMENT' | 'CVR' | 'SNAPSHOTS' | 'VE';
 type ValidationMode = 'soft' | 'hard';
 
 const fmtCurrency = (v: number) =>
@@ -136,6 +138,7 @@ export default function FmPage() {
   // КП creation
   const [cpModalOpen, setCpModalOpen] = useState(false);
   const [cpName, setCpName] = useState('');
+  const [importEstimateConfirm, setImportEstimateConfirm] = useState<string | null>(null);
 
   const handleLsrFile = useCallback(async (file: File) => {
     if (!file.name.match(/\.xlsx?$/i)) {
@@ -217,7 +220,15 @@ export default function FmPage() {
     const ndvTotal = customerTotal * 0.22;
     const marginTotal = customerTotal - costTotal;
     const marginPct = customerTotal > 0 ? (marginTotal / customerTotal) * 100 : 0;
-    return { costTotal, estimateTotal, customerTotal, ndvTotal, marginTotal, marginPct };
+    let overheadTotal = 0, profitTotal = 0, contingencyTotal = 0;
+    for (const i of nonSection) {
+      const cl = (i.costPrice ?? 0) * (i.quantity ?? 1);
+      const oh = cl * ((i.overheadRate ?? 0) / 100);
+      overheadTotal += oh;
+      profitTotal += cl * ((i.profitRate ?? 0) / 100);
+      contingencyTotal += (cl + oh) * ((i.contingencyRate ?? 0) / 100);
+    }
+    return { costTotal, estimateTotal, customerTotal, ndvTotal, marginTotal, marginPct, overheadTotal, profitTotal, contingencyTotal };
   }, [items]);
 
   const marginPctColor = kpis.marginPct < 0
@@ -235,6 +246,7 @@ export default function FmPage() {
     { key: 'EQUIPMENT', label: t('finance.fm.tabEquipment') },
     { key: 'CVR', label: t('finance.fm.tabCvr') },
     { key: 'SNAPSHOTS', label: t('finance.fm.tabSnapshots') },
+    { key: 'VE', label: t('finance.valueEngineering.tabTitle') },
   ];
 
   const tableBranch = tab === 'ALL' ? 'ALL' : tab === 'WORKS' ? 'WORKS' : tab === 'EQUIPMENT' ? 'EQUIPMENT' : 'MATERIALS';
@@ -450,9 +462,7 @@ export default function FmPage() {
                 value=""
                 onChange={(e) => {
                   if (e.target.value) {
-                    if (window.confirm(t('finance.fm.confirmImportEstimate'))) {
-                      importEstimateMutation.mutate(e.target.value);
-                    }
+                    setImportEstimateConfirm(e.target.value);
                   }
                 }}
               >
@@ -492,6 +502,9 @@ export default function FmPage() {
         <KpiCard label={t('finance.fm.kpiCostPrice')} value={fmtCurrency(kpis.costTotal)} />
         <KpiCard label={t('finance.fm.kpiEstimatePrice')} value={fmtCurrency(kpis.estimateTotal)} />
         <KpiCard label={t('finance.fm.kpiCustomerPrice')} value={fmtCurrency(kpis.customerTotal)} />
+        <KpiCard label={t('finance.fm.kpiOverhead')} value={fmtCurrency(kpis.overheadTotal)} valueClass="text-orange-600 dark:text-orange-400" />
+        <KpiCard label={t('finance.fm.kpiProfit')} value={fmtCurrency(kpis.profitTotal)} valueClass="text-teal-600 dark:text-teal-400" />
+        <KpiCard label={t('finance.fm.kpiContingency')} value={fmtCurrency(kpis.contingencyTotal)} valueClass="text-amber-600 dark:text-amber-400" />
         <KpiCard label={t('finance.fm.kpiNdv')} value={fmtCurrency(kpis.ndvTotal)} valueClass="text-violet-600 dark:text-violet-400" />
         <KpiCard label={t('finance.fm.kpiMargin')} value={fmtCurrency(kpis.marginTotal)} valueClass={marginPctColor} />
         <KpiCard
@@ -565,6 +578,10 @@ export default function FmPage() {
         ) : tab === 'CVR' ? (
           <div className="flex-1 overflow-auto">
             <CvrView items={items} />
+          </div>
+        ) : tab === 'VE' ? (
+          <div className="flex-1 overflow-auto">
+            <ValueEngineeringPanel projectId={budget?.projectId ?? ''} />
           </div>
         ) : (
           <div className="flex-1 overflow-auto">
@@ -767,6 +784,44 @@ export default function FmPage() {
           </div>
         </div>
       )}
+
+      {/* ─── Confirm Import Estimate Modal ────────────────────────────────── */}
+      <Modal
+        open={!!importEstimateConfirm}
+        onClose={() => setImportEstimateConfirm(null)}
+        title={t('finance.fm.importEstimateTitle', { defaultValue: 'Импорт из сметы' })}
+        size="sm"
+        footer={
+          <>
+            <button
+              onClick={() => setImportEstimateConfirm(null)}
+              className="px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800"
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              onClick={() => {
+                if (importEstimateConfirm) {
+                  importEstimateMutation.mutate(importEstimateConfirm);
+                }
+                setImportEstimateConfirm(null);
+              }}
+              disabled={importEstimateMutation.isPending}
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
+            >
+              <Upload className="w-4 h-4" />
+              {importEstimateMutation.isPending ? t('common.saving') : t('finance.fm.importEstimateBtn', { defaultValue: 'Импортировать' })}
+            </button>
+          </>
+        }
+      >
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">
+          {t('finance.fm.confirmImportEstimateDesc', { defaultValue: 'Позиции из выбранной сметы будут добавлены в финансовую модель. Сметные цены станут основой для столбца «Сметная стоимость».' })}
+        </p>
+        <p className="mt-3 text-xs text-warning-600 dark:text-warning-400 bg-warning-50 dark:bg-warning-900/20 rounded-lg px-3 py-2">
+          {t('finance.fm.confirmImportEstimateWarning', { defaultValue: '⚠ Если позиции уже были импортированы ранее, могут возникнуть дубликаты. Проверьте текущие позиции перед импортом.' })}
+        </p>
+      </Modal>
 
       {/* ─── Create КП modal ───────────────────────────────────────────────── */}
       {cpModalOpen && (

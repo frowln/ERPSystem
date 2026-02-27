@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crmApi } from '@/api/crm';
+import toast from 'react-hot-toast';
 import {
   User,
   Calendar,
@@ -14,9 +15,12 @@ import {
   Clock,
   Activity,
   CheckCircle,
+  HardHat,
+  ExternalLink,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
+import { Modal } from '@/design-system/components/Modal';
 import {
   StatusBadge,
   crmLeadStatusColorMap,
@@ -51,6 +55,8 @@ const CrmLeadDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [convertOpen, setConvertOpen] = useState(false);
+  const [convertForm, setConvertForm] = useState({ projectName: '', projectCode: '' });
 
   const statusMutation = useMutation({
     mutationFn: ({ leadId, status }: { leadId: string; status: string }) =>
@@ -59,6 +65,24 @@ const CrmLeadDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['crm-lead', id] });
       queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
     },
+  });
+
+  const convertMutation = useMutation({
+    mutationFn: () => crmApi.convertToProject(id!, {
+      projectName: convertForm.projectName,
+      projectCode: convertForm.projectCode,
+    }),
+    onSuccess: (updatedLead) => {
+      queryClient.invalidateQueries({ queryKey: ['crm-lead', id] });
+      queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      toast.success(t('crm.detail.convertSuccess'));
+      setConvertOpen(false);
+      if (updatedLead.projectId) {
+        navigate(`/projects/${updatedLead.projectId}`);
+      }
+    },
+    onError: () => toast.error(t('crm.detail.convertError')),
   });
 
   const { data: lead, isLoading: isLeadLoading } = useQuery<CrmLead>({
@@ -320,10 +344,46 @@ const CrmLeadDetailPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Project link (if converted) */}
+          {l.projectId && (
+            <div className="bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800 p-6">
+              <h3 className="text-sm font-semibold text-success-800 dark:text-success-200 mb-3 flex items-center gap-2">
+                <HardHat size={16} />
+                {t('crm.detail.projectLinked')}
+              </h3>
+              <Button
+                variant="primary"
+                size="sm"
+                className="w-full"
+                iconLeft={<ExternalLink size={14} />}
+                onClick={() => navigate(`/projects/${l.projectId}`)}
+              >
+                {t('crm.detail.goToProject')}
+              </Button>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.actions')}</h3>
             <div className="space-y-2">
+              {l.status === 'WON' && !l.projectId && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="w-full justify-start"
+                  iconLeft={<HardHat size={14} />}
+                  onClick={() => {
+                    setConvertForm({
+                      projectName: l.name,
+                      projectCode: l.number?.replace(/^L-/, '') || '',
+                    });
+                    setConvertOpen(true);
+                  }}
+                >
+                  {t('crm.detail.convertToProject')}
+                </Button>
+              )}
               <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate(`/crm/leads/${id}/activities/new`)}>
                 {t('crm.detail.addActivity')}
               </Button>
@@ -334,6 +394,72 @@ const CrmLeadDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Convert to project modal */}
+      {convertOpen && (
+        <Modal
+          open={convertOpen}
+          onClose={() => setConvertOpen(false)}
+          title={t('crm.detail.convertModalTitle')}
+          size="md"
+          footer={
+            <>
+              <Button variant="secondary" size="sm" onClick={() => setConvertOpen(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                iconLeft={<HardHat size={14} />}
+                loading={convertMutation.isPending}
+                disabled={!convertForm.projectName.trim() || !convertForm.projectCode.trim()}
+                onClick={() => convertMutation.mutate()}
+              >
+                {t('crm.detail.convertModalSubmit')}
+              </Button>
+            </>
+          }
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {t('crm.detail.convertToProjectDesc')}
+            </p>
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                {t('crm.detail.convertModalName')}
+              </label>
+              <input
+                type="text"
+                value={convertForm.projectName}
+                onChange={(e) => setConvertForm((prev) => ({ ...prev, projectName: e.target.value }))}
+                className="w-full h-9 px-3 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                {t('crm.detail.convertModalCode')}
+              </label>
+              <input
+                type="text"
+                value={convertForm.projectCode}
+                onChange={(e) => setConvertForm((prev) => ({ ...prev, projectCode: e.target.value }))}
+                className="w-full h-9 px-3 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            {l.companyName && (
+              <div className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg text-sm">
+                <span className="text-neutral-500 dark:text-neutral-400">{t('crm.detail.company')}:</span>{' '}
+                <span className="font-medium text-neutral-800 dark:text-neutral-200">{l.companyName}</span>
+              </div>
+            )}
+            {l.expectedRevenue != null && l.expectedRevenue > 0 && (
+              <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg text-sm">
+                <span className="text-primary-600 dark:text-primary-400">{t('crm.detail.expectedRevenue')}:</span>{' '}
+                <span className="font-bold text-primary-700 dark:text-primary-300">{formatMoney(l.expectedRevenue)}</span>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

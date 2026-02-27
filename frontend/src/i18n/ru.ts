@@ -4,9 +4,8 @@
 // =============================================================================
 
 export const ru = {
-  // ---------------------------------------------------------------------------
-  // Common
-  // ---------------------------------------------------------------------------
+  '5': '5',
+  '100': '100',
   common: {
     appName: 'Привод',
     appInitials: 'ПР',
@@ -74,11 +73,43 @@ export const ru = {
     name: 'Название',
     positions: 'Позиции',
     andMore: 'и ещё {count}',
+    error: 'Ошибка',
+    mockProjects: {
+      solnechny: 'Solnechny',
+      gorizont: 'Gorizont',
+      mostVyatka: 'Most Vyatka',
+      tsentralny: 'Tsentralny'
+    },
+    pcs: 'Pcs',
+    mockVendors: {
+      stroyMontazh: 'Stroy Montazh',
+      elektroStroy: 'Elektro Stroy',
+      betonServis: 'Beton Servis',
+      proektGrupp: 'Proekt Grupp',
+      dorStroy: 'Dor Stroy',
+      metallTrade: 'Metall Trade'
+    },
+    mockContracts: {
+      dg001Short: 'Dg001 Short',
+      dg002Short: 'Dg002 Short',
+      dg003Short: 'Dg003 Short',
+      dg004Short: 'Dg004 Short',
+      dg001: 'Dg001',
+      dg002: 'Dg002',
+      dg003: 'Dg003',
+      dg004: 'Dg004'
+    },
+    status: 'Статус',
+    notSelected: 'Не selected',
+    quantity: 'Количество',
+    startDate: 'Начать Дата',
+    endDate: 'end Дата',
+    unit: 'Единица',
+    days: 'Days',
+    unitPcs: 'Единица pcs',
+    created: 'Created',
+    cancelled: 'Отменено'
   },
-
-  // ---------------------------------------------------------------------------
-  // Navigation
-  // ---------------------------------------------------------------------------
   nav: {
     dashboard: 'Главная',
     projects: 'Объекты',
@@ -130,11 +161,8 @@ export const ru = {
     mobile: 'Мобильное приложение',
     dataExchange: 'Обмен данными',
     iot: 'IoT датчики',
+    home: 'Главная'
   },
-
-  // ---------------------------------------------------------------------------
-  // Auth
-  // ---------------------------------------------------------------------------
   auth: {
     login: 'Войти',
     loginTitle: 'Вход в систему',
@@ -158,7 +186,7 @@ export const ru = {
       emailRequired: 'Введите email',
       emailInvalid: 'Некорректный формат email',
       passwordRequired: 'Введите пароль',
-      passwordMin: 'Минимум 6 символов',
+      passwordMin: 'Минимум 6 символов'
     },
     welcomeMessage: 'Добро пожаловать!',
     invalidCredentials: 'Неверный email или пароль',
@@ -179,13 +207,9 @@ export const ru = {
       budget: 'Бюджет',
       budgetValue: '12 млрд ₽',
       users: 'Пользователей',
-      uptime: 'Аптайм',
-    },
+      uptime: 'Аптайм'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Projects
-  // ---------------------------------------------------------------------------
   projects: {
     title: 'Объекты',
     createProject: 'Создать объект',
@@ -203,7 +227,17 @@ export const ru = {
     plannedEndDate: 'Плановая дата окончания',
     actualStartDate: 'Фактическая дата начала',
     actualEndDate: 'Фактическая дата окончания',
-    budget: 'Бюджет',
+    budget: {
+      noBudgets: 'Нет budgets',
+      createFirstHint: 'Создать first hint',
+      createBudget: 'Создать Бюджет',
+      totalBudgets: 'Всего budgets',
+      revenue: 'Выручка',
+      plan: 'План',
+      costs: 'Costs',
+      margin: 'Маржа',
+      open: 'Открыть'
+    },
     totalBudget: 'Общий бюджет',
     spentBudget: 'Израсходовано',
     remainingBudget: 'Остаток',
@@ -256,7 +290,7 @@ export const ru = {
       commercial: 'Коммерческое строительство',
       industrial: 'Промышленное строительство',
       infrastructure: 'Инфраструктура',
-      renovation: 'Реконструкция',
+      renovation: 'Реконструкция'
     },
     finance: {
       incomeSection: 'Доходная часть',
@@ -305,7 +339,6 @@ export const ru = {
       headerDocument: 'Документ',
       headerAmount: 'Сумма',
       noCashFlowData: 'Нет данных о финансовых операциях',
-      // ContractsBreakdownSection
       financialBreakdown: 'Финансовый разрез по договорам',
       financialBreakdownDesc: 'Доходы и расходы по договорам объекта',
       colContractItem: 'Договор / позиция',
@@ -335,7 +368,6 @@ export const ru = {
       noSupplierContracts: 'Договоров с поставщиками нет',
       total: 'Итого',
       totalExpensesByContracts: 'Итого расходы по договорам',
-      // BudgetPositionsSection
       budgetExecution: 'Исполнение бюджета',
       budgetTreeDescription: 'Позиции финансовой модели с привязкой к договорам',
       positions: 'поз.',
@@ -358,7 +390,6 @@ export const ru = {
       colContract: 'Договор',
       contract: 'Договор',
       budgetTotal: 'ИТОГО ПО БЮДЖЕТУ',
-      // MarginSummarySection
       marginCalculation: 'Расчёт маржи',
       planByContracts: 'ПЛАН ПО ДОГОВОРАМ',
       revenueGkClient: 'Выручка ГК (заказчик)',
@@ -371,14 +402,12 @@ export const ru = {
       receivablesOwedToUs: 'ДЗ (нам должны)',
       payablesWeOwe: 'КЗ (мы должны)',
       budgetPlan: 'Плановый бюджет',
-      // Contract type labels
       contractTypeGeneral: 'ГК (Генподряд)',
       contractTypeSubcontract: 'Субподряд',
       contractTypeSupply: 'Поставка',
       contractTypeService: 'Услуги',
       contractTypeDesign: 'Проектирование',
       contractTypeOther: 'Прочее',
-      // Budget cost categories
       categoryAll: 'Все',
       categoryWorks: 'Работы / СМР',
       categoryMaterials: 'Материалы',
@@ -386,13 +415,11 @@ export const ru = {
       categoryOverhead: 'Накладные',
       categoryOther: 'Прочее',
       contractsCount: 'дог.',
-      // PaymentsSection tabs
       invoicesTab: 'Счета',
       paymentsTab: 'Платежи',
       incoming: 'Входящий',
       outgoing: 'Исходящий',
       payment: 'Исходящий',
-      // Excel export
       excelReportTitle: 'Финансовый отчёт по объекту',
       excelExportDate: 'Дата выгрузки',
       excelRevenueFromClient: 'ДОХОДЫ ОТ ЗАКАЗЧИКА',
@@ -415,7 +442,7 @@ export const ru = {
       excelPaymentsForProject: 'Платежи по объекту',
       colDate: 'Дата',
       colNumber: 'Номер',
-      excelSheetFinances: 'Финансы',
+      excelSheetFinances: 'Финансы'
     },
     teamTab: {
       title: 'Команда объекта',
@@ -442,7 +469,7 @@ export const ru = {
       memberAdded: 'Участник добавлен',
       addError: 'Ошибка добавления участника',
       memberRemoved: 'Участник удалён',
-      removeError: 'Ошибка удаления участника',
+      removeError: 'Ошибка удаления участника'
     },
     documentsTab: {
       contracts: 'Договоры',
@@ -482,7 +509,7 @@ export const ru = {
       uploadSuccess: 'Документ успешно загружен',
       uploadError: 'Ошибка загрузки документа',
       titleRequired: 'Укажите название документа',
-      fileRequired: 'Выберите файл для загрузки',
+      fileRequired: 'Выберите файл для загрузки'
     },
     wizard: {
       title: 'Настройка нового объекта',
@@ -530,13 +557,146 @@ export const ru = {
       folderActsForms: 'Акты и формы',
       folderCorrespondence: 'Переписка',
       folderPhotoReports: 'Фотоотчёты',
-      folderAsBuiltDocs: 'Исполнительная документация',
+      folderAsBuiltDocs: 'Исполнительная документация'
     },
+    // -- Pre-Construction Features --
+    preConstruction: {
+      tabTitle: 'Предстроительный этап',
+    },
+    statusUpdated: 'Статус обновлён',
+    surveys: {
+      title: 'Инженерные изыскания',
+      addTitle: 'Добавить изыскание',
+      editTitle: 'Редактировать изыскание',
+      type: 'Тип изыскания',
+      contractor: 'Подрядчик',
+      contractNumber: 'Номер договора',
+      startDate: 'Дата начала',
+      endDate: 'Дата окончания',
+      resultSummary: 'Результат',
+      types: {
+        GEODETIC: 'Геодезические',
+        GEOLOGICAL: 'Геологические',
+        HYDRO: 'Гидрологические',
+        ECOLOGICAL: 'Экологические',
+        OTHER: 'Прочие',
+      },
+      statuses: {
+        PLANNED: 'Запланировано',
+        IN_PROGRESS: 'В работе',
+        COMPLETED: 'Завершено',
+        APPROVED: 'Утверждено',
+      },
+    },
+    permits: {
+      title: 'Разрешительная документация',
+      addTitle: 'Добавить разрешение',
+      editTitle: 'Редактировать разрешение',
+      permitType: 'Тип разрешения',
+      number: 'Номер',
+      issuingAuthority: 'Выдающий орган',
+      issueDate: 'Дата выдачи',
+      expiryDate: 'Срок действия',
+      types: {
+        GPZU: 'ГПЗУ',
+        EXPERTISE_PD: 'Экспертиза ПД',
+        BUILDING_PERMIT: 'Разрешение на строительство',
+        ENVIRONMENTAL: 'Экологическое заключение',
+        FIRE_SAFETY: 'Пожарная безопасность',
+        OTHER: 'Прочее',
+      },
+      statuses: {
+        NOT_STARTED: 'Не начато',
+        IN_PROGRESS: 'В работе',
+        SUBMITTED: 'Подано',
+        APPROVED: 'Утверждено',
+        REJECTED: 'Отклонено',
+        EXPIRED: 'Истекло',
+      },
+    },
+    constructionPlans: {
+      title: 'ПОС / ППР',
+      advance: 'Продвинуть',
+      types: {
+        POS: 'ПОС (Проект организации строительства)',
+        PPR: 'ППР (Проект производства работ)',
+        SITE_PLAN: 'Стройгенплан',
+      },
+      statuses: {
+        NOT_STARTED: 'Не начато',
+        DRAFT: 'Черновик',
+        REVIEW: 'На проверке',
+        APPROVED: 'Утверждено',
+      },
+    },
+    safetyChecklist: {
+      title: 'Чек-лист ТБ',
+      empty: 'Чек-лист не инициализирован',
+      initialize: 'Инициализировать',
+      required: 'Обязательно',
+      categories: {
+        PPE: 'СИЗ (средства индивидуальной защиты)',
+        SITE_SECURITY: 'Охрана площадки',
+        EMERGENCY: 'Аварийные планы',
+        TRAINING: 'Обучение и инструктажи',
+        HAZARD_ASSESSMENT: 'Оценка опасных факторов',
+        FIRE_PROTECTION: 'Пожарная защита',
+      },
+    },
+    risks: {
+      title: 'Реестр рисков',
+      subtitle: 'Управление рисками объекта',
+      addRisk: 'Добавить риск',
+      editRisk: 'Редактировать риск',
+      totalRisks: 'Всего рисков',
+      highRisks: 'Высокие риски',
+      mitigating: 'В работе',
+      closedRisks: 'Закрыто',
+      matrix: 'Матрица рисков',
+      category: 'Категория',
+      probability: 'Вероятность',
+      impact: 'Влияние',
+      score: 'Балл',
+      owner: 'Ответственный',
+      mitigation: 'Меры снижения',
+      dueDate: 'Срок',
+      categories: {
+        FINANCIAL: 'Финансовый',
+        TECHNICAL: 'Технический',
+        LEGAL: 'Юридический',
+        ENVIRONMENTAL: 'Экологический',
+        SCHEDULE: 'Сроки',
+        SAFETY: 'Безопасность',
+        OTHER: 'Прочее',
+      },
+      statuses: {
+        IDENTIFIED: 'Выявлен',
+        MITIGATING: 'В работе',
+        ACCEPTED: 'Принят',
+        CLOSED: 'Закрыт',
+      },
+    },
+    meeting: {
+      title: 'Стартовое совещание',
+      subtitle: 'Pre-construction Meeting',
+      empty: 'Стартовое совещание не создано',
+      create: 'Создать совещание',
+      info: 'Информация о совещании',
+      noLocation: 'Место не указано',
+      attendeesCount: 'Участников',
+      attendees: 'Участники',
+      addAttendee: 'Добавить участника',
+      agenda: 'Повестка',
+      addAgendaItem: 'Добавить пункт',
+      decisions: 'Решения',
+      addDecision: 'Добавить решение',
+      actionItems: 'Задачи',
+      actionDescription: 'Описание задачи',
+      actionOwner: 'Ответственный',
+      minutes: 'Протокол',
+      minutesPlaceholder: 'Введите протокол совещания...',
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Contracts
-  // ---------------------------------------------------------------------------
   counterparties: {
     title: 'Реестр контрагентов',
     subtitle: 'Заказчики, подрядчики, поставщики и другие организации',
@@ -587,12 +747,12 @@ export const ru = {
     validation: {
       nameRequired: 'Введите наименование',
       innRequired: 'Введите ИНН',
-      innFormat: 'ИНН должен содержать 10 или 12 цифр',
+      innFormat: 'ИНН должен содержать 10 или 12 цифр'
     },
     goToRegistry: 'Перейти в реестр контрагентов',
     notFound: 'Контрагент не найден',
     selectCounterparty: 'Выбрать из реестра',
-    createNew: 'Создать нового контрагента',
+    createNew: 'Создать нового контрагента'
   },
   contracts: {
     title: 'Договоры',
@@ -611,7 +771,7 @@ export const ru = {
       subcontract: 'Субподряд',
       supply: 'Поставка',
       service: 'Оказание услуг',
-      design: 'Проектирование',
+      design: 'Проектирование'
     },
     list: {
       subtitle: '{count} договоров в системе',
@@ -646,7 +806,7 @@ export const ru = {
       confirmCancelButton: 'Подтвердить отмену',
       confirmCancelCancel: 'Оставить как есть',
       demoCancelContracts: 'Отмена договоров',
-      demoCreateContract: 'Создание договора',
+      demoCreateContract: 'Создание договора'
     },
     detail: {
       defaultType: 'Договор',
@@ -706,7 +866,7 @@ export const ru = {
       payableAmount: 'Сумма к выплате',
       changeStatusTitle: 'Изменить статус договора',
       changeStatusDesc: 'Текущий статус: {status}',
-      currentStatus: 'Текущий',
+      currentStatus: 'Текущий'
     },
     board: {
       title: 'Договоры - Доска',
@@ -727,7 +887,7 @@ export const ru = {
       priorityHigh: 'Высокий',
       priorityCritical: 'Критический',
       emptyColumn: 'Нет договоров',
-      dragHint: 'Перетащите карточку сюда',
+      dragHint: 'Перетащите карточку сюда'
     },
     sign: {
       title: 'Подписание договора',
@@ -771,15 +931,59 @@ export const ru = {
       summaryRole: 'Должность:',
       summaryDate: 'Дата:',
       summaryProxy: 'Доверенность:',
-      confirmInfo: 'После подтверждения договор перейдёт в статус "Подписан" и станет действующим.',
+      confirmInfo: 'После подтверждения договор перейдёт в статус "Подписан" и станет действующим.'
     },
     direction: {
       all: 'Все',
       contractor: 'С подрядчиками',
-      client: 'С заказчиком',
+      client: 'С заказчиком'
     },
     budgetItems: {
       colCoverage: 'Покрытие',
+      linkSuccess: 'Ссылка Успешно',
+      updateSuccess: 'Успешно обновлено',
+      unlinkSuccess: 'Отвязать Успешно',
+      errorInvalidNumber: 'Ошибка Недействителен number',
+      errorNegativeValues: 'Ошибка negative values',
+      errorQuantityOrAmountRequired: 'Ошибка Количество Или Сумма Обязательное',
+      errorQuantityExceedsCoverage: 'Ошибка Количество exceeds coverage',
+      errorAmountExceedsCoverage: 'Ошибка Сумма exceeds coverage',
+      errorProjectRequired: 'Ошибка Объект Обязательное',
+      errorSelectItem: 'Ошибка Выберите item',
+      errorDuplicateInBatch: 'Ошибка Дублировать in Пакетная обработка',
+      errorBatchEmpty: 'Ошибка Пакетная обработка Пусто',
+      linkTitle: 'Ссылка Заголовок',
+      linkHint: 'Ссылка hint',
+      addToBatch: 'add to Пакетная обработка',
+      linkBatchAction: 'Ссылка Пакетная обработка action',
+      fieldItem: 'Поле item',
+      fieldItemPlaceholder: 'Поле item placeholder',
+      fieldQuantity: 'Поле Количество',
+      fieldQuantityHint: 'Поле Количество hint',
+      fieldAmount: 'Поле Сумма',
+      fieldAmountHint: 'Поле Сумма hint',
+      fieldNotes: 'Поле Примечания',
+      fieldNotesPlaceholder: 'Поле Примечания placeholder',
+      metricPlanned: 'metric Плановый',
+      metricContracted: 'Metric Contracted',
+      metricCoverage: 'Metric Coverage',
+      metricAmountCoverage: 'metric Сумма coverage',
+      noSelectableItems: 'Нет selectable items',
+      batchTitle: 'Пакетная обработка Заголовок',
+      batchEmpty: 'Пакетная обработка Пусто',
+      colName: 'Наименование',
+      colQuantity: 'Количество',
+      colAmount: 'Сумма',
+      removeFromBatch: 'remove from Пакетная обработка',
+      title: 'Название',
+      empty: 'Пусто',
+      colNotes: 'Примечания',
+      save: 'Сохранить',
+      cancel: 'Отмена',
+      edit: 'Редактировать',
+      unlinkConfirm: 'Отвязать Подтвердить',
+      unlink: 'Отвязать',
+      total: 'Всего'
     },
     fmCoverage: {
       title: 'Покрытие позиции ФМ',
@@ -791,13 +995,123 @@ export const ru = {
       warningUnderAllocated: 'Позиция не полностью покрыта договорами',
       linkedContracts: 'Привязанные договоры',
       noContracts: 'Нет привязанных договоров',
-      qty: 'Кол-во',
+      qty: 'Кол-во'
     },
+    claims: {
+      statusFiled: 'Статус filed',
+      statusUnderReview: 'Статус under review',
+      statusAccepted: 'Статус accepted',
+      statusRejected: 'Отклонено',
+      statusResolved: 'Статус resolved',
+      statusWithdrawn: 'Статус withdrawn',
+      typeDelay: 'Тип delay',
+      typeQualityDefect: 'Тип Качество Дефект',
+      typePaymentDefault: 'Тип Платёж default',
+      typeScopeChange: 'Тип scope change',
+      typeOther: 'Тип other',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      toastStatusUpdated: 'toast Статус updated',
+      toastStatusError: 'toast Статус Ошибка',
+      errorNoSubject: 'Ошибка Нет subject',
+      title: 'Название',
+      openClaims: 'Открыть claims',
+      addClaim: 'Add Claim',
+      empty: 'Пусто',
+      response: 'Ответ',
+      resolution: 'Resolution',
+      actionReview: 'Action Review',
+      actionAccept: 'Action Accept',
+      actionReject: 'action Отклонить',
+      actionResolve: 'Action Resolve',
+      modalTitle: 'modal Заголовок',
+      fieldType: 'Поле Тип',
+      fieldAmount: 'Поле Сумма',
+      fieldSubject: 'Поле subject',
+      fieldSubjectPlaceholder: 'Поле subject placeholder',
+      fieldDescription: 'Поле Описание',
+      fieldDescriptionPlaceholder: 'Поле Описание placeholder',
+      submitClaim: 'Отправить claim'
+    },
+    procurement: {
+      '44fz': '44fz',
+      '223fz': '223fz',
+      law: 'Law',
+      commercial: 'Commercial',
+      tenderNumber: 'Tender Number',
+      methodOpenTender: 'method Открыть tender',
+      methodSingleSource: 'method single Источник',
+      methodAuction: 'Method Auction',
+      methodRequest: 'method Запрос',
+      method: 'Method',
+      tenderJustification: 'Tender Justification',
+      compliancePanel: 'compliance Панель',
+      complianceHint: 'Compliance Hint',
+      docProvided: 'Doc Provided',
+      docMissing: 'Doc Missing',
+      docRequired: 'doc Обязательное'
+    },
+    insurance: {
+      sectionTitle: 'Страхование и гарантии',
+      type: 'Тип страхования',
+      types: {
+        CMR: 'Страхование СМР',
+        BUILDERS_RISK: 'Строительные риски',
+        PROFESSIONAL_LIABILITY: 'Профессиональная ответственность',
+        COMBINED: 'Комбинированное',
+      },
+      policyNumber: 'Номер полиса',
+      amount: 'Сумма страхования',
+      expiryDate: 'Срок действия полиса',
+      performanceBondNumber: 'Номер банковской гарантии исполнения',
+      performanceBondAmount: 'Сумма банковской гарантии исполнения',
+      paymentBondNumber: 'Номер гарантии оплаты',
+      paymentBondAmount: 'Сумма гарантии оплаты',
+    },
+    supplements: {
+      statusDraft: 'Черновик',
+      statusUnderReview: 'Статус under review',
+      statusApproved: 'Утверждено',
+      statusSigned: 'Статус signed',
+      statusRejected: 'Отклонено',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      toastApproved: 'toast Утверждено',
+      toastApproveError: 'toast Утвердить Ошибка',
+      toastSigned: 'Toast Signed',
+      toastSignError: 'toast sign Ошибка',
+      errorNoNumber: 'Ошибка Нет number',
+      errorNoDate: 'Ошибка Нет Дата',
+      title: 'Название',
+      totalAmountChange: 'Всего Сумма change',
+      addSupplement: 'Add Supplement',
+      empty: 'Пусто',
+      createFirst: 'Создать first',
+      supplementNumber: 'Supplement Number',
+      descriptionChanges: 'Описание changes',
+      deadlineChange: 'Deadline Change',
+      days: 'Days',
+      newTotalAmount: 'Новый Всего Сумма',
+      signedAt: 'Signed At',
+      approve: 'Утвердить',
+      sign: 'Sign',
+      modalTitle: 'modal Заголовок',
+      fieldNumber: 'Поле number',
+      fieldNumberPlaceholder: 'Поле number placeholder',
+      fieldDate: 'Поле Дата',
+      fieldReason: 'Поле reason',
+      fieldReasonPlaceholder: 'Поле reason placeholder',
+      fieldDescription: 'Поле Описание',
+      fieldDescriptionPlaceholder: 'Поле Описание placeholder',
+      fieldAmountChange: 'Поле Сумма change',
+      fieldAmountChangeHint: 'Поле Сумма change hint',
+      fieldDeadlineChange: 'Поле deadline change',
+      fieldDeadlineChangeHint: 'Поле deadline change hint',
+      fieldNewDeadline: 'Поле Новый deadline',
+      previewAfterSigning: 'Предпросмотр after signing',
+      previewAmount: 'Предпросмотр Сумма'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Finance & Cost Management
-  // ---------------------------------------------------------------------------
   finance: {
     title: 'Финансы',
     costCodes: 'Коды затрат',
@@ -844,7 +1158,7 @@ export const ru = {
       colAmount: 'Сумма',
       emptyTitle: 'Нет платежей',
       emptyDescription: 'Создайте первый платёж для начала работы',
-      footerTotal: 'Итого по отображённым:',
+      footerTotal: 'Итого по отображённым:'
     },
     paymentDetail: {
       edit: 'Редактировать',
@@ -875,7 +1189,7 @@ export const ru = {
       toastEditHint: 'Редактирование платежа доступно из формы создания',
       demoChangeStatus: 'Изменение статуса платежа',
       demoDeletePayment: 'Удаление платежа',
-      demoEditPayment: 'Редактирование платежа',
+      demoEditPayment: 'Редактирование платежа'
     },
     invoiceList: {
       title: 'Счета',
@@ -897,7 +1211,7 @@ export const ru = {
       colPaid: 'Оплачено',
       colRemaining: 'Остаток',
       emptyTitle: 'Нет счетов',
-      emptyDescription: 'Создайте первый счёт для начала работы',
+      emptyDescription: 'Создайте первый счёт для начала работы'
     },
     invoiceDetail: {
       tabDetails: 'Детали',
@@ -943,7 +1257,7 @@ export const ru = {
       toastEditHint: 'Редактирование счета доступно из формы создания',
       demoChangeStatus: 'Изменение статуса счета',
       demoDeleteInvoice: 'Удаление счета',
-      demoEditInvoice: 'Редактирование счета',
+      demoEditInvoice: 'Редактирование счета'
     },
     sections: {
       title: 'Управление разделами',
@@ -962,7 +1276,7 @@ export const ru = {
       presetIndustrial: 'Промышленное строительство',
       presetRoad: 'Дорожное строительство',
       presetEngineering: 'Инженерные сети',
-      presetConfirm: 'Текущие секции будут заменены. Продолжить?',
+      presetConfirm: 'Текущие секции будут заменены. Продолжить?'
     },
     fmList: {
       title: 'Финансовые модели',
@@ -970,7 +1284,7 @@ export const ru = {
       breadcrumb: 'Финансовые модели',
       hint: 'Нажмите на строку — откроется ФМ напрямую',
       emptyTitle: 'Нет финансовых моделей',
-      emptyDescription: 'Создайте объект — ФМ создаётся автоматически',
+      emptyDescription: 'Создайте объект — ФМ создаётся автоматически'
     },
     budgetList: {
       title: 'Бюджеты',
@@ -994,7 +1308,7 @@ export const ru = {
       colActualCost: 'Факт затраты',
       colVariance: 'Отклонение',
       emptyTitle: 'Нет бюджетов',
-      emptyDescription: 'Создайте первый бюджет для начала работы',
+      emptyDescription: 'Создайте первый бюджет для начала работы'
     },
     budgetDetail: {
       defaultSubtitle: 'Бюджет',
@@ -1023,11 +1337,12 @@ export const ru = {
       chartPlan: 'План',
       chartActual: 'Факт',
       chartCommitted: 'Обязательства',
-    flowTitle: 'Навигация по цепочке',
-    flowSpec: 'Спецификация',
-    flowCl: 'Конкурентный лист',
-    flowCp: 'Коммерческое предложение',
-    flowFm: 'Финансовая модель',
+      flowTitle: 'Навигация по цепочке',
+      flowSpec: 'Спецификация',
+      flowCl: 'Конкурентный лист',
+      flowCp: 'Коммерческое предложение',
+      flowFm: 'Финансовая модель',
+      chartTooltipUnit: 'График tooltip Единица'
     },
     fm: {
       title: 'Финансовая модель',
@@ -1056,7 +1371,7 @@ export const ru = {
         simulate: 'Рассчитать',
         currentRevenue: 'Текущая выручка',
         targetRevenue: 'Целевая выручка',
-        revenueDelta: 'Дельта выручки',
+        revenueDelta: 'Дельта выручки'
       },
       manageSections: 'Управление разделами',
       createSnapshot: 'Создать снимок',
@@ -1152,7 +1467,7 @@ export const ru = {
         colCurrent: 'Текущее',
         colDelta: 'Дельта',
         colChange: 'Изменение',
-        noChanges: 'Нет изменений',
+        noChanges: 'Нет изменений'
       },
       inlineEditHint: 'Двойной клик для редактирования',
       expandAll: 'Развернуть все',
@@ -1184,20 +1499,45 @@ export const ru = {
         estimateImported: 'Смета импортирована в финансовую модель',
         saveError: 'Ошибка сохранения',
         itemCreated: 'Позиция добавлена',
-        itemDeleted: 'Позиция удалена',
+        itemDeleted: 'Позиция удалена'
       },
+      kpiOverhead: 'Kpi Overhead',
+      kpiProfit: 'kpi Прибыль',
+      kpiContingency: 'Kpi Contingency',
+      importEstimateTitle: 'Импорт estimate Заголовок',
+      importEstimateBtn: 'Импорт estimate btn',
+      confirmImportEstimateDesc: 'Подтвердить Импорт estimate desc',
+      confirmImportEstimateWarning: 'Подтвердить Импорт estimate Предупреждение',
+      colOverheadHint: 'Col Overhead Hint',
+      colOverhead: 'Col Overhead',
+      colProfitHint: 'col Прибыль hint',
+      colProfit: 'col Прибыль',
+      colContingencyHint: 'Col Contingency Hint',
+      colContingency: 'Col Contingency'
     },
     fmDashboard: {
-      title: 'Дашборд финансовой модели', subtitle: 'Ключевые показатели и аналитика объекта',
-      breadcrumb: 'Дашборд ФМ', goToFm: 'К финансовой модели',
-      metricCost: 'Себестоимость', metricCustomer: 'Цена заказчику',
-      metricMargin: 'Маржа', metricCvr: 'CVR', metricPaid: 'Оплачено',
-      cvrProgress: 'Прогресс CVR', contracted: 'Законтрактовано', actSigned: 'Акты подписаны', paid: 'Оплачено',
+      title: 'Дашборд финансовой модели',
+      subtitle: 'Ключевые показатели и аналитика объекта',
+      breadcrumb: 'Дашборд ФМ',
+      goToFm: 'К финансовой модели',
+      metricCost: 'Себестоимость',
+      metricCustomer: 'Цена заказчику',
+      metricMargin: 'Маржа',
+      metricCvr: 'CVR',
+      metricPaid: 'Оплачено',
+      cvrProgress: 'Прогресс CVR',
+      contracted: 'Законтрактовано',
+      actSigned: 'Акты подписаны',
+      paid: 'Оплачено',
       marginBreakdown: 'Маржинальность',
       bySection: 'По разделам (план vs контракт vs факт)',
-      colName: 'Позиция', colSection: 'Раздел', colPlanned: 'План', colActual: 'Факт',
-      colOverrun: 'Перерасход', colOverrunPercent: '% перерасхода',
-      riskPositions: 'Рисковые позиции (факт > план на 10%+)',
+      colName: 'Позиция',
+      colSection: 'Раздел',
+      colPlanned: 'План',
+      colActual: 'Факт',
+      colOverrun: 'Перерасход',
+      colOverrunPercent: '% перерасхода',
+      riskPositions: 'Рисковые позиции (факт > план на 10%+)'
     },
     cashFlowPage: {
       title: 'Денежный поток',
@@ -1218,6 +1558,10 @@ export const ru = {
       colBalance: 'Сальдо',
       emptyTitle: 'Нет данных',
       emptyDescription: 'Данные о денежном потоке пока отсутствуют',
+      metricTotalIncoming: 'Всего поступлений',
+      metricTotalOutgoing: 'Всего расходов',
+      metricNetFlow: 'Чистый поток',
+      tooltipValue: '{value} млн ₽'
     },
     cashFlowChart: {
       title: 'Денежный поток - Графики',
@@ -1240,6 +1584,7 @@ export const ru = {
       colNetFlow: 'Чистый поток',
       colRunningBalance: 'Остаток',
       totalRow: 'Итого',
+      colBalance: 'Col Balance'
     },
     paymentCalendar: {
       title: 'Платёжный календарь',
@@ -1280,6 +1625,15 @@ export const ru = {
       summaryPayments: 'Платежей:',
       summaryTotal: 'Общая сумма:',
       confirmInfo: 'Платёжный календарь будет создан и доступен в разделе "Финансы - Календарь платежей".',
+      stepProject: 'step Объект',
+      modalTitle: 'modal Заголовок',
+      cancel: 'Отмена',
+      selectProject: 'Выберите объект',
+      checkApproved: 'check Утверждено',
+      checkPlanned: 'check Плановый',
+      checkAutoDistribute: 'Check Auto Distribute',
+      previewHint: 'Предпросмотр hint',
+      totalRow: 'Всего Ряд'
     },
     paymentApprove: {
       title: 'Согласование платежа',
@@ -1314,6 +1668,19 @@ export const ru = {
       commentLabel: 'Комментарий',
       commentPlaceholder: 'Комментарий к решению...',
       confirmInfo: 'Нажмите "Утвердить платёж" для согласования или "Отклонить" для отказа.',
+      modalTitle: 'modal Заголовок',
+      cancel: 'Отмена',
+      purpose: 'Purpose',
+      amountExclVat: 'Сумма excl vat',
+      vat: 'Vat',
+      totalPayable: 'Всего payable',
+      planned: 'Плановый',
+      spent: 'Spent',
+      remaining: 'Remaining',
+      summaryAmount: 'Сводка Сумма',
+      summaryBudget: 'Сводка Бюджет',
+      withinBudget: 'within Бюджет',
+      overBudget: 'over Бюджет'
     },
     cashFlowForecast: {
       title: 'Прогноз движения денежных средств',
@@ -1354,6 +1721,22 @@ export const ru = {
       summaryNo: 'Нет',
       summaryRetention: 'Гарантийное удержание:',
       confirmInfo: 'После формирования прогноз будет доступен в разделе "Движение денежных средств".',
+      toastSuccess: 'toast Успешно',
+      modalTitle: 'modal Заголовок',
+      cancel: 'Отмена',
+      generate: 'Generate',
+      periodInfo: 'period Информация',
+      growthRateLabel: 'growth rate Метка',
+      growthRateHint: 'Growth Rate Hint',
+      paymentDelayLabel: 'Платёж delay Метка',
+      paymentDelayHint: 'Платёж delay hint',
+      checkVat: 'Check Vat',
+      checkRetention: 'Check Retention',
+      retentionPercentLabel: 'retention Процент Метка',
+      reviewHint: 'Review Hint',
+      days: 'Days',
+      yes: 'Да',
+      no: 'Нет'
     },
     bankStatementMatching: {
       title: 'Сопоставление с банковской выпиской',
@@ -1390,7 +1773,7 @@ export const ru = {
       toastUploaded: 'Выписка загружена: {count} транзакций',
       toastConfirmed: 'Сопоставление подтверждено',
       toastRejected: 'Сопоставление отклонено',
-      toastManualMatched: 'Ручное сопоставление выполнено',
+      toastManualMatched: 'Ручное сопоставление выполнено'
     },
     factoringCalculator: {
       title: 'Факторинговый калькулятор',
@@ -1421,7 +1804,7 @@ export const ru = {
       colNetProceeds: 'Чистые поступления',
       emptyTitle: 'Нет данных',
       emptyDescription: 'Выберите счета и задайте параметры для расчёта',
-      toastCalculated: 'Факторинг рассчитан для {count} счетов',
+      toastCalculated: 'Факторинг рассчитан для {count} счетов'
     },
     treasuryCalendar: {
       title: 'Казначейский платёжный календарь',
@@ -1450,7 +1833,7 @@ export const ru = {
       statusOverdue: 'Просрочен',
       emptyDay: 'Нет платежей за этот день',
       emptyTitle: 'Нет платежей',
-      emptyDescription: 'За выбранный месяц нет запланированных платежей',
+      emptyDescription: 'За выбранный месяц нет запланированных платежей'
     },
     taxCalendar: {
       title: 'Налоговый календарь',
@@ -1481,7 +1864,7 @@ export const ru = {
       emptyTitle: 'Нет налоговых обязательств',
       emptyDescription: 'Налоговые дедлайны пока не загружены',
       toastNotifyOn: 'Уведомление включено для {tax}',
-      toastNotifyOff: 'Уведомление выключено для {tax}',
+      toastNotifyOff: 'Уведомление выключено для {tax}'
     },
     bankExport: {
       title: 'Экспорт платёжных поручений',
@@ -1511,7 +1894,7 @@ export const ru = {
       noPaymentsSelected: 'Выберите платежи для экспорта',
       emptyHistory: 'Нет истории экспорта',
       emptyHistoryDescription: 'Экспорт ещё не выполнялся',
-      toastExported: 'Экспорт выполнен: {fileName}',
+      toastExported: 'Экспорт выполнен: {fileName}'
     },
     executionChain: {
       title: 'Цепочка исполнения',
@@ -1544,9 +1927,8 @@ export const ru = {
       emptyTitle: 'Выберите объект',
       emptyDescription: 'Для просмотра цепочки исполнения выберите объект из списка выше',
       errorTitle: 'Ошибка загрузки',
-      errorDescription: 'Не удалось загрузить данные цепочки исполнения',
+      errorDescription: 'Не удалось загрузить данные цепочки исполнения'
     },
-    // Budget item doc statuses
     docStatusPlanned: 'Планово',
     docStatusTendered: 'На тендере',
     docStatusContracted: 'По договору',
@@ -1554,28 +1936,245 @@ export const ru = {
     docStatusActSigned: 'Акт подп.',
     docStatusInvoiced: 'Выставлен счёт',
     docStatusPaid: 'Оплачено',
-    // Budget item / position types
     unitPcs: 'шт',
     itemTypeWorks: 'Работы',
     itemTypeMaterials: 'Материалы',
     itemTypeEquipment: 'Оборудование',
     itemTypeOverhead: 'Накладные',
     itemTypeOther: 'Прочее',
-    // Budget categories
     costCategoryLabor: 'Труд',
     costCategorySubcontract: 'Субподряд',
     costCategoryOverhead: 'Накладные расходы',
-    // Price sources
     priceSourceManual: 'Вручную',
     priceSourceWorksTender: 'Тендер (работы)',
     priceSourceMaterialsTender: 'Тендер (материалы)',
     priceSourceEstimate: 'Смета',
     priceSourceInvoice: 'Счёт',
+    bdds: {
+      monthJan: 'Январь',
+      monthFeb: 'Февраль',
+      monthMar: 'Март',
+      monthApr: 'Апрель',
+      monthMay: 'Май',
+      monthJun: 'Июнь',
+      monthJul: 'Июль',
+      monthAug: 'Август',
+      monthSep: 'Сентябрь',
+      monthOct: 'Октябрь',
+      monthNov: 'Ноябрь',
+      monthDec: 'Декабрь',
+      lineFromClient: 'Line From Client',
+      lineAdvancesReceived: 'Line Advances Received',
+      lineOtherIncome: 'line other Доход',
+      lineSubcontractors: 'Line Subcontractors',
+      lineMaterialsSupply: 'Line Materials Supply',
+      lineEquipmentRental: 'Line Equipment Rental',
+      linePayroll: 'Line Payroll',
+      lineOverhead: 'Line Overhead',
+      lineVatBudget: 'line vat Бюджет',
+      taxPayments: 'Налог payments',
+      lineOtherExpenses: 'Line Other Expenses',
+      thousandRub: 'Thousand Rub',
+      colItem: 'Col Item',
+      colType: 'Тип',
+      colTotal: 'Итого',
+      excelTitle: 'excel Заголовок',
+      excelYear: 'Excel Year',
+      excelProject: 'excel Объект',
+      all: 'Все',
+      plan: 'План',
+      fact: 'Fact',
+      totalIncome: 'Всего Доход',
+      totalExpenses: 'Всего expenses',
+      netFlowPlan: 'net flow План',
+      netFlowFact: 'Net Flow Fact',
+      title: 'Название',
+      allProjects: 'Все projects',
+      subtitle: 'Подзаголовок',
+      savePlan: 'Сохранить План',
+      enterPlan: 'Введите План',
+      refresh: 'Обновить',
+      tabTable: 'tab Таблица',
+      tabChart: 'tab График',
+      clickCellHint: 'click Ячейка hint',
+      planIncome: 'План Доход',
+      factIncome: 'fact Доход',
+      planExpenses: 'План expenses',
+      now: 'Now',
+      incomeFlow: 'Доход flow',
+      expenseFlow: 'Расход flow',
+      netFlow: 'Net Flow',
+      cumulativeBalance: 'Cumulative Balance',
+      chartIncomeExpenses: 'График Доход expenses',
+      planIncomeLegend: 'План Доход legend',
+      factIncomeLegend: 'fact Доход legend',
+      planExpenseLegend: 'План Расход legend',
+      factExpenseLegend: 'fact Расход legend',
+      chartNetFlowCumulative: 'График net flow cumulative',
+      planBalanceLegend: 'План balance legend'
+    },
+    expenses: {
+      allStatuses: 'Все статусы',
+      colMark: 'col Отметить',
+      colType: 'Тип',
+      colContract: 'Договор',
+      colCounterparty: 'Col Counterparty',
+      colInvoiced: 'Col Invoiced',
+      colRemaining: 'Col Remaining',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      allProjects: 'Все projects',
+      allMarks: 'Все marks',
+      plannedAmount: 'Плановый Сумма',
+      ofPlan: 'of План',
+      actsSigned: 'Acts Signed',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    },
+    colName: 'Наименование',
+    colPlanned: 'col Плановый',
+    colContracted: 'Col Contracted',
+    colActSigned: 'Col Act Signed',
+    colPaid: 'Col Paid',
+    colStatus: 'Статус',
+    contracted: 'Contracted',
+    valueEngineering: {
+      budgetItem: 'Позиция бюджета',
+      originalSolution: 'Исходное решение',
+      proposedSolution: 'Предлагаемое решение',
+      costSaving: 'Экономия',
+      qualityImpact: 'Влияние на качество',
+      author: 'Автор',
+      totalSavings: 'Общая экономия',
+      approvedSavings: 'Утверждённая экономия',
+      implementationRate: 'Процент внедрения',
+      addItem: 'Добавить предложение',
+      editItem: 'Редактировать предложение',
+      impacts: {
+        NONE: 'Нет',
+        MINOR: 'Незначительное',
+        SIGNIFICANT: 'Существенное',
+      },
+      statuses: {
+        PROPOSED: 'Предложено',
+        APPROVED: 'Утверждено',
+        REJECTED: 'Отклонено',
+        IMPLEMENTED: 'Внедрено',
+      },
+    },
+    editSection: 'Редактировать Раздел',
+    editPosition: 'Редактировать Должность',
+    addSectionTitle: 'add Раздел Заголовок',
+    addPositionTitle: 'add Должность Заголовок',
+    isSectionHint: 'is Раздел hint',
+    fieldSectionName: 'Поле Раздел Название',
+    fieldPositionName: 'Поле Должность Название',
+    placeholderSectionName: 'placeholder Раздел Название',
+    placeholderPositionName: 'placeholder Должность Название',
+    fieldSectionMark: 'Поле Раздел Отметить',
+    notSpecified: 'Не specified',
+    fieldItemType: 'Поле item Тип',
+    fieldCategory: 'Поле Категория',
+    fieldQuantity: 'Поле Количество',
+    fieldUnit: 'Поле Единица',
+    fieldVatPercent: 'Поле vat Процент',
+    fieldCostPricePerUnit: 'Поле Стоимость Цена per Единица',
+    hintPriceFromTenderOrEstimate: 'hint Цена from tender Или estimate',
+    pickPriceFromTender: 'pick Цена from tender',
+    tender: 'Tender',
+    pickPriceFromEstimate: 'pick Цена from estimate',
+    estimate: 'Estimate',
+    pickPriceFromInvoice: 'pick Цена from Счёт',
+    invoice: 'Счёт',
+    fieldEstimatePricePerUnit: 'Поле estimate Цена per Единица',
+    hintBaseEstimatePrice: 'hint base estimate Цена',
+    colClientPrice: 'col client Цена',
+    hintCustomerPriceLimit: 'hint customer Цена limit',
+    fieldMarkupCoefficient: 'Поле markup coefficient',
+    hintMarkupCoefficient: 'Hint Markup Coefficient',
+    priceCalculation: 'Цена calculation',
+    calcCostPrice: 'calc Стоимость Цена',
+    calcEstimatePrice: 'calc estimate Цена',
+    calcCoefficient: 'Calc Coefficient',
+    calcVat: 'Calc Vat',
+    calcTotalWithVatPerUnit: 'calc Всего with vat per Единица',
+    calcPlannedAmount: 'calc Плановый Сумма',
+    fieldNote: 'Поле note',
+    addButton: 'Add Button',
+    typeShortWorks: 'Тип short works',
+    typeShortMaterials: 'Тип short materials',
+    typeShortEquipment: 'Тип short equipment',
+    typeShortOther: 'Тип short other',
+    openPriceSource: 'Открыть Цена Источник',
+    childItems: 'Child Items',
+    addSubsection: 'Add Subsection',
+    addPosition: 'add Должность',
+    editItem: 'Редактировать item',
+    deleteItem: 'Удалить item',
+    noBudgetItems: 'Нет Бюджет items',
+    createSectionsHint: 'Создать sections hint',
+    plusSection: 'plus Раздел',
+    plusPosition: 'plus Должность',
+    colUnit: 'Ед.изм.',
+    colQty: 'Col Qty',
+    colCostPrice: 'col Стоимость Цена',
+    colEstimatePrice: 'col estimate Цена',
+    colCoefficient: 'Col Coefficient',
+    colVat22: 'Col Vat22',
+    colTotalWithVat: 'col Всего with vat',
+    colSource: 'col Источник',
+    budgetTotal: 'Бюджет Всего',
+    errorNoPriceInEstimate: 'Ошибка Нет Цена in estimate',
+    searchEstimate: 'Поиск estimate',
+    estimatesNotFound: 'estimates Не found',
+    noEstimatesForProject: 'Нет estimates for Объект',
+    loadingPositions: 'Загрузка positions',
+    noPositions: 'Нет positions',
+    perUnit: 'per Единица',
+    errorNoPriceInInvoice: 'Ошибка Нет Цена in Счёт',
+    searchInvoice: 'Поиск Счёт',
+    invoicesNotFound: 'invoices Не found',
+    noInvoicesForProject: 'Нет invoices for Объект',
+    loadingInvoiceLines: 'Загрузка Счёт lines',
+    noInvoiceLines: 'Нет Счёт lines',
+    priceSource: 'Цена Источник',
+    loadingSource: 'Загрузка Источник',
+    sourceStatus: 'Источник Статус',
+    sourceAmount: 'Источник Сумма',
+    openDocument: 'Открыть Документ',
+    sourcePositions: 'Источник positions',
+    noSourceLines: 'Нет Источник lines',
+    colPricePerUnit: 'col Цена per Единица',
+    colAmount: 'Сумма',
+    matchesBudgetItem: 'matches Бюджет item',
+    errorNoPriceForItem: 'Ошибка Нет Цена for item',
+    prStatusApproved: 'pr Статус Утверждено',
+    prStatusOrdered: 'pr Статус ordered',
+    prStatusDelivered: 'pr Статус delivered',
+    prStatusInProgress: 'pr Статус in Прогресс',
+    prStatusSubmitted: 'pr Статус submitted',
+    prStatusDraft: 'pr Статус Черновик',
+    searchTender: 'Поиск tender',
+    tendersNotFound: 'tenders Не found',
+    noTendersForProject: 'Нет tenders for Объект',
+    positions: 'Positions',
+    noPositionsWithPrice: 'Нет positions with Цена',
+    budgetView: {
+      noMaterials: 'Нет materials',
+      quantity: 'Количество',
+      unit: 'Единица',
+      costPrice: 'Стоимость Цена',
+      estimatePrice: 'estimate Цена',
+      customerPrice: 'customer Цена',
+      costTotal: 'Стоимость Всего',
+      customerTotalCol: 'customer Всего col',
+      margin: 'Маржа',
+      totalMaterials: 'Всего materials',
+      noWorks: 'Нет works',
+      totalWorks: 'Всего works'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Revenue Recognition
-  // ---------------------------------------------------------------------------
   revenue: {
     title: 'Признание выручки',
     revenueContract: 'Договор выручки',
@@ -1586,14 +2185,9 @@ export const ru = {
     completionPercentage: 'Процент завершения',
     periodStart: 'Начало периода',
     periodEnd: 'Конец периода',
-    recognizedAmount: 'Признанная сумма',
+    recognizedAmount: 'Признанная сумма'
   },
-
-  // ---------------------------------------------------------------------------
-  // Specifications
-  // ---------------------------------------------------------------------------
   specifications: {
-    // -- SpecificationListPage --
     listTitle: 'Спецификации',
     listSubtitle: '{count} спецификаций в системе',
     breadcrumbHome: 'Главная',
@@ -1614,7 +2208,6 @@ export const ru = {
     searchPlaceholder: 'Поиск по названию, объекту...',
     emptyTitle: 'Нет спецификаций',
     emptyDescription: 'Создайте первую спецификацию для начала работы',
-    // -- SpecificationDetailPage --
     detailVersionSubtitle: '{project} / Версия {version}',
     detailColType: 'Тип',
     detailColName: 'Наименование',
@@ -1636,11 +2229,9 @@ export const ru = {
     flowCl: 'Конкурентный лист',
     flowCp: 'Коммерческое предложение',
     flowFm: 'Финансовая модель',
-    // -- Spec item types --
     itemTypeEquipment: 'Оборудование',
     itemTypeMaterial: 'Материалы',
     itemTypeWork: 'Работы',
-    // -- Spec item column headers (matching ПД format) --
     itemColName: 'Наименование',
     itemColBrand: 'Тип / Марка',
     itemColProductCode: 'Код оборудования',
@@ -1653,7 +2244,6 @@ export const ru = {
     colSection: 'Раздел',
     placeholderBrand: 'Тип, марка, модель...',
     placeholderManufacturer: 'Завод, производитель...',
-    // -- Spec items in form --
     itemsHintNoPrices: 'Спецификация не содержит цен — только наименование, количество и ед. измерения',
     itemsCount: 'Позиций к созданию: {count}',
     colItemType: 'Тип позиции',
@@ -1665,14 +2255,12 @@ export const ru = {
     importXlsxNoRows: 'В файле не найдено строк с позициями',
     importXlsxError: 'Ошибка при разборе файла. Убедитесь, что файл в формате xlsx/xls',
     importXlsxSuccess: 'Загружено {count} позиций из файла',
-    // -- Auto-FM --
     autoFmLabel: 'Автоматически передать позиции в финансовую модель после создания',
     autoFmNote: 'Позиции будут переданы в ФМ автоматически',
     autoFmSuccess: 'Передано {count} позиций в финансовую модель',
     autoKpLabel: 'Автоматически создать коммерческое предложение с позициями спецификации',
     autoKpNote: 'КП будет создано автоматически',
     autoKpSuccess: 'Коммерческое предложение «{name}» создано автоматически',
-    // -- Spec → FM push --
     pushToFmBtn: 'Передать в ФМ',
     pushToFmTitle: 'Передать позиции в финансовую модель',
     pushToFmDesc: 'Будут созданы {count} позиций в ФМ. Цены не переносятся — estimatePrice заполняется из сметы.',
@@ -1681,7 +2269,6 @@ export const ru = {
     pushToFmConfirm: 'Передать',
     pushToFmSuccess: 'Позиции переданы в ФМ',
     pushToFmError: 'Ошибка при передаче в ФМ',
-    // -- Import --
     importBtn: 'Импорт',
     importPdfBtn: 'Импорт из PDF',
     importTitle: 'Импорт позиций',
@@ -1726,7 +2313,6 @@ export const ru = {
     importPdfColUnit: 'Ед.',
     importPdfColQty: 'Кол.',
     importPdfColMass: 'Масса',
-    // -- AnalogRequestsPage --
     analogRequestsTitle: 'Запросы на аналоги',
     analogRequestsSubtitle: '{count} запросов',
     analogRequestsBreadcrumb: 'Запросы на аналоги',
@@ -1756,7 +2342,6 @@ export const ru = {
     analogStatusApproved: 'Утверждена',
     analogStatusRejected: 'Отклонена',
     analogStatusImplemented: 'Внедрена',
-    // -- MaterialAnalogsPage --
     materialsTitle: 'Аналоги материалов',
     materialsSubtitle: '{count} аналогов в базе',
     materialsBreadcrumb: 'Аналоги материалов',
@@ -1794,27 +2379,40 @@ export const ru = {
     materialsEmptyTitle: 'Нет аналогов материалов',
     materialsEmptyDescription: 'Добавьте первый аналог для управления заменами',
     materialsDays: 'дн.',
-    // -- SpecificationSplitView --
     splitView: {
-      title: 'Спецификация', subtitle: 'Обзор позиций и обеспеченности поставками',
-      typeMaterial: 'Материалы', typeEquipment: 'Оборудование', typeWork: 'Работы',
-      covered: 'Обеспечено', partial: 'Частично', notCovered: 'Не обеспечено',
-      totalItems: 'Всего позиций', searchPlaceholder: 'Поиск по названию, артикулу...',
+      title: 'Спецификация',
+      subtitle: 'Обзор позиций и обеспеченности поставками',
+      typeMaterial: 'Материалы',
+      typeEquipment: 'Оборудование',
+      typeWork: 'Работы',
+      covered: 'Обеспечено',
+      partial: 'Частично',
+      notCovered: 'Не обеспечено',
+      totalItems: 'Всего позиций',
+      searchPlaceholder: 'Поиск по названию, артикулу...',
       noItems: 'Нет позиций',
       selectItem: 'Выберите позицию из списка слева',
-      quantity: 'Количество', coveredQty: 'Обеспечено', bestPrice: 'Лучшая цена', bestVendor: 'Лучший поставщик',
-      coverageProgress: 'Обеспеченность', plannedAmount: 'Плановая сумма',
+      quantity: 'Количество',
+      coveredQty: 'Обеспечено',
+      bestPrice: 'Лучшая цена',
+      bestVendor: 'Лучший поставщик',
+      coverageProgress: 'Обеспеченность',
+      plannedAmount: 'Плановая сумма'
     },
-    // -- SpecSupplyDashboard --
     supplyDashboard: {
-      title: 'Обеспеченность поставками', breadcrumb: 'Обеспеченность',
-      totalPositions: 'Всего позиций', fullyCovered: 'Полностью обеспечено',
-      partiallyCovered: 'Частично обеспечено', notCoveredCount: 'Не обеспечено',
-      coverageSummary: 'Сводка обеспеченности', amountBreakdown: 'Разбивка по суммам',
-      totalAmount: 'Общая сумма', coveredAmount: 'Сумма обеспеченных', uncoveredAmount: 'Сумма не обеспеченных',
-      bySection: 'По категориям',
+      title: 'Обеспеченность поставками',
+      breadcrumb: 'Обеспеченность',
+      totalPositions: 'Всего позиций',
+      fullyCovered: 'Полностью обеспечено',
+      partiallyCovered: 'Частично обеспечено',
+      notCoveredCount: 'Не обеспечено',
+      coverageSummary: 'Сводка обеспеченности',
+      amountBreakdown: 'Разбивка по суммам',
+      totalAmount: 'Общая сумма',
+      coveredAmount: 'Сумма обеспеченных',
+      uncoveredAmount: 'Сумма не обеспеченных',
+      bySection: 'По категориям'
     },
-    // -- CRUD actions --
     deleteConfirmTitle: 'Удалить спецификацию?',
     deleteConfirmDesc: 'Все позиции будут удалены. Это действие нельзя отменить.',
     deleteSuccess: 'Спецификация удалена',
@@ -1839,11 +2437,15 @@ export const ru = {
     addItemLabelUnit: 'Ед.изм.',
     addItemLabelSection: 'Раздел',
     addItemLabelNotes: 'Примечание',
+    procurementStatusNotStarted: 'procurement Статус Не started',
+    procurementStatusInProgress: 'procurement Статус in Прогресс',
+    procurementStatusCompleted: 'procurement Статус Завершено',
+    longLead: {
+      column: 'Длительная поставка',
+      flag: 'Ранняя закупка',
+      days: 'дн.',
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Competitive List
-  // ---------------------------------------------------------------------------
   competitiveList: {
     title: 'Конкурентный лист',
     creating: 'Создаём конкурентный лист...',
@@ -1854,7 +2456,7 @@ export const ru = {
       COLLECTING: 'Сбор предложений',
       EVALUATING: 'Оценка',
       DECIDED: 'Решение принято',
-      APPROVED: 'Утверждён',
+      APPROVED: 'Утверждён'
     },
     detail: {
       title: 'Конкурентный лист',
@@ -1870,6 +2472,8 @@ export const ru = {
       proposalsOnly: '{count}',
       minShort: 'мин',
       savingsCoverage: 'Покрытие: {covered}/{total} позиций ({percent}%), экономия {savingsPercent}%',
+      overrun: 'Overrun',
+      unknownVendor: 'Unknown Vendor'
     },
     emptyTitle: 'Пока нет предложений',
     emptyDescription: 'Добавьте хотя бы одно предложение поставщика для этой позиции',
@@ -1880,7 +2484,7 @@ export const ru = {
     supply: {
       fullyCovered: 'Обеспечена',
       partiallyCovered: 'Частично',
-      notCovered: 'Не обеспечена',
+      notCovered: 'Не обеспечена'
     },
     entry: {
       vendor: 'Поставщик',
@@ -1893,19 +2497,15 @@ export const ru = {
       paymentDelay: 'Отсрочка (дни)',
       warranty: 'Гарантия (мес)',
       months: 'мес',
-      score: 'Балл',
+      score: 'Балл'
     },
     toasts: {
       entryAdded: 'Предложение добавлено',
       winnerSelected: 'Победитель выбран',
       autoRanked: 'Предложения ранжированы',
-      autoSelected: 'Лучшие цены выбраны',
-    },
+      autoSelected: 'Лучшие цены выбраны'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Commercial Proposal (КП / Себестоимость)
-  // ---------------------------------------------------------------------------
   commercialProposal: {
     listTitle: 'Коммерческие предложения',
     listSubtitle: '{count} КП в системе',
@@ -2039,26 +2639,28 @@ export const ru = {
       materials: 'Материалы',
       works: 'Работы',
       totalCost: 'Общая стоимость',
+      allReady: 'Все ready',
+      allReadyDesc: 'Все ready desc'
     },
     cl: {
       noClLinked: 'Конкурентный лист не привязан',
-      noEntries: 'Нет предложений для этой позиции',
+      noEntries: 'Нет предложений для этой позиции'
     },
     toasts: {
       clEntrySelected: 'Поставщик выбран',
-      pushedToFm: 'Данные переданы в финансовую модель',
+      pushedToFm: 'Данные переданы в финансовую модель'
     },
     applyBid: {
       btn: 'Применить победителя тендера',
       hint: 'Себестоимость будет применена из результатов тендера',
-      success: 'Себестоимость обновлена по результатам тендера',
+      success: 'Себестоимость обновлена по результатам тендера'
     },
     export: {
-      pdf: 'Экспорт PDF',
+      pdf: 'Экспорт PDF'
     },
     version: {
       create: 'Новая версия',
-      created: 'Новая версия КП создана',
+      created: 'Новая версия КП создана'
     },
     companyDetails: {
       btn: 'Реквизиты',
@@ -2069,13 +2671,16 @@ export const ru = {
       companyAddress: 'Юридический адрес',
       signatoryName: 'ФИО подписанта',
       signatoryPosition: 'Должность подписанта',
-      saved: 'Реквизиты сохранены',
+      saved: 'Реквизиты сохранены'
     },
+    emptyTitle: 'Нет данных',
+    emptyDescription: 'Данные не найдены',
+    poStatus: 'po Статус',
+    grStatus: 'gr Статус',
+    variance: 'Отклонение',
+    varianceWarning: 'Отклонение Предупреждение',
+    overrideReasonPlaceholder: 'Override Reason Placeholder'
   },
-
-  // ---------------------------------------------------------------------------
-  // Invoice Matching
-  // ---------------------------------------------------------------------------
   invoiceMatching: {
     tab: 'Сопоставление',
     threeWayTitle: 'Трёхстороннее сопоставление',
@@ -2094,11 +2699,8 @@ export const ru = {
     colConfidence: 'Совпадение',
     colDescription: 'Описание',
     noMatches: 'Совпадений не найдено',
+    link: 'Ссылка'
   },
-
-  // ---------------------------------------------------------------------------
-  // PM Workflow -- RFI, Submittals, Issues
-  // ---------------------------------------------------------------------------
   rfi: {
     title: 'Запросы на информацию (RFI)',
     createRfi: 'Создать RFI',
@@ -2111,7 +2713,6 @@ export const ru = {
     respondedDate: 'Дата ответа',
     distributionList: 'Список рассылки',
     emptyState: 'Запросы не найдены',
-    // -- RfiListPage --
     listTitle: 'Запросы информации (RFI)',
     listSubtitle: '{count} запросов в системе',
     breadcrumbHome: 'Главная',
@@ -2155,7 +2756,6 @@ export const ru = {
     deleteError: 'Ошибка при удалении',
     emptyTitle: 'Нет запросов информации',
     emptyDescription: 'Создайте первый RFI для начала работы',
-    // -- RfiDetailPage --
     detailQuestion: 'Вопрос',
     detailOfficialAnswer: 'Официальный ответ',
     detailAnsweredAt: 'Отвечено: {date}',
@@ -2181,7 +2781,6 @@ export const ru = {
     actionAnswer: 'Ответить (официально)',
     actionClose: 'Закрыть',
     statusChangeToast: 'Статус RFI: {status}',
-    // -- RfiBoardPage --
     boardTitle: 'Запросы информации (RFI) - Доска',
     boardSubtitle: '{count} запросов',
     boardBreadcrumbBoard: 'Доска',
@@ -2201,7 +2800,6 @@ export const ru = {
     boardPriorityCritical: 'Критический',
     boardNoRequests: 'Нет запросов',
     boardDragHint: 'Перетащите карточку сюда',
-    // -- RfiCreateModal --
     modalTitle: 'Новый запрос информации (RFI)',
     modalDescription: 'Заполните информацию для создания нового RFI',
     modalCancel: 'Отмена',
@@ -2222,9 +2820,8 @@ export const ru = {
     modalPriorityHigh: 'Высокий',
     modalPriorityCritical: 'Критический',
     modalCreateSuccess: 'RFI создан',
-    modalCreateError: 'Не удалось создать RFI',
+    modalCreateError: 'Не удалось создать RFI'
   },
-
   submittals: {
     title: 'Подачи',
     createSubmittal: 'Создать подачу',
@@ -2239,10 +2836,9 @@ export const ru = {
       approved: 'Утверждено',
       approvedAsNoted: 'Утверждено с замечаниями',
       reviseAndResubmit: 'Пересмотреть и повторить',
-      rejected: 'Отклонено',
+      rejected: 'Отклонено'
     },
     emptyState: 'Подачи не найдены',
-    // -- SubmittalListPage --
     listTitle: 'Субмиттелы',
     listSubtitle: '{count} субмиттелов в системе',
     breadcrumbHome: 'Главная',
@@ -2269,7 +2865,6 @@ export const ru = {
     days: 'дн.',
     emptyTitle: 'Нет субмиттелов',
     emptyDescription: 'Создайте первый субмиттел для начала работы',
-    // -- SubmittalDetailPage --
     detailLoading: 'Загрузка...',
     detailStartReview: 'Начать рассмотрение',
     detailApprove: 'Утвердить',
@@ -2286,7 +2881,7 @@ export const ru = {
     detailSubmitDate: 'Дата подачи',
     detailDueDate: 'Срок рассмотрения',
     detailRequiredDate: 'Требуемая дата',
-    detailLeadTime: 'Lead Time',
+    detailLeadTime: 'Срок поставки',
     detailSection: 'Раздел',
     detailProject: 'Объект',
     detailReviewHistoryTitle: 'История рассмотрения',
@@ -2296,7 +2891,6 @@ export const ru = {
     detailDrawingName: 'Чертеж {id}',
     detailDrawingLinked: 'Связан с субмитталом {number}',
     detailVersionSubtitle: '{project} / Версия {version}',
-    // -- SubmittalCreateModal --
     modalTitle: 'Новый субмиттел',
     modalDescription: 'Заполните информацию для создания нового субмиттела',
     modalCancel: 'Отмена',
@@ -2321,9 +2915,8 @@ export const ru = {
     modalTypeCertificate: 'Сертификат',
     modalTypeOther: 'Прочее',
     modalCreateSuccess: 'Субмиттал создан',
-    modalCreateError: 'Не удалось создать субмиттал',
+    modalCreateError: 'Не удалось создать субмиттал'
   },
-
   issues: {
     title: 'Замечания',
     createIssue: 'Создать замечание',
@@ -2336,11 +2929,27 @@ export const ru = {
     location: 'Местоположение',
     resolution: 'Решение',
     emptyState: 'Замечания не найдены',
+    list: {
+      kanbanOpen: 'kanban Открыть',
+      kanbanInProgress: 'kanban in Прогресс',
+      kanbanOnHold: 'Kanban On Hold',
+      kanbanResolved: 'Kanban Resolved',
+      kanbanClosed: 'Kanban Closed',
+      deleteSuccess: 'Успешно удалено',
+      deleteError: 'Ошибка удаления',
+      colTitle: 'col Заголовок',
+      colType: 'Тип',
+      colStatus: 'Статус',
+      colPriority: 'col Приоритет',
+      colAssignee: 'Col Assignee',
+      colDueDate: 'col due Дата',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbIssues: 'Breadcrumb Issues',
+      createHint: 'Создать hint',
+      newIssue: 'Новый Расход'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Change Management
-  // ---------------------------------------------------------------------------
   changes: {
     title: 'Управление изменениями',
     changeEvents: 'События изменений',
@@ -2355,12 +2964,8 @@ export const ru = {
     scheduleImpact: 'Влияние на сроки',
     proposedAmount: 'Предлагаемая сумма',
     approvedAmount: 'Утверждённая сумма',
-    emptyState: 'Изменения не найдены',
+    emptyState: 'Изменения не найдены'
   },
-
-  // ---------------------------------------------------------------------------
-  // Safety
-  // ---------------------------------------------------------------------------
   safety: {
     title: 'Безопасность',
     inspections: 'Проверки безопасности',
@@ -2380,11 +2985,9 @@ export const ru = {
       low: 'Низкая',
       medium: 'Средняя',
       high: 'Высокая',
-      critical: 'Критическая',
+      critical: 'Критическая'
     },
     emptyState: 'Проверки не найдены',
-
-    // -- Safety Dashboard (SafetyDashboardPage) --
     dashboard: {
       title: 'Безопасность',
       subtitle: 'Мониторинг охраны труда и техники безопасности',
@@ -2430,9 +3033,39 @@ export const ru = {
       emptyIncidents: 'Нет инцидентов',
       emptyInspections: 'Нет проверок',
       emptyViolations: 'Нет нарушений',
+      violationSeverityMinor: 'Нарушение Серьёзность minor',
+      violationSeverityModerate: 'Нарушение Серьёзность moderate',
+      violationSeveritySerious: 'Нарушение Серьёзность serious',
+      violationSeverityCritical: 'Нарушение Серьёзность Критический',
+      violationStatusClosed: 'Нарушение Статус closed',
+      columnProject: 'Объект',
+      columnInspectionType: 'column Проверка Тип',
+      columnDate: 'Дата',
+      columnInspector: 'Column Inspector',
+      columnScore: 'Column Score',
+      columnStatus: 'Статус',
+      columnFindings: 'Column Findings',
+      columnDescription: 'Описание',
+      columnSeverity: 'column Серьёзность',
+      columnResponsible: 'Ответственный',
+      columnDeadline: 'Column Deadline',
+      actionBriefing: 'Action Briefing',
+      actionReportIncident: 'action Отчёт Инцидент',
+      actionNewInspection: 'action Новый Проверка',
+      metricIncidentsThisMonth: 'Metric Incidents This Month',
+      metricComparedToPrevMonth: 'Metric Compared To Prev Month',
+      metricOpenViolations: 'metric Открыть violations',
+      metricRequireResolution: 'Metric Require Resolution',
+      metricAvgInspectionScore: 'metric avg Проверка score',
+      metricLast30Days: 'Metric Last30 Days',
+      metricCurrentStreak: 'Metric Current Streak',
+      safetyIndexTrend: 'Безопасность index trend',
+      searchPlaceholder: 'Поиск...',
+      emptyInspectionsTitle: 'Пусто inspections Заголовок',
+      emptyInspectionsDescription: 'Пусто inspections Описание',
+      emptyViolationsTitle: 'Пусто violations Заголовок',
+      emptyViolationsDescription: 'Пусто violations Описание'
     },
-
-    // -- Safety Incident List (SafetyIncidentListPage) --
     incidentList: {
       title: 'Инциденты безопасности',
       subtitleSuffix: 'инцидентов',
@@ -2487,9 +3120,22 @@ export const ru = {
       toastDeleteError: 'Ошибка при удалении инцидентов',
       emptyTitle: 'Нет инцидентов',
       emptyDescription: 'Зарегистрируйте первый инцидент безопасности',
+      filterAllLevels: 'Фильтр Все levels',
+      columnDate: 'Дата',
+      columnDescription: 'Описание',
+      columnSeverity: 'column Серьёзность',
+      columnStatus: 'Статус',
+      columnProject: 'Объект',
+      columnType: 'Тип',
+      columnInjured: 'Column Injured',
+      actionOpen: 'action Открыть',
+      subtitleCount: 'Подзаголовок Количество',
+      actionRegisterIncident: 'action register Инцидент',
+      metricActive: 'Активных',
+      metricRequireAttention: 'Metric Require Attention',
+      metricPersons: 'Metric Persons',
+      metricDaysLost: 'Metric Days Lost'
     },
-
-    // -- Safety Incident Detail (SafetyIncidentDetailPage) --
     incidentDetail: {
       breadcrumbHome: 'Главная',
       breadcrumbSafety: 'Безопасность',
@@ -2545,9 +3191,26 @@ export const ru = {
       labelWorkDaysLost: 'Потеряно рабочих дней',
       personsUnit: 'чел.',
       daysUnit: 'дн.',
+      actionStartInvestigation: 'action Начать investigation',
+      actionAssignMeasures: 'action Назначить measures',
+      actionMarkResolved: 'action Отметить resolved',
+      toastStatusChanged: 'toast Статус changed',
+      titlePrefix: 'Заголовок prefix',
+      statInjured: 'Stat Injured',
+      statDaysLost: 'Stat Days Lost',
+      statIncidentType: 'stat Инцидент Тип',
+      sectionTimeline: 'Раздел timeline',
+      sidebarDetails: 'Боковая панель Подробности',
+      labelAtTime: 'Метка at time',
+      labelType: 'Тип',
+      labelInvestigator: 'Метка investigator',
+      labelUpdated: 'Метка updated',
+      sidebarActions: 'Боковая панель actions',
+      toastActGenerated: 'Toast Act Generated',
+      actionGenerateAct: 'Action Generate Act',
+      toastManagementNotified: 'Toast Management Notified',
+      actionNotifyManagement: 'Action Notify Management'
     },
-
-    // -- Safety Incident Create Modal (SafetyIncidentCreateModal) --
     incidentCreate: {
       modalTitle: 'Регистрация инцидента',
       modalDescription: 'Зафиксируйте инцидент безопасности на объекте',
@@ -2589,9 +3252,14 @@ export const ru = {
       validationMaxChars2000: 'Максимум 2000 символов',
       toastCreated: 'Инцидент зарегистрирован',
       toastCreateError: 'Не удалось зарегистрировать инцидент',
+      toastError: 'toast Ошибка',
+      buttonCancel: 'button Отмена',
+      buttonSubmit: 'button Отправить',
+      labelIncidentType: 'Метка Инцидент Тип',
+      labelIncidentDate: 'Метка Инцидент Дата',
+      labelIncidentTime: 'Метка Инцидент time',
+      labelInjuredCount: 'Метка injured Количество'
     },
-
-    // -- Safety Inspection List (SafetyInspectionListPage) --
     inspectionList: {
       title: 'Проверки безопасности',
       subtitleSuffix: 'проверок',
@@ -2633,9 +3301,29 @@ export const ru = {
       ratingCritical: 'Критично',
       emptyTitle: 'Нет проверок безопасности',
       emptyDescription: 'Создайте первую проверку безопасности',
+      statusFailed: 'Ошибка',
+      typeFollowUp: 'Тип follow up',
+      typePreWork: 'Тип pre Работа',
+      ratingNeedsImprovement: 'Rating Needs Improvement',
+      ratingUnsatisfactory: 'Rating Unsatisfactory',
+      filterAllStatuses: 'Фильтр Все statuses',
+      columnDate: 'Дата',
+      columnProjectLocation: 'column Объект Локация',
+      columnType: 'Тип',
+      columnStatus: 'Статус',
+      columnRating: 'Column Rating',
+      columnScore: 'Column Score',
+      columnInspector: 'Column Inspector',
+      columnViolations: 'Column Violations',
+      actionOpen: 'action Открыть',
+      subtitleCount: 'Подзаголовок Количество',
+      tabFailed: 'Tab Failed',
+      metricAvgScore: 'Metric Avg Score',
+      metricViolations: 'Metric Violations',
+      metricRequireAttention: 'Metric Require Attention',
+      metricCritical: 'metric Критический',
+      metricNone: 'metric Нет'
     },
-
-    // -- Safety Inspection Detail (SafetyInspectionDetailPage) --
     inspectionDetail: {
       breadcrumbHome: 'Главная',
       breadcrumbSafety: 'Безопасность',
@@ -2685,9 +3373,28 @@ export const ru = {
       labelCreatedAt: 'Создано',
       labelRating: 'Оценка',
       labelScore: 'Балл',
+      statusFailed: 'Ошибка',
+      ratingNeedsImprovement: 'Rating Needs Improvement',
+      ratingUnsatisfactory: 'Rating Unsatisfactory',
+      typeFollowUp: 'Тип follow up',
+      typePreWork: 'Тип pre Работа',
+      severityLow: 'Серьёзность Низкий',
+      severityMedium: 'Серьёзность Средний',
+      severityHigh: 'Серьёзность Высокий',
+      findingStatusOpen: 'Замечание Статус Открыть',
+      findingStatusInProgress: 'Замечание Статус in Прогресс',
+      findingStatusResolved: 'Замечание Статус resolved',
+      titlePrefix: 'Заголовок prefix',
+      sectionResult: 'Раздел result',
+      statFindings: 'Stat Findings',
+      statViolations: 'Stat Violations',
+      statRecommendations: 'Stat Recommendations',
+      sectionCorrectiveActions: 'Раздел corrective actions',
+      sidebarDetails: 'Боковая панель Подробности',
+      labelInspectionDate: 'Метка Проверка Дата',
+      labelLocation: 'Метка Локация',
+      labelNextInspection: 'Метка Далее Проверка'
     },
-
-    // -- Safety Violation List (SafetyViolationListPage) --
     violationList: {
       title: 'Нарушения ТБ',
       subtitleSuffix: 'нарушений',
@@ -2719,9 +3426,27 @@ export const ru = {
       statusOverdue: 'Просрочено',
       emptyTitle: 'Нет нарушений',
       emptyDescription: 'Нарушения техники безопасности не найдены',
+      statusClosed: 'Статус closed',
+      severityLow: 'Серьёзность Низкий',
+      severityMedium: 'Серьёзность Средний',
+      severityHigh: 'Серьёзность Высокий',
+      severityCritical: 'Серьёзность Критический',
+      filterAllLevels: 'Фильтр Все levels',
+      columnDescription: 'Описание',
+      columnSeverity: 'column Серьёзность',
+      columnStatus: 'Статус',
+      columnProject: 'Объект',
+      columnResponsible: 'Ответственный',
+      columnDeadline: 'Column Deadline',
+      columnDetected: 'Column Detected',
+      subtitleCount: 'Подзаголовок Количество',
+      tabClosed: 'Tab Closed',
+      metricRequireResolution: 'Metric Require Resolution',
+      metricUrgent: 'Metric Urgent',
+      metricNone: 'metric Нет',
+      metricCriticalActive: 'metric Критический Активный',
+      metricCritical: 'metric Критический'
     },
-
-    // -- Safety Board (SafetyBoardPage) --
     board: {
       title: 'Инциденты безопасности - Доска',
       subtitleSuffix: 'инцидентов',
@@ -2744,9 +3469,18 @@ export const ru = {
       severityFatal: 'Фатальный',
       emptyColumn: 'Нет инцидентов',
       emptyColumnHint: 'Перетащите карточку сюда',
+      columnReported: 'Column Reported',
+      columnInvestigating: 'Column Investigating',
+      columnResolved: 'Column Resolved',
+      columnClosed: 'Column Closed',
+      severityLow: 'Серьёзность Низкий',
+      severityNormal: 'Серьёзность normal',
+      severityHigh: 'Серьёзность Высокий',
+      subtitleCount: 'Подзаголовок Количество',
+      actionFilters: 'Action Filters',
+      actionReport: 'action Отчёт',
+      actionReset: 'action Сбросить'
     },
-
-    // -- Incident Investigate Wizard (IncidentInvestigateWizard) --
     investigateWizard: {
       title: 'Расследование инцидента',
       description: 'Проведите расследование и определите корневые причины',
@@ -2783,8 +3517,6 @@ export const ru = {
       summaryActionsCount: 'Корректирующих действий',
       summaryStatus: 'Статус инцидента будет обновлён',
       toastSuccess: 'Расследование завершено',
-
-      // Keys used by the refactored IncidentInvestigateWizard component
       modalTitle: 'Расследование инцидента',
       buttonCancel: 'Отмена',
       buttonBack: 'Назад',
@@ -2832,10 +3564,8 @@ export const ru = {
       summaryRootCauses: 'Корневые причины',
       summaryCorrectiveActions: 'Корректирующие действия',
       completionWarning: 'После завершения расследования статус инцидента будет обновлён. Убедитесь, что все данные заполнены корректно.',
-      toastCompleted: 'Расследование завершено для инцидента',
+      toastCompleted: 'Расследование завершено для инцидента'
     },
-
-    // -- Safety Metrics Dashboard (SafetyMetricsDashboard) --
     metrics: {
       title: 'Показатели безопасности',
       subtitle: 'LTIR, TRIR и другие ключевые метрики',
@@ -2879,10 +3609,8 @@ export const ru = {
       monthlyBreakdownTitle: 'Помесячная разбивка',
       colMonth: 'Месяц',
       colTargetLtir: 'План LTIR',
-      colTargetTrir: 'План TRIR',
+      colTargetTrir: 'План TRIR'
     },
-
-    // -- Safety Training Journal (SafetyTrainingJournalPage) --
     trainingJournal: {
       title: 'Журнал инструктажей',
       subtitle: 'Реестр инструктажей по охране труда',
@@ -2930,10 +3658,8 @@ export const ru = {
       toastCreated: 'Инструктаж зарегистрирован',
       toastCreateError: 'Не удалось зарегистрировать инструктаж',
       emptyTitle: 'Нет записей',
-      emptyDescription: 'Зарегистрируйте первый инструктаж',
+      emptyDescription: 'Зарегистрируйте первый инструктаж'
     },
-
-    // -- PPE Management (PpeManagementPage) --
     ppe: {
       title: 'Средства индивидуальной защиты',
       subtitle: 'Учёт и выдача СИЗ',
@@ -3009,10 +3735,8 @@ export const ru = {
       expirationAlertTitle: 'Предупреждения о сроке годности СИЗ',
       expiredOn: 'Срок истёк {date}',
       expiresOn: 'Истекает {date}',
-      andMore: '...и ещё {count}',
+      andMore: '...и ещё {count}'
     },
-
-    // -- SOUT Cards (SoutCardPage) --
     sout: {
       title: 'Карты СОУТ',
       subtitle: 'Специальная оценка условий труда',
@@ -3066,10 +3790,8 @@ export const ru = {
       labelExpiryDate: 'Действует до',
       btnBack: 'К списку',
       emptyTitle: 'Нет карт СОУТ',
-      emptyDescription: 'Карты специальной оценки условий труда не найдены',
+      emptyDescription: 'Карты специальной оценки условий труда не найдены'
     },
-
-    // -- Accident Act N-1 (AccidentActN1Page) --
     accidentAct: {
       title: 'Акты о несчастных случаях (Н-1)',
       subtitle: 'Расследование несчастных случаев на производстве',
@@ -3122,39 +3844,122 @@ export const ru = {
       toastStatusUpdated: 'Статус акта обновлён',
       toastStatusError: 'Не удалось обновить статус',
       emptyTitle: 'Нет актов Н-1',
-      emptyDescription: 'Создайте первый акт расследования несчастного случая',
+      emptyDescription: 'Создайте первый акт расследования несчастного случая'
     },
+    training: {
+      statusPlanned: 'Статус Плановый',
+      statusInProgress: 'Статус in Прогресс',
+      statusCompleted: 'Завершено',
+      statusCancelled: 'Отменено',
+      typeInitial: 'Тип initial',
+      typePrimary: 'Тип primary',
+      typePeriodic: 'Тип periodic',
+      typeUnscheduled: 'Тип unscheduled',
+      typeSpecial: 'Тип special',
+      detail: {
+        toastCompleted: 'toast Завершено',
+        toastCompleteError: 'toast complete Ошибка',
+        toastCancelled: 'toast Отменено',
+        toastCancelError: 'toast Отмена Ошибка',
+        toastDeleted: 'Toast Deleted',
+        toastDeleteError: 'toast Удалить Ошибка',
+        actionComplete: 'Action Complete',
+        actionCancel: 'action Отмена',
+        sectionTopics: 'Раздел topics',
+        sectionParticipants: 'Раздел participants',
+        participantsUnit: 'participants Единица',
+        noParticipants: 'Нет participants',
+        completedTitle: 'Завершено Заголовок',
+        nextScheduled: 'Далее scheduled',
+        labelType: 'Тип',
+        labelDate: 'Дата',
+        labelInstructor: 'Метка instructor',
+        labelParticipantCount: 'Метка participant Количество',
+        labelDuration: 'Метка Длительность',
+        labelGost: 'Метка gost',
+        gostPrefix: 'Gost Prefix',
+        labelCreated: 'Метка created',
+        confirmDeleteTitle: 'Подтвердить Удалить Заголовок',
+        confirmDeleteDescription: 'Подтвердить Удалить Описание',
+        confirmDeleteConfirm: 'Подтвердить Удалить Подтвердить'
+      },
+      breadcrumbTrainings: 'Breadcrumb Trainings',
+      durationMinutes: 'Длительность Минут',
+      form: {
+        validationTitleRequired: 'validation Заголовок Обязательное',
+        validationTypeRequired: 'validation Тип Обязательное',
+        validationDateRequired: 'validation Дата Обязательное',
+        toastCreated: 'Toast Created',
+        toastCreateError: 'toast Создать Ошибка',
+        toastUpdated: 'Toast Updated',
+        toastUpdateError: 'toast Обновить Ошибка',
+        editTitle: 'Редактировать Заголовок',
+        createTitle: 'Создать Заголовок',
+        createSubtitle: 'Создать Подзаголовок',
+        labelTitle: 'Метка Заголовок',
+        placeholderTitle: 'placeholder Заголовок',
+        labelType: 'Тип',
+        placeholderType: 'placeholder Тип',
+        labelDate: 'Дата',
+        labelProject: 'Объект',
+        placeholderProject: 'placeholder Объект',
+        labelDuration: 'Метка Длительность',
+        placeholderDuration: 'placeholder Длительность',
+        sectionInstructor: 'Раздел instructor',
+        labelInstructor: 'Метка instructor',
+        placeholderInstructor: 'Placeholder Instructor',
+        labelInstructorName: 'Метка instructor Название',
+        placeholderInstructorName: 'placeholder instructor Название',
+        sectionContent: 'Раздел Содержимое',
+        labelTopics: 'Метка topics',
+        placeholderTopics: 'Placeholder Topics',
+        labelParticipants: 'Метка participants',
+        placeholderParticipants: 'Placeholder Participants',
+        placeholderNotes: 'placeholder Примечания',
+        btnCreate: 'Создать'
+      },
+      filterAllTypes: 'Фильтр Все types',
+      colDate: 'Дата',
+      colTitle: 'col Заголовок',
+      colType: 'Тип',
+      colStatus: 'Статус',
+      colInstructor: 'Col Instructor',
+      colParticipants: 'Col Participants',
+      colDuration: 'col Длительность',
+      title: 'Название',
+      subtitleSuffix: 'Подзаголовок suffix',
+      tabAll: 'Все',
+      tabPlanned: 'tab Плановый',
+      tabCompleted: 'Завершённые',
+      tabCancelled: 'tab Отменено',
+      newTraining: 'Новый training',
+      metricTotal: 'Итого',
+      metricParticipants: 'Metric Participants',
+      metricHours: 'metric Часов',
+      metricOverdue: 'Metric Overdue',
+      requireAttention: 'Require Attention',
+      searchPlaceholder: 'Поиск...',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // CDE (Common Data Environment)
-  // ---------------------------------------------------------------------------
   cde: {
-    // -- Shared --
     breadcrumbHome: 'Главная',
     breadcrumbCDE: 'CDE',
-
-    // -- Transmittal statuses --
     statusDraft: 'Черновик',
     statusIssued: 'Выдан',
     statusAcknowledged: 'Подтверждён',
     statusResponded: 'Получен ответ',
     statusClosed: 'Закрыт',
-
-    // -- Purposes --
     purposeForInformation: 'Для информации',
     purposeForReview: 'На рассмотрение',
     purposeForApproval: 'На утверждение',
     purposeForConstruction: 'Для строительства',
     purposeAsBuilt: 'Исполнительная',
-
-    // -- Lifecycle states --
     lifecycleWIP: 'В работе',
     lifecycleShared: 'Совместный',
     lifecyclePublished: 'Опубликован',
     lifecycleArchived: 'Архив',
-
-    // -- Classifications --
     classificationProject: 'Проектная',
     classificationDesign: 'Проектирование',
     classificationConstruction: 'Строительная',
@@ -3162,8 +3967,6 @@ export const ru = {
     classificationSafety: 'Безопасность',
     classificationQuality: 'Качество',
     classificationFinancial: 'Финансовая',
-
-    // -- Disciplines --
     disciplineArchitecture: 'Архитектура',
     disciplineStructural: 'Конструкции',
     disciplineMEP: 'Инженерные сети',
@@ -3172,14 +3975,10 @@ export const ru = {
     disciplinePlumbing: 'Водоснабжение',
     disciplineFireProtection: 'Пожарная защита',
     disciplineGeneral: 'Общее',
-
-    // -- Response statuses --
     responseApproved: 'Утверждено',
     responseApprovedWithComments: 'Утверждено с замечаниями',
     responseRejected: 'Отклонено',
     responsePending: 'Ожидает',
-
-    // -- TransmittalListPage --
     transmittals: {
       title: 'Трансмиттелы',
       subtitleSuffix: 'трансмиттелов',
@@ -3202,10 +4001,8 @@ export const ru = {
       colIssuedDate: 'Дата выдачи',
       colItemCount: 'Документов',
       emptyTitle: 'Нет трансмиттелов',
-      emptyDescription: 'Создайте первый трансмиттел',
+      emptyDescription: 'Создайте первый трансмиттел'
     },
-
-    // -- TransmittalDetailPage --
     transmittalDetail: {
       breadcrumbTransmittals: 'Трансмиттелы',
       buttonReply: 'Ответить',
@@ -3229,10 +4026,8 @@ export const ru = {
       colNumber: 'Номер',
       colTitle: 'Название',
       colRevision: 'Ревизия',
-      colResponseStatus: 'Статус ответа',
+      colResponseStatus: 'Статус ответа'
     },
-
-    // -- DocumentContainerListPage --
     documents: {
       title: 'Среда общих данных (CDE)',
       subtitleSuffix: 'документов в системе',
@@ -3259,10 +4054,8 @@ export const ru = {
       colAuthor: 'Автор',
       colUpdated: 'Обновлён',
       emptyTitle: 'Нет документов',
-      emptyDescription: 'Загрузите первый документ в CDE',
+      emptyDescription: 'Загрузите первый документ в CDE'
     },
-
-    // -- DocumentContainerDetailPage --
     documentDetail: {
       subtitleRevision: 'Ревизия',
       tabOverview: 'Обзор',
@@ -3300,13 +4093,83 @@ export const ru = {
       metaFileSizeMB: 'МБ',
       metaRevisionCount: 'Количество ревизий',
       metaCreatedAt: 'Дата создания',
-      metaUpdatedAt: 'Дата обновления',
+      metaUpdatedAt: 'Дата обновления'
     },
+    classification: {
+      project: 'Объект',
+      design: 'Design',
+      construction: 'Construction',
+      operations: 'Operations',
+      safety: 'Безопасность',
+      quality: 'Качество',
+      financial: 'Financial',
+      all: 'Все'
+    },
+    archivePolicies: {
+      runNowSuccess: 'run now Успешно',
+      deleteConfirm: 'Вы уверены, что хотите удалить?',
+      colName: 'Наименование',
+      colClassification: 'Col Classification',
+      allClassifications: 'Все classifications',
+      colRetentionDays: 'Col Retention Days',
+      colAutoArchive: 'col auto Архивировать',
+      autoArchiveOn: 'auto Архивировать on',
+      autoArchiveOff: 'auto Архивировать off',
+      colEnabled: 'Col Enabled',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      colCreatedAt: 'Col Created At',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      runNow: 'Run Now',
+      createPolicy: 'Создать policy',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены',
+      formTitleEdit: 'Форма Заголовок Редактировать',
+      formTitle: 'Форма Заголовок',
+      fieldName: 'Поле Название',
+      fieldDescription: 'Поле Описание',
+      fieldClassification: 'Поле classification',
+      fieldClassificationHint: 'Поле classification hint',
+      fieldRetentionDays: 'Поле retention days',
+      fieldAutoArchive: 'Поле auto Архивировать',
+      fieldEnabled: 'Поле enabled'
+    },
+    revisionSetDetail: {
+      deleteSuccess: 'Успешно удалено',
+      breadcrumbRevisionSets: 'breadcrumb Ревизия sets',
+      deleteButton: 'Удалить button',
+      sectionInfo: 'Раздел Информация',
+      labelIssuedDate: 'Метка issued Дата',
+      notSet: 'Не set',
+      labelIssuedBy: 'Метка issued by',
+      labelProject: 'Объект',
+      labelRevisionCount: 'Метка Ревизия Количество',
+      sectionRevisions: 'Раздел revisions',
+      revisionId: 'Ревизия id',
+      noRevisions: 'Нет revisions',
+      deleteConfirmTitle: 'Удалить Подтвердить Заголовок',
+      deleteConfirmDescription: 'Удалить Подтвердить Описание'
+    },
+    revisionSets: {
+      colName: 'Наименование',
+      colDescription: 'Описание',
+      colRevisionCount: 'col Ревизия Количество',
+      colIssuedDate: 'col issued Дата',
+      colIssuedBy: 'Col Issued By',
+      colProject: 'Объект',
+      title: 'Название',
+      subtitleSuffix: 'Подзаголовок suffix',
+      breadcrumbRevisionSets: 'breadcrumb Ревизия sets',
+      createSet: 'Создать set',
+      metricTotal: 'Итого',
+      metricIssued: 'Metric Issued',
+      metricIssuedSubtitle: 'metric issued Подзаголовок',
+      searchPlaceholder: 'Поиск...',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Documents
-  // ---------------------------------------------------------------------------
   documents: {
     title: 'Документы',
     uploadDocument: 'Загрузить документ',
@@ -3331,7 +4194,7 @@ export const ru = {
       permit: 'Разрешение',
       photo: 'Фото',
       correspondence: 'Переписка',
-      other: 'Другое',
+      other: 'Другое'
     },
     pdSection: {
       label: 'Раздел ПД',
@@ -3346,7 +4209,7 @@ export const ru = {
       gp: 'ГП — Генеральный план',
       pos: 'ПОС — Проект организации строительства',
       en: 'ЭН — Энергоэффективность',
-      other: 'Прочее',
+      other: 'Прочее'
     },
     emptyState: 'Документы не найдены',
     emptyStateDescription: 'Загрузите первый документ',
@@ -3376,13 +4239,9 @@ export const ru = {
       colAuthor: 'Автор',
       colCreated: 'Создан',
       emptyTitle: 'Документы не найдены',
-      emptyDescription: 'Загрузите первый документ или измените фильтры',
-    },
+      emptyDescription: 'Загрузите первый документ или измените фильтры'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Quality & Punch List
-  // ---------------------------------------------------------------------------
   quality: {
     title: 'Контроль качества',
     inspections: 'Проверки качества',
@@ -3397,8 +4256,6 @@ export const ru = {
     responsible: 'Ответственный',
     completionDate: 'Дата завершения',
     emptyState: 'Проверки качества не найдены',
-
-    // -- Quality List (QualityListPage) --
     list: {
       title: 'Проверки качества',
       subtitle: '{count} проверок',
@@ -3441,10 +4298,8 @@ export const ru = {
       toastDeleted: 'Проверки удалены',
       toastDeleteError: 'Ошибка при удалении проверок',
       emptyTitle: 'Нет проверок качества',
-      emptyDescription: 'Создайте первую проверку качества',
+      emptyDescription: 'Создайте первую проверку качества'
     },
-
-    // -- Quality Check Detail (QualityCheckDetailPage) --
     checkDetail: {
       breadcrumbHome: 'Главная',
       breadcrumbQuality: 'Качество',
@@ -3486,10 +4341,8 @@ export const ru = {
       labelCompletedDate: 'Дата завершения',
       labelCreated: 'Создано',
       sectionResult: 'Результат',
-      sectionLinkedIssues: 'Связанные замечания',
+      sectionLinkedIssues: 'Связанные замечания'
     },
-
-    // -- Quality Check Create (QualityCheckCreateModal) --
     checkCreate: {
       modalTitle: 'Новая проверка качества',
       modalDescription: 'Создайте проверку для контроля качества работ',
@@ -3519,10 +4372,8 @@ export const ru = {
       validationSpecifyDate: 'Укажите дату проверки',
       validationSpecifyArea: 'Укажите участок',
       validationMaxChars200: 'Максимум 200 символов',
-      validationMaxChars2000: 'Максимум 2000 символов',
+      validationMaxChars2000: 'Максимум 2000 символов'
     },
-
-    // -- Quality Board (QualityBoardPage) --
     board: {
       title: 'Проверки качества - Доска',
       subtitle: '{count} проверок',
@@ -3543,10 +4394,8 @@ export const ru = {
       priorityHigh: 'Высокий',
       priorityCritical: 'Критический',
       emptyColumn: 'Нет проверок',
-      emptyColumnHint: 'Перетащите карточку сюда',
+      emptyColumnHint: 'Перетащите карточку сюда'
     },
-
-    // -- Material Certificates (MaterialCertificatesPage) --
     materialCerts: {
       title: 'Сертификаты материалов',
       subtitle: '{count} сертификатов',
@@ -3588,10 +4437,8 @@ export const ru = {
       colValidUntil: 'Действителен до',
       colParameters: 'Параметры',
       emptyTitle: 'Нет сертификатов',
-      emptyDescription: 'Добавьте первый сертификат материала',
+      emptyDescription: 'Добавьте первый сертификат материала'
     },
-
-    // -- Tolerance Rules (ToleranceRulesPage) --
     toleranceRules: {
       title: 'Допуски и нормативы',
       subtitle: '{count} правил',
@@ -3626,10 +4473,8 @@ export const ru = {
       colStatus: 'Статус',
       colProject: 'Объект',
       emptyTitle: 'Нет правил допусков',
-      emptyDescription: 'Создайте первое правило допуска',
+      emptyDescription: 'Создайте первое правило допуска'
     },
-
-    // -- Tolerance Checks (ToleranceChecksPage) --
     toleranceChecks: {
       title: 'Проверки допусков',
       subtitle: '{count} проверок',
@@ -3663,10 +4508,8 @@ export const ru = {
       colInspector: 'Инспектор',
       colDate: 'Дата',
       emptyTitle: 'Нет проверок допусков',
-      emptyDescription: 'Создайте первую проверку допуска',
+      emptyDescription: 'Создайте первую проверку допуска'
     },
-
-    // -- Material Inspection (MaterialInspectionPage) --
     materialInspection: {
       title: 'Входной контроль материалов',
       subtitle: '{count} проверок',
@@ -3726,10 +4569,8 @@ export const ru = {
       toastCreated: 'Проверка материала создана',
       toastCreateError: 'Ошибка при создании проверки',
       dateFrom: 'Дата с',
-      dateTo: 'Дата по',
+      dateTo: 'Дата по'
     },
-
-    // -- Checklist Templates (ChecklistTemplatesPage) --
     checklistTemplates: {
       title: 'Шаблоны чек-листов',
       subtitle: '{count} шаблонов',
@@ -3770,10 +4611,8 @@ export const ru = {
       toastCreated: 'Шаблон создан',
       toastUpdated: 'Шаблон обновлён',
       toastCreateError: 'Ошибка при создании шаблона',
-      toastUpdateError: 'Ошибка при обновлении шаблона',
+      toastUpdateError: 'Ошибка при обновлении шаблона'
     },
-
-    // -- Defect Register (DefectRegisterPage) --
     defectRegister: {
       title: 'Ведомость дефектов',
       subtitle: '{count} записей',
@@ -3816,10 +4655,8 @@ export const ru = {
       colProject: 'Объект',
       emptyTitle: 'Нет записей о дефектах',
       emptyDescription: 'Дефекты не обнаружены',
-      toastExport: 'Экспорт будет доступен в ближайшее время',
+      toastExport: 'Экспорт будет доступен в ближайшее время'
     },
-
-    // -- Defect Pareto Chart (DefectParetoPage) --
     defectPareto: {
       title: 'Диаграмма Парето дефектов',
       subtitle: 'Распределение дефектов по типам',
@@ -3841,10 +4678,8 @@ export const ru = {
       chartCumulative: 'Накопительный %',
       chartThreshold: 'Порог 80%',
       categoriesCount: '{count} категорий',
-      noData: 'Нет данных для отображения',
+      noData: 'Нет данных для отображения'
     },
-
-    // -- Author Supervision Journal (AuthorSupervisionJournalPage) --
     supervisionJournal: {
       title: 'Журнал авторского надзора',
       subtitle: '{count} записей',
@@ -3889,13 +4724,9 @@ export const ru = {
       toastCreated: 'Запись создана',
       toastCreateError: 'Ошибка при создании записи',
       dateFrom: 'Дата с',
-      dateTo: 'Дата по',
-    },
+      dateTo: 'Дата по'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Planning & Scheduling
-  // ---------------------------------------------------------------------------
   planning: {
     title: 'Планирование',
     ganttChart: 'Диаграмма Ганта',
@@ -3910,8 +4741,6 @@ export const ru = {
     actualProgress: 'Фактический прогресс',
     workBreakdownStructure: 'Структурная декомпозиция работ',
     emptyState: 'Задачи не найдены',
-
-    // -- Gantt Chart (GanttChartPage) --
     gantt: {
       title: 'Диаграмма Ганта',
       subtitle: 'Календарно-сетевой график объекта',
@@ -3934,10 +4763,8 @@ export const ru = {
       legendCriticalPath: 'Критический путь',
       legendCompleted: 'Завершено',
       legendPlannedDuration: 'Плановая длительность',
-      legendMilestone: 'Веха',
+      legendMilestone: 'Веха'
     },
-
-    // -- WBS Tree (WbsTreePage) --
     wbs: {
       title: 'Структура декомпозиции работ (WBS)',
       subtitle: 'Иерархическая структура объекта',
@@ -3965,9 +4792,17 @@ export const ru = {
       daysUnit: 'дн.',
       emptyTitle: 'Нет элементов WBS',
       emptyDescription: 'Структура объекта не определена',
+      nodeTypeProject: 'node Тип Объект',
+      nodeTypeActivity: 'node Тип activity',
+      daysSuffix: 'Days Suffix',
+      totalElements: 'Всего elements',
+      avgProgress: 'avg Прогресс',
+      criticalPath: 'Критический path',
+      elementsSuffix: 'Elements Suffix',
+      phases: 'Phases',
+      colActualStart: 'col Фактический Начать',
+      colActualEnd: 'col Фактический end'
     },
-
-    // -- EVM Dashboard (EvmDashboardPage) --
     evm: {
       title: 'Освоенный объём (EVM)',
       subtitle: 'Анализ освоенного объёма объекта',
@@ -3996,9 +4831,31 @@ export const ru = {
       statusOverBudget: 'Перерасход',
       statusUnderBudget: 'Экономия',
       selectProject: 'Выберите объект',
+      subtitleProject: 'Подзаголовок Объект',
+      subtitleDataDate: 'Подзаголовок data Дата',
+      bacLabel: 'bac Метка',
+      eacLabel: 'eac Метка',
+      etcLabel: 'etc Метка',
+      completionLabel: 'Выполнение Метка',
+      performanceIndices: 'Performance Indices',
+      scheduleLabel: 'Расписание Метка',
+      costLabel: 'Стоимость Метка',
+      spiLabel: 'spi Метка',
+      cpiLabel: 'cpi Метка',
+      tcpiLabel: 'tcpi Метка',
+      variances: 'Variances',
+      svLabel: 'sv Метка',
+      cvLabel: 'cv Метка',
+      vacLabel: 'vac Метка',
+      pvShort: 'Pv Short',
+      evShort: 'Ev Short',
+      acShort: 'Ac Short',
+      sCurveTitle: 's curve Заголовок',
+      sCurveSubtitle: 's curve Подзаголовок',
+      legendPv: 'Legend Pv',
+      legendEv: 'Legend Ev',
+      legendAc: 'Legend Ac'
     },
-
-    // -- Schedule Baseline (ScheduleBaselinePage) --
     baselines: {
       title: 'Базовые планы',
       subtitle: 'Управление базовыми планами объекта',
@@ -4021,9 +4878,19 @@ export const ru = {
       statusSuperseded: 'Заменён',
       emptyTitle: 'Нет базовых планов',
       emptyDescription: 'Создайте первый базовый план',
+      statusApproved: 'Утверждено',
+      colBaselineDate: 'col baseline Дата',
+      colActivities: 'Col Activities',
+      colStart: 'col Начать',
+      colEnd: 'Col End',
+      colBudget: 'col Бюджет',
+      compareVersions: 'Compare Versions',
+      totalBaselines: 'Всего baselines',
+      activeCount: 'Активный Количество',
+      currentPlan: 'current План',
+      activitiesInCurrent: 'Activities In Current',
+      searchPlaceholder: 'Поиск...'
     },
-
-    // -- Resource Allocation (ResourceAllocationPage) --
     resources: {
       title: 'Распределение ресурсов',
       subtitle: 'Управление ресурсами объекта',
@@ -4048,9 +4915,22 @@ export const ru = {
       typeSubcontract: 'Субподряд',
       emptyTitle: 'Нет ресурсов',
       emptyDescription: 'Назначьте ресурсы на задачи объекта',
+      typeLAbor: 'Тип l abor',
+      colWbsCode: 'col wbs Код',
+      colWbsElement: 'Col Wbs Element',
+      colResource: 'Col Resource',
+      colPlannedHours: 'col Плановый Часов',
+      colActualHours: 'col Фактический Часов',
+      colPlannedCost: 'col Плановый Стоимость',
+      colActualCost: 'col Фактический Стоимость',
+      totalResources: 'Всего resources',
+      avgUtilization: 'Avg Utilization',
+      normal: 'Normal',
+      underloaded: 'Underloaded',
+      plannedCost: 'Плановый Стоимость',
+      actualCost: 'Фактический Стоимость',
+      allTypes: 'Все типы'
     },
-
-    // -- Critical Path Method (CriticalPathPage) --
     cpm: {
       title: 'Метод критического пути (CPM)',
       subtitle: 'Анализ критического пути объекта',
@@ -4077,10 +4957,8 @@ export const ru = {
       colFloat: 'Резерв',
       colGanttBar: 'Диаграмма',
       emptyTitle: 'Нет данных о критическом пути',
-      emptyDescription: 'Выберите объект для анализа',
+      emptyDescription: 'Выберите объект для анализа'
     },
-
-    // -- EVM Indicators Dashboard (EvmIndicatorsPage) --
     evmIndicators: {
       title: 'Показатели EVM',
       subtitle: 'Панель показателей метода освоенного объёма',
@@ -4108,10 +4986,8 @@ export const ru = {
       interpretationBehindSchedule: 'Объект отстаёт от графика',
       sCurveTitle: 'S-кривая EVM',
       sCurveSubtitle: 'Динамика PV, EV и AC во времени',
-      noData: 'Нет данных для отображения',
+      noData: 'Нет данных для отображения'
     },
-
-    // -- Resource Planning (ResourcePlanningPage) --
     resourcePlanning: {
       title: 'Планирование ресурсов',
       subtitle: 'Назначение и контроль загрузки ресурсов',
@@ -4141,10 +5017,8 @@ export const ru = {
       colEnd: 'Окончание',
       colUtilization: 'Загрузка',
       emptyTitle: 'Нет данных по ресурсам',
-      emptyDescription: 'Выберите объект для просмотра плана ресурсов',
+      emptyDescription: 'Выберите объект для просмотра плана ресурсов'
     },
-
-    // -- Baselines Management (BaselinesPage) --
     baselinesPage: {
       title: 'Управление базовыми планами',
       subtitle: 'Создание, сравнение и контроль базовых планов',
@@ -4183,10 +5057,8 @@ export const ru = {
       compareColCurrentStart: 'Начало (тек.)',
       compareColCurrentEnd: 'Окончание (тек.)',
       compareColDrift: 'Сдвиг',
-      compareNoData: 'Нет данных для сравнения',
+      compareNoData: 'Нет данных для сравнения'
     },
-
-    // -- S-Curve (SCurvePage) --
     sCurve: {
       title: 'S-кривая',
       subtitle: 'Сравнение планового и фактического прогресса',
@@ -4212,10 +5084,8 @@ export const ru = {
       colDate: 'Дата',
       colPlanned: 'План, %',
       colActual: 'Факт, %',
-      colDeviation: 'Отклонение',
+      colDeviation: 'Отклонение'
     },
-
-    // -- Procurement Schedule --
     procurement: {
       title: 'График закупок',
       colItem: 'Позиция',
@@ -4230,10 +5100,8 @@ export const ru = {
       statusOrdered: 'Заказано',
       statusInTransit: 'В пути',
       statusDelivered: 'Доставлено',
-      statusCancelled: 'Отменено',
+      statusCancelled: 'Отменено'
     },
-
-    // -- Mobilization Schedule --
     mobilization: {
       title: 'График мобилизации',
       colName: 'Ресурс',
@@ -4246,13 +5114,40 @@ export const ru = {
       totalPersonnel: 'Затраты на персонал',
       totalEquipment: 'Затраты на технику',
       tabPersonnel: 'Персонал',
-      tabEquipment: 'Техника',
+      tabEquipment: 'Техника'
     },
+    volumes: {
+      saveSuccess: 'Успешно сохранено',
+      saveError: 'Ошибка сохранения',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbPlanning: 'Breadcrumb Planning',
+      breadcrumbVolumes: 'Breadcrumb Volumes',
+      saving: 'Saving',
+      save: 'Сохранить',
+      project: 'Объект',
+      selectProject: 'Выберите объект',
+      date: 'Дата',
+      metricTotalNodes: 'metric Всего nodes',
+      metricAvgProgress: 'metric avg Прогресс',
+      metricTodayTotal: 'metric today Всего',
+      metricWithVolume: 'metric with Объём',
+      selectProjectHint: 'Выберите Объект hint',
+      loading: 'Загрузка',
+      noNodes: 'Нет nodes',
+      colCode: 'Код',
+      colName: 'Наименование',
+      colUnit: 'Ед.изм.',
+      colPlanned: 'col Плановый',
+      colActual: 'col Фактический',
+      colRemaining: 'Col Remaining',
+      colProgress: 'col Прогресс',
+      colToday: 'Col Today',
+      workPackage: 'Работа package',
+      activity: 'Activity'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Daily Log
-  // ---------------------------------------------------------------------------
   dailyLog: {
     title: 'Журнал работ',
     createEntry: 'Создать запись',
@@ -4272,14 +5167,10 @@ export const ru = {
       rain: 'Дождь',
       snow: 'Снег',
       wind: 'Ветер',
-      fog: 'Туман',
+      fog: 'Туман'
     },
-    emptyState: 'Записи журнала не найдены',
+    emptyState: 'Записи журнала не найдены'
   },
-
-  // ---------------------------------------------------------------------------
-  // Procurement & Warehouse
-  // ---------------------------------------------------------------------------
   procurement: {
     title: 'Закупки',
     purchaseOrders: 'Заказы на поставку',
@@ -4293,8 +5184,6 @@ export const ru = {
     totalPrice: 'Общая стоимость',
     unit: 'Ед. изм.',
     emptyState: 'Заказы не найдены',
-
-    // -- Purchase Request List (PurchaseRequestListPage) --
     requestList: {
       title: 'Заявки на закупку',
       subtitleSuffix: 'заявок в системе',
@@ -4330,10 +5219,8 @@ export const ru = {
       bulkRejectError: 'Ошибка при отклонении',
       bulkAssignSuccess: 'Назначено: {count}',
       bulkAssignPartial: 'Назначено: {success}, ошибок: {failed}',
-      bulkAssignError: 'Ошибка при назначении',
+      bulkAssignError: 'Ошибка при назначении'
     },
-
-    // -- Purchase Request Detail (PurchaseRequestDetailPage) --
     requestDetail: {
       breadcrumbHome: 'Главная',
       breadcrumbProcurement: 'Заявки на закупку',
@@ -4362,7 +5249,6 @@ export const ru = {
       colTotal: 'Сумма',
       emptyItemsTitle: 'Нет позиций',
       emptyItemsDescription: 'Добавьте позиции в заявку',
-      // New keys from PurchaseRequestDetailPage i18n conversion
       breadcrumbPurchaseRequests: 'Заявки на закупку',
       dateLabel: 'Дата',
       infoProject: 'Объект',
@@ -4392,10 +5278,8 @@ export const ru = {
       relatedOrdersEmptyDescription: 'Заказы для этой заявки не найдены',
       createPurchaseOrder: 'Создать заказ',
       newOrderFromRequest: 'Новый заказ из заявки',
-      openOrdersList: 'Открыть список заказов',
+      openOrdersList: 'Открыть список заказов'
     },
-
-    // -- Purchase Request Board (PurchaseRequestBoardPage) --
     requestBoard: {
       title: 'Заявки на закупку - Доска',
       subtitleSuffix: 'заявок',
@@ -4418,7 +5302,6 @@ export const ru = {
       priorityCritical: 'Критический',
       emptyColumn: 'Нет заявок',
       emptyColumnHint: 'Перетащите карточку сюда',
-      // New keys from PurchaseRequestBoardPage i18n conversion
       subtitleRequests: 'заявок',
       filters: 'Фильтры',
       newRequest: 'Новая заявка',
@@ -4438,10 +5321,8 @@ export const ru = {
       errorNoAssignee: 'Назначьте исполнителя перед изменением статуса',
       errorWaitTransition: 'Дождитесь завершения текущего перехода',
       toastStatusChanged: 'Статус заявки изменён',
-      toastTransitioning: 'Переход статуса...',
+      toastTransitioning: 'Переход статуса...'
     },
-
-    // -- Approval Wizard (ApprovalWizard) --
     approvalWizard: {
       title: 'Согласование заявки на закупку',
       btnCancel: 'Отмена',
@@ -4473,9 +5354,32 @@ export const ru = {
       toastApproved: 'Заявка {number} утверждена',
       toastRejected: 'Заявка {number} отклонена',
       toastReturned: 'Заявка {number} возвращена на доработку',
+      stepDetails: 'step Подробности',
+      stepDecision: 'Step Decision',
+      decisionApproved: 'decision Утверждено',
+      decisionRejected: 'decision Отклонено',
+      decisionReturned: 'Decision Returned',
+      toastRequest: 'toast Запрос',
+      cancel: 'Отмена',
+      next: 'Далее',
+      back: 'Назад',
+      returnForRevision: 'Возврат for Ревизия',
+      reject: 'Отклонить',
+      approve: 'Утвердить',
+      requestNumber: 'Запрос number',
+      date: 'Дата',
+      initiator: 'Initiator',
+      department: 'Отдел',
+      requestItems: 'Запрос items',
+      total: 'Всего',
+      remaining: 'Remaining',
+      amount: 'Сумма',
+      commentLabel: 'Комментарий Метка',
+      commentPlaceholder: 'Комментарий placeholder',
+      conditionsLabel: 'conditions Метка',
+      conditionsPlaceholder: 'Conditions Placeholder',
+      actionPrompt: 'Action Prompt'
     },
-
-    // -- Merge Requests Wizard (MergeRequestsWizard) --
     mergeWizard: {
       title: 'Объединение заявок на закупку',
       btnCancel: 'Отмена',
@@ -4504,9 +5408,33 @@ export const ru = {
       summaryAmount: 'Итого сумма:',
       summaryComment: 'Комментарий:',
       toastSuccess: 'Заявки объединены: {count} -> 1',
+      stepSelectRequests: 'step Выберите requests',
+      stepPreview: 'step Предпросмотр',
+      stepConfirm: 'step Подтвердить',
+      toastMerged: 'Toast Merged',
+      cancel: 'Отмена',
+      back: 'Назад',
+      next: 'Далее',
+      merge: 'Merge',
+      selectHint: 'Выберите hint',
+      items: 'Items',
+      selected: 'Selected',
+      requests: 'Requests',
+      minimumTwo: 'Minimum Two',
+      mergedTitleLabel: 'merged Заголовок Метка',
+      mergedTitlePlaceholder: 'merged Заголовок placeholder',
+      mergeResult: 'Merge Result',
+      requestsCount: 'requests Количество',
+      itemsCount: 'items Количество',
+      totalAmount: 'Всего Сумма',
+      commentLabel: 'Комментарий Метка',
+      commentPlaceholder: 'Комментарий placeholder',
+      confirmTitle: 'Подтвердить Заголовок',
+      confirmMergedRequests: 'Подтвердить merged requests',
+      confirmTotalItems: 'Подтвердить Всего items',
+      confirmTotalAmount: 'Подтвердить Всего Сумма',
+      confirmComment: 'Подтвердить Комментарий'
     },
-
-    // -- Send Price Request Wizard (SendPriceRequestWizard) --
     sendPriceRequest: {
       title: 'Запрос коммерческих предложений',
       btnCancel: 'Отмена',
@@ -4535,10 +5463,8 @@ export const ru = {
       sendNotice: 'Запрос будет отправлен {count} поставщикам на электронную почту.',
       toastSuccess: 'Запросы цен отправлены: {count} поставщикам',
       toastError: 'Не удалось отправить запросы цен',
-      toastInvalidQuantity: 'Укажите корректное количество больше нуля для каждого выбранного материала',
+      toastInvalidQuantity: 'Укажите корректное количество больше нуля для каждого выбранного материала'
     },
-
-    // -- Tender Evaluate Wizard (TenderEvaluateWizard) --
     tenderEvaluate: {
       title: 'Оценка тендерных предложений',
       btnCancel: 'Отмена',
@@ -4573,9 +5499,29 @@ export const ru = {
       validationWeight: 'Сумма весов критериев должна быть равна 100%',
       validationScores: 'Заполните корректные оценки минимум для одного участника',
       manualWinnerJustification: 'Победитель выбран вручную в мастере оценки',
+      postAward: {
+        tenderPrefix: 'Tender Prefix',
+        awardConfirmed: 'Award Confirmed',
+        winnerIs: 'Winner Is',
+        createPoTitle: 'Создать po Заголовок',
+        createPoHint: 'Создать po hint',
+        vendorName: 'vendor Название',
+        vendorEmail: 'Vendor Email',
+        createPoBtn: 'Создать po btn',
+        rejectedTitle: 'Отклонено Заголовок',
+        finalRanking: 'Final Ranking',
+        winnerBadge: 'Winner Badge'
+      },
+      winnerJustificationLabel: 'winner justification Метка',
+      winnerJustificationHint: 'Winner Justification Hint',
+      winnerJustificationPlaceholder: 'Winner Justification Placeholder',
+      draftRestored: 'Черновик restored',
+      draftAutoSave: 'Черновик auto Сохранить',
+      draftSavedAt: 'Черновик saved at',
+      clearDraft: 'clear Черновик',
+      savingScoresProgress: 'saving scores Прогресс',
+      savingScoresRetry: 'Saving Scores Retry'
     },
-
-    // -- Create From Spec Wizard (CreateFromSpecWizard) --
     createFromSpec: {
       title: 'Создание заявок из спецификации',
       btnCancel: 'Отмена',
@@ -4600,10 +5546,8 @@ export const ru = {
       toastSuccess: 'Создано заявок из спецификации: {count}',
       toastError: 'Не удалось создать заявки из спецификации',
       toastInvalidQuantity: 'Укажите корректное количество больше нуля для каждой выбранной позиции',
-      emptySpecItems: 'В выбранной спецификации нет позиций для закупки',
+      emptySpecItems: 'В выбранной спецификации нет позиций для закупки'
     },
-
-    // -- Purchase Order Statuses --
     orderStatus: {
       draft: 'Черновик',
       sent: 'Отправлен',
@@ -4612,10 +5556,8 @@ export const ru = {
       delivered: 'Доставлен',
       invoiced: 'Выставлен счёт',
       closed: 'Закрыт',
-      cancelled: 'Отменён',
+      cancelled: 'Отменён'
     },
-
-    // -- Purchase Order Actions --
     orderAction: {
       send: 'Отправить',
       confirm: 'Подтвердить',
@@ -4631,10 +5573,8 @@ export const ru = {
       bulkConfirmSuccess: 'Заказы подтверждены',
       bulkInvoiceSuccess: 'Счета выставлены',
       bulkCancelSuccess: 'Заказы отменены',
-      bulkCloseSuccess: 'Заказы закрыты',
+      bulkCloseSuccess: 'Заказы закрыты'
     },
-
-    // -- Purchase Order List (PurchaseOrderListPage) --
     orderList: {
       title: 'Заказы на поставку',
       subtitlePurchaseOrders: 'заказов',
@@ -4686,10 +5626,8 @@ export const ru = {
       bulkCancelTitle: 'Отменить выбранные заказы?',
       bulkCancelDescription: 'Заказы будут отменены. Это действие нельзя отменить.',
       bulkCloseTitle: 'Закрыть выбранные заказы?',
-      bulkCloseDescription: 'Заказы будут переведены в статус «Закрыт».',
+      bulkCloseDescription: 'Заказы будут переведены в статус «Закрыт».'
     },
-
-    // -- Purchase Order Detail (PurchaseOrderDetailPage) --
     orderDetail: {
       title: 'Заказ на поставку',
       subtitlePurchaseOrder: 'Заказ',
@@ -4784,10 +5722,8 @@ export const ru = {
       itemsEmptyTitle: 'В заказе нет позиций',
       itemsEmptyDescription: 'Добавьте позиции в заказ, чтобы зарегистрировать поставки.',
       editItemTitle: 'Редактирование позиции',
-      saveItem: 'Сохранить позицию',
+      saveItem: 'Сохранить позицию'
     },
-
-    // -- Purchase Order Form (PurchaseOrderFormPage) --
     orderForm: {
       title: 'Новый заказ на поставку',
       subtitle: 'Заполните данные заказа',
@@ -4860,14 +5796,138 @@ export const ru = {
         maxChars500: 'Максимум 500 символов',
         maxChars1000: 'Максимум 1000 символов',
         maxChars5000: 'Максимум 5000 символов',
-        currencyLength: 'Код валюты — 3 символа',
-      },
+        currencyLength: 'Код валюты — 3 символа'
+      }
     },
+    bidComparison: {
+      totalScore: 'Всего score',
+      noData: 'Нет данных',
+      title: 'Название',
+      breadcrumbTenders: 'Breadcrumb Tenders',
+      exportPdf: 'Экспорт pdf',
+      back: 'Назад',
+      rank: 'Rank',
+      winner: 'Winner',
+      criterion: 'Criterion',
+      weight: 'Вес',
+      vendors: 'Vendors',
+      compare: 'Compare'
+    },
+    tenders: {
+      statusDraft: 'Черновик',
+      statusSubmitted: 'Статус submitted',
+      statusInApproval: 'Статус in approval',
+      statusApproved: 'Утверждено',
+      statusAssigned: 'Статус assigned',
+      statusOrdered: 'Статус ordered',
+      statusDelivered: 'Статус delivered',
+      statusClosed: 'Статус closed',
+      statusCancelled: 'Отменено',
+      priorityLow: 'Приоритет Низкий',
+      priorityMedium: 'Приоритет Средний',
+      priorityHigh: 'Приоритет Высокий',
+      priorityCritical: 'Приоритет Критический',
+      cardPositions: 'Card Positions',
+      cardAmount: 'card Сумма',
+      cardPriority: 'card Приоритет',
+      cardRequestDate: 'card Запрос Дата',
+      cardExecutor: 'Card Executor',
+      evaluate: 'Оценить',
+      allProjects: 'Все projects',
+      allStatuses: 'Все статусы',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      newMaterials: 'Новый materials',
+      newWorks: 'Новый works',
+      tabMaterials: 'Tab Materials',
+      tabWorks: 'Tab Works',
+      statTotal: 'stat Всего',
+      statOpen: 'stat Открыть',
+      statAwarded: 'Stat Awarded',
+      searchPlaceholder: 'Поиск...',
+      descMaterials: 'Desc Materials',
+      descWorks: 'Desc Works',
+      emptyMaterials: 'Пусто materials',
+      emptyWorks: 'Пусто works',
+      emptyFilterHint: 'Пусто Фильтр hint',
+      emptyCreateHint: 'Пусто Создать hint',
+      createRequest: 'Создать Запрос'
+    },
+    prequalification: {
+      title: 'Преквалификация подрядчиков',
+      subtitle: 'Реестр квалифицированных подрядчиков',
+      addVendor: 'Добавить подрядчика',
+      editVendor: 'Редактировать подрядчика',
+      vendorName: 'Наименование',
+      scores: 'Баллы',
+      financial: 'Финансовый балл',
+      safety: 'Балл безопасности',
+      experience: 'Балл опыта',
+      overallScore: 'Общий балл',
+      insurance: 'Страхование',
+      insuranceValid: 'Действует страховка',
+      bondCapacity: 'Лимит банковских гарантий',
+      totalVendors: 'Всего подрядчиков',
+      qualified: 'Квалифицированы',
+      pendingReview: 'На проверке',
+      disqualified: 'Дисквалифицированы',
+      statuses: {
+        PENDING: 'На проверке',
+        QUALIFIED: 'Квалифицирован',
+        DISQUALIFIED: 'Дисквалифицирован',
+        EXPIRED: 'Истёк',
+      },
+    }
   },
-
   warehouse: {
     title: 'Склад',
-    inventory: 'Инвентарь',
+    inventory: {
+      title: 'Инвентаризация',
+      subtitle: 'Проверка фактических остатков',
+      breadcrumbHome: 'Главная',
+      statusPlanned: 'Запланирована',
+      statusInProgress: 'В процессе',
+      statusCompleted: 'Завершена',
+      statusCancelled: 'Отменена',
+      itemStatusMatch: 'Совпадение',
+      itemStatusShortage: 'Недостача',
+      itemStatusSurplus: 'Излишек',
+      columnNumber: '№',
+      columnLocation: 'Локация',
+      columnDate: 'Дата',
+      columnStatus: 'Статус',
+      columnItemsCount: 'Количество',
+      columnMatched: 'Совпало',
+      columnShortage: 'Недостача',
+      columnSurplus: 'Излишек',
+      columnResponsible: 'Ответственный',
+      columnMaterial: 'Материал',
+      columnUnit: 'Ед.изм.',
+      columnPlanned: 'План',
+      columnActual: 'Факт',
+      columnVariance: 'Отклонение',
+      columnItemStatus: 'Статус',
+      newCheck: 'Новая проверка',
+      metricTotalChecks: 'Всего проверок',
+      metricCompleted: 'Завершённых',
+      metricShortages: 'Недостач',
+      metricSurplus: 'Излишков',
+      searchPlaceholder: 'Поиск...',
+      sectionChecks: 'Проверки',
+      emptyChecksTitle: 'Нет проверок',
+      emptyChecksDescription: 'Создайте первую инвентаризацию',
+      sectionLastCheckItems: 'Позиции последней проверки',
+      emptyItemsTitle: 'Нет позиций',
+      emptyItemsDescription: 'Данные о позициях отсутствуют',
+      modalTitle: 'Новая инвентаризация',
+      modalCancel: 'Отмена',
+      modalCreate: 'Создать',
+      modalFieldLocation: 'Локация',
+      modalLocationPlaceholder: 'Выберите склад или зону',
+      modalFieldDate: 'Дата проверки',
+      modalFieldResponsible: 'Ответственный',
+      modalResponsiblePlaceholder: 'Введите ФИО ответственного'
+    },
     materials: 'Материалы',
     stockIn: 'Приход',
     stockOut: 'Расход',
@@ -4876,14 +5936,12 @@ export const ru = {
     category: 'Категория',
     location: 'Место хранения',
     emptyState: 'Материалы не найдены',
-
     breadcrumbHome: 'Главная',
     breadcrumbWarehouse: 'Склад',
-
-    // MaterialListPage
     materialList: {
       title: 'Материалы',
       subtitle: '{count} наименований в справочнике',
+      breadcrumbHome: 'Главная',
       breadcrumbMaterials: 'Материалы',
       newMaterial: 'Новый материал',
       searchPlaceholder: 'Поиск по коду, наименованию...',
@@ -4891,7 +5949,19 @@ export const ru = {
       columnName: 'Наименование',
       columnCategory: 'Категория',
       columnUnit: 'Ед.изм.',
+      columnPrice: 'Цена',
       columnCurrentPrice: 'Текущая цена',
+      allCategories: 'Все категории',
+      catConcrete: 'Бетон',
+      catMetal: 'Металл',
+      catWood: 'Дерево',
+      catInsulation: 'Изоляция',
+      catPipes: 'Трубы',
+      catElectrical: 'Электрика',
+      catFinishing: 'Отделка',
+      catFasteners: 'Крепёж',
+      catTools: 'Инструмент',
+      catOther: 'Прочее',
       emptyTitle: 'Нет материалов',
       emptyDescription: 'Добавьте материалы в справочник',
       categoryOptions: {
@@ -4905,11 +5975,9 @@ export const ru = {
         finishing: 'Отделка',
         fasteners: 'Крепёж',
         tools: 'Инструмент',
-        other: 'Прочее',
-      },
+        other: 'Прочее'
+      }
     },
-
-    // StockPage
     stock: {
       title: 'Остатки на складах',
       subtitle: 'Текущие остатки материалов',
@@ -4927,9 +5995,9 @@ export const ru = {
       searchPlaceholder: 'Поиск по материалу, складу...',
       emptyTitle: 'Нет остатков',
       emptyDescription: 'Данные об остатках отсутствуют',
+      columnWarehouse: 'Склад',
+      breadcrumbHome: 'Главная'
     },
-
-    // InventoryPage
     inventory_page: {
       title: 'Инвентаризация',
       subtitle: 'Проверка наличия и соответствия материалов',
@@ -4942,7 +6010,7 @@ export const ru = {
       searchPlaceholder: 'Поиск по номеру, локации...',
       checksTitle: 'Инвентаризационные проверки',
       lastCheckTitle: 'Последняя проверка: позиции',
-      columnNumber: '\u2116',
+      columnNumber: '№',
       columnLocation: 'Локация',
       columnDate: 'Дата',
       columnStatus: 'Статус',
@@ -4972,16 +6040,14 @@ export const ru = {
         planned: 'Запланирована',
         inProgress: 'Проводится',
         completed: 'Завершена',
-        cancelled: 'Отменена',
+        cancelled: 'Отменена'
       },
       itemStatusLabels: {
         match: 'Совпадает',
         shortage: 'Недостача',
-        surplus: 'Излишек',
-      },
+        surplus: 'Излишек'
+      }
     },
-
-    // MaterialDetailPage
     materialDetail: {
       breadcrumbMaterials: 'Материалы',
       needsReorder: 'Требуется заказ',
@@ -5017,18 +6083,47 @@ export const ru = {
       movementTypeLabels: {
         receipt: 'Приход',
         issue: 'Расход',
-        transfer: 'Перемещение',
+        transfer: 'Перемещение'
       },
+      movementTypeReceipt: 'Движение Тип Приход',
+      movementTypeIssue: 'Движение Тип Расход',
+      movementTypeTransfer: 'Движение Тип Перемещение',
+      toastDeleted: 'Toast Deleted',
+      confirmTitle: 'Подтвердить Заголовок',
+      confirmDescription: 'Подтвердить Описание',
+      confirmButton: 'Подтвердить button',
+      confirmCancel: 'Подтвердить Отмена',
+      breadcrumbHome: 'Главная',
+      toastEditRedirect: 'toast Редактировать redirect',
+      sectionInfo: 'Раздел Информация',
+      labelTotalStock: 'Метка Всего Запас',
+      labelMinStock: 'Метка Минимум Запас',
+      labelMaxStock: 'Метка Максимум Запас',
+      labelAvgPrice: 'Метка avg Цена',
+      sectionStockByLocation: 'Раздел Запас by Локация',
+      tableWarehouse: 'Таблица Склад',
+      tableTotal: 'Таблица Всего',
+      tableReserved: 'Таблица reserved',
+      tableAvailable: 'Таблица available',
+      sectionRecentMovements: 'Раздел recent movements',
+      sectionDetails: 'Раздел Подробности',
+      infoSku: 'Информация sku',
+      infoUnit: 'Информация Единица',
+      infoLastReceipt: 'Информация last Приход',
+      infoCreatedAt: 'Информация created at',
+      sectionOrderInfo: 'Раздел Заказ Информация',
+      labelCurrentStock: 'Метка current Запас',
+      labelReorderPoint: 'Метка reorder point',
+      toastProcurementOpened: 'Toast Procurement Opened',
+      createProcurementRequest: 'Создать procurement Запрос'
     },
-
-    // MovementListPage
     movementList: {
       title: 'Движение материалов',
       subtitle: '{count} операций',
       breadcrumbMovement: 'Движение',
       newOperation: 'Новая операция',
       searchPlaceholder: 'Поиск по номеру, складу...',
-      columnNumber: '\u2116',
+      columnNumber: '№',
       columnDate: 'Дата',
       columnType: 'Тип',
       columnFrom: 'Откуда',
@@ -5041,9 +6136,10 @@ export const ru = {
       tabDraft: 'Черновик',
       tabConfirmed: 'Подтверждено',
       tabDone: 'Выполнено',
+      columnLineCount: 'Позиций',
+      breadcrumbHome: 'Главная',
+      breadcrumbMovements: 'Движения'
     },
-
-    // MovementDetailPage
     movementDetail: {
       breadcrumbMovements: 'Движения',
       editButton: 'Редактировать',
@@ -5069,9 +6165,32 @@ export const ru = {
       relatedDocsTitle: 'Связанные документы',
       statusActionConfirm: 'Подтвердить',
       statusActionComplete: 'Выполнить',
+      confirm: 'Подтвердить',
+      execute: 'Execute',
+      toastStatusChanged: 'toast Статус changed',
+      toastDeleted: 'Toast Deleted',
+      confirmTitle: 'Подтвердить Заголовок',
+      confirmDescription: 'Подтвердить Описание',
+      confirmButton: 'Подтвердить button',
+      confirmCancel: 'Подтвердить Отмена',
+      breadcrumbHome: 'Главная',
+      toastEditRedirect: 'toast Редактировать redirect',
+      edit: 'Редактировать',
+      delete: 'Удалить',
+      sectionDirection: 'Направление',
+      labelFrom: 'Метка from',
+      labelTo: 'Метка to',
+      sectionMaterial: 'Раздел Материал',
+      labelMaterial: 'Метка Материал',
+      labelQuantity: 'Метка Количество',
+      labelNote: 'Метка note',
+      sectionDetails: 'Раздел Подробности',
+      labelDate: 'Дата',
+      labelResponsible: 'Ответственный',
+      labelApprovedBy: 'Метка Утверждено by',
+      labelCreated: 'Метка created',
+      sectionRelatedDocs: 'Раздел related docs'
     },
-
-    // MovementBoardPage
     movementBoard: {
       title: 'Перемещения - Доска',
       subtitle: '{count} перемещений',
@@ -5092,20 +6211,38 @@ export const ru = {
         low: 'Низкий',
         normal: 'Обычный',
         high: 'Высокий',
-        critical: 'Критический',
+        critical: 'Критический'
       },
+      priorityLow: 'Приоритет Низкий',
+      priorityNormal: 'Приоритет normal',
+      priorityHigh: 'Приоритет Высокий',
+      priorityCritical: 'Приоритет Критический',
+      breadcrumbHome: 'Главная',
+      btnFilters: 'Btn Filters',
+      btnReset: 'Сбросить',
+      emptyColumn: 'Пусто column',
+      dragHint: 'Drag Hint'
     },
-
-    // WarehouseLocationsPage
     locations: {
       title: 'Складские локации',
       subtitle: 'Управление складами и площадками хранения',
+      breadcrumbHome: 'Главная',
       breadcrumbLocations: 'Локации',
       addLocation: 'Добавить локацию',
+      createLocation: 'Создать локацию',
+      metricTotal: 'Всего локаций',
       metricTotalLocations: 'Всего локаций',
       metricActive: 'Активных',
+      metricLoad: 'Общая загрузка',
       metricTotalLoad: 'Общая загрузка',
+      metricCapacity: 'Общая ёмкость',
       metricTotalCapacity: 'Общая ёмкость',
+      typeWarehouse: 'Склад',
+      typeSite: 'Площадка',
+      typeZone: 'Зона',
+      statusActive: 'Активен',
+      statusInactive: 'Неактивен',
+      statusFull: 'Заполнен',
       searchPlaceholder: 'Поиск по коду, названию...',
       allTypes: 'Все типы',
       columnCode: 'Код',
@@ -5121,16 +6258,14 @@ export const ru = {
       typeLabels: {
         warehouse: 'Склад',
         site: 'Площадка',
-        zone: 'Зона',
+        zone: 'Зона'
       },
       statusLabels: {
         active: 'Активен',
         inactive: 'Неактивен',
-        full: 'Заполнен',
-      },
+        full: 'Заполнен'
+      }
     },
-
-    // StockLimitsPage
     stockLimits: {
       title: 'Лимиты запасов',
       subtitle: '{count} лимитов настроено',
@@ -5158,19 +6293,31 @@ export const ru = {
         min: 'Минимум',
         max: 'Максимум',
         reorderPoint: 'Точка заказа',
-        safetyStock: 'Страховой запас',
+        safetyStock: 'Страховой запас'
       },
       breachedLabels: {
         true: 'Нарушен',
-        false: 'В норме',
+        false: 'В норме'
       },
       filterAllTypes: 'Все типы',
       filterAll: 'Все',
       filterBreached: 'Нарушенные',
       filterNormal: 'В норме',
+      typeMin: 'Тип Минимум',
+      typeMax: 'Тип Максимум',
+      typeReorderPoint: 'Тип reorder point',
+      typeSafetyStock: 'Тип Безопасность Запас',
+      breached: 'Breached',
+      normal: 'Normal',
+      allTypes: 'Все типы',
+      allStates: 'Все states',
+      columnState: 'Column State',
+      breadcrumbHome: 'Главная',
+      btnAlerts: 'Btn Alerts',
+      metricTotal: 'Итого',
+      trendNeedAttention: 'Trend Need Attention',
+      trendAllNormal: 'trend Все normal'
     },
-
-    // StockAlertsPage
     stockAlerts: {
       title: 'Оповещения о запасах',
       subtitle: '{count} оповещений',
@@ -5201,18 +6348,34 @@ export const ru = {
       severityLabels: {
         info: 'Информация',
         warning: 'Предупреждение',
-        critical: 'Критический',
+        critical: 'Критический'
       },
       statusLabels: {
         active: 'Активно',
         acknowledged: 'Принято',
-        resolved: 'Решено',
+        resolved: 'Решено'
       },
       filterAllLevels: 'Все уровни',
       filterAllStatuses: 'Все статусы',
+      severityInfo: 'Серьёзность Информация',
+      severityWarning: 'Серьёзность Предупреждение',
+      severityCritical: 'Серьёзность Критический',
+      statusActive: 'Активен',
+      statusAcknowledged: 'Статус acknowledged',
+      statusResolved: 'Статус resolved',
+      typeMin: 'Тип Минимум',
+      typeMax: 'Тип Максимум',
+      typeReorderPoint: 'Тип reorder point',
+      typeSafetyStock: 'Тип Безопасность Запас',
+      allSeverities: 'Все severities',
+      allStatuses: 'Все статусы',
+      btnAcknowledge: 'Btn Acknowledge',
+      btnResolve: 'Btn Resolve',
+      breadcrumbHome: 'Главная',
+      metricTotal: 'Итого',
+      trendNeedAction: 'Trend Need Action',
+      trendUrgent: 'Trend Urgent'
     },
-
-    // M29FromKs2Wizard
     m29Wizard: {
       title: 'Формирование М-29 из КС-2',
       description: 'Создание отчёта о расходе материалов на основании актов выполненных работ',
@@ -5243,9 +6406,27 @@ export const ru = {
       toastSuccess: 'Отчет М-29 сформирован по {count} актам КС-2',
       toastGenerated: 'Отчет М-29 сформирован по {count} актам КС-2',
       toastGenerateError: 'Ошибка формирования отчёта М-29',
+      btnCancel: 'Отмена',
+      btnBack: 'Назад',
+      btnNext: 'Далее',
+      btnGenerate: 'Btn Generate',
+      step1Instruction: 'Step1 Instruction',
+      step2Instruction: 'Step2 Instruction',
+      headerMaterial: 'Заголовок Материал',
+      headerUnit: 'Заголовок Единица',
+      headerNorm: 'Заголовок norm',
+      headerActual: 'Заголовок Фактический',
+      infoMaterialsFound: 'Информация materials found',
+      step3Instruction: 'Step3 Instruction',
+      labelNorm: 'Метка norm',
+      step4Instruction: 'Step4 Instruction',
+      summaryActs: 'Сводка acts',
+      summaryMaterialPositions: 'Сводка Материал positions',
+      summaryDeviations: 'Сводка deviations',
+      summaryPositions: 'Сводка positions',
+      summaryNoDeviations: 'Сводка Нет deviations',
+      infoReportReady: 'Информация Отчёт ready'
     },
-
-    // TurnoverReportWizard
     turnoverWizard: {
       title: 'Оборотная ведомость',
       description: 'Формирование отчёта о движении материалов по складу',
@@ -5282,11 +6463,35 @@ export const ru = {
       groupByOptions: {
         byMaterials: 'По материалам',
         byCategories: 'По категориям',
-        bySuppliers: 'По поставщикам',
+        bySuppliers: 'По поставщикам'
       },
+      warehouseCentral: 'Склад central',
+      warehouseNewHorizons: 'Склад Новый horizons',
+      warehouseCentralBC: 'Склад central b c',
+      warehouseGSM: 'Склад g s m',
+      groupByMaterial: 'Группа by Материал',
+      groupByCategory: 'Группа by Категория',
+      groupBySupplier: 'Группа by Поставщик',
+      btnCancel: 'Отмена',
+      btnBack: 'Назад',
+      btnNext: 'Далее',
+      btnExport: 'Экспорт',
+      fieldWarehouse: 'Поле Склад',
+      fieldWarehousePlaceholder: 'Поле Склад placeholder',
+      fieldStartDate: 'Поле Начать Дата',
+      fieldEndDate: 'Поле end Дата',
+      fieldGroupBy: 'Поле Группа by',
+      checkboxZeroBalance: 'Checkbox Zero Balance',
+      step2Instruction: 'Step2 Instruction',
+      headerName: 'Заголовок Название',
+      headerUnit: 'Заголовок Единица',
+      headerOpenBalance: 'Заголовок Открыть balance',
+      headerIncome: 'Заголовок Доход',
+      headerExpense: 'Заголовок Расход',
+      headerCloseBalance: 'Заголовок Закрыть balance',
+      fieldExportFormat: 'Поле Экспорт format',
+      infoExportReady: 'Информация Экспорт ready'
     },
-
-    // M29ReportPage
     m29Report: {
       title: 'Отчёт М-29',
       subtitle: 'Ежемесячный отчёт о расходе материалов по объекту',
@@ -5313,10 +6518,8 @@ export const ru = {
       summaryTotal: 'Итого',
       summaryPlan: 'План',
       summaryFact: 'Факт',
-      summaryVariance: 'Откл.',
+      summaryVariance: 'Откл.'
     },
-
-    // LimitFenceCardsPage
     limitFenceCards: {
       title: 'Лимитно-заборные карты',
       subtitle: '{count} карт',
@@ -5333,7 +6536,7 @@ export const ru = {
       metricOverdrawn: 'Перерасход',
       trendNeedAttention: 'Требуют внимания',
       trendAllNormal: 'Все в норме',
-      columnNumber: '\u2116 карты',
+      columnNumber: '№ карты',
       columnProject: 'Объект',
       columnMaterial: 'Материал',
       columnLimit: 'Лимит',
@@ -5363,10 +6566,8 @@ export const ru = {
       issueQty: 'Количество',
       issueRecipient: 'Получатель',
       issueRunningTotal: 'Нарастающий итог',
-      noIssues: 'Выдач по карте ещё не было',
+      noIssues: 'Выдач по карте ещё не было'
     },
-
-    // WarehouseOrdersPage
     warehouseOrders: {
       title: 'Складские ордера',
       subtitle: '{count} ордеров',
@@ -5379,7 +6580,7 @@ export const ru = {
       tabApproved: 'Утверждён',
       tabCompleted: 'Выполнен',
       tabCancelled: 'Отменён',
-      columnNumber: '\u2116',
+      columnNumber: '№',
       columnType: 'Тип',
       columnDate: 'Дата',
       columnWarehouse: 'Склад',
@@ -5410,10 +6611,8 @@ export const ru = {
       formItemMaterial: 'Материал',
       formItemQty: 'Кол-во',
       formItemUnit: 'Ед.',
-      formItemPrice: 'Цена',
+      formItemPrice: 'Цена'
     },
-
-    // AddressStoragePage
     addressStorage: {
       title: 'Адресное хранение',
       subtitle: 'Визуализация ячеек хранения',
@@ -5444,10 +6643,8 @@ export const ru = {
       detailCell: 'Ячейка',
       detailMaterial: 'Материал',
       detailQuantity: 'Количество',
-      detailLastMovement: 'Последнее движение',
+      detailLastMovement: 'Последнее движение'
     },
-
-    // MaterialDemandPage
     materialDemand: {
       title: 'Расчёт потребности в материалах',
       subtitle: 'Анализ обеспеченности по графику работ',
@@ -5475,13 +6672,226 @@ export const ru = {
       statusLow: 'Мало',
       statusDeficit: 'Дефицит',
       emptyTitle: 'Нет данных',
-      emptyDescription: 'Выберите объект для расчёта потребности',
+      emptyDescription: 'Выберите объект для расчёта потребности'
     },
+    interSiteTransfer: {
+      toastSuccess: 'toast Успешно',
+      toastError: 'toast Ошибка',
+      validationSourceRequired: 'validation Источник Обязательное',
+      validationDestRequired: 'validation dest Обязательное',
+      validationSameLocation: 'validation same Локация',
+      validationNoLines: 'validation Нет lines',
+      validationQtyPositive: 'Validation Qty Positive',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      step1Title: 'Шаг 1',
+      step2Title: 'Шаг 2',
+      sectionDirection: 'Направление',
+      labelSource: 'Источник',
+      placeholderSource: 'Выберите источник',
+      labelDest: 'Назначение',
+      placeholderDest: 'Выберите назначение',
+      sectionProjects: 'Объекты',
+      labelSourceProject: 'Объект-источник',
+      placeholderProject: 'placeholder Объект',
+      labelDestProject: 'Объект назначения',
+      sectionAdditional: 'Дополнительно',
+      labelResponsible: 'Ответственный',
+      placeholderResponsible: 'placeholder Ответственный',
+      labelNotes: 'Примечания',
+      placeholderNotes: 'placeholder Примечания',
+      btnNext: 'Далее',
+      sectionMaterials: 'Материалы',
+      btnAddLine: 'Btn Add Line',
+      colMaterial: 'Материал',
+      placeholderMaterial: 'Выберите материал',
+      colQuantity: 'Количество',
+      btnCreate: 'Создать',
+      btnBack: 'Назад'
+    },
+    limitFenceSheet: {
+      toastIssued: 'Toast Issued',
+      toastError: 'toast Ошибка',
+      toastReturned: 'Toast Returned',
+      toastClosed: 'Toast Closed',
+      toastDeleted: 'Toast Deleted',
+      detailTitle: 'Детали Заголовок',
+      breadcrumb: 'Навигация',
+      actionIssue: 'action Расход',
+      actionReturn: 'action Возврат',
+      actionClose: 'action Закрыть',
+      actionEdit: 'action Редактировать',
+      actionDelete: 'action Удалить',
+      detailLimitProgress: 'Детали limit Прогресс',
+      columnLimit: 'Column Limit',
+      detailIssued: 'Детали issued',
+      detailReturned: 'Детали returned',
+      detailRemaining: 'Детали remaining',
+      detailMaterial: 'Детали Материал',
+      detailPeriod: 'Детали period',
+      detailNotes: 'Детали Примечания',
+      issueTitle: 'Расход Заголовок',
+      issueConfirm: 'Расход Подтвердить',
+      returnTitle: 'Возврат Заголовок',
+      returnConfirm: 'Возврат Подтвердить',
+      closeConfirmTitle: 'Закрыть Подтвердить Заголовок',
+      closeConfirmMessage: 'Закрыть Подтвердить Сообщение',
+      deleteConfirmTitle: 'Удалить Подтвердить Заголовок',
+      deleteConfirmMessage: 'Удалить Подтвердить Сообщение',
+      validationNumberRequired: 'validation number Обязательное',
+      validationProjectRequired: 'validation Объект Обязательное',
+      validationMaterialRequired: 'validation Материал Обязательное',
+      validationLimitRequired: 'validation limit Обязательное',
+      validationLimitPositive: 'Validation Limit Positive',
+      validationPeriodStartRequired: 'validation period Начать Обязательное',
+      validationPeriodEndRequired: 'validation period end Обязательное',
+      toastCreated: 'Toast Created',
+      toastUpdated: 'Toast Updated',
+      formEditTitle: 'Форма Редактировать Заголовок',
+      formTitle: 'Форма Заголовок',
+      formSubtitle: 'Форма Подзаголовок',
+      formSectionMain: 'Форма Раздел main',
+      formLabelNumber: 'Форма Метка number',
+      formPlaceholderNumber: 'Форма placeholder number',
+      formLabelProject: 'Форма Метка Объект',
+      formLabelMaterial: 'Форма Метка Материал',
+      formLabelUnit: 'Форма Метка Единица',
+      formPlaceholderUnit: 'Форма placeholder Единица',
+      formSectionPeriod: 'Форма Раздел period',
+      formLabelLimitQuantity: 'Форма Метка limit Количество',
+      formLabelPeriodStart: 'Форма Метка period Начать',
+      formLabelPeriodEnd: 'Форма Метка period end',
+      formSectionAdditional: 'Форма Раздел additional',
+      formLabelWarehouse: 'Форма Метка Склад',
+      formLabelResponsible: 'Форма Метка Ответственный',
+      formLabelNotes: 'Форма Метка Примечания',
+      formPlaceholderNotes: 'Форма placeholder Примечания',
+      formUpdate: 'Форма Обновить',
+      formSave: 'Форма Сохранить',
+      columnNumber: 'Column Number',
+      columnMaterial: 'Материал',
+      columnUnit: 'Ед.изм.',
+      columnIssued: 'Column Issued',
+      columnRemaining: 'Column Remaining',
+      columnPeriod: 'Column Period',
+      columnStatus: 'Статус',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      newSheet: 'Новый sheet',
+      filterAll: 'Фильтр Все',
+      filterActive: 'Фильтр Активный',
+      filterExhausted: 'Фильтр exhausted',
+      filterClosed: 'Фильтр closed',
+      searchPlaceholder: 'Поиск...',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    },
+    quickReceipt: {
+      toastSuccess: 'toast Успешно',
+      toastError: 'toast Ошибка',
+      validationQtyPositive: 'Validation Qty Positive',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      step1: 'Step1',
+      step2: 'Step2',
+      scanTitle: 'scan Заголовок',
+      scanHint: 'Scan Hint',
+      orManual: 'Или manual',
+      labelMaterial: 'Метка Материал',
+      placeholderMaterial: 'Выберите материал',
+      labelQuantity: 'Метка Количество',
+      summaryTitle: 'Сводка Заголовок',
+      summaryMaterial: 'Сводка Материал',
+      summaryQuantity: 'Сводка Количество',
+      summaryType: 'Сводка Тип',
+      typeReceipt: 'Тип Приход',
+      summaryResponsible: 'Сводка Ответственный',
+      labelLocation: 'Метка Локация',
+      placeholderLocation: 'placeholder Локация',
+      backToStep1: 'Назад to step1',
+      btnNext: 'Далее',
+      btnConfirm: 'Подтвердить'
+    },
+    scanner: {
+      found: 'Found',
+      notFound: 'Не found'
+    },
+    orders: {
+      toastConfirmed: 'Toast Confirmed',
+      toastError: 'toast Ошибка',
+      toastCancelled: 'toast Отменено',
+      toastDeleted: 'Toast Deleted',
+      toastItemAdded: 'Toast Item Added',
+      itemColumnMaterial: 'item column Материал',
+      itemColumnUnit: 'item column Единица',
+      itemColumnQuantity: 'item column Количество',
+      itemColumnPrice: 'item column Цена',
+      itemColumnTotal: 'item column Всего',
+      itemColumnLot: 'Item Column Lot',
+      detailTitle: 'Детали Заголовок',
+      breadcrumb: 'Навигация',
+      actionConfirm: 'action Подтвердить',
+      actionEdit: 'action Редактировать',
+      actionCancel: 'action Отмена',
+      actionDelete: 'action Удалить',
+      detailDate: 'Детали Дата',
+      detailTotalQuantity: 'Детали Всего Количество',
+      detailTotalAmount: 'Детали Всего Сумма',
+      detailNotes: 'Детали Примечания',
+      detailItems: 'Детали items',
+      addItem: 'Add Item',
+      emptyTitle: 'Нет данных',
+      addItemTitle: 'add item Заголовок',
+      itemColumnCertificate: 'item column Сертификат',
+      confirmTitle: 'Подтвердить Заголовок',
+      confirmMessage: 'Подтвердить Сообщение',
+      cancelTitle: 'Отмена Заголовок',
+      cancelMessage: 'Отмена Сообщение',
+      deleteTitle: 'Удалить Заголовок',
+      deleteMessage: 'Удалить Сообщение',
+      validationNumberRequired: 'validation number Обязательное',
+      validationTypeRequired: 'validation Тип Обязательное',
+      validationDateRequired: 'validation Дата Обязательное',
+      validationWarehouseRequired: 'validation Склад Обязательное',
+      toastCreated: 'Toast Created',
+      toastUpdated: 'Toast Updated',
+      formEditTitle: 'Форма Редактировать Заголовок',
+      formTitle: 'Форма Заголовок',
+      formSubtitle: 'Форма Подзаголовок',
+      formSectionMain: 'Форма Раздел main',
+      formLabelNumber: 'Форма Метка number',
+      formPlaceholderNumber: 'Форма placeholder number',
+      formLabelType: 'Форма Метка Тип',
+      formLabelDate: 'Форма Метка Дата',
+      formLabelWarehouse: 'Форма Метка Склад',
+      formSectionDetails: 'Форма Раздел Подробности',
+      formLabelCounterparty: 'Форма Метка counterparty',
+      formLabelContract: 'Форма Метка Договор',
+      formLabelResponsible: 'Форма Метка Ответственный',
+      formLabelReceiver: 'Форма Метка receiver',
+      formLabelNotes: 'Форма Метка Примечания',
+      formPlaceholderNotes: 'Форма placeholder Примечания',
+      formUpdate: 'Форма Обновить',
+      formSave: 'Форма Сохранить',
+      columnNumber: 'Column Number',
+      columnType: 'Тип',
+      columnDate: 'Дата',
+      columnQuantity: 'Количество',
+      columnAmount: 'Сумма',
+      columnStatus: 'Статус',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      newOrder: 'Новый Заказ',
+      tabAll: 'Все',
+      tabDraft: 'tab Черновик',
+      tabConfirmed: 'Tab Confirmed',
+      tabCancelled: 'tab Отменено',
+      searchPlaceholder: 'Поиск...',
+      emptyDescription: 'Данные не найдены'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Fleet & Equipment
-  // ---------------------------------------------------------------------------
   fleet: {
     title: 'Автопарк и техника',
     vehicles: 'Транспортные средства',
@@ -5495,8 +6905,6 @@ export const ru = {
     fuelConsumption: 'Расход топлива',
     assignedTo: 'Назначен',
     emptyState: 'Техника не найдена',
-
-    // -- Fleet List (FleetListPage) --
     list: {
       title: 'Автопарк и техника',
       subtitleSuffix: 'единиц техники',
@@ -5553,9 +6961,17 @@ export const ru = {
       toastDeleteError: 'Ошибка при удалении',
       emptyTitle: 'Нет техники',
       emptyDescription: 'Добавьте первую единицу техники',
+      deleteSuccess: 'Успешно удалено',
+      deleteError: 'Ошибка удаления',
+      colCode: 'Код',
+      colName: 'Наименование',
+      colNextMaintenance: 'col Далее Обслуживание',
+      subtitleUnits: 'Подзаголовок units',
+      createHint: 'Создать hint',
+      addVehicle: 'add Транспортное средство',
+      allTypes: 'Все типы',
+      allStatuses: 'Все статусы'
     },
-
-    // -- Fleet Detail (FleetDetailPage) --
     detail: {
       breadcrumbHome: 'Главная',
       breadcrumbFleet: 'Автопарк',
@@ -5655,10 +7071,8 @@ export const ru = {
       infoEngineHours: 'Моточасы',
       infoFuel: 'Топливо',
       infoLastMaintenance: 'Последнее ТО',
-      infoNextMaintenance: 'Следующее ТО',
+      infoNextMaintenance: 'Следующее ТО'
     },
-
-    // -- Maintenance Page (MaintenancePage) --
     maintenance: {
       title: 'Техническое обслуживание',
       subtitleSuffix: 'записей',
@@ -5687,9 +7101,19 @@ export const ru = {
       statusCancelled: 'Отменено',
       emptyTitle: 'Нет записей ТО',
       emptyDescription: 'Создайте первую запись технического обслуживания',
+      statusPlanned: 'Статус Плановый',
+      statusOverdue: 'Статус overdue',
+      colMaintenanceType: 'col Обслуживание Тип',
+      colScheduledDate: 'col scheduled Дата',
+      colMechanic: 'Col Mechanic',
+      colProject: 'Объект',
+      subtitle: 'Подзаголовок',
+      newMaintenance: 'Новый Обслуживание',
+      tabPlanned: 'tab Плановый',
+      totalRecords: 'Всего records',
+      overdue: 'Overdue',
+      costsCurrentMonth: 'Costs Current Month'
     },
-
-    // -- Fuel Page (FuelPage) --
     fuel: {
       title: 'Учёт топлива',
       subtitleSuffix: 'записей',
@@ -5714,9 +7138,23 @@ export const ru = {
       litersUnit: 'л',
       emptyTitle: 'Нет записей заправок',
       emptyDescription: 'Создайте первую запись заправки',
+      fuelGasoline92: 'Топливо gasoline92',
+      fuelGasoline95: 'Топливо gasoline95',
+      colLiters: 'Col Liters',
+      colMileage: 'col Пробег',
+      colDriver: 'col Водитель',
+      colStation: 'Col Station',
+      subtitle: 'Подзаголовок',
+      addRefueling: 'Add Refueling',
+      totalCosts: 'Всего costs',
+      currentMonth: 'Current Month',
+      totalConsumption: 'Всего Расход',
+      litersShort: 'Liters Short',
+      avgConsumption: 'avg Расход',
+      topConsumer: 'Top Consumer',
+      dateFrom: 'Дата from',
+      dateTo: 'Дата to'
     },
-
-    // -- Fleet Maintenance Board (FleetMaintenanceBoardPage) --
     maintenanceBoard: {
       title: 'ТО техники - Доска',
       subtitleSuffix: 'записей',
@@ -5738,9 +7176,14 @@ export const ru = {
       priorityCritical: 'Критический',
       emptyColumn: 'Нет записей',
       emptyColumnHint: 'Перетащите карточку сюда',
+      recordsSuffix: 'Records Suffix',
+      filters: 'Filters',
+      newRecord: 'Новый record',
+      allStatuses: 'Все статусы',
+      resetFilters: 'Сбросить filters',
+      dragHint: 'Drag Hint',
+      kmSuffix: 'Km Suffix'
     },
-
-    // -- Vehicle Create Modal (VehicleCreateModal) --
     createModal: {
       modalTitle: 'Добавление техники',
       modalDescription: 'Добавьте новую единицу техники в автопарк',
@@ -5789,9 +7232,26 @@ export const ru = {
       validationFuelTypeRequired: 'Выберите тип топлива',
       toastCreated: 'Техника добавлена',
       toastCreateError: 'Не удалось добавить технику',
+      validationLicensePlate: 'validation Лицензия plate',
+      validationMaxChars: 'validation Максимум chars',
+      validationBrand: 'Validation Brand',
+      validationModel: 'Validation Model',
+      validationYear: 'Validation Year',
+      validationYearRange: 'Validation Year Range',
+      validationType: 'validation Тип',
+      validationStatus: 'validation Статус',
+      statusDecommissioned: 'Статус decommissioned',
+      noProject: 'Нет Объект',
+      successToast: 'Успешно toast',
+      errorToast: 'Ошибка toast',
+      title: 'Название',
+      description: 'Описание',
+      cancel: 'Отмена',
+      submit: 'Отправить',
+      labelBrand: 'Метка brand',
+      labelProject: 'Объект',
+      placeholderProject: 'placeholder Объект'
     },
-
-    // -- Waybills ESM-2 (WaybillsPage) --
     waybillsEsm: {
       title: 'Путевые листы — ЭСМ-2',
       subtitle: 'Оформление и учёт путевых листов',
@@ -5872,10 +7332,8 @@ export const ru = {
       toastStatusChanged: 'Статус обновлён',
       toastError: 'Ошибка при создании путевого листа',
       toastPrintReady: 'Форма ЭСМ-2 готова',
-      toastPrintError: 'Ошибка при формировании ЭСМ-2',
+      toastPrintError: 'Ошибка при формировании ЭСМ-2'
     },
-
-    // -- Fuel Accounting (FuelAccountingPage) --
     fuelAccounting: {
       title: 'Учёт ГСМ',
       subtitle: 'Контроль расхода и стоимости топлива',
@@ -5902,9 +7360,32 @@ export const ru = {
       colConsumption: 'Расход / Норма',
       emptyTitle: 'Нет записей ГСМ',
       emptyDescription: 'Данные о заправках появятся после добавления',
+      fuelDiesel: 'Топливо diesel',
+      fuelGasoline92: 'Топливо gasoline92',
+      fuelGasoline95: 'Топливо gasoline95',
+      fuelGasoline98: 'Топливо gasoline98',
+      fuelLpg: 'Топливо lpg',
+      toastCreated: 'Toast Created',
+      toastError: 'toast Ошибка',
+      colNorm: 'Col Norm',
+      newRecord: 'Новый record',
+      metricAvgDeviation: 'Metric Avg Deviation',
+      normComparisonTitle: 'norm comparison Заголовок',
+      filterAllFuelTypes: 'Фильтр Все Топливо types',
+      modalTitle: 'modal Заголовок',
+      formVehicle: 'Форма Транспортное средство',
+      formVehiclePlaceholder: 'Форма Транспортное средство placeholder',
+      formDate: 'Форма Дата',
+      formFuelType: 'Форма Топливо Тип',
+      formLiters: 'Форма liters',
+      formCost: 'Форма Стоимость',
+      formStation: 'Форма station',
+      formStationPlaceholder: 'Форма station placeholder',
+      formMileage: 'Форма Пробег',
+      formDriver: 'Форма Водитель',
+      formDriverPlaceholder: 'Форма Водитель placeholder',
+      costPerLiter: 'Стоимость per liter'
     },
-
-    // -- Maintenance & Repair (MaintenanceToRepairPage) --
     maintRepair: {
       title: 'ТО и ремонт',
       subtitle: 'График обслуживания и ремонта техники',
@@ -5946,9 +7427,46 @@ export const ru = {
       formCost: 'Ориентировочная стоимость',
       toastCreated: 'Запись ТО создана',
       toastError: 'Ошибка при создании записи',
+      tabAll: 'Все',
+      tabScheduled: 'Tab Scheduled',
+      tabOverdue: 'Tab Overdue',
+      tabInProgress: 'tab in Прогресс',
+      tabCompleted: 'Завершённые',
+      triggerDate: 'trigger Дата',
+      triggerMileage: 'trigger Пробег',
+      triggerHours: 'trigger Часов',
+      statusScheduled: 'Статус scheduled',
+      statusInProgress: 'Статус in Прогресс',
+      toastCompleted: 'toast Завершено',
+      colWorkType: 'col Работа Тип',
+      colScheduled: 'Col Scheduled',
+      colActual: 'col Фактический',
+      actionComplete: 'Action Complete',
+      metricScheduled: 'Metric Scheduled',
+      metricInProgress: 'metric in Прогресс',
+      overdueAlert: 'overdue Оповещение',
+      searchPlaceholder: 'Поиск...',
+      filterAllWorkTypes: 'Фильтр Все Работа types',
+      legendScheduled: 'Legend Scheduled',
+      legendInProgress: 'legend in Прогресс',
+      formWorkType: 'Форма Работа Тип',
+      formTrigger: 'Форма trigger',
+      formScheduledDate: 'Форма scheduled Дата',
+      formIntervalDays: 'Форма Интервал days',
+      formIntervalDaysPlaceholder: 'Форма Интервал days placeholder',
+      formScheduledMileage: 'Форма scheduled Пробег',
+      formScheduledMileagePlaceholder: 'Форма scheduled Пробег placeholder',
+      formIntervalMileage: 'Форма Интервал Пробег',
+      formIntervalMileagePlaceholder: 'Форма Интервал Пробег placeholder',
+      formIntervalHoursPlaceholder: 'Форма Интервал Часов placeholder',
+      completeModalTitle: 'complete modal Заголовок',
+      completeActualDate: 'complete Фактический Дата',
+      completeActualMileage: 'complete Фактический Пробег',
+      completeActualCost: 'complete Фактический Стоимость',
+      completeNotes: 'complete Примечания',
+      completeNotesPlaceholder: 'complete Примечания placeholder',
+      completeBtn: 'Complete Btn'
     },
-
-    // -- GPS Tracking (GpsTrackingPage) --
     gps: {
       title: 'GPS-трекинг',
       subtitle: 'Мониторинг местоположения транспорта в реальном времени',
@@ -5975,9 +7493,29 @@ export const ru = {
       detailLocation: 'Последнее место',
       detailDistance: 'Пробег за сегодня',
       detailLastUpdate: 'Обновлено',
+      statusStopped: 'Статус stopped',
+      justNow: 'Just Now',
+      minutesAgo: 'Минут ago',
+      filterStopped: 'Фильтр stopped',
+      livePolling: 'Live Polling',
+      geofenceAlertsTitle: 'geofence alerts Заголовок',
+      geofenceEntered: 'Geofence Entered',
+      geofenceExited: 'Geofence Exited',
+      metricStopped: 'Metric Stopped',
+      filterAllTypes: 'Фильтр Все types',
+      mapVehicleCount: 'map Транспортное средство Количество',
+      detailStops: 'Детали stops',
+      detailCoordinates: 'Детали coordinates',
+      trackHistoryTitle: 'track История Заголовок',
+      trackDistance: 'track Расстояние',
+      trackStops: 'Track Stops',
+      trackAvgSpeed: 'track avg Скорость',
+      trackMaxSpeed: 'track Максимум Скорость',
+      trackColTime: 'Track Col Time',
+      trackColLocation: 'track col Локация',
+      trackColSpeed: 'track col Скорость',
+      trackNoData: 'track Нет data'
     },
-
-    // -- Driver Rating (DriverRatingPage) --
     driverRating: {
       title: 'Рейтинг водителей',
       subtitle: 'Оценка эффективности и безопасности вождения',
@@ -5998,12 +7536,326 @@ export const ru = {
       lPer100km: 'л/100км',
       emptyTitle: 'Нет данных о водителях',
       emptyDescription: 'Рейтинг формируется по данным поездок',
+      breakdownFuel: 'breakdown Топливо',
+      breakdownSpeed: 'breakdown Скорость',
+      breakdownMaintenance: 'breakdown Обслуживание',
+      breakdownIdle: 'Breakdown Idle',
+      periodMonth: 'Period Month',
+      periodQuarter: 'Period Quarter',
+      periodYear: 'Period Year',
+      colDistance: 'col Расстояние',
+      km: 'Km',
+      clickForBreakdown: 'Click For Breakdown',
+      metricTotalViolations: 'metric Всего violations',
+      metricTotalDistance: 'metric Всего Расстояние',
+      topPerformers: 'Top Performers',
+      bottomPerformers: 'Bottom Performers',
+      legendGood: 'Legend Good',
+      legendAverage: 'legend Среднее',
+      legendPoor: 'Legend Poor',
+      breakdownTitle: 'breakdown Заголовок',
+      overallScore: 'Overall Score',
+      ratingComponents: 'Rating Components',
+      statsTitle: 'stats Заголовок',
+      statIdleTime: 'Stat Idle Time',
+      hours: 'Часов',
+      minutes: 'Минут'
     },
+    schedule: {
+      typeScheduled: 'Тип scheduled',
+      typeUnscheduled: 'Тип unscheduled',
+      typeRepair: 'Тип Ремонт',
+      typeInspection: 'Тип Проверка',
+      toastRuleCreated: 'Toast Rule Created',
+      toastError: 'toast Ошибка',
+      toastRuleUpdated: 'Toast Rule Updated',
+      toastRuleDeleted: 'Toast Rule Deleted',
+      colName: 'Наименование',
+      colVehicle: 'col Транспортное средство',
+      allVehicles: 'Все vehicles',
+      specificVehicle: 'specific Транспортное средство',
+      colType: 'Тип',
+      colIntervalHours: 'col Интервал Часов',
+      colIntervalMileage: 'col Интервал Пробег',
+      colIntervalDays: 'col Интервал days',
+      colActive: 'col Активный',
+      active: 'Активный',
+      inactive: 'Inactive',
+      colRule: 'Col Rule',
+      colTrigger: 'Col Trigger',
+      colCurrentHours: 'col current Часов',
+      colThresholdHours: 'col Порог Часов',
+      colCurrentMileage: 'col current Пробег',
+      colThresholdMileage: 'col Порог Пробег',
+      colOverdue: 'Col Overdue',
+      overdue: 'Overdue',
+      approaching: 'Approaching',
+      colExpiryDate: 'col expiry Дата',
+      colDaysRemaining: 'Col Days Remaining',
+      expired: 'Просрочено',
+      daysLeft: 'Days Left',
+      tabRules: 'Tab Rules',
+      tabDue: 'Tab Due',
+      tabCompliance: 'Tab Compliance',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbFleet: 'Автопарк',
+      breadcrumbSchedule: 'breadcrumb Расписание',
+      newRule: 'Новый rule',
+      rulesEmpty: 'rules Пусто',
+      rulesEmptyDesc: 'rules Пусто desc',
+      dueEmpty: 'due Пусто',
+      dueEmptyDesc: 'due Пусто desc',
+      formTitle: 'Форма Заголовок',
+      formName: 'Форма Название',
+      formNamePlaceholder: 'Форма Название placeholder',
+      formDescription: 'Форма Описание',
+      formType: 'Форма Тип',
+      formVehicle: 'Форма Транспортное средство',
+      formVehiclePlaceholder: 'Форма Транспортное средство placeholder',
+      formAllVehicles: 'Форма Все vehicles',
+      formIntervalHours: 'Форма Интервал Часов',
+      formIntervalMileage: 'Форма Интервал Пробег',
+      formIntervalDays: 'Форма Интервал days',
+      formLeadTimeHours: 'Форма lead time Часов',
+      formLeadTimeMileage: 'Форма lead time Пробег',
+      formLeadTimeDays: 'Форма lead time days',
+      formNotes: 'Форма Примечания',
+      formBtnCancel: 'Форма btn Отмена',
+      formBtnUpdate: 'Форма btn Обновить',
+      formBtnCreate: 'Форма btn Создать',
+      metricTotal: 'Итого',
+      metricOverdue: 'Metric Overdue',
+      metricApproaching: 'Metric Approaching',
+      metricExpiredIns: 'metric Просрочено ins',
+      metricExpiringIns: 'metric Истекает ins',
+      metricExpiredTech: 'metric Просрочено tech',
+      metricExpiringTech: 'metric Истекает tech',
+      sectionInsurance: 'Раздел Страхование',
+      sectionTechInspection: 'Раздел tech Проверка'
+    },
+    usageLogs: {
+      toastDeleted: 'Toast Deleted',
+      detailTitle: 'Детали Заголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbFleet: 'Автопарк',
+      breadcrumbUsageLogs: 'breadcrumb Использование logs',
+      editButton: 'Редактировать button',
+      confirmDeleteTitle: 'Подтвердить Удалить Заголовок',
+      confirmDeleteDescription: 'Подтвердить Удалить Описание',
+      confirmDeleteConfirm: 'Подтвердить Удалить Подтвердить',
+      confirmDeleteCancel: 'Подтвердить Удалить Отмена',
+      deleteButton: 'Удалить button',
+      labelHoursWorked: 'Метка Часов worked',
+      labelDate: 'Дата',
+      labelVehicle: 'Метка Транспортное средство',
+      labelProject: 'Объект',
+      labelOperator: 'Метка operator',
+      hours: 'Часов',
+      labelHoursStart: 'Метка Часов Начать',
+      labelHoursEnd: 'Метка Часов end',
+      labelFuelConsumed: 'Метка Топливо consumed',
+      liters: 'Liters',
+      labelDescription: 'Описание',
+      labelNotes: 'Примечания',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'toast Обновить Ошибка',
+      formTitleEdit: 'Форма Заголовок Редактировать',
+      formTitleNew: 'Форма Заголовок Новый',
+      breadcrumbEdit: 'breadcrumb Редактировать',
+      breadcrumbNew: 'breadcrumb Новый',
+      formVehicle: 'Форма Транспортное средство',
+      formVehiclePlaceholder: 'Форма Транспортное средство placeholder',
+      formProject: 'Форма Объект',
+      formProjectPlaceholder: 'Форма Объект placeholder',
+      formDate: 'Форма Дата',
+      formOperatorName: 'Форма operator Название',
+      formOperatorNamePlaceholder: 'Форма operator Название placeholder',
+      formHoursWorked: 'Форма Часов worked',
+      formHoursStart: 'Форма Часов Начать',
+      formHoursEnd: 'Форма Часов end',
+      formFuelConsumed: 'Форма Топливо consumed',
+      formDescription: 'Форма Описание',
+      formDescriptionPlaceholder: 'Форма Описание placeholder',
+      formNotes: 'Форма Примечания',
+      formNotesPlaceholder: 'Форма Примечания placeholder',
+      formBtnCancel: 'Форма btn Отмена',
+      formBtnUpdate: 'Форма btn Обновить',
+      formBtnCreate: 'Форма btn Создать',
+      calcPerHour: 'Calc Per Hour',
+      calcPerYear: 'Calc Per Year',
+      tabLogs: 'Tab Logs',
+      tabCalculator: 'Tab Calculator',
+      tabComparison: 'Tab Comparison',
+      colDate: 'Дата',
+      colVehicle: 'col Транспортное средство',
+      colProject: 'Объект',
+      colOperator: 'Col Operator',
+      colHoursWorked: 'col Часов worked',
+      colHoursStart: 'col Часов Начать',
+      colHoursEnd: 'col Часов end',
+      colFuelConsumed: 'col Топливо consumed',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      newEntry: 'Новый entry',
+      metricTotalHours: 'metric Всего Часов',
+      metricTotalEntries: 'metric Всего entries',
+      metricAvgHoursPerDay: 'metric avg Часов per day',
+      metricTotalFuel: 'metric Всего Топливо',
+      searchPlaceholder: 'Поиск...',
+      filterAllVehicles: 'Фильтр Все vehicles',
+      filterAllProjects: 'Фильтр Все projects',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены',
+      calcTitle: 'calc Заголовок',
+      compTitle: 'comp Заголовок',
+      calcSubtitle: 'calc Подзаголовок',
+      compSubtitle: 'comp Подзаголовок',
+      calcSelectVehicle: 'calc Выберите Транспортное средство',
+      calcFuelPricePlaceholder: 'calc Топливо Цена placeholder',
+      calcTotalRate: 'calc Всего rate',
+      calcAnnualTotal: 'calc annual Всего',
+      calcInputParams: 'Calc Input Params',
+      calcParamPurchasePrice: 'calc param purchase Цена',
+      calcParamUsefulLife: 'Calc Param Useful Life',
+      calcParamAnnualHours: 'calc param annual Часов',
+      calcParamFuelRate: 'calc param Топливо rate',
+      calcResultTitle: 'calc result Заголовок',
+      calcDepreciation: 'Calc Depreciation',
+      calcFuel: 'calc Топливо',
+      calcMaintenance: 'calc Обслуживание',
+      calcInsurance: 'calc Страхование',
+      calcOperator: 'Calc Operator',
+      compNoRentalRate: 'comp Нет rental rate',
+      compOwnCosts: 'Comp Own Costs',
+      compPerHour: 'Comp Per Hour',
+      compPerMonth: 'Comp Per Month',
+      compPerYear: 'Comp Per Year',
+      compRentCosts: 'Comp Rent Costs',
+      compRecommendation: 'Comp Recommendation',
+      compSavings: 'Comp Savings',
+      compSavingsPercent: 'comp savings Процент'
+    },
+    waybills: {
+      toastStatusChanged: 'toast Статус changed',
+      toastStatusError: 'toast Статус Ошибка',
+      toastDeleted: 'Toast Deleted',
+      detailTitle: 'Детали Заголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbFleet: 'Автопарк',
+      breadcrumbWaybills: 'Breadcrumb Waybills',
+      editButton: 'Редактировать button',
+      confirmDeleteTitle: 'Подтвердить Удалить Заголовок',
+      confirmDeleteDescription: 'Подтвердить Удалить Описание',
+      confirmDeleteConfirm: 'Подтвердить Удалить Подтвердить',
+      confirmDeleteCancel: 'Подтвердить Удалить Отмена',
+      deleteButton: 'Удалить button',
+      sectionRoute: 'Раздел route',
+      labelNumber: 'Метка number',
+      labelDate: 'Дата',
+      labelVehicle: 'Метка Транспортное средство',
+      labelProject: 'Объект',
+      labelDriver: 'Метка Водитель',
+      labelDeparturePoint: 'Метка departure point',
+      labelDestinationPoint: 'Метка Назначение point',
+      labelRouteDescription: 'Метка route Описание',
+      labelDepartureTime: 'Метка departure time',
+      labelReturnTime: 'Метка Возврат time',
+      sectionMileage: 'Раздел Пробег',
+      labelMileageStart: 'Метка Пробег Начать',
+      km: 'Km',
+      labelMileageEnd: 'Метка Пробег end',
+      labelDistance: 'Метка Расстояние',
+      labelEngineHoursStart: 'Метка engine Часов Начать',
+      hours: 'Часов',
+      labelEngineHoursEnd: 'Метка engine Часов end',
+      labelEngineHoursWorked: 'Метка engine Часов worked',
+      sectionFuel: 'Раздел Топливо',
+      labelFuelDispensed: 'Метка Топливо dispensed',
+      liters: 'Liters',
+      labelFuelConsumed: 'Метка Топливо consumed',
+      labelFuelNorm: 'Метка Топливо norm',
+      labelFuelRemaining: 'Метка Топливо remaining',
+      labelFuelVariance: 'Метка Топливо Отклонение',
+      fuelOverNorm: 'Топливо over norm',
+      fuelUnderNorm: 'Топливо under norm',
+      sectionPreTrip: 'Раздел pre trip',
+      labelMedicalExam: 'Метка medical exam',
+      passed: 'Пройдено',
+      notPassed: 'Не Пройдено',
+      labelMedicalExaminer: 'Метка medical examiner',
+      labelMechanicApproval: 'Метка mechanic approval',
+      approved: 'Утверждено',
+      notApproved: 'Не Утверждено',
+      labelMechanicName: 'Метка mechanic Название',
+      sectionNotes: 'Раздел Примечания',
+      colStatus: 'Статус',
+      changeStatus: 'change Статус',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'toast Обновить Ошибка',
+      formTitleEdit: 'Форма Заголовок Редактировать',
+      formTitleNew: 'Форма Заголовок Новый',
+      breadcrumbEdit: 'breadcrumb Редактировать',
+      breadcrumbNew: 'breadcrumb Новый',
+      formVehicle: 'Форма Транспортное средство',
+      formVehiclePlaceholder: 'Форма Транспортное средство placeholder',
+      formProject: 'Форма Объект',
+      formProjectPlaceholder: 'Форма Объект placeholder',
+      formDate: 'Форма Дата',
+      formDriverName: 'Форма Водитель Название',
+      formDriverNamePlaceholder: 'Форма Водитель Название placeholder',
+      formDeparturePoint: 'Форма departure point',
+      formDestinationPoint: 'Форма Назначение point',
+      formRouteDescription: 'Форма route Описание',
+      formRouteDescriptionPlaceholder: 'Форма route Описание placeholder',
+      formMileageStart: 'Форма Пробег Начать',
+      formMileageEnd: 'Форма Пробег end',
+      formEngineHoursStart: 'Форма engine Часов Начать',
+      formEngineHoursEnd: 'Форма engine Часов end',
+      formFuelDispensed: 'Форма Топливо dispensed',
+      formFuelConsumed: 'Форма Топливо consumed',
+      formFuelRemaining: 'Форма Топливо remaining',
+      formMedicalExamPassed: 'Форма medical exam Пройдено',
+      formMedicalExaminer: 'Форма medical examiner',
+      formMechanicApproved: 'Форма mechanic Утверждено',
+      formMechanicName: 'Форма mechanic Название',
+      formNotes: 'Форма Примечания',
+      formNotesPlaceholder: 'Форма Примечания placeholder',
+      formBtnCancel: 'Форма btn Отмена',
+      formBtnUpdate: 'Форма btn Обновить',
+      formBtnCreate: 'Форма btn Создать',
+      tabAll: 'Все',
+      tabDraft: 'tab Черновик',
+      tabIssued: 'Tab Issued',
+      tabInProgress: 'tab in Прогресс',
+      tabCompleted: 'Завершённые',
+      tabClosed: 'Tab Closed',
+      colNumber: 'Col Number',
+      colDate: 'Дата',
+      colVehicle: 'col Транспортное средство',
+      colDriver: 'col Водитель',
+      colRoute: 'Col Route',
+      colDistance: 'col Расстояние',
+      colFuelConsumed: 'col Топливо consumed',
+      colMedical: 'Col Medical',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      newWaybill: 'Новый Путевой лист',
+      metricTotal: 'Итого',
+      metricDraft: 'metric Черновик',
+      metricInProgress: 'metric in Прогресс',
+      metricCompleted: 'Завершённых',
+      searchPlaceholder: 'Поиск...',
+      filterAllVehicles: 'Фильтр Все vehicles',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // HR
-  // ---------------------------------------------------------------------------
   hr: {
     title: 'Кадры',
     employees: 'Сотрудники',
@@ -6017,11 +7869,8 @@ export const ru = {
     email: 'Email',
     tabNumber: 'Табельный номер',
     emptyState: 'Сотрудники не найдены',
-
     breadcrumbHome: 'Главная',
     breadcrumbPersonnel: 'Персонал',
-
-    // EmployeeListPage
     employeeList: {
       title: 'Сотрудники',
       subtitle: '{count} сотрудников в системе',
@@ -6042,11 +7891,18 @@ export const ru = {
         active: 'Работает',
         onLeave: 'В отпуске',
         terminated: 'Уволен',
-        suspended: 'Отстранён',
+        suspended: 'Отстранён'
       },
+      statusLabels: {
+        all: 'Все',
+        active: 'Активный',
+        onLeave: 'On Leave',
+        terminated: 'Terminated',
+        suspended: 'Suspended'
+      },
+      columnEmployeeNumber: 'column Сотрудник number',
+      breadcrumbHome: 'Главная'
     },
-
-    // EmployeeDetailPage
     employeeDetail: {
       breadcrumbEmployees: 'Сотрудники',
       editButton: 'Редактировать',
@@ -6090,9 +7946,37 @@ export const ru = {
       hoursMetricWorkDays: 'Рабочих дней',
       hoursDetailTitle: 'Детализация часов',
       hoursDetailDescription: 'Подробная информация о рабочих часах находится в разделе табеля учёта рабочего времени.',
+      expiringSoon: 'Истекает soon',
+      expired: 'Просрочено',
+      assignColumnProject: 'Назначить column Объект',
+      assignColumnRole: 'Назначить column Роль',
+      assignColumnStart: 'Назначить column Начать',
+      assignColumnEnd: 'Назначить column end',
+      toPresent: 'To Present',
+      breadcrumbHome: 'Главная',
+      btnEdit: 'Редактировать',
+      sectionPersonalData: 'Раздел personal data',
+      labelFullName: 'Метка full Название',
+      labelEmployeeNumber: 'Метка Сотрудник number',
+      labelPhone: 'Метка phone',
+      labelEmail: 'Метка email',
+      sectionWorkInfo: 'Раздел Работа Информация',
+      labelDepartment: 'Метка Отдел',
+      labelPosition: 'Метка Должность',
+      labelHireDate: 'Метка hire Дата',
+      labelTenure: 'Метка tenure',
+      years: 'Years',
+      expiryWarning: 'expiry Предупреждение',
+      emptyCertTitle: 'Пусто cert Заголовок',
+      emptyCertDescription: 'Пусто cert Описание',
+      emptyAssignTitle: 'Пусто Назначить Заголовок',
+      emptyAssignDescription: 'Пусто Назначить Описание',
+      metricHoursMonth: 'metric Часов month',
+      metricOvertime: 'Metric Overtime',
+      metricWorkDays: 'metric Работа days',
+      sectionHoursDetail: 'Раздел Часов Детали',
+      infoHoursDetail: 'Информация Часов Детали'
     },
-
-    // CrewPage
     crews: {
       title: 'Бригады',
       subtitle: 'Управление строительными бригадами',
@@ -6130,11 +8014,19 @@ export const ru = {
         active: 'На объекте',
         idle: 'Свободна',
         onLeave: 'В отпуске',
-        disbanded: 'Расформирована',
+        disbanded: 'Расформирована'
       },
+      notAssigned: 'Не assigned',
+      breadcrumbHome: 'Главная',
+      metricAvailable: 'Metric Available',
+      personsSuffix: 'Persons Suffix',
+      modalTitle: 'modal Заголовок',
+      modalFieldProject: 'modal Поле Объект',
+      modalFieldProjectPlaceholder: 'modal Поле Объект placeholder',
+      modalFieldStartDate: 'modal Поле Начать Дата',
+      modalFieldComment: 'modal Поле Комментарий',
+      modalFieldCommentPlaceholder: 'modal Поле Комментарий placeholder'
     },
-
-    // CrewTimeEntriesPage
     crewTimeEntries: {
       title: 'Записи времени бригад',
       subtitle: '{count} записей',
@@ -6156,9 +8048,13 @@ export const ru = {
       hoursUnit: 'ч',
       emptyTitle: 'Нет записей времени',
       emptyDescription: 'Записи появятся после ввода данных о рабочем времени бригад',
+      columnDescription: 'Описание',
+      personsSuffix: 'Persons Suffix',
+      hoursSuffix: 'Часов suffix',
+      breadcrumbHome: 'Главная',
+      breadcrumbTimeEntries: 'Breadcrumb Time Entries',
+      metricTotal: 'Итого'
     },
-
-    // CrewTimeCalendarPage
     crewTimeCalendar: {
       title: 'Табель бригад - Календарь',
       subtitle: 'Учёт рабочего времени бригад по сменам',
@@ -6183,7 +8079,7 @@ export const ru = {
       shiftLabels: {
         day: 'Дневная',
         night: 'Ночная',
-        overtime: 'Сверхурочная',
+        overtime: 'Сверхурочная'
       },
       months: {
         january: 'Январь',
@@ -6197,7 +8093,7 @@ export const ru = {
         september: 'Сентябрь',
         october: 'Октябрь',
         november: 'Ноябрь',
-        december: 'Декабрь',
+        december: 'Декабрь'
       },
       daysShort: {
         mon: 'Пн',
@@ -6206,11 +8102,43 @@ export const ru = {
         thu: 'Чт',
         fri: 'Пт',
         sat: 'Сб',
-        sun: 'Вс',
+        sun: 'Вс'
       },
+      monthJan: 'Январь',
+      monthFeb: 'Февраль',
+      monthMar: 'Март',
+      monthApr: 'Апрель',
+      monthMay: 'Май',
+      monthJun: 'Июнь',
+      monthJul: 'Июль',
+      monthAug: 'Август',
+      monthSep: 'Сентябрь',
+      monthOct: 'Октябрь',
+      monthNov: 'Ноябрь',
+      monthDec: 'Декабрь',
+      dayMon: 'Пн',
+      dayTue: 'Вт',
+      dayWed: 'Ср',
+      dayThu: 'Чт',
+      dayFri: 'Пт',
+      daySat: 'Сб',
+      daySun: 'Вс',
+      shiftDay: 'Дневная',
+      shiftNight: 'Ночная',
+      shiftOvertime: 'Смена overtime',
+      breadcrumbHome: 'Главная',
+      breadcrumbCalendar: 'breadcrumb Календарь',
+      summaryDayShift: 'Сводка day Смена',
+      summaryNightShift: 'Сводка night Смена',
+      summaryOvertimeShift: 'Сводка overtime Смена',
+      hoursSuffix: 'Часов suffix',
+      hoursLabel: 'Часов Метка',
+      personsSuffix: 'Persons Suffix',
+      foremanPrefix: 'Foreman Prefix',
+      dayTotal: 'day Всего',
+      manHours: 'man Часов',
+      selectDayPrompt: 'Выберите day prompt'
     },
-
-    // CrewTimeSheetsPage
     crewTimeSheets: {
       title: 'Табели бригад',
       subtitle: '{count} табелей в системе',
@@ -6225,7 +8153,7 @@ export const ru = {
       tabSubmitted: 'На проверке',
       tabApproved: 'Утверждены',
       tabRejected: 'Отклонены',
-      columnNumber: '\u2116',
+      columnNumber: '№',
       columnCrew: 'Бригада',
       columnForemanPrefix: 'Бригадир: ',
       columnProject: 'Объект',
@@ -6238,9 +8166,12 @@ export const ru = {
       hoursUnit: 'ч',
       emptyTitle: 'Нет табелей бригад',
       emptyDescription: 'Создайте первый табель для учёта рабочего времени бригады',
+      foremanPrefix: 'Foreman Prefix',
+      hoursSuffix: 'Часов suffix',
+      breadcrumbHome: 'Главная',
+      breadcrumbTimeSheets: 'Breadcrumb Time Sheets',
+      metricTotal: 'Итого'
     },
-
-    // TimesheetPivotPage
     timesheetPivot: {
       title: 'Сводная таблица табелей',
       subtitle: 'Анализ рабочего времени сотрудников по неделям, Февраль 2026',
@@ -6256,9 +8187,16 @@ export const ru = {
       aggregationAverage: 'Среднее',
       pivotRowLabel: 'Сотрудник',
       pivotTitle: 'Сотрудник / Неделя (Февраль 2026)',
+      breadcrumbHome: 'Главная',
+      totalHours: 'Всего Часов',
+      employeeCount: 'Сотрудник Количество',
+      avgPerWeek: 'Avg Per Week',
+      overtimeCount: 'overtime Количество',
+      aggSum: 'agg Сумма',
+      aggCount: 'agg Количество',
+      aggAverage: 'agg Среднее',
+      hoursSuffix: 'Часов suffix'
     },
-
-    // TimesheetDetailPage
     timesheetDetail: {
       titlePrefix: 'Табель',
       breadcrumbTimesheets: 'Табели',
@@ -6286,9 +8224,32 @@ export const ru = {
       statusActionApprove: 'Утвердить',
       statusActionReject: 'Отклонить',
       statusActionResubmit: 'Подать повторно',
+      actionSubmit: 'action Отправить',
+      actionApprove: 'action Утвердить',
+      actionReject: 'action Отклонить',
+      actionResubmit: 'Action Resubmit',
+      title: 'Название',
+      breadcrumbHome: 'Главная',
+      toastStatusChanged: 'toast Статус changed',
+      toastEditAvailable: 'toast Редактировать available',
+      btnEdit: 'Редактировать',
+      sectionPeriodResults: 'Раздел period results',
+      mainHours: 'main Часов',
+      sectionDailyDetail: 'Раздел Ежедневно Детали',
+      headerDate: 'Заголовок Дата',
+      headerDay: 'Заголовок day',
+      headerHours: 'Заголовок Часов',
+      headerOvertime: 'Заголовок overtime',
+      headerTotal: 'Заголовок Всего',
+      sectionEmployee: 'Раздел Сотрудник',
+      labelDepartment: 'Метка Отдел',
+      labelProject: 'Объект',
+      sectionApproval: 'Раздел approval',
+      labelPeriod: 'Метка period',
+      labelApprovedBy: 'Метка Утверждено by',
+      awaitingApproval: 'Awaiting Approval',
+      labelApprovalDate: 'Метка approval Дата'
     },
-
-    // TimesheetListPage
     timesheetList: {
       title: 'Табель учёта рабочего времени',
       subtitleRecords: '{count} записей',
@@ -6311,10 +8272,8 @@ export const ru = {
       colStatus: 'Статус',
       searchPlaceholder: 'Поиск по сотруднику, объекту...',
       emptyTitle: 'Нет записей',
-      emptyDescription: 'Данные табеля отсутствуют',
+      emptyDescription: 'Данные табеля отсутствуют'
     },
-
-    // StaffingSchedulePage
     staffing: {
       title: 'Штатное расписание',
       subtitle: 'Управление должностями и вакансиями',
@@ -6350,10 +8309,8 @@ export const ru = {
       modalFieldSalaryMin: 'ЗП от',
       modalFieldSalaryMax: 'ЗП до',
       modalCancel: 'Отмена',
-      modalCreate: 'Создать',
+      modalCreate: 'Создать'
     },
-
-    // TimesheetT13Page
     timesheetT13: {
       title: 'Табель Т-13',
       subtitle: 'Табель учёта рабочего времени по форме Т-13',
@@ -6383,11 +8340,9 @@ export const ru = {
         businessTrip: 'К - Командировка',
         absent: 'НН - Неявка',
         weekend: 'В - Выходной',
-        nightShift: 'Н - Ночная смена',
-      },
+        nightShift: 'Н - Ночная смена'
+      }
     },
-
-    // WorkOrderFormPage
     workOrders: {
       title: 'Наряды',
       subtitle: 'Управление нарядами-заданиями и нарядами-допусками',
@@ -6431,10 +8386,8 @@ export const ru = {
       modalFieldPermits: 'Необходимые разрешения',
       modalFieldPermitsPlaceholder: 'Через запятую',
       modalCancel: 'Отмена',
-      modalCreate: 'Создать',
+      modalCreate: 'Создать'
     },
-
-    // QualificationsJournalPage
     qualifications: {
       title: 'Журнал квалификаций',
       subtitle: 'Учёт квалификаций и допусков сотрудников',
@@ -6471,10 +8424,8 @@ export const ru = {
       modalFieldIssueDate: 'Дата выдачи',
       modalFieldExpiryDate: 'Действует до',
       modalCancel: 'Отмена',
-      modalCreate: 'Добавить',
+      modalCreate: 'Добавить'
     },
-
-    // SeniorityLeavePage
     seniority: {
       title: 'Стаж и отпуска',
       subtitle: 'Расчёт стажа и остатков отпусков',
@@ -6497,13 +8448,9 @@ export const ru = {
       seniorityFormat: '{years}г {months}м {days}д',
       daysUnit: 'дн.',
       emptyTitle: 'Нет данных',
-      emptyDescription: 'Данные о стаже и отпусках отсутствуют',
-    },
+      emptyDescription: 'Данные о стаже и отпусках отсутствуют'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Analytics & Dashboard
-  // ---------------------------------------------------------------------------
   analytics: {
     title: 'Аналитика',
     overview: 'Обзор',
@@ -6520,7 +8467,6 @@ export const ru = {
     thisYear: 'В этом году',
     period: 'Период',
     comparison: 'Сравнение',
-    // -- Dashboard --
     dashboard: {
       title: 'Аналитика',
       subtitle: 'Сводная панель по всем объектам',
@@ -6556,9 +8502,8 @@ export const ru = {
       warehouseStockLevels: 'Уровни складских запасов',
       belowMinimum: 'ниже минимума',
       redLineNote: 'Красная линия — минимальный порог запаса',
+      millionShort: 'Million Short'
     },
-
-    // -- Reports --
     reports: {
       title: 'Отчёты',
       subtitle: 'Формирование и выгрузка отчётов',
@@ -6596,10 +8541,8 @@ export const ru = {
       allProjects: 'Все объекты',
       dateFrom: 'Дата начала',
       dateTo: 'Дата окончания',
-      format: 'Формат',
+      format: 'Формат'
     },
-
-    // -- KPI --
     kpi: {
       title: 'Ключевые показатели (KPI)',
       subtitle: 'Мониторинг ключевых показателей по объектам',
@@ -6641,10 +8584,8 @@ export const ru = {
       openRemarksDesc: 'Незакрытые замечания по качеству',
       unitPcs: 'шт.',
       fleetLoadName: 'Загрузка парка',
-      fleetLoadDesc: 'Процент использования техники',
+      fleetLoadDesc: 'Процент использования техники'
     },
-
-    // -- KPI Achievements --
     kpiAchievements: {
       title: 'Достижения KPI',
       subtitleCount: 'показателей',
@@ -6673,9 +8614,15 @@ export const ru = {
       emptyTitle: 'Нет данных по KPI',
       emptyDescription: 'Данные о достижениях KPI появятся после расчёта',
       general: 'Общий',
+      catSchedule: 'cat Расписание',
+      catCost: 'cat Стоимость',
+      catQuality: 'cat Качество',
+      catSafety: 'cat Безопасность',
+      catProductivity: 'Cat Productivity',
+      indicatorsCount: 'indicators Количество',
+      exceeded: 'Exceeded',
+      none: 'Нет'
     },
-
-    // -- Bonus Calculations --
     bonusCalculations: {
       title: 'Расчёт премий',
       subtitleCount: 'расчётов',
@@ -6695,7 +8642,7 @@ export const ru = {
       statusPaid: 'Выплачен',
       statusCancelled: 'Отменён',
       allStatuses: 'Все статусы',
-      colNumber: '\u2116',
+      colNumber: '№',
       colEmployee: 'Сотрудник',
       colStatus: 'Статус',
       colPeriod: 'Период',
@@ -6706,9 +8653,13 @@ export const ru = {
       colKpiCount: 'KPI',
       emptyTitle: 'Нет расчётов премий',
       emptyDescription: 'Расчёты премий появятся после оценки KPI',
+      colBonusPct: 'Col Bonus Pct',
+      calculationsCount: 'calculations Количество',
+      totalCalculations: 'Всего calculations',
+      totalAmount: 'Всего Сумма',
+      paidAmount: 'paid Сумма',
+      avgAchievement: 'Avg Achievement'
     },
-
-    // -- Project Analytics Chart --
     projectChart: {
       title: 'Аналитика объектов - Графики',
       subtitle: 'Визуализация бюджетов, прогресса и распределения средств',
@@ -6741,9 +8692,16 @@ export const ru = {
       catEquipment: 'Техника',
       catPayroll: 'ФОТ',
       catOverhead: 'Накладные',
+      breadcrumb: 'Навигация',
+      projects: 'Projects',
+      budgetVsActual: 'Бюджет vs Фактический',
+      budgetVsActualDesc: 'Бюджет vs Фактический desc',
+      budgetByCategory: 'Бюджет by Категория',
+      budgetByCategoryDesc: 'Бюджет by Категория desc',
+      projectDetails: 'Объект Подробности',
+      variance: 'Отклонение',
+      completionPct: 'Выполнение pct'
     },
-
-    // -- Audit Pivot --
     auditPivot: {
       title: 'Аудит действий - Сводная таблица',
       subtitle: 'Анализ журнала аудита по модулям и типам действий',
@@ -6776,9 +8734,25 @@ export const ru = {
       actionView: 'Просмотр',
       actionExport: 'Экспорт',
       infoNote: 'Данные за период: Февраль 2026. Включены все действия пользователей по модулям системы. Высокие значения в столбце «Просмотр» указывают на наиболее востребованные разделы. Столбец «Удаление» помогает контролировать потенциально деструктивные действия.',
-    },
+      modProjects: 'Mod Projects',
+      modContracts: 'Mod Contracts',
+      modEstimates: 'Mod Estimates',
+      modPayments: 'Mod Payments',
+      modWarehouse: 'mod Склад',
+      modPersonnel: 'Mod Personnel',
+      modDocuments: 'Mod Documents',
+      modQuality: 'mod Качество',
+      modProcurement: 'Mod Procurement',
+      modTasks: 'Mod Tasks',
+      actCreate: 'act Создать',
+      actEdit: 'act Редактировать',
+      actDelete: 'act Удалить',
+      actView: 'act Просмотр',
+      actExport: 'act Экспорт',
+      breadcrumb: 'Навигация',
+      rowLabelModule: 'Ряд Метка module'
+    }
   },
-
   dashboard: {
     title: 'Главная панель',
     welcome: 'Добро пожаловать',
@@ -6816,12 +8790,8 @@ export const ru = {
     code: 'Код',
     name: 'Название',
     manager: 'Руководитель',
-    millionRub: 'млн \u20BD',
+    millionRub: 'млн ₽'
   },
-
-  // ---------------------------------------------------------------------------
-  // Operations
-  // ---------------------------------------------------------------------------
   operations: {
     dashboard: {
       title: 'Операции',
@@ -6847,7 +8817,7 @@ export const ru = {
       unapprovedLog: '{count} журнал не утверждён',
       awaitingApproval: 'ожидает утверждения',
       completedOrders: '{count} нарядов завершено',
-      thisMonth: 'В текущем месяце',
+      thisMonth: 'В текущем месяце'
     },
     dailyLogList: {
       title: 'Журнал производства работ',
@@ -6872,7 +8842,7 @@ export const ru = {
       statusSubmitted: 'Подан',
       statusApproved: 'Утверждён',
       statusRejected: 'Отклонён',
-      colNumber: '\u2116',
+      colNumber: '№',
       colDate: 'Дата',
       colProject: 'Объект',
       colStatus: 'Статус',
@@ -6883,6 +8853,21 @@ export const ru = {
       btnOpen: 'Открыть',
       emptyTitle: 'Нет записей в журнале',
       emptyDescription: 'Создайте первую запись в журнале производства работ',
+      draft: 'Черновик',
+      submitted: 'Submitted',
+      approved: 'Утверждено',
+      rejected: 'Отклонено',
+      columnDate: 'Дата',
+      columnProject: 'Объект',
+      columnStatus: 'Статус',
+      columnWeather: 'column Погода',
+      columnWorkers: 'Column Workers',
+      personAbbr: 'Person Abbr',
+      columnSupervisor: 'Column Supervisor',
+      open: 'Открыть',
+      subtitle: 'Подзаголовок',
+      breadcrumbDailyLogs: 'breadcrumb Ежедневно logs',
+      unitAbbr: 'Единица abbr'
     },
     dailyLogDetail: {
       titlePrefix: 'Журнал за',
@@ -6922,6 +8907,34 @@ export const ru = {
       awaitingApproval: 'Ожидает утверждения',
       labelCreated: 'Создано',
       sectionNotes: 'Заметки',
+      actionSubmit: 'action Отправить',
+      actionApprove: 'action Утвердить',
+      actionReject: 'action Отклонить',
+      actionResubmit: 'Action Resubmit',
+      deleteSuccess: 'Успешно удалено',
+      deleteTitle: 'Удалить Заголовок',
+      deleteDescription: 'Удалить Описание',
+      deleteConfirm: 'Вы уверены, что хотите удалить?',
+      deleteCancel: 'Удалить Отмена',
+      title: 'Название',
+      breadcrumbDailyLogs: 'breadcrumb Ежедневно logs',
+      editAvailableInList: 'Редактировать available in Список',
+      edit: 'Редактировать',
+      delete: 'Удалить',
+      weatherAndSummary: 'Погода И Сводка',
+      logEntries: 'Журнал entries',
+      workforce: 'Workforce',
+      trade: 'Trade',
+      people: 'People',
+      hours: 'Часов',
+      materialsReceived: 'Materials Received',
+      incidents: 'Incidents',
+      details: 'Подробности',
+      date: 'Дата',
+      author: 'Author',
+      approvedBy: 'Утверждено by',
+      created: 'Created',
+      notes: 'Примечания'
     },
     dailyLogCreate: {
       title: 'Новая запись в журнале',
@@ -6969,6 +8982,38 @@ export const ru = {
       weatherWind: 'Ветер',
       weatherFrost: 'Мороз',
       weatherFog: 'Туман',
+      createSuccess: 'Успешно создано',
+      breadcrumbDailyLogs: 'breadcrumb Ежедневно logs',
+      back: 'Назад',
+      generalInfo: 'Общая информация',
+      project: 'Объект',
+      selectProject: 'Выберите объект',
+      date: 'Дата',
+      weatherConditions: 'Погода conditions',
+      weather: 'Погода',
+      tempMin: 'temp Минимум',
+      tempMax: 'temp Максимум',
+      workersOnSite: 'Workers On Site',
+      equipmentUnits: 'Equipment Units',
+      workDescriptionLabel: 'Работа Описание Метка',
+      workDescriptionPlaceholder: 'Работа Описание placeholder',
+      issuesLabel: 'issues Метка',
+      issuesPlaceholder: 'Issues Placeholder',
+      safetyLabel: 'Безопасность Метка',
+      safetyPlaceholder: 'Безопасность placeholder',
+      workDetailByArea: 'Работа Детали by Площадь',
+      areaNumber: 'Площадь number',
+      workAreaLabel: 'Работа Площадь Метка',
+      workAreaPlaceholder: 'Работа Площадь placeholder',
+      equipmentLabel: 'equipment Метка',
+      equipmentPlaceholder: 'Equipment Placeholder',
+      workDescriptionEntryLabel: 'Работа Описание entry Метка',
+      workDescriptionEntryPlaceholder: 'Работа Описание entry placeholder',
+      workersLabel: 'workers Метка',
+      hoursLabel: 'Часов Метка',
+      completionPercent: 'Выполнение Процент',
+      cancel: 'Отмена',
+      save: 'Сохранить'
     },
     workOrderList: {
       title: 'Наряд-задания',
@@ -6992,7 +9037,7 @@ export const ru = {
       priorityMedium: 'Средний',
       priorityHigh: 'Высокий',
       priorityUrgent: 'Срочный',
-      colNumber: '\u2116',
+      colNumber: '№',
       colWorkOrder: 'Наряд-задание',
       colStatus: 'Статус',
       colPriority: 'Приоритет',
@@ -7001,6 +9046,13 @@ export const ru = {
       colDeadline: 'Срок',
       emptyTitle: 'Нет наряд-заданий',
       emptyDescription: 'Создайте первый наряд-задание',
+      columnTitle: 'column Заголовок',
+      columnStatus: 'Статус',
+      columnPriority: 'column Приоритет',
+      columnAssignee: 'Column Assignee',
+      columnProgress: 'column Прогресс',
+      columnDeadline: 'Column Deadline',
+      subtitle: 'Подзаголовок'
     },
     workOrderDetail: {
       breadcrumbHome: 'Главная',
@@ -7043,7 +9095,6 @@ export const ru = {
       sectionCreation: 'Создание',
       labelCreatedBy: 'Создал',
       labelCreatedAt: 'Создано',
-      // Aliases used by WorkOrderDetailPage component
       actionStart: 'Начать работу',
       actionComplete: 'Завершить',
       actionPause: 'Приостановить',
@@ -7077,7 +9128,7 @@ export const ru = {
       actualEnd: 'Фактическое окончание',
       creation: 'Создание',
       createdBy: 'Создал',
-      created: 'Создано',
+      created: 'Создано'
     },
     workOrderBoard: {
       title: 'Наряд-заказы - Доска',
@@ -7100,6 +9151,15 @@ export const ru = {
       priorityCritical: 'Критический',
       emptyColumn: 'Нет наряд-заказов',
       emptyColumnHint: 'Перетащите карточку сюда',
+      columnPlanned: 'column Плановый',
+      columnInProgress: 'column in Прогресс',
+      columnCompleted: 'column Завершено',
+      columnCancelled: 'column Отменено',
+      subtitle: 'Подзаголовок',
+      filters: 'Filters',
+      reset: 'Сбросить',
+      noOrders: 'Нет orders',
+      dragCardHere: 'Drag Card Here'
     },
     dispatchCalendar: {
       title: 'Календарь диспетчеризации',
@@ -7140,13 +9200,9 @@ export const ru = {
       legendDelivered: 'Доставлен',
       more: 'ещё',
       noDispatches: 'Нет отправок на эту дату',
-      selectDayPrompt: 'Выберите день для просмотра отправок',
-    },
+      selectDayPrompt: 'Выберите день для просмотра отправок'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Cost Management
-  // ---------------------------------------------------------------------------
   costManagement: {
     budgetOverview: {
       title: 'Обзор бюджета',
@@ -7167,7 +9223,7 @@ export const ru = {
       cpiLabel: 'CPI (индекс стоимости)',
       spiLabel: 'SPI (индекс графика)',
       budgetUtilization: 'Освоение бюджета',
-      contracting: 'Контрактация',
+      contracting: 'Контрактация'
     },
     costCodeList: {
       title: 'Статьи затрат',
@@ -7191,7 +9247,7 @@ export const ru = {
       columnVariance: 'Отклонение',
       columnUtilization: 'Освоение',
       emptyTitle: 'Нет кодов затрат',
-      emptyDescription: 'Коды затрат не загружены',
+      emptyDescription: 'Коды затрат не загружены'
     },
     costCodeDetail: {
       breadcrumbHome: 'Главная',
@@ -7228,6 +9284,31 @@ export const ru = {
       commitmentStatusCommitted: 'Подтверждён',
       commitmentStatusClosed: 'Закрыт',
       commitmentStatusVoid: 'Аннулирован',
+      statusDraft: 'Черновик',
+      statusPending: 'Ожидание',
+      statusApproved: 'Утверждено',
+      statusCommitted: 'Статус committed',
+      statusClosed: 'Статус closed',
+      statusVoid: 'Статус void',
+      deleteTitle: 'Удалить Заголовок',
+      deleteDescription: 'Удалить Описание',
+      deleteConfirm: 'Вы уверены, что хотите удалить?',
+      deleteCancel: 'Удалить Отмена',
+      deleteSuccess: 'Успешно удалено',
+      editAvailableInList: 'Редактировать available in Список',
+      edit: 'Редактировать',
+      delete: 'Удалить',
+      hierarchy: 'Hierarchy',
+      budgetVsActual: 'Бюджет vs Фактический',
+      actual: 'Фактический',
+      varianceAnalysis: 'Отклонение analysis',
+      linkedCommitments: 'Linked Commitments',
+      details: 'Подробности',
+      code: 'Код',
+      name: 'Наименование',
+      parentCode: 'parent Код',
+      created: 'Created',
+      updated: 'Updated'
     },
     costCashflow: {
       title: 'Движение денежных средств',
@@ -7259,6 +9340,23 @@ export const ru = {
       colCumPlan: 'Кум. план',
       colCumFactForecast: 'Кум. факт/прогноз',
       colVariance: 'Отклонение',
+      plannedExpenses: 'Плановый expenses',
+      actualSpent: 'Фактический spent',
+      forecastExpenses: 'Прогноз expenses',
+      planVariance: 'План Отклонение',
+      overrun: 'Overrun',
+      monthlyExpensesSubtitle: 'Ежемесячно expenses Подзаголовок',
+      plan: 'План',
+      fact: 'Fact',
+      forecastLabel: 'Прогноз Метка',
+      cumulativeSubtitle: 'cumulative Подзаголовок',
+      cumPlan: 'cum План',
+      cumFact: 'Cum Fact',
+      cumForecast: 'cum Прогноз',
+      monthlyDetail: 'Ежемесячно Детали',
+      columnMonth: 'Column Month',
+      cumFactForecast: 'cum fact Прогноз',
+      columnVariance: 'column Отклонение'
     },
     commitments: {
       title: 'Обязательства',
@@ -7282,7 +9380,7 @@ export const ru = {
       typePurchaseOrder: 'Заказ на поставку',
       typeServiceAgreement: 'Договор услуг',
       typeRental: 'Аренда',
-      colNumber: '\u2116',
+      colNumber: '№',
       colTitle: 'Наименование',
       colStatus: 'Статус',
       colType: 'Тип',
@@ -7293,6 +9391,19 @@ export const ru = {
       colDeadline: 'Срок',
       emptyTitle: 'Нет обязательств',
       emptyDescription: 'Создайте первое обязательство для начала работы',
+      columnName: 'Наименование',
+      columnStatus: 'Статус',
+      columnType: 'Тип',
+      columnAmount: 'Сумма',
+      columnInvoiced: 'Column Invoiced',
+      columnRemaining: 'Column Remaining',
+      columnUtilization: 'Column Utilization',
+      columnDeadline: 'Column Deadline',
+      subtitle: 'Подзаголовок',
+      totalCommitments: 'Всего commitments',
+      totalAmount: 'Всего Сумма',
+      invoiced: 'Invoiced',
+      remainingToUtilize: 'Remaining To Utilize'
     },
     commitmentDetail: {
       breadcrumbHome: 'Главная',
@@ -7335,6 +9446,40 @@ export const ru = {
       labelCreatedBy: 'Создал',
       labelCreatedAt: 'Создано',
       sectionLinkedContract: 'Связанный договор',
+      actionSubmitForApproval: 'action Отправить for approval',
+      actionApprove: 'action Утвердить',
+      actionReject: 'action Отклонить',
+      actionConfirm: 'action Подтвердить',
+      actionClose: 'action Закрыть',
+      statusChanged: 'Статус changed',
+      deleteTitle: 'Удалить Заголовок',
+      deleteDescription: 'Удалить Описание',
+      deleteConfirm: 'Вы уверены, что хотите удалить?',
+      deleteCancel: 'Удалить Отмена',
+      deleteSuccess: 'Успешно удалено',
+      editAvailableInList: 'Редактировать available in Список',
+      edit: 'Редактировать',
+      delete: 'Удалить',
+      amounts: 'Amounts',
+      invoiced: 'Invoiced',
+      paid: 'Paid',
+      remaining: 'Remaining',
+      executionProgress: 'execution Прогресс',
+      lineItems: 'Line Items',
+      columnDescription: 'Описание',
+      columnCostCode: 'column Стоимость Код',
+      columnQuantity: 'Количество',
+      columnUnit: 'Ед.изм.',
+      columnPrice: 'Цена',
+      columnTotal: 'Итого',
+      changeOrders: 'Change Orders',
+      details: 'Подробности',
+      vendor: 'Vendor',
+      startDate: 'Начать Дата',
+      endDate: 'end Дата',
+      createdBy: 'Created By',
+      createdAt: 'Created At',
+      linkedContract: 'linked Договор'
     },
     commitmentCreate: {
       modalTitle: 'Новое обязательство',
@@ -7368,6 +9513,15 @@ export const ru = {
       validationAmountPositive: 'Сумма должна быть больше 0',
       validationStartDate: 'Укажите дату начала',
       validationEndDate: 'Укажите дату окончания',
+      validationTitle: 'validation Заголовок',
+      validationMaxChars: 'validation Максимум chars',
+      validationType: 'validation Тип',
+      validationVendor: 'Validation Vendor',
+      validationAmount: 'validation Сумма',
+      createSuccess: 'Успешно создано',
+      createError: 'Ошибка создания',
+      cancel: 'Отмена',
+      createButton: 'Создать button'
     },
     forecast: {
       title: 'Прогноз стоимости',
@@ -7392,12 +9546,114 @@ export const ru = {
       overBudgetItems: 'Статьи с превышением бюджета',
       overBudgetPercent: 'Превышение:',
       allWithinBudget: 'Все статьи в пределах бюджета',
+      budget: 'Бюджет',
+      forecastEAC: 'Прогноз e a c',
+      varianceVAC: 'Отклонение v a c',
+      withinBudget: 'within Бюджет',
+      problematicItems: 'Problematic Items',
+      columnCostCode: 'column Стоимость Код',
+      columnBudget: 'column Бюджет',
+      columnForecast: 'column Прогноз',
+      columnVariance: 'column Отклонение',
+      excess: 'Excess'
     },
+    cashFlowForecastDeleteConfirm: 'cash flow Прогноз Удалить Подтвердить',
+    cashFlowForecastColName: 'cash flow Прогноз col Название',
+    cashFlowForecastColHorizon: 'cash flow Прогноз col horizon',
+    cashFlowForecastColGrowth: 'cash flow Прогноз col growth',
+    cashFlowForecastColDelay: 'cash flow Прогноз col delay',
+    cashFlowForecastColRetention: 'cash flow Прогноз col retention',
+    cashFlowForecastGenerate: 'cash flow Прогноз generate',
+    cashFlowForecastColPeriod: 'cash flow Прогноз col period',
+    cashFlowForecastColForecastIncome: 'cash flow Прогноз col Прогноз Доход',
+    cashFlowForecastColForecastExpense: 'cash flow Прогноз col Прогноз Расход',
+    cashFlowForecastColForecastNet: 'cash flow Прогноз col Прогноз net',
+    cashFlowForecastColActualIncome: 'cash flow Прогноз col Фактический Доход',
+    cashFlowForecastColActualExpense: 'cash flow Прогноз col Фактический Расход',
+    cashFlowForecastColVariance: 'cash flow Прогноз col Отклонение',
+    cashFlowForecastColCumForecast: 'cash flow Прогноз col cum Прогноз',
+    cashFlowForecastTitle: 'cash flow Прогноз Заголовок',
+    cashFlowForecastSubtitle: 'cash flow Прогноз Подзаголовок',
+    cashFlowForecastCreateScenario: 'cash flow Прогноз Создать scenario',
+    cashFlowForecastEmpty: 'cash flow Прогноз Пусто',
+    cashFlowForecastEmptyDesc: 'cash flow Прогноз Пусто desc',
+    cashFlowForecastBuckets: 'cash flow Прогноз buckets',
+    cashFlowForecastVarianceTotal: 'cash flow Прогноз Отклонение Всего',
+    cashFlowForecastVarianceAvg: 'cash flow Прогноз Отклонение avg',
+    cashFlowForecastFormTitleEdit: 'cash flow Прогноз Форма Заголовок Редактировать',
+    cashFlowForecastFormTitle: 'cash flow Прогноз Форма Заголовок',
+    cashFlowForecastFieldName: 'cash flow Прогноз Поле Название',
+    cashFlowForecastFieldDesc: 'cash flow Прогноз Поле desc',
+    cashFlowForecastFieldBaseline: 'cash flow Прогноз Поле baseline',
+    cashFlowForecastFieldHorizon: 'cash flow Прогноз Поле horizon',
+    cashFlowForecastFieldGrowth: 'cash flow Прогноз Поле growth',
+    cashFlowForecastFieldDelay: 'cash flow Прогноз Поле delay',
+    cashFlowForecastFieldRetention: 'cash flow Прогноз Поле retention',
+    cashFlowForecastFieldVat: 'cash flow Прогноз Поле vat',
+    commitmentForm: {
+      placeholderName: 'Введите название'
+    },
+    forecastingHub: {
+      riskLow: 'Риск Низкий',
+      riskMedium: 'Риск Средний',
+      riskHigh: 'Риск Высокий',
+      riskCritical: 'Риск Критический',
+      colProject: 'Объект',
+      eacCpi: 'Eac Cpi',
+      eacSpiCpi: 'Eac Spi Cpi',
+      eacBottomUp: 'Eac Bottom Up',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      metricEac: 'Metric Eac',
+      metricEacHint: 'Metric Eac Hint',
+      metricEtc: 'Metric Etc',
+      metricEtcHint: 'Metric Etc Hint',
+      metricCashflow: 'Metric Cashflow',
+      next3Months: 'Next3 Months',
+      metricRisk: 'metric Риск',
+      evmPanel: 'evm Панель',
+      viewAll: 'Просмотр Все',
+      eacTrend: 'Eac Trend',
+      cashflowPanel: 'cashflow Панель',
+      income: 'Доход',
+      expense: 'Расход',
+      noCashflowData: 'Нет cashflow data',
+      riskPanel: 'Риск Панель',
+      topAtRisk: 'top at Риск',
+      eacTableTitle: 'eac Таблица Заголовок',
+      eacTableSubtitle: 'eac Таблица Подзаголовок',
+      eacTableEmpty: 'eac Таблица Пусто',
+      eacTableEmptyDesc: 'eac Таблица Пусто desc'
+    },
+    profitability: {
+      tabAll: 'Все',
+      tabAtRisk: 'tab at Риск',
+      tabLoss: 'Tab Loss',
+      tabPortfolio: 'Tab Portfolio',
+      colProject: 'Объект',
+      colContract: 'Договор',
+      colEAC: 'Col E A C',
+      colETC: 'Col E T C',
+      colMargin: 'col Маржа',
+      colMarginPct: 'col Маржа pct',
+      colProfitFade: 'col Прибыль fade',
+      colCompletion: 'col Выполнение',
+      colRisk: 'col Риск',
+      snapshotDate: 'snapshot Дата',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      recalculateAll: 'recalculate Все',
+      portfolioTotalContracts: 'portfolio Всего contracts',
+      portfolioForecastMargin: 'portfolio Прогноз Маржа',
+      portfolioAvgMargin: 'portfolio avg Маржа',
+      portfolioProfitFade: 'portfolio Прибыль fade',
+      portfolioAtRisk: 'portfolio at Риск',
+      portfolioLoss: 'Portfolio Loss',
+      noForecasts: 'Нет forecasts',
+      snapshotsTitle: 'snapshots Заголовок'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Statuses (used across modules)
-  // ---------------------------------------------------------------------------
   status: {
     draft: 'Черновик',
     active: 'Активный',
@@ -7421,23 +9677,15 @@ export const ru = {
     submitted: 'Отправлен',
     planning: 'Планирование',
     execution: 'Выполнение',
-    closing: 'Закрытие',
+    closing: 'Закрытие'
   },
-
-  // ---------------------------------------------------------------------------
-  // Priority levels
-  // ---------------------------------------------------------------------------
   priority: {
     critical: 'Критический',
     high: 'Высокий',
     medium: 'Средний',
     low: 'Низкий',
-    none: 'Без приоритета',
+    none: 'Без приоритета'
   },
-
-  // ---------------------------------------------------------------------------
-  // Table & Data grid
-  // ---------------------------------------------------------------------------
   table: {
     noData: 'Нет данных',
     loading: 'Загрузка данных...',
@@ -7470,12 +9718,8 @@ export const ru = {
     hideColumnPicker: 'Скрыть выбор столбцов',
     exportCsv: 'Экспортировать таблицу в CSV',
     showing: 'Показано {from} - {to} из {total}',
-    savedViewName: 'Вид {number}',
+    savedViewName: 'Вид {number}'
   },
-
-  // ---------------------------------------------------------------------------
-  // Messaging
-  // ---------------------------------------------------------------------------
   messaging: {
     edited: '(ред.)',
     pinned: 'закреплено',
@@ -7522,12 +9766,8 @@ export const ru = {
     pinnedTitle: 'Закреплённые',
     channelInfoTitle: 'Информация о канале',
     messageInChannel: 'Сообщение в #{channel}...',
-    messageTo: 'Сообщение для {user}...',
+    messageTo: 'Сообщение для {user}...'
   },
-
-  // ---------------------------------------------------------------------------
-  // Task Detail Panel
-  // ---------------------------------------------------------------------------
   taskDetail: {
     priority: 'Приоритет',
     project: 'Объект',
@@ -7555,12 +9795,8 @@ export const ru = {
     addDependency: 'Добавить зависимость',
     depFinishToStart: 'Финиш → Старт',
     depStartToStart: 'Старт → Старт',
-    depFinishToFinish: 'Финиш → Финиш',
+    depFinishToFinish: 'Финиш → Финиш'
   },
-
-  // ---------------------------------------------------------------------------
-  // Placeholder Page
-  // ---------------------------------------------------------------------------
   placeholder: {
     home: 'Главная',
     unavailable: 'Раздел недоступен в текущей конфигурации',
@@ -7597,12 +9833,8 @@ export const ru = {
     parentMessaging: 'Общение',
     parentFleet: 'Техника',
     parentAnalytics: 'Аналитика',
-    parentWarehouse: 'Склад',
+    parentWarehouse: 'Склад'
   },
-
-  // ---------------------------------------------------------------------------
-  // Gantt Chart
-  // ---------------------------------------------------------------------------
   gantt: {
     title: 'Задачи — Диаграмма Ганта',
     subtitle: '{count} задач на таймлайне',
@@ -7631,7 +9863,7 @@ export const ru = {
       sep: 'Сен',
       oct: 'Окт',
       nov: 'Ноя',
-      dec: 'Дек',
+      dec: 'Дек'
     },
     mockProjects: {
       solnechny: 'ЖК "Солнечный"',
@@ -7640,7 +9872,7 @@ export const ru = {
       mostVyatkaShort: 'Мост р. Вятка',
       school15: 'Школа N15',
       prostor: 'ТЦ "Простор"',
-      tsentralny: 'ТЦ "Центральный"',
+      tsentralny: 'ТЦ "Центральный"'
     },
     mockVendors: {
       stroyMontazh: 'ООО "СтройМонтаж"',
@@ -7649,7 +9881,7 @@ export const ru = {
       proektGrupp: 'ООО "ОбъектГрупп"',
       dorStroy: 'АО "ДорСтрой"',
       metallTrade: 'ПАО "МеталлТрейд"',
-      krovlyaPro: 'ООО "КровляПро"',
+      krovlyaPro: 'ООО "КровляПро"'
     },
     mockContracts: {
       dg001: 'ДГ-2025-001 - Генподряд ЖК "Солнечный"',
@@ -7659,13 +9891,9 @@ export const ru = {
       dg001Short: 'ДГ-2025-001',
       dg002Short: 'ДГ-2025-002',
       dg003Short: 'ДГ-2025-003',
-      dg004Short: 'ДГ-2025-004',
-    },
+      dg004Short: 'ДГ-2025-004'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Calls
-  // ---------------------------------------------------------------------------
   calls: {
     title: 'Центр звонков',
     subtitle: 'Видеозвонки и аудиозвонки для оперативной координации объектов',
@@ -7688,12 +9916,8 @@ export const ru = {
     statusActive: 'Активный',
     statusEnded: 'Завершён',
     statusCancelled: 'Отменён',
-    statusMissed: 'Пропущен',
+    statusMissed: 'Пропущен'
   },
-
-  // ---------------------------------------------------------------------------
-  // Favorites
-  // ---------------------------------------------------------------------------
   favorites: {
     title: 'Избранное',
     subtitle: '{count} сохранённых сообщений',
@@ -7708,12 +9932,8 @@ export const ru = {
     repliesCount: '{count} ответов',
     addNote: '+ Добавить заметку',
     notePlaceholder: 'Добавить заметку...',
-    saveNote: 'Сохранить',
+    saveNote: 'Сохранить'
   },
-
-  // ---------------------------------------------------------------------------
-  // Filters
-  // ---------------------------------------------------------------------------
   filters: {
     title: 'Фильтры',
     status: 'Статус',
@@ -7729,12 +9949,8 @@ export const ru = {
     clearAll: 'Сбросить все',
     applyFilters: 'Применить фильтры',
     noResults: 'По заданным критериям ничего не найдено',
-    activeFilters: 'Активные фильтры',
+    activeFilters: 'Активные фильтры'
   },
-
-  // ---------------------------------------------------------------------------
-  // Forms
-  // ---------------------------------------------------------------------------
   form: {
     requiredField: 'Обязательное поле',
     invalidEmail: 'Некорректный адрес электронной почты',
@@ -7748,12 +9964,8 @@ export const ru = {
     enterValue: 'Введите значение',
     unsavedChanges: 'Есть несохранённые изменения. Покинуть страницу?',
     submitError: 'Ошибка при отправке формы',
-    submitSuccess: 'Форма успешно отправлена',
+    submitSuccess: 'Форма успешно отправлена'
   },
-
-  // ---------------------------------------------------------------------------
-  // Errors
-  // ---------------------------------------------------------------------------
   errors: {
     generic: 'Произошла ошибка',
     unexpectedError: 'Произошла непредвиденная ошибка',
@@ -7775,12 +9987,8 @@ export const ru = {
     timeout: 'Превышено время ожидания',
     tryAgain: 'Попробовать снова',
     goHome: 'На главную',
-    contactSupport: 'Обратитесь в поддержку',
+    contactSupport: 'Обратитесь в поддержку'
   },
-
-  // ---------------------------------------------------------------------------
-  // Empty states
-  // ---------------------------------------------------------------------------
   empty: {
     noProjects: 'Нет объектов',
     noContracts: 'Нет договоров',
@@ -7790,12 +9998,8 @@ export const ru = {
     noComments: 'Нет комментариев',
     noResults: 'Ничего не найдено',
     noResultsDescription: 'Попробуйте изменить параметры поиска или фильтры',
-    createFirst: 'Создайте первую запись для начала работы',
+    createFirst: 'Создайте первую запись для начала работы'
   },
-
-  // ---------------------------------------------------------------------------
-  // Confirmation dialogs
-  // ---------------------------------------------------------------------------
   confirm: {
     deleteTitle: 'Подтвердите удаление',
     deleteMessage: 'Вы уверены, что хотите удалить эту запись? Это действие необратимо.',
@@ -7810,12 +10014,8 @@ export const ru = {
     submitTitle: 'Подтвердите отправку',
     submitMessage: 'После отправки редактирование будет невозможно. Продолжить?',
     affectedItems: 'Затрагиваемые объекты',
-    andMore: 'и еще {count}',
+    andMore: 'и еще {count}'
   },
-
-  // ---------------------------------------------------------------------------
-  // TopBar
-  // ---------------------------------------------------------------------------
   topbar: {
     enableLightTheme: 'Включить светлую тему',
     enableDarkTheme: 'Включить тёмную тему',
@@ -7828,31 +10028,19 @@ export const ru = {
     defaultUser: 'Пользователь',
     profile: 'Профиль',
     settings: 'Настройки',
-    logout: 'Выйти',
+    logout: 'Выйти'
   },
-
-  // ---------------------------------------------------------------------------
-  // Access control
-  // ---------------------------------------------------------------------------
   access: {
     forbidden: 'Доступ запрещён',
     noPermission: 'У вас нет прав для просмотра этой страницы.',
-    backToHome: 'Вернуться на главную',
+    backToHome: 'Вернуться на главную'
   },
-
-  // ---------------------------------------------------------------------------
-  // MessageInput
-  // ---------------------------------------------------------------------------
   messageInput: {
     defaultPlaceholder: 'Напишите сообщение...',
     attachFile: 'Прикрепить файл',
     emoji: 'Эмодзи',
-    send: 'Отправить',
+    send: 'Отправить'
   },
-
-  // ---------------------------------------------------------------------------
-  // Sidebar
-  // ---------------------------------------------------------------------------
   sidebar: {
     collapse: 'Свернуть',
     expand: 'Развернуть',
@@ -7865,12 +10053,8 @@ export const ru = {
     roleManager: 'Руководитель',
     roleAccountant: 'Бухгалтер',
     roleViewer: 'Наблюдатель',
-    roleEngineer: 'Инженер',
+    roleEngineer: 'Инженер'
   },
-
-  // ---------------------------------------------------------------------------
-  // Notifications
-  // ---------------------------------------------------------------------------
   notifications: {
     title: 'Уведомления',
     markAllRead: 'Отметить все как прочитанные',
@@ -7881,13 +10065,9 @@ export const ru = {
       info: 'Информация',
       warning: 'Предупреждение',
       error: 'Ошибка',
-      success: 'Успех',
-    },
+      success: 'Успех'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Date & Time formats (patterns for date-fns)
-  // ---------------------------------------------------------------------------
   dateFormats: {
     short: 'dd.MM.yyyy',
     long: 'd MMMM yyyy',
@@ -7902,28 +10082,20 @@ export const ru = {
       daysAgo: '{count} дн. назад',
       hoursAgo: '{count} ч. назад',
       minutesAgo: '{count} мин. назад',
-      justNow: 'Только что',
-    },
+      justNow: 'Только что'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Number formats
-  // ---------------------------------------------------------------------------
   numberFormats: {
-    currency: '{value} \u20BD',
+    currency: '{value} ₽',
     currencyCode: 'RUB',
     decimalSeparator: ',',
-    thousandsSeparator: '\u00A0',
+    thousandsSeparator: ' ',
     percent: '{value}%',
-    area: '{value} м\u00B2',
-    volume: '{value} м\u00B3',
+    area: '{value} м²',
+    volume: '{value} м³',
     length: '{value} м',
-    weight: '{value} кг',
+    weight: '{value} кг'
   },
-
-  // ---------------------------------------------------------------------------
-  // Task Board
-  // ---------------------------------------------------------------------------
   taskBoard: {
     title: 'Задачи',
     subtitle: '{count} задач в системе',
@@ -7972,12 +10144,8 @@ export const ru = {
     bulkChangePriority: 'Приоритет',
     bulkChangePrioritySuccess: 'Приоритет обновлён для {count} задач',
     emptyTitle: 'Нет задач',
-    emptyDescription: 'Создайте первую задачу',
+    emptyDescription: 'Создайте первую задачу'
   },
-
-  // ---------------------------------------------------------------------------
-  // Settings
-  // ---------------------------------------------------------------------------
   settings: {
     title: 'Настройки',
     general: 'Общие',
@@ -7987,7 +10155,7 @@ export const ru = {
     themes: {
       light: 'Светлая',
       dark: 'Тёмная',
-      system: 'Системная',
+      system: 'Системная'
     },
     notifications: 'Уведомления',
     emailNotifications: 'Email-уведомления',
@@ -7998,12 +10166,9 @@ export const ru = {
     timezone: 'Часовой пояс',
     dateFormat: 'Формат даты',
     numberFormat: 'Формат чисел',
-
     breadcrumbHome: 'Главная',
     breadcrumbSettings: 'Настройки',
     breadcrumbAdmin: 'Администрирование',
-
-    // SettingsPage
     page: {
       title: 'Настройки',
       subtitle: 'Управление параметрами системы',
@@ -8013,7 +10178,6 @@ export const ru = {
       tabIntegrations: 'Интеграции',
       tabNotifications: 'Уведомления',
       tabBackup: 'Резервное копирование',
-      // General tab
       companyInfoTitle: 'Информация о компании',
       logoLabel: 'Логотип',
       companyLogoTitle: 'Логотип компании',
@@ -8033,13 +10197,12 @@ export const ru = {
       currencyOptions: {
         rub: 'Рубль (₽)',
         usd: 'Доллар ($)',
-        eur: 'Евро (€)',
+        eur: 'Евро (€)'
       },
       languageOptions: {
         ru: 'Русский',
-        en: 'English',
+        en: 'English'
       },
-      // Email tab
       smtpTitle: 'Настройки SMTP',
       smtpHostLabel: 'SMTP хост',
       smtpPortLabel: 'Порт',
@@ -8050,7 +10213,6 @@ export const ru = {
       smtpTls: 'Использовать TLS/SSL',
       smtpSave: 'Сохранить',
       smtpTestEmail: 'Отправить тестовое письмо',
-      // Security tab
       securityTitle: 'Параметры безопасности',
       sessionLifetimeLabel: 'Время жизни сессии (минут)',
       sessionLifetimeHint: 'Автоматический выход при бездействии',
@@ -8062,19 +10224,16 @@ export const ru = {
       twoFaLabel: 'Двухфакторная аутентификация (2FA)',
       twoFaDescription: 'Требовать подтверждение входа через приложение-аутентификатор',
       saveSettings: 'Сохранить настройки',
-      // Integrations tab (inline in SettingsPage)
       integrationsTitle: 'Интеграции',
       integrationsSubtitle: 'Подключение внешних систем',
       lastSync: 'Последняя синхронизация:',
       configureButton: 'Настроить',
       syncButton: 'Синхронизировать',
-      // Notifications tab
       notificationMatrixTitle: 'Матрица уведомлений',
       notificationMatrixSubtitle: 'Настройте каналы доставки для каждого типа уведомлений',
       notificationTypeColumn: 'Тип уведомления',
       notificationInApp: 'В приложении',
       saveNotificationSettings: 'Сохранить настройки',
-      // Backup tab
       backupScheduleTitle: 'Расписание резервного копирования',
       backupScheduleLabel: 'Расписание',
       backupScheduleDaily: 'Ежедневно',
@@ -8097,12 +10256,12 @@ export const ru = {
       integrationStatusLabels: {
         active: 'Активна',
         inactive: 'Не подключена',
-        error: 'Ошибка',
+        error: 'Ошибка'
       },
       backupStatusLabels: {
         completed: 'Выполнено',
         inProgress: 'В процессе',
-        failed: 'Ошибка',
+        failed: 'Ошибка'
       },
       toastSaved: 'Настройки сохранены',
       toastError: 'Ошибка сохранения настроек',
@@ -8111,7 +10270,6 @@ export const ru = {
       toastBackupStarted: 'Резервное копирование запущено',
       toastBackupError: 'Ошибка запуска резервного копирования',
       loading: 'Загрузка...',
-      // General tab — keys used by SettingsPage component
       generalTitle: 'Основные настройки',
       companyLogo: 'Логотип компании',
       logoHint: 'PNG, JPG до 2 МБ. Рекомендуемый размер 200x200 px',
@@ -8130,7 +10288,6 @@ export const ru = {
       fieldLanguage: 'Язык',
       fieldTimezone: 'Часовой пояс',
       btnSave: 'Сохранить',
-      // Email tab — keys used by SettingsPage component
       emailTitle: 'Настройки SMTP',
       fieldSmtpHost: 'SMTP хост',
       fieldPort: 'Порт',
@@ -8140,7 +10297,6 @@ export const ru = {
       fieldSenderName: 'Имя отправителя',
       tlsLabel: 'Использовать TLS/SSL',
       btnTestEmail: 'Отправить тестовое письмо',
-      // Security tab — keys used by SettingsPage component
       fieldSessionLife: 'Время жизни сессии (минут)',
       fieldSessionLifeHint: 'Автоматический выход при бездействии',
       fieldMaxAttempts: 'Максимум попыток входа',
@@ -8149,10 +10305,8 @@ export const ru = {
       fieldPasswordExpiry: 'Срок действия пароля (дней)',
       fieldPasswordExpiryHint: '0 — без ограничений',
       btnSaveSettings: 'Сохранить настройки',
-      // Integrations tab — keys used by SettingsPage component
       btnConfigure: 'Настроить',
       btnSync: 'Синхронизировать',
-      // Notifications tab — keys used by SettingsPage component
       notificationsTitle: 'Матрица уведомлений',
       notificationsSubtitle: 'Настройте каналы доставки для каждого типа уведомлений',
       colNotificationType: 'Тип уведомления',
@@ -8160,7 +10314,6 @@ export const ru = {
       colPush: 'Push',
       colTelegram: 'Telegram',
       colInApp: 'В приложении',
-      // Backup tab — keys used by SettingsPage component
       fieldSchedule: 'Расписание',
       scheduleDaily: 'Ежедневно',
       scheduleWeekly: 'Еженедельно',
@@ -8177,19 +10330,15 @@ export const ru = {
       typeAuto: 'Автоматическая',
       typeManual: 'Ручная',
       btnDownload: 'Скачать',
-      // Status labels — keys used by SettingsPage component
       integrationActive: 'Активна',
       integrationInactive: 'Не подключена',
       integrationError: 'Ошибка',
       backupCompleted: 'Выполнено',
       backupInProgress: 'В процессе',
       backupFailed: 'Ошибка',
-      // Breadcrumbs — keys used by SettingsPage component
       breadcrumbHome: 'Главная',
-      breadcrumbSettings: 'Настройки',
+      breadcrumbSettings: 'Настройки'
     },
-
-    // UsersAdminPage
     users: {
       title: 'Пользователи',
       subtitle: '{count} пользователей в системе',
@@ -8243,18 +10392,53 @@ export const ru = {
       statusLabels: {
         active: 'Активен',
         blocked: 'Заблокирован',
-        pending: 'Ожидает',
+        pending: 'Ожидает'
       },
       roleLabels: {
         admin: 'Администратор',
         manager: 'Руководитель',
         engineer: 'Инженер',
         accountant: 'Бухгалтер',
-        viewer: 'Наблюдатель',
+        viewer: 'Наблюдатель'
       },
+      statusActive: 'Активен',
+      statusBlocked: 'Статус Заблокировано',
+      statusPending: 'Ожидание',
+      roleAdmin: 'Роль Администратор',
+      roleManager: 'Роль manager',
+      roleEngineer: 'Роль engineer',
+      roleAccountant: 'Роль accountant',
+      roleViewer: 'Роль viewer',
+      neverLoggedIn: 'Never Logged In',
+      breadcrumbHome: 'Главная',
+      breadcrumbAdmin: 'breadcrumb Администратор',
+      btnCreateUser: 'btn Создать Пользователь',
+      btnBlock: 'Btn Block',
+      btnUnblock: 'Btn Unblock',
+      btnResetPassword: 'btn Сбросить Пароль',
+      btnForceLogout: 'Btn Force Logout',
+      detailProfile: 'Детали profile',
+      detailGroups: 'Детали groups',
+      detailActivity: 'Детали activity',
+      detailSessions: 'Детали sessions',
+      fieldFirstName: 'Поле first Название',
+      fieldLastName: 'Поле last Название',
+      fieldEmail: 'Поле email',
+      fieldRole: 'Поле Роль',
+      fieldStatus: 'Поле Статус',
+      btnSave: 'Сохранить',
+      groupsInstruction: 'Groups Instruction',
+      btnSaveGroups: 'btn Сохранить groups',
+      currentSession: 'Current Session',
+      btnEndSession: 'Btn End Session',
+      sessionIP: 'Session I P',
+      sessionStarted: 'Session Started',
+      createTitle: 'Создать Заголовок',
+      createCancel: 'Создать Отмена',
+      createSubmit: 'Создать Отправить',
+      fieldPassword: 'Поле Пароль',
+      fieldAccessGroups: 'Поле Доступ groups'
     },
-
-    // PermissionsPage
     permissions: {
       title: 'Права доступа',
       subtitle: 'Управление группами и разрешениями',
@@ -8271,31 +10455,26 @@ export const ru = {
       tabFields: 'Доступ к полям',
       tabUsers: 'Пользователи',
       searchPlaceholder: 'Поиск...',
-      // Models tab
       modelColumnModel: 'Модель',
       modelColumnRead: 'Чтение',
       modelColumnCreate: 'Создание',
       modelColumnUpdate: 'Изменение',
       modelColumnDelete: 'Удаление',
       modelSaveRights: 'Сохранить права',
-      // Rules tab
       addRule: 'Добавить правило',
       ruleReadLabel: 'Чтение:',
       ruleWriteLabel: 'Запись:',
       ruleYes: 'Да',
       ruleNo: 'Нет',
-      // Fields tab
       fieldColumnModel: 'Модель',
       fieldColumnField: 'Поле',
       fieldColumnRead: 'Чтение',
       fieldColumnWrite: 'Запись',
-      // Users tab
       usersInGroupCount: '{count} пользователей в группе',
       addUserToGroup: 'Добавить пользователя',
       userColumnUser: 'Пользователь',
       userColumnEmail: 'Email',
       userColumnRole: 'Роль',
-      // New group modal
       newGroupModalTitle: 'Новая группа',
       newGroupModalDescription: 'Создание группы разрешений',
       newGroupNameLabel: 'Название группы',
@@ -8306,15 +10485,53 @@ export const ru = {
       newGroupNoParent: 'Без родителя (корневая)',
       modalCancel: 'Отмена',
       modalCreate: 'Создать',
-      // Add user modal
       addUserModalTitle: 'Добавить пользователя в группу',
       addUserSearchLabel: 'Поиск пользователя',
       addUserSearchPlaceholder: 'Имя или email...',
       addUserCancel: 'Отмена',
       addUserConfirm: 'Добавить',
+      tabModelAccess: 'tab model Доступ',
+      tabRecordRules: 'Tab Record Rules',
+      tabFieldAccess: 'tab Поле Доступ',
+      breadcrumbHome: 'Главная',
+      breadcrumbAdmin: 'breadcrumb Администратор',
+      btnAdd: 'Добавить',
+      systemLabel: 'system Метка',
+      parentGroupLabel: 'parent Группа Метка',
+      btnEdit: 'Редактировать',
+      btnDelete: 'Удалить',
+      headerModel: 'Заголовок model',
+      headerRead: 'Заголовок Прочитано',
+      headerCreate: 'Заголовок Создать',
+      headerUpdate: 'Заголовок Обновить',
+      headerDelete: 'Заголовок Удалить',
+      btnSavePermissions: 'btn Сохранить permissions',
+      btnAddRule: 'Btn Add Rule',
+      readLabel: 'Прочитано Метка',
+      yesLabel: 'Да Метка',
+      noLabel: 'Нет Метка',
+      writeLabel: 'write Метка',
+      headerField: 'Заголовок Поле',
+      headerWrite: 'Заголовок write',
+      usersInGroup: 'users in Группа',
+      addUser: 'add Пользователь',
+      headerUser: 'Заголовок Пользователь',
+      headerEmail: 'Заголовок email',
+      headerRole: 'Заголовок Роль',
+      selectGroupPrompt: 'Выберите Группа prompt',
+      newGroupTitle: 'Новый Группа Заголовок',
+      newGroupDescription: 'Новый Группа Описание',
+      btnCancel: 'Отмена',
+      btnCreate: 'Создать',
+      fieldGroupName: 'Поле Группа Название',
+      groupNamePlaceholder: 'Группа Название placeholder',
+      fieldDescription: 'Поле Описание',
+      descriptionPlaceholder: 'Описание placeholder',
+      fieldParentGroup: 'Поле parent Группа',
+      noParent: 'Нет parent',
+      addUserTitle: 'add Пользователь Заголовок',
+      searchUserPlaceholder: 'Поиск Пользователь placeholder'
     },
-
-    // IntegrationsPage
     integrations: {
       title: 'Интеграции',
       subtitle: 'Управление подключениями к внешним системам',
@@ -8336,14 +10553,13 @@ export const ru = {
       statusLabels: {
         connected: 'Подключено',
         disconnected: 'Отключено',
-        error: 'Ошибка',
+        error: 'Ошибка'
       },
       modalTitle1c: 'Настройка: 1С:Предприятие',
       modalTitleTelegram: 'Настройка: Telegram Bot',
       modalTitleSbis: 'Настройка: СБИС',
       modalTitleEdo: 'Настройка: ЭДО',
       modalTitleDefault: 'Настройка интеграции',
-      // 1C config
       oneCConfigName: 'Название конфигурации',
       oneCServerUrl: 'URL сервера 1С',
       oneCServerUrlHint: 'Например: http://server:8080/1c',
@@ -8365,7 +10581,6 @@ export const ru = {
       oneCConfigError: 'Ошибка сохранения конфигурации 1С',
       oneCConnectionSuccess: 'Соединение с 1С установлено',
       oneCTestError: 'Ошибка тестирования соединения',
-      // Telegram config
       telegramBotToken: 'Токен бота',
       telegramBotTokenHint: 'Получите у @BotFather в Telegram',
       telegramBotUsername: 'Имя пользователя бота',
@@ -8374,7 +10589,6 @@ export const ru = {
       telegramWebhookHint: 'Автоматически настраивается',
       telegramConfigSaved: 'Конфигурация Telegram сохранена',
       telegramConfigError: 'Ошибка сохранения конфигурации Telegram',
-      // SBIS config
       sbisConfigName: 'Название конфигурации',
       sbisApiUrl: 'URL API СБИС',
       sbisLogin: 'Логин',
@@ -8384,7 +10598,6 @@ export const ru = {
       sbisCertThumbprint: 'Отпечаток сертификата',
       sbisConfigSaved: 'Конфигурация СБИС сохранена',
       sbisConfigError: 'Ошибка сохранения конфигурации СБИС',
-      // EDO config
       edoProvider: 'Провайдер ЭДО',
       edoApiKey: 'API-ключ / Токен',
       edoApiKeyPlaceholder: 'Введите API-ключ провайдера ЭДО',
@@ -8393,12 +10606,66 @@ export const ru = {
       edoHint: 'Настройка ЭДО зависит от выбранного провайдера. Для Диадока потребуется ключ разработчика, для СБИС -- учётные данные API. Обратитесь к документации вашего провайдера.',
       cancel: 'Отмена',
       save: 'Сохранить',
-    },
+      statusConnected: 'Статус connected',
+      statusDisconnected: 'Статус disconnected',
+      statusError: 'Статус Ошибка',
+      toastConfigSaved1C: 'Toast Config Saved1 C',
+      toastConfigError1C: 'Toast Config Error1 C',
+      testSuccess: 'test Успешно',
+      testFailed: 'Test Failed',
+      fieldConfigName: 'Поле config Название',
+      fieldServerUrl: 'Поле Сервер url',
+      fieldUsername: 'Поле username',
+      fieldPassword: 'Поле Пароль',
+      fieldDatabaseName: 'Поле База данных Название',
+      fieldSyncDirection: 'Поле Синхронизация direction',
+      syncImport: 'Синхронизация Импорт',
+      syncExport: 'Синхронизация Экспорт',
+      syncBidirectional: 'Синхронизация bidirectional',
+      fieldSyncInterval: 'Поле Синхронизация Интервал',
+      every15: 'Каждые 15 минут',
+      every30: 'Каждые 30 минут',
+      everyHour: 'Каждый час',
+      every6Hours: 'Каждые 6 часов',
+      everyDay: 'Ежедневно',
+      btnCancel: 'Отмена',
+      btnTest: 'Тестировать',
+      btnSave: 'Сохранить',
+      toastConfigSavedTelegram: 'Toast Config Saved Telegram',
+      toastConfigErrorTelegram: 'toast config Ошибка telegram',
+      fieldBotToken: 'Поле bot Токен',
+      fieldBotTokenHint: 'Поле bot Токен hint',
+      fieldBotUsername: 'Поле bot username',
+      fieldBotUsernameHint: 'Поле bot username hint',
+      fieldWebhookUrl: 'Поле webhook url',
+      fieldWebhookUrlHint: 'Поле webhook url hint',
+      toastConfigSavedSBIS: 'Toast Config Saved S B I S',
+      toastConfigErrorSBIS: 'toast config Ошибка s b i s',
+      fieldSbisApiUrl: 'Поле sbis api url',
+      fieldLogin: 'Поле Логин',
+      fieldOrgINN: 'Поле org i n n',
+      fieldOrgKPP: 'Поле org k p p',
+      fieldCertThumbprint: 'Поле cert thumbprint',
+      fieldEdoProvider: 'Поле edo Провайдер',
+      providerDiadoc: 'Провайдер diadoc',
+      providerSBIS: 'Провайдер s b i s',
+      providerKontur: 'Провайдер kontur',
+      fieldApiKey: 'Поле api key',
+      fieldApiKeyPlaceholder: 'Поле api key placeholder',
+      toastSyncStarted: 'toast Синхронизация started',
+      toastSyncFailed: 'toast Синхронизация failed',
+      configTitle1C: 'Config Title1 C',
+      configTitleTelegram: 'config Заголовок telegram',
+      configTitleSBIS: 'config Заголовок s b i s',
+      configTitleEDO: 'config Заголовок e d o',
+      configTitleDefault: 'config Заголовок default',
+      breadcrumbHome: 'Главная',
+      btnConfigure: 'Настроить',
+      btnSyncing: 'Синхронизация...',
+      btnSync: 'Синхронизировать',
+      btnConnect: 'Подключить'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Shortcuts & Command Palette
-  // ---------------------------------------------------------------------------
   shortcuts: {
     title: 'Горячие клавиши',
     general: 'Общие',
@@ -8413,55 +10680,34 @@ export const ru = {
     goFinance: 'Перейти → Финансы',
     goSettings: 'Перейти → Настройки',
     goMessenger: 'Перейти → Мессенджер',
-    goAnalytics: 'Перейти → Аналитика',
+    goAnalytics: 'Перейти → Аналитика'
   },
-
   commandPalette: {
     createProject: 'Создать объект',
     createTask: 'Создать задачу',
     createContract: 'Создать договор',
     createDocument: 'Создать документ',
-    actions: 'Действия',
+    actions: 'Действия'
   },
-
-  // ---------------------------------------------------------------------------
-  // NotFound page
-  // ---------------------------------------------------------------------------
   notFound: {
     title: 'Страница не найдена',
     description: 'Ссылка устарела или введен неверный адрес. Перейдите на главную или откройте поиск.',
     goHome: 'На главную',
-    openSearch: 'Открыть поиск',
+    openSearch: 'Открыть поиск'
   },
-
-  // ---------------------------------------------------------------------------
-  // PivotTable
-  // ---------------------------------------------------------------------------
   pivotTable: {
     noData: 'Нет данных для отображения',
-    total: 'Итого',
+    total: 'Итого'
   },
-
-  // ---------------------------------------------------------------------------
-  // Modal
-  // ---------------------------------------------------------------------------
   modal: {
-    close: 'Закрыть модальное окно',
+    close: 'Закрыть модальное окно'
   },
-
-  // ---------------------------------------------------------------------------
-  // Emoji picker
-  // ---------------------------------------------------------------------------
   emoji: {
     frequentlyUsed: 'Часто используемые',
     emotions: 'Эмоции',
     gestures: 'Жесты',
-    objects: 'Объекты',
+    objects: 'Объекты'
   },
-
-  // ---------------------------------------------------------------------------
-  // Status Badge Labels (domain-specific status/type/priority labels)
-  // ---------------------------------------------------------------------------
   statusLabels: {
     projectStatus: {
       DRAFT: 'Черновик',
@@ -8469,21 +10715,21 @@ export const ru = {
       IN_PROGRESS: 'В работе',
       ON_HOLD: 'На паузе',
       COMPLETED: 'Завершён',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     priority: {
       LOW: 'Низкий',
       NORMAL: 'Обычный',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     projectType: {
       RESIDENTIAL: 'Жилое',
       COMMERCIAL: 'Коммерческое',
       INDUSTRIAL: 'Промышленное',
       INFRASTRUCTURE: 'Инфраструктура',
-      RENOVATION: 'Реновация',
+      RENOVATION: 'Реновация'
     },
     contractStatus: {
       DRAFT: 'Черновик',
@@ -8496,25 +10742,25 @@ export const ru = {
       ACTIVE: 'Активен',
       CLOSED: 'Закрыт',
       REJECTED: 'Отклонён',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     specificationStatus: {
       DRAFT: 'Черновик',
       IN_REVIEW: 'На проверке',
       APPROVED: 'Утверждена',
-      ACTIVE: 'Активна',
+      ACTIVE: 'Активна'
     },
     estimateStatus: {
       DRAFT: 'Черновик',
       IN_WORK: 'В работе',
       APPROVED: 'Утверждена',
-      ACTIVE: 'Активна',
+      ACTIVE: 'Активна'
     },
     closingDocStatus: {
       DRAFT: 'Черновик',
       SUBMITTED: 'Передан',
       SIGNED: 'Подписан',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     purchaseRequestStatus: {
       DRAFT: 'Черновик',
@@ -8526,36 +10772,36 @@ export const ru = {
       ORDERED: 'Заказано',
       DELIVERED: 'Доставлено',
       CLOSED: 'Закрыта',
-      CANCELLED: 'Отменена',
+      CANCELLED: 'Отменена'
     },
     purchaseRequestPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     specItemType: {
       MATERIAL: 'Материал',
       EQUIPMENT: 'Оборудование',
-      WORK: 'Работа',
+      WORK: 'Работа'
     },
     budgetStatus: {
       DRAFT: 'Черновик',
       APPROVED: 'Утверждён',
       ACTIVE: 'Активен',
       FROZEN: 'Заморожен',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     paymentStatusLower: {
       DRAFT: 'Черновик',
       PENDING: 'Ожидает',
       APPROVED: 'Одобрен',
       PAID: 'Оплачен',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     paymentType: {
       INCOMING: 'Входящий',
-      OUTGOING: 'Исходящий',
+      OUTGOING: 'Исходящий'
     },
     invoiceStatus: {
       NEW: 'Новый',
@@ -8570,17 +10816,17 @@ export const ru = {
       PARTIALLY_PAID: 'Частично оплачен',
       PAID: 'Оплачен',
       OVERDUE: 'Просрочен',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     invoiceType: {
       ISSUED: 'Выставленный',
-      RECEIVED: 'Полученный',
+      RECEIVED: 'Полученный'
     },
     stockMovementStatus: {
       DRAFT: 'Черновик',
       CONFIRMED: 'Подтверждено',
       DONE: 'Выполнено',
-      CANCELLED: 'Отменено',
+      CANCELLED: 'Отменено'
     },
     stockMovementType: {
       RECEIPT: 'Приход',
@@ -8588,7 +10834,7 @@ export const ru = {
       TRANSFER: 'Перемещение',
       ADJUSTMENT: 'Корректировка',
       RETURN: 'Возврат',
-      WRITE_OFF: 'Списание',
+      WRITE_OFF: 'Списание'
     },
     materialCategory: {
       CONCRETE: 'Бетон',
@@ -8600,33 +10846,33 @@ export const ru = {
       FINISHING: 'Отделка',
       FASTENERS: 'Крепёж',
       TOOLS: 'Инструмент',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     employeeStatus: {
       ACTIVE: 'Работает',
       ON_LEAVE: 'В отпуске',
       TERMINATED: 'Уволен',
-      SUSPENDED: 'Отстранён',
+      SUSPENDED: 'Отстранён'
     },
     timesheetStatus: {
       DRAFT: 'Черновик',
       SUBMITTED: 'Подан',
       APPROVED: 'Утверждён',
-      REJECTED: 'Отклонён',
+      REJECTED: 'Отклонён'
     },
     incidentSeverity: {
       MINOR: 'Незначительный',
       MODERATE: 'Умеренный',
       SERIOUS: 'Серьёзный',
       CRITICAL: 'Критический',
-      FATAL: 'Фатальный',
+      FATAL: 'Фатальный'
     },
     incidentStatus: {
       REPORTED: 'Зарегистрирован',
       UNDER_INVESTIGATION: 'Расследование',
       CORRECTIVE_ACTION: 'Корр. меры',
       RESOLVED: 'Устранён',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     taskStatus: {
       BACKLOG: 'Бэклог',
@@ -8634,14 +10880,14 @@ export const ru = {
       IN_PROGRESS: 'В работе',
       IN_REVIEW: 'На проверке',
       DONE: 'Готово',
-      CANCELLED: 'Отменена',
+      CANCELLED: 'Отменена'
     },
     taskPriority: {
       LOW: 'Низкий',
       NORMAL: 'Обычный',
       HIGH: 'Высокий',
       URGENT: 'Срочный',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     documentStatusLower: {
       DRAFT: 'Черновик',
@@ -8649,7 +10895,7 @@ export const ru = {
       APPROVED: 'Утверждён',
       ACTIVE: 'Действующий',
       ARCHIVED: 'В архиве',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     documentCategory: {
       CONTRACT: 'Договор',
@@ -8663,7 +10909,7 @@ export const ru = {
       CORRESPONDENCE: 'Переписка',
       PHOTO: 'Фото',
       REPORT: 'Отчёт',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     budgetCategory: {
       MATERIALS: 'Материалы',
@@ -8671,7 +10917,7 @@ export const ru = {
       EQUIPMENT: 'Оборудование',
       SUBCONTRACT: 'Субподряд',
       OVERHEAD: 'Накладные',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     rfiStatus: {
       DRAFT: 'Черновик',
@@ -8679,13 +10925,13 @@ export const ru = {
       ANSWERED: 'Отвечен',
       CLOSED: 'Закрыт',
       OVERDUE: 'Просрочен',
-      VOID: 'Аннулирован',
+      VOID: 'Аннулирован'
     },
     rfiPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     submittalStatus: {
       DRAFT: 'Черновик',
@@ -8695,7 +10941,7 @@ export const ru = {
       APPROVED_AS_NOTED: 'Утверждён с замечаниями',
       REVISE_RESUBMIT: 'На доработку',
       REJECTED: 'Отклонён',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     submittalType: {
       SHOP_DRAWING: 'Рабочий чертёж',
@@ -8704,14 +10950,14 @@ export const ru = {
       DESIGN_DATA: 'Проектные данные',
       TEST_REPORT: 'Протокол испытаний',
       CERTIFICATE: 'Сертификат',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     issueStatus: {
       OPEN: 'Открыт',
       IN_PROGRESS: 'В работе',
       ON_HOLD: 'Приостановлен',
       RESOLVED: 'Решён',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     issueType: {
       DEFECT: 'Дефект',
@@ -8719,13 +10965,13 @@ export const ru = {
       DESIGN: 'Проектирование',
       COORDINATION: 'Координация',
       SCHEDULE: 'График',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     issuePriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     changeEventStatus: {
       IDENTIFIED: 'Выявлен',
@@ -8733,7 +10979,7 @@ export const ru = {
       PENDING_APPROVAL: 'На утверждении',
       APPROVED: 'Утверждён',
       REJECTED: 'Отклонён',
-      VOID: 'Аннулирован',
+      VOID: 'Аннулирован'
     },
     changeEventSource: {
       RFI: 'RFI',
@@ -8742,7 +10988,7 @@ export const ru = {
       OWNER_REQUEST: 'Запрос заказчика',
       FIELD_CONDITION: 'Полевые условия',
       REGULATORY: 'Нормативное',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     changeOrderStatus: {
       DRAFT: 'Черновик',
@@ -8751,13 +10997,13 @@ export const ru = {
       APPROVED: 'Утверждён',
       EXECUTED: 'Исполнен',
       REJECTED: 'Отклонён',
-      VOID: 'Аннулирован',
+      VOID: 'Аннулирован'
     },
     changeOrderType: {
       ADDITION: 'Добавление',
       DEDUCTION: 'Вычет',
       NO_COST: 'Без затрат',
-      TIME_EXTENSION: 'Продление сроков',
+      TIME_EXTENSION: 'Продление сроков'
     },
     commitmentStatus: {
       DRAFT: 'Черновик',
@@ -8765,13 +11011,13 @@ export const ru = {
       APPROVED: 'Одобрен',
       COMMITTED: 'Подтверждён',
       CLOSED: 'Закрыт',
-      VOID: 'Аннулирован',
+      VOID: 'Аннулирован'
     },
     commitmentType: {
       SUBCONTRACT: 'Субподряд',
       PURCHASE_ORDER: 'Заказ на поставку',
       SERVICE_AGREEMENT: 'Договор услуг',
-      RENTAL: 'Аренда',
+      RENTAL: 'Аренда'
     },
     russianDocType: {
       KS2: 'КС-2',
@@ -8782,7 +11028,7 @@ export const ru = {
       GENERAL_JOURNAL: 'Общий журнал',
       COMMISSIONING_ACT: 'Акт ввода',
       PASSPORT: 'Паспорт',
-      PROTOCOL: 'Протокол',
+      PROTOCOL: 'Протокол'
     },
     russianDocStatus: {
       DRAFT: 'Черновик',
@@ -8790,26 +11036,26 @@ export const ru = {
       ON_SIGNING: 'На подписании',
       SIGNED: 'Подписан',
       REJECTED: 'Отклонён',
-      ARCHIVED: 'В архиве',
+      ARCHIVED: 'В архиве'
     },
     dailyLogStatus: {
       DRAFT: 'Черновик',
       SUBMITTED: 'Подан',
       APPROVED: 'Утверждён',
-      REJECTED: 'Отклонён',
+      REJECTED: 'Отклонён'
     },
     workOrderStatus: {
       PLANNED: 'Запланирован',
       IN_PROGRESS: 'В работе',
       COMPLETED: 'Выполнен',
       ON_HOLD: 'Приостановлен',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     workOrderPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      URGENT: 'Срочный',
+      URGENT: 'Срочный'
     },
     weather: {
       CLEAR: 'Ясно',
@@ -8818,7 +11064,7 @@ export const ru = {
       SNOW: 'Снег',
       WIND: 'Ветер',
       FROST: 'Мороз',
-      FOG: 'Туман',
+      FOG: 'Туман'
     },
     permitStatus: {
       DRAFT: 'Черновик',
@@ -8828,7 +11074,7 @@ export const ru = {
       ACTIVE: 'Действует',
       EXPIRED: 'Истёк',
       REVOKED: 'Отозван',
-      REJECTED: 'Отклонён',
+      REJECTED: 'Отклонён'
     },
     permitType: {
       BUILDING_PERMIT: 'Разрешение на строительство',
@@ -8838,14 +11084,14 @@ export const ru = {
       FIRE_SAFETY: 'Пожарная безопасность',
       SANITARY: 'Санитарное разрешение',
       ROSTECHNADZOR: 'Ростехнадзор',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     licenseStatus: {
       ACTIVE: 'Действует',
       EXPIRING_SOON: 'Истекает',
       EXPIRED: 'Истекла',
       SUSPENDED: 'Приостановлена',
-      REVOKED: 'Отозвана',
+      REVOKED: 'Отозвана'
     },
     inspectionStatus: {
       SCHEDULED: 'Запланирована',
@@ -8853,7 +11099,7 @@ export const ru = {
       PASSED: 'Пройдена',
       FAILED: 'Не пройдена',
       RESCHEDULED: 'Перенесена',
-      CANCELLED: 'Отменена',
+      CANCELLED: 'Отменена'
     },
     inspectionType: {
       ROSTECHNADZOR: 'Ростехнадзор',
@@ -8863,13 +11109,13 @@ export const ru = {
       LABOR_INSPECTION: 'ГИТ',
       INTERNAL_AUDIT: 'Внутренний аудит',
       CUSTOMER_INSPECTION: 'Инспекция заказчика',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     complianceResult: {
       COMPLIANT: 'Соответствует',
       NON_COMPLIANT: 'Не соответствует',
       PARTIALLY_COMPLIANT: 'Частично',
-      PENDING: 'Ожидает проверки',
+      PENDING: 'Ожидает проверки'
     },
     punchItemStatus: {
       OPEN: 'Открыт',
@@ -8877,13 +11123,13 @@ export const ru = {
       READY_FOR_REVIEW: 'На проверке',
       APPROVED: 'Принят',
       REJECTED: 'Отклонён',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     punchItemPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     punchCategory: {
       STRUCTURAL: 'Конструктивные',
@@ -8894,34 +11140,34 @@ export const ru = {
       FINISHING: 'Отделочные',
       FIRE_SAFETY: 'Пожарная безопасность',
       LANDSCAPING: 'Благоустройство',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     punchListStatus: {
       DRAFT: 'Черновик',
       ACTIVE: 'Активен',
       IN_REVIEW: 'На проверке',
       COMPLETED: 'Завершён',
-      CLOSED: 'Закрыт',
+      CLOSED: 'Закрыт'
     },
     kepCertStatus: {
       ACTIVE: 'Действует',
       EXPIRING_SOON: 'Истекает',
       EXPIRED: 'Истёк',
       REVOKED: 'Отозван',
-      SUSPENDED: 'Приостановлен',
+      SUSPENDED: 'Приостановлен'
     },
     kepSigningStatus: {
       PENDING: 'Ожидает подписания',
       SIGNED: 'Подписан',
       REJECTED: 'Отклонён',
       EXPIRED: 'Просрочен',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     kepPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     designVersionStatus: {
       DRAFT: 'Черновик',
@@ -8929,14 +11175,14 @@ export const ru = {
       APPROVED: 'Утверждён',
       SUPERSEDED: 'Замещён',
       REJECTED: 'Отклонён',
-      ARCHIVED: 'В архиве',
+      ARCHIVED: 'В архиве'
     },
     designReviewStatus: {
       PENDING: 'Ожидает',
       IN_PROGRESS: 'В процессе',
       APPROVED: 'Утверждён',
       REJECTED: 'Отклонён',
-      REVISION_REQUESTED: 'На доработку',
+      REVISION_REQUESTED: 'На доработку'
     },
     dispatchStatus: {
       DRAFT: 'Черновик',
@@ -8945,18 +11191,18 @@ export const ru = {
       IN_TRANSIT: 'В пути',
       DELIVERED: 'Доставлен',
       COMPLETED: 'Завершён',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     stockLimitType: {
       MIN: 'Минимум',
       MAX: 'Максимум',
       REORDER_POINT: 'Точка заказа',
-      SAFETY_STOCK: 'Страховой запас',
+      SAFETY_STOCK: 'Страховой запас'
     },
     stockAlertSeverity: {
       INFO: 'Информация',
       WARNING: 'Предупреждение',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
     toleranceCategory: {
       GEOMETRIC: 'Геометрические',
@@ -8967,14 +11213,14 @@ export const ru = {
       FIRE_RESISTANCE: 'Огнестойкость',
       SURFACE_FINISH: 'Отделка поверхности',
       ALIGNMENT: 'Выравнивание',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     toleranceCheckStatus: {
       PLANNED: 'Запланировано',
       IN_PROGRESS: 'В процессе',
       PASSED: 'Соответствует',
       FAILED: 'Не соответствует',
-      DEVIATION_ACCEPTED: 'Отклонение принято',
+      DEVIATION_ACCEPTED: 'Отклонение принято'
     },
     applicantStatus: {
       NEW: 'Новый',
@@ -8983,62 +11229,62 @@ export const ru = {
       OFFER: 'Оффер',
       HIRED: 'Принят',
       REJECTED: 'Отклонён',
-      WITHDRAWN: 'Отозван',
+      WITHDRAWN: 'Отозван'
     },
     applicantPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      URGENT: 'Срочный',
+      URGENT: 'Срочный'
     },
     jobPositionStatus: {
       DRAFT: 'Черновик',
       OPEN: 'Открыта',
       IN_PROGRESS: 'В работе',
       FILLED: 'Закрыта',
-      CANCELLED: 'Отменена',
+      CANCELLED: 'Отменена'
     },
     employmentType: {
       FULL_TIME: 'Полная занятость',
       PART_TIME: 'Частичная занятость',
       CONTRACT: 'Контракт',
-      INTERNSHIP: 'Стажировка',
+      INTERNSHIP: 'Стажировка'
     },
     leaveRequestStatus: {
       DRAFT: 'Черновик',
       SUBMITTED: 'На рассмотрении',
       APPROVED: 'Утверждён',
       REFUSED: 'Отклонён',
-      CANCELLED: 'Отменён',
+      CANCELLED: 'Отменён'
     },
     leaveAllocationStatus: {
       DRAFT: 'Черновик',
       APPROVED: 'Утверждён',
-      EXPIRED: 'Истёк',
+      EXPIRED: 'Истёк'
     },
     maintenanceRequestStatus: {
       NEW: 'Новая',
       IN_PROGRESS: 'В работе',
       REPAIRED: 'Отремонтировано',
       SCRAP: 'Списание',
-      CANCELLED: 'Отменена',
+      CANCELLED: 'Отменена'
     },
     maintenancePriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      URGENT: 'Срочный',
+      URGENT: 'Срочный'
     },
     maintenanceType: {
       CORRECTIVE: 'Корректирующее',
       PREVENTIVE: 'Превентивное',
-      PREDICTIVE: 'Предиктивное',
+      PREDICTIVE: 'Предиктивное'
     },
     equipmentStatus: {
       OPERATIONAL: 'В работе',
       MAINTENANCE: 'На обслуживании',
       OUT_OF_SERVICE: 'Не в работе',
-      RETIRED: 'Списано',
+      RETIRED: 'Списано'
     },
     legalCaseStatus: {
       DRAFT: 'Черновик',
@@ -9047,7 +11293,7 @@ export const ru = {
       ON_HOLD: 'Приостановлено',
       RESOLVED: 'Решено',
       CLOSED: 'Закрыто',
-      APPEAL: 'Апелляция',
+      APPEAL: 'Апелляция'
     },
     legalCaseType: {
       LITIGATION: 'Судебное',
@@ -9055,12 +11301,12 @@ export const ru = {
       CLAIM: 'Претензия',
       CONSULTATION: 'Консультация',
       CONTRACT_DISPUTE: 'Договорной спор',
-      REGULATORY: 'Регуляторное',
+      REGULATORY: 'Регуляторное'
     },
     legalTemplateStatus: {
       DRAFT: 'Черновик',
       ACTIVE: 'Активный',
-      ARCHIVED: 'Архивный',
+      ARCHIVED: 'Архивный'
     },
     legalTemplateCategory: {
       CONSTRUCTION: 'Строительство',
@@ -9069,7 +11315,7 @@ export const ru = {
       SUBCONTRACT: 'Субподряд',
       LEASE: 'Аренда',
       NDA: 'NDA',
-      OTHER: 'Прочее',
+      OTHER: 'Прочее'
     },
     crmLeadStatus: {
       NEW: 'Новый',
@@ -9077,19 +11323,21 @@ export const ru = {
       PROPOSITION: 'Предложение',
       NEGOTIATION: 'Переговоры',
       WON: 'Выиграно',
-      LOST: 'Потеряно',
+      LOST: 'Потеряно'
     },
     crmLeadPriority: {
       LOW: 'Низкий',
       MEDIUM: 'Средний',
       HIGH: 'Высокий',
-      CRITICAL: 'Критический',
+      CRITICAL: 'Критический'
     },
+    warehouseOrderType: {
+      RECEIPT: 'R E C E I P T',
+      ISSUE: 'I S S U E',
+      INTERNAL_TRANSFER: 'I N T E R N A L_ T R A N S F E R',
+      RETURN: 'R E T U R N'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Navigation
-  // ---------------------------------------------------------------------------
   navigation: {
     groups: {
       home: 'Главная',
@@ -9112,18 +11360,18 @@ export const ru = {
       site: 'Стройплощадка',
       closeout: 'Завершение',
       analytics: 'Аналитика',
-      admin: 'Настройки',
+      admin: 'Настройки'
     },
     items: {
-      'dashboard': 'Главная',
+      dashboard: 'Главная',
       'projects-list': 'Объекты',
-      'counterparties': 'Контрагенты',
-      'CONTRACTS': 'Договоры',
-      'estimates': 'Сметы',
+      counterparties: 'Контрагенты',
+      CONTRACTS: 'Договоры',
+      estimates: 'Сметы',
       'estimates-pricing-databases': 'Базы расценок',
       'estimates-pricing-rates': 'Нормативные расценки',
       'estimates-pricing-calc': 'Калькулятор расценок',
-      'specifications': 'Спецификации',
+      specifications: 'Спецификации',
       'spec-analogs': 'Аналоги материалов',
       'spec-analog-requests': 'Заявки на замену',
       'pm-rfis': 'RFI (запросы)',
@@ -9182,10 +11430,11 @@ export const ru = {
       'fin-rev-dashboard': 'Дашборд выручки',
       'fin-opportunities': 'Возможности',
       'site-assessments': 'Обследование площадок',
-      'prequalifications': 'Преквалификация',
+      prequalifications: 'Преквалификация',
       'fin-tenders': 'Тендеры',
       'fin-bid-comparison': 'Сравнение КП',
       'fin-procurement': 'Закупки',
+      'fin-prequalification': 'Преквалификация подрядчиков',
       'fin-price-coefficients': 'Ценовые коэф.',
       'fin-tax-risk': 'Налоговые риски',
       'wh-locations': 'Склады',
@@ -9297,13 +11546,9 @@ export const ru = {
       'adm-api-keys': 'API ключи',
       'adm-webhooks': 'Вебхуки',
       'adm-subscription': 'Подписка',
-      'adm-marketplace': 'Маркетплейс',
-    },
+      'adm-marketplace': 'Маркетплейс'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Forms
-  // ---------------------------------------------------------------------------
   forms: {
     common: {
       saveChanges: 'Сохранить изменения',
@@ -9311,7 +11556,7 @@ export const ru = {
       editing: 'Редактирование',
       home: 'Главная',
       basicInfo: 'Основная информация',
-      maxChars: 'Максимум {count} символов',
+      maxChars: 'Максимум {count} символов'
     },
     journalEntry: {
       createTitle: 'Новая проводка',
@@ -9346,7 +11591,7 @@ export const ru = {
         debitRequired: 'Выберите дебетовый счёт',
         creditRequired: 'Выберите кредитовый счёт',
         amountRequired: 'Укажите сумму',
-        amountPositive: 'Сумма должна быть больше 0',
+        amountPositive: 'Сумма должна быть больше 0'
       },
       accounts: {
         a01: '01 - Основные средства',
@@ -9368,8 +11613,8 @@ export const ru = {
         a84: '84 - Нераспределённая прибыль',
         a90: '90 - Продажи',
         a91: '91 - Прочие доходы и расходы',
-        a99: '99 - Прибыли и убытки',
-      },
+        a99: '99 - Прибыли и убытки'
+      }
     },
     calendarEvent: {
       createTitle: 'Новое событие',
@@ -9409,7 +11654,7 @@ export const ru = {
         endDateRequired: 'Укажите дату окончания',
         organizerIdRequired: 'Выберите организатора',
         organizerNameRequired: 'Укажите имя организатора',
-        invalidUrl: 'Некорректный URL',
+        invalidUrl: 'Некорректный URL'
       },
       eventTypes: {
         meeting: 'Совещание',
@@ -9419,8 +11664,8 @@ export const ru = {
         milestone: 'Веха',
         holiday: 'Праздник',
         training: 'Обучение',
-        other: 'Прочее',
-      },
+        other: 'Прочее'
+      }
     },
     dailyLog: {
       createTitle: 'Новая запись в журнале',
@@ -9463,7 +11708,7 @@ export const ru = {
         windSpeedRange: 'Скорость ветра от 0 до 100 м/с',
         workDescriptionRequired: 'Введите описание работ',
         crewCountPositive: 'Количество должно быть положительным',
-        hoursRange: 'Часы от 0 до 24',
+        hoursRange: 'Часы от 0 до 24'
       },
       weatherTypes: {
         clear: 'Ясно',
@@ -9471,8 +11716,8 @@ export const ru = {
         rain: 'Дождь',
         snow: 'Снег',
         fog: 'Туман',
-        wind: 'Ветер',
-      },
+        wind: 'Ветер'
+      }
     },
     contract: {
       createTitle: 'Новый договор',
@@ -9522,15 +11767,17 @@ export const ru = {
         amountRequired: 'Укажите сумму',
         amountPositive: 'Сумма должна быть больше 0',
         startDateRequired: 'Укажите дату начала',
-        endDateRequired: 'Укажите дату окончания',
+        endDateRequired: 'Укажите дату окончания'
       },
       contractTypes: {
         general: 'Генподряд',
         subcontract: 'Субподряд',
         supply: 'Поставка',
         design: 'Проектирование',
-        services: 'Услуги',
+        services: 'Услуги'
       },
+      directionClient: 'Direction Client',
+      directionContractor: 'Direction Contractor'
     },
     rfi: {
       createTitle: 'Новый запрос информации (RFI)',
@@ -9562,7 +11809,7 @@ export const ru = {
         questionRequired: 'Введите вопрос',
         projectRequired: 'Выберите объект',
         priorityRequired: 'Выберите приоритет',
-        categoryRequired: 'Выберите категорию',
+        categoryRequired: 'Выберите категорию'
       },
       categories: {
         design: 'Проектирование',
@@ -9570,14 +11817,14 @@ export const ru = {
         material: 'Материалы',
         schedule: 'График',
         cost: 'Стоимость',
-        other: 'Другое',
+        other: 'Другое'
       },
       priorities: {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
-      },
+        critical: 'Критический'
+      }
     },
     issue: {
       createTitle: 'Новое замечание',
@@ -9604,21 +11851,21 @@ export const ru = {
         titleRequired: 'Введите название замечания',
         typeRequired: 'Выберите тип замечания',
         priorityRequired: 'Выберите приоритет',
-        projectRequired: 'Выберите объект',
+        projectRequired: 'Выберите объект'
       },
       issueTypes: {
         defect: 'Дефект',
         safety: 'Безопасность',
         coordination: 'Координация',
         design: 'Проектирование',
-        schedule: 'График',
+        schedule: 'График'
       },
       priorities: {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
-      },
+        critical: 'Критический'
+      }
     },
     submittal: {
       createTitle: 'Новый сабмиттал',
@@ -9650,13 +11897,13 @@ export const ru = {
       validation: {
         titleRequired: 'Введите название',
         projectRequired: 'Выберите объект',
-        priorityRequired: 'Выберите приоритет',
+        priorityRequired: 'Выберите приоритет'
       },
       priorities: {
         low: 'Низкий',
         medium: 'Средний',
-        high: 'Высокий',
-      },
+        high: 'Высокий'
+      }
     },
     budget: {
       createTitle: 'Новый бюджет',
@@ -9682,7 +11929,7 @@ export const ru = {
         nameRequired: 'Введите название бюджета',
         periodRequired: 'Укажите период',
         amountRequired: 'Укажите первоначальную сумму',
-        amountPositive: 'Сумма должна быть больше 0',
+        amountPositive: 'Сумма должна быть больше 0'
       },
       periods: {
         q1_2025: '1 квартал 2025',
@@ -9691,8 +11938,8 @@ export const ru = {
         q4_2025: '4 квартал 2025',
         q1_2026: '1 квартал 2026',
         q2_2026: '2 квартал 2026',
-        annual_2026: 'Годовой 2026',
-      },
+        annual_2026: 'Годовой 2026'
+      }
     },
     invoice: {
       createTitle: 'Новая счёт-фактура',
@@ -9730,12 +11977,12 @@ export const ru = {
         dueDateRequired: 'Укажите дату оплаты',
         typeRequired: 'Выберите тип счёта',
         amountRequired: 'Укажите сумму без НДС',
-        amountPositive: 'Сумма должна быть больше 0',
+        amountPositive: 'Сумма должна быть больше 0'
       },
       invoiceTypes: {
         issued: 'Выставленный',
-        received: 'Полученный',
-      },
+        received: 'Полученный'
+      }
     },
     payment: {
       createTitle: 'Новый платёж',
@@ -9770,18 +12017,18 @@ export const ru = {
         amountRequired: 'Укажите сумму',
         amountPositive: 'Сумма должна быть больше 0',
         dateRequired: 'Укажите дату платежа',
-        methodRequired: 'Выберите способ оплаты',
+        methodRequired: 'Выберите способ оплаты'
       },
       paymentTypes: {
         incoming: 'Входящий',
-        outgoing: 'Исходящий',
+        outgoing: 'Исходящий'
       },
       paymentMethods: {
         bankTransfer: 'Банковский перевод',
         cash: 'Наличные',
         letterOfCredit: 'Аккредитив',
-        offset: 'Взаимозачёт',
-      },
+        offset: 'Взаимозачёт'
+      }
     },
     movement: {
       createTitle: 'Новое перемещение',
@@ -9814,7 +12061,7 @@ export const ru = {
         quantityRequired: 'Укажите количество',
         quantityPositive: 'Количество должно быть больше 0',
         dateRequired: 'Укажите дату',
-        responsibleRequired: 'Укажите ответственного',
+        responsibleRequired: 'Укажите ответственного'
       },
       movementTypes: {
         receipt: 'Приход',
@@ -9822,8 +12069,8 @@ export const ru = {
         transfer: 'Перемещение',
         adjustment: 'Корректировка',
         return: 'Возврат',
-        writeOff: 'Списание',
-      },
+        writeOff: 'Списание'
+      }
     },
     material: {
       createTitle: 'Новый материал',
@@ -9850,7 +12097,7 @@ export const ru = {
         nameRequired: 'Введите название материала',
         codeRequired: 'Введите код материала',
         categoryRequired: 'Выберите категорию',
-        unitRequired: 'Укажите единицу измерения',
+        unitRequired: 'Укажите единицу измерения'
       },
       categories: {
         concrete: 'Бетон и растворы',
@@ -9862,7 +12109,7 @@ export const ru = {
         finishing: 'Отделочные материалы',
         fasteners: 'Крепёж',
         tools: 'Инструменты',
-        other: 'Прочее',
+        other: 'Прочее'
       },
       units: {
         piece: 'шт',
@@ -9873,8 +12120,8 @@ export const ru = {
         ton: 'т',
         liter: 'л',
         pack: 'упак',
-        set: 'комплект',
-      },
+        set: 'комплект'
+      }
     },
     safetyInspection: {
       createTitle: 'Новая инспекция безопасности',
@@ -9901,14 +12148,14 @@ export const ru = {
       validation: {
         dateRequired: 'Укажите дату проверки',
         typeRequired: 'Выберите тип проверки',
-        projectRequired: 'Выберите объект',
+        projectRequired: 'Выберите объект'
       },
       inspectionTypes: {
         routine: 'Плановая',
         unscheduled: 'Внеплановая',
         followup: 'Повторная',
-        regulatory: 'Надзорная',
-      },
+        regulatory: 'Надзорная'
+      }
     },
     safetyIncident: {
       createTitle: 'Новый инцидент',
@@ -9948,7 +12195,7 @@ export const ru = {
         typeRequired: 'Выберите тип инцидента',
         severityRequired: 'Выберите степень тяжести',
         projectRequired: 'Выберите объект',
-        dateRequired: 'Укажите дату инцидента',
+        dateRequired: 'Укажите дату инцидента'
       },
       incidentTypes: {
         fall: 'Падение',
@@ -9959,15 +12206,15 @@ export const ru = {
         fire: 'Пожар',
         chemical: 'Химическое воздействие',
         equipment: 'Инцидент с техникой',
-        other: 'Прочее',
+        other: 'Прочее'
       },
       severityLevels: {
         minor: 'Незначительная',
         moderate: 'Средняя',
         serious: 'Серьезная',
         critical: 'Критическая',
-        fatal: 'Фатальная',
-      },
+        fatal: 'Фатальная'
+      }
     },
     employee: {
       createTitle: 'Новый сотрудник',
@@ -10015,7 +12262,7 @@ export const ru = {
         phoneInvalid: 'Некорректный формат телефона',
         emailInvalid: 'Некорректный формат email',
         hireDateRequired: 'Укажите дату приёма',
-        contractTypeRequired: 'Выберите тип договора',
+        contractTypeRequired: 'Выберите тип договора'
       },
       departments: {
         construction: 'Строительный отдел',
@@ -10025,15 +12272,15 @@ export const ru = {
         finance: 'Финансовый отдел',
         legal: 'Юридический отдел',
         hr: 'HR',
-        it: 'IT',
+        it: 'IT'
       },
       contractTypes: {
         permanent: 'Бессрочный',
         fixedTerm: 'Срочный',
         civil: 'ГПХ',
         partTime: 'Совместительство',
-        probation: 'Испытательный срок',
-      },
+        probation: 'Испытательный срок'
+      }
     },
     qualityInspection: {
       createTitle: 'Новая проверка качества',
@@ -10068,20 +12315,20 @@ export const ru = {
         titleRequired: 'Введите название проверки',
         typeRequired: 'Выберите тип проверки',
         projectRequired: 'Выберите объект',
-        statusRequired: 'Выберите статус',
+        statusRequired: 'Выберите статус'
       },
       inspectionTypes: {
         visual: 'Визуальная',
         measurement: 'Измерительная',
         test: 'Испытание',
-        audit: 'Аудит',
+        audit: 'Аудит'
       },
       statuses: {
         scheduled: 'Запланирована',
         inProgress: 'В процессе',
         completed: 'Завершена',
-        failed: 'Не пройдена',
-      },
+        failed: 'Не пройдена'
+      }
     },
     project: {
       createTitle: 'Новый объект',
@@ -10138,7 +12385,7 @@ export const ru = {
         typeRequired: 'Выберите тип',
         priorityRequired: 'Выберите приоритет',
         statusRequired: 'Выберите статус',
-        customerRequired: 'Укажите заказчика',
+        customerRequired: 'Укажите заказчика'
       },
       statuses: {
         draft: 'Черновик',
@@ -10146,28 +12393,28 @@ export const ru = {
         inProgress: 'В работе',
         onHold: 'На паузе',
         completed: 'Завершён',
-        cancelled: 'Отменён',
+        cancelled: 'Отменён'
       },
       constructionKinds: {
         newConstruction: 'Новое строительство',
         reconstruction: 'Реконструкция',
         overhaul: 'Капитальный ремонт',
         demolition: 'Снос',
-        techReequipment: 'Техническое перевооружение',
+        techReequipment: 'Техническое перевооружение'
       },
       projectTypes: {
         residential: 'Жилой объект',
         commercial: 'Коммерческий объект',
         industrial: 'Промышленный объект',
         infrastructure: 'Инфраструктура',
-        renovation: 'Реновация',
+        renovation: 'Реновация'
       },
       priorities: {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
-      },
+        critical: 'Критический'
+      }
     },
     crmLead: {
       createTitle: 'Новый лид',
@@ -10201,7 +12448,7 @@ export const ru = {
         phoneInvalid: 'Некорректный формат телефона',
         statusRequired: 'Выберите статус',
         amountPositive: 'Сумма должна быть положительной',
-        probabilityRange: 'Вероятность от 0 до 100',
+        probabilityRange: 'Вероятность от 0 до 100'
       },
       statuses: {
         new: 'Новый',
@@ -10209,7 +12456,7 @@ export const ru = {
         proposition: 'Предложение',
         negotiation: 'Переговоры',
         won: 'Выигран',
-        lost: 'Проигран',
+        lost: 'Проигран'
       },
       sources: {
         website: 'Сайт',
@@ -10218,10 +12465,10 @@ export const ru = {
         exhibition: 'Выставка',
         tender: 'Тендер',
         social: 'Соцсети',
-        other: 'Другое',
+        other: 'Другое'
       },
       placeholderContactName: 'Иванов Иван Иванович',
-      placeholderCompany: 'ООО "СтройИнвест"',
+      placeholderCompany: 'ООО "СтройИнвест"'
     },
     dispatchOrder: {
       createTitle: 'Новый заказ на перевозку',
@@ -10272,8 +12519,8 @@ export const ru = {
         originRequired: 'Укажите точку отправления',
         destinationRequired: 'Укажите точку назначения',
         scheduledDateRequired: 'Укажите дату отправки',
-        weightPositive: 'Вес должен быть положительным',
-      },
+        weightPositive: 'Вес должен быть положительным'
+      }
     },
     punchListItem: {
       createTitle: 'Новый пункт замечаний',
@@ -10309,20 +12556,20 @@ export const ru = {
         descriptionRequired: 'Введите описание замечания',
         projectRequired: 'Выберите объект',
         categoryRequired: 'Выберите категорию',
-        priorityRequired: 'Выберите приоритет',
+        priorityRequired: 'Выберите приоритет'
       },
       categories: {
         deficiency: 'Дефект',
         incompleteWork: 'Незавершённая работа',
         damage: 'Повреждение',
-        safety: 'Безопасность',
+        safety: 'Безопасность'
       },
       priorities: {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
-      },
+        critical: 'Критический'
+      }
     },
     applicant: {
       createTitle: 'Новый кандидат',
@@ -10359,7 +12606,7 @@ export const ru = {
         phoneInvalid: 'Некорректный формат телефона',
         positionRequired: 'Выберите вакансию',
         resumeUrlInvalid: 'Некорректный URL',
-        statusRequired: 'Выберите статус',
+        statusRequired: 'Выберите статус'
       },
       statuses: {
         new: 'Новый',
@@ -10368,8 +12615,8 @@ export const ru = {
         offer: 'Оффер',
         hired: 'Принят',
         rejected: 'Отклонён',
-        withdrawn: 'Отозван',
-      },
+        withdrawn: 'Отозван'
+      }
     },
     contractor: {
       createTitle: 'Новый самозанятый исполнитель',
@@ -10401,8 +12648,8 @@ export const ru = {
         fullNameRequired: 'Введите ФИО',
         innLength: 'ИНН должен содержать 12 цифр',
         innFormat: 'ИНН должен состоять из 12 цифр',
-        emailInvalid: 'Некорректный email',
-      },
+        emailInvalid: 'Некорректный email'
+      }
     },
     document: {
       createTitle: 'Новый документ',
@@ -10445,13 +12692,13 @@ export const ru = {
         photo: 'Фотография',
         correspondence: 'Переписка',
         permit: 'Разрешение',
-        other: 'Другое',
+        other: 'Другое'
       },
       validation: {
         titleRequired: 'Введите название документа',
         documentTypeRequired: 'Выберите тип документа',
-        projectRequired: 'Выберите объект',
-      },
+        projectRequired: 'Выберите объект'
+      }
     },
     fleetVehicle: {
       createTitle: 'Новое транспортное средство',
@@ -10499,20 +12746,20 @@ export const ru = {
         welding: 'Сварочный аппарат',
         car: 'Легковой автомобиль',
         bus: 'Автобус',
-        other: 'Прочее',
+        other: 'Прочее'
       },
       statuses: {
         available: 'Доступен',
         inUse: 'В работе',
         maintenance: 'На обслуживании',
         repair: 'Ремонт',
-        decommissioned: 'Списан',
+        decommissioned: 'Списан'
       },
       fuelTypes: {
         diesel: 'Дизель',
         gasoline: 'Бензин',
         electric: 'Электрический',
-        hybrid: 'Гибрид',
+        hybrid: 'Гибрид'
       },
       validation: {
         licensePlateRequired: 'Введите гос. номер',
@@ -10522,8 +12769,8 @@ export const ru = {
         vinMaxLength: 'VIN содержит максимум 17 символов',
         vehicleTypeRequired: 'Выберите тип техники',
         statusRequired: 'Выберите статус',
-        fuelTypeRequired: 'Выберите тип топлива',
-      },
+        fuelTypeRequired: 'Выберите тип топлива'
+      }
     },
     changeOrder: {
       createTitle: 'Новое изменение',
@@ -10559,20 +12806,20 @@ export const ru = {
         designChange: 'Изменение объекта',
         unforeseenCondition: 'Непредвиденные условия',
         clientRequest: 'Запрос заказчика',
-        regulatory: 'Нормативные требования',
+        regulatory: 'Нормативные требования'
       },
       priorities: {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
+        critical: 'Критический'
       },
       validation: {
         titleRequired: 'Введите название',
         projectRequired: 'Выберите объект',
         contractRequired: 'Выберите договор',
         reasonRequired: 'Выберите причину',
-        priorityRequired: 'Выберите приоритет',
+        priorityRequired: 'Выберите приоритет'
       },
       projectSolnechny: 'ЖК "Солнечный"',
       projectGorizont: 'БЦ "Горизонт"',
@@ -10580,7 +12827,7 @@ export const ru = {
       projectCentralny: 'ТЦ "Центральный"',
       contractSmr: 'Договор СМР-2024/01',
       contractPir: 'Договор ПИР-2024/05',
-      contractEmr: 'Договор ЭМР-2024/12',
+      contractEmr: 'Договор ЭМР-2024/12'
     },
     designVersion: {
       createTitle: 'Новая версия объекта',
@@ -10611,13 +12858,13 @@ export const ru = {
         eo: 'ЭО - Электрооборудование',
         vk: 'ВК - Водоснабжение и канализация',
         ov: 'ОВ - Отопление и вентиляция',
-        pos: 'ПОС - Объект организации строительства',
+        pos: 'ПОС - Объект организации строительства'
       },
       statuses: {
         draft: 'Черновик',
         review: 'На рассмотрении',
         approved: 'Утверждено',
-        superseded: 'Заменено',
+        superseded: 'Заменено'
       },
       validation: {
         nameRequired: 'Введите название версии',
@@ -10625,8 +12872,8 @@ export const ru = {
         versionRequired: 'Введите номер версии',
         fileUrlInvalid: 'Некорректный URL файла',
         statusRequired: 'Выберите статус',
-        projectRequired: 'Выберите объект',
-      },
+        projectRequired: 'Выберите объект'
+      }
     },
     commitment: {
       createTitle: 'Новое обязательство',
@@ -10662,13 +12909,13 @@ export const ru = {
         subcontract: 'Субподряд',
         purchaseOrder: 'Заказ на закупку',
         serviceAgreement: 'Договор услуг',
-        rental: 'Аренда',
+        rental: 'Аренда'
       },
       currencies: {
         rub: 'Рубли (RUB)',
         usd: 'Доллары (USD)',
         eur: 'Евро (EUR)',
-        cny: 'Юани (CNY)',
+        cny: 'Юани (CNY)'
       },
       validation: {
         nameRequired: 'Введите название',
@@ -10679,8 +12926,8 @@ export const ru = {
         amountPositive: 'Сумма должна быть больше 0',
         currencyRequired: 'Выберите валюту',
         startDateRequired: 'Укажите дату начала',
-        endDateRequired: 'Укажите дату окончания',
-      },
+        endDateRequired: 'Укажите дату окончания'
+      }
     },
     maintenanceRequest: {
       createTitle: 'Новая заявка на обслуживание',
@@ -10709,19 +12956,19 @@ export const ru = {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        urgent: 'Срочный',
+        urgent: 'Срочный'
       },
       requestTypes: {
         corrective: 'Корректирующее',
-        preventive: 'Профилактическое',
+        preventive: 'Профилактическое'
       },
       validation: {
         titleRequired: 'Введите название заявки',
         equipmentRequired: 'Выберите оборудование',
         priorityRequired: 'Выберите приоритет',
         requestTypeRequired: 'Выберите тип обслуживания',
-        startDateRequired: 'Укажите дату начала',
-      },
+        startDateRequired: 'Укажите дату начала'
+      }
     },
     priceCoefficient: {
       createTitle: 'Новый ценовой коэффициент',
@@ -10757,7 +13004,7 @@ export const ru = {
         labor: 'Трудозатраты',
         equipment: 'Оборудование',
         overhead: 'Накладные',
-        custom: 'Пользовательский',
+        custom: 'Пользовательский'
       },
       validation: {
         codeRequired: 'Введите код коэффициента',
@@ -10765,8 +13012,8 @@ export const ru = {
         typeRequired: 'Выберите тип',
         valueRequired: 'Укажите значение',
         valuePositive: 'Значение должно быть больше 0',
-        effectiveFromRequired: 'Укажите дату начала',
-      },
+        effectiveFromRequired: 'Укажите дату начала'
+      }
     },
     payrollTemplate: {
       createTitle: 'Новый шаблон зарплаты',
@@ -10800,13 +13047,13 @@ export const ru = {
         salary: 'Оклад',
         hourly: 'Почасовая',
         pieceRate: 'Сдельная',
-        mixed: 'Смешанная',
+        mixed: 'Смешанная'
       },
       validation: {
         codeRequired: 'Введите код шаблона',
         nameRequired: 'Введите название',
-        typeRequired: 'Выберите тип',
-      },
+        typeRequired: 'Выберите тип'
+      }
     },
     taxRisk: {
       createTitle: 'Новая оценка налоговых рисков',
@@ -10832,7 +13079,7 @@ export const ru = {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
+        critical: 'Критический'
       },
       projectSunny: 'ЖК "Солнечный"',
       projectHorizon: 'БЦ "Горизонт"',
@@ -10843,8 +13090,8 @@ export const ru = {
         nameRequired: 'Введите название',
         assessmentDateRequired: 'Укажите дату оценки',
         riskLevelRequired: 'Выберите уровень риска',
-        scoreRange: 'Балл от 0 до 100',
-      },
+        scoreRange: 'Балл от 0 до 100'
+      }
     },
     simulation: {
       createTitle: 'Новая симуляция Монте-Карло',
@@ -10875,8 +13122,8 @@ export const ru = {
       updateSuccess: 'Симуляция обновлена',
       updateError: 'Не удалось обновить симуляцию',
       validation: {
-        nameRequired: 'Введите название',
-      },
+        nameRequired: 'Введите название'
+      }
     },
     specification: {
       createTitle: 'Новая спецификация',
@@ -10911,14 +13158,14 @@ export const ru = {
         draft: 'Черновик',
         inReview: 'На рассмотрении',
         approved: 'Утверждена',
-        active: 'Активна',
+        active: 'Активна'
       },
       validation: {
         nameRequired: 'Введите название спецификации',
         codeRequired: 'Введите код',
         projectRequired: 'Выберите объект',
-        statusRequired: 'Выберите статус',
-      },
+        statusRequired: 'Выберите статус'
+      }
     },
     purchaseRequest: {
       createTitle: 'Новая заявка на закупку',
@@ -10948,7 +13195,7 @@ export const ru = {
         low: 'Низкий',
         medium: 'Средний',
         high: 'Высокий',
-        critical: 'Критический',
+        critical: 'Критический'
       },
       validation: {
         requestDateRequired: 'Укажите дату заявки',
@@ -10959,13 +13206,13 @@ export const ru = {
         itemMaterialRequired: 'Укажите материал в строке',
         itemQuantityPositive: 'Количество должно быть больше нуля в строке',
         itemUnitRequired: 'Укажите единицу измерения в строке',
-        itemPricePositive: 'Оценочная цена должна быть больше нуля в строке',
+        itemPricePositive: 'Оценочная цена должна быть больше нуля в строке'
       },
       demoProjects: {
         solar: 'ЖК «Солнечный»',
         horizon: 'БЦ «Горизонт»',
         bridge: 'Мост через р. Волга',
-        central: 'ТЦ «Центральный»',
+        central: 'ТЦ «Центральный»'
       },
       demoMaterials: {
         rebar: 'Арматура А500С ø12мм',
@@ -10975,7 +13222,7 @@ export const ru = {
         pipe: 'Труба ПНД 110мм',
         cable: 'Кабель ВВГнг 3×2.5',
         cement: 'Цемент М500',
-        sand: 'Песок строительный',
+        sand: 'Песок строительный'
       },
       units: {
         pcs: 'шт',
@@ -10985,8 +13232,8 @@ export const ru = {
         kg: 'кг',
         t: 'т',
         l: 'л',
-        pack: 'упак',
-      },
+        pack: 'упак'
+      }
     },
     opportunity: {
       createTitle: 'Новая возможность',
@@ -11024,20 +13271,20 @@ export const ru = {
         proposal: 'Предложение',
         negotiation: 'Переговоры',
         won: 'Выигран',
-        lost: 'Проигран',
+        lost: 'Проигран'
       },
       projectTypes: {
         residential: 'Жилое строительство',
         commercial: 'Коммерческое',
         industrial: 'Промышленное',
-        infrastructure: 'Инфраструктура',
+        infrastructure: 'Инфраструктура'
       },
       validation: {
         nameRequired: 'Введите название',
         clientRequired: 'Введите имя клиента',
         stageRequired: 'Выберите стадию',
-        projectTypeRequired: 'Выберите тип объекта',
-      },
+        projectTypeRequired: 'Выберите тип объекта'
+      }
     },
     ptoDocument: {
       createTitle: 'Новый документ ПТО',
@@ -11070,27 +13317,101 @@ export const ru = {
         act: 'Акт',
         protocol: 'Протокол',
         certificate: 'Сертификат',
-        testReport: 'Отчёт об испытании',
+        testReport: 'Отчёт об испытании'
       },
       results: {
         pass: 'Пройдено',
         fail: 'Не пройдено',
-        conditional: 'Условно',
+        conditional: 'Условно'
       },
       validation: {
         titleRequired: 'Введите название документа',
         documentTypeRequired: 'Выберите тип документа',
         projectRequired: 'Выберите объект',
-        resultRequired: 'Выберите результат',
-      },
+        resultRequired: 'Выберите результат'
+      }
     },
+    ks3: {
+      validation: {
+        numberRequired: 'number Обязательное',
+        nameRequired: 'Название Обязательное',
+        documentDateRequired: 'Документ Дата Обязательное',
+        periodFromRequired: 'period from Обязательное',
+        periodToRequired: 'period to Обязательное',
+        projectRequired: 'Объект Обязательное',
+        contractRequired: 'Договор Обязательное'
+      },
+      createSuccess: 'Успешно создано',
+      createError: 'Ошибка создания',
+      updateSuccess: 'Успешно обновлено',
+      updateError: 'Обновить Ошибка',
+      editTitle: 'Редактировать Заголовок',
+      createTitle: 'Создать Заголовок',
+      editSubtitle: 'Редактировать Подзаголовок',
+      createSubtitle: 'Создать Подзаголовок',
+      breadcrumbKs3: 'Breadcrumb Ks3',
+      sectionBasic: 'Раздел basic',
+      labelNumber: 'Метка number',
+      placeholderNumber: 'Placeholder Number',
+      labelDocumentDate: 'Метка Документ Дата',
+      labelName: 'Название',
+      placeholderName: 'Введите название',
+      sectionPeriod: 'Раздел period',
+      labelPeriodFrom: 'Метка period from',
+      labelPeriodTo: 'Метка period to',
+      sectionBinding: 'Раздел binding',
+      labelProject: 'Объект',
+      placeholderProject: 'placeholder Объект',
+      labelContract: 'Метка Договор',
+      placeholderContract: 'placeholder Договор',
+      sectionRetention: 'Раздел retention',
+      labelRetentionPercent: 'Метка retention Процент',
+      hintRetentionPercent: 'hint retention Процент',
+      labelNotes: 'Примечания',
+      placeholderNotes: 'placeholder Примечания',
+      createButton: 'Создать button'
+    },
+    draftRestored: 'Черновик restored',
+    clearDraft: 'clear Черновик',
+    draftSavedAt: 'Черновик saved at',
+    dispatchRoute: {
+      validation: {
+        nameRequired: 'Название Обязательное',
+        originRequired: 'origin Обязательное',
+        destinationRequired: 'Назначение Обязательное',
+        distancePositive: 'Расстояние positive',
+        durationPositive: 'Длительность positive'
+      },
+      createSuccess: 'Успешно создано',
+      createError: 'Ошибка создания',
+      updateSuccess: 'Успешно обновлено',
+      updateError: 'Обновить Ошибка',
+      editTitle: 'Редактировать Заголовок',
+      createTitle: 'Создать Заголовок',
+      editSubtitlePrefix: 'Редактировать Подзаголовок prefix',
+      createSubtitle: 'Создать Подзаголовок',
+      breadcrumbDispatch: 'Breadcrumb Dispatch',
+      breadcrumbRoutes: 'Breadcrumb Routes',
+      sectionRouteInfo: 'Раздел route Информация',
+      labelName: 'Название',
+      placeholderName: 'Введите название',
+      labelActive: 'Метка Активный',
+      sectionPathMetrics: 'Раздел path metrics',
+      labelOrigin: 'Метка origin',
+      placeholderOrigin: 'Placeholder Origin',
+      labelDestination: 'Назначение',
+      placeholderDestination: 'placeholder Назначение',
+      labelDistance: 'Метка Расстояние',
+      placeholderDistance: 'placeholder Расстояние',
+      labelDuration: 'Метка Длительность',
+      placeholderDuration: 'placeholder Длительность',
+      sectionAdditional: 'Дополнительно',
+      labelNotes: 'Примечания',
+      placeholderNotes: 'placeholder Примечания',
+      createButton: 'Создать button'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Integrations (module-level)
-  // ---------------------------------------------------------------------------
   integrations: {
-    // -- Integrations Main (IntegrationsPage) --
     main: {
       title: 'Интеграции',
       subtitle: 'Управление внешними сервисами и интеграциями',
@@ -11124,9 +13445,34 @@ export const ru = {
       cardWeatherDescription: 'Мониторинг погодных условий на объектах',
       cardBimTitle: 'BIM',
       cardBimDescription: 'Интеграция с BIM-моделями (IFC, Revit)',
+      oneCName: 'one c Название',
+      oneCDescription: 'one c Описание',
+      telegramDescription: 'telegram Описание',
+      sbisName: 'sbis Название',
+      sbisDescription: 'sbis Описание',
+      edoName: 'edo Название',
+      edoDescription: 'edo Описание',
+      smsDescription: 'sms Описание',
+      weatherName: 'Погода Название',
+      weatherDescription: 'Погода Описание',
+      bimDescription: 'bim Описание',
+      govRegistriesName: 'gov registries Название',
+      govRegistriesDescription: 'gov registries Описание',
+      apiKeysName: 'api keys Название',
+      apiKeysDescription: 'api keys Описание',
+      syncStarted: 'Синхронизация started',
+      syncFailed: 'Синхронизация failed',
+      breadcrumbSettings: 'Настройки',
+      metricConnected: 'Metric Connected',
+      metricOutOf: 'Metric Out Of',
+      metricActiveServices: 'metric Активный services',
+      metricLastSync: 'metric last Синхронизация',
+      lastSyncShort: 'last Синхронизация short',
+      configure: 'Configure',
+      syncing: 'Syncing',
+      synchronize: 'Synchronize',
+      connect: 'Подключить'
     },
-
-    // -- 1C Settings (OneCSettingsPage) --
     oneC: {
       title: 'Настройки 1С:Предприятие',
       subtitle: 'Конфигурация интеграции с 1С',
@@ -11164,9 +13510,67 @@ export const ru = {
       modalSyncDescription: 'Это может занять несколько минут',
       modalSyncConfirm: 'Начать',
       modalSyncCancel: 'Отмена',
+      logStatusCompleted: 'Журнал Статус Завершено',
+      logStatusFailed: 'Журнал Статус failed',
+      logStatusRunning: 'Журнал Статус running',
+      logStatusPending: 'Журнал Статус Ожидание',
+      configSaved: 'Config Saved',
+      saveError: 'Ошибка сохранения',
+      connectionEstablished: 'Connection Established',
+      ms: 'Ms',
+      testError: 'test Ошибка',
+      syncStarted: 'Синхронизация started',
+      syncFailed: 'Синхронизация failed',
+      colName: 'Наименование',
+      colDatabase: 'col База данных',
+      colDirection: 'Col Direction',
+      colStatus: 'Статус',
+      statusActive: 'Активен',
+      statusInactive: 'Неактивен',
+      colLastSync: 'col last Синхронизация',
+      test: 'Test',
+      syncShort: 'Синхронизация short',
+      logColConfig: 'Журнал col config',
+      logColExchangeType: 'Журнал col exchange Тип',
+      logColProcessed: 'Журнал col processed',
+      logColErrors: 'Журнал col errors',
+      addConfig: 'Add Config',
+      tabConfigs: 'Tab Configs',
+      tabLogs: 'Tab Logs',
+      notConfigured: 'Не configured',
+      addConfigHint: 'Add Config Hint',
+      connected: 'Connected',
+      notConnected: 'Не connected',
+      metricConfigs: 'Metric Configs',
+      metricInterval: 'metric Интервал',
+      minutes: 'Минут',
+      metricLastSync: 'metric last Синхронизация',
+      metricDirection: 'Metric Direction',
+      connectionError: 'connection Ошибка',
+      emptyConfigsTitle: 'Пусто configs Заголовок',
+      emptyConfigsDescription: 'Пусто configs Описание',
+      emptyLogsTitle: 'Пусто logs Заголовок',
+      emptyLogsDescription: 'Пусто logs Описание',
+      newConfigTitle: 'Новый config Заголовок',
+      cancel: 'Отмена',
+      save: 'Сохранить',
+      fieldName: 'Поле Название',
+      placeholderName: 'Введите название',
+      fieldServerUrl: 'Поле Сервер url',
+      fieldUsername: 'Поле username',
+      fieldPassword: 'Поле Пароль',
+      fieldDatabaseName: 'Поле База данных Название',
+      fieldSyncDirection: 'Поле Синхронизация direction',
+      syncImportOnly: 'Синхронизация Импорт only',
+      syncExportOnly: 'Синхронизация Экспорт only',
+      syncBidirectional: 'Синхронизация bidirectional',
+      fieldInterval: 'Поле Интервал',
+      interval15min: 'Interval15min',
+      interval30min: 'Interval30min',
+      interval1hour: 'Interval1hour',
+      interval6hours: 'Interval6hours',
+      interval1day: 'Interval1day'
     },
-
-    // -- Telegram (TelegramPage) --
     telegram: {
       title: 'Telegram-бот',
       subtitle: 'Настройка уведомлений и команд Telegram-бота',
@@ -11203,7 +13607,6 @@ export const ru = {
       toastDeactivated: 'Бот деактивирован',
       toastError: 'Ошибка сохранения',
       modalConfigTitle: 'Настройка канала',
-      // TelegramPage keys
       breadcrumbSettings: 'Настройки',
       tabSubscribers: 'Подписчики',
       tabMessages: 'Сообщения',
@@ -11247,10 +13650,8 @@ export const ru = {
       fieldMessagePlaceholder: 'Введите текст сообщения...',
       testMessageSent: 'Тестовое сообщение отправлено',
       testMessageFailed: 'Ошибка отправки тестового сообщения',
-      enterMessageText: 'Введите текст сообщения',
+      enterMessageText: 'Введите текст сообщения'
     },
-
-    // -- SBIS Settings (SbisSettingsPage) --
     sbis: {
       title: 'Настройки СБИС',
       subtitle: 'Конфигурация интеграции со СБИС',
@@ -11279,7 +13680,6 @@ export const ru = {
       toastSyncStarted: 'Синхронизация документов начата',
       toastConnectionOk: 'Подключение к СБИС установлено',
       toastConnectionError: 'Ошибка подключения к СБИС',
-      // SbisSettingsPage keys
       tabConfigs: 'Конфигурации',
       tabDocuments: 'Документы',
       add: 'Добавить',
@@ -11330,10 +13730,8 @@ export const ru = {
       fieldKpp: 'КПП организации',
       fieldCertificateThumbprint: 'Отпечаток сертификата',
       docStatusDelivered: 'Доставлен',
-      docStatusCancelled: 'Отменён',
+      docStatusCancelled: 'Отменён'
     },
-
-    // -- EDO Settings (EdoSettingsPage) --
     edo: {
       title: 'Электронный документооборот',
       subtitle: 'Настройка ЭДО: Диадок, СБИС ЭДО, Контур',
@@ -11368,7 +13766,6 @@ export const ru = {
       toastSaved: 'Настройки ЭДО сохранены',
       toastSigned: 'Документ подписан',
       toastRejected: 'Документ отклонён',
-      // EdoSettingsPage keys
       tabAll: 'Все',
       tabInbox: 'Входящие',
       tabOutbox: 'Исходящие',
@@ -11415,10 +13812,8 @@ export const ru = {
       docStatusCreated: 'Создан',
       docStatusSigning: 'Подписание',
       docStatusDelivered: 'Доставлен',
-      docStatusExpired: 'Просрочен',
+      docStatusExpired: 'Просрочен'
     },
-
-    // -- Weather (WeatherPage) --
     weather: {
       title: 'Погодный мониторинг',
       subtitle: 'Метеоданные по строительным объектам',
@@ -11441,7 +13836,6 @@ export const ru = {
       btnRefresh: 'Обновить данные',
       toastRefreshed: 'Данные обновлены',
       toastSaved: 'Настройки сохранены',
-      // WeatherPage keys
       breadcrumbSettings: 'Настройки',
       settings: 'Настройки',
       refresh: 'Обновить',
@@ -11476,13 +13870,11 @@ export const ru = {
       intervalEveryHour: 'Каждый час',
       intervalEvery2hours: 'Каждые 2 часа',
       fieldTempUnit: 'Единицы температуры',
-      tempCelsius: 'Цельсий (\u00B0C)',
-      tempFahrenheit: 'Фаренгейт (\u00B0F)',
+      tempCelsius: 'Цельсий (°C)',
+      tempFahrenheit: 'Фаренгейт (°F)',
       fieldWindUnit: 'Единицы скорости ветра',
-      linkedSites: 'Привязанные площадки',
+      linkedSites: 'Привязанные площадки'
     },
-
-    // -- BIM (BimPage) --
     bim: {
       title: 'BIM-интеграция',
       subtitle: 'Работа с информационными моделями зданий',
@@ -11518,9 +13910,52 @@ export const ru = {
       toastClashRunStarted: 'Проверка коллизий запущена',
       emptyModels: 'Нет загруженных моделей',
       emptyClashes: 'Коллизии не обнаружены',
+      fileStatusReady: 'Файл Статус ready',
+      fileStatusProcessing: 'Файл Статус processing',
+      fileStatusError: 'Файл Статус Ошибка',
+      fileStatusPending: 'Файл Статус Ожидание',
+      severityCritical: 'Серьёзность Критический',
+      severityMajor: 'Серьёзность major',
+      severityMinor: 'Серьёзность minor',
+      clashStatusOpen: 'clash Статус Открыть',
+      uploadSuccess: 'Загрузить Успешно',
+      uploadError: 'Загрузить Ошибка',
+      exportSuccess: 'Экспорт Успешно',
+      exportError: 'Экспорт Ошибка',
+      onlyIfcSupported: 'Only Ifc Supported',
+      colFile: 'col Файл',
+      colFormat: 'Col Format',
+      colSize: 'Col Size',
+      colStatus: 'Статус',
+      colElements: 'Col Elements',
+      colUploaded: 'Col Uploaded',
+      colUploadedBy: 'Col Uploaded By',
+      colDescription: 'Описание',
+      colType: 'Тип',
+      colSeverity: 'col Серьёзность',
+      colLocation: 'Локация',
+      colClashStatus: 'col clash Статус',
+      colDetected: 'Col Detected',
+      breadcrumbSettings: 'Настройки',
+      exportVolumes: 'Экспорт volumes',
+      uploadIfc: 'Загрузить ifc',
+      tabFiles: 'Tab Files',
+      tabClashes: 'Tab Clashes',
+      metricFilesUploaded: 'Metric Files Uploaded',
+      metricProcessed: 'Metric Processed',
+      metricElements: 'Metric Elements',
+      metricOpenClashes: 'metric Открыть clashes',
+      criticalCount: 'Критический Количество',
+      uploading: 'Uploading',
+      dropZoneText: 'drop Зона text',
+      supportedFormat: 'Supported Format',
+      searchFiles: 'Поиск files',
+      searchClashes: 'Поиск clashes',
+      emptyFilesTitle: 'Пусто files Заголовок',
+      emptyFilesDescription: 'Пусто files Описание',
+      emptyClashesTitle: 'Пусто clashes Заголовок',
+      emptyClashesDescription: 'Пусто clashes Описание'
     },
-
-    // -- API Keys (ApiKeysPage) --
     apiKeys: {
       title: 'API-ключи',
       subtitle: 'Управление ключами доступа к API',
@@ -11556,14 +13991,222 @@ export const ru = {
       toastCopied: 'Ключ скопирован в буфер обмена',
       emptyTitle: 'Нет API-ключей',
       emptyDescription: 'Создайте первый API-ключ',
+      keyCreated: 'Key Created',
+      createError: 'Ошибка создания',
+      keyRevoked: 'Key Revoked',
+      revokeError: 'revoke Ошибка',
+      enterKeyName: 'Введите key Название',
+      keyCopied: 'Key Copied',
+      colRequests: 'Col Requests',
+      notUsed: 'Не used',
+      permanent: 'Permanent',
+      colCreatedBy: 'Col Created By',
+      revoke: 'Revoke',
+      keysCount: 'keys Количество',
+      breadcrumbSettings: 'Настройки',
+      createKey: 'Создать key',
+      tabAll: 'Все',
+      tabActive: 'Активные',
+      tabRevoked: 'Tab Revoked',
+      metricTotalKeys: 'metric Всего keys',
+      metricTotalRequests: 'metric Всего requests',
+      createKeyTitle: 'Создать key Заголовок',
+      createKeyDescription: 'Создать key Описание',
+      cancel: 'Отмена',
+      create: 'Создать',
+      fieldKeyName: 'Поле key Название',
+      fieldKeyNamePlaceholder: 'Поле key Название placeholder',
+      fieldExpiry: 'Поле expiry',
+      fieldExpiryHint: 'Поле expiry hint',
+      expiry30days: 'Expiry30days',
+      expiry90days: 'Expiry90days',
+      expiry180days: 'Expiry180days',
+      expiry1year: 'Expiry1year',
+      expiry2years: 'Expiry2years',
+      expiryPermanent: 'Expiry Permanent',
+      keyCreatedTitle: 'key created Заголовок',
+      keyCreatedDescription: 'key created Описание',
+      done: 'Done',
+      fieldNameLabel: 'Поле Название Метка',
+      fieldApiKey: 'Поле api key',
+      copy: 'Копировать',
+      saveKeyWarning: 'Сохранить key Предупреждение',
+      revokeKeyTitle: 'revoke key Заголовок',
+      revokeKeyDescription: 'revoke key Описание',
+      revokeFieldName: 'revoke Поле Название',
+      revokeFieldPrefix: 'revoke Поле prefix',
+      revokeFieldRequests: 'revoke Поле requests'
     },
+    govRegistries: {
+      statusActive: 'Активен',
+      statusInactive: 'Неактивен',
+      statusError: 'Статус Ошибка',
+      checkStatusOk: 'check Статус ok',
+      checkStatusWarning: 'check Статус Предупреждение',
+      checkStatusError: 'check Статус Ошибка',
+      checkStatusNotFound: 'check Статус Не found',
+      riskLow: 'Риск Низкий',
+      riskMedium: 'Риск Средний',
+      riskHigh: 'Риск Высокий',
+      riskCritical: 'Риск Критический',
+      toastConfigUpdated: 'Toast Config Updated',
+      toastConfigError: 'toast config Ошибка',
+      toastCheckComplete: 'Toast Check Complete',
+      toastCheckError: 'toast check Ошибка',
+      innRequired: 'inn Обязательное',
+      innInvalid: 'inn Недействителен',
+      colType: 'Тип',
+      colDescription: 'Описание',
+      colStatus: 'Статус',
+      colApiUrl: 'Col Api Url',
+      colLastCheck: 'Col Last Check',
+      colActions: 'Col Actions',
+      actionDisable: 'action Отключить',
+      actionEnable: 'action Включить',
+      histColDate: 'hist col Дата',
+      histColInn: 'Hist Col Inn',
+      histColRegistry: 'Hist Col Registry',
+      histColStatus: 'hist col Статус',
+      histColRisk: 'hist col Риск',
+      histColSource: 'hist col Источник',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbIntegrations: 'Breadcrumb Integrations',
+      tabConfigs: 'Tab Configs',
+      tabCheckCounterparty: 'Tab Check Counterparty',
+      tabHistory: 'tab История',
+      summaryTitle: 'Сводка Заголовок',
+      summaryDescription: 'Сводка Описание',
+      metricTotal: 'Итого',
+      metricActive: 'Активных',
+      metricErrors: 'Metric Errors',
+      metricChecks: 'Metric Checks',
+      emptyConfigsTitle: 'Пусто configs Заголовок',
+      emptyConfigsDescription: 'Пусто configs Описание',
+      checkTitle: 'check Заголовок',
+      checkInnLabel: 'check inn Метка',
+      checkInnPlaceholder: 'Check Inn Placeholder',
+      checkButton: 'Check Button',
+      checkHint: 'Check Hint',
+      resultInn: 'Result Inn',
+      resultOverallRisk: 'result overall Риск',
+      resultCheckedAt: 'Result Checked At',
+      resultStatus: 'result Статус',
+      resultSource: 'result Источник',
+      resultDate: 'result Дата',
+      emptyHistoryTitle: 'Пусто История Заголовок',
+      emptyHistoryDescription: 'Пусто История Описание'
+    },
+    sms: {
+      statusPending: 'Ожидание',
+      statusSent: 'Статус sent',
+      statusDelivered: 'Статус delivered',
+      statusFailed: 'Ошибка',
+      configSaved: 'Config Saved',
+      configError: 'config Ошибка',
+      messageSent: 'Сообщение sent',
+      sendError: 'Отправить Ошибка',
+      colRecipient: 'Col Recipient',
+      colText: 'Col Text',
+      colStatus: 'Статус',
+      colSentAt: 'Col Sent At',
+      colDeliveredAt: 'Col Delivered At',
+      colCost: 'col Стоимость',
+      currency: 'Currency',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbIntegrations: 'Breadcrumb Integrations',
+      sendMessage: 'Отправить Сообщение',
+      tabConfig: 'Tab Config',
+      tabMessages: 'Tab Messages',
+      providerLabel: 'Провайдер Метка',
+      notConfigured: 'Не configured',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      metricMessages: 'Metric Messages',
+      metricBalance: 'Metric Balance',
+      metricDelivered: 'Metric Delivered',
+      configTitle: 'config Заголовок',
+      fieldProvider: 'Поле Провайдер',
+      fieldApiUrl: 'Поле api url',
+      hintApiUrl: 'Hint Api Url',
+      fieldApiKey: 'Поле api key',
+      fieldSenderName: 'Поле sender Название',
+      hintSenderName: 'hint sender Название',
+      toggleEnabled: 'Toggle Enabled',
+      toggleDisabled: 'Toggle Disabled',
+      balanceLabel: 'balance Метка',
+      save: 'Сохранить',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены',
+      sendModalTitle: 'Отправить modal Заголовок',
+      cancel: 'Отмена',
+      sendButton: 'Отправить button',
+      fieldRecipient: 'Поле recipient',
+      fieldText: 'Поле text',
+      placeholderText: 'Placeholder Text',
+      charCount: 'char Количество'
+    },
+    webdav: {
+      statusSynced: 'Статус synced',
+      statusPending: 'Ожидание',
+      statusConflict: 'Статус conflict',
+      statusError: 'Статус Ошибка',
+      connConnected: 'Conn Connected',
+      connDisconnected: 'Conn Disconnected',
+      connError: 'conn Ошибка',
+      configSaved: 'Config Saved',
+      configError: 'config Ошибка',
+      syncComplete: 'Синхронизация complete',
+      syncError: 'Синхронизация Ошибка',
+      testSuccess: 'test Успешно',
+      ms: 'Ms',
+      testFailed: 'Test Failed',
+      fileSynced: 'Файл synced',
+      fileSyncError: 'Файл Синхронизация Ошибка',
+      colFileName: 'col Файл Название',
+      colRemotePath: 'Col Remote Path',
+      colSize: 'Col Size',
+      colSyncStatus: 'col Синхронизация Статус',
+      colLastModified: 'Col Last Modified',
+      colSyncedAt: 'Col Synced At',
+      syncFile: 'Синхронизация Файл',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbIntegrations: 'Breadcrumb Integrations',
+      syncAll: 'Синхронизация Все',
+      tabConfig: 'Tab Config',
+      tabFiles: 'Tab Files',
+      notConfigured: 'Не configured',
+      metricFiles: 'Metric Files',
+      metricSynced: 'Metric Synced',
+      metricConflicts: 'Metric Conflicts',
+      metricErrors: 'Metric Errors',
+      configTitle: 'config Заголовок',
+      fieldServerUrl: 'Поле Сервер url',
+      fieldUsername: 'Поле username',
+      fieldPassword: 'Поле Пароль',
+      fieldBasePath: 'Поле base path',
+      hintBasePath: 'Hint Base Path',
+      autoSyncLabel: 'auto Синхронизация Метка',
+      interval15: 'Interval15',
+      interval30: 'Interval30',
+      interval60: 'Interval60',
+      interval360: 'Interval360',
+      interval1440: 'Interval1440',
+      toggleEnabled: 'Toggle Enabled',
+      toggleDisabled: 'Toggle Disabled',
+      lastTested: 'Last Tested',
+      testConnection: 'Test Connection',
+      save: 'Сохранить',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Change Management
-  // ---------------------------------------------------------------------------
   changeManagement: {
-    // -- Change Order List (ChangeOrderListPage) --
     orderList: {
       title: 'Заказы на изменения',
       subtitleOrders: 'заказов',
@@ -11605,10 +14248,8 @@ export const ru = {
       toastDeleted: 'Заказы удалены',
       toastDeleteError: 'Ошибка при удалении заказов',
       emptyTitle: 'Нет заказов на изменения',
-      emptyDescription: 'Создайте первый заказ на изменение',
+      emptyDescription: 'Создайте первый заказ на изменение'
     },
-
-    // -- Change Order Detail (ChangeOrderDetailPage) --
     orderDetail: {
       breadcrumbHome: 'Главная',
       breadcrumbChangeManagement: 'Управление изменениями',
@@ -11652,10 +14293,8 @@ export const ru = {
       linkedEvents: 'Связанные события',
       actions: 'Действия',
       exportPdf: 'Экспорт в PDF',
-      print: 'Печать',
+      print: 'Печать'
     },
-
-    // -- Change Order Board (ChangeOrderBoardPage) --
     orderBoard: {
       title: 'Заказы на изменения - Доска',
       subtitleSuffix: 'заказов',
@@ -11679,9 +14318,14 @@ export const ru = {
       priorityCritical: 'Критический',
       emptyColumn: 'Нет заказов',
       emptyColumnHint: 'Перетащите карточку сюда',
+      subtitleOrders: 'Подзаголовок orders',
+      filters: 'Filters',
+      newOrder: 'Новый Заказ',
+      allStatuses: 'Все статусы',
+      reset: 'Сбросить',
+      noOrders: 'Нет orders',
+      dragHere: 'Drag Here'
     },
-
-    // -- Change Event List (ChangeEventListPage) --
     eventList: {
       title: 'Изменения (Change Events)',
       subtitleSuffix: 'событий изменений',
@@ -11723,9 +14367,20 @@ export const ru = {
       colDate: 'Дата',
       emptyTitle: 'Нет событий изменений',
       emptyDescription: 'Создайте первое событие изменения для начала работы',
+      filterIdentified: 'Фильтр identified',
+      filterEvaluating: 'Фильтр evaluating',
+      filterPendingApproval: 'Фильтр Ожидание approval',
+      filterApproved: 'Фильтр Утверждено',
+      filterRejected: 'Фильтр Отклонено',
+      filterIssue: 'Фильтр Расход',
+      filterDesignChange: 'Фильтр design change',
+      filterOwnerRequest: 'Фильтр Владелец Запрос',
+      filterFieldCondition: 'Фильтр Поле condition',
+      filterRegulatory: 'Фильтр regulatory',
+      days: 'Days',
+      colInitiator: 'Col Initiator',
+      subtitleEvents: 'Подзаголовок events'
     },
-
-    // -- Change Event Detail (ChangeEventDetailPage) --
     eventDetail: {
       breadcrumbHome: 'Главная',
       breadcrumbChangeManagement: 'Управление изменениями',
@@ -11760,9 +14415,27 @@ export const ru = {
       actionsTitle: 'Действия',
       actionCreateOrder: 'Создать Change Order',
       actionExportPdf: 'Экспорт в PDF',
+      approvalProcess: 'Approval Process',
+      description: 'Описание',
+      impactAssessment: 'Impact Assessment',
+      costImpact: 'Стоимость impact',
+      scheduleImpact: 'Расписание impact',
+      noChange: 'Нет change',
+      linkedItems: 'Linked Items',
+      issue: 'Расход',
+      details: 'Подробности',
+      initiator: 'Initiator',
+      approvedBy: 'Утверждено by',
+      created: 'Created',
+      approved: 'Утверждено',
+      project: 'Объект',
+      cost: 'Стоимость',
+      schedule: 'Расписание',
+      daysShort: 'Days Short',
+      actions: 'Actions',
+      createChangeOrder: 'Создать change Заказ',
+      exportPdf: 'Экспорт pdf'
     },
-
-    // -- Change Event Create Modal (ChangeEventCreateModal) --
     eventCreate: {
       modalTitle: 'Новое событие изменения',
       modalDescription: 'Зафиксируйте потенциальное изменение по объекту',
@@ -11798,14 +14471,18 @@ export const ru = {
       projectGorizont: 'БЦ "Горизонт"',
       projectBridge: 'Мост через р. Вятка',
       projectCentralny: 'ТЦ "Центральный"',
+      validationTitleMax: 'validation Заголовок Максимум',
+      validationDescriptionMax: 'validation Описание Максимум',
+      toastSuccess: 'toast Успешно',
+      toastError: 'toast Ошибка',
+      cancel: 'Отмена',
+      createButton: 'Создать button'
     },
+    analytics: {
+      affectedWbsNodes: 'Affected Wbs Nodes'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Maintenance Module
-  // ---------------------------------------------------------------------------
   maintenance: {
-    // EquipmentListPage
     title: 'Оборудование',
     unitsCount: '{count} единиц',
     breadcrumbHome: 'Главная',
@@ -11836,8 +14513,6 @@ export const ru = {
     colTeam: 'Бригада',
     emptyEquipmentTitle: 'Нет оборудования',
     emptyEquipmentDescription: 'Добавьте первую единицу оборудования',
-
-    // MaintenanceRequestListPage
     requestsTitle: 'Заявки на обслуживание',
     requestsCount: '{count} заявок',
     breadcrumbRequests: 'Заявки',
@@ -11858,7 +14533,7 @@ export const ru = {
     requestStatusRepaired: 'Отремонтировано',
     requestStatusScrap: 'Списание',
     requestStatusCancelled: 'Отменена',
-    colNumber: '\u2116',
+    colNumber: '№',
     colRequest: 'Заявка',
     colPriority: 'Приоритет',
     colType: 'Тип',
@@ -11877,8 +14552,6 @@ export const ru = {
     bulkDeleteError: 'Ошибка при удалении',
     emptyRequestsTitle: 'Нет заявок на обслуживание',
     emptyRequestsDescription: 'Создайте первую заявку для начала работы',
-
-    // MaintenanceRequestFormPage
     equipmentOptionCrane: 'Башенный кран КБ-403',
     equipmentOptionExcavator: 'Экскаватор CAT 320',
     equipmentOptionPump: 'Бетононасос Putzmeister BSA',
@@ -11886,8 +14559,6 @@ export const ru = {
     equipmentOptionGenerator: 'Генератор Caterpillar DE220',
     equipmentOptionWelder: 'Сварочный аппарат Lincoln V350',
     placeholderRequestTitle: 'Замена подшипника лебёдки крана',
-
-    // MaintenanceBoardPage
     boardTitle: 'Обслуживание - Доска',
     boardRequestsCount: '{count} заявок',
     boardBreadcrumb: 'Доска',
@@ -11905,11 +14576,9 @@ export const ru = {
     boardPriorityCritical: 'Критический',
     boardNoRequests: 'Нет заявок',
     boardDragHint: 'Перетащите карточку сюда',
-
-    // MaintenanceDashboardPage
     dashboardTitle: 'Обслуживание - Dashboard',
     dashboardSubtitle: 'Обзор технического обслуживания',
-    dashboardBreadcrumb: 'Dashboard',
+    dashboardBreadcrumb: 'Панель управления',
     metricActiveRequests: 'Активные заявки',
     metricCostsCurrent: 'Затраты (тек.)',
     metricSpecialists: 'Специалистов',
@@ -11929,14 +14598,9 @@ export const ru = {
     quickActionsTitle: 'Быстрые действия',
     quickAllRequests: 'Все заявки',
     quickEquipment: 'Оборудование',
-    quickCreateRequest: 'Создать заявку',
+    quickCreateRequest: 'Создать заявку'
   },
-
-  // ---------------------------------------------------------------------------
-  // Design Module
-  // ---------------------------------------------------------------------------
   design: {
-    // DesignReviewPage
     reviewsTitle: 'Проверки проектной документации',
     reviewsSubtitle: '{count} проверок в системе',
     breadcrumbHome: 'Главная',
@@ -11958,7 +14622,7 @@ export const ru = {
     statusApproved: 'Утверждён',
     statusRejected: 'Отклонён',
     statusRevisionRequested: 'На доработку',
-    colNumber: '\u2116',
+    colNumber: '№',
     colDocument: 'Документ',
     colStatus: 'Статус',
     colReviewer: 'Проверяющий',
@@ -11969,8 +14633,6 @@ export const ru = {
     versionLabel: 'Версия {version}',
     emptyReviewsTitle: 'Нет проверок',
     emptyReviewsDescription: 'Проверки проектной документации отсутствуют',
-
-    // DesignSectionListPage
     sectionsTitle: 'Разделы проектной документации',
     sectionsSubtitle: '{count} разделов в системе',
     breadcrumbSections: 'Разделы',
@@ -11992,8 +14654,6 @@ export const ru = {
     versionStatusSuperseded: 'Замещён',
     versionStatusRejected: 'Отклонён',
     versionStatusArchived: 'В архиве',
-
-    // DesignVersionListPage
     versionsTitle: 'Версии проектной документации',
     versionsSubtitle: '{count} версий в системе',
     breadcrumbVersions: 'Версии',
@@ -12017,15 +14677,11 @@ export const ru = {
     colReviewCount: 'Проверки',
     emptyVersionsTitle: 'Нет версий документации',
     emptyVersionsDescription: 'Создайте первую версию проектной документации',
-
-    // DesignVersionFormPage
     projectOptionSolnechny: 'ЖК "Солнечный"',
     projectOptionHorizont: 'БЦ "Горизонт"',
     projectOptionBridge: 'Мост через р. Вятка',
     projectOptionCentral: 'ТЦ "Центральный"',
     placeholderVersionName: 'Архитектурные решения - Секция А',
-
-    // DesignReviewBoardPage
     reviewBoardTitle: 'Ревью проектной документации - Доска',
     reviewBoardSubtitle: '{count} разделов',
     reviewBoardBreadcrumb: 'Доска',
@@ -12043,14 +14699,9 @@ export const ru = {
     reviewBoardPriorityCritical: 'Критический',
     reviewBoardNoSections: 'Нет разделов',
     reviewBoardDragHint: 'Перетащите карточку сюда',
-    reviewBoardCommentsAbbrev: 'комм.',
+    reviewBoardCommentsAbbrev: 'комм.'
   },
-
-  // ---------------------------------------------------------------------------
-  // Data Exchange Module
-  // ---------------------------------------------------------------------------
   dataExchange: {
-    // Common entity type labels
     entityProjects: 'Объекты',
     entityContracts: 'Договоры',
     entityMaterials: 'Материалы',
@@ -12059,13 +14710,9 @@ export const ru = {
     entityWbs: 'Структура работ',
     entityBudgetItems: 'Статьи бюджета',
     entityInvoices: 'Счета',
-
-    // Common direction labels
     directionImport: 'Импорт',
     directionExport: 'Экспорт',
     directionBidirectional: 'Двусторонний',
-
-    // ExportJobListPage
     exportTitle: 'Экспорт данных',
     exportSubtitle: '{count} задач экспорта',
     breadcrumbHome: 'Главная',
@@ -12103,8 +14750,6 @@ export const ru = {
     fileSizeB: '{size} Б',
     fileSizeKB: '{size} КБ',
     fileSizeMB: '{size} МБ',
-
-    // ImportJobListPage
     importTitle: 'Импорт данных',
     importSubtitle: '{count} задач импорта',
     breadcrumbImport: 'Импорт',
@@ -12131,8 +14776,6 @@ export const ru = {
     errorsAbbrev: 'ош.',
     emptyImportTitle: 'Нет задач импорта',
     emptyImportDescription: 'Загрузите файл для начала импорта данных',
-
-    // OneCConfigPage
     onecTitle: 'Интеграция с 1С',
     onecSubtitle: '{count} подключений',
     breadcrumbOnec: 'Интеграция с 1С',
@@ -12161,8 +14804,6 @@ export const ru = {
     syncButton: 'Синхр.',
     emptyOnecTitle: 'Нет подключений к 1С',
     emptyOnecDescription: 'Настройте первое подключение к базе 1С',
-
-    // OneCExchangeLogPage
     exchangeLogTitle: 'Журнал обмена 1С',
     exchangeLogSubtitle: '{count} записей',
     breadcrumbExchangeLog: 'Журнал обмена 1С',
@@ -12198,8 +14839,6 @@ export const ru = {
     secondsAbbrev: 'с',
     emptyLogTitle: 'Нет записей обмена',
     emptyLogDescription: 'Записи появятся после первой синхронизации с 1С',
-
-    // MappingConfigPage
     mappingTitle: 'Настройка маппинга полей',
     mappingSubtitle: 'Соответствие колонок импорта и полей системы',
     breadcrumbMapping: 'Маппинг',
@@ -12232,8 +14871,6 @@ export const ru = {
     helpTargetField: 'Поле системы -- техническое имя поля в базе данных',
     helpTransformations: 'Трансформации: PARSE_DATE конвертирует строки дат, PARSE_NUMBER -- числа, LOOKUP ищет по справочнику',
     helpRequired: 'Обязательные поля вызовут ошибку при отсутствии значения',
-
-    // MappingConfigPage - source column names (data, not UI labels per se, but displayed)
     mappingSourceName: 'Наименование',
     mappingSourceProductCode: 'Код товара',
     mappingSourceCategory: 'Категория',
@@ -12248,14 +14885,9 @@ export const ru = {
     mappingSourceContractNumber: 'Номер договора',
     mappingSourceContractor: 'Контрагент',
     mappingSourceAmount: 'Сумма',
-    mappingSourceContractDate: 'Дата договора',
+    mappingSourceContractDate: 'Дата договора'
   },
-
-  // ---------------------------------------------------------------------------
-  // BIM Module
-  // ---------------------------------------------------------------------------
   bim: {
-    // BimModelListPage
     modelsTitle: 'BIM Модели',
     modelsSubtitle: '{count} моделей в системе',
     breadcrumbHome: 'Главная',
@@ -12287,8 +14919,6 @@ export const ru = {
     statusError: 'Ошибка',
     emptyModelsTitle: 'Нет моделей',
     emptyModelsDescription: 'Загрузите первую BIM модель',
-
-    // ClashDetectionPage
     clashTitle: 'Обнаружение коллизий',
     clashSubtitle: '{count} коллизий найдено',
     breadcrumbClashes: 'Коллизии',
@@ -12319,8 +14949,6 @@ export const ru = {
     notAssigned: 'Не назначен',
     emptyClashTitle: 'Коллизий не обнаружено',
     emptyClashDescription: 'Запустите проверку для обнаружения коллизий',
-
-    // DesignPackagePage
     packagesTitle: 'Проектные комплекты',
     packagesSubtitle: '{count} комплектов в системе',
     breadcrumbPackages: 'Проектные комплекты',
@@ -12353,8 +14981,6 @@ export const ru = {
     packageStatusSuperseded: 'Заменён',
     emptyPackagesTitle: 'Нет комплектов',
     emptyPackagesDescription: 'Создайте первый проектный комплект',
-
-    // BimModelDetailPage
     breadcrumbBimModels: 'BIM модели',
     newVersionButton: 'Новая версия',
     editButton: 'Редактировать',
@@ -12389,16 +15015,12 @@ export const ru = {
     detailLastModified: 'Последнее изменение',
     detailCreated: 'Создана',
     detailUpdated: 'Обновлена',
-
-    // BimModelDetailPage - status labels
     modelStatusDraft: 'Черновик',
     modelStatusInProgress: 'В работе',
     modelStatusReview: 'На проверке',
     modelStatusApproved: 'Утверждена',
     modelStatusPublished: 'Опубликована',
     modelStatusArchived: 'В архиве',
-
-    // ClashBoardPage
     clashBoardTitle: 'Коллизии BIM - Доска',
     clashBoardSubtitle: '{count} коллизий',
     clashBoardBreadcrumb: 'Доска',
@@ -12417,8 +15039,6 @@ export const ru = {
     clashBoardSeverityCritical: 'Критический',
     clashBoardNoClashes: 'Нет коллизий',
     clashBoardDragHint: 'Перетащите карточку сюда',
-
-    // ClashDetectionResultsPage
     clashResultTitle: 'Результаты Clash Detection',
     clashResultSubtitle: '{count} результатов обнаружено',
     clashResultBreadcrumb: 'Результаты Clash',
@@ -12457,8 +15077,6 @@ export const ru = {
     clashResultDetailDetectedDate: 'Дата обнаружения',
     clashResultMarkResolved: 'Отметить решённой',
     clashResultMarkIgnored: 'Игнорировать',
-
-    // DefectHeatmapPage
     heatmapTitle: 'Тепловая карта дефектов',
     heatmapSubtitle: 'Визуализация плотности дефектов по зонам',
     heatmapBreadcrumb: 'Тепловая карта',
@@ -12476,8 +15094,6 @@ export const ru = {
     heatmapFilterAllTypes: 'Все типы',
     heatmapFilterAllSeverities: 'Все серьёзности',
     heatmapNoDefectsInZone: 'Дефекты не найдены',
-
-    // ConstructionProgressPage
     progressTitle: '4D Прогресс строительства',
     progressSubtitle: '{count} элементов в графике',
     progressBreadcrumb: '4D Прогресс',
@@ -12500,8 +15116,6 @@ export const ru = {
     progressMetricDelayed: 'С задержкой',
     progressEmptyTitle: 'Нет данных по прогрессу',
     progressEmptyDescription: 'Данные о прогрессе строительства появятся после синхронизации с BIM-моделью',
-
-    // PropertySetsPage
     propSetsTitle: 'Спецификация элементов',
     propSetsSubtitle: '{count} элементов в модели',
     propSetsBreadcrumb: 'Спецификация',
@@ -12521,8 +15135,6 @@ export const ru = {
     propSetsColValue: 'Значение',
     propSetsColUnit: 'Единица',
     propSetsEmpty: 'пусто',
-
-    // BcfIssuesPage
     bcfTitle: 'BCF Issues',
     bcfSubtitle: '{count} тем в системе',
     bcfBreadcrumb: 'BCF Issues',
@@ -12577,13 +15189,36 @@ export const ru = {
     bcfNoComments: 'Нет комментариев',
     bcfCommentPlaceholder: 'Написать комментарий...',
     bcfSendComment: 'Отправить',
+    linking: {
+      toastLinked: 'Toast Linked',
+      toastUnlinked: 'Toast Unlinked',
+      linkedClashesCount: 'linked clashes Количество',
+      linkedClashes: 'Linked Clashes',
+      linkClash: 'Ссылка clash',
+      noLinkedClashes: 'Нет linked clashes',
+      noLinkedClashesDescription: 'Нет linked clashes Описание',
+      unlinkItem: 'Отвязать item',
+      cancelButton: 'Отмена button',
+      linkButton: 'Ссылка button',
+      noResultsFound: 'Нет results found',
+      entityTypeIssue: 'entity Тип Расход',
+      entityTypeRfi: 'entity Тип rfi',
+      entityTypeChangeOrder: 'entity Тип change Заказ',
+      entityTypeDefect: 'entity Тип Дефект',
+      toastCreateIssueHint: 'toast Создать Расход hint',
+      linkedItemsCount: 'linked items Количество',
+      linkedItems: 'Linked Items',
+      createIssueFromClash: 'Создать Расход from clash',
+      linkItem: 'Ссылка item',
+      emptyState: 'Пусто state',
+      emptyStateDescription: 'Пусто state Описание',
+      linkedAt: 'Linked At',
+      linkModalTitle: 'Ссылка modal Заголовок',
+      linkModalDescription: 'Ссылка modal Описание',
+      searchPlaceholder: 'Поиск...'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Accounting module
-  // ---------------------------------------------------------------------------
   accounting: {
-    // Breadcrumbs & navigation
     breadcrumbHome: 'Главная',
     breadcrumbAccounting: 'Бухгалтерия',
     breadcrumbChartOfAccounts: 'План счетов',
@@ -12593,15 +15228,11 @@ export const ru = {
     breadcrumbFixedAssets: 'Основные средства',
     breadcrumbEditing: 'Редактирование',
     breadcrumbCreating: 'Создание',
-
-    // Common
     retry: 'Повторить',
     checkConnectionRetry: 'Проверьте соединение и повторите попытку',
     checkConnectionTryAgain: 'Проверьте соединение и попробуйте снова',
     system: 'Система',
     notSpecified: 'Не указан',
-
-    // Dashboard
     dashboardTitle: 'Бухгалтерия',
     dashboardSubtitle: 'Сводка по бухгалтерскому учёту',
     dashboardErrorTitle: 'Не удалось загрузить данные бухгалтерии',
@@ -12629,8 +15260,6 @@ export const ru = {
     recentEntriesTitle: 'Последние проводки',
     dashboardEmptyTitle: 'Нет проводок',
     dashboardEmptyDescription: 'Проводки появятся после первой операции',
-
-    // Dashboard columns
     colNumber: '№',
     colDate: 'Дата',
     colDescription: 'Описание',
@@ -12638,8 +15267,6 @@ export const ru = {
     colCredit: 'Кредит',
     colAmount: 'Сумма',
     colAuthor: 'Автор',
-
-    // Chart of accounts
     chartTitle: 'План счетов',
     chartSubtitle: 'Всего счетов: {count}',
     chartErrorTitle: 'Не удалось загрузить план счетов',
@@ -12654,8 +15281,6 @@ export const ru = {
     chartAnalytical: 'Аналитический',
     chartSynthetic: 'Синтетический',
     chartEmpty: 'План счетов пуст.',
-
-    // Journal entries list
     journalTitle: 'Журнал проводок',
     journalSubtitle: '{count} проводок | Отфильтровано: {amount}',
     journalSubtitleAccounting: 'Проводки бухгалтерского учёта',
@@ -12686,8 +15311,6 @@ export const ru = {
     journalBulkDeleteCancel: 'Отмена',
     journalEmptyTitle: 'Нет проводок',
     journalEmptyDescription: 'Создайте первую бухгалтерскую проводку',
-
-    // Journal entry detail
     detailSubtitle: 'Бухгалтерская проводка',
     detailLoadingSubtitle: 'Загрузка...',
     detailViewSubtitle: 'Детальный просмотр',
@@ -12719,8 +15342,6 @@ export const ru = {
     detailLabelPeriodUuid: 'UUID периода',
     detailLabelJournalUuid: 'UUID журнала',
     detailAmountTitle: 'Сумма',
-
-    // Journal entry form
     formTitle: 'Проводка',
     formEditTitle: 'Редактирование проводки',
     formCreateTitle: 'Новая проводка',
@@ -12770,8 +15391,6 @@ export const ru = {
     formCreateError: 'Не удалось создать проводку',
     formUpdateSuccess: 'Проводка обновлена',
     formUpdateError: 'Не удалось обновить проводку',
-
-    // Zod validation messages
     validationInvalidUuid: 'Неверный формат UUID',
     validationDateRequired: 'Укажите дату проводки',
     validationDescriptionRequired: 'Укажите описание',
@@ -12781,8 +15400,6 @@ export const ru = {
     validationDocTypeMax: 'Максимум 50 символов',
     validationNotesMax: 'Максимум 2000 символов',
     validationInvalidDocUuid: 'Неверный UUID документа',
-
-    // Financial journals
     fjTitle: 'Финансовые журналы',
     fjSubtitle: 'Справочник журналов бухгалтерских проводок',
     fjSubtitleCount: '{count} журналов',
@@ -12822,15 +15439,11 @@ export const ru = {
     fjTypeSales: 'Продажи',
     fjTypePurchase: 'Закупки',
     fjTypeGeneral: 'Общий',
-
-    // Zod validation for financial journals
     fjValidationCodeMin: 'Минимум 2 символа',
     fjValidationCodeMax: 'Максимум 20 символов',
     fjValidationCodeFormat: 'Только латиница, цифры, "_" и "-"',
     fjValidationNameMin: 'Минимум 2 символа',
     fjValidationNameMax: 'Максимум 500 символов',
-
-    // Fixed assets
     faTitle: 'Основные средства',
     faSubtitleRegistry: 'Реестр активов',
     faSubtitleCount: '{count} объектов ОС',
@@ -12861,14 +15474,9 @@ export const ru = {
     faStatusDisposed: 'Выбыло',
     faDeprLinear: 'Линейный',
     faDeprReducingBalance: 'Уменьшаемого остатка',
-    faDeprSumOfYears: 'Суммы чисел лет',
+    faDeprSumOfYears: 'Суммы чисел лет'
   },
-
-  // ---------------------------------------------------------------------------
-  // PTO Module
-  // ---------------------------------------------------------------------------
   pto: {
-    // --- Breadcrumbs & common ---
     breadcrumbHome: 'Главная',
     breadcrumbPto: 'ПТО',
     breadcrumbDocuments: 'Документы',
@@ -12876,8 +15484,6 @@ export const ru = {
     breadcrumbWorkPermits: 'Наряд-допуски',
     breadcrumbLabTests: 'Лабораторные испытания',
     breadcrumbKs6: 'Журнал КС-6',
-
-    // --- Ks6CalendarPage ---
     ks6Title: 'Журнал КС-6 - Календарь',
     ks6Subtitle: 'Ежедневный учёт выполненных работ по форме КС-6',
     ks6IntensityLabel: 'Интенсивность работ:',
@@ -12916,8 +15522,6 @@ export const ru = {
     ks6DayFri: 'Пт',
     ks6DaySat: 'Сб',
     ks6DaySun: 'Вс',
-
-    // --- PtoDocumentBoardPage ---
     boardTitle: 'Документы ПТО - Доска',
     boardSubtitle: '{count} документов',
     boardFilters: 'Фильтры',
@@ -12935,8 +15539,6 @@ export const ru = {
     boardPriorityCritical: 'Критический',
     boardNoDocuments: 'Нет документов',
     boardDragHint: 'Перетащите карточку сюда',
-
-    // --- PtoDocumentListPage ---
     docListTitle: 'Документация ПТО',
     docListSubtitle: '{count} документов в системе',
     docListNewDocument: 'Новый документ',
@@ -12971,8 +15573,6 @@ export const ru = {
     docListStatusApproved: 'Утверждён',
     docListStatusRejected: 'Отклонён',
     docListStatusArchived: 'В архиве',
-
-    // --- PtoDocumentDetailPage ---
     docDetailLoading: 'Загрузка...',
     docDetailBreadcrumbDocuments: 'Документы ПТО',
     docDetailContent: 'Содержание',
@@ -13001,8 +15601,6 @@ export const ru = {
     docDetailActionReject: 'Отклонить',
     docDetailActionSigned: 'Подписан',
     docDetailActionRevise: 'На доработку',
-
-    // --- WorkPermitListPage ---
     wpListTitle: 'Наряд-допуски',
     wpListSubtitle: '{count} наряд-допусков',
     wpListNewPermit: 'Новый наряд-допуск',
@@ -13036,8 +15634,6 @@ export const ru = {
     wpStatusExpired: 'Просрочен',
     wpStatusClosed: 'Закрыт',
     wpStatusSuspended: 'Приостановлен',
-
-    // --- WorkPermitDetailPage ---
     wpDetailLoading: 'Загрузка...',
     wpDetailBreadcrumbPermits: 'Наряды-допуски',
     wpDetailDescriptionTitle: 'Описание работ',
@@ -13084,8 +15680,6 @@ export const ru = {
     wpDetailTypeElectrical: 'Электромонтажные работы',
     wpDetailTypeCrane: 'Работа с грузоподъёмным оборудованием',
     wpDetailTypeDemolition: 'Демонтажные работы',
-
-    // --- LabTestListPage ---
     labTestTitle: 'Лабораторные испытания',
     labTestSubtitle: '{count} испытаний',
     labTestNewTest: 'Новое испытание',
@@ -13124,14 +15718,9 @@ export const ru = {
     labTestResultPassed: 'Годен',
     labTestResultFailed: 'Не годен',
     labTestResultConditional: 'Условно годен',
-    labTestResultPending: 'Ожидает',
+    labTestResultPending: 'Ожидает'
   },
-
-  // ---------------------------------------------------------------------------
-  // Closeout Module
-  // ---------------------------------------------------------------------------
   closeout: {
-    // --- Breadcrumbs & common ---
     breadcrumbHome: 'Главная',
     breadcrumbCloseout: 'Завершение',
     breadcrumbCommissioning: 'Пусконаладка',
@@ -13143,8 +15732,6 @@ export const ru = {
     checkConnection: 'Проверьте соединение и повторите попытку',
     retryAction: 'Повторить',
     openAction: 'Открыть',
-
-    // --- CloseoutDashboardPage ---
     dashboardTitle: 'Завершение и сдача объектов',
     dashboardSubtitle: 'Обзор пусконаладки, передачи и гарантийных обязательств',
     dashboardMetricTotalChecklists: 'Всего чек-листов',
@@ -13178,8 +15765,6 @@ export const ru = {
     dashboardColDefect: 'Дефект',
     dashboardColClaimStatus: 'Статус',
     dashboardColEstimate: 'Оценка',
-
-    // --- CommissioningListPage ---
     commListTitle: 'Пусконаладочные работы',
     commListSubtitle: '{count} чек-листов в системе',
     commListBoardButton: 'Доска',
@@ -13205,8 +15790,6 @@ export const ru = {
     commListColPassedFailed: 'Прошли / Не прошли',
     commListColInspector: 'Инспектор',
     commListColInspectionDate: 'Дата проверки',
-
-    // --- CommissioningDetailPage ---
     commDetailChecklistTitle: 'Чек-лист пусконаладки',
     commDetailErrorTitle: 'Не удалось загрузить чек-лист',
     commDetailLoading: 'Загрузка чек-листа...',
@@ -13226,8 +15809,6 @@ export const ru = {
     commDetailInspectionDate: 'Дата проверки',
     commDetailProject: 'Объект',
     commDetailCreatedAt: 'Создан',
-
-    // --- CommissioningBoardPage ---
     commBoardTitle: 'Пусконаладка - Доска',
     commBoardSubtitle: '{count} объектов',
     commBoardFilters: 'Фильтры',
@@ -13246,15 +15827,11 @@ export const ru = {
     commBoardDragHint: 'Перетащите карточку сюда',
     commBoardErrorTitle: 'Не удалось загрузить доску пусконаладки',
     commBoardStatusError: 'Не удалось обновить статус чек-листа',
-
-    // --- Commissioning status labels (shared) ---
     commStatusNotStarted: 'Не начат',
     commStatusInProgress: 'В процессе',
     commStatusCompleted: 'Завершён',
     commStatusFailed: 'Не пройден',
     commStatusOnHold: 'Приостановлен',
-
-    // --- HandoverPackageListPage ---
     handoverListTitle: 'Передача документации',
     handoverListSubtitle: '{count} пакетов в системе',
     handoverListNewPackage: 'Новый пакет',
@@ -13283,8 +15860,6 @@ export const ru = {
     handoverStatusSubmitted: 'Передан',
     handoverStatusAccepted: 'Принят',
     handoverStatusRejected: 'Отклонён',
-
-    // --- HandoverPackageDetailPage ---
     handoverDetailTitle: 'Пакет передачи',
     handoverDetailErrorTitle: 'Не удалось загрузить пакет передачи',
     handoverDetailLoading: 'Загрузка пакета передачи...',
@@ -13302,8 +15877,6 @@ export const ru = {
     handoverDetailAcceptedDate: 'Дата приёмки',
     handoverDetailAcceptedBy: 'Принял',
     handoverDetailCreatedAt: 'Создан',
-
-    // --- WarrantyClaimListPage ---
     warrantyListTitle: 'Гарантийные обращения',
     warrantyListSubtitle: '{count} обращений в системе',
     warrantyListNewClaim: 'Новое обращение',
@@ -13328,8 +15901,6 @@ export const ru = {
     warrantyListColEstimatedCost: 'Оценка стоимости',
     warrantyListColReporter: 'Заявитель',
     warrantyListColWarrantyExpiry: 'Гарантия до',
-
-    // --- WarrantyClaimDetailPage ---
     warrantyDetailTitle: 'Гарантийное обращение',
     warrantyDetailErrorTitle: 'Не удалось загрузить обращение',
     warrantyDetailLoading: 'Загрузка гарантийного обращения...',
@@ -13348,8 +15919,6 @@ export const ru = {
     warrantyDetailWarrantyExpiry: 'Гарантия до',
     warrantyDetailResolvedDate: 'Дата решения',
     warrantyDetailCreatedAt: 'Создано',
-
-    // --- Warranty status labels ---
     warrantyStatusOpen: 'Открыта',
     warrantyStatusInReview: 'На рассмотрении',
     warrantyStatusApproved: 'Одобрена',
@@ -13357,8 +15926,6 @@ export const ru = {
     warrantyStatusResolved: 'Устранена',
     warrantyStatusRejected: 'Отклонена',
     warrantyStatusClosed: 'Закрыта',
-
-    // --- Warranty defect type labels ---
     defectTypeStructural: 'Конструктивный',
     defectTypeMechanical: 'Механический',
     defectTypeElectrical: 'Электрический',
@@ -13366,8 +15933,6 @@ export const ru = {
     defectTypeFinishing: 'Отделка',
     defectTypeWaterproofing: 'Гидроизоляция',
     defectTypeOther: 'Прочее',
-
-    // --- WarrantyObligationListPage ---
     warrantyOblTitle: 'Гарантийные обязательства',
     warrantyOblSubtitle: 'Управление гарантийными обязательствами по объектам',
     warrantyOblCreate: 'Новое обязательство',
@@ -13400,8 +15965,6 @@ export const ru = {
     warrantyOblFieldCoverage: 'Покрытие',
     warrantyOblFieldExclusions: 'Исключения',
     warrantyOblFieldNotes: 'Примечания',
-
-    // --- ZosDocumentListPage ---
     zosTitle: 'Документы ЗОС',
     zosSubtitle: 'Заключения о соответствии',
     zosCreate: 'Новый ЗОС',
@@ -13427,8 +15990,6 @@ export const ru = {
     zosFieldIssuedByOrg: 'Организация',
     zosFieldConclusion: 'Заключение',
     zosFieldRemarks: 'Замечания',
-
-    // --- CommissioningChecklistPage ---
     commChecklistTitle: 'Чек-лист ввода в эксплуатацию',
     commChecklistSubtitle: 'Готовность систем к вводу в эксплуатацию',
     commChecklistStatusCompleted: 'Выполнено',
@@ -13450,8 +16011,6 @@ export const ru = {
     commChecklistMarkInProgress: 'В работу',
     commChecklistStatusUpdated: 'Статус обновлён',
     commChecklistStatusError: 'Не удалось обновить статус',
-
-    // --- ZosFormPage ---
     zosFormTitle: 'Заключение о соответствии (ЗОС)',
     zosFormSubtitle: 'Формирование и просмотр заключений о соответствии',
     zosFormGenerate: 'Сформировать ЗОС',
@@ -13481,8 +16040,6 @@ export const ru = {
     zosFormFieldConclusion: 'Текст заключения',
     zosFormFieldRemarks: 'Замечания',
     zosFormPreviewTitle: 'Предварительный просмотр ЗОС',
-
-    // --- StroyNadzorPackagePage ---
     stroyNadzorTitle: 'Пакет документов для Стройнадзора',
     stroyNadzorSubtitle: 'Формирование пакета документов для строительного надзора',
     stroyNadzorStatusAttached: 'Приложен',
@@ -13507,8 +16064,6 @@ export const ru = {
     stroyNadzorStatusError: 'Не удалось обновить статус',
     stroyNadzorEmpty: 'Нет документов',
     stroyNadzorEmptyDesc: 'Документы для пакета Стройнадзора не найдены',
-
-    // --- WarrantyTrackingPage ---
     warrantyTrackingTitle: 'Гарантийные обязательства',
     warrantyTrackingSubtitle: 'Отслеживание гарантийных сроков и дефектов',
     warrantyTrackingStatusActive: 'Активна',
@@ -13530,8 +16085,6 @@ export const ru = {
     warrantyTrackingEmptyDesc: 'Гарантийные обязательства не найдены',
     warrantyTrackingDetailTitle: 'Детали гарантии',
     warrantyTrackingTerms: 'Условия гарантии',
-
-    // --- ExecutiveSchemasPage ---
     execSchemaTitle: 'Исполнительные схемы',
     execSchemaSubtitle: 'Управление исполнительными схемами по видам работ',
     execSchemaStatusDraft: 'Черновик',
@@ -13573,19 +16126,103 @@ export const ru = {
     execSchemaLinkError: 'Не удалось привязать схему',
     execSchemaEmpty: 'Нет исполнительных схем',
     execSchemaEmptyDesc: 'Загрузите первую исполнительную схему',
+    asBuiltColWbs: 'As Built Col Wbs',
+    asBuiltColRequired: 'as built col Обязательное',
+    asBuiltColSubmitted: 'As Built Col Submitted',
+    asBuiltColAccepted: 'As Built Col Accepted',
+    asBuiltColCompletion: 'as built col Выполнение',
+    asBuiltColQualityGate: 'as built col Качество Контрольная точка',
+    asBuiltQualityNoReqs: 'as built Качество Нет reqs',
+    asBuiltQualityPassed: 'as built Качество Пройдено',
+    asBuiltQualityNotPassed: 'as built Качество Не Пройдено',
+    asBuiltSelectProject: 'as built Выберите Объект',
+    asBuiltTitle: 'as built Заголовок',
+    asBuiltSubtitle: 'as built Подзаголовок',
+    asBuiltOfWbsElements: 'As Built Of Wbs Elements',
+    asBuiltNoData: 'as built Нет data',
+    asBuiltNoDataDesc: 'as built Нет data desc',
+    commChecklistStatusNA: 'comm Контрольный список Статус n a',
+    commChecklistSectionElevators: 'comm Контрольный список Раздел elevators',
+    commChecklistSectionLandscaping: 'comm Контрольный список Раздел landscaping',
+    commChecklistAllProjects: 'comm Контрольный список Все projects',
+    commChecklistPrint: 'comm Контрольный список Печать',
+    commChecklistProject: 'comm Контрольный список Объект',
+    commChecklistItemsLabel: 'comm Контрольный список items Метка',
+    commChecklistRequirement: 'comm Контрольный список requirement',
+    commChecklistEditNotes: 'comm Контрольный список Редактировать Примечания',
+    commChecklistEditNotesTitle: 'comm Контрольный список Редактировать Примечания Заголовок',
+    commChecklistNotesLabel: 'comm Контрольный список Примечания Метка',
+    templateDeleteConfirm: 'Шаблон Удалить Подтвердить',
+    templateColName: 'Шаблон col Название',
+    templateColSystem: 'Шаблон col system',
+    templateColItems: 'Шаблон col items',
+    templateColActive: 'Шаблон col Активный',
+    templateTitle: 'Шаблон Заголовок',
+    templateSubtitle: 'Шаблон Подзаголовок',
+    templateCreate: 'Шаблон Создать',
+    templateEmpty: 'Шаблон Пусто',
+    templateEmptyDesc: 'Шаблон Пусто desc',
+    templateFormTitleEdit: 'Шаблон Форма Заголовок Редактировать',
+    templateFormTitle: 'Шаблон Форма Заголовок',
+    templateFieldName: 'Шаблон Поле Название',
+    templateFieldSystem: 'Шаблон Поле system',
+    templateFieldDescription: 'Шаблон Поле Описание',
+    templateFieldItems: 'Шаблон Поле items',
+    stroyNadzorStatusExpired: 'stroy nadzor Статус Просрочено',
+    stroyNadzorCatDesignDocs: 'Stroy Nadzor Cat Design Docs',
+    stroyNadzorCatPermits: 'Stroy Nadzor Cat Permits',
+    stroyNadzorCatInspectionActs: 'stroy nadzor cat Проверка acts',
+    stroyNadzorCatTestProtocols: 'Stroy Nadzor Cat Test Protocols',
+    stroyNadzorCatCertificates: 'Stroy Nadzor Cat Certificates',
+    stroyNadzorCatAsBuilt: 'Stroy Nadzor Cat As Built',
+    stroyNadzorUploadSuccess: 'stroy nadzor Загрузить Успешно',
+    stroyNadzorUploadError: 'stroy nadzor Загрузить Ошибка',
+    stroyNadzorSelectProject: 'stroy nadzor Выберите Объект',
+    stroyNadzorPackageGenerated: 'Stroy Nadzor Package Generated',
+    stroyNadzorPackageError: 'stroy nadzor package Ошибка',
+    stroyNadzorColRequired: 'stroy nadzor col Обязательное',
+    stroyNadzorRequired: 'stroy nadzor Обязательное',
+    stroyNadzorOptional: 'stroy nadzor Необязательное',
+    stroyNadzorColExpiryDate: 'stroy nadzor col expiry Дата',
+    stroyNadzorUploadFile: 'stroy nadzor Загрузить Файл',
+    stroyNadzorAllProjects: 'stroy nadzor Все projects',
+    stroyNadzorAllCategories: 'stroy nadzor Все categories',
+    stroyNadzorGeneratePackage: 'Stroy Nadzor Generate Package',
+    stroyNadzorProject: 'stroy nadzor Объект',
+    stroyNadzorRequiredProgress: 'stroy nadzor Обязательное Прогресс',
+    stroyNadzorMissingRequired: 'stroy nadzor missing Обязательное',
+    stroyNadzorGeneratePackageTitle: 'stroy nadzor generate package Заголовок',
+    stroyNadzorGeneratePackageDesc: 'Stroy Nadzor Generate Package Desc',
+    stroyNadzorGeneratePackageWarning: 'stroy nadzor generate package Предупреждение',
+    zosFormExportSuccess: 'zos Форма Экспорт Успешно',
+    zosFormExportError: 'zos Форма Экспорт Ошибка',
+    zosFormSectionObjectInfo: 'zos Форма Раздел object Информация',
+    zosFormFieldObjectName: 'zos Форма Поле object Название',
+    zosFormFieldObjectAddress: 'zos Форма Поле object Адрес',
+    zosFormFieldPermitNumber: 'zos Форма Поле permit number',
+    zosFormFieldPermitDate: 'zos Форма Поле permit Дата',
+    zosFormSectionDesignDocs: 'zos Форма Раздел design docs',
+    zosFormFieldDesignDocRefs: 'zos Форма Поле design doc refs',
+    zosFormDesignDocPlaceholder: 'zos Форма design doc placeholder',
+    zosFormComplianceSection: 'zos Форма compliance Раздел',
+    zosFormComplianceSectionName: 'zos Форма compliance Раздел Название',
+    zosFormCompliant: 'zos Форма compliant',
+    zosFormNonCompliant: 'zos Форма non compliant',
+    zosFormComplianceNotes: 'zos Форма compliance Примечания',
+    zosFormAddComplianceSection: 'zos Форма add compliance Раздел',
+    zosFormSectionSignatures: 'zos Форма Раздел signatures',
+    zosFormSignature: 'zos Форма signature',
+    zosFormSignatureRole: 'zos Форма signature Роль',
+    zosFormSignatureFullName: 'zos Форма signature full Название',
+    zosFormSignatureOrg: 'zos Форма signature org',
+    zosFormAddSignature: 'zos Форма add signature',
+    zosFormExportPdf: 'zos Форма Экспорт pdf'
   },
-
-  // ---------------------------------------------------------------------------
-  // Mock / placeholder data labels (shared across forms)
-  // ---------------------------------------------------------------------------
   mockData: {
-    // Projects
     projectSolnechny: 'ЖК "Солнечный"',
     projectHorizon: 'БЦ "Горизонт"',
     projectBridge: 'Мост через р. Вятка',
     projectCentral: 'ТЦ "Центральный"',
-
-    // Persons
     personIvanovAS: 'Иванов А.С.',
     personPetrovVK: 'Петров В.К.',
     personSidorovMN: 'Сидоров М.Н.',
@@ -13595,16 +16232,12 @@ export const ru = {
     personPetrovPP: 'Петров П.П.',
     personSidorovSS: 'Сидоров С.С.',
     personKozlovKK: 'Козлов К.К.',
-
-    // Materials
     materialRebar: 'Арматура А500С d12 (кг)',
     materialConcrete: 'Бетон В25 (м3)',
     materialBrick: 'Кирпич облицовочный (шт)',
     materialInsulation: 'Утеплитель Rockwool 100мм (м2)',
     materialPipe: 'Труба ПНД 110мм (м)',
     materialCable: 'Кабель ВВГнг 3x2.5 (м)',
-
-    // Locations
     locationWarehouseA: 'Склад А - Основной',
     locationWarehouseB: 'Склад Б - Вспомогательный',
     locationSiteSolnechny: 'Площадка ЖК "Солнечный"',
@@ -13612,21 +16245,13 @@ export const ru = {
     locationSiteBridge: 'Площадка Мост',
     locationCentralWarehouse: 'Центральный склад',
     locationSiteHorizonShort: 'Площадка "Горизонт"',
-
-    // Movement prefix
     movementNumberPrefix: 'ПМ',
-
-    // Timezone labels
     timezoneMoscow: 'Москва (UTC+3)',
     timezoneSamara: 'Самара (UTC+4)',
     timezoneYekaterinburg: 'Екатеринбург (UTC+5)',
     timezoneNovosibirsk: 'Новосибирск (UTC+7)',
     timezoneVladivostok: 'Владивосток (UTC+10)',
-
-    // Language labels
     languageRussian: 'Русский',
-
-    // User groups
     groupAdmins: 'Администраторы',
     groupProjectManagers: 'Руководители объектов',
     groupSeniorManagers: 'Старшие руководители',
@@ -13636,8 +16261,6 @@ export const ru = {
     groupAccounting: 'Бухгалтерия',
     groupProcurement: 'Снабженцы',
     groupObservers: 'Наблюдатели',
-
-    // Integration fallback data
     integration1CName: '1С:Предприятие',
     integration1CDescription: 'Синхронизация справочников, документов, бухгалтерских проводок и взаиморасчётов.',
     integrationTelegramDescription: 'Push-уведомления в Telegram, отправка отчётов и оповещений о задачах.',
@@ -13645,15 +16268,11 @@ export const ru = {
     integrationSBISDescription: 'Документооборот через СБИС: отправка, приём и подписание первичных документов.',
     integrationEDOName: 'ЭДО (Диадок / Контур)',
     integrationEDODescription: 'Электронный документооборот: отправка и получение документов через ЭДО.',
-
-    // Misc
     connectedOf: '{connected} из {total}',
     placeholder1CMain: 'Основная 1С',
     hintServerUrl: 'Например: http://server:8080/1c',
     placeholderSBISMain: 'СБИС основной',
     ariaDeleteRule: 'Удалить правило',
-
-    // Additional project / person / timesheet mock data
     projectGorizont: 'БЦ "Горизонт"',
     projectBridgeVyatka: 'Мост через р. Вятка',
     projectTsCentralny: 'ТЦ "Центральный"',
@@ -13680,14 +16299,9 @@ export const ru = {
     deptElectrical: 'Электромонтаж',
     deptFinishing: 'Отделка',
     deptLogistics: 'Логистика',
-    deptPto: 'ПТО',
+    deptPto: 'ПТО'
   },
-
-  // ---------------------------------------------------------------------------
-  // Russian Documents (russianDocs)
-  // ---------------------------------------------------------------------------
   russianDocs: {
-    // Breadcrumbs & navigation
     breadcrumbHome: 'Главная',
     breadcrumbExecDocs: 'Исп. документация',
     breadcrumbRussianDocs: 'Российские документы',
@@ -13698,8 +16312,6 @@ export const ru = {
     breadcrumbNewKs2: 'Новый КС-2',
     breadcrumbNewKs3: 'Новая КС-3',
     breadcrumbNewDocument: 'Новый документ',
-
-    // Common actions
     back: 'Назад',
     cancel: 'Отмена',
     open: 'Открыть',
@@ -13714,9 +16326,7 @@ export const ru = {
     newDocument: 'Новый документ',
     newReport: 'Новый отчёт',
     addRow: 'Добавить строку',
-
-    // Common labels
-    number: '\u2116',
+    number: '№',
     document: 'Документ',
     status: 'Статус',
     date: 'Дата',
@@ -13732,8 +16342,6 @@ export const ru = {
     recipient: 'Получатель',
     signatures: 'Подписи',
     nameLabel: 'Наименование',
-
-    // Tabs
     tabAll: 'Все',
     tabDrafts: 'Черновики',
     tabDraft: 'Черновик',
@@ -13745,8 +16353,6 @@ export const ru = {
     tabArchive: 'Архив',
     tabSigning: 'На подписании',
     tabDelivered: 'Доставленные',
-
-    // Metrics
     metricTotalDocs: 'Всего документов',
     metricSignedAmount: 'Подписано на сумму',
     metricTotalAmount: 'Общая сумма',
@@ -13759,14 +16365,10 @@ export const ru = {
     metricSigned: 'Подписано',
     metricOnSigning: 'На подписании',
     metricDelivered: 'Доставлено',
-
-    // Search
     searchByNumberNameCounterparty: 'Поиск по номеру, названию, контрагенту...',
     searchByNumberProjectPeriod: 'Поиск по номеру, объекту, периоду...',
     searchByNumberName: 'Поиск по номеру, названию...',
     searchByNumberDocCounterparty: 'Поиск по номеру, документу, контрагенту...',
-
-    // Document types (filter)
     allTypes: 'Все типы',
     typeKs2: 'КС-2',
     typeKs3: 'КС-3',
@@ -13774,8 +16376,6 @@ export const ru = {
     typeExecScheme: 'Исп. схема',
     typeHiddenWorksAct: 'Акт скрытых работ',
     typeGeneralJournal: 'Общий журнал',
-
-    // DocumentListPage
     docListTitle: 'Исполнительная документация',
     docListSubtitle: '{count} документов в системе',
     docListColumnName: 'Наименование',
@@ -13783,8 +16383,6 @@ export const ru = {
     docListColumnAmountWithVat: 'Сумма с НДС',
     docListEmptyTitle: 'Нет документов',
     docListEmptyDescription: 'Создайте первый документ исполнительной документации',
-
-    // DocumentCreatePage
     docCreateTitle: 'Новый документ',
     docCreateSubtitle: 'Создание документа исполнительной документации',
     docCreateMainData: 'Основные данные',
@@ -13802,8 +16400,6 @@ export const ru = {
     docCreateNotes: 'Примечания',
     docCreateNotesPlaceholder: 'Дополнительная информация...',
     docCreateSubmit: 'Создать документ',
-
-    // Document type options (DocumentCreatePage)
     docTypeKs2Full: 'КС-2 (Акт выполненных работ)',
     docTypeKs3Full: 'КС-3 (Справка о стоимости)',
     docTypeM29Full: 'М-29 (Отчёт о расходе материалов)',
@@ -13813,8 +16409,6 @@ export const ru = {
     docTypeCommissioningAct: 'Акт ввода в эксплуатацию',
     docTypePassport: 'Паспорт объекта',
     docTypeProtocol: 'Протокол испытаний',
-
-    // DocumentDetailPage
     docDetailInfo: 'Информация о документе',
     docDetailDocType: 'Тип документа',
     docDetailProject: 'Объект',
@@ -13840,8 +16434,6 @@ export const ru = {
     docDetailLines: 'Строк',
     docDetailToReview: 'На проверку',
     docDetailToSigning: 'На подписание',
-
-    // FormKs2Page
     ks2Title: 'Новый акт КС-2',
     ks2Subtitle: 'Акт о приёмке выполненных работ (форма КС-2)',
     ks2Requisites: 'Реквизиты акта',
@@ -13864,8 +16456,6 @@ export const ru = {
     ks2Vat20: 'НДС (20%):',
     ks2TotalWithVat: 'Итого с НДС:',
     ks2Submit: 'Создать акт КС-2',
-
-    // FormKs3Page
     ks3Title: 'Новая справка КС-3',
     ks3Subtitle: 'Справка о стоимости выполненных работ и затрат (форма КС-3)',
     ks3Requisites: 'Реквизиты справки',
@@ -13883,51 +16473,37 @@ export const ru = {
     ks3SelectedCount: 'Выбрано актов',
     ks3WorksTotal: 'Итого стоимость работ',
     ks3Submit: 'Создать справку КС-3',
-
-    // M29ListPage
     m29Title: 'Отчёты М-29',
     m29Subtitle: 'Отчёты о расходе материалов в строительстве',
     m29ColumnMaterials: 'Материалов',
     m29ColumnWithVat: 'С НДС',
     m29EmptyTitle: 'Нет отчётов М-29',
     m29EmptyDescription: 'Отчёты о расходе материалов не найдены',
-
-    // SbisDocumentsPage
     sbisTitle: 'Документы СБИС',
     sbisSubtitle: '{count} документов',
     sbisEmptyTitle: 'Нет документов СБИС',
     sbisEmptyDescription: 'Документы появятся после настройки интеграции с СБИС',
-
-    // SBIS statuses
     sbisStatusDraft: 'Черновик',
     sbisStatusSent: 'Отправлен',
     sbisStatusDelivered: 'Доставлен',
     sbisStatusSigned: 'Подписан',
     sbisStatusRejected: 'Отклонён',
     sbisStatusCancelled: 'Отменён',
-
-    // SBIS document types
     sbisTypeInvoice: 'Счёт-фактура',
     sbisTypeAct: 'Акт',
     sbisTypeWaybill: 'Накладная',
     sbisTypePowerOfAttorney: 'Доверенность',
     sbisTypeContract: 'Договор',
     sbisTypeOther: 'Прочее',
-
-    // M29 statuses
     m29StatusDraft: 'Черновик',
     m29StatusInReview: 'На проверке',
     m29StatusApproved: 'Утверждён',
     m29StatusRejected: 'Отклонён',
-
-    // EdoDocumentsPage
     edoTitle: 'Электронный документооборот (ЭДО)',
     edoSubtitle: '{count} документов',
     edoOperator: 'Оператор ЭДО',
     edoEmptyTitle: 'Нет документов ЭДО',
     edoEmptyDescription: 'Документы появятся после настройки оператора ЭДО',
-
-    // EDO statuses
     edoStatusCreated: 'Создан',
     edoStatusSigning: 'На подписании',
     edoStatusSigned: 'Подписан',
@@ -13935,15 +16511,11 @@ export const ru = {
     edoStatusDelivered: 'Доставлен',
     edoStatusRejected: 'Отклонён',
     edoStatusExpired: 'Истёк срок',
-
-    // EDO providers
     edoProviderDiadoc: 'Диадок',
     edoProviderSbis: 'СБИС',
     edoProviderTaxcom: 'Такском',
     edoProviderKalugaAstral: 'Калуга Астрал',
     edoProviderOther: 'Другой',
-
-    // KepSignWizard
     kepTitle: 'Подписание документа КЭП',
     kepDescription: 'Квалифицированная электронная подпись',
     kepStepDocument: 'Выбор документа',
@@ -13978,19 +16550,13 @@ export const ru = {
     kepSignErrorPin: 'Неверный ПИН-код контейнера закрытого ключа. Проверьте правильность ввода.',
     kepToastSuccess: 'Документ подписан КЭП',
     kepToastError: 'Ошибка подписания КЭП',
-
-    // Project/Contract placeholder options
     projectSolnechny: 'ЖК "Солнечный"',
     projectBridge: 'Мост через р. Вятка',
     projectMall: 'ТЦ "Центральный"',
     contractGP: 'Договор ГП №12-2025',
     contractSubcontract: 'Договор субподряда №45-2025',
-    contractSupply: 'Договор поставки №88-2025',
+    contractSupply: 'Договор поставки №88-2025'
   },
-
-  // ---------------------------------------------------------------------------
-  // Payroll
-  // ---------------------------------------------------------------------------
   payroll: {
     templateList: {
       title: 'Шаблоны расчёта зарплаты',
@@ -14019,7 +16585,7 @@ export const ru = {
       confirmDeleteDescription: 'Операция необратима. Выбранные шаблоны расчета будут удалены.',
       confirmDeleteBtn: 'Удалить',
       emptyTitle: 'Нет шаблонов',
-      emptyDescription: 'Создайте первый шаблон расчёта зарплаты',
+      emptyDescription: 'Создайте первый шаблон расчёта зарплаты'
     },
     calculation: {
       title: 'Расчёт зарплаты',
@@ -14062,13 +16628,9 @@ export const ru = {
       emptyTitle: 'Выполните расчёт',
       emptyDescription: 'Выберите шаблон расчёта, сотрудника и укажите период. Результат расчёта с детализацией удержаний появится здесь.',
       selectTemplate: 'Выберите шаблон',
-      selectEmployee: 'Выберите сотрудника',
-    },
+      selectEmployee: 'Выберите сотрудника'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Price Coefficients
-  // ---------------------------------------------------------------------------
   priceCoefficients: {
     listTitle: 'Ценовые коэффициенты',
     listSubtitle: '{count} коэффициентов в системе',
@@ -14120,12 +16682,8 @@ export const ru = {
     calculateBtn: 'Рассчитать',
     coefficientLabel: 'Коэффициент',
     resultLabel: 'Результат',
-    differenceLabel: 'Разница',
+    differenceLabel: 'Разница'
   },
-
-  // ---------------------------------------------------------------------------
-  // Closing (KS-2, KS-3)
-  // ---------------------------------------------------------------------------
   closing: {
     ks3: {
       title: 'Справки КС-3',
@@ -14149,6 +16707,34 @@ export const ru = {
       actUnit: 'акт',
       emptyTitle: 'Нет справок КС-3',
       emptyDescription: 'Справки КС-3 формируются на основании актов КС-2',
+      pickerTitle: 'picker Заголовок',
+      pickerDescription: 'picker Описание',
+      pickerEmpty: 'picker Пусто',
+      pickerLink: 'picker Ссылка',
+      toastSubmitted: 'Toast Submitted',
+      toastError: 'toast Ошибка',
+      toastSigned: 'Toast Signed',
+      toastClosed: 'Toast Closed',
+      toastLinked: 'Toast Linked',
+      toastUnlinked: 'Toast Unlinked',
+      loadError: 'load Ошибка',
+      actionSubmit: 'action Отправить',
+      actionSign: 'Action Sign',
+      actionClose: 'action Закрыть',
+      detailTitlePrefix: 'Детали Заголовок prefix',
+      cardPeriod: 'Card Period',
+      cardTotalAmount: 'card Всего Сумма',
+      cardRetention: 'Card Retention',
+      cardNetAmount: 'card net Сумма',
+      sectionKs2: 'Раздел ks2',
+      addKs2: 'Add Ks2',
+      emptyKs2: 'Пусто ks2',
+      colKs2Number: 'Col Ks2 Number',
+      colKs2Name: 'col ks2 Название',
+      colKs2Date: 'col ks2 Дата',
+      colKs2Status: 'col ks2 Статус',
+      colKs2Actions: 'Col Ks2 Actions',
+      unlinkKs2: 'Отвязать ks2'
     },
     ks2: {
       title: 'Акты КС-2',
@@ -14171,7 +16757,7 @@ export const ru = {
       colVolume: 'Объём',
       posUnit: 'поз.',
       emptyTitle: 'Нет актов КС-2',
-      emptyDescription: 'Акты КС-2 формируются по результатам выполненных работ',
+      emptyDescription: 'Акты КС-2 формируются по результатам выполненных работ'
     },
     ks2Detail: {
       titlePrefix: 'Акт КС-2',
@@ -14216,7 +16802,6 @@ export const ru = {
       validationQtyPositive: 'Количество должно быть больше 0',
       validationPricePositive: 'Цена не может быть отрицательной',
       validationVatRange: 'Ставка НДС должна быть от 0 до 100%',
-      // Cross-cutting: Volume check inline
       volumeEstimate: 'По смете',
       volumeSubmitted: 'Сдано ранее',
       volumeRemaining: 'Остаток',
@@ -14224,7 +16809,6 @@ export const ru = {
       volumeWarning: 'Внимание: >80% сметы',
       volumeExceeds: 'Превышение лимита сметы',
       sectionVolumeCheck: 'Контроль объёмов',
-      // Cross-cutting: Payment status
       sectionPaymentStatus: 'Статус оплаты',
       paymentInvoiceNumber: 'Счёт №',
       paymentInvoiceStatus: 'Статус счёта',
@@ -14234,7 +16818,6 @@ export const ru = {
       paymentPercent: 'Оплачено, %',
       paymentNoInvoice: 'Счёт не выставлен',
       paymentGoToInvoice: 'Перейти к счёту',
-      // Cross-cutting: Import from estimate
       importFromEstimate: 'Импорт из сметы',
       importSelectEstimate: 'Выберите смету',
       importSelectEstimatePlaceholder: 'Выберите смету объекта...',
@@ -14246,13 +16829,31 @@ export const ru = {
       importButton: 'Импортировать выбранные',
       importSuccess: 'Позиции импортированы из сметы',
       importError: 'Ошибка при импорте из сметы',
-      // Cross-cutting: Create invoice from KS-2
       createInvoice: 'Создать счёт из КС-2',
       createInvoiceConfirm: 'Создать счёт на оплату на основе подписанного акта КС-2?',
       createInvoiceSuccess: 'Счёт создан',
       createInvoiceError: 'Ошибка при создании счёта',
+      paymentStatusTitle: 'Платёж Статус Заголовок',
+      paymentInvoiceAmount: 'Платёж Счёт Сумма',
+      paymentRemaining: 'Платёж remaining',
+      paymentProgress: 'Платёж Прогресс',
+      importPartialError: 'Импорт partial Ошибка',
+      importModalTitle: 'Импорт modal Заголовок',
+      importModalDescription: 'Импорт modal Описание',
+      importEstimatePlaceholder: 'Импорт estimate placeholder',
+      importEstimateQty: 'Импорт estimate qty',
+      importQtyToAdd: 'Импорт qty to add',
+      importExceedsRemaining: 'Импорт exceeds remaining',
+      toastInvoiceCreated: 'toast Счёт created',
+      toastInvoiceCreateError: 'toast Счёт Создать Ошибка',
+      actionImportFromEstimate: 'action Импорт from estimate',
+      actionCreateInvoice: 'action Создать Счёт',
+      createInvoicePromptTitle: 'Создать Счёт prompt Заголовок',
+      createInvoicePromptDescription: 'Создать Счёт prompt Описание',
+      volumeLegendOk: 'Объём legend ok',
+      volumeLegendWarning: 'Объём legend Предупреждение',
+      volumeLegendExceeds: 'Объём legend exceeds'
     },
-    // KS-2 Approval Workflow
     approval: {
       title: 'Согласование КС-2',
       subtitle: 'Маршрут согласования актов выполненных работ',
@@ -14282,9 +16883,8 @@ export const ru = {
       toastApproved: 'Акт согласован',
       toastApproveError: 'Ошибка при согласовании',
       toastRejected: 'Акт отклонён',
-      toastRejectError: 'Ошибка при отклонении',
+      toastRejectError: 'Ошибка при отклонении'
     },
-    // KS-2 Volume Verification
     volumeCheck: {
       title: 'Проверка объёмов КС-2',
       subtitle: 'Автоматическая сверка объёмов КС-2 с лимитами сметы',
@@ -14308,9 +16908,8 @@ export const ru = {
       metricWarnings: 'Предупреждения',
       metricViolations: 'Нарушения',
       emptyTitle: 'Нет данных',
-      emptyDescription: 'Для выбранного акта нет позиций для проверки',
+      emptyDescription: 'Для выбранного акта нет позиций для проверки'
     },
-    // KS-6a Journal
     ks6a: {
       title: 'Журнал КС-6а',
       subtitle: 'Журнал учёта выполненных работ',
@@ -14327,9 +16926,8 @@ export const ru = {
       colThisMonthQty: 'За месяц',
       colProgress: 'Выполнение',
       emptyTitle: 'Нет записей',
-      emptyDescription: 'Записи журнала КС-6а за выбранный период отсутствуют',
+      emptyDescription: 'Записи журнала КС-6а за выбранный период отсутствуют'
     },
-    // Correction Acts
     correctionActs: {
       title: 'Корректировочные акты',
       subtitle: 'Корректировочные акты (минус-объёмы)',
@@ -14366,9 +16964,8 @@ export const ru = {
       toastCreateError: 'Ошибка при создании корректировочного акта',
       validationSelectAct: 'Выберите исходный акт',
       validationReasonRequired: 'Укажите причину корректировки',
-      validationNoItems: 'Добавьте хотя бы одну позицию',
+      validationNoItems: 'Добавьте хотя бы одну позицию'
     },
-    // KS Print Forms
     printForms: {
       title: 'Печатные формы КС-2/КС-3',
       subtitle: 'Предпросмотр и печать форм по Госкомстат',
@@ -14407,16 +17004,40 @@ export const ru = {
       ks3ColAmount: 'Сумма, руб.',
       ks3CompletedFromStart: 'Выполнено работ с начала строительства',
       ks3CompletedThisPeriod: 'Выполнено за отчётный период',
-      ks3CompletedTotal: 'Итого с начала строительства',
+      ks3CompletedTotal: 'Итого с начала строительства'
     },
+    ks2Form: {
+      validationNumber: 'Validation Number',
+      validationName: 'validation Название',
+      validationDate: 'validation Дата',
+      validationProject: 'validation Объект',
+      validationContract: 'validation Договор',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'toast Обновить Ошибка',
+      titleEdit: 'Заголовок Редактировать',
+      titleCreate: 'Заголовок Создать',
+      subtitleEdit: 'Подзаголовок Редактировать',
+      subtitleCreate: 'Подзаголовок Создать',
+      sectionBasicData: 'Раздел basic data',
+      labelNumber: 'Метка number',
+      labelDocDate: 'Метка doc Дата',
+      labelName: 'Название',
+      placeholderName: 'Введите название',
+      sectionBinding: 'Раздел binding',
+      labelProject: 'Объект',
+      placeholderProject: 'placeholder Объект',
+      labelContract: 'Метка Договор',
+      placeholderSelectProjectFirst: 'placeholder Выберите Объект first',
+      placeholderContract: 'placeholder Договор',
+      labelNotes: 'Примечания',
+      placeholderNotes: 'placeholder Примечания',
+      createButton: 'Создать button'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Executive Documentation (AOSR, KS-6, Incoming Control, Welding, Special)
-  // ---------------------------------------------------------------------------
   execDocs: {
     breadcrumbHome: 'Главная',
-
     aosr: {
       title: 'АОСР',
       subtitle: 'Акты освидетельствования скрытых работ',
@@ -14466,9 +17087,8 @@ export const ru = {
       toastCreated: 'Акт АОСР создан',
       toastCreateError: 'Ошибка создания акта АОСР',
       validationWorkType: 'Укажите вид работ',
-      validationProject: 'Выберите объект',
+      validationProject: 'Выберите объект'
     },
-
     ks6: {
       title: 'Общий журнал работ (КС-6)',
       subtitle: 'Ежедневные записи хода строительства',
@@ -14507,9 +17127,8 @@ export const ru = {
       toastCreateError: 'Ошибка добавления записи',
       toastExportStarted: 'Экспорт журнала начат',
       validationDate: 'Укажите дату',
-      validationWorkDescription: 'Укажите описание работ',
+      validationWorkDescription: 'Укажите описание работ'
     },
-
     incomingControl: {
       title: 'Журнал входного контроля',
       subtitle: 'Контроль качества поступающих материалов',
@@ -14548,9 +17167,8 @@ export const ru = {
       toastCreated: 'Запись входного контроля добавлена',
       toastCreateError: 'Ошибка добавления записи',
       validationDate: 'Укажите дату',
-      validationMaterial: 'Укажите наименование материала',
+      validationMaterial: 'Укажите наименование материала'
     },
-
     welding: {
       title: 'Журнал сварочных работ',
       subtitle: 'Контроль качества сварных соединений',
@@ -14592,9 +17210,8 @@ export const ru = {
       toastCreated: 'Запись сварочных работ добавлена',
       toastCreateError: 'Ошибка добавления записи',
       validationDate: 'Укажите дату',
-      validationWeldNumber: 'Укажите номер стыка',
+      validationWeldNumber: 'Укажите номер стыка'
     },
-
     specialJournals: {
       title: 'Специальные журналы работ',
       subtitle: 'Бетонные, монтажные и свайные работы',
@@ -14630,13 +17247,9 @@ export const ru = {
       toastCreated: 'Запись добавлена в журнал',
       toastCreateError: 'Ошибка добавления записи',
       validationDate: 'Укажите дату',
-      validationWorkDescription: 'Укажите описание работ',
-    },
+      validationWorkDescription: 'Укажите описание работ'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Global Search
-  // ---------------------------------------------------------------------------
   search: {
     title: 'Поиск',
     subtitle: 'Поиск по всем разделам системы',
@@ -14677,12 +17290,8 @@ export const ru = {
     statusDraft: 'Черновик',
     statusInProgress: 'В работе',
     statusCompleted: 'Завершен',
-    statusOverdue: 'Просрочен',
+    statusOverdue: 'Просрочен'
   },
-
-  // ---------------------------------------------------------------------------
-  // Notifications Page
-  // ---------------------------------------------------------------------------
   notificationsPage: {
     title: 'Уведомления',
     unreadCount: '{count} непрочитанных',
@@ -14708,12 +17317,8 @@ export const ru = {
     markAllReadError: 'Не удалось отметить все как прочитанные',
     markAsReadTooltip: 'Отметить как прочитанное',
     emptyTitle: 'Нет уведомлений',
-    emptyDescription: 'Новые уведомления появятся здесь',
+    emptyDescription: 'Новые уведомления появятся здесь'
   },
-
-  // ---------------------------------------------------------------------------
-  // Onboarding
-  // ---------------------------------------------------------------------------
   onboarding: {
     welcomeTitle: 'Добро пожаловать в Привод!',
     progressLabel: 'Выполните шаги для быстрого старта — {completed} из {total}',
@@ -14724,12 +17329,8 @@ export const ru = {
     stepExploreDocuments: 'Изучите документы',
     stepExploreDocumentsDesc: 'Посмотрите раздел документов и загрузите файл',
     stepCheckAnalytics: 'Проверьте аналитику',
-    stepCheckAnalyticsDesc: 'Откройте дашборд аналитики для обзора показателей',
+    stepCheckAnalyticsDesc: 'Откройте дашборд аналитики для обзора показателей'
   },
-
-  // ---------------------------------------------------------------------------
-  // Monitoring
-  // ---------------------------------------------------------------------------
   monitoring: {
     title: 'Мониторинг системы',
     subtitle: 'Состояние сервисов и системные события',
@@ -14764,12 +17365,8 @@ export const ru = {
     prometheusTitle: 'Экспорт метрик Prometheus',
     prometheusDescription: 'Метрики приложения экспортируются для сбора Prometheus и визуализации в Grafana',
     prometheusExporting: 'Экспорт активен',
-    prometheusUnavailable: 'Недоступен',
+    prometheusUnavailable: 'Недоступен'
   },
-
-  // ---------------------------------------------------------------------------
-  // Dispatch
-  // ---------------------------------------------------------------------------
   dispatch: {
     orders: {
       title: 'Диспетчерские заявки',
@@ -14809,7 +17406,7 @@ export const ru = {
       colRoute: 'Маршрут',
       colDate: 'Дата',
       emptyTitle: 'Нет диспетчерских заявок',
-      emptyDescription: 'Создайте первую заявку на перевозку',
+      emptyDescription: 'Создайте первую заявку на перевозку'
     },
     routes: {
       title: 'Маршруты доставки',
@@ -14838,13 +17435,9 @@ export const ru = {
       minUnit: 'мин',
       colOrders: 'Заявок',
       emptyTitle: 'Нет маршрутов',
-      emptyDescription: 'Создайте первый маршрут доставки',
-    },
+      emptyDescription: 'Создайте первый маршрут доставки'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Legal Module
-  // ---------------------------------------------------------------------------
   legal: {
     breadcrumbHome: 'Главная',
     breadcrumbLegal: 'Юридический отдел',
@@ -14905,7 +17498,7 @@ export const ru = {
     caseTypeConsultation: 'Консультация',
     caseTypeContractDispute: 'Договорной спор',
     caseTypeRegulatory: 'Регуляторное',
-    colNumber: '\u2116',
+    colNumber: '№',
     colCase: 'Дело',
     colType: 'Тип',
     colClaimAmount: 'Сумма иска',
@@ -14955,12 +17548,8 @@ export const ru = {
     actionResolved: 'Решено',
     actionSuspend: 'Приостановить',
     actionResume: 'Возобновить',
-    actionCloseCase: 'Закрыть дело',
+    actionCloseCase: 'Закрыть дело'
   },
-
-  // ---------------------------------------------------------------------------
-  // Workflow Module
-  // ---------------------------------------------------------------------------
   workflow: {
     breadcrumbHome: 'Главная',
     breadcrumbWorkflows: 'Бизнес-процессы',
@@ -15059,11 +17648,78 @@ export const ru = {
     actionSendEmail: 'Отправка email',
     emptyExecutionsTitle: 'Нет выполнений',
     emptyExecutionsDescription: 'Выполнения появятся после срабатывания правил автоматизации',
+    conditionBuilder: {
+      fieldStatus: 'Поле Статус',
+      fieldAmount: 'Поле Сумма',
+      fieldPriority: 'Поле Приоритет',
+      fieldAssignee: 'Поле assignee',
+      fieldDepartment: 'Поле Отдел',
+      fieldEntityType: 'Поле entity Тип',
+      fieldCreatedBy: 'Поле created by',
+      fieldDueDate: 'Поле due Дата',
+      opEquals: 'Op Equals',
+      opNotEquals: 'op Не equals',
+      opGreaterThan: 'Op Greater Than',
+      opLessThan: 'Op Less Than',
+      opContains: 'Op Contains',
+      opInList: 'op in Список',
+      logicAnd: 'logic И',
+      logicOr: 'logic Или',
+      fieldLabel: 'Поле Метка',
+      operatorLabel: 'operator Метка',
+      valuePlaceholder: 'Значение placeholder',
+      valueLabel: 'Значение Метка',
+      removeCondition: 'Remove Condition',
+      groupLabel: 'Группа Метка',
+      groupLogicLabel: 'Группа logic Метка',
+      duplicateGroup: 'Дублировать Группа',
+      removeGroup: 'remove Группа',
+      addCondition: 'Add Condition',
+      matchLabel: 'match Метка',
+      topLevelLogicLabel: 'top level logic Метка',
+      groupsOfConditions: 'Groups Of Conditions',
+      addGroup: 'add Группа'
+    },
+    ruleTemplates: {
+      categoryApproval: 'Категория approval',
+      categoryNotification: 'Категория Уведомление',
+      categoryAssignment: 'Категория Назначение',
+      categoryEscalation: 'Категория escalation',
+      categoryBudget: 'Категория Бюджет',
+      tplAutoApproveName: 'tpl auto Утвердить Название',
+      tplAutoApproveDesc: 'tpl auto Утвердить desc',
+      tplEscalateOverdueName: 'tpl escalate overdue Название',
+      tplEscalateOverdueDesc: 'Tpl Escalate Overdue Desc',
+      tplSafetyNotifyName: 'tpl Безопасность notify Название',
+      tplSafetyNotifyDesc: 'tpl Безопасность notify desc',
+      tplAutoAssignName: 'tpl auto Назначить Название',
+      tplAutoAssignDesc: 'tpl auto Назначить desc',
+      tplBudgetThresholdName: 'tpl Бюджет Порог Название',
+      tplBudgetThresholdDesc: 'tpl Бюджет Порог desc',
+      filterAll: 'Фильтр Все',
+      searchPlaceholder: 'Поиск...',
+      emptySearch: 'Пусто Поиск',
+      useTemplate: 'use Шаблон'
+    },
+    stepDesigner: {
+      untitledStep: 'Untitled Step',
+      hoursAbbrev: 'Часов abbrev',
+      badgeAuto: 'Badge Auto',
+      badgeManual: 'Badge Manual',
+      moveUp: 'Move Up',
+      moveDown: 'Move Down',
+      removeStep: 'Remove Step',
+      hasBranching: 'Has Branching',
+      editStepTitle: 'Редактировать step Заголовок',
+      conditionsLabel: 'conditions Метка',
+      conditionsPlaceholder: 'Conditions Placeholder',
+      insertStep: 'Insert Step',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены',
+      addFirstStep: 'Add First Step',
+      flowOverview: 'flow Обзор'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Tax Risk Module
-  // ---------------------------------------------------------------------------
   taxRisk: {
     breadcrumbHome: 'Главная',
     breadcrumbTaxRisks: 'Налоговые риски',
@@ -15123,12 +17779,8 @@ export const ru = {
     mitigationPlanned: 'Запланировано',
     mitigationInProgress: 'В работе',
     mitigationCompleted: 'Выполнено',
-    mitigationOverdue: 'Просрочено',
+    mitigationOverdue: 'Просрочено'
   },
-
-  // ---------------------------------------------------------------------------
-  // Regulatory
-  // ---------------------------------------------------------------------------
   regulatory: {
     dashboardTitle: 'Регуляторика и комплаенс',
     dashboardSubtitle: 'Обзор нормативного соответствия',
@@ -15148,7 +17800,7 @@ export const ru = {
     alertPermitExpiring: 'Истекает разрешение {number}',
     alertPermitExpiringDesc: 'Срок действия истекает через {days} дн., требуется продление.',
     alertLicenseExpiring: 'Истекает лицензия {number}',
-    alertLicenseExpiringDesc: 'Лицензия \u00ab{name}\u00bb скоро истекает.',
+    alertLicenseExpiringDesc: 'Лицензия «{name}» скоро истекает.',
     deadlinePrefix: 'Срок: {date}',
     upcomingEvents: 'Ближайшие события',
     defaultInspectionName: 'Проверка',
@@ -15272,7 +17924,7 @@ export const ru = {
     searchPermitPlaceholder: 'Поиск по номеру, названию...',
     emptyPermits: 'Нет разрешений',
     emptyPermitsDesc: 'Добавьте первое разрешение для начала учёта',
-    colNumber: '\u2116',
+    colNumber: '№',
     colName: 'Наименование',
     colType: 'Тип',
     colValidUntil: 'Действует до',
@@ -15325,8 +17977,6 @@ export const ru = {
     licTypeSroEngineering: 'СРО Инженерные изыскания',
     licTypeSpecialPermit: 'Спецразрешение',
     licTypeOther: 'Прочее',
-
-    // Prescription List Page (existing page refs)
     prescriptionsTitle: 'Предписания',
     prescriptionsSubtitle: '{count} предписаний в системе',
     breadcrumbPrescriptions: 'Предписания',
@@ -15361,8 +18011,6 @@ export const ru = {
     bodyTypeRospotrebnadzor: 'Роспотребнадзор',
     bodyTypeEnvironmental: 'Экология',
     bodyTypeOther: 'Другое',
-
-    // Prescriptions Journal Page
     pjTitle: 'Журнал предписаний Ростехнадзора',
     pjSubtitle: '{count} предписаний',
     pjBreadcrumb: 'Журнал предписаний',
@@ -15377,7 +18025,7 @@ export const ru = {
     pjSearchPlaceholder: 'Поиск по номеру, описанию...',
     pjEmptyTitle: 'Нет предписаний',
     pjEmptyDesc: 'Создайте первое предписание',
-    pjColNumber: '\u2116 предписания',
+    pjColNumber: '№ предписания',
     pjColAuthority: 'Контр. орган',
     pjColIssueDate: 'Дата выдачи',
     pjColDeadline: 'Срок устранения',
@@ -15391,8 +18039,6 @@ export const ru = {
     pjFieldDescription: 'Описание нарушения',
     pjCreateSuccess: 'Предписание создано',
     pjCreateError: 'Ошибка создания предписания',
-
-    // Prescription Response Page
     prTitle: 'Ответы на предписания',
     prSubtitle: '{count} ответов',
     prBreadcrumb: 'Ответы на предписания',
@@ -15406,7 +18052,7 @@ export const ru = {
     prSearchPlaceholder: 'Поиск по номеру, шаблону...',
     prEmptyTitle: 'Нет ответов',
     prEmptyDesc: 'Сформируйте первый ответ на предписание',
-    prColPrescription: '\u2116 предписания',
+    prColPrescription: '№ предписания',
     prColTemplate: 'Шаблон',
     prColResponseText: 'Текст ответа',
     prColStatus: 'Статус',
@@ -15428,8 +18074,6 @@ export const ru = {
     prGenerateError: 'Ошибка формирования ответа',
     prPreviewCategory: 'Категория',
     prPreviewText: 'Текст шаблона',
-
-    // SRO License Registry Page
     sroTitle: 'Реестр СРО и лицензий',
     sroSubtitle: '{count} записей в реестре',
     sroBreadcrumb: 'Реестр СРО',
@@ -15446,7 +18090,7 @@ export const ru = {
     sroEmptyDesc: 'Добавьте первую запись в реестр',
     sroColOrganization: 'Организация',
     sroColType: 'Тип СРО',
-    sroColCertificate: '\u2116 свидетельства',
+    sroColCertificate: '№ свидетельства',
     sroColIssueDate: 'Дата выдачи',
     sroColExpiryDate: 'Срок действия',
     sroColStatus: 'Статус',
@@ -15466,8 +18110,6 @@ export const ru = {
     sroFieldExpiryDate: 'Срок действия до',
     sroCreateSuccess: 'Запись добавлена в реестр',
     sroCreateError: 'Ошибка добавления записи',
-
-    // Inspection Prep Page
     ipTitle: 'Подготовка к проверке',
     ipSubtitle: 'Чек-лист документов для инспекции',
     ipBreadcrumb: 'Подготовка к проверке',
@@ -15487,8 +18129,6 @@ export const ru = {
     ipStatusUpdated: 'Статус обновлён',
     ipStatusError: 'Ошибка обновления статуса',
     ipResponsible: 'Ответственный',
-
-    // Inspection History Page
     ihTitle: 'История проверок и штрафов',
     ihSubtitle: '{count} проверок в системе',
     ihBreadcrumb: 'История проверок',
@@ -15522,14 +18162,10 @@ export const ru = {
     ihDetailTitle: 'Детали проверки',
     ihDetailFindings: 'Выявленные нарушения',
     ihYearFilterAll: 'Все годы',
-
-    // Prescriptions Journal - additional
     pjColSubject: 'Предмет',
     pjColOverdueDays: 'Дн. просрочки',
     pjDateFrom: 'Дата от',
     pjDateTo: 'Дата до',
-
-    // Prescription Response - additional
     prCorrectiveActions: 'Корректирующие мероприятия',
     prAddAction: 'Добавить мероприятие',
     prNoActions: 'Корректирующие мероприятия не добавлены',
@@ -15539,16 +18175,12 @@ export const ru = {
     prAttachFiles: 'Прикрепить файлы',
     prFilesCount: '{count} файл(ов) прикреплено',
     prNoFiles: 'Файлы не прикреплены',
-
-    // SRO License Registry - type labels
     sroTypeSroConstruction: 'СРО Строительство',
     sroTypeSroDesign: 'СРO Проектирование',
     sroTypeSroSurvey: 'СРО Изыскания',
     sroTypeLicenseHazardous: 'Лицензия - ОПО',
     sroTypeLicenseFire: 'Лицензия - Пожарная безопасность',
     sroTypeLicenseNuclear: 'Лицензия - Ядерная безопасность',
-
-    // Inspection Prep - additional
     ipBtnGeneratePackage: 'Сформировать пакет',
     ipInspectionType: 'Тип проверки',
     ipType_scheduled: 'Плановая',
@@ -15558,11 +18190,81 @@ export const ru = {
     ipType_labor: 'Трудовая инспекция',
     ipPackageGenerated: 'Пакет документов сформирован',
     ipPackageError: 'Ошибка формирования пакета',
+    prescription: {
+      statusReceived: 'Статус received',
+      statusUnderReview: 'Статус under review',
+      statusInProgress: 'Статус in Прогресс',
+      statusResponseSubmitted: 'Статус Ответ submitted',
+      statusCompleted: 'Завершено',
+      statusClosed: 'Статус closed'
+    },
+    toastStatusChanged: 'toast Статус changed',
+    toastAppealFiled: 'Toast Appeal Filed',
+    toastAppealExpired: 'toast appeal Просрочено',
+    toastPrescriptionDeleted: 'Toast Prescription Deleted',
+    warningOverdue: 'Предупреждение overdue',
+    warningOverdueDesc: 'Предупреждение overdue desc',
+    warningApproachingDeadline: 'Предупреждение approaching deadline',
+    warningApproachingDeadlineDesc: 'Предупреждение approaching deadline desc',
+    prescriptionDetailTitle: 'prescription Детали Заголовок',
+    prescriptionDetailSubtitle: 'prescription Детали Подзаголовок',
+    prescriptionBtnEdit: 'prescription btn Редактировать',
+    btnDeletePrescription: 'btn Удалить prescription',
+    sectionPrescriptionDetails: 'Раздел prescription Подробности',
+    labelPrescriptionNumber: 'Метка prescription number',
+    labelBodyType: 'Метка Основное содержимое Тип',
+    labelProject: 'Объект',
+    prescriptionLabelResponsible: 'prescription Метка Ответственный',
+    labelReceivedDate: 'Метка received Дата',
+    labelDeadline: 'Метка deadline',
+    labelRegulatoryReference: 'Метка regulatory reference',
+    labelViolationCount: 'Метка Нарушение Количество',
+    sectionFinancial: 'Раздел financial',
+    labelFineAmount: 'Метка fine Сумма',
+    labelCorrectiveActionCost: 'Метка corrective action Стоимость',
+    labelNotes: 'Примечания',
+    labelEvidenceUrl: 'Метка evidence url',
+    labelResponseLetterUrl: 'Метка Ответ letter url',
+    btnChangeStatus: 'btn change Статус',
+    btnFileAppeal: 'btn Файл appeal',
+    labelAppealDeadline: 'Метка appeal deadline',
+    appealWindowClosed: 'Appeal Window Closed',
+    sectionTimeline: 'Раздел timeline',
+    tabReceived: 'Tab Received',
+    confirmDeletePrescription: 'Подтвердить Удалить prescription',
+    confirmDeletePrescriptionDesc: 'Подтвердить Удалить prescription desc',
+    confirmDeletePrescriptionBtn: 'Подтвердить Удалить prescription btn',
+    validationRequired: 'Обязательное поле',
+    bodyGIT: 'Основное содержимое g i t',
+    bodyRostekhnadzor: 'Основное содержимое rostekhnadzor',
+    bodyStroynadzor: 'Основное содержимое stroynadzor',
+    bodyMCHS: 'Основное содержимое m c h s',
+    bodyRospotrebnadzor: 'Основное содержимое rospotrebnadzor',
+    bodyEnvironmental: 'Основное содержимое environmental',
+    bodyOther: 'Основное содержимое other',
+    toastPrescriptionUpdated: 'Toast Prescription Updated',
+    toastPrescriptionCreated: 'Toast Prescription Created',
+    prescriptionFormEditTitle: 'prescription Форма Редактировать Заголовок',
+    prescriptionFormTitle: 'prescription Форма Заголовок',
+    prescriptionFormSubtitle: 'prescription Форма Подзаголовок',
+    formDescription: 'Форма Описание',
+    formDescriptionPlaceholder: 'Форма Описание placeholder',
+    formRegulatoryBodyType: 'Форма regulatory Основное содержимое Тип',
+    formProject: 'Форма Объект',
+    formReceivedDate: 'Форма received Дата',
+    formDeadline: 'Форма deadline',
+    formAppealDeadline: 'Форма appeal deadline',
+    formResponsible: 'Форма Ответственный',
+    formResponsiblePlaceholder: 'Форма Ответственный placeholder',
+    formFineAmount: 'Форма fine Сумма',
+    formViolationCount: 'Форма Нарушение Количество',
+    formRegulatoryReference: 'Форма regulatory reference',
+    formRegulatoryReferencePlaceholder: 'Форма regulatory reference placeholder',
+    formNotes: 'Форма Примечания',
+    formNotesPlaceholder: 'Форма Примечания placeholder',
+    btnCancel: 'Отмена',
+    btnSavePrescription: 'btn Сохранить prescription'
   },
-
-  // ---------------------------------------------------------------------------
-  // Punchlist
-  // ---------------------------------------------------------------------------
   punchlist: {
     boardTitle: 'Пунчлист - Доска',
     boardSubtitle: '{count} замечаний',
@@ -15586,7 +18288,7 @@ export const ru = {
     dragHint: 'Перетащите карточку сюда',
     dashboardTitle: 'Панель Punch List',
     dashboardSubtitle: 'Сводка по перечням замечаний',
-    breadcrumbPunchList: 'Punch List',
+    breadcrumbPunchList: 'punch Список',
     btnAllItems: 'Все замечания',
     btnNewList: 'Новый перечень',
     metricTotalItems: 'Всего замечаний',
@@ -15646,7 +18348,7 @@ export const ru = {
     labelCategory: 'Категория',
     labelPriority: 'Приоритет',
     labelStatus: 'Статус',
-    labelPunchList: 'Punch List',
+    labelPunchList: 'punch Список',
     sectionLocation: 'Расположение',
     labelProject: 'Объект',
     labelFullLocation: 'Полное расположение',
@@ -15673,7 +18375,7 @@ export const ru = {
     modalDescription: 'Добавьте замечание в перечень (Punch List)',
     modalCancel: 'Отмена',
     modalCreate: 'Создать замечание',
-    labelPunchListField: 'Punch List',
+    labelPunchListField: 'punch Список',
     placeholderSelectList: 'Выберите перечень',
     labelTitleField: 'Название замечания',
     placeholderTitleField: 'Краткое описание дефекта',
@@ -15696,12 +18398,8 @@ export const ru = {
     catOther: 'Прочее',
     listSectionA: 'Замечания по секции А',
     listParking: 'Замечания по паркингу',
-    listLandscaping: 'Замечания по благоустройству',
+    listLandscaping: 'Замечания по благоустройству'
   },
-
-  // ---------------------------------------------------------------------------
-  // Support
-  // ---------------------------------------------------------------------------
   support: {
     boardTitle: 'Тикеты поддержки - Доска',
     boardSubtitle: '{count} тикетов',
@@ -15823,7 +18521,7 @@ export const ru = {
     emptyTicketsDesc: 'Создайте первую заявку для начала работы',
     errorLoadTickets: 'Не удалось загрузить заявки поддержки',
     errorLoadTicketsDesc: 'Проверьте соединение и попробуйте снова',
-    colNumber: '\u2116',
+    colNumber: '№',
     colSubject: 'Тема',
     colStatus: 'Статус',
     colPriority: 'Приоритет',
@@ -15846,12 +18544,8 @@ export const ru = {
     currentUser: 'Текущий пользователь',
     ticketCreated: 'Заявка поддержки создана',
     errorCreateTicket: 'Не удалось создать заявку поддержки',
-    validationRequired: 'Тема и описание обязательны',
+    validationRequired: 'Тема и описание обязательны'
   },
-
-  // ---------------------------------------------------------------------------
-  // Leave Management
-  // ---------------------------------------------------------------------------
   leave: {
     board: {
       title: 'Доска отпусков',
@@ -15871,7 +18565,7 @@ export const ru = {
       colDraft: 'Черновик',
       colSubmitted: 'Подана',
       colApproved: 'Одобрена',
-      colRejected: 'Отклонена',
+      colRejected: 'Отклонена'
     },
     types: {
       title: 'Типы отпусков',
@@ -15900,7 +18594,7 @@ export const ru = {
       activeYes: 'Да',
       activeNo: 'Нет',
       emptyTitle: 'Нет типов отпусков',
-      emptyDescription: 'Создайте первый тип отпуска',
+      emptyDescription: 'Создайте первый тип отпуска'
     },
     requests: {
       title: 'Заявки на отпуск',
@@ -15937,7 +18631,7 @@ export const ru = {
       actionRefuse: 'Отклонить',
       refuseReason: 'Отклонено руководителем',
       emptyTitle: 'Нет заявок',
-      emptyDescription: 'Заявки на отпуск отсутствуют',
+      emptyDescription: 'Заявки на отпуск отсутствуют'
     },
     allocations: {
       title: 'Лимиты отпусков',
@@ -15965,15 +18659,10 @@ export const ru = {
       colProgress: 'Прогресс',
       daysSuffix: 'дн.',
       emptyTitle: 'Нет лимитов',
-      emptyDescription: 'Лимиты отпусков не найдены',
-    },
+      emptyDescription: 'Лимиты отпусков не найдены'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // IoT Monitoring
-  // ---------------------------------------------------------------------------
   iot: {
-    // Shared labels across IoT pages
     statusOnline: 'Онлайн',
     statusOffline: 'Офлайн',
     statusWarning: 'Предупреждение',
@@ -15987,7 +18676,6 @@ export const ru = {
     sensorDust: 'Пыль',
     sensorNoise: 'Шум',
     sensorStructural: 'Структурный',
-
     devices: {
       title: 'IoT устройства',
       subtitleDevices: '{count} устройств',
@@ -16018,9 +18706,8 @@ export const ru = {
       colProject: 'Объект',
       colLastReading: 'Последнее чтение',
       emptyTitle: 'Нет устройств',
-      emptyDescription: 'Добавьте первое IoT устройство',
+      emptyDescription: 'Добавьте первое IoT устройство'
     },
-
     sensors: {
       title: 'Датчики',
       subtitle: 'Мониторинг датчиков по типам',
@@ -16034,9 +18721,8 @@ export const ru = {
       trendAttention: 'Требуют внимания',
       trendNo: 'Нет',
       onlineSuffix: 'онлайн',
-      lastUpdate: 'Последнее обновление:',
+      lastUpdate: 'Последнее обновление:'
     },
-
     alerts: {
       title: 'Оповещения и правила',
       subtitleAlerts: '{alertCount} оповещений, {ruleCount} правил',
@@ -16088,9 +18774,8 @@ export const ru = {
       conditionBelow: 'Ниже порога',
       conditionOutOfRange: 'Вне диапазона',
       labelThreshold: 'Порог',
-      labelEmail: 'Email для уведомлений',
+      labelEmail: 'Email для уведомлений'
     },
-
     detail: {
       breadcrumbHome: 'Главная',
       breadcrumbIot: 'IoT мониторинг',
@@ -16123,13 +18808,9 @@ export const ru = {
       statMin: 'Минимум',
       statMax: 'Максимум',
       statAvg: 'Среднее',
-      statAnomalies: 'Аномалий',
-    },
+      statAnomalies: 'Аномалий'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // HR Russian (Кадры РФ)
-  // ---------------------------------------------------------------------------
   hrRussian: {
     timesheet: {
       title: 'Табель учёта рабочего времени',
@@ -16185,10 +18866,9 @@ export const ru = {
         september: 'Сентябрь',
         october: 'Октябрь',
         november: 'Ноябрь',
-        december: 'Декабрь',
-      },
+        december: 'Декабрь'
+      }
     },
-
     contracts: {
       title: 'Трудовые договоры',
       subtitleContracts: '{count} договоров',
@@ -16222,9 +18902,8 @@ export const ru = {
       colStartDate: 'Начало',
       colSalary: 'Оклад',
       emptyTitle: 'Нет договоров',
-      emptyDescription: 'Создайте первый трудовой договор',
+      emptyDescription: 'Создайте первый трудовой договор'
     },
-
     orders: {
       title: 'Кадровые приказы',
       subtitleOrders: '{count} приказов',
@@ -16264,9 +18943,8 @@ export const ru = {
       colOrderDate: 'Дата приказа',
       colEffectiveDate: 'Дата действия',
       emptyTitle: 'Нет кадровых приказов',
-      emptyDescription: 'Создайте первый приказ',
+      emptyDescription: 'Создайте первый приказ'
     },
-
     staffing: {
       title: 'Штатное расписание',
       subtitlePositions: '{count} позиций в штатном расписании',
@@ -16306,269 +18984,595 @@ export const ru = {
       colSalaryRange: 'Вилка оклада',
       colStatus: 'Статус',
       emptyTitle: 'Нет позиций',
-      emptyDescription: 'Штатное расписание пусто',
-    },
+      emptyDescription: 'Штатное расписание пусто'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Estimates Module
-  // ---------------------------------------------------------------------------
   estimates: {
     list: {
-      title: 'Сметы', subtitle: '{count} смет в системе', breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы',
-      tabAll: 'Все', tabDraft: 'Черновик', tabInWork: 'В работе', tabActive: 'Активна',
-      colName: 'Название', colProject: 'Объект', colSpecification: 'Спецификация', colStatus: 'Статус',
-      colPlan: 'План', colFact: 'Факт', colVariance: 'Отклонение',
-      searchPlaceholder: 'Поиск по названию, объекту...', emptyTitle: 'Нет смет', emptyDescription: 'Сметы создаются на основе спецификаций',
+      title: 'Сметы',
+      subtitle: '{count} смет в системе',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      tabAll: 'Все',
+      tabDraft: 'Черновик',
+      tabInWork: 'В работе',
+      tabActive: 'Активна',
+      colName: 'Название',
+      colProject: 'Объект',
+      colSpecification: 'Спецификация',
+      colStatus: 'Статус',
+      colPlan: 'План',
+      colFact: 'Факт',
+      colVariance: 'Отклонение',
+      searchPlaceholder: 'Поиск по названию, объекту...',
+      emptyTitle: 'Нет смет',
+      emptyDescription: 'Сметы создаются на основе спецификаций'
     },
     detail: {
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы',
-      colItemName: 'Наименование', colQuantity: 'Кол-во', colUnitPrice: 'Цена за ед.', colAmountPlan: 'Сумма план',
-      colOrdered: 'Заказано', colPaid: 'Оплачено', colBalance: 'Остаток', colExecution: '% выполн.',
-      metricPlanned: 'Плановая сумма', metricOrdered: 'Заказано', metricPaid: 'Оплачено', metricBalance: 'Остаток',
-      budgetExecution: 'Исполнение бюджета сметы', emptyItemsTitle: 'Нет позиций', emptyItemsDescription: 'Позиции создаются на основе спецификации',
-      financialSummary: 'Финансовая сводка', labelVariance: 'Отклонение',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      colItemName: 'Наименование',
+      colQuantity: 'Кол-во',
+      colUnitPrice: 'Цена за ед.',
+      colAmountPlan: 'Сумма план',
+      colOrdered: 'Заказано',
+      colPaid: 'Оплачено',
+      colBalance: 'Остаток',
+      colExecution: '% выполн.',
+      metricPlanned: 'Плановая сумма',
+      metricOrdered: 'Заказано',
+      metricPaid: 'Оплачено',
+      metricBalance: 'Остаток',
+      budgetExecution: 'Исполнение бюджета сметы',
+      emptyItemsTitle: 'Нет позиций',
+      emptyItemsDescription: 'Позиции создаются на основе спецификации',
+      financialSummary: 'Финансовая сводка',
+      labelVariance: 'Отклонение',
+      labelBudgetRemaining: 'Метка Бюджет remaining',
+      labelOverspend: 'Метка overspend'
     },
     pivot: {
-      title: 'Сводная таблица смет', subtitle: 'Анализ сметных позиций по категориям и статусам',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbPivot: 'Сводная таблица',
-      aggregation: 'Агрегация', aggSum: 'Сумма', aggCount: 'Кол-во', aggAverage: 'Среднее',
-      rowLabel: 'Категория работ', tableTitle: 'Категория работ / Статус сметы',
-      referenceInfo: 'Справочная информация', totalItems: 'Всего позиций', totalAmount: 'Общая сумма', totalCategories: 'Категорий работ',
-      statusApproved: 'Утверждена', statusInReview: 'На согласовании', statusDraft: 'Черновик', categoryOther: 'Прочее',
-      catEarthworks: 'Земляные работы', catConcrete: 'Бетонные работы', catMasonry: 'Каменные работы', catMetalStructures: 'Металлоконструкции',
-      catRoofing: 'Кровля', catFacade: 'Фасад', catElectrical: 'Электромонтаж', catPlumbing: 'Сантехника', catFinishing: 'Отделка',
+      title: 'Сводная таблица смет',
+      subtitle: 'Анализ сметных позиций по категориям и статусам',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbPivot: 'Сводная таблица',
+      aggregation: 'Агрегация',
+      aggSum: 'Сумма',
+      aggCount: 'Кол-во',
+      aggAverage: 'Среднее',
+      rowLabel: 'Категория работ',
+      tableTitle: 'Категория работ / Статус сметы',
+      referenceInfo: 'Справочная информация',
+      totalItems: 'Всего позиций',
+      totalAmount: 'Общая сумма',
+      totalCategories: 'Категорий работ',
+      statusApproved: 'Утверждена',
+      statusInReview: 'На согласовании',
+      statusDraft: 'Черновик',
+      categoryOther: 'Прочее',
+      catEarthworks: 'Земляные работы',
+      catConcrete: 'Бетонные работы',
+      catMasonry: 'Каменные работы',
+      catMetalStructures: 'Металлоконструкции',
+      catRoofing: 'Кровля',
+      catFacade: 'Фасад',
+      catElectrical: 'Электромонтаж',
+      catPlumbing: 'Сантехника',
+      catFinishing: 'Отделка'
     },
     import: {
-      title: 'Импорт сметы', formatArps: 'АРПС (Гранд-Смета)', formatXml: 'XML (смета)',
-      fieldSkip: '-- Пропустить --', fieldCode: 'Шифр расценки', fieldWorkName: 'Наименование работ',
-      fieldUnit: 'Единица измерения', fieldQuantity: 'Количество', fieldUnitPrice: 'Цена за единицу',
-      fieldTotal: 'Сумма', fieldLaborCost: 'Затраты труда (чел-ч)', fieldMaterialsCost: 'Стоимость материалов',
-      fieldMachinesCost: 'Стоимость машин', fieldSection: 'Раздел сметы',
-      stepUpload: 'Загрузка файла', stepMapping: 'Сопоставление колонок', stepPreview: 'Предпросмотр', stepImport: 'Импорт',
-      btnImport: 'Импортировать', labelFormat: 'Формат файла', labelFile: 'Файл сметы',
-      clickToReplace: 'Нажмите для замены', dropzoneText: 'Нажмите или перетащите файл сюда',
+      title: 'Импорт сметы',
+      formatArps: 'АРПС (Гранд-Смета)',
+      formatXml: 'XML (смета)',
+      fieldSkip: '-- Пропустить --',
+      fieldCode: 'Шифр расценки',
+      fieldWorkName: 'Наименование работ',
+      fieldUnit: 'Единица измерения',
+      fieldQuantity: 'Количество',
+      fieldUnitPrice: 'Цена за единицу',
+      fieldTotal: 'Сумма',
+      fieldLaborCost: 'Затраты труда (чел-ч)',
+      fieldMaterialsCost: 'Стоимость материалов',
+      fieldMachinesCost: 'Стоимость машин',
+      fieldSection: 'Раздел сметы',
+      stepUpload: 'Загрузка файла',
+      stepMapping: 'Сопоставление колонок',
+      stepPreview: 'Предпросмотр',
+      stepImport: 'Импорт',
+      btnImport: 'Импортировать',
+      labelFormat: 'Формат файла',
+      labelFile: 'Файл сметы',
+      clickToReplace: 'Нажмите для замены',
+      dropzoneText: 'Нажмите или перетащите файл сюда',
       supportedFormats: 'Поддерживаются: XLSX, CSV, АРПС, XML',
       arpsAutoHint: 'Формат АРПС будет автоматически распознан. Сопоставление колонок не потребуется.',
       mappingHint: 'Сопоставьте колонки файла с полями системы. Сопоставлено: {mapped} из {total}.',
-      selectField: 'Выберите поле', previewHint: 'Предварительный просмотр импортируемых данных ({count} позиций):',
-      thCode: 'Шифр', thName: 'Наименование', thUnit: 'Ед.', thQty: 'Кол-во', thPrice: 'Цена', thTotal: 'Сумма',
-      totalLabel: 'Итого:', summaryFile: 'Файл', summaryFormat: 'Формат', summaryItems: 'Позиций',
-      summaryMapped: 'Сопоставлено колонок', summaryTotal: 'Общая сумма',
+      selectField: 'Выберите поле',
+      previewHint: 'Предварительный просмотр импортируемых данных ({count} позиций):',
+      thCode: 'Шифр',
+      thName: 'Наименование',
+      thUnit: 'Ед.',
+      thQty: 'Кол-во',
+      thPrice: 'Цена',
+      thTotal: 'Сумма',
+      totalLabel: 'Итого:',
+      summaryFile: 'Файл',
+      summaryFormat: 'Формат',
+      summaryItems: 'Позиций',
+      summaryMapped: 'Сопоставлено колонок',
+      summaryTotal: 'Общая сумма',
       confirmWarning: 'Данные будут импортированы в новую смету. Проверьте корректность данных перед подтверждением.',
-      toastSuccess: 'Смета импортирована: {count} позиций',
+      toastSuccess: 'Смета импортирована: {count} позиций'
     },
     normative: {
-      title: 'Нормативная смета', subtitle: 'Расчёт по нормативной базе с индексами пересчёта',
-      statusDraft: 'Черновик', statusCalculated: 'Рассчитана', statusApproved: 'Утверждена', statusArchived: 'В архиве',
+      title: 'Нормативная смета',
+      subtitle: 'Расчёт по нормативной базе с индексами пересчёта',
+      statusDraft: 'Черновик',
+      statusCalculated: 'Рассчитана',
+      statusApproved: 'Утверждена',
+      statusArchived: 'В архиве',
       btnCalculate: 'Рассчитать',
-      colJustification: 'Обоснование', colNormCode: 'Код расценки', colName: 'Наименование',
-      colUnit: 'Ед.', colQty: 'Кол-во', colNormHours: 'Норм. ч/ч',
-      colBasePrice2001: 'Цена 2001', colPriceIndex: 'Индекс', colCurrentPrice: 'Текущая цена',
-      colDirectCosts: 'Прямые затраты', colOverheadCosts: 'Накладные', colProfit: 'Сметная прибыль', colTotal: 'Итого',
-      metricDirectCost: 'Прямые затраты', metricOverhead: 'Накладные расходы',
-      metricProfit: 'Сметная прибыль', metricTotalVat: 'Итого с НДС',
-      emptyTitle: 'Нет строк сметы', emptyDescription: 'Добавьте позиции из нормативной базы или импортируйте',
-      totals: 'Итоги по смете', linesCount: 'Строк в смете',
+      colJustification: 'Обоснование',
+      colNormCode: 'Код расценки',
+      colName: 'Наименование',
+      colUnit: 'Ед.',
+      colQty: 'Кол-во',
+      colNormHours: 'Норм. ч/ч',
+      colBasePrice2001: 'Цена 2001',
+      colPriceIndex: 'Индекс',
+      colCurrentPrice: 'Текущая цена',
+      colDirectCosts: 'Прямые затраты',
+      colOverheadCosts: 'Накладные',
+      colProfit: 'Сметная прибыль',
+      colTotal: 'Итого',
+      metricDirectCost: 'Прямые затраты',
+      metricOverhead: 'Накладные расходы',
+      metricProfit: 'Сметная прибыль',
+      metricTotalVat: 'Итого с НДС',
+      emptyTitle: 'Нет строк сметы',
+      emptyDescription: 'Добавьте позиции из нормативной базы или импортируйте',
+      totals: 'Итоги по смете',
+      linesCount: 'Строк в смете',
       toastCalculated: 'Смета рассчитана',
+      normativeSource: 'normative Источник',
+      gesn: 'Gesn',
+      fer: 'Fer',
+      ter: 'Ter',
+      manual: 'Manual',
+      browseRatesTitle: 'Обзор rates Заголовок',
+      browseRatesHint: 'Обзор rates hint',
+      searchNormative: 'Поиск normative',
+      browseRatesEmpty: 'Обзор rates Пусто',
+      browseRatesSelect: 'Обзор rates Выберите'
     },
     reconciliation: {
-      title: 'Сверка: Смета vs ФМ', subtitle: 'Сравнение сметных данных с финансовой моделью по разделам',
+      title: 'Сверка: Смета vs ФМ',
+      subtitle: 'Сравнение сметных данных с финансовой моделью по разделам',
       breadcrumbReconciliation: 'Сверка с ФМ',
-      selectBudget: 'Бюджет (ФМ) для сравнения', budgetIdPlaceholder: 'Введите ID бюджета...',
-      colSection: 'Раздел', colEstimate: 'Сумма по смете', colFm: 'Сумма в ФМ',
-      colDelta: 'Разница', colDeltaPercent: '% отклонения', colStatus: 'Статус',
-      statusDiscrepancy: 'Расхождение', statusOk: 'В норме',
-      totalEstimate: 'Итого по смете', totalFm: 'Итого в ФМ', totalDelta: 'Общее отклонение', discrepancies: 'Расхождения > 10%',
-      emptyTitle: 'Нет данных для сравнения', emptyDescription: 'Нет пересекающихся разделов между сметой и ФМ',
-      selectBudgetHint: 'Выберите бюджет', selectBudgetDescription: 'Укажите ID бюджета для сверки со сметой',
+      selectBudget: 'Бюджет (ФМ) для сравнения',
+      budgetIdPlaceholder: 'Введите ID бюджета...',
+      colSection: 'Раздел',
+      colEstimate: 'Сумма по смете',
+      colFm: 'Сумма в ФМ',
+      colDelta: 'Разница',
+      colDeltaPercent: '% отклонения',
+      colStatus: 'Статус',
+      statusDiscrepancy: 'Расхождение',
+      statusOk: 'В норме',
+      totalEstimate: 'Итого по смете',
+      totalFm: 'Итого в ФМ',
+      totalDelta: 'Общее отклонение',
+      discrepancies: 'Расхождения > 10%',
+      emptyTitle: 'Нет данных для сравнения',
+      emptyDescription: 'Нет пересекающихся разделов между сметой и ФМ',
+      selectBudgetHint: 'Выберите бюджет',
+      selectBudgetDescription: 'Укажите ID бюджета для сверки со сметой'
     },
     advancedImport: {
       title: 'Импорт сметы из ГРАНД-Смета',
       subtitle: 'Импорт из форматов АРПС, XML, GSFX',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbImport: 'Импорт',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbImport: 'Импорт',
       uploadSection: 'Загрузка файла',
-      labelFormat: 'Формат файла', labelFile: 'Файл сметы',
-      importing: 'Импорт...', importComplete: 'Импорт завершён',
+      labelFormat: 'Формат файла',
+      labelFile: 'Файл сметы',
+      importing: 'Импорт...',
+      importComplete: 'Импорт завершён',
       validationErrors: 'Ошибки валидации',
       importSuccessMsg: 'Успешно импортировано: {count} позиций',
-      btnPreview: 'Предпросмотр', btnImport: 'Импортировать', btnConfirmImport: 'Подтвердить импорт',
-      previewTitle: 'Предпросмотр импорта', previewFile: 'Файл', previewFormat: 'Формат',
+      btnPreview: 'Предпросмотр',
+      btnImport: 'Импортировать',
+      btnConfirmImport: 'Подтвердить импорт',
+      previewTitle: 'Предпросмотр импорта',
+      previewFile: 'Файл',
+      previewFormat: 'Формат',
       previewHint: 'После подтверждения данные будут импортированы в систему.',
-      historyTitle: 'История импорта', historyEmpty: 'Нет истории импорта', historyEmptyDesc: 'Импортированные файлы будут отображаться здесь',
-      colFileName: 'Имя файла', colFormat: 'Формат', colDate: 'Дата', colStatus: 'Статус', colItemsCount: 'Позиций',
-      statusSuccess: 'Успешно', statusPartial: 'Частично', statusFailed: 'Ошибка',
+      historyTitle: 'История импорта',
+      historyEmpty: 'Нет истории импорта',
+      historyEmptyDesc: 'Импортированные файлы будут отображаться здесь',
+      colFileName: 'Имя файла',
+      colFormat: 'Формат',
+      colDate: 'Дата',
+      colStatus: 'Статус',
+      colItemsCount: 'Позиций',
+      statusSuccess: 'Успешно',
+      statusPartial: 'Частично',
+      statusFailed: 'Ошибка'
     },
     export: {
       title: 'Экспорт в формат ГГЭ',
       subtitle: 'Экспорт сметы для Главгосэкспертизы',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbExport: 'Экспорт ГГЭ',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbExport: 'Экспорт ГГЭ',
       configSection: 'Настройки экспорта',
-      labelEstimate: 'Смета', selectEstimate: 'Выберите смету',
+      labelEstimate: 'Смета',
+      selectEstimate: 'Выберите смету',
       labelFormatVersion: 'Версия формата',
-      optIncludeSummary: 'Включить итоги', optIncludeDetails: 'Включить детализацию',
-      btnValidate: 'Проверить', btnExport: 'Экспортировать',
-      metricValidation: 'Валидация', metricErrors: 'Ошибки', metricWarnings: 'Предупреждения',
-      validationPassed: 'Пройдена', validationFailed: 'Не пройдена',
+      optIncludeSummary: 'Включить итоги',
+      optIncludeDetails: 'Включить детализацию',
+      btnValidate: 'Проверить',
+      btnExport: 'Экспортировать',
+      metricValidation: 'Валидация',
+      metricErrors: 'Ошибки',
+      metricWarnings: 'Предупреждения',
+      validationPassed: 'Пройдена',
+      validationFailed: 'Не пройдена',
       validationPassedMsg: 'Все проверки пройдены. Смета готова к экспорту.',
-      errorsTitle: 'Ошибки', warningsTitle: 'Предупреждения',
-      historyTitle: 'История экспорта', historyEmpty: 'Нет истории экспорта', historyEmptyDesc: 'Экспортированные файлы будут отображаться здесь',
-      colEstimate: 'Смета', colDate: 'Дата', colFormat: 'Формат', colStatus: 'Статус',
-      statusSuccess: 'Успешно', statusFailed: 'Ошибка',
+      errorsTitle: 'Ошибки',
+      warningsTitle: 'Предупреждения',
+      historyTitle: 'История экспорта',
+      historyEmpty: 'Нет истории экспорта',
+      historyEmptyDesc: 'Экспортированные файлы будут отображаться здесь',
+      colEstimate: 'Смета',
+      colDate: 'Дата',
+      colFormat: 'Формат',
+      colStatus: 'Статус',
+      statusSuccess: 'Успешно',
+      statusFailed: 'Ошибка'
     },
     volume: {
       title: 'Калькулятор физических объёмов',
       subtitle: 'Расчёт объёмов для строительных работ',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbCalc: 'Калькулятор объёмов',
-      typeEarthwork: 'Земляные работы', typeConcrete: 'Бетонные работы',
-      typeMasonry: 'Каменная кладка', typeRoofing: 'Кровля', typeFinishing: 'Отделка',
-      fieldLength: 'Длина', fieldWidth: 'Ширина', fieldHeight: 'Высота', fieldDepth: 'Глубина',
-      fieldSlopeCoeff: 'Коэфф. откоса', fieldCount: 'Количество', fieldThickness: 'Толщина',
-      fieldOpeningArea: 'Площадь проёмов', fieldSlopeAngle: 'Угол наклона', fieldOverlapCoeff: 'Коэфф. нахлёста',
-      fieldPerimeter: 'Периметр', fieldLayers: 'Кол-во слоёв',
-      unitM: 'м', unitM2: 'м\u00b2', unitM3: 'м\u00b3', unitPcs: 'шт', unitDeg: '\u00b0',
-      resultLabel: 'Результат', formulaLabel: 'Формула',
-      labelLinkedItem: 'Привязать к позиции сметы', linkedItemHint: 'ID позиции сметы (необязательно)',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbCalc: 'Калькулятор объёмов',
+      typeEarthwork: 'Земляные работы',
+      typeConcrete: 'Бетонные работы',
+      typeMasonry: 'Каменная кладка',
+      typeRoofing: 'Кровля',
+      typeFinishing: 'Отделка',
+      fieldLength: 'Длина',
+      fieldWidth: 'Ширина',
+      fieldHeight: 'Высота',
+      fieldDepth: 'Глубина',
+      fieldSlopeCoeff: 'Коэфф. откоса',
+      fieldCount: 'Количество',
+      fieldThickness: 'Толщина',
+      fieldOpeningArea: 'Площадь проёмов',
+      fieldSlopeAngle: 'Угол наклона',
+      fieldOverlapCoeff: 'Коэфф. нахлёста',
+      fieldPerimeter: 'Периметр',
+      fieldLayers: 'Кол-во слоёв',
+      unitM: 'м',
+      unitM2: 'м²',
+      unitM3: 'м³',
+      unitPcs: 'шт',
+      unitDeg: '°',
+      resultLabel: 'Результат',
+      formulaLabel: 'Формула',
+      labelLinkedItem: 'Привязать к позиции сметы',
+      linkedItemHint: 'ID позиции сметы (необязательно)',
       linkedItemPlaceholder: 'Введите ID позиции...',
-      btnClear: 'Очистить', btnSave: 'Сохранить расчёт',
+      btnClear: 'Очистить',
+      btnSave: 'Сохранить расчёт',
       metricSaved: 'Сохранённых расчётов',
       savedTitle: 'Сохранённые расчёты',
-      colWorkType: 'Тип работ', colResult: 'Результат', colLinkedItem: 'Привязка',
-      emptyTitle: 'Нет сохранённых расчётов', emptyDescription: 'Выполните расчёт и сохраните результат',
+      colWorkType: 'Тип работ',
+      colResult: 'Результат',
+      colLinkedItem: 'Привязка',
+      emptyTitle: 'Нет сохранённых расчётов',
+      emptyDescription: 'Выполните расчёт и сохраните результат'
     },
     comparison: {
       title: 'Сравнение: План vs Факт',
       subtitle: 'Сравнение плановых и фактических затрат по смете',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbComparison: 'План vs Факт',
-      labelEstimate: 'Смета', selectEstimate: 'Выберите смету',
-      labelSection: 'Раздел', labelThreshold: 'Порог отклонения',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbComparison: 'План vs Факт',
+      labelEstimate: 'Смета',
+      selectEstimate: 'Выберите смету',
+      labelSection: 'Раздел',
+      labelThreshold: 'Порог отклонения',
       thresholdAll: 'Все',
-      metricPlan: 'План', metricFact: 'Факт', metricVariance: 'Отклонение', metricVariancePercent: '% отклонения',
-      chartTitle: 'Топ-10 позиций по отклонению', chartVariance: 'Отклонение',
-      colName: 'Наименование', colUnit: 'Ед.', colPlanQty: 'Кол-во план', colPlanTotal: 'Сумма план',
-      colFactQty: 'Кол-во факт', colFactTotal: 'Сумма факт', colVariance: 'Отклонение', colVariancePct: '% откл.',
-      noData: 'Нет данных для отображения', selectHint: 'Выберите смету для сравнения',
+      metricPlan: 'План',
+      metricFact: 'Факт',
+      metricVariance: 'Отклонение',
+      metricVariancePercent: '% отклонения',
+      chartTitle: 'Топ-10 позиций по отклонению',
+      chartVariance: 'Отклонение',
+      colName: 'Наименование',
+      colUnit: 'Ед.',
+      colPlanQty: 'Кол-во план',
+      colPlanTotal: 'Сумма план',
+      colFactQty: 'Кол-во факт',
+      colFactTotal: 'Сумма факт',
+      colVariance: 'Отклонение',
+      colVariancePct: '% откл.',
+      noData: 'Нет данных для отображения',
+      selectHint: 'Выберите смету для сравнения'
     },
     minstroy: {
       title: 'Индексы Минстроя',
       subtitle: 'Применение региональных ценовых индексов Минстроя',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbMinstroy: 'Индексы Минстроя',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbMinstroy: 'Индексы Минстроя',
       filterSection: 'Параметры индексов',
-      labelRegion: 'Регион', labelQuarter: 'Квартал', labelYear: 'Год', labelEstimate: 'Смета',
+      labelRegion: 'Регион',
+      labelQuarter: 'Квартал',
+      labelYear: 'Год',
+      labelEstimate: 'Смета',
       selectEstimate: 'Выберите смету',
-      regionMoscow: 'Москва', regionSpb: 'Санкт-Петербург', regionNovosibirsk: 'Новосибирск',
-      regionYekaterinburg: 'Екатеринбург', regionKazan: 'Казань', regionKrasnodar: 'Краснодар',
-      regionTyumen: 'Тюмень', regionVladivostok: 'Владивосток',
+      regionMoscow: 'Москва',
+      regionSpb: 'Санкт-Петербург',
+      regionNovosibirsk: 'Новосибирск',
+      regionYekaterinburg: 'Екатеринбург',
+      regionKazan: 'Казань',
+      regionKrasnodar: 'Краснодар',
+      regionTyumen: 'Тюмень',
+      regionVladivostok: 'Владивосток',
       quarterShort: 'кв.',
-      typeConstruction: 'Строительные работы', typeInstallation: 'Монтажные работы',
-      typeEquipment: 'Оборудование', typeOther: 'Прочие',
-      metricIndicesCount: 'Индексов', metricAvgIndex: 'Средний индекс',
-      metricRegion: 'Регион', metricPeriod: 'Период',
+      typeConstruction: 'Строительные работы',
+      typeInstallation: 'Монтажные работы',
+      typeEquipment: 'Оборудование',
+      typeOther: 'Прочие',
+      metricIndicesCount: 'Индексов',
+      metricAvgIndex: 'Средний индекс',
+      metricRegion: 'Регион',
+      metricPeriod: 'Период',
       indicesTitle: 'Таблица индексов',
-      colRegion: 'Регион', colPeriod: 'Период', colIndexType: 'Тип индекса', colValue: 'Значение',
+      colRegion: 'Регион',
+      colPeriod: 'Период',
+      colIndexType: 'Тип индекса',
+      colValue: 'Значение',
       btnApply: 'Применить к смете',
-      emptyTitle: 'Нет индексов', emptyDescription: 'Измените параметры поиска для получения индексов',
+      emptyTitle: 'Нет индексов',
+      emptyDescription: 'Измените параметры поиска для получения индексов',
       applyResultTitle: 'Результат применения индексов',
       applyResultDesc: 'Применено индексов: {count}',
-      colItemName: 'Наименование', colOldPrice: 'Старая цена', colNewPrice: 'Новая цена', colIndexApplied: 'Индекс',
+      colItemName: 'Наименование',
+      colOldPrice: 'Старая цена',
+      colNewPrice: 'Новая цена',
+      colIndexApplied: 'Индекс'
     },
     summary: {
       title: 'Сводный сметный расчёт',
       subtitle: 'Консолидация проектных смет в сводный отчёт',
-      breadcrumbHome: 'Главная', breadcrumbEstimates: 'Сметы', breadcrumbSummary: 'Сводный расчёт',
-      labelProject: 'Объект', selectProject: 'Выберите объект',
-      metricTotal: 'Итого', metricConstruction: 'Строит. работы', metricEquipment: 'Оборудование', metricOther: 'Прочие расходы',
-      directCosts: 'Прямые затраты', overheadCosts: 'Накладные расходы', profitLabel: 'Сметная прибыль',
+      breadcrumbHome: 'Главная',
+      breadcrumbEstimates: 'Сметы',
+      breadcrumbSummary: 'Сводный расчёт',
+      labelProject: 'Объект',
+      selectProject: 'Выберите объект',
+      metricTotal: 'Итого',
+      metricConstruction: 'Строит. работы',
+      metricEquipment: 'Оборудование',
+      metricOther: 'Прочие расходы',
+      directCosts: 'Прямые затраты',
+      overheadCosts: 'Накладные расходы',
+      profitLabel: 'Сметная прибыль',
       chaptersTitle: 'Главы сводного расчёта',
-      expandAll: 'Развернуть все', collapseAll: 'Свернуть все',
-      colChapterNum: '№', colName: 'Наименование', colEstimateNum: '№ сметы', colAmount: 'Сумма',
+      expandAll: 'Развернуть все',
+      collapseAll: 'Свернуть все',
+      colChapterNum: '№',
+      colName: 'Наименование',
+      colEstimateNum: '№ сметы',
+      colAmount: 'Сумма',
       grandTotalLabel: 'ИТОГО ПО СВОДНОМУ РАСЧЁТУ',
-      selectHint: 'Выберите объект для формирования сводного расчёта',
+      selectHint: 'Выберите объект для формирования сводного расчёта'
     },
+    form: {
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'toast Обновить Ошибка',
+      titleEdit: 'Заголовок Редактировать',
+      titleCreate: 'Заголовок Создать',
+      subtitleCreate: 'Подзаголовок Создать',
+      fieldName: 'Поле Название',
+      placeholderName: 'Введите название',
+      fieldProject: 'Поле Объект',
+      placeholderProject: 'placeholder Объект',
+      fieldSpecification: 'Поле specification',
+      placeholderSpecification: 'Placeholder Specification',
+      fieldContract: 'Поле Договор',
+      noContract: 'Нет Договор',
+      placeholderContract: 'placeholder Договор',
+      placeholderNotes: 'placeholder Примечания',
+      createButton: 'Создать button'
+    }
   },
-
-  // Issues Page (additional keys for IssueListPage / IssueDetailPage)
   issuesPage: {
     list: {
-      colAssignee: 'Ответственный', colDueDate: 'Срок',
-      deleteSuccess: 'Замечания удалены', deleteError: 'Ошибка при удалении замечаний',
-      confirmDeleteTitle: 'Удалить {count} замечани(е/я)?', confirmDeleteDescription: 'Операция необратима. Выбранные замечания будут удалены.',
-      confirmDeleteLabel: 'Удалить', confirmDeleteCancel: 'Отмена',
-      emptyTitle: 'Нет замечаний', emptyDescription: 'Система замечаний пуста',
-      title: 'Замечания и проблемы', subtitle: '{count} замечаний в системе',
-      breadcrumbHome: 'Главная', breadcrumbIssues: 'Замечания',
-      newIssue: 'Новое замечание', tabAll: 'Все', tabOpen: 'Открытые', tabInProgress: 'В работе',
-      tabResolved: 'Решённые', tabClosed: 'Закрытые', searchPlaceholder: 'Поиск по номеру, названию...',
+      colAssignee: 'Ответственный',
+      colDueDate: 'Срок',
+      deleteSuccess: 'Замечания удалены',
+      deleteError: 'Ошибка при удалении замечаний',
+      confirmDeleteTitle: 'Удалить {count} замечани(е/я)?',
+      confirmDeleteDescription: 'Операция необратима. Выбранные замечания будут удалены.',
+      confirmDeleteLabel: 'Удалить',
+      confirmDeleteCancel: 'Отмена',
+      emptyTitle: 'Нет замечаний',
+      emptyDescription: 'Система замечаний пуста',
+      title: 'Замечания и проблемы',
+      subtitle: '{count} замечаний в системе',
+      breadcrumbHome: 'Главная',
+      breadcrumbIssues: 'Замечания',
+      newIssue: 'Новое замечание',
+      tabAll: 'Все',
+      tabOpen: 'Открытые',
+      tabInProgress: 'В работе',
+      tabResolved: 'Решённые',
+      tabClosed: 'Закрытые',
+      searchPlaceholder: 'Поиск по номеру, названию...',
       bulkDelete: 'Удалить',
-      kanbanOpen: 'Открытые', kanbanInProgress: 'В работе', kanbanOnHold: 'Приостановлено',
-      kanbanResolved: 'Решено', kanbanClosed: 'Закрыто',
-      toastNewIssueHint: 'Создание замечания доступно в карточке PM / Issue',
+      kanbanOpen: 'Открытые',
+      kanbanInProgress: 'В работе',
+      kanbanOnHold: 'Приостановлено',
+      kanbanResolved: 'Решено',
+      kanbanClosed: 'Закрыто',
+      toastNewIssueHint: 'Создание замечания доступно в карточке PM / Issue'
     },
     detail: {
-      breadcrumbHome: 'Главная', breadcrumbIssues: 'Замечания', backToList: 'Назад к списку',
-      loading: 'Загрузка...', sectionDescription: 'Описание', noDescription: 'Описание отсутствует',
-      sectionResolution: 'Решение', sectionComments: 'Комментарии',
-      addComment: 'Добавить комментарий', commentPlaceholder: 'Введите комментарий...', sendButton: 'Отправить',
-      toastCommentAdded: 'Комментарий добавлен', you: 'Вы',
-      sectionInfo: 'Информация', labelStatus: 'Статус', labelType: 'Тип', labelPriority: 'Приоритет',
-      sectionDetails: 'Детали', labelAuthor: 'Автор', labelAssignee: 'Ответственный',
-      notAssigned: 'Не назначен', labelProject: 'Объект', labelDueDate: 'Срок',
-      notSet: 'Не установлен', labelCreated: 'Создано', labelLinkedDocs: 'Связанные документы',
-      sectionActions: 'Действия', changeStatus: 'Изменить статус',
+      breadcrumbHome: 'Главная',
+      breadcrumbIssues: 'Замечания',
+      backToList: 'Назад к списку',
+      loading: 'Загрузка...',
+      sectionDescription: 'Описание',
+      noDescription: 'Описание отсутствует',
+      sectionResolution: 'Решение',
+      sectionComments: 'Комментарии',
+      addComment: 'Добавить комментарий',
+      commentPlaceholder: 'Введите комментарий...',
+      sendButton: 'Отправить',
+      toastCommentAdded: 'Комментарий добавлен',
+      you: 'Вы',
+      sectionInfo: 'Информация',
+      labelStatus: 'Статус',
+      labelType: 'Тип',
+      labelPriority: 'Приоритет',
+      sectionDetails: 'Детали',
+      labelAuthor: 'Автор',
+      labelAssignee: 'Ответственный',
+      notAssigned: 'Не назначен',
+      labelProject: 'Объект',
+      labelDueDate: 'Срок',
+      notSet: 'Не установлен',
+      labelCreated: 'Создано',
+      labelLinkedDocs: 'Связанные документы',
+      sectionActions: 'Действия',
+      changeStatus: 'Изменить статус',
       toastStatusChanged: 'Статус замечания: {status}',
-      statusOpen: 'Открыт', statusInProgress: 'В работе', statusOnHold: 'Приостановлен',
-      statusResolved: 'Решён', statusClosed: 'Закрыт',
-    },
+      statusOpen: 'Открыт',
+      statusInProgress: 'В работе',
+      statusOnHold: 'Приостановлен',
+      statusResolved: 'Решён',
+      statusClosed: 'Закрыт'
+    }
   },
-
-  // API Management Module
   apiManagement: {
     keys: {
-      title: 'API-ключи', subtitle: '{count} ключей',
-      breadcrumbHome: 'Главная', breadcrumbApiManagement: 'API управление', breadcrumbApiKeys: 'API-ключи',
-      createKey: 'Создать ключ', tabAll: 'Все', tabActive: 'Активные', tabRevoked: 'Отозванные',
-      metricTotal: 'Всего ключей', metricActive: 'Активные', metricTotalRequests: 'Всего запросов',
-      metricAvgRateLimit: 'Ср. rate limit', perMinute: '/мин',
+      title: 'API-ключи',
+      subtitle: '{count} ключей',
+      breadcrumbHome: 'Главная',
+      breadcrumbApiManagement: 'API управление',
+      breadcrumbApiKeys: 'API-ключи',
+      createKey: 'Создать ключ',
+      tabAll: 'Все',
+      tabActive: 'Активные',
+      tabRevoked: 'Отозванные',
+      metricTotal: 'Всего ключей',
+      metricActive: 'Активные',
+      metricTotalRequests: 'Всего запросов',
+      metricAvgRateLimit: 'Ср. rate limit',
+      perMinute: '/мин',
       searchPlaceholder: 'Поиск по названию, ключу...',
-      colName: 'Название', colStatus: 'Статус', colPermissions: 'Разрешения', colRequests: 'Запросов',
-      colRateLimit: 'Rate limit', colLastUsed: 'Последнее использование', colExpires: 'Истекает', colCreatedBy: 'Создал',
-      notUsed: 'Не использовался', unlimited: 'Бессрочно', revokeButton: 'Отозвать',
-      statusActive: 'Активен', statusExpired: 'Истёк', statusRevoked: 'Отозван', statusSuspended: 'Приостановлен',
-      emptyTitle: 'Нет API-ключей', emptyDescription: 'Создайте первый API-ключ для интеграции',
+      colName: 'Название',
+      colStatus: 'Статус',
+      colPermissions: 'Разрешения',
+      colRequests: 'Запросов',
+      colRateLimit: 'Rate limit',
+      colLastUsed: 'Последнее использование',
+      colExpires: 'Истекает',
+      colCreatedBy: 'Создал',
+      notUsed: 'Не использовался',
+      unlimited: 'Бессрочно',
+      revokeButton: 'Отозвать',
+      statusActive: 'Активен',
+      statusExpired: 'Истёк',
+      statusRevoked: 'Отозван',
+      statusSuspended: 'Приостановлен',
+      emptyTitle: 'Нет API-ключей',
+      emptyDescription: 'Создайте первый API-ключ для интеграции'
     },
     webhooks: {
-      title: 'Webhooks', subtitle: '{count} вебхуков',
-      breadcrumbHome: 'Главная', breadcrumbApiManagement: 'API управление', breadcrumbWebhooks: 'Webhooks',
-      createWebhook: 'Создать webhook', tabAll: 'Все', tabActive: 'Активные', tabFailed: 'С ошибками', tabInactive: 'Неактивные',
-      metricTotal: 'Всего webhooks', metricActive: 'Активные', metricDeliveries: 'Всего доставок', metricSuccessRate: 'Успешность',
+      title: 'Webhooks',
+      subtitle: '{count} вебхуков',
+      breadcrumbHome: 'Главная',
+      breadcrumbApiManagement: 'API управление',
+      breadcrumbWebhooks: 'Webhooks',
+      createWebhook: 'Создать webhook',
+      tabAll: 'Все',
+      tabActive: 'Активные',
+      tabFailed: 'С ошибками',
+      tabInactive: 'Неактивные',
+      metricTotal: 'Всего webhooks',
+      metricActive: 'Активные',
+      metricDeliveries: 'Всего доставок',
+      metricSuccessRate: 'Успешность',
       searchPlaceholder: 'Поиск по названию, URL...',
-      colWebhook: 'Webhook', colStatus: 'Статус', colEvents: 'События', colSuccess: 'Успешно',
-      colErrors: 'Ошибки', colHttpCode: 'HTTP код', colLastDelivery: 'Последняя доставка', testButton: 'Тест',
-      statusActive: 'Активен', statusInactive: 'Неактивен', statusFailed: 'Ошибка',
-      emptyTitle: 'Нет webhooks', emptyDescription: 'Создайте первый webhook для получения уведомлений',
-    },
+      colWebhook: 'Webhook',
+      colStatus: 'Статус',
+      colEvents: 'События',
+      colSuccess: 'Успешно',
+      colErrors: 'Ошибки',
+      colHttpCode: 'HTTP код',
+      colLastDelivery: 'Последняя доставка',
+      testButton: 'Тест',
+      statusActive: 'Активен',
+      statusInactive: 'Неактивен',
+      statusFailed: 'Ошибка',
+      emptyTitle: 'Нет webhooks',
+      emptyDescription: 'Создайте первый webhook для получения уведомлений'
+    }
   },
-
-  // KEP Module
   kepModule: {
-    title: 'Запросы на подписание КЭП', subtitle: '{count} запросов в системе',
-    breadcrumbHome: 'Главная', breadcrumbKep: 'КЭП', breadcrumbSigningRequests: 'Запросы на подписание',
-    tabAll: 'Все', tabPending: 'Ожидающие', tabSigned: 'Подписанные', tabRejected: 'Отклонённые',
-    metricTotal: 'Всего запросов', metricPending: 'Ожидают подписания', metricSigned: 'Подписано',
-    metricRejectedExpired: 'Отклонено / Просрочено', trendPcs: '{count} шт.', trendNeedAttention: 'Требуют внимания',
+    title: 'Запросы на подписание КЭП',
+    subtitle: '{count} запросов в системе',
+    breadcrumbHome: 'Главная',
+    breadcrumbKep: 'КЭП',
+    breadcrumbSigningRequests: 'Запросы на подписание',
+    tabAll: 'Все',
+    tabPending: 'Ожидающие',
+    tabSigned: 'Подписанные',
+    tabRejected: 'Отклонённые',
+    metricTotal: 'Всего запросов',
+    metricPending: 'Ожидают подписания',
+    metricSigned: 'Подписано',
+    metricRejectedExpired: 'Отклонено / Просрочено',
+    trendPcs: '{count} шт.',
+    trendNeedAttention: 'Требуют внимания',
     searchPlaceholder: 'Поиск по номеру, документу...',
-    filterAllStatuses: 'Все статусы', filterPending: 'Ожидает подписания', filterSigned: 'Подписан',
-    filterRejected: 'Отклонён', filterExpired: 'Просрочен', filterCancelled: 'Отменён',
-    filterAllPriorities: 'Все приоритеты', priorityLow: 'Низкий', priorityMedium: 'Средний', priorityHigh: 'Высокий', priorityCritical: 'Критический',
-    colNumber: '\u2116', colDocument: 'Документ', colStatus: 'Статус', colPriority: 'Приоритет', colSigner: 'Подписант', colDueDate: 'Срок',
-    openButton: 'Открыть', signButton: 'Подписать', rejectButton: 'Отклонить',
-    statusPending: 'Ожидает подписания', statusSigned: 'Подписан', statusRejected: 'Отклонён', statusExpired: 'Просрочен', statusCancelled: 'Отменён',
-    emptyTitle: 'Нет запросов на подписание', emptyDescription: 'Запросы на подписание КЭП отсутствуют',
+    filterAllStatuses: 'Все статусы',
+    filterPending: 'Ожидает подписания',
+    filterSigned: 'Подписан',
+    filterRejected: 'Отклонён',
+    filterExpired: 'Просрочен',
+    filterCancelled: 'Отменён',
+    filterAllPriorities: 'Все приоритеты',
+    priorityLow: 'Низкий',
+    priorityMedium: 'Средний',
+    priorityHigh: 'Высокий',
+    priorityCritical: 'Критический',
+    colNumber: '№',
+    colDocument: 'Документ',
+    colStatus: 'Статус',
+    colPriority: 'Приоритет',
+    colSigner: 'Подписант',
+    colDueDate: 'Срок',
+    openButton: 'Открыть',
+    signButton: 'Подписать',
+    rejectButton: 'Отклонить',
+    statusPending: 'Ожидает подписания',
+    statusSigned: 'Подписан',
+    statusRejected: 'Отклонён',
+    statusExpired: 'Просрочен',
+    statusCancelled: 'Отменён',
+    emptyTitle: 'Нет запросов на подписание',
+    emptyDescription: 'Запросы на подписание КЭП отсутствуют'
   },
-
-  // ---------------------------------------------------------------------------
-  // Recruitment
-  // ---------------------------------------------------------------------------
   recruitment: {
     detail: {
       statusNew: 'Новый',
@@ -16620,7 +19624,7 @@ export const ru = {
       labelUpdated: 'Обновлено',
       sectionActions: 'Действия',
       downloadResume: 'Скачать резюме',
-      exportPdf: 'Экспорт в PDF',
+      exportPdf: 'Экспорт в PDF'
     },
     list: {
       title: 'Кандидаты',
@@ -16668,7 +19672,7 @@ export const ru = {
       priorityLow: 'Низкий',
       priorityMedium: 'Средний',
       priorityHigh: 'Высокий',
-      priorityUrgent: 'Срочный',
+      priorityUrgent: 'Срочный'
     },
     positions: {
       title: 'Вакансии',
@@ -16702,7 +19706,7 @@ export const ru = {
       statusOpen: 'Открыта',
       statusInProgress: 'В работе',
       statusFilled: 'Закрыта',
-      statusCancelled: 'Отменена',
+      statusCancelled: 'Отменена'
     },
     form: {
       positionEngineer: 'Инженер-строитель',
@@ -16711,13 +19715,28 @@ export const ru = {
       positionEstimator: 'Сметчик',
       positionPtoEngineer: 'Инженер ПТО',
       positionSupplyManager: 'Менеджер по снабжению',
-      positionAccountant: 'Бухгалтер',
+      positionAccountant: 'Бухгалтер'
     },
+    board: {
+      statusNew: 'Статус Новый',
+      statusScreening: 'Статус screening',
+      statusInterview: 'Статус interview',
+      statusOffer: 'Статус offer',
+      statusHired: 'Статус hired',
+      statusRejected: 'Отклонено',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      filters: 'Filters',
+      addApplicant: 'Add Applicant',
+      searchPlaceholder: 'Поиск...',
+      allStatuses: 'Все статусы',
+      reset: 'Сбросить',
+      noApplicants: 'Нет applicants',
+      dragHere: 'Drag Here'
+    },
+    breadcrumb: 'Навигация'
   },
-
-  // ---------------------------------------------------------------------------
-  // Portal
-  // ---------------------------------------------------------------------------
   portal: {
     messages: {
       title: 'Сообщения портала',
@@ -16752,7 +19771,7 @@ export const ru = {
       composeMessagePlaceholder: 'Текст сообщения...',
       composeCancel: 'Отмена',
       composeSend: 'Отправить',
-      messageSent: 'Сообщение отправлено',
+      messageSent: 'Сообщение отправлено'
     },
     dashboard: {
       title: 'Портал',
@@ -16775,7 +19794,7 @@ export const ru = {
       sectionQuickActions: 'Быстрые действия',
       actionSendMessage: 'Написать сообщение',
       actionViewDocuments: 'Просмотреть документы',
-      actionManageAccess: 'Управление доступом',
+      actionManageAccess: 'Управление доступом'
     },
     documents: {
       title: 'Документы портала',
@@ -16808,7 +19827,7 @@ export const ru = {
       categoryPermit: 'Разрешение',
       categoryReport: 'Отчёт',
       categoryPhoto: 'Фото',
-      categoryOther: 'Прочее',
+      categoryOther: 'Прочее'
     },
     projects: {
       title: 'Объекты портала',
@@ -16837,7 +19856,7 @@ export const ru = {
       statusPlanning: 'Планирование',
       statusOnHold: 'Приостановлен',
       statusCompleted: 'Завершён',
-      statusDraft: 'Черновик',
+      statusDraft: 'Черновик'
     },
     admin: {
       title: 'Управление порталом',
@@ -16880,7 +19899,7 @@ export const ru = {
       labelEmailField: 'Email',
       placeholderEmail: 'user@company.ru',
       labelOrganization: 'Организация',
-      placeholderOrganization: "ООО 'Компания'",
+      placeholderOrganization: 'ООО \'Компания\'',
       labelRole: 'Роль',
       labelAccessLevel: 'Уровень доступа',
       cancelBtn: 'Отмена',
@@ -16896,13 +19915,9 @@ export const ru = {
       accessView: 'Просмотр',
       accessComment: 'Комментирование',
       accessUpload: 'Загрузка',
-      accessFull: 'Полный',
-    },
+      accessFull: 'Полный'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Mobile Module
-  // ---------------------------------------------------------------------------
   mobileModule: {
     dashboard: {
       title: 'Мобильная панель',
@@ -16985,7 +20000,7 @@ export const ru = {
       dueDatePrefix: 'до {date}',
       demoTaskUpdate: 'Обновление задачи',
       recentReports: 'Последние отчёты',
-      noReportsYet: 'Отчётов пока нет',
+      noReportsYet: 'Отчётов пока нет'
     },
     reportDetail: {
       notFoundTitle: 'Отчёт не найден',
@@ -17044,7 +20059,7 @@ export const ru = {
       notFoundOrUnavailable: 'Отчёт не найден или недоступен.',
       workDescription: 'Описание работ',
       noDescription: 'Описание не заполнено',
-      photoDocumentation: 'Фотофиксация',
+      photoDocumentation: 'Фотофиксация'
     },
     reportNew: {
       title: 'Новый полевой отчёт',
@@ -17114,7 +20129,7 @@ export const ru = {
       toastQueuedForSync: 'Отчёт добавлен в очередь синхронизации',
       toastReportSubmitted: 'Полевой отчет отправлен',
       toastSubmittedPhotoCleanupFailed: 'Отчёт отправлен, но локальные фото не удалось очистить',
-      toastSubmitFailedQueued: 'Не удалось отправить. Отчёт помещен в очередь синхронизации',
+      toastSubmitFailedQueued: 'Не удалось отправить. Отчёт помещен в очередь синхронизации'
     },
     reports: {
       title: 'Полевые отчёты',
@@ -17165,7 +20180,7 @@ export const ru = {
       tabReview: 'На проверке',
       syncRequired: 'Требуется синхронизация',
       allSynced: 'Все синхронизированы',
-      localQueue: 'Локальная очередь: {total} отчёт(ов), {photos} фото.',
+      localQueue: 'Локальная очередь: {total} отчёт(ов), {photos} фото.'
     },
     photos: {
       title: 'Фото с площадки',
@@ -17201,13 +20216,9 @@ export const ru = {
       syncRequired: 'Требуется синхронизация',
       allUploaded: 'Все загружены',
       allStatuses: 'Все статусы',
-      localQueue: 'В локальной очереди: {photos} фото из {reports} отчёт(ов).',
-    },
+      localQueue: 'В локальной очереди: {photos} фото из {reports} отчёт(ов).'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Self-Employed
-  // ---------------------------------------------------------------------------
   selfEmployed: {
     registries: {
       title: 'Реестры выплат',
@@ -17229,7 +20240,7 @@ export const ru = {
       statusDraft: 'Черновик',
       statusInProgress: 'В работе',
       statusCompleted: 'Завершён',
-      statusApproved: 'Утверждён',
+      statusApproved: 'Утверждён'
     },
     payments: {
       title: 'Выплаты самозанятым',
@@ -17253,7 +20264,7 @@ export const ru = {
       statusPending: 'Ожидание',
       statusPaid: 'Оплачено',
       statusReceiptIssued: 'Чек выдан',
-      statusCancelled: 'Отменено',
+      statusCancelled: 'Отменено'
     },
     contractors: {
       title: 'Реестр самозанятых',
@@ -17286,13 +20297,9 @@ export const ru = {
       taxStatusRegistered: 'Зарегистрирован',
       taxStatusUnregistered: 'Не зарегистрирован',
       taxStatusSuspended: 'Приостановлен',
-      taxStatusRevoked: 'Аннулирован',
-    },
+      taxStatusRevoked: 'Аннулирован'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Portfolio module
-  // ---------------------------------------------------------------------------
   portfolio: {
     bidComparison: {
       title: 'Сравнение предложений',
@@ -17323,7 +20330,7 @@ export const ru = {
       colTimeline: 'Сроки',
       colTotal: 'Итого',
       colRecommendation: 'Рекомендация',
-      priceComparison: 'Сравнение цен предложений',
+      priceComparison: 'Сравнение цен предложений'
     },
     tenders: {
       title: 'Тендеры',
@@ -17334,7 +20341,7 @@ export const ru = {
       tabRejected: 'Отклонённые',
       totalTenders: 'Всего тендеров',
       totalVolume: 'Общий объём',
-      winRate: 'Win Rate',
+      winRate: 'Процент побед',
       underReview: 'На рассмотрении',
       tendersSubtitle: 'тендеров',
       searchPlaceholder: 'Поиск по номеру, объекту, клиенту...',
@@ -17353,7 +20360,7 @@ export const ru = {
       colScore: 'Оценка',
       colResponsible: 'Ответственный',
       colDeadline: 'Дедлайн',
-      colSubmitted: 'Подан',
+      colSubmitted: 'Подан'
     },
     opportunities: {
       title: 'Возможности (Pipeline)',
@@ -17383,7 +20390,7 @@ export const ru = {
       colProbability: 'Вероятность',
       colWeightedValue: 'Взвешенная стоимость',
       colOwner: 'Ответственный',
-      colExpectedClose: 'Ожид. закрытие',
+      colExpectedClose: 'Ожид. закрытие'
     },
     opportunityDetail: {
       moveToStage: 'Перевести в "{stage}"',
@@ -17407,7 +20414,7 @@ export const ru = {
       activityAdded: 'Активность добавлена',
       createBid: 'Создать тендерное предложение',
       exportPdf: 'Экспорт в PDF',
-      exportStarted: 'Экспорт в PDF запущен',
+      exportStarted: 'Экспорт в PDF запущен'
     },
     goNoGo: {
       title: 'Go/No-Go чек-лист',
@@ -17424,13 +20431,9 @@ export const ru = {
       saved: 'Чек-лист сохранён',
       saveError: 'Ошибка сохранения чек-листа',
       analogError: 'Ошибка аналоговой оценки',
-      analogCount: 'Найдено {count} аналогов',
-    },
+      analogCount: 'Найдено {count} аналогов'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Monte Carlo module
-  // ---------------------------------------------------------------------------
   monteCarlo: {
     title: 'Симуляции Монте-Карло',
     subtitle: '{count} симуляций',
@@ -17476,12 +20479,8 @@ export const ru = {
     colP85: 'P85 (дней)',
     colP95: 'P95 (дней)',
     deleteTitle: 'Удалить {count} симуляци(ю/й)?',
-    deleteDescription: 'Операция необратима. Выбранные симуляции будут удалены.',
+    deleteDescription: 'Операция необратима. Выбранные симуляции будут удалены.'
   },
-
-  // ---------------------------------------------------------------------------
-  // Revenue Recognition module
-  // ---------------------------------------------------------------------------
   revenueRecognition: {
     title: 'Признание выручки',
     dashboardSubtitle: 'Сводный обзор по стандартам МСФО 15 / РСБУ',
@@ -17557,12 +20556,8 @@ export const ru = {
     cumulativeCost: 'Затраты накопл.',
     periodRevenue: 'Выручка периода',
     cumulativeRevenue: 'Выручка накопл.',
-    periodProfit: 'Прибыль периода',
+    periodProfit: 'Прибыль периода'
   },
-
-  // ---------------------------------------------------------------------------
-  // AI Assistant
-  // ---------------------------------------------------------------------------
   ai: {
     assistant: {
       title: 'ИИ-ассистент',
@@ -17591,13 +20586,144 @@ export const ru = {
       mockSafety: '## Сводка по безопасности за неделю\n**Период:** 08.03.2025 - 15.03.2025\n\n### Статистика\n- Инцидентов: **2** (прошлая неделя: 1)\n- Проверок: **12** из 15 запланированных\n- Нарушений: **8** (устранено: 5)\n- Дней без травм: **23**\n\n### Инциденты\n1. Падение предмета с высоты (ЖК "Солнечный", 10.03) - без пострадавших\n2. Мелкая травма руки (ТЦ "Центральный", 12.03) - оказана первая помощь\n\n### Рекомендации\n- Провести внеплановый инструктаж по работе на высоте\n- Усилить контроль ограждений на объекте ЖК "Солнечный"\n- Обновить запас СИЗ на складе',
       mockOverdue: '## Просроченные задачи\n\nОбнаружено **14** просроченных задач по 3 объектам:\n\n### ЖК "Солнечный" (7 задач)\n- Монтаж опалубки перекрытия 4 этажа - просрочка 3 дня\n- Приёмка арматуры от поставщика - просрочка 5 дней\n- Оформление акта скрытых работ №12 - просрочка 2 дня\n- Испытание бетона кубиков серии №8 - просрочка 4 дня\n- ещё 3 задачи...\n\n### Мост через р. Вятка (4 задачи)\n- Водопонижение котлована - просрочка 7 дней\n- Геодезическая разбивка опоры №3 - просрочка 2 дня\n- ещё 2 задачи...\n\n### ТЦ "Центральный" (3 задачи)\n- Согласование изменений в объект - просрочка 10 дней\n- ещё 2 задачи...',
       mockSupply: '## Статус поставок материалов\n\n### Ожидаемые поставки (ближайшие 7 дней)\n| Материал | Поставщик | Объект | Дата | Статус |\n|----------|-----------|--------|------|--------|\n| Арматура A500C d16 | СтальТорг | ЖК Солнечный | 17.03 | В пути |\n| Бетон B25 | БетонСервис | ТЦ Центральный | 18.03 | Подтверждён |\n| Кирпич М150 | СтройКомплект | ЖК НГ | 19.03 | Подтверждён |\n| Щебень фр 5-20 | Промснаб | Мост | 20.03 | Ожидание |\n\n### Проблемные поставки\n- **Металлоконструкции** (ООО "МеталлСтрой") - задержка на 14 дней, новая дата: 28.03\n- **Утеплитель** (ООО "ТеплоДом") - частичная поставка, 60% от заказа\n\n### Склад - критически низкие остатки\n- Цемент М500: осталось на 3 дня работ\n- Электроды: осталось на 2 дня работ',
-      mockDefault: 'Спасибо за вопрос. Вот что я нашёл по вашему запросу:\n\n### Краткая сводка\nНа текущий момент в системе активно **4 объекта** с общим бюджетом **1.2 млрд ₽**.\n\n### Ключевые показатели\n- Средний прогресс по объектам: **47%**\n- Открытых задач: **156**\n- Активных договоров: **23**\n- Замечаний в работе: **34**\n\nЕсли вам нужна более детальная информация по конкретному аспекту, уточните вопрос.',
+      mockDefault: 'Спасибо за вопрос. Вот что я нашёл по вашему запросу:\n\n### Краткая сводка\nНа текущий момент в системе активно **4 объекта** с общим бюджетом **1.2 млрд ₽**.\n\n### Ключевые показатели\n- Средний прогресс по объектам: **47%**\n- Открытых задач: **156**\n- Активных договоров: **23**\n- Замечаний в работе: **34**\n\nЕсли вам нужна более детальная информация по конкретному аспекту, уточните вопрос.'
     },
+    photoAnalysis: {
+      dropZoneTitle: 'drop Зона Заголовок',
+      dropZoneDragActive: 'drop Зона drag Активный',
+      dropZoneDescription: 'drop Зона Описание',
+      confidence: 'Confidence',
+      suggestedAction: 'Suggested Action',
+      safetyScore: 'Безопасность score',
+      progressEstimate: 'Прогресс estimate',
+      findingsCount: 'findings Количество',
+      overallAssessment: 'Overall Assessment',
+      findingType: {
+        SAFETY_VIOLATION: 'S A F E T Y_ V I O L A T I O N',
+        DEFECT: 'D E F E C T'
+      },
+      analysisResults: 'Analysis Results',
+      noFindings: 'Нет findings',
+      actions: {
+        createDefect: 'Создать Дефект',
+        createIncident: 'Создать Инцидент',
+        addToDailyLog: 'add to Ежедневно Журнал'
+      },
+      history: {
+        noHistory: 'Нет История',
+        date: 'Дата',
+        photo: 'Фото',
+        findings: 'Findings',
+        status: 'Статус',
+        statusCompleted: 'Завершено',
+        title: 'Название'
+      },
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbAi: 'ИИ',
+      breadcrumbPhotoAnalysis: 'breadcrumb Фото analysis',
+      analyzing: 'Analyzing',
+      analyze: 'Analyze'
+    },
+    riskDashboard: {
+      riskLevel: {
+        low: 'Низкий',
+        medium: 'Средний',
+        high: 'Высокий',
+        critical: 'Критический'
+      },
+      riskTrend: {
+        title: 'Название',
+        description: 'Описание'
+      },
+      factors: {
+        noFactors: 'Нет factors',
+        name: 'Наименование',
+        category: 'Категория',
+        probability: 'Probability',
+        impact: 'Impact',
+        riskScore: 'Риск score',
+        mitigationStatus: 'mitigation Статус',
+        suggestedMitigation: 'Suggested Mitigation',
+        title: 'Название'
+      },
+      alerts: {
+        title: 'Название',
+        noAlerts: 'Нет alerts',
+        recommendedAction: 'Recommended Action'
+      },
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbAi: 'ИИ',
+      breadcrumbRiskDashboard: 'breadcrumb Риск Панель управления',
+      filters: {
+        project: 'Объект',
+        allProjects: 'Все projects',
+        timeRange: 'Time Range',
+        last7Days: 'Последние 7 дней',
+        last30Days: 'Последние 30 дней',
+        last90Days: 'Последние 90 дней'
+      },
+      overallRisk: 'overall Риск',
+      scheduleRisk: 'Расписание Риск',
+      costRisk: 'Стоимость Риск',
+      safetyRisk: 'Безопасность Риск',
+      predictedAt: 'Predicted At'
+    },
+    settings: {
+      provider: 'Провайдер',
+      model: 'Model',
+      modelPlaceholder: 'Model Placeholder',
+      apiUrl: 'Api Url',
+      apiUrlHint: 'Api Url Hint',
+      apiKey: 'Api Key',
+      apiKeyUnchanged: 'Api Key Unchanged',
+      temperature: 'Температура',
+      temperaturePrecise: 'Температура precise',
+      temperatureCreative: 'Температура creative',
+      maxTokens: 'Максимум tokens',
+      setAsDefault: 'Set As Default',
+      noConfigs: 'Нет configs',
+      default: 'Default',
+      temp: 'Temp',
+      tokens: 'Tokens',
+      active: 'Активный',
+      inactive: 'Inactive',
+      usageLast7d: 'Последние 7 дней',
+      usageLast30d: 'Последние 30 дней',
+      usageAllTime: 'Использование Все time',
+      usageColDate: 'Использование col Дата',
+      usageColFeature: 'Использование col feature',
+      usageColTokens: 'Использование col tokens',
+      usageColCost: 'Использование col Стоимость',
+      usageColDuration: 'Использование col Длительность',
+      usageColStatus: 'Использование col Статус',
+      usageSuccess: 'Использование Успешно',
+      usageFailed: 'Использование failed',
+      usageTitle: 'Использование Заголовок',
+      metricTotalRequests: 'metric Всего requests',
+      metricTotalTokens: 'metric Всего tokens',
+      metricEstimatedCost: 'metric estimated Стоимость',
+      metricAvgResponseTime: 'metric avg Ответ time',
+      usageEmpty: 'Использование Пусто',
+      usageEmptyDesc: 'Использование Пусто desc',
+      saveSuccess: 'Успешно сохранено',
+      saveError: 'Ошибка сохранения',
+      deleteSuccess: 'Успешно удалено',
+      deleteError: 'Ошибка удаления',
+      deleteConfirm: 'Вы уверены, что хотите удалить?',
+      tabConfig: 'Tab Config',
+      tabUsage: 'tab Использование',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumbHome: 'Главная',
+      breadcrumbSettings: 'Настройки',
+      breadcrumbAi: 'ИИ',
+      addConfig: 'Add Config',
+      editConfig: 'Редактировать config',
+      newConfig: 'Новый config'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // KEP Certificates (KepCertificateListPage)
-  // ---------------------------------------------------------------------------
   kep: {
     certificates: {
       title: 'Сертификаты КЭП',
@@ -17644,7 +20770,7 @@ export const ru = {
       deleteTitle: 'Удалить сертификат',
       deleteDescription: 'Вы уверены, что хотите удалить этот сертификат? Это действие необратимо.',
       deleteSuccess: 'Сертификат удалён',
-      deleteError: 'Ошибка при удалении сертификата',
+      deleteError: 'Ошибка при удалении сертификата'
     },
     certDetail: {
       title: 'Сертификат',
@@ -17684,7 +20810,7 @@ export const ru = {
       revokeSuccess: 'Сертификат успешно отозван',
       deleteTitle: 'Удалить сертификат',
       deleteDescription: 'Вы уверены, что хотите удалить этот сертификат? Это действие необратимо.',
-      deleteSuccess: 'Сертификат удалён',
+      deleteSuccess: 'Сертификат удалён'
     },
     mchd: {
       title: 'Машиночитаемые доверенности (МЧД)',
@@ -17724,7 +20850,7 @@ export const ru = {
       fieldValidTo: 'Действует до',
       fieldScope: 'Полномочия',
       scopePlaceholder: 'Описание полномочий представителя...',
-      fieldNotes: 'Примечания',
+      fieldNotes: 'Примечания'
     },
     signing: {
       title: 'Подписание документов КЭП',
@@ -17801,7 +20927,7 @@ export const ru = {
       batchSignSuccess: 'Документы успешно подписаны',
       batchSignError: 'Ошибка при пакетном подписании',
       emptyTitle: 'Нет запросов на подписание',
-      emptyDescription: 'Создайте новый запрос для подписания документа КЭП',
+      emptyDescription: 'Создайте новый запрос для подписания документа КЭП'
     },
     verification: {
       title: 'Проверка электронной подписи',
@@ -17827,7 +20953,7 @@ export const ru = {
       detailValidity: 'Валидность',
       signatureValid: 'Действительна',
       signatureInvalid: 'Недействительна',
-      verifyAnother: 'Проверить другую подпись',
+      verifyAnother: 'Проверить другую подпись'
     },
     widget: {
       title: 'Электронная подпись',
@@ -17843,15 +20969,10 @@ export const ru = {
       lastSignedBy: 'Последний подписант',
       noSignatures: 'Документ ещё не подписан электронной подписью.',
       statusValid: 'Действительна',
-      statusInvalid: 'Недействительна',
-    },
+      statusInvalid: 'Недействительна'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // CRM Module
-  // ---------------------------------------------------------------------------
   crm: {
-    // CrmLeadListPage
     leadList: {
       title: 'Лиды CRM',
       leadsCount: 'лидов',
@@ -17880,16 +21001,14 @@ export const ru = {
       toastDeleteError: 'Ошибка при удалении лида',
       confirmDeleteTitle: 'Удалить лид?',
       confirmDeleteDescription: 'Операция необратима. Лид будет удалён.',
-      confirmDeleteConfirm: 'Удалить',
+      confirmDeleteConfirm: 'Удалить'
     },
-
-    // CrmDashboardPage
     dashboard: {
-      title: 'CRM - Dashboard',
+      title: 'crm Панель управления',
       subtitle: 'Обзор продаж и воронки',
       breadcrumbHome: 'Главная',
       breadcrumbCrm: 'CRM',
-      breadcrumbDashboard: 'Dashboard',
+      breadcrumbDashboard: 'Панель управления',
       newLead: 'Новый лид',
       metricPipeline: 'Pipeline',
       metricWonRevenue: 'Выигранная выручка',
@@ -17908,10 +21027,8 @@ export const ru = {
       teamVolume: 'Объём',
       quickActions: 'Быстрые действия',
       quickPipeline: 'Pipeline (воронка)',
-      quickAllLeadsList: 'Все лиды (список)',
+      quickAllLeadsList: 'Все лиды (список)'
     },
-
-    // CrmLeadDetailPage
     detail: {
       breadcrumbHome: 'Главная',
       breadcrumbCrm: 'CRM',
@@ -17959,12 +21076,18 @@ export const ru = {
       actions: 'Действия',
       addActivity: 'Добавить активность',
       exportPdf: 'Экспорт в PDF',
-    },
+      convertSuccess: 'convert Успешно',
+      convertError: 'convert Ошибка',
+      projectLinked: 'Объект linked',
+      goToProject: 'go to Объект',
+      convertToProject: 'convert to Объект',
+      convertModalTitle: 'convert modal Заголовок',
+      convertModalSubmit: 'convert modal Отправить',
+      convertToProjectDesc: 'convert to Объект desc',
+      convertModalName: 'convert modal Название',
+      convertModalCode: 'convert modal Код'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Calendar Module
-  // ---------------------------------------------------------------------------
   calendar: {
     title: 'Календарь',
     subtitle: 'Планирование событий и контроль сроков',
@@ -18009,12 +21132,8 @@ export const ru = {
     colDate: 'Дата',
     colEvent: 'Событие',
     colType: 'Тип',
-    colTime: 'Время',
+    colTime: 'Время'
   },
-
-  // ---------------------------------------------------------------------------
-  // DailyLogPage (detail view)
-  // ---------------------------------------------------------------------------
   dailyLogPage: {
     title: 'Журнал работ (КС-6)',
     loading: 'Загрузка...',
@@ -18062,12 +21181,8 @@ export const ru = {
     projectBridge: 'Мост через р. Вятка',
     projectCentral: 'ТЦ "Центральный"',
     personsAbbrev: 'чел.',
-    unitsAbbrev: 'ед.',
+    unitsAbbrev: 'ед.'
   },
-
-  // ---------------------------------------------------------------------------
-  // DailyLogBoardPage
-  // ---------------------------------------------------------------------------
   dailyLogBoard: {
     title: 'Журнал работ - Доска',
     subtitle: '{count} записей',
@@ -18085,12 +21200,8 @@ export const ru = {
     noEntries: 'Нет записей',
     dragHint: 'Перетащите карточку сюда',
     personsAbbrev: 'чел.',
-    unitsAbbrev: 'ед.',
+    unitsAbbrev: 'ед.'
   },
-
-  // ---------------------------------------------------------------------------
-  // ISUP (ИСУП Минстроя)
-  // ---------------------------------------------------------------------------
   isup: {
     wizard: {
       title: 'ИСУП Минстроя',
@@ -18153,7 +21264,7 @@ export const ru = {
       creating: 'Создание конфигурации...',
       configCreated: 'Конфигурация ИСУП создана',
       createError: 'Ошибка создания конфигурации',
-      finish: 'Готово',
+      finish: 'Готово'
     },
     transmissions: {
       title: 'Передача данных ИСУП',
@@ -18190,7 +21301,7 @@ export const ru = {
       retrySuccess: 'Передача поставлена в очередь повторно',
       retryError: 'Ошибка повторной отправки',
       emptyTitle: 'Нет передач данных',
-      emptyDescription: 'Данные пока не передавались в ИСУП',
+      emptyDescription: 'Данные пока не передавались в ИСУП'
     },
     mappings: {
       title: 'Привязки объектов ИСУП',
@@ -18228,13 +21339,9 @@ export const ru = {
       noConfigTitle: 'Нет активной конфигурации ИСУП',
       noConfigDescription: 'Сначала создайте и активируйте конфигурацию ИСУП в разделе настроек',
       emptyTitle: 'Нет привязок объектов',
-      emptyDescription: 'Добавьте привязки для синхронизации объектов с ИСУП',
-    },
+      emptyDescription: 'Добавьте привязки для синхронизации объектов с ИСУП'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Offline Mode
-  // ---------------------------------------------------------------------------
   offline: {
     indicatorOffline: 'Нет подключения к сети',
     indicatorPending: '{count} изменений ожидают синхронизации',
@@ -18289,13 +21396,9 @@ export const ru = {
       emptyDescription: 'Нет запросов, ожидающих отправки',
       justNow: 'только что',
       minutesAgo: '{count} мин. назад',
-      hoursAgo: '{count} ч. назад',
-    },
+      hoursAgo: '{count} ч. назад'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // PWA
-  // ---------------------------------------------------------------------------
   pwa: {
     installTitle: 'Установить Привод',
     installDescription: 'Установите приложение для быстрого доступа и работы офлайн',
@@ -18305,12 +21408,8 @@ export const ru = {
     notificationEnable: 'Включить уведомления',
     notificationDisable: 'Выключить уведомления',
     notificationGranted: 'Уведомления включены',
-    notificationDenied: 'Уведомления заблокированы в настройках браузера',
+    notificationDenied: 'Уведомления заблокированы в настройках браузера'
   },
-
-  // ---------------------------------------------------------------------------
-  // Subscription
-  // ---------------------------------------------------------------------------
   subscription: {
     pricing: {
       title: 'Тарифные планы',
@@ -18329,7 +21428,7 @@ export const ru = {
       startFree: 'Начать бесплатно',
       contactSales: 'Связаться с нами',
       featureComparison: 'Сравнение функций',
-      feature: 'Функция',
+      feature: 'Функция'
     },
     dashboard: {
       title: 'Подписка',
@@ -18342,7 +21441,7 @@ export const ru = {
       availablePlans: 'Доступные планы',
       planChanged: 'Тарифный план успешно изменён',
       planChangeError: 'Не удалось изменить тарифный план',
-      contactSalesHint: 'Для перехода на Enterprise свяжитесь с отделом продаж',
+      contactSalesHint: 'Для перехода на Enterprise свяжитесь с отделом продаж'
     },
     featureGate: {
       title: 'Функция недоступна',
@@ -18352,7 +21451,7 @@ export const ru = {
       requiredPlan: 'Требуется план: {plan}',
       upgrade: 'Перейти на другой план',
       comparePlans: 'Сравнить планы',
-      defaultFeature: 'Данная функция',
+      defaultFeature: 'Данная функция'
     },
     billing: {
       title: 'История платежей',
@@ -18362,12 +21461,12 @@ export const ru = {
       amount: 'Сумма',
       status: 'Статус',
       page: 'Страница',
-      empty: 'Записей о платежах пока нет',
+      empty: 'Записей о платежах пока нет'
     },
     quotas: {
       users: 'Пользователи',
       projects: 'Объекты',
-      storage: 'Хранилище',
+      storage: 'Хранилище'
     },
     features: {
       projects: 'Объекты',
@@ -18391,20 +21490,13 @@ export const ru = {
       sla_support: 'SLA-поддержка',
       dedicated_manager: 'Персональный менеджер',
       sso: 'Единый вход (SSO)',
-      audit_log: 'Журнал аудита',
-    },
+      audit_log: 'Журнал аудита'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // 1C Integration Module
-  // ---------------------------------------------------------------------------
   integration1c: {
-    // Dashboard
     dashboardTitle: 'Интеграция с 1С',
     dashboardSubtitle: 'Управление обменом данными с 1С:Бухгалтерия и 1С:ЗУП',
     breadcrumbSettings: 'Настройки',
-
-    // Connection
     connectionActive: 'Подключение установлено',
     connectionInactive: 'Подключение отсутствует',
     noConnectionInfo: 'Нет данных о подключении',
@@ -18414,8 +21506,6 @@ export const ru = {
     lastCheck: 'Последняя проверка',
     connected: 'Подключено',
     disconnected: 'Отключено',
-
-    // Metrics
     metricConnectionStatus: 'Статус подключения',
     metricTodaySyncs: 'Синхронизаций сегодня',
     metricPendingItems: 'Ожидающие элементы',
@@ -18433,8 +21523,6 @@ export const ru = {
     metricSynced: 'Синхронизировано',
     metricConflicts: 'Конфликтов',
     metricLastSync: 'Последняя синхронизация',
-
-    // Quick links
     quickLinks: 'Быстрый доступ',
     linkKsExport: 'Экспорт КС-2/КС-3',
     linkKsExportDesc: 'Экспорт актов КС-2 и справок КС-3 в 1С:Бухгалтерия',
@@ -18444,14 +21532,10 @@ export const ru = {
     linkBankImportDesc: 'Загрузка банковской выписки из 1С',
     linkSync: 'Синхронизация',
     linkSyncDesc: 'Синхронизация контрагентов и номенклатуры',
-
-    // Recent activity
     recentActivity: 'Последние операции',
     activityImport: 'Импорт',
     activityExport: 'Экспорт',
     activitySync: 'Синхронизация',
-
-    // KS export page
     ksExportTitle: 'Экспорт КС-2 / КС-3',
     ksExportSubtitle: 'Выгрузка актов и справок в формат 1С:Бухгалтерия',
     tabKs2: 'КС-2 Акты',
@@ -18464,14 +21548,10 @@ export const ru = {
     exportBtn: 'Экспортировать',
     exportSuccess: 'Экспорт выполнен успешно',
     exportError: 'Ошибка экспорта',
-
-    // Payment export page
     paymentExportTitle: 'Экспорт платежей',
     paymentExportSubtitle: 'Выгрузка платежных поручений в формат XML (ДиректБанк)',
     tabPayments: 'Платежи',
     exportToDirectBank: 'Экспорт в ДиректБанк',
-
-    // Bank import page
     bankImportTitle: 'Импорт банковской выписки',
     bankImportSubtitle: 'Загрузка выписки из 1С для сверки платежей',
     uploadBankStatement: 'Загрузить выписку',
@@ -18487,8 +21567,6 @@ export const ru = {
     unmatched: 'Не сопоставлено',
     errorsFound: 'Обнаружено ошибок: {count}',
     importHistoryTitle: 'История импорта',
-
-    // Sync page
     syncTitle: 'Синхронизация справочников',
     syncSubtitle: 'Обмен контрагентами и номенклатурой между Привод и 1С',
     tabContractors: 'Контрагенты',
@@ -18498,8 +21576,6 @@ export const ru = {
     syncCompleteMsg: 'Синхронизация успешно завершена',
     syncError: 'Ошибка синхронизации',
     conflictsTitle: 'Конфликты',
-
-    // Table columns
     colNumber: 'Номер',
     colDate: 'Дата',
     colContractor: 'Контрагент',
@@ -18523,13 +21599,9 @@ export const ru = {
     colDetectedAt: 'Обнаружено',
     colDescription: 'Описание',
     colTimestamp: 'Время',
-
-    // Statuses
     statusSuccess: 'Успешно',
     statusFailed: 'Ошибка',
     statusPartial: 'Частично',
-
-    // Empty states
     emptyKs2Title: 'Нет актов КС-2',
     emptyKs2Description: 'Акты КС-2 для экспорта не найдены',
     emptyKs3Title: 'Нет справок КС-3',
@@ -18543,8 +21615,475 @@ export const ru = {
     emptyConflictsTitle: 'Нет конфликтов',
     emptyConflictsDescription: 'Все данные синхронизированы без расхождений',
     emptyActivityTitle: 'Нет операций',
-    emptyActivityDescription: 'Операции обмена с 1С ещё не выполнялись',
+    emptyActivityDescription: 'Операции обмена с 1С ещё не выполнялись'
   },
+  T: 'T',
+  executiveKpi: {
+    tabOverview: 'tab Обзор',
+    tabProjects: 'Tab Projects',
+    tabCashflow: 'Tab Cashflow',
+    tabSafety: 'tab Безопасность',
+    colProject: 'Объект',
+    colHealth: 'Col Health',
+    colContract: 'Договор',
+    colBudget: 'col Бюджет',
+    colSpent: 'Col Spent',
+    title: 'Название',
+    subtitle: 'Подзаголовок',
+    metricContractValue: 'metric Договор Значение',
+    metricEbit: 'Metric Ebit',
+    metricProjects: 'Metric Projects',
+    totalProjects: 'Всего projects',
+    metricNetCash: 'Metric Net Cash',
+    metricTrir: 'Metric Trir',
+    metricDaysSafe: 'Metric Days Safe',
+    metricWorkerUtil: 'Metric Worker Util',
+    metricEquipUtil: 'Metric Equip Util',
+    projectHealth: 'Объект health',
+    healthGreen: 'Health Green',
+    healthYellow: 'Health Yellow',
+    healthRed: 'Health Red',
+    metricAR: 'Metric A R',
+    metricAP: 'Metric A P',
+    metricInvoiced: 'Metric Invoiced',
+    arAging: 'Ar Aging',
+    days: 'Days',
+    metricIncidents: 'Metric Incidents',
+    severityBreakdown: 'Серьёзность breakdown'
+  },
+  a: 'A',
+  three: 'Three',
+  budgetId: 'Бюджет id',
+  projectId: 'Объект id',
+  defects: {
+    dashboard: {
+      colName: 'Наименование',
+      colTotal: 'Итого',
+      colProgress: 'col Прогресс',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      openDefects: 'Открыть defects',
+      overdueDefects: 'Overdue Defects',
+      avgResolution: 'Avg Resolution',
+      bySeverity: 'by Серьёзность',
+      severityBreakdown: 'Серьёзность breakdown',
+      byContractor: 'By Contractor',
+      byProject: 'by Объект'
+    },
+    statusOpen: 'Статус Открыть',
+    statusInProgress: 'Статус in Прогресс',
+    statusFixed: 'Статус fixed',
+    statusVerified: 'Статус verified',
+    slaHours: 'sla Часов',
+    breadcrumb: 'Навигация',
+    severityLow: 'Серьёзность Низкий',
+    severityMedium: 'Серьёзность Средний',
+    severityHigh: 'Серьёзность Высокий',
+    severityCritical: 'Серьёзность Критический',
+    statusClosed: 'Статус closed',
+    statusRejected: 'Отклонено',
+    overdue: 'Overdue',
+    dueToday: 'Due Today',
+    dueSoon: 'Due Soon',
+    toastStatusChanged: 'toast Статус changed',
+    toastTransitionError: 'toast transition Ошибка',
+    toastDeleted: 'Toast Deleted',
+    toastDeleteError: 'toast Удалить Ошибка',
+    promptFixDescription: 'prompt fix Описание',
+    confirmDeleteTitle: 'Подтвердить Удалить Заголовок',
+    confirmDeleteDescription: 'Подтвердить Удалить Описание',
+    confirmDeleteBtn: 'Подтвердить Удалить btn',
+    reinspectionCount: 'reinspection Количество',
+    fieldLocation: 'Поле Локация',
+    fieldDeadline: 'Поле deadline',
+    fieldFixedAt: 'Поле fixed at',
+    fieldFixDescription: 'Поле fix Описание',
+    slaTimer: 'Sla Timer',
+    slaElapsed: 'Sla Elapsed',
+    slaOverdue: 'Sla Overdue',
+    slaRemaining: 'Sla Remaining',
+    slaFromAssignment: 'sla from Назначение',
+    sectionPhotos: 'Раздел photos',
+    photoAlt: 'Фото alt',
+    sectionActions: 'Раздел actions',
+    sectionDetails: 'Раздел Подробности',
+    fieldCode: 'Поле Код',
+    fieldSeverity: 'Поле Серьёзность',
+    fieldStatus: 'Поле Статус',
+    fieldContractor: 'Поле contractor',
+    fieldReinspections: 'Поле reinspections',
+    fieldCreated: 'Поле created',
+    fieldCreatedBy: 'Поле created by',
+    fieldPhotos: 'Поле photos',
+    form: {
+      sla24h: 'Sla24h',
+      sla48h: 'Sla48h',
+      sla72h: 'Sla72h',
+      sla120h: 'Sla120h',
+      sla168h: 'Sla168h',
+      sla336h: 'Sla336h',
+      validationProject: 'validation Объект',
+      validationTitle: 'validation Заголовок',
+      createSuccess: 'Успешно создано',
+      createError: 'Ошибка создания',
+      updateSuccess: 'Успешно обновлено',
+      updateError: 'Обновить Ошибка',
+      editTitle: 'Редактировать Заголовок',
+      createTitle: 'Создать Заголовок',
+      createSubtitle: 'Создать Подзаголовок',
+      labelTitle: 'Метка Заголовок',
+      placeholderTitle: 'placeholder Заголовок',
+      labelProject: 'Объект',
+      placeholderProject: 'placeholder Объект',
+      labelSeverity: 'Метка Серьёзность',
+      labelContractor: 'Метка contractor',
+      placeholderContractor: 'Placeholder Contractor',
+      labelAssignee: 'Метка assignee',
+      placeholderAssignee: 'Placeholder Assignee',
+      labelDeadline: 'Метка deadline',
+      labelSla: 'Метка sla',
+      labelLocation: 'Метка Локация',
+      placeholderLocation: 'placeholder Локация',
+      placeholderDescription: 'placeholder Описание',
+      createButton: 'Создать button'
+    },
+    colCode: 'Код',
+    colTitle: 'col Заголовок',
+    colSeverity: 'col Серьёзность',
+    colStatus: 'Статус',
+    colDeadline: 'Col Deadline',
+    colPhotos: 'Col Photos',
+    colCreated: 'Создано',
+    title: 'Название',
+    subtitle: 'Подзаголовок',
+    btnDashboard: 'btn Панель управления',
+    btnNew: 'btn Новый',
+    tabAll: 'Все',
+    tabOpen: 'tab Открыть',
+    tabInProgress: 'tab in Прогресс',
+    tabFixed: 'Tab Fixed',
+    searchPlaceholder: 'Поиск...',
+    filterAllSeverities: 'Фильтр Все severities',
+    bulkDelete: 'Массовая операция Удалить',
+    emptyTitle: 'Нет данных',
+    emptyDescription: 'Данные не найдены'
+  },
+  specificationId: 'Specification Id',
+  ocrEstimate: {
+    taskCreated: 'Задача created',
+    taskCreateError: 'Задача Создать Ошибка',
+    processSuccess: 'process Успешно',
+    processError: 'process Ошибка',
+    acceptSuccess: 'accept Успешно',
+    acceptError: 'accept Ошибка',
+    rejectSuccess: 'Отклонить Успешно',
+    rejectError: 'Отклонить Ошибка',
+    uploadFile: 'Загрузить Файл',
+    processEstimate: 'Process Estimate',
+    acceptResults: 'Accept Results',
+    rejectResult: 'Отклонить result',
+    colCode: 'Код',
+    colName: 'Наименование',
+    colUnit: 'Ед.изм.',
+    colQty: 'Col Qty',
+    colUnitPrice: 'col Единица Цена',
+    colTotal: 'Итого',
+    colConfidence: 'Col Confidence',
+    colStatus: 'Статус',
+    statusAccepted: 'Статус accepted',
+    statusPending: 'Ожидание',
+    reject: 'Отклонить',
+    title: 'Название',
+    subtitle: 'Подзаголовок',
+    breadcrumbHome: 'Главная',
+    breadcrumbEstimates: 'Breadcrumb Estimates',
+    breadcrumbOcr: 'Breadcrumb Ocr',
+    dropzoneTitle: 'dropzone Заголовок',
+    dropzoneHint: 'Dropzone Hint',
+    selectFile: 'Выберите Файл',
+    tasksTitle: 'tasks Заголовок',
+    processing: 'Processing',
+    startProcessing: 'Начать processing',
+    acceptSelected: 'Accept Selected',
+    statsInfo: 'stats Информация',
+    processingMessage: 'processing Сообщение',
+    emptyTitle: 'Нет данных',
+    emptyDescription: 'Данные не найдены',
+    noTasksTitle: 'Нет tasks Заголовок',
+    noTasksDescription: 'Нет tasks Описание'
+  },
+  accepted: 'Accepted',
+  pass: 'Pass',
+  certification: {
+    statusValid: 'Действителен',
+    statusExpiring: 'Истекает',
+    statusExpired: 'Просрочено',
+    typeSafetyGeneral: 'Тип Безопасность general',
+    typeSafetyHeights: 'Тип Безопасность heights',
+    typeSafetyElectrical: 'Тип Безопасность electrical',
+    typeSafetyFire: 'Тип Безопасность fire',
+    typeMedical: 'Тип medical',
+    typeQualification: 'Тип qualification',
+    typeDrivingLicense: 'Тип driving Лицензия',
+    typeWelding: 'Тип welding',
+    typeOther: 'Тип other',
+    filterAllTypes: 'Фильтр Все types',
+    colEmployee: 'Сотрудник',
+    colCertificate: 'Сертификат',
+    colNumber: 'Col Number',
+    colIssued: 'Col Issued',
+    colExpiry: 'Срок действия',
+    daysOverdue: 'Days Overdue',
+    daysLeft: 'Days Left',
+    colStatus: 'Статус',
+    colIssuedBy: 'Col Issued By',
+    title: 'Название',
+    subtitle: 'Подзаголовок',
+    breadcrumbHR: 'Breadcrumb H R',
+    breadcrumbMatrix: 'Breadcrumb Matrix',
+    tabAll: 'Все',
+    tabExpiring: 'tab Истекает',
+    tabExpired: 'tab Просрочено',
+    metricTotal: 'Итого',
+    metricValid: 'Действующих',
+    metricExpiring: 'Истекающих',
+    requireAttention: 'Require Attention',
+    metricExpired: 'Просроченных',
+    critical: 'Критический',
+    complianceTitle: 'compliance Заголовок',
+    searchPlaceholder: 'Поиск...',
+    emptyTitle: 'Нет данных',
+    emptyDescription: 'Данные не найдены'
+  },
+  '': {
+    '': ''
+  },
+  marketplace: {
+    noScreenshots: 'Нет screenshots',
+    installSuccess: 'Установить Успешно',
+    installError: 'Установить Ошибка',
+    uninstallSuccess: 'Удалить Успешно',
+    uninstallError: 'Удалить Ошибка',
+    breadcrumbHome: 'Главная',
+    title: 'Название',
+    developer: 'Developer',
+    reviews: 'Reviews',
+    installs: 'Installs',
+    version: 'Версия',
+    installedVersion: 'installed Версия',
+    installedAt: 'Installed At',
+    installing: 'Installing',
+    install: 'Установить',
+    update: 'Обновить',
+    configure: 'Configure',
+    uninstall: 'Удалить',
+    permissions: 'Permissions',
+    tags: 'Tags',
+    noReviews: 'Нет reviews',
+    noChangelog: 'Нет Журнал изменений',
+    confirmUninstallTitle: 'Подтвердить Удалить Заголовок',
+    confirmUninstallDescription: 'Подтвердить Удалить Описание',
+    checkUpdates: 'Check Updates',
+    installedTitle: 'installed Заголовок',
+    installedSubtitle: 'installed Подзаголовок',
+    installed: 'Installed',
+    catalog: 'Catalog',
+    noInstalledPlugins: 'Нет installed plugins',
+    noInstalledDescription: 'Нет installed Описание',
+    browseMarketplace: 'Обзор marketplace',
+    statusUpdateAvailable: 'Статус Обновить available',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    statusInstalled: 'Статус installed',
+    statusDeprecated: 'Статус deprecated',
+    subtitle: 'Подзаголовок',
+    search: 'Поиск',
+    noPluginsFound: 'Нет plugins found',
+    noPluginsDescription: 'Нет plugins Описание',
+    configSaved: 'Config Saved',
+    configError: 'config Ошибка',
+    pluginConfiguration: 'plugin Конфигурация',
+    saveConfig: 'Сохранить config',
+    pluginEnabled: 'Plugin Enabled'
+  },
+  pricing: {
+    calculator: {
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      tabCalculator: 'Tab Calculator',
+      tabIndices: 'Tab Indices',
+      selectRate: 'Выберите rate',
+      searchRatePlaceholder: 'Поиск rate placeholder',
+      basePriceLabel: 'base Цена Метка',
+      changeRate: 'Change Rate',
+      parameters: 'Parameters',
+      fieldQuantity: 'Поле Количество',
+      fieldRegion: 'Поле region',
+      fieldRegionPlaceholder: 'Поле region placeholder',
+      btnCalculate: 'Btn Calculate',
+      baseTotalLabel: 'base Всего Метка',
+      indexLabel: 'index Метка',
+      currentPriceLabel: 'current Цена Метка',
+      currentTotalLabel: 'current Всего Метка',
+      costBreakdown: 'Стоимость breakdown',
+      costComponent: 'Стоимость component',
+      costPerUnit: 'Стоимость per Единица',
+      costTotal: 'Стоимость Всего',
+      costTotalRow: 'Стоимость Всего Ряд',
+      indexNote: 'Index Note'
+    },
+    databases: {
+      breadcrumb: 'Навигация',
+      colName: 'Наименование',
+      colType: 'Тип',
+      colRegion: 'Col Region',
+      colBaseYear: 'Col Base Year',
+      colCoefficient: 'Col Coefficient',
+      colActive: 'col Активный',
+      yes: 'Да',
+      no: 'Нет',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      demoCreate: 'demo Создать',
+      btnCreate: 'Создать',
+      tabActive: 'Активные',
+      tabInactive: 'Tab Inactive',
+      searchPlaceholder: 'Поиск...',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'toast Создать Ошибка',
+      createTitle: 'Создать Заголовок',
+      fieldName: 'Поле Название',
+      fieldNameRequired: 'Поле Название Обязательное',
+      fieldNamePlaceholder: 'Поле Название placeholder',
+      fieldType: 'Поле Тип',
+      fieldRegion: 'Поле region',
+      fieldRegionPlaceholder: 'Поле region placeholder',
+      fieldBaseYear: 'Поле base year',
+      fieldCoefficient: 'Поле coefficient',
+      fieldSourceUrl: 'Поле Источник url'
+    },
+    rates: {
+      colUnit: 'Ед.изм.',
+      colLabor: 'Col Labor',
+      colMaterial: 'Материал',
+      colEquipment: 'Col Equipment',
+      colOverhead: 'Col Overhead',
+      allDatabases: 'Все databases',
+      toastImported: 'Toast Imported',
+      toastImportError: 'toast Импорт Ошибка',
+      selectDbFirst: 'Выберите db first',
+      demoImport: 'demo Импорт',
+      toastExported: 'Toast Exported',
+      toastExportError: 'toast Экспорт Ошибка',
+      colCode: 'Код',
+      colName: 'Наименование',
+      colTotal: 'Итого',
+      title: 'Название',
+      subtitle: 'Подзаголовок',
+      breadcrumb: 'Навигация',
+      btnImport: 'Импорт',
+      btnExport: 'Экспорт',
+      searchPlaceholder: 'Поиск...',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    },
+    indices: {
+      colRegion: 'Col Region',
+      colWorkType: 'col Работа Тип',
+      colBaseQuarter: 'Col Base Quarter',
+      colTargetQuarter: 'Col Target Quarter',
+      colIndexValue: 'col index Значение',
+      colSource: 'col Источник',
+      searchRegionPlaceholder: 'Поиск region placeholder',
+      searchWorkTypePlaceholder: 'Поиск Работа Тип placeholder',
+      emptyTitle: 'Нет данных',
+      emptyDescription: 'Данные не найдены'
+    },
+    database: {
+      typeFER: 'Тип f e r',
+      typeTER: 'Тип t e r',
+      typeGESN: 'Тип g e s n',
+      typeLocal: 'Тип local'
+    }
+  },
+  purchaseRequestId: 'purchase Запрос id',
+  sourceRequestName: 'Источник Запрос Название',
+  send: 'Отправить',
+  invoice: 'Счёт',
+  close: 'Закрыть',
+  cancel: 'Отмена',
+  supplierId: 'Поставщик id',
+  qualityGates: {
+    tabAll: 'Все',
+    tabPending: 'Ожидающие',
+    tabBlocked: 'Заблокированы',
+    tabPassed: 'Пройдены',
+    colName: 'Наименование',
+    colWbs: 'СПР',
+    colStatus: 'Статус',
+    colDocs: 'Документы',
+    colQuality: 'Качество',
+    colVolumes: 'Объёмы',
+    evaluateBtn: 'Оценить btn',
+    title: 'Название',
+    subtitle: 'Подзаголовок',
+    evaluateAllBtn: 'Оценить Все btn',
+    createBtn: 'Создать',
+    selectProject: 'Выберите объект',
+    selectProjectPlaceholder: 'Выберите объект',
+    metricTotal: 'Итого',
+    metricPassed: 'Пройдено',
+    metricBlocked: 'Заблокировано',
+    metricProgress: 'Прогресс',
+    createModalTitle: 'Создать modal Заголовок',
+    fieldName: 'Поле Название',
+    fieldWbsNode: 'Поле wbs node',
+    fieldThreshold: 'Поле Порог',
+    fieldDescription: 'Поле Описание'
+  },
+  SUCCESS: 'S U C C E S S',
+  ERROR: 'E R R O R',
+  safetyCompliance: {
+    tabDashboard: 'tab Панель управления',
+    tabBlocks: 'Tab Blocks',
+    tabPrescriptions: 'Tab Prescriptions',
+    colEmployee: 'Сотрудник',
+    colReason: 'Col Reason',
+    colStatus: 'Статус',
+    colBlockedAt: 'col Заблокировано at',
+    resolveBtn: 'Resolve Btn',
+    colNumber: 'Col Number',
+    colDescription: 'Описание',
+    colIssuedBy: 'Col Issued By',
+    colDeadline: 'Col Deadline',
+    colDaysRemaining: 'Col Days Remaining',
+    colResponsible: 'Ответственный',
+    title: 'Название',
+    subtitle: 'Подзаголовок',
+    checkEmployee: 'check Сотрудник',
+    autoScheduleBtn: 'auto Расписание btn',
+    metricTotal: 'Итого',
+    metricCompliant: 'Metric Compliant',
+    metricNonCompliant: 'Metric Non Compliant',
+    metricExpiring: 'Истекающих',
+    metricScheduled: 'Metric Scheduled',
+    metricOverdue: 'Metric Overdue',
+    complianceOverview: 'compliance Обзор',
+    complianceRate: 'Compliance Rate',
+    checkModalTitle: 'check modal Заголовок',
+    employeeIdField: 'Сотрудник id Поле',
+    employeeIdPlaceholder: 'Сотрудник id placeholder',
+    checkBtn: 'Check Btn'
+  },
+  q: 'Q',
+  xlsx: 'Xlsx',
+  feature: 'Feature',
+  plan: 'План',
+  featureKey: 'Feature Key'
 } as const;
 
 // Widen every leaf string-literal to `string` so that other locale files

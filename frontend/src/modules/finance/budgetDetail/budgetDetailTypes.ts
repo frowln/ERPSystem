@@ -18,6 +18,9 @@ export interface ItemFormState {
   customerPrice: string;
   coefficient: string;
   vatRate: string;
+  overheadRate: string;
+  profitRate: string;
+  contingencyRate: string;
   notes: string;
   priceSourceType: string;
   priceSourceId: string;
@@ -92,6 +95,9 @@ export const DEFAULT_FORM: ItemFormState = {
   customerPrice: '0',
   coefficient: '1',
   vatRate: '22',
+  overheadRate: '15',
+  profitRate: '8',
+  contingencyRate: '3',
   notes: '',
   priceSourceType: 'MANUAL',
   priceSourceId: '',

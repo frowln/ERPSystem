@@ -38,13 +38,18 @@ const CrmDashboardPage: React.FC = () => {
   const leads = leadsData?.content ?? [];
 
   const metrics = useMemo(() => {
-    const totalPipeline = stages.reduce((s, st) => s + st.totalRevenue, 0);
-    const wonRevenue = stages.filter((st) => st.isWon).reduce((s, st) => s + st.totalRevenue, 0);
-    const totalLeads = stages.reduce((s, st) => s + st.leadCount, 0);
+    const totalPipeline = stages.reduce((s, st) => s + (st.totalRevenue ?? 0), 0);
+    const wonRevenue = stages.filter((st) => st.isWon).reduce((s, st) => s + (st.totalRevenue ?? 0), 0);
+    const totalLeads = stages.reduce((s, st) => s + (st.leadCount ?? 0), 0);
     const avgProbability = leads.length > 0
       ? Math.round(leads.reduce((s, l) => s + (l.probability ?? 0), 0) / leads.length)
       : 0;
-    return { totalPipeline, wonRevenue, totalLeads, avgProbability };
+    return {
+      totalPipeline: isFinite(totalPipeline) ? totalPipeline : 0,
+      wonRevenue: isFinite(wonRevenue) ? wonRevenue : 0,
+      totalLeads: isFinite(totalLeads) ? totalLeads : 0,
+      avgProbability: isFinite(avgProbability) ? avgProbability : 0,
+    };
   }, [stages, leads]);
 
   const topLeads = useMemo(() => {
@@ -84,7 +89,7 @@ const CrmDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard icon={<BarChart3 size={18} />} label={t('crm.dashboard.metricPipeline')} value={formatMoneyCompact(metrics.totalPipeline)} />
         <MetricCard icon={<DollarSign size={18} />} label={t('crm.dashboard.metricWonRevenue')} value={formatMoneyCompact(metrics.wonRevenue)} />
-        <MetricCard icon={<Users size={18} />} label={t('crm.dashboard.metricTotalLeads')} value={metrics.totalLeads} />
+        <MetricCard icon={<Users size={18} />} label={t('crm.dashboard.metricTotalLeads')} value={String(metrics.totalLeads)} />
         <MetricCard icon={<Target size={18} />} label={t('crm.dashboard.metricAvgProbability')} value={formatPercent(metrics.avgProbability)} />
       </div>
 

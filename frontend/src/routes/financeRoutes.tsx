@@ -61,6 +61,9 @@ const RevenueContractDetailPage = lazy(() => import('@/modules/revenueRecognitio
 const RevenuePeriodsPage = lazy(() => import('@/modules/revenueRecognition/RevenuePeriodsPage'));
 const RevenueDashboardPage = lazy(() => import('@/modules/revenueRecognition/RevenueDashboardPage'));
 
+// Vendor Prequalification
+const VendorPrequalificationPage = lazy(() => import('@/modules/procurement/VendorPrequalificationPage'));
+
 // Procurement
 const PurchaseRequestListPage = lazy(() => import('@/modules/procurement/PurchaseRequestListPage'));
 const PurchaseRequestDetailPage = lazy(() => import('@/modules/procurement/PurchaseRequestDetailPage'));
@@ -197,6 +200,7 @@ export function financeRoutes() {
       <Route path="procurement/new" element={<PurchaseRequestFormPage />} />
       <Route path="procurement/:id" element={<PurchaseRequestDetailPage />} />
       <Route path="procurement/:id/edit" element={<PurchaseRequestFormPage />} />
+      <Route path="procurement/prequalification" element={<VendorPrequalificationPage />} />
 
       {/* Price Coefficients */}
       <Route path="price-coefficients" element={<PriceCoefficientListPage />} />

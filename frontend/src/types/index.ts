@@ -284,6 +284,18 @@ export interface Contract {
   totalInvoiced: number;
   totalPaid: number;
   balance: number;
+  procurementLaw?: '44-FZ' | '223-FZ' | 'COMMERCIAL';
+  procurementMethod?: string;
+  tenderNumber?: string;
+  tenderJustification?: string;
+  insuranceType?: 'CMR' | 'BUILDERS_RISK' | 'PROFESSIONAL_LIABILITY' | 'COMBINED';
+  insurancePolicyNumber?: string;
+  insuranceAmount?: number;
+  insuranceExpiryDate?: string;
+  performanceBondNumber?: string;
+  performanceBondAmount?: number;
+  paymentBondNumber?: string;
+  paymentBondAmount?: number;
   version: number;
   notes?: string;
   createdAt: string;
@@ -350,7 +362,151 @@ export interface SpecItem {
   bestPrice?: number;
   bestVendorName?: string;
   budgetItemId?: string;
+  longLead?: boolean;
+  leadTimeDays?: number;
+  earlyProcurementRequired?: boolean;
   notes?: string;
+}
+
+// Engineering Surveys
+export type SurveyType = 'GEODETIC' | 'GEOLOGICAL' | 'HYDRO' | 'ECOLOGICAL' | 'OTHER';
+export type SurveyStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'APPROVED';
+export interface EngineeringSurvey {
+  id: string;
+  projectId: string;
+  type: SurveyType;
+  status: SurveyStatus;
+  contractor?: string;
+  contractNumber?: string;
+  startDate?: string;
+  endDate?: string;
+  resultSummary?: string;
+  documents?: string[];
+}
+
+// Construction Permits
+export type PermitType = 'GPZU' | 'EXPERTISE_PD' | 'BUILDING_PERMIT' | 'ENVIRONMENTAL' | 'FIRE_SAFETY' | 'OTHER';
+export type PermitStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+export interface ConstructionPermit {
+  id: string;
+  projectId: string;
+  permitType: PermitType;
+  status: PermitStatus;
+  number?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  issuingAuthority?: string;
+  notes?: string;
+  documents?: string[];
+}
+
+// Construction Plans (ПОС/ППР)
+export type ConstructionPlanType = 'POS' | 'PPR' | 'SITE_PLAN';
+export type ConstructionPlanStatus = 'NOT_STARTED' | 'DRAFT' | 'REVIEW' | 'APPROVED';
+export interface ConstructionPlan {
+  id: string;
+  projectId: string;
+  planType: ConstructionPlanType;
+  status: ConstructionPlanStatus;
+  version: number;
+  author?: string;
+  approvedBy?: string;
+  approvedDate?: string;
+  documentId?: string;
+  notes?: string;
+}
+
+// Risk Register
+export type RiskCategory = 'FINANCIAL' | 'TECHNICAL' | 'LEGAL' | 'ENVIRONMENTAL' | 'SCHEDULE' | 'SAFETY' | 'OTHER';
+export type RiskStatus = 'IDENTIFIED' | 'MITIGATING' | 'ACCEPTED' | 'CLOSED';
+export interface ProjectRisk {
+  id: string;
+  projectId: string;
+  category: RiskCategory;
+  description: string;
+  probability: number;
+  impact: number;
+  score: number;
+  mitigation?: string;
+  owner?: string;
+  status: RiskStatus;
+  dueDate?: string;
+  createdAt: string;
+}
+
+// Value Engineering
+export type VeStatus = 'PROPOSED' | 'APPROVED' | 'REJECTED' | 'IMPLEMENTED';
+export type QualityImpact = 'NONE' | 'MINOR' | 'SIGNIFICANT';
+export interface ValueEngineeringItem {
+  id: string;
+  projectId: string;
+  budgetItemId?: string;
+  budgetItemName?: string;
+  originalSolution: string;
+  proposedSolution: string;
+  costSaving: number;
+  qualityImpact: QualityImpact;
+  status: VeStatus;
+  author?: string;
+  approvedBy?: string;
+  createdAt: string;
+}
+
+// Vendor Prequalification
+export type PrequalificationStatus = 'PENDING' | 'QUALIFIED' | 'DISQUALIFIED' | 'EXPIRED';
+export interface VendorPrequalification {
+  id: string;
+  vendorId: string;
+  vendorName: string;
+  financialScore: number;
+  safetyScore: number;
+  experienceScore: number;
+  insuranceValid: boolean;
+  bondCapacity: number;
+  overallScore: number;
+  status: PrequalificationStatus;
+  validUntil?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+// Safety Checklist
+export type SafetyChecklistCategory = 'PPE' | 'SITE_SECURITY' | 'EMERGENCY' | 'TRAINING' | 'HAZARD_ASSESSMENT' | 'FIRE_PROTECTION';
+export interface SafetyChecklistItem {
+  id: string;
+  projectId: string;
+  category: SafetyChecklistCategory;
+  description: string;
+  required: boolean;
+  completed: boolean;
+  responsiblePerson?: string;
+  dueDate?: string;
+}
+
+// Pre-Construction Meeting
+export interface MeetingDecision {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+export interface MeetingActionItem {
+  id: string;
+  description: string;
+  owner: string;
+  dueDate?: string;
+  completed: boolean;
+}
+export interface PreConstructionMeeting {
+  id: string;
+  projectId: string;
+  date: string;
+  location?: string;
+  attendees: string[];
+  agenda: string[];
+  minutes?: string;
+  decisions: MeetingDecision[];
+  actionItems: MeetingActionItem[];
+  createdAt: string;
 }
 
 // Estimate types
@@ -439,6 +595,7 @@ export interface LocalEstimateLine {
   materialIndex: number;
   equipmentIndex: number;
   notes?: string;
+  normativeSource?: 'GESN' | 'FER' | 'TER' | 'MANUAL';
   normativeCode?: string;
   normHours?: number;
   basePrice2001?: number;
@@ -610,6 +767,9 @@ export interface BudgetItem {
   marginAmount?: number;
   marginPercent?: number;
   sectionId?: string;
+  overheadRate?: number;
+  profitRate?: number;
+  contingencyRate?: number;
   notes?: string;
 }
 
@@ -750,6 +910,7 @@ export interface CompetitiveListEntry {
   selectionReason?: string;
   notes?: string;
   isWinner?: boolean;
+  contractorName?: string;
 }
 
 export interface InvoiceLine {
@@ -762,6 +923,11 @@ export interface InvoiceLine {
   totalPrice?: number;
   amount?: number;
   unitOfMeasure?: string;
+  poNumber?: string;
+  poUnitPrice?: number;
+  grReceived?: boolean;
+  grDate?: string;
+  variancePercent?: number;
   notes?: string;
   isSelectedForCp?: boolean;
   cpItemId?: string;

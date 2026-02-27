@@ -37,6 +37,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { t } from '@/i18n';
 import type { PurchaseRequest, PurchaseRequestStatus } from '@/types';
 import toast from 'react-hot-toast';
+import { financeApi } from '@/api/finance';
 
 const getPurchaseOrderStatusLabels = (): Record<PurchaseOrderStatus, string> => ({
   DRAFT: t('procurement.orderStatus.draft'),
@@ -143,6 +144,17 @@ const PurchaseRequestDetailPage: React.FC = () => {
     },
     onSettled: () => {
       setPendingStatus(null);
+    },
+  });
+
+  const createClMutation = useMutation({
+    mutationFn: () => financeApi.createCompetitiveListFromPR(id!),
+    onSuccess: (res) => {
+      toast.success('Тендер (Конкурентный лист) создан');
+      navigate(`/specifications/${res.specificationId}/competitive-list/${res.id}`);
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Ошибка создания тендера');
     },
   });
 
@@ -346,6 +358,17 @@ const PurchaseRequestDetailPage: React.FC = () => {
                 {action.label}
               </Button>
             ))}
+            {r.status === 'APPROVED' && (
+              <Button
+                variant="primary"
+                size="sm"
+                iconLeft={<FileText size={14} />}
+                loading={createClMutation.isPending}
+                onClick={() => createClMutation.mutate()}
+              >
+                Создать тендер (КЛ)
+              </Button>
+            )}
             {canCreatePurchaseOrder && (
               <Button
                 variant="primary"

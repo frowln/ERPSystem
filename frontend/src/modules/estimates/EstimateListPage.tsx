@@ -122,8 +122,14 @@ const EstimateListPage: React.FC = () => {
         accessorKey: 'variancePercent',
         header: t('estimates.list.colVariance'),
         size: 120,
-        cell: ({ getValue }) => {
+        cell: ({ getValue, row }) => {
           const val = getValue<number>();
+          const ordered = (row.original as any).orderedAmount ?? 0;
+          const spent = (row.original as any).totalSpent ?? 0;
+          // When nothing ordered/spent yet, show "—" instead of misleading "+100%"
+          if (ordered === 0 && spent === 0) {
+            return <span className="text-neutral-400 dark:text-neutral-500">—</span>;
+          }
           if (val === 0) {
             return <span className="text-neutral-500 dark:text-neutral-400 tabular-nums">0,0%</span>;
           }

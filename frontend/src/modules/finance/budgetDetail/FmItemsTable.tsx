@@ -5,7 +5,7 @@ import { t } from '@/i18n';
 import type { BudgetItem, BudgetItemType } from '@/types';
 import InlineEditCell from './InlineEditCell';
 import CvrBar from './CvrBar';
-import { ChevronDown, ChevronRight, ChevronsUpDown, ChevronsDownUp, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, ChevronsUpDown, ChevronsDownUp, Trash2, CalendarClock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface FmItemsTableProps {
@@ -121,16 +121,23 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
 
   // Section subtotals
   const sectionTotals = useMemo(() => {
-    const map = new Map<string, { costTotal: number; estimateTotal: number; customerTotal: number; ndvTotal: number; marginTotal: number }>();
+    const map = new Map<string, { costTotal: number; estimateTotal: number; customerTotal: number; ndvTotal: number; marginTotal: number; overheadTotal: number; profitTotal: number; contingencyTotal: number }>();
     for (const item of items) {
       if (item.parentId && !item.section) {
-        const prev = map.get(item.parentId) || { costTotal: 0, estimateTotal: 0, customerTotal: 0, ndvTotal: 0, marginTotal: 0 };
+        const prev = map.get(item.parentId) || { costTotal: 0, estimateTotal: 0, customerTotal: 0, ndvTotal: 0, marginTotal: 0, overheadTotal: 0, profitTotal: 0, contingencyTotal: 0 };
         const ct = (item.customerPrice ?? 0) * (item.quantity ?? 1);
-        prev.costTotal += (item.costPrice ?? 0) * (item.quantity ?? 1);
+        const costLine = (item.costPrice ?? 0) * (item.quantity ?? 1);
+        const oh = costLine * ((item.overheadRate ?? 0) / 100);
+        const sp = costLine * ((item.profitRate ?? 0) / 100);
+        const cg = (costLine + oh) * ((item.contingencyRate ?? 0) / 100);
+        prev.costTotal += costLine;
         prev.estimateTotal += (item.estimatePrice ?? 0) * (item.quantity ?? 1);
         prev.customerTotal += ct;
         prev.ndvTotal += ct * 0.22;
         prev.marginTotal += item.marginAmount ?? 0;
+        prev.overheadTotal += oh;
+        prev.profitTotal += sp;
+        prev.contingencyTotal += cg;
         map.set(item.parentId, prev);
       }
     }
@@ -171,6 +178,23 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
     onError: () => toast.error(t('errors.unexpectedError')),
   });
 
+  const linkToWbsMutation = useMutation({
+    mutationFn: ({ itemId, wbsNodeId }: { itemId: string; wbsNodeId: string }) =>
+      financeApi.linkBudgetItemToWbs(budgetId, itemId, wbsNodeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budget-items', budgetId] });
+      toast.success('Привязано к графику и распределено по времени (Cash Flow)');
+    },
+    onError: (error: any) => toast.error(error?.response?.data?.message || 'Ошибка привязки к графику'),
+  });
+
+  const handleLinkToWbs = (itemId: string) => {
+    const wbsId = window.prompt('Введите ID задачи из графика (WBS Node ID):');
+    if (wbsId) {
+      linkToWbsMutation.mutate({ itemId, wbsNodeId: wbsId });
+    }
+  };
+
   const handleInlineEdit = (itemId: string, field: string, value: number) => {
     // Hard validation mode: block save if customerPrice > estimatePrice
     if (validationMode === 'hard' && field === 'customerPrice') {
@@ -193,13 +217,25 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
   const totals = useMemo(() => {
     const nonSection = items.filter((i) => !i.section);
     const sum = (fn: (i: BudgetItem) => number) => nonSection.reduce((acc, i) => acc + fn(i), 0);
+    const costTotal = sum((i) => (i.costPrice ?? 0) * (i.quantity ?? 1));
     const customerTotal = sum((i) => (i.customerPrice ?? 0) * (i.quantity ?? 1));
+    let overheadTotal = 0, profitTotal = 0, contingencyTotal = 0;
+    for (const i of nonSection) {
+      const cl = (i.costPrice ?? 0) * (i.quantity ?? 1);
+      const oh = cl * ((i.overheadRate ?? 0) / 100);
+      overheadTotal += oh;
+      profitTotal += cl * ((i.profitRate ?? 0) / 100);
+      contingencyTotal += (cl + oh) * ((i.contingencyRate ?? 0) / 100);
+    }
     return {
-      costTotal: sum((i) => (i.costPrice ?? 0) * (i.quantity ?? 1)),
+      costTotal,
       estimateTotal: sum((i) => (i.estimatePrice ?? 0) * (i.quantity ?? 1)),
       customerTotal,
       ndvTotal: customerTotal * 0.22,
       marginTotal: sum((i) => i.marginAmount ?? 0),
+      overheadTotal,
+      profitTotal,
+      contingencyTotal,
       planned: sum((i) => i.plannedAmount ?? 0),
       contracted: sum((i) => i.contractedAmount ?? 0),
       actSigned: sum((i) => i.actSignedAmount ?? 0),
@@ -231,22 +267,25 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
         </div>
       )}
 
-      <table className="w-full text-sm min-w-[1380px]">
+      <table className="w-full text-sm min-w-[1600px]">
         <thead className="sticky top-0 z-10">
           <tr>
-            <th className={`${thCls} text-left w-[260px]`}>{t('finance.fm.colName')}</th>
+            <th className={`${thCls} text-left w-[240px]`}>{t('finance.fm.colName')}</th>
             <th className={`${thCls} text-center w-[50px]`}>{t('finance.fm.colUnit')}</th>
-            <th className={`${thCls} text-right w-[70px]`}>{t('finance.fm.colQty')}</th>
-            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colCostPrice')}</th>
-            <th className={`${thCls} text-right w-[110px]`}>{t('finance.fm.colCostTotal')}</th>
-            <th className={`${thCls} text-right w-[110px]`}>{t('finance.fm.colEstimate')}</th>
-            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colCustomerPrice')}</th>
-            <th className={`${thCls} text-right w-[110px]`}>{t('finance.fm.colCustomerTotal')}</th>
-            <th className={`${thCls} text-right w-[95px]`} title={t('finance.fm.colNdvHint')}>{t('finance.fm.colNdv')}</th>
-            <th className={`${thCls} text-right w-[90px]`}>{t('finance.fm.colMargin')}</th>
-            <th className={`${thCls} text-right w-[60px]`}>{t('finance.fm.colMarginPct')}</th>
+            <th className={`${thCls} text-right w-[60px]`}>{t('finance.fm.colQty')}</th>
+            <th className={`${thCls} text-right w-[90px]`}>{t('finance.fm.colCostPrice')}</th>
+            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colCostTotal')}</th>
+            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colEstimate')}</th>
+            <th className={`${thCls} text-right w-[55px]`} title={t('finance.fm.colOverheadHint')}>{t('finance.fm.colOverhead')}</th>
+            <th className={`${thCls} text-right w-[55px]`} title={t('finance.fm.colProfitHint')}>{t('finance.fm.colProfit')}</th>
+            <th className={`${thCls} text-right w-[55px]`} title={t('finance.fm.colContingencyHint')}>{t('finance.fm.colContingency')}</th>
+            <th className={`${thCls} text-right w-[90px]`}>{t('finance.fm.colCustomerPrice')}</th>
+            <th className={`${thCls} text-right w-[100px]`}>{t('finance.fm.colCustomerTotal')}</th>
+            <th className={`${thCls} text-right w-[80px]`} title={t('finance.fm.colNdvHint')}>{t('finance.fm.colNdv')}</th>
+            <th className={`${thCls} text-right w-[80px]`}>{t('finance.fm.colMargin')}</th>
+            <th className={`${thCls} text-right w-[55px]`}>{t('finance.fm.colMarginPct')}</th>
             <th className={`${thCls} text-center w-[60px]`}>{t('finance.fm.colDocStatus')}</th>
-            <th className={`${thCls} w-[130px]`}>{t('finance.fm.colCvr')}</th>
+            <th className={`${thCls} w-[120px]`}>{t('finance.fm.colCvr')}</th>
             <th className={`${thCls} w-[40px]`} />
           </tr>
         </thead>
@@ -273,6 +312,15 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
                   <td className={`${tdCls} text-right tabular-nums font-semibold text-neutral-700 dark:text-neutral-300`}>
                     {sub ? fmtAmt(sub.estimateTotal) : ''}
                   </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-orange-600 dark:text-orange-400`}>
+                    {sub ? fmtAmt(sub.overheadTotal) : ''}
+                  </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-teal-600 dark:text-teal-400`}>
+                    {sub ? fmtAmt(sub.profitTotal) : ''}
+                  </td>
+                  <td className={`${tdCls} text-right tabular-nums font-semibold text-amber-600 dark:text-amber-400`}>
+                    {sub ? fmtAmt(sub.contingencyTotal) : ''}
+                  </td>
                   <td className={tdCls} />
                   <td className={`${tdCls} text-right tabular-nums font-semibold text-neutral-700 dark:text-neutral-300`}>
                     {sub ? fmtAmt(sub.customerTotal) : ''}
@@ -293,6 +341,9 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
 
             const costTotal = (item.costPrice ?? 0) * (item.quantity ?? 1);
             const estimateTotal = (item.estimatePrice ?? 0) * (item.quantity ?? 1);
+            const overheadAmt = costTotal * ((item.overheadRate ?? 0) / 100);
+            const profitAmt = costTotal * ((item.profitRate ?? 0) / 100);
+            const contingencyAmt = (costTotal + overheadAmt) * ((item.contingencyRate ?? 0) / 100);
             const customerTotal = (item.customerPrice ?? 0) * (item.quantity ?? 1);
             const showWarning =
               item.customerPrice != null &&
@@ -323,6 +374,27 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
                 </td>
                 <td className={`${tdCls} text-right tabular-nums text-neutral-600 dark:text-neutral-400`}>
                   {fmtAmt(estimateTotal)}
+                </td>
+                <td className={`${tdCls} text-right`}>
+                  <InlineEditCell
+                    value={item.overheadRate}
+                    onSave={(v) => handleInlineEdit(item.id, 'overheadRate', v)}
+                  />
+                  <span className="block text-[10px] text-orange-500 dark:text-orange-400 tabular-nums">{fmtAmt(overheadAmt)}</span>
+                </td>
+                <td className={`${tdCls} text-right`}>
+                  <InlineEditCell
+                    value={item.profitRate}
+                    onSave={(v) => handleInlineEdit(item.id, 'profitRate', v)}
+                  />
+                  <span className="block text-[10px] text-teal-500 dark:text-teal-400 tabular-nums">{fmtAmt(profitAmt)}</span>
+                </td>
+                <td className={`${tdCls} text-right`}>
+                  <InlineEditCell
+                    value={item.contingencyRate}
+                    onSave={(v) => handleInlineEdit(item.id, 'contingencyRate', v)}
+                  />
+                  <span className="block text-[10px] text-amber-500 dark:text-amber-400 tabular-nums">{fmtAmt(contingencyAmt)}</span>
                 </td>
                 <td className={`${tdCls} text-right`}>
                   <span className={isHardWarning ? 'ring-2 ring-red-500 rounded' : showWarning ? 'ring-1 ring-red-400 rounded' : ''}>
@@ -361,13 +433,22 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
                   />
                 </td>
                 <td className={`${tdCls} text-center`}>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                    className="opacity-0 group-hover:opacity-100 p-1 text-neutral-400 hover:text-red-500 dark:hover:text-red-400 rounded transition-all"
-                    title={t('finance.fm.deleteItem')}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleLinkToWbs(item.id); }}
+                      className="p-1 text-neutral-400 hover:text-blue-600 rounded transition-colors"
+                      title="Привязать к задаче графика (WBS) для Cash Flow"
+                    >
+                      <CalendarClock className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+                      className="p-1 text-neutral-400 hover:text-red-500 dark:hover:text-red-400 rounded transition-colors"
+                      title={t('finance.fm.deleteItem')}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             );
@@ -382,6 +463,9 @@ export default function FmItemsTable({ budgetId, items, branch, validationMode =
             <td className={tdCls} />
             <td className={`${tdCls} text-right tabular-nums text-neutral-900 dark:text-neutral-100`}>{fmtAmt(totals.costTotal)}</td>
             <td className={`${tdCls} text-right tabular-nums text-neutral-900 dark:text-neutral-100`}>{fmtAmt(totals.estimateTotal)}</td>
+            <td className={`${tdCls} text-right tabular-nums text-orange-600 dark:text-orange-400`}>{fmtAmt(totals.overheadTotal)}</td>
+            <td className={`${tdCls} text-right tabular-nums text-teal-600 dark:text-teal-400`}>{fmtAmt(totals.profitTotal)}</td>
+            <td className={`${tdCls} text-right tabular-nums text-amber-600 dark:text-amber-400`}>{fmtAmt(totals.contingencyTotal)}</td>
             <td className={tdCls} />
             <td className={`${tdCls} text-right tabular-nums text-neutral-900 dark:text-neutral-100`}>{fmtAmt(totals.customerTotal)}</td>
             <td className={`${tdCls} text-right tabular-nums text-violet-600 dark:text-violet-400 font-bold`}>{fmtAmt(totals.ndvTotal)}</td>

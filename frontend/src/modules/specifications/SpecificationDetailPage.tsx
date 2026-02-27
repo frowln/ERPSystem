@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Package, Wrench, Cpu, Layers, FilePlus2, ArrowUpRight, FileUp, Tag, Pencil, Trash2, Plus, GitBranch, Upload, Calculator, CalendarClock } from 'lucide-react';
+import { Package, Wrench, Cpu, Layers, FilePlus2, ArrowUpRight, FileUp, Tag, Pencil, Trash2, Plus, GitBranch, Upload, Calculator, CalendarClock, Clock } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -18,6 +18,7 @@ import {
 } from '@/design-system/components/StatusBadge';
 import { specificationsApi, type ParsedSpecItem, type CreateSpecItemRequest } from '@/api/specifications';
 import { financeApi } from '@/api/finance';
+import { procurementApi } from '@/api/procurement';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import type { Budget, CommercialProposal, Specification, SpecItem, SpecItemType } from '@/types';
@@ -224,6 +225,15 @@ const SpecificationDetailPage: React.FC = () => {
       navigate(`/specifications/${newSpec.id}`);
     },
     onError: () => toast.error(t('specifications.deleteError')),
+  });
+
+  const createPrMutation = useMutation({
+    mutationFn: (selectedIds: string[]) => procurementApi.createFromSpecItems(spec!.projectId, id!, selectedIds),
+    onSuccess: (res) => {
+      toast.success('Заявка на закупку создана');
+      navigate(`/procurement/requests/${res.id}`);
+    },
+    onError: () => toast.error('Ошибка создания заявки'),
   });
 
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
@@ -489,7 +499,7 @@ const SpecificationDetailPage: React.FC = () => {
         size: 80,
         cell: ({ row }) => (
           <span className="tabular-nums font-medium text-neutral-800 dark:text-neutral-200">
-            {new Intl.NumberFormat('ru-RU').format(row.original.quantity)}
+            {row.original.quantity != null ? new Intl.NumberFormat('ru-RU').format(row.original.quantity) : '—'}
           </span>
         ),
       },
@@ -516,15 +526,20 @@ const SpecificationDetailPage: React.FC = () => {
         size: 120,
         cell: ({ getValue }) => {
           const val = getValue<string>();
+          const statusLabels: Record<string, string> = {
+            'not_started': t('specifications.procurementStatusNotStarted'),
+            'in_progress': t('specifications.procurementStatusInProgress'),
+            'completed': t('specifications.procurementStatusCompleted'),
+          };
+          const translatedVal = statusLabels[val] || val;
           const cls: Record<string, string> = {
-            'Заказано':    'text-primary-600 bg-primary-50 dark:bg-primary-900/20',
-            'Доставлено':  'text-success-600 bg-success-50 dark:bg-success-900/20',
-            'Частично':    'text-warning-600 bg-warning-50 dark:bg-warning-900/20',
-            'Не заказано': 'text-neutral-500 bg-neutral-100 dark:bg-neutral-800',
+            'Не начата':   'text-neutral-500 bg-neutral-100 dark:bg-neutral-800',
+            'В процессе':  'text-warning-600 bg-warning-50 dark:bg-warning-900/20',
+            'Завершена':   'text-success-600 bg-success-50 dark:bg-success-900/20',
           };
           return (
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls[val] ?? 'text-neutral-400'}`}>
-              {val || '—'}
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls[translatedVal] ?? 'text-neutral-400'}`}>
+              {translatedVal || '—'}
             </span>
           );
         },
@@ -536,6 +551,23 @@ const SpecificationDetailPage: React.FC = () => {
         cell: ({ getValue }) => (
           <span className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2">{getValue<string>() || ''}</span>
         ),
+      },
+      {
+        id: 'longLead',
+        header: t('specifications.longLead.column'),
+        size: 90,
+        cell: ({ row }) => {
+          const item = row.original;
+          if (!item.longLead) return <span className="text-xs text-neutral-300 dark:text-neutral-600">—</span>;
+          return (
+            <div className="flex items-center gap-1">
+              <Clock size={13} className="text-amber-500" />
+              <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                {item.leadTimeDays ? `${item.leadTimeDays}${t('specifications.longLead.days')}` : t('specifications.longLead.flag')}
+              </span>
+            </div>
+          );
+        },
       },
       {
         id: 'fm_linked',
@@ -754,6 +786,14 @@ const SpecificationDetailPage: React.FC = () => {
               <DataTable<SpecItem>
                 data={sectionItems}
                 columns={columns}
+                enableRowSelection
+                bulkActions={[
+                  {
+                    label: 'В закупку (создать заявку)',
+                    icon: <Package size={14} />,
+                    onClick: (rows) => createPrMutation.mutate(rows.map((r) => r.id)),
+                  },
+                ]}
                 pageSize={sectionItems.length + 1}
                 emptyTitle={t('specifications.detailEmptyTitle')}
                 emptyDescription={t('specifications.detailEmptyDescription')}
@@ -765,6 +805,14 @@ const SpecificationDetailPage: React.FC = () => {
         <DataTable<SpecItem>
           data={specItems}
           columns={columns}
+          enableRowSelection
+          bulkActions={[
+            {
+              label: 'В закупку (создать заявку)',
+              icon: <Package size={14} />,
+              onClick: (rows) => createPrMutation.mutate(rows.map((r) => r.id)),
+            },
+          ]}
           enableColumnVisibility
           enableDensityToggle
           enableExport

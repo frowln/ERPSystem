@@ -6,9 +6,8 @@
 import type { TranslationKeys } from './ru';
 
 export const en: TranslationKeys = {
-  // ---------------------------------------------------------------------------
-  // Common
-  // ---------------------------------------------------------------------------
+  '5': '5',
+  '100': '100',
   common: {
     appName: 'Privod',
     appInitials: 'PR',
@@ -76,11 +75,43 @@ export const en: TranslationKeys = {
     name: 'Name',
     positions: 'Positions',
     andMore: 'and {count} more',
+    error: 'Error',
+    mockProjects: {
+      solnechny: 'Solnechny',
+      gorizont: 'Gorizont',
+      mostVyatka: 'Most Vyatka',
+      tsentralny: 'Tsentralny'
+    },
+    pcs: 'Pcs',
+    mockVendors: {
+      stroyMontazh: 'Stroy Montazh',
+      elektroStroy: 'Elektro Stroy',
+      betonServis: 'Beton Servis',
+      proektGrupp: 'Proekt Grupp',
+      dorStroy: 'Dor Stroy',
+      metallTrade: 'Metall Trade'
+    },
+    mockContracts: {
+      dg001Short: 'Dg001 Short',
+      dg002Short: 'Dg002 Short',
+      dg003Short: 'Dg003 Short',
+      dg004Short: 'Dg004 Short',
+      dg001: 'Dg001',
+      dg002: 'Dg002',
+      dg003: 'Dg003',
+      dg004: 'Dg004'
+    },
+    status: 'Status',
+    notSelected: 'Not Selected',
+    quantity: 'Quantity',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    unit: 'Unit',
+    days: 'Days',
+    unitPcs: 'Unit Pcs',
+    created: 'Created',
+    cancelled: 'Cancelled'
   },
-
-  // ---------------------------------------------------------------------------
-  // Navigation
-  // ---------------------------------------------------------------------------
   nav: {
     dashboard: 'Dashboard',
     projects: 'Projects',
@@ -132,11 +163,8 @@ export const en: TranslationKeys = {
     mobile: 'Mobile App',
     dataExchange: 'Data Exchange',
     iot: 'IoT Sensors',
+    home: 'Home'
   },
-
-  // ---------------------------------------------------------------------------
-  // Auth
-  // ---------------------------------------------------------------------------
   auth: {
     login: 'Log In',
     loginTitle: 'Sign In',
@@ -150,7 +178,7 @@ export const en: TranslationKeys = {
     register: 'Register',
     signUp: 'Sign Up',
     alreadyHaveAccount: 'Already have an account?',
-    noAccount: "Don't have an account?",
+    noAccount: 'Don\'t have an account?',
     firstName: 'First Name',
     lastName: 'Last Name',
     role: 'Role',
@@ -160,7 +188,7 @@ export const en: TranslationKeys = {
       emailRequired: 'Enter email',
       emailInvalid: 'Invalid email format',
       passwordRequired: 'Enter password',
-      passwordMin: 'Minimum 6 characters',
+      passwordMin: 'Minimum 6 characters'
     },
     welcomeMessage: 'Welcome!',
     invalidCredentials: 'Invalid email or password',
@@ -181,13 +209,9 @@ export const en: TranslationKeys = {
       budget: 'Budget',
       budgetValue: '12B RUB',
       users: 'Users',
-      uptime: 'Uptime',
-    },
+      uptime: 'Uptime'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Projects
-  // ---------------------------------------------------------------------------
   projects: {
     title: 'Projects',
     createProject: 'Create Project',
@@ -205,7 +229,17 @@ export const en: TranslationKeys = {
     plannedEndDate: 'Planned End Date',
     actualStartDate: 'Actual Start Date',
     actualEndDate: 'Actual End Date',
-    budget: 'Budget',
+    budget: {
+      noBudgets: 'No Budgets',
+      createFirstHint: 'Create First Hint',
+      createBudget: 'Create Budget',
+      totalBudgets: 'Total Budgets',
+      revenue: 'Revenue',
+      plan: 'Plan',
+      costs: 'Costs',
+      margin: 'Margin',
+      open: 'Open'
+    },
     totalBudget: 'Total Budget',
     spentBudget: 'Spent',
     remainingBudget: 'Remaining',
@@ -258,7 +292,7 @@ export const en: TranslationKeys = {
       commercial: 'Commercial',
       industrial: 'Industrial',
       infrastructure: 'Infrastructure',
-      renovation: 'Renovation',
+      renovation: 'Renovation'
     },
     finance: {
       incomeSection: 'Income',
@@ -307,7 +341,6 @@ export const en: TranslationKeys = {
       headerDocument: 'Document',
       headerAmount: 'Amount',
       noCashFlowData: 'No cash flow data available',
-      // ContractsBreakdownSection
       financialBreakdown: 'Financial Breakdown by Contracts',
       financialBreakdownDesc: 'Revenue and expenses by project contracts',
       colContractItem: 'Contract / item',
@@ -337,7 +370,6 @@ export const en: TranslationKeys = {
       noSupplierContracts: 'No supplier contracts',
       total: 'Total',
       totalExpensesByContracts: 'Total expenses by contracts',
-      // BudgetPositionsSection
       budgetExecution: 'Budget execution',
       budgetTreeDescription: 'Budget positions linked to contracts',
       positions: 'pos.',
@@ -360,7 +392,6 @@ export const en: TranslationKeys = {
       colContract: 'Contract',
       contract: 'Contract',
       budgetTotal: 'BUDGET TOTAL',
-      // MarginSummarySection
       marginCalculation: 'Margin calculation',
       planByContracts: 'PLAN BY CONTRACTS',
       revenueGkClient: 'GC revenue (client)',
@@ -373,14 +404,12 @@ export const en: TranslationKeys = {
       receivablesOwedToUs: 'AR (owed to us)',
       payablesWeOwe: 'AP (we owe)',
       budgetPlan: 'Budget plan',
-      // Contract type labels
       contractTypeGeneral: 'GC (General Contract)',
       contractTypeSubcontract: 'Subcontract',
       contractTypeSupply: 'Supply',
       contractTypeService: 'Services',
       contractTypeDesign: 'Design',
       contractTypeOther: 'Other',
-      // Budget cost categories
       categoryAll: 'All',
       categoryWorks: 'Works / CW',
       categoryMaterials: 'Materials',
@@ -388,13 +417,11 @@ export const en: TranslationKeys = {
       categoryOverhead: 'Overhead',
       categoryOther: 'Other',
       contractsCount: 'ctr.',
-      // PaymentsSection tabs
       invoicesTab: 'Invoices',
       paymentsTab: 'Payments',
       incoming: 'Incoming',
       outgoing: 'Outgoing',
       payment: 'Outgoing',
-      // Excel export
       excelReportTitle: 'Project Financial Report',
       excelExportDate: 'Export date',
       excelRevenueFromClient: 'REVENUE FROM CLIENT',
@@ -417,7 +444,7 @@ export const en: TranslationKeys = {
       excelPaymentsForProject: 'Project payments',
       colDate: 'Date',
       colNumber: 'Number',
-      excelSheetFinances: 'Finances',
+      excelSheetFinances: 'Finances'
     },
     teamTab: {
       title: 'Project team',
@@ -444,7 +471,7 @@ export const en: TranslationKeys = {
       memberAdded: 'Member added',
       addError: 'Error adding member',
       memberRemoved: 'Member removed',
-      removeError: 'Error removing member',
+      removeError: 'Error removing member'
     },
     documentsTab: {
       contracts: 'Contracts',
@@ -484,7 +511,7 @@ export const en: TranslationKeys = {
       uploadSuccess: 'Document uploaded successfully',
       uploadError: 'Failed to upload document',
       titleRequired: 'Document title is required',
-      fileRequired: 'Please select a file to upload',
+      fileRequired: 'Please select a file to upload'
     },
     wizard: {
       title: 'New Project Setup',
@@ -532,13 +559,146 @@ export const en: TranslationKeys = {
       folderActsForms: 'Acts & Forms',
       folderCorrespondence: 'Correspondence',
       folderPhotoReports: 'Photo Reports',
-      folderAsBuiltDocs: 'As-Built Documentation',
+      folderAsBuiltDocs: 'As-Built Documentation'
     },
+    // -- Pre-Construction Features --
+    preConstruction: {
+      tabTitle: 'Pre-Construction',
+    },
+    statusUpdated: 'Status Updated',
+    surveys: {
+      title: 'Engineering Surveys',
+      addTitle: 'Add Survey',
+      editTitle: 'Edit Survey',
+      type: 'Survey Type',
+      contractor: 'Contractor',
+      contractNumber: 'Contract Number',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      resultSummary: 'Result Summary',
+      types: {
+        GEODETIC: 'Geodetic',
+        GEOLOGICAL: 'Geological',
+        HYDRO: 'Hydrological',
+        ECOLOGICAL: 'Ecological',
+        OTHER: 'Other',
+      },
+      statuses: {
+        PLANNED: 'Planned',
+        IN_PROGRESS: 'In Progress',
+        COMPLETED: 'Completed',
+        APPROVED: 'Approved',
+      },
+    },
+    permits: {
+      title: 'Permits & Approvals',
+      addTitle: 'Add Permit',
+      editTitle: 'Edit Permit',
+      permitType: 'Permit Type',
+      number: 'Number',
+      issuingAuthority: 'Issuing Authority',
+      issueDate: 'Issue Date',
+      expiryDate: 'Expiry Date',
+      types: {
+        GPZU: 'Land Use Plan (GPZU)',
+        EXPERTISE_PD: 'Design Expertise',
+        BUILDING_PERMIT: 'Building Permit',
+        ENVIRONMENTAL: 'Environmental Clearance',
+        FIRE_SAFETY: 'Fire Safety',
+        OTHER: 'Other',
+      },
+      statuses: {
+        NOT_STARTED: 'Not Started',
+        IN_PROGRESS: 'In Progress',
+        SUBMITTED: 'Submitted',
+        APPROVED: 'Approved',
+        REJECTED: 'Rejected',
+        EXPIRED: 'Expired',
+      },
+    },
+    constructionPlans: {
+      title: 'Construction Plans',
+      advance: 'Advance',
+      types: {
+        POS: 'Construction Organization Plan (POS)',
+        PPR: 'Work Production Plan (PPR)',
+        SITE_PLAN: 'Site Layout Plan',
+      },
+      statuses: {
+        NOT_STARTED: 'Not Started',
+        DRAFT: 'Draft',
+        REVIEW: 'Under Review',
+        APPROVED: 'Approved',
+      },
+    },
+    safetyChecklist: {
+      title: 'Safety Checklist',
+      empty: 'Checklist not initialized',
+      initialize: 'Initialize',
+      required: 'Required',
+      categories: {
+        PPE: 'PPE (Personal Protective Equipment)',
+        SITE_SECURITY: 'Site Security',
+        EMERGENCY: 'Emergency Plans',
+        TRAINING: 'Training & Briefings',
+        HAZARD_ASSESSMENT: 'Hazard Assessment',
+        FIRE_PROTECTION: 'Fire Protection',
+      },
+    },
+    risks: {
+      title: 'Risk Register',
+      subtitle: 'Project risk management',
+      addRisk: 'Add Risk',
+      editRisk: 'Edit Risk',
+      totalRisks: 'Total Risks',
+      highRisks: 'High Risks',
+      mitigating: 'Mitigating',
+      closedRisks: 'Closed',
+      matrix: 'Risk Matrix',
+      category: 'Category',
+      probability: 'Probability',
+      impact: 'Impact',
+      score: 'Score',
+      owner: 'Owner',
+      mitigation: 'Mitigation',
+      dueDate: 'Due Date',
+      categories: {
+        FINANCIAL: 'Financial',
+        TECHNICAL: 'Technical',
+        LEGAL: 'Legal',
+        ENVIRONMENTAL: 'Environmental',
+        SCHEDULE: 'Schedule',
+        SAFETY: 'Safety',
+        OTHER: 'Other',
+      },
+      statuses: {
+        IDENTIFIED: 'Identified',
+        MITIGATING: 'Mitigating',
+        ACCEPTED: 'Accepted',
+        CLOSED: 'Closed',
+      },
+    },
+    meeting: {
+      title: 'Pre-Construction Meeting',
+      subtitle: 'Kick-off meeting',
+      empty: 'No meeting created yet',
+      create: 'Create Meeting',
+      info: 'Meeting Information',
+      noLocation: 'Location not set',
+      attendeesCount: 'Attendees',
+      attendees: 'Attendees',
+      addAttendee: 'Add Attendee',
+      agenda: 'Agenda',
+      addAgendaItem: 'Add Item',
+      decisions: 'Decisions',
+      addDecision: 'Add Decision',
+      actionItems: 'Action Items',
+      actionDescription: 'Description',
+      actionOwner: 'Owner',
+      minutes: 'Minutes',
+      minutesPlaceholder: 'Enter meeting minutes...',
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Contracts
-  // ---------------------------------------------------------------------------
   counterparties: {
     title: 'Counterparty Registry',
     subtitle: 'Customers, contractors, suppliers and other organizations',
@@ -589,12 +749,12 @@ export const en: TranslationKeys = {
     validation: {
       nameRequired: 'Name is required',
       innRequired: 'INN is required',
-      innFormat: 'INN must contain 10 or 12 digits',
+      innFormat: 'INN must contain 10 or 12 digits'
     },
     goToRegistry: 'Go to counterparty registry',
     notFound: 'Counterparty not found',
     selectCounterparty: 'Select from registry',
-    createNew: 'Create new counterparty',
+    createNew: 'Create new counterparty'
   },
   contracts: {
     title: 'Contracts',
@@ -613,7 +773,7 @@ export const en: TranslationKeys = {
       subcontract: 'Subcontract',
       supply: 'Supply',
       service: 'Service',
-      design: 'Design',
+      design: 'Design'
     },
     list: {
       subtitle: '{count} contracts in system',
@@ -648,7 +808,7 @@ export const en: TranslationKeys = {
       confirmCancelButton: 'Confirm cancellation',
       confirmCancelCancel: 'Keep as is',
       demoCancelContracts: 'Cancel contracts',
-      demoCreateContract: 'Create contract',
+      demoCreateContract: 'Create contract'
     },
     detail: {
       defaultType: 'Contract',
@@ -708,7 +868,7 @@ export const en: TranslationKeys = {
       payableAmount: 'Payable Amount',
       changeStatusTitle: 'Change Contract Status',
       changeStatusDesc: 'Current status: {status}',
-      currentStatus: 'Current',
+      currentStatus: 'Current'
     },
     board: {
       title: 'Contracts - Board',
@@ -729,7 +889,7 @@ export const en: TranslationKeys = {
       priorityHigh: 'High',
       priorityCritical: 'Critical',
       emptyColumn: 'No contracts',
-      dragHint: 'Drag a card here',
+      dragHint: 'Drag a card here'
     },
     sign: {
       title: 'Contract Signing',
@@ -773,15 +933,59 @@ export const en: TranslationKeys = {
       summaryRole: 'Position:',
       summaryDate: 'Date:',
       summaryProxy: 'Power of Attorney:',
-      confirmInfo: 'After confirmation, the contract will be set to "Signed" status and become active.',
+      confirmInfo: 'After confirmation, the contract will be set to "Signed" status and become active.'
     },
     direction: {
       all: 'All',
       contractor: 'Contractors',
-      client: 'Client',
+      client: 'Client'
     },
     budgetItems: {
       colCoverage: 'Coverage',
+      linkSuccess: 'Link Success',
+      updateSuccess: 'Updated successfully',
+      unlinkSuccess: 'Unlink Success',
+      errorInvalidNumber: 'Error Invalid Number',
+      errorNegativeValues: 'Error Negative Values',
+      errorQuantityOrAmountRequired: 'Error Quantity Or Amount Required',
+      errorQuantityExceedsCoverage: 'Error Quantity Exceeds Coverage',
+      errorAmountExceedsCoverage: 'Error Amount Exceeds Coverage',
+      errorProjectRequired: 'Error Project Required',
+      errorSelectItem: 'Error Select Item',
+      errorDuplicateInBatch: 'Error Duplicate In Batch',
+      errorBatchEmpty: 'Error Batch Empty',
+      linkTitle: 'Link Title',
+      linkHint: 'Link Hint',
+      addToBatch: 'Add To Batch',
+      linkBatchAction: 'Link Batch Action',
+      fieldItem: 'Field Item',
+      fieldItemPlaceholder: 'Field Item Placeholder',
+      fieldQuantity: 'Field Quantity',
+      fieldQuantityHint: 'Field Quantity Hint',
+      fieldAmount: 'Field Amount',
+      fieldAmountHint: 'Field Amount Hint',
+      fieldNotes: 'Field Notes',
+      fieldNotesPlaceholder: 'Field Notes Placeholder',
+      metricPlanned: 'Metric Planned',
+      metricContracted: 'Metric Contracted',
+      metricCoverage: 'Metric Coverage',
+      metricAmountCoverage: 'Metric Amount Coverage',
+      noSelectableItems: 'No Selectable Items',
+      batchTitle: 'Batch Title',
+      batchEmpty: 'Batch Empty',
+      colName: 'Name',
+      colQuantity: 'Quantity',
+      colAmount: 'Amount',
+      removeFromBatch: 'Remove From Batch',
+      title: 'Title',
+      empty: 'Empty',
+      colNotes: 'Notes',
+      save: 'Save',
+      cancel: 'Cancel',
+      edit: 'Edit',
+      unlinkConfirm: 'Unlink Confirm',
+      unlink: 'Unlink',
+      total: 'Total'
     },
     fmCoverage: {
       title: 'FM Position Coverage',
@@ -793,13 +997,123 @@ export const en: TranslationKeys = {
       warningUnderAllocated: 'Position is not fully covered by contracts',
       linkedContracts: 'Linked Contracts',
       noContracts: 'No linked contracts',
-      qty: 'Qty',
+      qty: 'Qty'
     },
+    claims: {
+      statusFiled: 'Status Filed',
+      statusUnderReview: 'Status Under Review',
+      statusAccepted: 'Status Accepted',
+      statusRejected: 'Rejected',
+      statusResolved: 'Status Resolved',
+      statusWithdrawn: 'Status Withdrawn',
+      typeDelay: 'Type Delay',
+      typeQualityDefect: 'Type Quality Defect',
+      typePaymentDefault: 'Type Payment Default',
+      typeScopeChange: 'Type Scope Change',
+      typeOther: 'Type Other',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      toastStatusUpdated: 'Toast Status Updated',
+      toastStatusError: 'Toast Status Error',
+      errorNoSubject: 'Error No Subject',
+      title: 'Title',
+      openClaims: 'Open Claims',
+      addClaim: 'Add Claim',
+      empty: 'Empty',
+      response: 'Response',
+      resolution: 'Resolution',
+      actionReview: 'Action Review',
+      actionAccept: 'Action Accept',
+      actionReject: 'Action Reject',
+      actionResolve: 'Action Resolve',
+      modalTitle: 'Modal Title',
+      fieldType: 'Field Type',
+      fieldAmount: 'Field Amount',
+      fieldSubject: 'Field Subject',
+      fieldSubjectPlaceholder: 'Field Subject Placeholder',
+      fieldDescription: 'Field Description',
+      fieldDescriptionPlaceholder: 'Field Description Placeholder',
+      submitClaim: 'Submit Claim'
+    },
+    procurement: {
+      '44fz': '44fz',
+      '223fz': '223fz',
+      law: 'Law',
+      commercial: 'Commercial',
+      tenderNumber: 'Tender Number',
+      methodOpenTender: 'Method Open Tender',
+      methodSingleSource: 'Method Single Source',
+      methodAuction: 'Method Auction',
+      methodRequest: 'Method Request',
+      method: 'Method',
+      tenderJustification: 'Tender Justification',
+      compliancePanel: 'Compliance Panel',
+      complianceHint: 'Compliance Hint',
+      docProvided: 'Doc Provided',
+      docMissing: 'Doc Missing',
+      docRequired: 'Doc Required'
+    },
+    insurance: {
+      sectionTitle: 'Insurance & Bonds',
+      type: 'Insurance Type',
+      types: {
+        CMR: 'Construction & Installation Insurance',
+        BUILDERS_RISK: 'Builders Risk',
+        PROFESSIONAL_LIABILITY: 'Professional Liability',
+        COMBINED: 'Combined',
+      },
+      policyNumber: 'Policy Number',
+      amount: 'Insurance Amount',
+      expiryDate: 'Policy Expiry Date',
+      performanceBondNumber: 'Performance Bond Number',
+      performanceBondAmount: 'Performance Bond Amount',
+      paymentBondNumber: 'Payment Bond Number',
+      paymentBondAmount: 'Payment Bond Amount',
+    },
+    supplements: {
+      statusDraft: 'Draft',
+      statusUnderReview: 'Status Under Review',
+      statusApproved: 'Approved',
+      statusSigned: 'Status Signed',
+      statusRejected: 'Rejected',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      toastApproved: 'Toast Approved',
+      toastApproveError: 'Toast Approve Error',
+      toastSigned: 'Toast Signed',
+      toastSignError: 'Toast Sign Error',
+      errorNoNumber: 'Error No Number',
+      errorNoDate: 'Error No Date',
+      title: 'Title',
+      totalAmountChange: 'Total Amount Change',
+      addSupplement: 'Add Supplement',
+      empty: 'Empty',
+      createFirst: 'Create First',
+      supplementNumber: 'Supplement Number',
+      descriptionChanges: 'Description Changes',
+      deadlineChange: 'Deadline Change',
+      days: 'Days',
+      newTotalAmount: 'New Total Amount',
+      signedAt: 'Signed At',
+      approve: 'Approve',
+      sign: 'Sign',
+      modalTitle: 'Modal Title',
+      fieldNumber: 'Field Number',
+      fieldNumberPlaceholder: 'Field Number Placeholder',
+      fieldDate: 'Field Date',
+      fieldReason: 'Field Reason',
+      fieldReasonPlaceholder: 'Field Reason Placeholder',
+      fieldDescription: 'Field Description',
+      fieldDescriptionPlaceholder: 'Field Description Placeholder',
+      fieldAmountChange: 'Field Amount Change',
+      fieldAmountChangeHint: 'Field Amount Change Hint',
+      fieldDeadlineChange: 'Field Deadline Change',
+      fieldDeadlineChangeHint: 'Field Deadline Change Hint',
+      fieldNewDeadline: 'Field New Deadline',
+      previewAfterSigning: 'Preview After Signing',
+      previewAmount: 'Preview Amount'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Finance & Cost Management
-  // ---------------------------------------------------------------------------
   finance: {
     title: 'Finance',
     costCodes: 'Cost Codes',
@@ -846,7 +1160,7 @@ export const en: TranslationKeys = {
       colAmount: 'Amount',
       emptyTitle: 'No payments',
       emptyDescription: 'Create your first payment to get started',
-      footerTotal: 'Total displayed:',
+      footerTotal: 'Total displayed:'
     },
     paymentDetail: {
       edit: 'Edit',
@@ -877,7 +1191,7 @@ export const en: TranslationKeys = {
       toastEditHint: 'Edit payment via the creation form',
       demoChangeStatus: 'Change payment status',
       demoDeletePayment: 'Delete payment',
-      demoEditPayment: 'Edit payment',
+      demoEditPayment: 'Edit payment'
     },
     invoiceList: {
       title: 'Invoices',
@@ -899,7 +1213,7 @@ export const en: TranslationKeys = {
       colPaid: 'Paid',
       colRemaining: 'Remaining',
       emptyTitle: 'No invoices',
-      emptyDescription: 'Create your first invoice to get started',
+      emptyDescription: 'Create your first invoice to get started'
     },
     invoiceDetail: {
       tabDetails: 'Details',
@@ -945,7 +1259,7 @@ export const en: TranslationKeys = {
       toastEditHint: 'Edit invoice via the creation form',
       demoChangeStatus: 'Change invoice status',
       demoDeleteInvoice: 'Delete invoice',
-      demoEditInvoice: 'Edit invoice',
+      demoEditInvoice: 'Edit invoice'
     },
     sections: {
       title: 'Section Management',
@@ -964,7 +1278,7 @@ export const en: TranslationKeys = {
       presetIndustrial: 'Industrial construction',
       presetRoad: 'Road construction',
       presetEngineering: 'Engineering networks',
-      presetConfirm: 'Current sections will be replaced. Continue?',
+      presetConfirm: 'Current sections will be replaced. Continue?'
     },
     fmList: {
       title: 'Financial Models',
@@ -972,7 +1286,7 @@ export const en: TranslationKeys = {
       breadcrumb: 'Financial Models',
       hint: 'Click a row to open the FM directly',
       emptyTitle: 'No financial models',
-      emptyDescription: 'Create a project — FM is created automatically',
+      emptyDescription: 'Create a project — FM is created automatically'
     },
     budgetList: {
       title: 'Budgets',
@@ -996,7 +1310,7 @@ export const en: TranslationKeys = {
       colActualCost: 'Actual Cost',
       colVariance: 'Variance',
       emptyTitle: 'No budgets',
-      emptyDescription: 'Create your first budget to get started',
+      emptyDescription: 'Create your first budget to get started'
     },
     budgetDetail: {
       defaultSubtitle: 'Budget',
@@ -1025,11 +1339,12 @@ export const en: TranslationKeys = {
       chartPlan: 'Plan',
       chartActual: 'Actual',
       chartCommitted: 'Committed',
-    flowTitle: 'Flow navigation',
-    flowSpec: 'Specification',
-    flowCl: 'Competitive List',
-    flowCp: 'Commercial Proposal',
-    flowFm: 'Financial Model',
+      flowTitle: 'Flow navigation',
+      flowSpec: 'Specification',
+      flowCl: 'Competitive List',
+      flowCp: 'Commercial Proposal',
+      flowFm: 'Financial Model',
+      chartTooltipUnit: 'Chart Tooltip Unit'
     },
     fm: {
       title: 'Financial Model',
@@ -1058,7 +1373,7 @@ export const en: TranslationKeys = {
         simulate: 'Simulate',
         currentRevenue: 'Current Revenue',
         targetRevenue: 'Target Revenue',
-        revenueDelta: 'Revenue Delta',
+        revenueDelta: 'Revenue Delta'
       },
       manageSections: 'Manage Sections',
       createSnapshot: 'Create Snapshot',
@@ -1154,7 +1469,7 @@ export const en: TranslationKeys = {
         colCurrent: 'Current',
         colDelta: 'Delta',
         colChange: 'Change',
-        noChanges: 'No changes',
+        noChanges: 'No changes'
       },
       inlineEditHint: 'Double-click to edit',
       expandAll: 'Expand all',
@@ -1186,20 +1501,45 @@ export const en: TranslationKeys = {
         estimateImported: 'Estimate imported into the financial model',
         saveError: 'Save error',
         itemCreated: 'Item created',
-        itemDeleted: 'Item deleted',
+        itemDeleted: 'Item deleted'
       },
+      kpiOverhead: 'Kpi Overhead',
+      kpiProfit: 'Kpi Profit',
+      kpiContingency: 'Kpi Contingency',
+      importEstimateTitle: 'Import Estimate Title',
+      importEstimateBtn: 'Import Estimate Btn',
+      confirmImportEstimateDesc: 'Confirm Import Estimate Desc',
+      confirmImportEstimateWarning: 'Confirm Import Estimate Warning',
+      colOverheadHint: 'Col Overhead Hint',
+      colOverhead: 'Col Overhead',
+      colProfitHint: 'Col Profit Hint',
+      colProfit: 'Col Profit',
+      colContingencyHint: 'Col Contingency Hint',
+      colContingency: 'Col Contingency'
     },
     fmDashboard: {
-      title: 'FM Dashboard', subtitle: 'Key metrics and project analytics',
-      breadcrumb: 'FM Dashboard', goToFm: 'Go to FM',
-      metricCost: 'Cost', metricCustomer: 'Customer Price',
-      metricMargin: 'Margin', metricCvr: 'CVR', metricPaid: 'Paid',
-      cvrProgress: 'CVR Progress', contracted: 'Contracted', actSigned: 'Acts Signed', paid: 'Paid',
+      title: 'FM Dashboard',
+      subtitle: 'Key metrics and project analytics',
+      breadcrumb: 'FM Dashboard',
+      goToFm: 'Go to FM',
+      metricCost: 'Cost',
+      metricCustomer: 'Customer Price',
+      metricMargin: 'Margin',
+      metricCvr: 'CVR',
+      metricPaid: 'Paid',
+      cvrProgress: 'CVR Progress',
+      contracted: 'Contracted',
+      actSigned: 'Acts Signed',
+      paid: 'Paid',
       marginBreakdown: 'Margin Breakdown',
       bySection: 'By Section (Plan vs Contract vs Actual)',
-      colName: 'Item', colSection: 'Section', colPlanned: 'Planned', colActual: 'Actual',
-      colOverrun: 'Overrun', colOverrunPercent: 'Overrun %',
-      riskPositions: 'Risk Positions (Actual > Plan by 10%+)',
+      colName: 'Item',
+      colSection: 'Section',
+      colPlanned: 'Planned',
+      colActual: 'Actual',
+      colOverrun: 'Overrun',
+      colOverrunPercent: 'Overrun %',
+      riskPositions: 'Risk Positions (Actual > Plan by 10%+)'
     },
     cashFlowPage: {
       title: 'Cash Flow',
@@ -1219,7 +1559,7 @@ export const en: TranslationKeys = {
       colOutgoing: 'Outgoing',
       colBalance: 'Balance',
       emptyTitle: 'No data',
-      emptyDescription: 'No cash flow data available',
+      emptyDescription: 'No cash flow data available'
     },
     cashFlowChart: {
       title: 'Cash Flow - Charts',
@@ -1242,6 +1582,7 @@ export const en: TranslationKeys = {
       colNetFlow: 'Net Flow',
       colRunningBalance: 'Balance',
       totalRow: 'Total',
+      colBalance: 'Col Balance'
     },
     paymentCalendar: {
       title: 'Payment Calendar',
@@ -1282,6 +1623,15 @@ export const en: TranslationKeys = {
       summaryPayments: 'Payments:',
       summaryTotal: 'Total Amount:',
       confirmInfo: 'The payment calendar will be created and available in "Finance - Payment Calendar".',
+      stepProject: 'Step Project',
+      modalTitle: 'Modal Title',
+      cancel: 'Cancel',
+      selectProject: 'Select Project',
+      checkApproved: 'Check Approved',
+      checkPlanned: 'Check Planned',
+      checkAutoDistribute: 'Check Auto Distribute',
+      previewHint: 'Preview Hint',
+      totalRow: 'Total Row'
     },
     paymentApprove: {
       title: 'Payment Approval',
@@ -1316,6 +1666,19 @@ export const en: TranslationKeys = {
       commentLabel: 'Comment',
       commentPlaceholder: 'Comment on the decision...',
       confirmInfo: 'Click "Approve Payment" to approve or "Reject" to decline.',
+      modalTitle: 'Modal Title',
+      cancel: 'Cancel',
+      purpose: 'Purpose',
+      amountExclVat: 'Amount Excl Vat',
+      vat: 'Vat',
+      totalPayable: 'Total Payable',
+      planned: 'Planned',
+      spent: 'Spent',
+      remaining: 'Remaining',
+      summaryAmount: 'Summary Amount',
+      summaryBudget: 'Summary Budget',
+      withinBudget: 'Within Budget',
+      overBudget: 'Over Budget'
     },
     cashFlowForecast: {
       title: 'Cash Flow Forecast',
@@ -1356,6 +1719,22 @@ export const en: TranslationKeys = {
       summaryNo: 'No',
       summaryRetention: 'Retention guarantee:',
       confirmInfo: 'After generation, the forecast will be available in "Cash Flow".',
+      toastSuccess: 'Toast Success',
+      modalTitle: 'Modal Title',
+      cancel: 'Cancel',
+      generate: 'Generate',
+      periodInfo: 'Period Info',
+      growthRateLabel: 'Growth Rate Label',
+      growthRateHint: 'Growth Rate Hint',
+      paymentDelayLabel: 'Payment Delay Label',
+      paymentDelayHint: 'Payment Delay Hint',
+      checkVat: 'Check Vat',
+      checkRetention: 'Check Retention',
+      retentionPercentLabel: 'Retention Percent Label',
+      reviewHint: 'Review Hint',
+      days: 'Days',
+      yes: 'Yes',
+      no: 'No'
     },
     bankStatementMatching: {
       title: 'Bank Statement Matching',
@@ -1392,7 +1771,7 @@ export const en: TranslationKeys = {
       toastUploaded: 'Statement uploaded: {count} transactions',
       toastConfirmed: 'Match confirmed',
       toastRejected: 'Match rejected',
-      toastManualMatched: 'Manual match completed',
+      toastManualMatched: 'Manual match completed'
     },
     factoringCalculator: {
       title: 'Factoring Calculator',
@@ -1423,7 +1802,7 @@ export const en: TranslationKeys = {
       colNetProceeds: 'Net Proceeds',
       emptyTitle: 'No Data',
       emptyDescription: 'Select invoices and set parameters to calculate',
-      toastCalculated: 'Factoring calculated for {count} invoices',
+      toastCalculated: 'Factoring calculated for {count} invoices'
     },
     treasuryCalendar: {
       title: 'Treasury Payment Calendar',
@@ -1452,7 +1831,7 @@ export const en: TranslationKeys = {
       statusOverdue: 'Overdue',
       emptyDay: 'No payments for this day',
       emptyTitle: 'No Payments',
-      emptyDescription: 'No payments scheduled for the selected month',
+      emptyDescription: 'No payments scheduled for the selected month'
     },
     taxCalendar: {
       title: 'Tax Calendar',
@@ -1483,7 +1862,7 @@ export const en: TranslationKeys = {
       emptyTitle: 'No Tax Obligations',
       emptyDescription: 'No tax deadlines loaded yet',
       toastNotifyOn: 'Notification enabled for {tax}',
-      toastNotifyOff: 'Notification disabled for {tax}',
+      toastNotifyOff: 'Notification disabled for {tax}'
     },
     bankExport: {
       title: 'Bank Payment Export',
@@ -1513,7 +1892,7 @@ export const en: TranslationKeys = {
       noPaymentsSelected: 'Select payments to export',
       emptyHistory: 'No Export History',
       emptyHistoryDescription: 'No exports have been made yet',
-      toastExported: 'Export completed: {fileName}',
+      toastExported: 'Export completed: {fileName}'
     },
     executionChain: {
       title: 'Execution Chain',
@@ -1546,9 +1925,8 @@ export const en: TranslationKeys = {
       emptyTitle: 'Select a Project',
       emptyDescription: 'Choose a project from the dropdown above to view the execution chain',
       errorTitle: 'Loading Error',
-      errorDescription: 'Failed to load execution chain data',
+      errorDescription: 'Failed to load execution chain data'
     },
-    // Budget item doc statuses
     docStatusPlanned: 'Planned',
     docStatusTendered: 'Tendered',
     docStatusContracted: 'Contracted',
@@ -1556,28 +1934,245 @@ export const en: TranslationKeys = {
     docStatusActSigned: 'Act Signed',
     docStatusInvoiced: 'Invoiced',
     docStatusPaid: 'Paid',
-    // Budget item / position types
     unitPcs: 'pcs',
     itemTypeWorks: 'Works',
     itemTypeMaterials: 'Materials',
     itemTypeEquipment: 'Equipment',
     itemTypeOverhead: 'Overhead',
     itemTypeOther: 'Other',
-    // Budget categories
     costCategoryLabor: 'Labor',
     costCategorySubcontract: 'Subcontract',
     costCategoryOverhead: 'Overhead',
-    // Price sources
     priceSourceManual: 'Manual',
     priceSourceWorksTender: 'Works Tender',
     priceSourceMaterialsTender: 'Materials Tender',
     priceSourceEstimate: 'Estimate',
     priceSourceInvoice: 'Invoice',
+    bdds: {
+      monthJan: 'January',
+      monthFeb: 'February',
+      monthMar: 'March',
+      monthApr: 'April',
+      monthMay: 'May',
+      monthJun: 'June',
+      monthJul: 'July',
+      monthAug: 'August',
+      monthSep: 'September',
+      monthOct: 'October',
+      monthNov: 'November',
+      monthDec: 'December',
+      lineFromClient: 'Line From Client',
+      lineAdvancesReceived: 'Line Advances Received',
+      lineOtherIncome: 'Line Other Income',
+      lineSubcontractors: 'Line Subcontractors',
+      lineMaterialsSupply: 'Line Materials Supply',
+      lineEquipmentRental: 'Line Equipment Rental',
+      linePayroll: 'Line Payroll',
+      lineOverhead: 'Line Overhead',
+      lineVatBudget: 'Line Vat Budget',
+      taxPayments: 'Tax Payments',
+      lineOtherExpenses: 'Line Other Expenses',
+      thousandRub: 'Thousand Rub',
+      colItem: 'Col Item',
+      colType: 'Type',
+      colTotal: 'Total',
+      excelTitle: 'Excel Title',
+      excelYear: 'Excel Year',
+      excelProject: 'Excel Project',
+      all: 'All',
+      plan: 'Plan',
+      fact: 'Fact',
+      totalIncome: 'Total Income',
+      totalExpenses: 'Total Expenses',
+      netFlowPlan: 'Net Flow Plan',
+      netFlowFact: 'Net Flow Fact',
+      title: 'Title',
+      allProjects: 'All Projects',
+      subtitle: 'Subtitle',
+      savePlan: 'Save Plan',
+      enterPlan: 'Enter Plan',
+      refresh: 'Refresh',
+      tabTable: 'Tab Table',
+      tabChart: 'Tab Chart',
+      clickCellHint: 'Click Cell Hint',
+      planIncome: 'Plan Income',
+      factIncome: 'Fact Income',
+      planExpenses: 'Plan Expenses',
+      now: 'Now',
+      incomeFlow: 'Income Flow',
+      expenseFlow: 'Expense Flow',
+      netFlow: 'Net Flow',
+      cumulativeBalance: 'Cumulative Balance',
+      chartIncomeExpenses: 'Chart Income Expenses',
+      planIncomeLegend: 'Plan Income Legend',
+      factIncomeLegend: 'Fact Income Legend',
+      planExpenseLegend: 'Plan Expense Legend',
+      factExpenseLegend: 'Fact Expense Legend',
+      chartNetFlowCumulative: 'Chart Net Flow Cumulative',
+      planBalanceLegend: 'Plan Balance Legend'
+    },
+    expenses: {
+      allStatuses: 'All Statuses',
+      colMark: 'Col Mark',
+      colType: 'Type',
+      colContract: 'Contract',
+      colCounterparty: 'Col Counterparty',
+      colInvoiced: 'Col Invoiced',
+      colRemaining: 'Col Remaining',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      allProjects: 'All Projects',
+      allMarks: 'All Marks',
+      plannedAmount: 'Planned Amount',
+      ofPlan: 'Of Plan',
+      actsSigned: 'Acts Signed',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    },
+    colName: 'Name',
+    colPlanned: 'Col Planned',
+    colContracted: 'Col Contracted',
+    colActSigned: 'Col Act Signed',
+    colPaid: 'Col Paid',
+    colStatus: 'Status',
+    contracted: 'Contracted',
+    valueEngineering: {
+      budgetItem: 'Budget Item',
+      originalSolution: 'Original Solution',
+      proposedSolution: 'Proposed Solution',
+      costSaving: 'Cost Saving',
+      qualityImpact: 'Quality Impact',
+      author: 'Author',
+      totalSavings: 'Total Savings',
+      approvedSavings: 'Approved Savings',
+      implementationRate: 'Implementation Rate',
+      addItem: 'Add Item',
+      editItem: 'Edit Item',
+      impacts: {
+        NONE: 'None',
+        MINOR: 'Minor',
+        SIGNIFICANT: 'Significant',
+      },
+      statuses: {
+        PROPOSED: 'Proposed',
+        APPROVED: 'Approved',
+        REJECTED: 'Rejected',
+        IMPLEMENTED: 'Implemented',
+      },
+    },
+    editSection: 'Edit Section',
+    editPosition: 'Edit Position',
+    addSectionTitle: 'Add Section Title',
+    addPositionTitle: 'Add Position Title',
+    isSectionHint: 'Is Section Hint',
+    fieldSectionName: 'Field Section Name',
+    fieldPositionName: 'Field Position Name',
+    placeholderSectionName: 'Placeholder Section Name',
+    placeholderPositionName: 'Placeholder Position Name',
+    fieldSectionMark: 'Field Section Mark',
+    notSpecified: 'Not Specified',
+    fieldItemType: 'Field Item Type',
+    fieldCategory: 'Field Category',
+    fieldQuantity: 'Field Quantity',
+    fieldUnit: 'Field Unit',
+    fieldVatPercent: 'Field Vat Percent',
+    fieldCostPricePerUnit: 'Field Cost Price Per Unit',
+    hintPriceFromTenderOrEstimate: 'Hint Price From Tender Or Estimate',
+    pickPriceFromTender: 'Pick Price From Tender',
+    tender: 'Tender',
+    pickPriceFromEstimate: 'Pick Price From Estimate',
+    estimate: 'Estimate',
+    pickPriceFromInvoice: 'Pick Price From Invoice',
+    invoice: 'Invoice',
+    fieldEstimatePricePerUnit: 'Field Estimate Price Per Unit',
+    hintBaseEstimatePrice: 'Hint Base Estimate Price',
+    colClientPrice: 'Col Client Price',
+    hintCustomerPriceLimit: 'Hint Customer Price Limit',
+    fieldMarkupCoefficient: 'Field Markup Coefficient',
+    hintMarkupCoefficient: 'Hint Markup Coefficient',
+    priceCalculation: 'Price Calculation',
+    calcCostPrice: 'Calc Cost Price',
+    calcEstimatePrice: 'Calc Estimate Price',
+    calcCoefficient: 'Calc Coefficient',
+    calcVat: 'Calc Vat',
+    calcTotalWithVatPerUnit: 'Calc Total With Vat Per Unit',
+    calcPlannedAmount: 'Calc Planned Amount',
+    fieldNote: 'Field Note',
+    addButton: 'Add Button',
+    typeShortWorks: 'Type Short Works',
+    typeShortMaterials: 'Type Short Materials',
+    typeShortEquipment: 'Type Short Equipment',
+    typeShortOther: 'Type Short Other',
+    openPriceSource: 'Open Price Source',
+    childItems: 'Child Items',
+    addSubsection: 'Add Subsection',
+    addPosition: 'Add Position',
+    editItem: 'Edit Item',
+    deleteItem: 'Delete Item',
+    noBudgetItems: 'No Budget Items',
+    createSectionsHint: 'Create Sections Hint',
+    plusSection: 'Plus Section',
+    plusPosition: 'Plus Position',
+    colUnit: 'Unit',
+    colQty: 'Col Qty',
+    colCostPrice: 'Col Cost Price',
+    colEstimatePrice: 'Col Estimate Price',
+    colCoefficient: 'Col Coefficient',
+    colVat22: 'Col Vat22',
+    colTotalWithVat: 'Col Total With Vat',
+    colSource: 'Col Source',
+    budgetTotal: 'Budget Total',
+    errorNoPriceInEstimate: 'Error No Price In Estimate',
+    searchEstimate: 'Search Estimate',
+    estimatesNotFound: 'Estimates Not Found',
+    noEstimatesForProject: 'No Estimates For Project',
+    loadingPositions: 'Loading Positions',
+    noPositions: 'No Positions',
+    perUnit: 'Per Unit',
+    errorNoPriceInInvoice: 'Error No Price In Invoice',
+    searchInvoice: 'Search Invoice',
+    invoicesNotFound: 'Invoices Not Found',
+    noInvoicesForProject: 'No Invoices For Project',
+    loadingInvoiceLines: 'Loading Invoice Lines',
+    noInvoiceLines: 'No Invoice Lines',
+    priceSource: 'Price Source',
+    loadingSource: 'Loading Source',
+    sourceStatus: 'Source Status',
+    sourceAmount: 'Source Amount',
+    openDocument: 'Open Document',
+    sourcePositions: 'Source Positions',
+    noSourceLines: 'No Source Lines',
+    colPricePerUnit: 'Col Price Per Unit',
+    colAmount: 'Amount',
+    matchesBudgetItem: 'Matches Budget Item',
+    errorNoPriceForItem: 'Error No Price For Item',
+    prStatusApproved: 'Pr Status Approved',
+    prStatusOrdered: 'Pr Status Ordered',
+    prStatusDelivered: 'Pr Status Delivered',
+    prStatusInProgress: 'Pr Status In Progress',
+    prStatusSubmitted: 'Pr Status Submitted',
+    prStatusDraft: 'Pr Status Draft',
+    searchTender: 'Search Tender',
+    tendersNotFound: 'Tenders Not Found',
+    noTendersForProject: 'No Tenders For Project',
+    positions: 'Positions',
+    noPositionsWithPrice: 'No Positions With Price',
+    budgetView: {
+      noMaterials: 'No Materials',
+      quantity: 'Quantity',
+      unit: 'Unit',
+      costPrice: 'Cost Price',
+      estimatePrice: 'Estimate Price',
+      customerPrice: 'Customer Price',
+      costTotal: 'Cost Total',
+      customerTotalCol: 'Customer Total Col',
+      margin: 'Margin',
+      totalMaterials: 'Total Materials',
+      noWorks: 'No Works',
+      totalWorks: 'Total Works'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Revenue Recognition
-  // ---------------------------------------------------------------------------
   revenue: {
     title: 'Revenue Recognition',
     revenueContract: 'Revenue Contract',
@@ -1588,14 +2183,9 @@ export const en: TranslationKeys = {
     completionPercentage: 'Completion Percentage',
     periodStart: 'Period Start',
     periodEnd: 'Period End',
-    recognizedAmount: 'Recognized Amount',
+    recognizedAmount: 'Recognized Amount'
   },
-
-  // ---------------------------------------------------------------------------
-  // Specifications
-  // ---------------------------------------------------------------------------
   specifications: {
-    // -- SpecificationListPage --
     listTitle: 'Specifications',
     listSubtitle: '{count} specifications in system',
     breadcrumbHome: 'Home',
@@ -1616,7 +2206,6 @@ export const en: TranslationKeys = {
     searchPlaceholder: 'Search by name, project...',
     emptyTitle: 'No specifications',
     emptyDescription: 'Create the first specification to get started',
-    // -- SpecificationDetailPage --
     detailVersionSubtitle: '{project} / Version {version}',
     detailColType: 'Type',
     detailColName: 'Name',
@@ -1638,11 +2227,9 @@ export const en: TranslationKeys = {
     flowCl: 'Competitive List',
     flowCp: 'Commercial Proposal',
     flowFm: 'Financial Model',
-    // -- Spec item types --
     itemTypeEquipment: 'Equipment',
     itemTypeMaterial: 'Materials',
     itemTypeWork: 'Works',
-    // -- Spec item column headers --
     itemColName: 'Name',
     itemColBrand: 'Type / Brand',
     itemColProductCode: 'Equipment Code',
@@ -1655,7 +2242,6 @@ export const en: TranslationKeys = {
     colSection: 'Section',
     placeholderBrand: 'Type, brand, model...',
     placeholderManufacturer: 'Factory, manufacturer...',
-    // -- Spec items in form --
     itemsHintNoPrices: 'Specification contains no prices — only name, quantity and unit of measure',
     itemsCount: 'Items to create: {count}',
     colItemType: 'Item type',
@@ -1667,14 +2253,12 @@ export const en: TranslationKeys = {
     importXlsxNoRows: 'No item rows found in the file',
     importXlsxError: 'Error parsing file. Please ensure the file is in xlsx/xls format',
     importXlsxSuccess: 'Loaded {count} items from file',
-    // -- Auto-FM --
     autoFmLabel: 'Automatically push items to Financial Model after creation',
     autoFmNote: 'Items will be pushed to FM automatically',
     autoFmSuccess: 'Pushed {count} items to Financial Model',
     autoKpLabel: 'Automatically create a Commercial Proposal with specification items',
     autoKpNote: 'A CP will be created automatically',
     autoKpSuccess: 'Commercial Proposal "{name}" created automatically',
-    // -- Spec → FM push --
     pushToFmBtn: 'Push to FM',
     pushToFmTitle: 'Push items to Financial Model',
     pushToFmDesc: '{count} items will be created in the FM. Prices are not transferred — estimatePrice is filled from the estimate.',
@@ -1683,7 +2267,6 @@ export const en: TranslationKeys = {
     pushToFmConfirm: 'Push',
     pushToFmSuccess: 'Items pushed to FM',
     pushToFmError: 'Error pushing to FM',
-    // -- PDF import --
     importPdfBtn: 'Import from PDF',
     importPdfTitle: 'Import Specification from PDF',
     importPdfDesc: 'Upload a PDF document (PD volume, IOS, AS). The system will automatically find the "Equipment Specification" section and extract all items.',
@@ -1728,7 +2311,6 @@ export const en: TranslationKeys = {
     importPdfColUnit: 'Unit',
     importPdfColQty: 'Qty',
     importPdfColMass: 'Mass',
-    // -- AnalogRequestsPage --
     analogRequestsTitle: 'Analog Requests',
     analogRequestsSubtitle: '{count} requests',
     analogRequestsBreadcrumb: 'Analog Requests',
@@ -1758,7 +2340,6 @@ export const en: TranslationKeys = {
     analogStatusApproved: 'Approved',
     analogStatusRejected: 'Rejected',
     analogStatusImplemented: 'Implemented',
-    // -- MaterialAnalogsPage --
     materialsTitle: 'Material Analogs',
     materialsSubtitle: '{count} analogs in database',
     materialsBreadcrumb: 'Material Analogs',
@@ -1796,27 +2377,40 @@ export const en: TranslationKeys = {
     materialsEmptyTitle: 'No material analogs',
     materialsEmptyDescription: 'Add the first analog to manage substitutions',
     materialsDays: 'days',
-    // -- SpecificationSplitView --
     splitView: {
-      title: 'Specification', subtitle: 'Items overview with supply coverage',
-      typeMaterial: 'Materials', typeEquipment: 'Equipment', typeWork: 'Works',
-      covered: 'Covered', partial: 'Partial', notCovered: 'Not Covered',
-      totalItems: 'Total Items', searchPlaceholder: 'Search by name, code...',
+      title: 'Specification',
+      subtitle: 'Items overview with supply coverage',
+      typeMaterial: 'Materials',
+      typeEquipment: 'Equipment',
+      typeWork: 'Works',
+      covered: 'Covered',
+      partial: 'Partial',
+      notCovered: 'Not Covered',
+      totalItems: 'Total Items',
+      searchPlaceholder: 'Search by name, code...',
       noItems: 'No items',
       selectItem: 'Select an item from the list on the left',
-      quantity: 'Quantity', coveredQty: 'Covered', bestPrice: 'Best Price', bestVendor: 'Best Vendor',
-      coverageProgress: 'Coverage', plannedAmount: 'Planned Amount',
+      quantity: 'Quantity',
+      coveredQty: 'Covered',
+      bestPrice: 'Best Price',
+      bestVendor: 'Best Vendor',
+      coverageProgress: 'Coverage',
+      plannedAmount: 'Planned Amount'
     },
-    // -- SpecSupplyDashboard --
     supplyDashboard: {
-      title: 'Supply Coverage', breadcrumb: 'Supply Coverage',
-      totalPositions: 'Total Positions', fullyCovered: 'Fully Covered',
-      partiallyCovered: 'Partially Covered', notCoveredCount: 'Not Covered',
-      coverageSummary: 'Coverage Summary', amountBreakdown: 'Amount Breakdown',
-      totalAmount: 'Total Amount', coveredAmount: 'Covered Amount', uncoveredAmount: 'Uncovered Amount',
-      bySection: 'By Category',
+      title: 'Supply Coverage',
+      breadcrumb: 'Supply Coverage',
+      totalPositions: 'Total Positions',
+      fullyCovered: 'Fully Covered',
+      partiallyCovered: 'Partially Covered',
+      notCoveredCount: 'Not Covered',
+      coverageSummary: 'Coverage Summary',
+      amountBreakdown: 'Amount Breakdown',
+      totalAmount: 'Total Amount',
+      coveredAmount: 'Covered Amount',
+      uncoveredAmount: 'Uncovered Amount',
+      bySection: 'By Category'
     },
-    // -- CRUD actions --
     deleteConfirmTitle: 'Delete Specification?',
     deleteConfirmDesc: 'All items will be permanently deleted. This action cannot be undone.',
     deleteSuccess: 'Specification deleted',
@@ -1841,11 +2435,15 @@ export const en: TranslationKeys = {
     addItemLabelUnit: 'Unit',
     addItemLabelSection: 'Section',
     addItemLabelNotes: 'Notes',
+    procurementStatusNotStarted: 'Procurement Status Not Started',
+    procurementStatusInProgress: 'Procurement Status In Progress',
+    procurementStatusCompleted: 'Procurement Status Completed',
+    longLead: {
+      column: 'Long Lead',
+      flag: 'Early Procurement',
+      days: 'days',
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Competitive List
-  // ---------------------------------------------------------------------------
   competitiveList: {
     title: 'Competitive List',
     creating: 'Creating competitive list...',
@@ -1856,7 +2454,7 @@ export const en: TranslationKeys = {
       COLLECTING: 'Collecting proposals',
       EVALUATING: 'Evaluating',
       DECIDED: 'Decided',
-      APPROVED: 'Approved',
+      APPROVED: 'Approved'
     },
     detail: {
       title: 'Competitive List',
@@ -1872,6 +2470,8 @@ export const en: TranslationKeys = {
       proposalsOnly: '{count}',
       minShort: 'min',
       savingsCoverage: 'Coverage: {covered}/{total} positions ({percent}%), savings {savingsPercent}%',
+      overrun: 'Overrun',
+      unknownVendor: 'Unknown Vendor'
     },
     emptyTitle: 'No proposals yet',
     emptyDescription: 'Add at least one vendor proposal for this position',
@@ -1882,7 +2482,7 @@ export const en: TranslationKeys = {
     supply: {
       fullyCovered: 'Covered',
       partiallyCovered: 'Partial',
-      notCovered: 'Not covered',
+      notCovered: 'Not covered'
     },
     entry: {
       vendor: 'Vendor',
@@ -1895,19 +2495,15 @@ export const en: TranslationKeys = {
       paymentDelay: 'Delay (days)',
       warranty: 'Warranty (mo)',
       months: 'mo',
-      score: 'Score',
+      score: 'Score'
     },
     toasts: {
       entryAdded: 'Proposal added',
       winnerSelected: 'Winner selected',
       autoRanked: 'Proposals ranked',
-      autoSelected: 'Best prices selected',
-    },
+      autoSelected: 'Best prices selected'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Commercial Proposal
-  // ---------------------------------------------------------------------------
   commercialProposal: {
     listTitle: 'Commercial Proposals',
     listSubtitle: '{count} proposals in system',
@@ -2041,26 +2637,28 @@ export const en: TranslationKeys = {
       materials: 'Materials',
       works: 'Works',
       totalCost: 'Total Cost',
+      allReady: 'All Ready',
+      allReadyDesc: 'All Ready Desc'
     },
     cl: {
       noClLinked: 'No competitive list linked',
-      noEntries: 'No entries for this item',
+      noEntries: 'No entries for this item'
     },
     toasts: {
       clEntrySelected: 'Supplier selected',
-      pushedToFm: 'Data pushed to financial model',
+      pushedToFm: 'Data pushed to financial model'
     },
     applyBid: {
       btn: 'Apply Bid Winner',
       hint: 'Cost price will be applied from tender results',
-      success: 'Cost price updated from bid winner',
+      success: 'Cost price updated from bid winner'
     },
     export: {
-      pdf: 'Export PDF',
+      pdf: 'Export PDF'
     },
     version: {
       create: 'New Version',
-      created: 'New CP version created',
+      created: 'New CP version created'
     },
     companyDetails: {
       btn: 'Company Details',
@@ -2071,13 +2669,16 @@ export const en: TranslationKeys = {
       companyAddress: 'Legal Address',
       signatoryName: 'Signatory Name',
       signatoryPosition: 'Signatory Position',
-      saved: 'Company details saved',
+      saved: 'Company details saved'
     },
+    emptyTitle: 'No Data',
+    emptyDescription: 'No data found',
+    poStatus: 'Po Status',
+    grStatus: 'Gr Status',
+    variance: 'Variance',
+    varianceWarning: 'Variance Warning',
+    overrideReasonPlaceholder: 'Override Reason Placeholder'
   },
-
-  // ---------------------------------------------------------------------------
-  // Invoice Matching
-  // ---------------------------------------------------------------------------
   invoiceMatching: {
     tab: 'Matching',
     threeWayTitle: 'Three-way match',
@@ -2096,11 +2697,8 @@ export const en: TranslationKeys = {
     colConfidence: 'Match',
     colDescription: 'Description',
     noMatches: 'No matches found',
+    link: 'Link'
   },
-
-  // ---------------------------------------------------------------------------
-  // PM Workflow -- RFI, Submittals, Issues
-  // ---------------------------------------------------------------------------
   rfi: {
     title: 'Requests for Information (RFI)',
     createRfi: 'Create RFI',
@@ -2113,7 +2711,6 @@ export const en: TranslationKeys = {
     respondedDate: 'Responded Date',
     distributionList: 'Distribution List',
     emptyState: 'No RFIs found',
-    // -- RfiListPage --
     listTitle: 'Requests for Information (RFI)',
     listSubtitle: '{count} requests in system',
     breadcrumbHome: 'Home',
@@ -2157,7 +2754,6 @@ export const en: TranslationKeys = {
     deleteError: 'Error deleting',
     emptyTitle: 'No information requests',
     emptyDescription: 'Create the first RFI to get started',
-    // -- RfiDetailPage --
     detailQuestion: 'Question',
     detailOfficialAnswer: 'Official Answer',
     detailAnsweredAt: 'Answered: {date}',
@@ -2183,7 +2779,6 @@ export const en: TranslationKeys = {
     actionAnswer: 'Answer (official)',
     actionClose: 'Close',
     statusChangeToast: 'RFI Status: {status}',
-    // -- RfiBoardPage --
     boardTitle: 'Requests for Information (RFI) - Board',
     boardSubtitle: '{count} requests',
     boardBreadcrumbBoard: 'Board',
@@ -2203,7 +2798,6 @@ export const en: TranslationKeys = {
     boardPriorityCritical: 'Critical',
     boardNoRequests: 'No requests',
     boardDragHint: 'Drag a card here',
-    // -- RfiCreateModal --
     modalTitle: 'New Information Request (RFI)',
     modalDescription: 'Fill in information to create a new RFI',
     modalCancel: 'Cancel',
@@ -2224,9 +2818,8 @@ export const en: TranslationKeys = {
     modalPriorityHigh: 'High',
     modalPriorityCritical: 'Critical',
     modalCreateSuccess: 'RFI created',
-    modalCreateError: 'Failed to create RFI',
+    modalCreateError: 'Failed to create RFI'
   },
-
   submittals: {
     title: 'Submittals',
     createSubmittal: 'Create Submittal',
@@ -2241,10 +2834,9 @@ export const en: TranslationKeys = {
       approved: 'Approved',
       approvedAsNoted: 'Approved as Noted',
       reviseAndResubmit: 'Revise and Resubmit',
-      rejected: 'Rejected',
+      rejected: 'Rejected'
     },
     emptyState: 'No submittals found',
-    // -- SubmittalListPage --
     listTitle: 'Submittals',
     listSubtitle: '{count} submittals in system',
     breadcrumbHome: 'Home',
@@ -2271,7 +2863,6 @@ export const en: TranslationKeys = {
     days: 'days',
     emptyTitle: 'No submittals',
     emptyDescription: 'Create the first submittal to get started',
-    // -- SubmittalDetailPage --
     detailLoading: 'Loading...',
     detailStartReview: 'Start Review',
     detailApprove: 'Approve',
@@ -2298,7 +2889,6 @@ export const en: TranslationKeys = {
     detailDrawingName: 'Drawing {id}',
     detailDrawingLinked: 'Linked to submittal {number}',
     detailVersionSubtitle: '{project} / Version {version}',
-    // -- SubmittalCreateModal --
     modalTitle: 'New Submittal',
     modalDescription: 'Fill in information to create a new submittal',
     modalCancel: 'Cancel',
@@ -2323,9 +2913,8 @@ export const en: TranslationKeys = {
     modalTypeCertificate: 'Certificate',
     modalTypeOther: 'Other',
     modalCreateSuccess: 'Submittal created',
-    modalCreateError: 'Failed to create submittal',
+    modalCreateError: 'Failed to create submittal'
   },
-
   issues: {
     title: 'Issues',
     createIssue: 'Create Issue',
@@ -2338,11 +2927,27 @@ export const en: TranslationKeys = {
     location: 'Location',
     resolution: 'Resolution',
     emptyState: 'No issues found',
+    list: {
+      kanbanOpen: 'Kanban Open',
+      kanbanInProgress: 'Kanban In Progress',
+      kanbanOnHold: 'Kanban On Hold',
+      kanbanResolved: 'Kanban Resolved',
+      kanbanClosed: 'Kanban Closed',
+      deleteSuccess: 'Deleted successfully',
+      deleteError: 'Delete error',
+      colTitle: 'Col Title',
+      colType: 'Type',
+      colStatus: 'Status',
+      colPriority: 'Col Priority',
+      colAssignee: 'Col Assignee',
+      colDueDate: 'Col Due Date',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbIssues: 'Breadcrumb Issues',
+      createHint: 'Create Hint',
+      newIssue: 'New Issue'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Change Management
-  // ---------------------------------------------------------------------------
   changes: {
     title: 'Change Management',
     changeEvents: 'Change Events',
@@ -2357,12 +2962,8 @@ export const en: TranslationKeys = {
     scheduleImpact: 'Schedule Impact',
     proposedAmount: 'Proposed Amount',
     approvedAmount: 'Approved Amount',
-    emptyState: 'No changes found',
+    emptyState: 'No changes found'
   },
-
-  // ---------------------------------------------------------------------------
-  // Safety
-  // ---------------------------------------------------------------------------
   safety: {
     title: 'Safety',
     inspections: 'Safety Inspections',
@@ -2382,11 +2983,9 @@ export const en: TranslationKeys = {
       low: 'Low',
       medium: 'Medium',
       high: 'High',
-      critical: 'Critical',
+      critical: 'Critical'
     },
     emptyState: 'No inspections found',
-
-    // -- Safety Dashboard (SafetyDashboardPage) --
     dashboard: {
       title: 'Safety',
       subtitle: 'Occupational health and safety monitoring',
@@ -2432,9 +3031,39 @@ export const en: TranslationKeys = {
       emptyIncidents: 'No incidents',
       emptyInspections: 'No inspections',
       emptyViolations: 'No violations',
+      violationSeverityMinor: 'Violation Severity Minor',
+      violationSeverityModerate: 'Violation Severity Moderate',
+      violationSeveritySerious: 'Violation Severity Serious',
+      violationSeverityCritical: 'Violation Severity Critical',
+      violationStatusClosed: 'Violation Status Closed',
+      columnProject: 'Project',
+      columnInspectionType: 'Column Inspection Type',
+      columnDate: 'Date',
+      columnInspector: 'Column Inspector',
+      columnScore: 'Column Score',
+      columnStatus: 'Status',
+      columnFindings: 'Column Findings',
+      columnDescription: 'Description',
+      columnSeverity: 'Column Severity',
+      columnResponsible: 'Responsible',
+      columnDeadline: 'Column Deadline',
+      actionBriefing: 'Action Briefing',
+      actionReportIncident: 'Action Report Incident',
+      actionNewInspection: 'Action New Inspection',
+      metricIncidentsThisMonth: 'Metric Incidents This Month',
+      metricComparedToPrevMonth: 'Metric Compared To Prev Month',
+      metricOpenViolations: 'Metric Open Violations',
+      metricRequireResolution: 'Metric Require Resolution',
+      metricAvgInspectionScore: 'Metric Avg Inspection Score',
+      metricLast30Days: 'Metric Last30 Days',
+      metricCurrentStreak: 'Metric Current Streak',
+      safetyIndexTrend: 'Safety Index Trend',
+      searchPlaceholder: 'Search...',
+      emptyInspectionsTitle: 'Empty Inspections Title',
+      emptyInspectionsDescription: 'Empty Inspections Description',
+      emptyViolationsTitle: 'Empty Violations Title',
+      emptyViolationsDescription: 'Empty Violations Description'
     },
-
-    // -- Safety Incident List (SafetyIncidentListPage) --
     incidentList: {
       title: 'Safety Incidents',
       subtitleSuffix: 'incidents',
@@ -2489,9 +3118,22 @@ export const en: TranslationKeys = {
       toastDeleteError: 'Error deleting incidents',
       emptyTitle: 'No incidents',
       emptyDescription: 'Register the first safety incident',
+      filterAllLevels: 'Filter All Levels',
+      columnDate: 'Date',
+      columnDescription: 'Description',
+      columnSeverity: 'Column Severity',
+      columnStatus: 'Status',
+      columnProject: 'Project',
+      columnType: 'Type',
+      columnInjured: 'Column Injured',
+      actionOpen: 'Action Open',
+      subtitleCount: 'Subtitle Count',
+      actionRegisterIncident: 'Action Register Incident',
+      metricActive: 'Active',
+      metricRequireAttention: 'Metric Require Attention',
+      metricPersons: 'Metric Persons',
+      metricDaysLost: 'Metric Days Lost'
     },
-
-    // -- Safety Incident Detail (SafetyIncidentDetailPage) --
     incidentDetail: {
       breadcrumbHome: 'Home',
       breadcrumbSafety: 'Safety',
@@ -2547,9 +3189,26 @@ export const en: TranslationKeys = {
       labelWorkDaysLost: 'Work Days Lost',
       personsUnit: 'persons',
       daysUnit: 'days',
+      actionStartInvestigation: 'Action Start Investigation',
+      actionAssignMeasures: 'Action Assign Measures',
+      actionMarkResolved: 'Action Mark Resolved',
+      toastStatusChanged: 'Toast Status Changed',
+      titlePrefix: 'Title Prefix',
+      statInjured: 'Stat Injured',
+      statDaysLost: 'Stat Days Lost',
+      statIncidentType: 'Stat Incident Type',
+      sectionTimeline: 'Section Timeline',
+      sidebarDetails: 'Sidebar Details',
+      labelAtTime: 'Label At Time',
+      labelType: 'Type',
+      labelInvestigator: 'Label Investigator',
+      labelUpdated: 'Label Updated',
+      sidebarActions: 'Sidebar Actions',
+      toastActGenerated: 'Toast Act Generated',
+      actionGenerateAct: 'Action Generate Act',
+      toastManagementNotified: 'Toast Management Notified',
+      actionNotifyManagement: 'Action Notify Management'
     },
-
-    // -- Safety Incident Create Modal (SafetyIncidentCreateModal) --
     incidentCreate: {
       modalTitle: 'Report Incident',
       modalDescription: 'Report a safety incident at the site',
@@ -2591,9 +3250,14 @@ export const en: TranslationKeys = {
       validationMaxChars2000: 'Maximum 2000 characters',
       toastCreated: 'Incident reported',
       toastCreateError: 'Failed to report incident',
+      toastError: 'Toast Error',
+      buttonCancel: 'Button Cancel',
+      buttonSubmit: 'Button Submit',
+      labelIncidentType: 'Label Incident Type',
+      labelIncidentDate: 'Label Incident Date',
+      labelIncidentTime: 'Label Incident Time',
+      labelInjuredCount: 'Label Injured Count'
     },
-
-    // -- Safety Inspection List (SafetyInspectionListPage) --
     inspectionList: {
       title: 'Safety Inspections',
       subtitleSuffix: 'inspections',
@@ -2635,9 +3299,29 @@ export const en: TranslationKeys = {
       ratingCritical: 'Critical',
       emptyTitle: 'No safety inspections',
       emptyDescription: 'Create the first safety inspection',
+      statusFailed: 'Failed',
+      typeFollowUp: 'Type Follow Up',
+      typePreWork: 'Type Pre Work',
+      ratingNeedsImprovement: 'Rating Needs Improvement',
+      ratingUnsatisfactory: 'Rating Unsatisfactory',
+      filterAllStatuses: 'Filter All Statuses',
+      columnDate: 'Date',
+      columnProjectLocation: 'Column Project Location',
+      columnType: 'Type',
+      columnStatus: 'Status',
+      columnRating: 'Column Rating',
+      columnScore: 'Column Score',
+      columnInspector: 'Column Inspector',
+      columnViolations: 'Column Violations',
+      actionOpen: 'Action Open',
+      subtitleCount: 'Subtitle Count',
+      tabFailed: 'Tab Failed',
+      metricAvgScore: 'Metric Avg Score',
+      metricViolations: 'Metric Violations',
+      metricRequireAttention: 'Metric Require Attention',
+      metricCritical: 'Metric Critical',
+      metricNone: 'Metric None'
     },
-
-    // -- Safety Inspection Detail (SafetyInspectionDetailPage) --
     inspectionDetail: {
       breadcrumbHome: 'Home',
       breadcrumbSafety: 'Safety',
@@ -2687,9 +3371,28 @@ export const en: TranslationKeys = {
       labelCreatedAt: 'Created',
       labelRating: 'Rating',
       labelScore: 'Score',
+      statusFailed: 'Failed',
+      ratingNeedsImprovement: 'Rating Needs Improvement',
+      ratingUnsatisfactory: 'Rating Unsatisfactory',
+      typeFollowUp: 'Type Follow Up',
+      typePreWork: 'Type Pre Work',
+      severityLow: 'Severity Low',
+      severityMedium: 'Severity Medium',
+      severityHigh: 'Severity High',
+      findingStatusOpen: 'Finding Status Open',
+      findingStatusInProgress: 'Finding Status In Progress',
+      findingStatusResolved: 'Finding Status Resolved',
+      titlePrefix: 'Title Prefix',
+      sectionResult: 'Section Result',
+      statFindings: 'Stat Findings',
+      statViolations: 'Stat Violations',
+      statRecommendations: 'Stat Recommendations',
+      sectionCorrectiveActions: 'Section Corrective Actions',
+      sidebarDetails: 'Sidebar Details',
+      labelInspectionDate: 'Label Inspection Date',
+      labelLocation: 'Label Location',
+      labelNextInspection: 'Label Next Inspection'
     },
-
-    // -- Safety Violation List (SafetyViolationListPage) --
     violationList: {
       title: 'Safety Violations',
       subtitleSuffix: 'violations',
@@ -2721,9 +3424,27 @@ export const en: TranslationKeys = {
       statusOverdue: 'Overdue',
       emptyTitle: 'No violations',
       emptyDescription: 'No safety violations found',
+      statusClosed: 'Status Closed',
+      severityLow: 'Severity Low',
+      severityMedium: 'Severity Medium',
+      severityHigh: 'Severity High',
+      severityCritical: 'Severity Critical',
+      filterAllLevels: 'Filter All Levels',
+      columnDescription: 'Description',
+      columnSeverity: 'Column Severity',
+      columnStatus: 'Status',
+      columnProject: 'Project',
+      columnResponsible: 'Responsible',
+      columnDeadline: 'Column Deadline',
+      columnDetected: 'Column Detected',
+      subtitleCount: 'Subtitle Count',
+      tabClosed: 'Tab Closed',
+      metricRequireResolution: 'Metric Require Resolution',
+      metricUrgent: 'Metric Urgent',
+      metricNone: 'Metric None',
+      metricCriticalActive: 'Metric Critical Active',
+      metricCritical: 'Metric Critical'
     },
-
-    // -- Safety Board (SafetyBoardPage) --
     board: {
       title: 'Safety Incidents - Board',
       subtitleSuffix: 'incidents',
@@ -2746,9 +3467,18 @@ export const en: TranslationKeys = {
       severityFatal: 'Fatal',
       emptyColumn: 'No incidents',
       emptyColumnHint: 'Drag a card here',
+      columnReported: 'Column Reported',
+      columnInvestigating: 'Column Investigating',
+      columnResolved: 'Column Resolved',
+      columnClosed: 'Column Closed',
+      severityLow: 'Severity Low',
+      severityNormal: 'Severity Normal',
+      severityHigh: 'Severity High',
+      subtitleCount: 'Subtitle Count',
+      actionFilters: 'Action Filters',
+      actionReport: 'Action Report',
+      actionReset: 'Action Reset'
     },
-
-    // -- Incident Investigate Wizard (IncidentInvestigateWizard) --
     investigateWizard: {
       title: 'Incident Investigation',
       description: 'Conduct an investigation and determine root causes',
@@ -2785,8 +3515,6 @@ export const en: TranslationKeys = {
       summaryActionsCount: 'Corrective Actions',
       summaryStatus: 'Incident status will be updated',
       toastSuccess: 'Investigation completed',
-
-      // Keys used by the refactored IncidentInvestigateWizard component
       modalTitle: 'Incident Investigation',
       buttonCancel: 'Cancel',
       buttonBack: 'Back',
@@ -2834,10 +3562,8 @@ export const en: TranslationKeys = {
       summaryRootCauses: 'Root Causes',
       summaryCorrectiveActions: 'Corrective Actions',
       completionWarning: 'After completing the investigation, the incident status will be updated. Make sure all data is filled in correctly.',
-      toastCompleted: 'Investigation completed for incident',
+      toastCompleted: 'Investigation completed for incident'
     },
-
-    // -- Safety Metrics Dashboard (SafetyMetricsDashboard) --
     metrics: {
       title: 'Safety Metrics',
       subtitle: 'LTIR, TRIR and other key metrics',
@@ -2881,10 +3607,8 @@ export const en: TranslationKeys = {
       monthlyBreakdownTitle: 'Monthly Breakdown',
       colMonth: 'Month',
       colTargetLtir: 'Target LTIR',
-      colTargetTrir: 'Target TRIR',
+      colTargetTrir: 'Target TRIR'
     },
-
-    // -- Safety Training Journal (SafetyTrainingJournalPage) --
     trainingJournal: {
       title: 'Training Journal',
       subtitle: 'Occupational safety training registry',
@@ -2932,10 +3656,8 @@ export const en: TranslationKeys = {
       toastCreated: 'Training record created',
       toastCreateError: 'Failed to create training record',
       emptyTitle: 'No records',
-      emptyDescription: 'Register the first training',
+      emptyDescription: 'Register the first training'
     },
-
-    // -- PPE Management (PpeManagementPage) --
     ppe: {
       title: 'Personal Protective Equipment',
       subtitle: 'PPE inventory and issuance',
@@ -3011,10 +3733,8 @@ export const en: TranslationKeys = {
       expirationAlertTitle: 'PPE Expiration Alerts',
       expiredOn: 'Expired on {date}',
       expiresOn: 'Expires on {date}',
-      andMore: '...and {count} more',
+      andMore: '...and {count} more'
     },
-
-    // -- SOUT Cards (SoutCardPage) --
     sout: {
       title: 'SOUT Cards',
       subtitle: 'Special Assessment of Working Conditions',
@@ -3068,10 +3788,8 @@ export const en: TranslationKeys = {
       labelExpiryDate: 'Valid Until',
       btnBack: 'Back to List',
       emptyTitle: 'No SOUT Cards',
-      emptyDescription: 'No special assessment of working conditions cards found',
+      emptyDescription: 'No special assessment of working conditions cards found'
     },
-
-    // -- Accident Act N-1 (AccidentActN1Page) --
     accidentAct: {
       title: 'Accident Investigation Acts (N-1)',
       subtitle: 'Occupational accident investigation',
@@ -3124,39 +3842,122 @@ export const en: TranslationKeys = {
       toastStatusUpdated: 'Act status updated',
       toastStatusError: 'Failed to update status',
       emptyTitle: 'No N-1 Acts',
-      emptyDescription: 'Create the first accident investigation act',
+      emptyDescription: 'Create the first accident investigation act'
     },
+    training: {
+      statusPlanned: 'Status Planned',
+      statusInProgress: 'Status In Progress',
+      statusCompleted: 'Completed',
+      statusCancelled: 'Cancelled',
+      typeInitial: 'Type Initial',
+      typePrimary: 'Type Primary',
+      typePeriodic: 'Type Periodic',
+      typeUnscheduled: 'Type Unscheduled',
+      typeSpecial: 'Type Special',
+      detail: {
+        toastCompleted: 'Toast Completed',
+        toastCompleteError: 'Toast Complete Error',
+        toastCancelled: 'Toast Cancelled',
+        toastCancelError: 'Toast Cancel Error',
+        toastDeleted: 'Toast Deleted',
+        toastDeleteError: 'Toast Delete Error',
+        actionComplete: 'Action Complete',
+        actionCancel: 'Action Cancel',
+        sectionTopics: 'Section Topics',
+        sectionParticipants: 'Section Participants',
+        participantsUnit: 'Participants Unit',
+        noParticipants: 'No Participants',
+        completedTitle: 'Completed Title',
+        nextScheduled: 'Next Scheduled',
+        labelType: 'Type',
+        labelDate: 'Date',
+        labelInstructor: 'Label Instructor',
+        labelParticipantCount: 'Label Participant Count',
+        labelDuration: 'Label Duration',
+        labelGost: 'Label Gost',
+        gostPrefix: 'Gost Prefix',
+        labelCreated: 'Label Created',
+        confirmDeleteTitle: 'Confirm Delete Title',
+        confirmDeleteDescription: 'Confirm Delete Description',
+        confirmDeleteConfirm: 'Confirm Delete Confirm'
+      },
+      breadcrumbTrainings: 'Breadcrumb Trainings',
+      durationMinutes: 'Duration Minutes',
+      form: {
+        validationTitleRequired: 'Validation Title Required',
+        validationTypeRequired: 'Validation Type Required',
+        validationDateRequired: 'Validation Date Required',
+        toastCreated: 'Toast Created',
+        toastCreateError: 'Toast Create Error',
+        toastUpdated: 'Toast Updated',
+        toastUpdateError: 'Toast Update Error',
+        editTitle: 'Edit Title',
+        createTitle: 'Create Title',
+        createSubtitle: 'Create Subtitle',
+        labelTitle: 'Label Title',
+        placeholderTitle: 'Placeholder Title',
+        labelType: 'Type',
+        placeholderType: 'Placeholder Type',
+        labelDate: 'Date',
+        labelProject: 'Project',
+        placeholderProject: 'Placeholder Project',
+        labelDuration: 'Label Duration',
+        placeholderDuration: 'Placeholder Duration',
+        sectionInstructor: 'Section Instructor',
+        labelInstructor: 'Label Instructor',
+        placeholderInstructor: 'Placeholder Instructor',
+        labelInstructorName: 'Label Instructor Name',
+        placeholderInstructorName: 'Placeholder Instructor Name',
+        sectionContent: 'Section Content',
+        labelTopics: 'Label Topics',
+        placeholderTopics: 'Placeholder Topics',
+        labelParticipants: 'Label Participants',
+        placeholderParticipants: 'Placeholder Participants',
+        placeholderNotes: 'Placeholder Notes',
+        btnCreate: 'Create'
+      },
+      filterAllTypes: 'Filter All Types',
+      colDate: 'Date',
+      colTitle: 'Col Title',
+      colType: 'Type',
+      colStatus: 'Status',
+      colInstructor: 'Col Instructor',
+      colParticipants: 'Col Participants',
+      colDuration: 'Col Duration',
+      title: 'Title',
+      subtitleSuffix: 'Subtitle Suffix',
+      tabAll: 'All',
+      tabPlanned: 'Tab Planned',
+      tabCompleted: 'Completed',
+      tabCancelled: 'Tab Cancelled',
+      newTraining: 'New Training',
+      metricTotal: 'Total',
+      metricParticipants: 'Metric Participants',
+      metricHours: 'Metric Hours',
+      metricOverdue: 'Metric Overdue',
+      requireAttention: 'Require Attention',
+      searchPlaceholder: 'Search...',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // CDE (Common Data Environment)
-  // ---------------------------------------------------------------------------
   cde: {
-    // -- Shared --
     breadcrumbHome: 'Home',
     breadcrumbCDE: 'CDE',
-
-    // -- Transmittal statuses --
     statusDraft: 'Draft',
     statusIssued: 'Issued',
     statusAcknowledged: 'Acknowledged',
     statusResponded: 'Responded',
     statusClosed: 'Closed',
-
-    // -- Purposes --
     purposeForInformation: 'For Information',
     purposeForReview: 'For Review',
     purposeForApproval: 'For Approval',
     purposeForConstruction: 'For Construction',
     purposeAsBuilt: 'As-Built',
-
-    // -- Lifecycle states --
     lifecycleWIP: 'Work in Progress',
     lifecycleShared: 'Shared',
     lifecyclePublished: 'Published',
     lifecycleArchived: 'Archived',
-
-    // -- Classifications --
     classificationProject: 'Project',
     classificationDesign: 'Design',
     classificationConstruction: 'Construction',
@@ -3164,8 +3965,6 @@ export const en: TranslationKeys = {
     classificationSafety: 'Safety',
     classificationQuality: 'Quality',
     classificationFinancial: 'Financial',
-
-    // -- Disciplines --
     disciplineArchitecture: 'Architecture',
     disciplineStructural: 'Structural',
     disciplineMEP: 'MEP',
@@ -3174,14 +3973,10 @@ export const en: TranslationKeys = {
     disciplinePlumbing: 'Plumbing',
     disciplineFireProtection: 'Fire Protection',
     disciplineGeneral: 'General',
-
-    // -- Response statuses --
     responseApproved: 'Approved',
     responseApprovedWithComments: 'Approved with Comments',
     responseRejected: 'Rejected',
     responsePending: 'Pending',
-
-    // -- TransmittalListPage --
     transmittals: {
       title: 'Transmittals',
       subtitleSuffix: 'transmittals',
@@ -3204,10 +3999,8 @@ export const en: TranslationKeys = {
       colIssuedDate: 'Issued Date',
       colItemCount: 'Documents',
       emptyTitle: 'No transmittals',
-      emptyDescription: 'Create your first transmittal',
+      emptyDescription: 'Create your first transmittal'
     },
-
-    // -- TransmittalDetailPage --
     transmittalDetail: {
       breadcrumbTransmittals: 'Transmittals',
       buttonReply: 'Reply',
@@ -3231,10 +4024,8 @@ export const en: TranslationKeys = {
       colNumber: 'Number',
       colTitle: 'Title',
       colRevision: 'Revision',
-      colResponseStatus: 'Response Status',
+      colResponseStatus: 'Response Status'
     },
-
-    // -- DocumentContainerListPage --
     documents: {
       title: 'Common Data Environment (CDE)',
       subtitleSuffix: 'documents in system',
@@ -3261,10 +4052,8 @@ export const en: TranslationKeys = {
       colAuthor: 'Author',
       colUpdated: 'Updated',
       emptyTitle: 'No documents',
-      emptyDescription: 'Upload your first document to CDE',
+      emptyDescription: 'Upload your first document to CDE'
     },
-
-    // -- DocumentContainerDetailPage --
     documentDetail: {
       subtitleRevision: 'Revision',
       tabOverview: 'Overview',
@@ -3302,13 +4091,83 @@ export const en: TranslationKeys = {
       metaFileSizeMB: 'MB',
       metaRevisionCount: 'Revision Count',
       metaCreatedAt: 'Created Date',
-      metaUpdatedAt: 'Updated Date',
+      metaUpdatedAt: 'Updated Date'
     },
+    classification: {
+      project: 'Project',
+      design: 'Design',
+      construction: 'Construction',
+      operations: 'Operations',
+      safety: 'Safety',
+      quality: 'Quality',
+      financial: 'Financial',
+      all: 'All'
+    },
+    archivePolicies: {
+      runNowSuccess: 'Run Now Success',
+      deleteConfirm: 'Are you sure you want to delete?',
+      colName: 'Name',
+      colClassification: 'Col Classification',
+      allClassifications: 'All Classifications',
+      colRetentionDays: 'Col Retention Days',
+      colAutoArchive: 'Col Auto Archive',
+      autoArchiveOn: 'Auto Archive On',
+      autoArchiveOff: 'Auto Archive Off',
+      colEnabled: 'Col Enabled',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      colCreatedAt: 'Col Created At',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      runNow: 'Run Now',
+      createPolicy: 'Create Policy',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found',
+      formTitleEdit: 'Form Title Edit',
+      formTitle: 'Form Title',
+      fieldName: 'Field Name',
+      fieldDescription: 'Field Description',
+      fieldClassification: 'Field Classification',
+      fieldClassificationHint: 'Field Classification Hint',
+      fieldRetentionDays: 'Field Retention Days',
+      fieldAutoArchive: 'Field Auto Archive',
+      fieldEnabled: 'Field Enabled'
+    },
+    revisionSetDetail: {
+      deleteSuccess: 'Deleted successfully',
+      breadcrumbRevisionSets: 'Breadcrumb Revision Sets',
+      deleteButton: 'Delete Button',
+      sectionInfo: 'Section Info',
+      labelIssuedDate: 'Label Issued Date',
+      notSet: 'Not Set',
+      labelIssuedBy: 'Label Issued By',
+      labelProject: 'Project',
+      labelRevisionCount: 'Label Revision Count',
+      sectionRevisions: 'Section Revisions',
+      revisionId: 'Revision Id',
+      noRevisions: 'No Revisions',
+      deleteConfirmTitle: 'Delete Confirm Title',
+      deleteConfirmDescription: 'Delete Confirm Description'
+    },
+    revisionSets: {
+      colName: 'Name',
+      colDescription: 'Description',
+      colRevisionCount: 'Col Revision Count',
+      colIssuedDate: 'Col Issued Date',
+      colIssuedBy: 'Col Issued By',
+      colProject: 'Project',
+      title: 'Title',
+      subtitleSuffix: 'Subtitle Suffix',
+      breadcrumbRevisionSets: 'Breadcrumb Revision Sets',
+      createSet: 'Create Set',
+      metricTotal: 'Total',
+      metricIssued: 'Metric Issued',
+      metricIssuedSubtitle: 'Metric Issued Subtitle',
+      searchPlaceholder: 'Search...',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Documents
-  // ---------------------------------------------------------------------------
   documents: {
     title: 'Documents',
     uploadDocument: 'Upload Document',
@@ -3333,7 +4192,7 @@ export const en: TranslationKeys = {
       permit: 'Permit',
       photo: 'Photo',
       correspondence: 'Correspondence',
-      other: 'Other',
+      other: 'Other'
     },
     pdSection: {
       label: 'PD Section',
@@ -3348,7 +4207,7 @@ export const en: TranslationKeys = {
       gp: 'GP — General Plan',
       pos: 'POS — Construction Organization',
       en: 'EN — Energy Efficiency',
-      other: 'Other',
+      other: 'Other'
     },
     emptyState: 'No documents found',
     emptyStateDescription: 'Upload your first document',
@@ -3378,13 +4237,9 @@ export const en: TranslationKeys = {
       colAuthor: 'Author',
       colCreated: 'Created',
       emptyTitle: 'No documents found',
-      emptyDescription: 'Upload the first document or adjust filters',
-    },
+      emptyDescription: 'Upload the first document or adjust filters'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Quality & Punch List
-  // ---------------------------------------------------------------------------
   quality: {
     title: 'Quality Control',
     inspections: 'Quality Inspections',
@@ -3399,8 +4254,6 @@ export const en: TranslationKeys = {
     responsible: 'Responsible',
     completionDate: 'Completion Date',
     emptyState: 'No quality inspections found',
-
-    // -- Quality List (QualityListPage) --
     list: {
       title: 'Quality Inspections',
       subtitle: '{count} inspections',
@@ -3443,10 +4296,8 @@ export const en: TranslationKeys = {
       toastDeleted: 'Inspections deleted',
       toastDeleteError: 'Error deleting inspections',
       emptyTitle: 'No quality inspections',
-      emptyDescription: 'Create your first quality inspection',
+      emptyDescription: 'Create your first quality inspection'
     },
-
-    // -- Quality Check Detail (QualityCheckDetailPage) --
     checkDetail: {
       breadcrumbHome: 'Home',
       breadcrumbQuality: 'Quality',
@@ -3488,10 +4339,8 @@ export const en: TranslationKeys = {
       labelCompletedDate: 'Completion Date',
       labelCreated: 'Created',
       sectionResult: 'Result',
-      sectionLinkedIssues: 'Linked Issues',
+      sectionLinkedIssues: 'Linked Issues'
     },
-
-    // -- Quality Check Create (QualityCheckCreateModal) --
     checkCreate: {
       modalTitle: 'New Quality Inspection',
       modalDescription: 'Create an inspection for quality control',
@@ -3521,10 +4370,8 @@ export const en: TranslationKeys = {
       validationSpecifyDate: 'Specify inspection date',
       validationSpecifyArea: 'Specify area',
       validationMaxChars200: 'Maximum 200 characters',
-      validationMaxChars2000: 'Maximum 2000 characters',
+      validationMaxChars2000: 'Maximum 2000 characters'
     },
-
-    // -- Quality Board (QualityBoardPage) --
     board: {
       title: 'Quality Inspections - Board',
       subtitle: '{count} inspections',
@@ -3545,10 +4392,8 @@ export const en: TranslationKeys = {
       priorityHigh: 'High',
       priorityCritical: 'Critical',
       emptyColumn: 'No inspections',
-      emptyColumnHint: 'Drag a card here',
+      emptyColumnHint: 'Drag a card here'
     },
-
-    // -- Material Certificates (MaterialCertificatesPage) --
     materialCerts: {
       title: 'Material Certificates',
       subtitle: '{count} certificates',
@@ -3590,10 +4435,8 @@ export const en: TranslationKeys = {
       colValidUntil: 'Valid Until',
       colParameters: 'Parameters',
       emptyTitle: 'No certificates',
-      emptyDescription: 'Add your first material certificate',
+      emptyDescription: 'Add your first material certificate'
     },
-
-    // -- Tolerance Rules (ToleranceRulesPage) --
     toleranceRules: {
       title: 'Tolerances & Standards',
       subtitle: '{count} rules',
@@ -3628,10 +4471,8 @@ export const en: TranslationKeys = {
       colStatus: 'Status',
       colProject: 'Project',
       emptyTitle: 'No tolerance rules',
-      emptyDescription: 'Create your first tolerance rule',
+      emptyDescription: 'Create your first tolerance rule'
     },
-
-    // -- Tolerance Checks (ToleranceChecksPage) --
     toleranceChecks: {
       title: 'Tolerance Checks',
       subtitle: '{count} checks',
@@ -3665,10 +4506,8 @@ export const en: TranslationKeys = {
       colInspector: 'Inspector',
       colDate: 'Date',
       emptyTitle: 'No tolerance checks',
-      emptyDescription: 'Create your first tolerance check',
+      emptyDescription: 'Create your first tolerance check'
     },
-
-    // -- Material Inspection (MaterialInspectionPage) --
     materialInspection: {
       title: 'Incoming Material Inspection',
       subtitle: '{count} inspections',
@@ -3728,10 +4567,8 @@ export const en: TranslationKeys = {
       toastCreated: 'Material inspection created',
       toastCreateError: 'Error creating inspection',
       dateFrom: 'Date from',
-      dateTo: 'Date to',
+      dateTo: 'Date to'
     },
-
-    // -- Checklist Templates (ChecklistTemplatesPage) --
     checklistTemplates: {
       title: 'Checklist Templates',
       subtitle: '{count} templates',
@@ -3772,10 +4609,8 @@ export const en: TranslationKeys = {
       toastCreated: 'Template created',
       toastUpdated: 'Template updated',
       toastCreateError: 'Error creating template',
-      toastUpdateError: 'Error updating template',
+      toastUpdateError: 'Error updating template'
     },
-
-    // -- Defect Register (DefectRegisterPage) --
     defectRegister: {
       title: 'Defect Register',
       subtitle: '{count} entries',
@@ -3818,10 +4653,8 @@ export const en: TranslationKeys = {
       colProject: 'Project',
       emptyTitle: 'No defect entries',
       emptyDescription: 'No defects found',
-      toastExport: 'Export will be available soon',
+      toastExport: 'Export will be available soon'
     },
-
-    // -- Defect Pareto Chart (DefectParetoPage) --
     defectPareto: {
       title: 'Defect Pareto Chart',
       subtitle: 'Defect distribution by type',
@@ -3843,10 +4676,8 @@ export const en: TranslationKeys = {
       chartCumulative: 'Cumulative %',
       chartThreshold: '80% Threshold',
       categoriesCount: '{count} categories',
-      noData: 'No data to display',
+      noData: 'No data to display'
     },
-
-    // -- Author Supervision Journal (AuthorSupervisionJournalPage) --
     supervisionJournal: {
       title: 'Author Supervision Journal',
       subtitle: '{count} entries',
@@ -3891,13 +4722,9 @@ export const en: TranslationKeys = {
       toastCreated: 'Entry created',
       toastCreateError: 'Error creating entry',
       dateFrom: 'Date from',
-      dateTo: 'Date to',
-    },
+      dateTo: 'Date to'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Planning & Scheduling
-  // ---------------------------------------------------------------------------
   planning: {
     title: 'Planning',
     ganttChart: 'Gantt Chart',
@@ -3912,8 +4739,6 @@ export const en: TranslationKeys = {
     actualProgress: 'Actual Progress',
     workBreakdownStructure: 'Work Breakdown Structure',
     emptyState: 'No tasks found',
-
-    // -- Gantt Chart (GanttChartPage) --
     gantt: {
       title: 'Gantt Chart',
       subtitle: 'Project schedule network diagram',
@@ -3936,10 +4761,8 @@ export const en: TranslationKeys = {
       legendCriticalPath: 'Critical Path',
       legendCompleted: 'Completed',
       legendPlannedDuration: 'Planned Duration',
-      legendMilestone: 'Milestone',
+      legendMilestone: 'Milestone'
     },
-
-    // -- WBS Tree (WbsTreePage) --
     wbs: {
       title: 'Work Breakdown Structure (WBS)',
       subtitle: 'Project hierarchical structure',
@@ -3967,9 +4790,17 @@ export const en: TranslationKeys = {
       daysUnit: 'days',
       emptyTitle: 'No WBS elements',
       emptyDescription: 'Project structure is not defined',
+      nodeTypeProject: 'Node Type Project',
+      nodeTypeActivity: 'Node Type Activity',
+      daysSuffix: 'Days Suffix',
+      totalElements: 'Total Elements',
+      avgProgress: 'Avg Progress',
+      criticalPath: 'Critical Path',
+      elementsSuffix: 'Elements Suffix',
+      phases: 'Phases',
+      colActualStart: 'Col Actual Start',
+      colActualEnd: 'Col Actual End'
     },
-
-    // -- EVM Dashboard (EvmDashboardPage) --
     evm: {
       title: 'Earned Value Management (EVM)',
       subtitle: 'Project earned value analysis',
@@ -3998,9 +4829,31 @@ export const en: TranslationKeys = {
       statusOverBudget: 'Over Budget',
       statusUnderBudget: 'Under Budget',
       selectProject: 'Select project',
+      subtitleProject: 'Subtitle Project',
+      subtitleDataDate: 'Subtitle Data Date',
+      bacLabel: 'Bac Label',
+      eacLabel: 'Eac Label',
+      etcLabel: 'Etc Label',
+      completionLabel: 'Completion Label',
+      performanceIndices: 'Performance Indices',
+      scheduleLabel: 'Schedule Label',
+      costLabel: 'Cost Label',
+      spiLabel: 'Spi Label',
+      cpiLabel: 'Cpi Label',
+      tcpiLabel: 'Tcpi Label',
+      variances: 'Variances',
+      svLabel: 'Sv Label',
+      cvLabel: 'Cv Label',
+      vacLabel: 'Vac Label',
+      pvShort: 'Pv Short',
+      evShort: 'Ev Short',
+      acShort: 'Ac Short',
+      sCurveTitle: 'S Curve Title',
+      sCurveSubtitle: 'S Curve Subtitle',
+      legendPv: 'Legend Pv',
+      legendEv: 'Legend Ev',
+      legendAc: 'Legend Ac'
     },
-
-    // -- Schedule Baseline (ScheduleBaselinePage) --
     baselines: {
       title: 'Baselines',
       subtitle: 'Project baseline management',
@@ -4023,9 +4876,19 @@ export const en: TranslationKeys = {
       statusSuperseded: 'Superseded',
       emptyTitle: 'No baselines',
       emptyDescription: 'Create the first baseline',
+      statusApproved: 'Approved',
+      colBaselineDate: 'Col Baseline Date',
+      colActivities: 'Col Activities',
+      colStart: 'Col Start',
+      colEnd: 'Col End',
+      colBudget: 'Col Budget',
+      compareVersions: 'Compare Versions',
+      totalBaselines: 'Total Baselines',
+      activeCount: 'Active Count',
+      currentPlan: 'Current Plan',
+      activitiesInCurrent: 'Activities In Current',
+      searchPlaceholder: 'Search...'
     },
-
-    // -- Resource Allocation (ResourceAllocationPage) --
     resources: {
       title: 'Resource Allocation',
       subtitle: 'Project resource management',
@@ -4050,9 +4913,22 @@ export const en: TranslationKeys = {
       typeSubcontract: 'Subcontract',
       emptyTitle: 'No resources',
       emptyDescription: 'Assign resources to project tasks',
+      typeLAbor: 'Type L Abor',
+      colWbsCode: 'Col Wbs Code',
+      colWbsElement: 'Col Wbs Element',
+      colResource: 'Col Resource',
+      colPlannedHours: 'Col Planned Hours',
+      colActualHours: 'Col Actual Hours',
+      colPlannedCost: 'Col Planned Cost',
+      colActualCost: 'Col Actual Cost',
+      totalResources: 'Total Resources',
+      avgUtilization: 'Avg Utilization',
+      normal: 'Normal',
+      underloaded: 'Underloaded',
+      plannedCost: 'Planned Cost',
+      actualCost: 'Actual Cost',
+      allTypes: 'All Types'
     },
-
-    // -- Critical Path Method (CriticalPathPage) --
     cpm: {
       title: 'Critical Path Method (CPM)',
       subtitle: 'Project critical path analysis',
@@ -4079,10 +4955,8 @@ export const en: TranslationKeys = {
       colFloat: 'Float',
       colGanttBar: 'Chart',
       emptyTitle: 'No critical path data',
-      emptyDescription: 'Select a project for analysis',
+      emptyDescription: 'Select a project for analysis'
     },
-
-    // -- EVM Indicators Dashboard (EvmIndicatorsPage) --
     evmIndicators: {
       title: 'EVM Indicators',
       subtitle: 'Earned Value Management indicators dashboard',
@@ -4110,10 +4984,8 @@ export const en: TranslationKeys = {
       interpretationBehindSchedule: 'Project is behind schedule',
       sCurveTitle: 'EVM S-Curve',
       sCurveSubtitle: 'PV, EV and AC dynamics over time',
-      noData: 'No data to display',
+      noData: 'No data to display'
     },
-
-    // -- Resource Planning (ResourcePlanningPage) --
     resourcePlanning: {
       title: 'Resource Planning',
       subtitle: 'Resource assignment and utilization control',
@@ -4143,10 +5015,8 @@ export const en: TranslationKeys = {
       colEnd: 'End',
       colUtilization: 'Utilization',
       emptyTitle: 'No resource data',
-      emptyDescription: 'Select a project to view the resource plan',
+      emptyDescription: 'Select a project to view the resource plan'
     },
-
-    // -- Baselines Management (BaselinesPage) --
     baselinesPage: {
       title: 'Baselines Management',
       subtitle: 'Create, compare and track baselines',
@@ -4185,10 +5055,8 @@ export const en: TranslationKeys = {
       compareColCurrentStart: 'Current Start',
       compareColCurrentEnd: 'Current End',
       compareColDrift: 'Drift',
-      compareNoData: 'No comparison data',
+      compareNoData: 'No comparison data'
     },
-
-    // -- S-Curve (SCurvePage) --
     sCurve: {
       title: 'S-Curve',
       subtitle: 'Planned vs actual progress comparison',
@@ -4214,9 +5082,8 @@ export const en: TranslationKeys = {
       colDate: 'Date',
       colPlanned: 'Planned %',
       colActual: 'Actual %',
-      colDeviation: 'Deviation',
+      colDeviation: 'Deviation'
     },
-
     procurement: {
       title: 'Procurement Schedule',
       colItem: 'Item',
@@ -4231,9 +5098,8 @@ export const en: TranslationKeys = {
       statusOrdered: 'Ordered',
       statusInTransit: 'In Transit',
       statusDelivered: 'Delivered',
-      statusCancelled: 'Cancelled',
+      statusCancelled: 'Cancelled'
     },
-
     mobilization: {
       title: 'Mobilization Schedule',
       colName: 'Resource',
@@ -4246,13 +5112,40 @@ export const en: TranslationKeys = {
       totalPersonnel: 'Personnel Costs',
       totalEquipment: 'Equipment Costs',
       tabPersonnel: 'Personnel',
-      tabEquipment: 'Equipment',
+      tabEquipment: 'Equipment'
     },
+    volumes: {
+      saveSuccess: 'Saved successfully',
+      saveError: 'Save error',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      breadcrumbPlanning: 'Breadcrumb Planning',
+      breadcrumbVolumes: 'Breadcrumb Volumes',
+      saving: 'Saving',
+      save: 'Save',
+      project: 'Project',
+      selectProject: 'Select Project',
+      date: 'Date',
+      metricTotalNodes: 'Metric Total Nodes',
+      metricAvgProgress: 'Metric Avg Progress',
+      metricTodayTotal: 'Metric Today Total',
+      metricWithVolume: 'Metric With Volume',
+      selectProjectHint: 'Select Project Hint',
+      loading: 'Loading',
+      noNodes: 'No Nodes',
+      colCode: 'Code',
+      colName: 'Name',
+      colUnit: 'Unit',
+      colPlanned: 'Col Planned',
+      colActual: 'Col Actual',
+      colRemaining: 'Col Remaining',
+      colProgress: 'Col Progress',
+      colToday: 'Col Today',
+      workPackage: 'Work Package',
+      activity: 'Activity'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Daily Log
-  // ---------------------------------------------------------------------------
   dailyLog: {
     title: 'Daily Log',
     createEntry: 'Create Entry',
@@ -4272,14 +5165,10 @@ export const en: TranslationKeys = {
       rain: 'Rain',
       snow: 'Snow',
       wind: 'Wind',
-      fog: 'Fog',
+      fog: 'Fog'
     },
-    emptyState: 'No daily log entries found',
+    emptyState: 'No daily log entries found'
   },
-
-  // ---------------------------------------------------------------------------
-  // Procurement & Warehouse
-  // ---------------------------------------------------------------------------
   procurement: {
     title: 'Procurement',
     purchaseOrders: 'Purchase Orders',
@@ -4293,8 +5182,6 @@ export const en: TranslationKeys = {
     totalPrice: 'Total Price',
     unit: 'Unit',
     emptyState: 'No purchase orders found',
-
-    // -- Purchase Request List (PurchaseRequestListPage) --
     requestList: {
       title: 'Purchase Requests',
       subtitleSuffix: 'requests in system',
@@ -4330,10 +5217,8 @@ export const en: TranslationKeys = {
       bulkRejectError: 'Error rejecting',
       bulkAssignSuccess: 'Assigned: {count}',
       bulkAssignPartial: 'Assigned: {success}, errors: {failed}',
-      bulkAssignError: 'Error assigning',
+      bulkAssignError: 'Error assigning'
     },
-
-    // -- Purchase Request Detail (PurchaseRequestDetailPage) --
     requestDetail: {
       breadcrumbHome: 'Home',
       breadcrumbProcurement: 'Purchase Requests',
@@ -4362,7 +5247,6 @@ export const en: TranslationKeys = {
       colTotal: 'Total',
       emptyItemsTitle: 'No items',
       emptyItemsDescription: 'Add items to the request',
-      // New keys from PurchaseRequestDetailPage i18n conversion
       breadcrumbPurchaseRequests: 'Purchase Requests',
       dateLabel: 'Date',
       infoProject: 'Project',
@@ -4392,10 +5276,8 @@ export const en: TranslationKeys = {
       relatedOrdersEmptyDescription: 'No orders found for this request',
       createPurchaseOrder: 'Create Order',
       newOrderFromRequest: 'New order from request',
-      openOrdersList: 'Open orders list',
+      openOrdersList: 'Open orders list'
     },
-
-    // -- Purchase Request Board (PurchaseRequestBoardPage) --
     requestBoard: {
       title: 'Purchase Requests - Board',
       subtitleSuffix: 'requests',
@@ -4418,7 +5300,6 @@ export const en: TranslationKeys = {
       priorityCritical: 'Critical',
       emptyColumn: 'No requests',
       emptyColumnHint: 'Drag a card here',
-      // New keys from PurchaseRequestBoardPage i18n conversion
       subtitleRequests: 'requests',
       filters: 'Filters',
       newRequest: 'New Request',
@@ -4438,10 +5319,8 @@ export const en: TranslationKeys = {
       errorNoAssignee: 'Assign an executor before changing status',
       errorWaitTransition: 'Wait for the current transition to complete',
       toastStatusChanged: 'Request status changed',
-      toastTransitioning: 'Transitioning status...',
+      toastTransitioning: 'Transitioning status...'
     },
-
-    // -- Approval Wizard (ApprovalWizard) --
     approvalWizard: {
       title: 'Purchase Request Approval',
       btnCancel: 'Cancel',
@@ -4473,9 +5352,32 @@ export const en: TranslationKeys = {
       toastApproved: 'Request {number} approved',
       toastRejected: 'Request {number} rejected',
       toastReturned: 'Request {number} returned for revision',
+      stepDetails: 'Step Details',
+      stepDecision: 'Step Decision',
+      decisionApproved: 'Decision Approved',
+      decisionRejected: 'Decision Rejected',
+      decisionReturned: 'Decision Returned',
+      toastRequest: 'Toast Request',
+      cancel: 'Cancel',
+      next: 'Next',
+      back: 'Back',
+      returnForRevision: 'Return For Revision',
+      reject: 'Reject',
+      approve: 'Approve',
+      requestNumber: 'Request Number',
+      date: 'Date',
+      initiator: 'Initiator',
+      department: 'Department',
+      requestItems: 'Request Items',
+      total: 'Total',
+      remaining: 'Remaining',
+      amount: 'Amount',
+      commentLabel: 'Comment Label',
+      commentPlaceholder: 'Comment Placeholder',
+      conditionsLabel: 'Conditions Label',
+      conditionsPlaceholder: 'Conditions Placeholder',
+      actionPrompt: 'Action Prompt'
     },
-
-    // -- Merge Requests Wizard (MergeRequestsWizard) --
     mergeWizard: {
       title: 'Merge Purchase Requests',
       btnCancel: 'Cancel',
@@ -4504,9 +5406,33 @@ export const en: TranslationKeys = {
       summaryAmount: 'Total amount:',
       summaryComment: 'Comment:',
       toastSuccess: 'Requests merged: {count} -> 1',
+      stepSelectRequests: 'Step Select Requests',
+      stepPreview: 'Step Preview',
+      stepConfirm: 'Step Confirm',
+      toastMerged: 'Toast Merged',
+      cancel: 'Cancel',
+      back: 'Back',
+      next: 'Next',
+      merge: 'Merge',
+      selectHint: 'Select Hint',
+      items: 'Items',
+      selected: 'Selected',
+      requests: 'Requests',
+      minimumTwo: 'Minimum Two',
+      mergedTitleLabel: 'Merged Title Label',
+      mergedTitlePlaceholder: 'Merged Title Placeholder',
+      mergeResult: 'Merge Result',
+      requestsCount: 'Requests Count',
+      itemsCount: 'Items Count',
+      totalAmount: 'Total Amount',
+      commentLabel: 'Comment Label',
+      commentPlaceholder: 'Comment Placeholder',
+      confirmTitle: 'Confirm Title',
+      confirmMergedRequests: 'Confirm Merged Requests',
+      confirmTotalItems: 'Confirm Total Items',
+      confirmTotalAmount: 'Confirm Total Amount',
+      confirmComment: 'Confirm Comment'
     },
-
-    // -- Send Price Request Wizard (SendPriceRequestWizard) --
     sendPriceRequest: {
       title: 'Request for Quotation',
       btnCancel: 'Cancel',
@@ -4535,10 +5461,8 @@ export const en: TranslationKeys = {
       sendNotice: 'Request will be sent to {count} suppliers via email.',
       toastSuccess: 'Price requests sent to {count} suppliers',
       toastError: 'Failed to send price requests',
-      toastInvalidQuantity: 'Enter a valid quantity greater than zero for each selected material',
+      toastInvalidQuantity: 'Enter a valid quantity greater than zero for each selected material'
     },
-
-    // -- Tender Evaluate Wizard (TenderEvaluateWizard) --
     tenderEvaluate: {
       title: 'Tender Bid Evaluation',
       btnCancel: 'Cancel',
@@ -4573,9 +5497,29 @@ export const en: TranslationKeys = {
       validationWeight: 'Criteria weights must add up to 100%',
       validationScores: 'Enter valid scores for at least one participant',
       manualWinnerJustification: 'Winner selected manually in evaluation wizard',
+      postAward: {
+        tenderPrefix: 'Tender Prefix',
+        awardConfirmed: 'Award Confirmed',
+        winnerIs: 'Winner Is',
+        createPoTitle: 'Create Po Title',
+        createPoHint: 'Create Po Hint',
+        vendorName: 'Vendor Name',
+        vendorEmail: 'Vendor Email',
+        createPoBtn: 'Create Po Btn',
+        rejectedTitle: 'Rejected Title',
+        finalRanking: 'Final Ranking',
+        winnerBadge: 'Winner Badge'
+      },
+      winnerJustificationLabel: 'Winner Justification Label',
+      winnerJustificationHint: 'Winner Justification Hint',
+      winnerJustificationPlaceholder: 'Winner Justification Placeholder',
+      draftRestored: 'Draft Restored',
+      draftAutoSave: 'Draft Auto Save',
+      draftSavedAt: 'Draft Saved At',
+      clearDraft: 'Clear Draft',
+      savingScoresProgress: 'Saving Scores Progress',
+      savingScoresRetry: 'Saving Scores Retry'
     },
-
-    // -- Create From Spec Wizard (CreateFromSpecWizard) --
     createFromSpec: {
       title: 'Create Requests from Specification',
       btnCancel: 'Cancel',
@@ -4600,10 +5544,8 @@ export const en: TranslationKeys = {
       toastSuccess: 'Requests created from specification: {count}',
       toastError: 'Failed to create requests from specification',
       toastInvalidQuantity: 'Enter a valid quantity greater than zero for each selected item',
-      emptySpecItems: 'Selected specification has no items available for procurement',
+      emptySpecItems: 'Selected specification has no items available for procurement'
     },
-
-    // -- Purchase Order Statuses --
     orderStatus: {
       draft: 'Draft',
       sent: 'Sent',
@@ -4612,10 +5554,8 @@ export const en: TranslationKeys = {
       delivered: 'Delivered',
       invoiced: 'Invoiced',
       closed: 'Closed',
-      cancelled: 'Cancelled',
+      cancelled: 'Cancelled'
     },
-
-    // -- Purchase Order Actions --
     orderAction: {
       send: 'Send',
       confirm: 'Confirm',
@@ -4631,10 +5571,8 @@ export const en: TranslationKeys = {
       bulkConfirmSuccess: 'Orders confirmed',
       bulkInvoiceSuccess: 'Invoices issued',
       bulkCancelSuccess: 'Orders cancelled',
-      bulkCloseSuccess: 'Orders closed',
+      bulkCloseSuccess: 'Orders closed'
     },
-
-    // -- Purchase Order List (PurchaseOrderListPage) --
     orderList: {
       title: 'Purchase Orders',
       subtitlePurchaseOrders: 'orders',
@@ -4686,10 +5624,8 @@ export const en: TranslationKeys = {
       bulkCancelTitle: 'Cancel selected orders?',
       bulkCancelDescription: 'Orders will be cancelled. This action cannot be undone.',
       bulkCloseTitle: 'Close selected orders?',
-      bulkCloseDescription: 'Orders will be set to Closed status.',
+      bulkCloseDescription: 'Orders will be set to Closed status.'
     },
-
-    // -- Purchase Order Detail (PurchaseOrderDetailPage) --
     orderDetail: {
       title: 'Purchase Order',
       subtitlePurchaseOrder: 'Order',
@@ -4784,10 +5720,8 @@ export const en: TranslationKeys = {
       itemsEmptyTitle: 'No items in order',
       itemsEmptyDescription: 'Add items to the order to register deliveries.',
       editItemTitle: 'Edit Item',
-      saveItem: 'Save Item',
+      saveItem: 'Save Item'
     },
-
-    // -- Purchase Order Form (PurchaseOrderFormPage) --
     orderForm: {
       title: 'New Purchase Order',
       subtitle: 'Fill in the order details',
@@ -4860,14 +5794,138 @@ export const en: TranslationKeys = {
         maxChars500: 'Maximum 500 characters',
         maxChars1000: 'Maximum 1000 characters',
         maxChars5000: 'Maximum 5000 characters',
-        currencyLength: 'Currency code must be 3 characters',
-      },
+        currencyLength: 'Currency code must be 3 characters'
+      }
     },
+    bidComparison: {
+      totalScore: 'Total Score',
+      noData: 'No Data',
+      title: 'Title',
+      breadcrumbTenders: 'Breadcrumb Tenders',
+      exportPdf: 'Export Pdf',
+      back: 'Back',
+      rank: 'Rank',
+      winner: 'Winner',
+      criterion: 'Criterion',
+      weight: 'Weight',
+      vendors: 'Vendors',
+      compare: 'Compare'
+    },
+    tenders: {
+      statusDraft: 'Draft',
+      statusSubmitted: 'Status Submitted',
+      statusInApproval: 'Status In Approval',
+      statusApproved: 'Approved',
+      statusAssigned: 'Status Assigned',
+      statusOrdered: 'Status Ordered',
+      statusDelivered: 'Status Delivered',
+      statusClosed: 'Status Closed',
+      statusCancelled: 'Cancelled',
+      priorityLow: 'Priority Low',
+      priorityMedium: 'Priority Medium',
+      priorityHigh: 'Priority High',
+      priorityCritical: 'Priority Critical',
+      cardPositions: 'Card Positions',
+      cardAmount: 'Card Amount',
+      cardPriority: 'Card Priority',
+      cardRequestDate: 'Card Request Date',
+      cardExecutor: 'Card Executor',
+      evaluate: 'Evaluate',
+      allProjects: 'All Projects',
+      allStatuses: 'All Statuses',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      newMaterials: 'New Materials',
+      newWorks: 'New Works',
+      tabMaterials: 'Tab Materials',
+      tabWorks: 'Tab Works',
+      statTotal: 'Stat Total',
+      statOpen: 'Stat Open',
+      statAwarded: 'Stat Awarded',
+      searchPlaceholder: 'Search...',
+      descMaterials: 'Desc Materials',
+      descWorks: 'Desc Works',
+      emptyMaterials: 'Empty Materials',
+      emptyWorks: 'Empty Works',
+      emptyFilterHint: 'Empty Filter Hint',
+      emptyCreateHint: 'Empty Create Hint',
+      createRequest: 'Create Request'
+    },
+    prequalification: {
+      title: 'Vendor Prequalification',
+      subtitle: 'Qualified vendor registry',
+      addVendor: 'Add Vendor',
+      editVendor: 'Edit Vendor',
+      vendorName: 'Vendor Name',
+      scores: 'Scores',
+      financial: 'Financial Score',
+      safety: 'Safety Score',
+      experience: 'Experience Score',
+      overallScore: 'Overall Score',
+      insurance: 'Insurance',
+      insuranceValid: 'Insurance Valid',
+      bondCapacity: 'Bond Capacity',
+      totalVendors: 'Total Vendors',
+      qualified: 'Qualified',
+      pendingReview: 'Pending Review',
+      disqualified: 'Disqualified',
+      statuses: {
+        PENDING: 'Pending',
+        QUALIFIED: 'Qualified',
+        DISQUALIFIED: 'Disqualified',
+        EXPIRED: 'Expired',
+      },
+    }
   },
-
   warehouse: {
     title: 'Warehouse',
-    inventory: 'Inventory',
+    inventory: {
+      statusPlanned: 'Status Planned',
+      statusInProgress: 'Status In Progress',
+      statusCompleted: 'Completed',
+      statusCancelled: 'Cancelled',
+      itemStatusMatch: 'Item Status Match',
+      itemStatusShortage: 'Item Status Shortage',
+      itemStatusSurplus: 'Item Status Surplus',
+      columnNumber: 'Column Number',
+      columnLocation: 'Location',
+      columnDate: 'Date',
+      columnStatus: 'Status',
+      columnItemsCount: 'Column Items Count',
+      columnMatched: 'Column Matched',
+      columnShortage: 'Column Shortage',
+      columnSurplus: 'Column Surplus',
+      columnResponsible: 'Responsible',
+      columnMaterial: 'Material',
+      columnUnit: 'Unit',
+      columnPlanned: 'Column Planned',
+      columnActual: 'Column Actual',
+      columnVariance: 'Column Variance',
+      columnItemStatus: 'Column Item Status',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      newCheck: 'New Check',
+      metricTotalChecks: 'Metric Total Checks',
+      metricCompleted: 'Completed',
+      metricShortages: 'Metric Shortages',
+      metricSurplus: 'Metric Surplus',
+      searchPlaceholder: 'Search...',
+      sectionChecks: 'Section Checks',
+      emptyChecksTitle: 'Empty Checks Title',
+      emptyChecksDescription: 'Empty Checks Description',
+      sectionLastCheckItems: 'Section Last Check Items',
+      emptyItemsTitle: 'Empty Items Title',
+      emptyItemsDescription: 'Empty Items Description',
+      modalTitle: 'Modal Title',
+      modalCancel: 'Modal Cancel',
+      modalCreate: 'Modal Create',
+      modalFieldLocation: 'Modal Field Location',
+      modalLocationPlaceholder: 'Modal Location Placeholder',
+      modalFieldDate: 'Modal Field Date',
+      modalFieldResponsible: 'Modal Field Responsible',
+      modalResponsiblePlaceholder: 'Modal Responsible Placeholder'
+    },
     materials: 'Materials',
     stockIn: 'Stock In',
     stockOut: 'Stock Out',
@@ -4876,11 +5934,8 @@ export const en: TranslationKeys = {
     category: 'Category',
     location: 'Location',
     emptyState: 'No materials found',
-
     breadcrumbHome: 'Home',
     breadcrumbWarehouse: 'Warehouse',
-
-    // MaterialListPage
     materialList: {
       title: 'Materials',
       subtitle: '{count} items in directory',
@@ -4905,11 +5960,9 @@ export const en: TranslationKeys = {
         finishing: 'Finishing',
         fasteners: 'Fasteners',
         tools: 'Tools',
-        other: 'Other',
-      },
+        other: 'Other'
+      }
     },
-
-    // StockPage
     stock: {
       title: 'Stock Levels',
       subtitle: 'Current material stock levels',
@@ -4927,9 +5980,9 @@ export const en: TranslationKeys = {
       searchPlaceholder: 'Search by material, warehouse...',
       emptyTitle: 'No stock',
       emptyDescription: 'Stock data is not available',
+      columnWarehouse: 'Warehouse',
+      breadcrumbHome: 'Home'
     },
-
-    // InventoryPage
     inventory_page: {
       title: 'Inventory Check',
       subtitle: 'Verification of material presence and compliance',
@@ -4972,16 +6025,14 @@ export const en: TranslationKeys = {
         planned: 'Planned',
         inProgress: 'In Progress',
         completed: 'Completed',
-        cancelled: 'Cancelled',
+        cancelled: 'Cancelled'
       },
       itemStatusLabels: {
         match: 'Match',
         shortage: 'Shortage',
-        surplus: 'Surplus',
-      },
+        surplus: 'Surplus'
+      }
     },
-
-    // MaterialDetailPage
     materialDetail: {
       breadcrumbMaterials: 'Materials',
       needsReorder: 'Reorder Required',
@@ -5017,11 +6068,40 @@ export const en: TranslationKeys = {
       movementTypeLabels: {
         receipt: 'Receipt',
         issue: 'Issue',
-        transfer: 'Transfer',
+        transfer: 'Transfer'
       },
+      movementTypeReceipt: 'Movement Type Receipt',
+      movementTypeIssue: 'Movement Type Issue',
+      movementTypeTransfer: 'Movement Type Transfer',
+      toastDeleted: 'Toast Deleted',
+      confirmTitle: 'Confirm Title',
+      confirmDescription: 'Confirm Description',
+      confirmButton: 'Confirm Button',
+      confirmCancel: 'Confirm Cancel',
+      breadcrumbHome: 'Home',
+      toastEditRedirect: 'Toast Edit Redirect',
+      sectionInfo: 'Section Info',
+      labelTotalStock: 'Label Total Stock',
+      labelMinStock: 'Label Min Stock',
+      labelMaxStock: 'Label Max Stock',
+      labelAvgPrice: 'Label Avg Price',
+      sectionStockByLocation: 'Section Stock By Location',
+      tableWarehouse: 'Table Warehouse',
+      tableTotal: 'Table Total',
+      tableReserved: 'Table Reserved',
+      tableAvailable: 'Table Available',
+      sectionRecentMovements: 'Section Recent Movements',
+      sectionDetails: 'Section Details',
+      infoSku: 'Info Sku',
+      infoUnit: 'Info Unit',
+      infoLastReceipt: 'Info Last Receipt',
+      infoCreatedAt: 'Info Created At',
+      sectionOrderInfo: 'Section Order Info',
+      labelCurrentStock: 'Label Current Stock',
+      labelReorderPoint: 'Label Reorder Point',
+      toastProcurementOpened: 'Toast Procurement Opened',
+      createProcurementRequest: 'Create Procurement Request'
     },
-
-    // MovementListPage
     movementList: {
       title: 'Material Movements',
       subtitle: '{count} operations',
@@ -5041,9 +6121,10 @@ export const en: TranslationKeys = {
       tabDraft: 'Draft',
       tabConfirmed: 'Confirmed',
       tabDone: 'Completed',
+      columnLineCount: 'Column Line Count',
+      breadcrumbHome: 'Home',
+      breadcrumbMovements: 'Breadcrumb Movements'
     },
-
-    // MovementDetailPage
     movementDetail: {
       breadcrumbMovements: 'Movements',
       editButton: 'Edit',
@@ -5069,9 +6150,32 @@ export const en: TranslationKeys = {
       relatedDocsTitle: 'Related Documents',
       statusActionConfirm: 'Confirm',
       statusActionComplete: 'Complete',
+      confirm: 'Confirm',
+      execute: 'Execute',
+      toastStatusChanged: 'Toast Status Changed',
+      toastDeleted: 'Toast Deleted',
+      confirmTitle: 'Confirm Title',
+      confirmDescription: 'Confirm Description',
+      confirmButton: 'Confirm Button',
+      confirmCancel: 'Confirm Cancel',
+      breadcrumbHome: 'Home',
+      toastEditRedirect: 'Toast Edit Redirect',
+      edit: 'Edit',
+      delete: 'Delete',
+      sectionDirection: 'Direction',
+      labelFrom: 'Label From',
+      labelTo: 'Label To',
+      sectionMaterial: 'Section Material',
+      labelMaterial: 'Label Material',
+      labelQuantity: 'Label Quantity',
+      labelNote: 'Label Note',
+      sectionDetails: 'Section Details',
+      labelDate: 'Date',
+      labelResponsible: 'Responsible',
+      labelApprovedBy: 'Label Approved By',
+      labelCreated: 'Label Created',
+      sectionRelatedDocs: 'Section Related Docs'
     },
-
-    // MovementBoardPage
     movementBoard: {
       title: 'Movements - Board',
       subtitle: '{count} movements',
@@ -5092,11 +6196,18 @@ export const en: TranslationKeys = {
         low: 'Low',
         normal: 'Normal',
         high: 'High',
-        critical: 'Critical',
+        critical: 'Critical'
       },
+      priorityLow: 'Priority Low',
+      priorityNormal: 'Priority Normal',
+      priorityHigh: 'Priority High',
+      priorityCritical: 'Priority Critical',
+      breadcrumbHome: 'Home',
+      btnFilters: 'Btn Filters',
+      btnReset: 'Reset',
+      emptyColumn: 'Empty Column',
+      dragHint: 'Drag Hint'
     },
-
-    // WarehouseLocationsPage
     locations: {
       title: 'Warehouse Locations',
       subtitle: 'Manage warehouses and storage areas',
@@ -5121,16 +6232,14 @@ export const en: TranslationKeys = {
       typeLabels: {
         warehouse: 'Warehouse',
         site: 'Site',
-        zone: 'Zone',
+        zone: 'Zone'
       },
       statusLabels: {
         active: 'Active',
         inactive: 'Inactive',
-        full: 'Full',
-      },
+        full: 'Full'
+      }
     },
-
-    // StockLimitsPage
     stockLimits: {
       title: 'Stock Limits',
       subtitle: '{count} limits configured',
@@ -5158,19 +6267,31 @@ export const en: TranslationKeys = {
         min: 'Minimum',
         max: 'Maximum',
         reorderPoint: 'Reorder Point',
-        safetyStock: 'Safety Stock',
+        safetyStock: 'Safety Stock'
       },
       breachedLabels: {
         true: 'Breached',
-        false: 'Normal',
+        false: 'Normal'
       },
       filterAllTypes: 'All types',
       filterAll: 'All',
       filterBreached: 'Breached',
       filterNormal: 'Normal',
+      typeMin: 'Type Min',
+      typeMax: 'Type Max',
+      typeReorderPoint: 'Type Reorder Point',
+      typeSafetyStock: 'Type Safety Stock',
+      breached: 'Breached',
+      normal: 'Normal',
+      allTypes: 'All Types',
+      allStates: 'All States',
+      columnState: 'Column State',
+      breadcrumbHome: 'Home',
+      btnAlerts: 'Btn Alerts',
+      metricTotal: 'Total',
+      trendNeedAttention: 'Trend Need Attention',
+      trendAllNormal: 'Trend All Normal'
     },
-
-    // StockAlertsPage
     stockAlerts: {
       title: 'Stock Alerts',
       subtitle: '{count} alerts',
@@ -5201,18 +6322,34 @@ export const en: TranslationKeys = {
       severityLabels: {
         info: 'Info',
         warning: 'Warning',
-        critical: 'Critical',
+        critical: 'Critical'
       },
       statusLabels: {
         active: 'Active',
         acknowledged: 'Acknowledged',
-        resolved: 'Resolved',
+        resolved: 'Resolved'
       },
       filterAllLevels: 'All levels',
       filterAllStatuses: 'All statuses',
+      severityInfo: 'Severity Info',
+      severityWarning: 'Severity Warning',
+      severityCritical: 'Severity Critical',
+      statusActive: 'Active',
+      statusAcknowledged: 'Status Acknowledged',
+      statusResolved: 'Status Resolved',
+      typeMin: 'Type Min',
+      typeMax: 'Type Max',
+      typeReorderPoint: 'Type Reorder Point',
+      typeSafetyStock: 'Type Safety Stock',
+      allSeverities: 'All Severities',
+      allStatuses: 'All Statuses',
+      btnAcknowledge: 'Btn Acknowledge',
+      btnResolve: 'Btn Resolve',
+      breadcrumbHome: 'Home',
+      metricTotal: 'Total',
+      trendNeedAction: 'Trend Need Action',
+      trendUrgent: 'Trend Urgent'
     },
-
-    // M29FromKs2Wizard
     m29Wizard: {
       title: 'Generate M-29 from KS-2',
       description: 'Create a material consumption report based on completed work acts',
@@ -5243,9 +6380,27 @@ export const en: TranslationKeys = {
       toastSuccess: 'M-29 report generated from {count} KS-2 acts',
       toastGenerated: 'M-29 report generated from {count} KS-2 acts',
       toastGenerateError: 'Error generating M-29 report',
+      btnCancel: 'Cancel',
+      btnBack: 'Back',
+      btnNext: 'Next',
+      btnGenerate: 'Btn Generate',
+      step1Instruction: 'Step1 Instruction',
+      step2Instruction: 'Step2 Instruction',
+      headerMaterial: 'Header Material',
+      headerUnit: 'Header Unit',
+      headerNorm: 'Header Norm',
+      headerActual: 'Header Actual',
+      infoMaterialsFound: 'Info Materials Found',
+      step3Instruction: 'Step3 Instruction',
+      labelNorm: 'Label Norm',
+      step4Instruction: 'Step4 Instruction',
+      summaryActs: 'Summary Acts',
+      summaryMaterialPositions: 'Summary Material Positions',
+      summaryDeviations: 'Summary Deviations',
+      summaryPositions: 'Summary Positions',
+      summaryNoDeviations: 'Summary No Deviations',
+      infoReportReady: 'Info Report Ready'
     },
-
-    // TurnoverReportWizard
     turnoverWizard: {
       title: 'Turnover Report',
       description: 'Generate material movement report by warehouse',
@@ -5282,11 +6437,35 @@ export const en: TranslationKeys = {
       groupByOptions: {
         byMaterials: 'By Materials',
         byCategories: 'By Categories',
-        bySuppliers: 'By Suppliers',
+        bySuppliers: 'By Suppliers'
       },
+      warehouseCentral: 'Warehouse Central',
+      warehouseNewHorizons: 'Warehouse New Horizons',
+      warehouseCentralBC: 'Warehouse Central B C',
+      warehouseGSM: 'Warehouse G S M',
+      groupByMaterial: 'Group By Material',
+      groupByCategory: 'Group By Category',
+      groupBySupplier: 'Group By Supplier',
+      btnCancel: 'Cancel',
+      btnBack: 'Back',
+      btnNext: 'Next',
+      btnExport: 'Export',
+      fieldWarehouse: 'Field Warehouse',
+      fieldWarehousePlaceholder: 'Field Warehouse Placeholder',
+      fieldStartDate: 'Field Start Date',
+      fieldEndDate: 'Field End Date',
+      fieldGroupBy: 'Field Group By',
+      checkboxZeroBalance: 'Checkbox Zero Balance',
+      step2Instruction: 'Step2 Instruction',
+      headerName: 'Header Name',
+      headerUnit: 'Header Unit',
+      headerOpenBalance: 'Header Open Balance',
+      headerIncome: 'Header Income',
+      headerExpense: 'Header Expense',
+      headerCloseBalance: 'Header Close Balance',
+      fieldExportFormat: 'Field Export Format',
+      infoExportReady: 'Info Export Ready'
     },
-
-    // M29ReportPage
     m29Report: {
       title: 'M-29 Report',
       subtitle: 'Monthly material consumption report per project',
@@ -5313,10 +6492,8 @@ export const en: TranslationKeys = {
       summaryTotal: 'Total',
       summaryPlan: 'Plan',
       summaryFact: 'Actual',
-      summaryVariance: 'Var.',
+      summaryVariance: 'Var.'
     },
-
-    // LimitFenceCardsPage
     limitFenceCards: {
       title: 'Limit-Fence Cards',
       subtitle: '{count} cards',
@@ -5363,10 +6540,8 @@ export const en: TranslationKeys = {
       issueQty: 'Quantity',
       issueRecipient: 'Recipient',
       issueRunningTotal: 'Running Total',
-      noIssues: 'No issuances recorded yet',
+      noIssues: 'No issuances recorded yet'
     },
-
-    // WarehouseOrdersPage
     warehouseOrders: {
       title: 'Warehouse Orders',
       subtitle: '{count} orders',
@@ -5410,10 +6585,8 @@ export const en: TranslationKeys = {
       formItemMaterial: 'Material',
       formItemQty: 'Qty',
       formItemUnit: 'Unit',
-      formItemPrice: 'Price',
+      formItemPrice: 'Price'
     },
-
-    // AddressStoragePage
     addressStorage: {
       title: 'Address Storage',
       subtitle: 'Storage cell visualization',
@@ -5444,10 +6617,8 @@ export const en: TranslationKeys = {
       detailCell: 'Cell',
       detailMaterial: 'Material',
       detailQuantity: 'Quantity',
-      detailLastMovement: 'Last Movement',
+      detailLastMovement: 'Last Movement'
     },
-
-    // MaterialDemandPage
     materialDemand: {
       title: 'Material Demand Calculator',
       subtitle: 'Analyze material sufficiency based on work schedule',
@@ -5475,13 +6646,226 @@ export const en: TranslationKeys = {
       statusLow: 'Low',
       statusDeficit: 'Deficit',
       emptyTitle: 'No data',
-      emptyDescription: 'Select a project to calculate material demand',
+      emptyDescription: 'Select a project to calculate material demand'
     },
+    interSiteTransfer: {
+      toastSuccess: 'Toast Success',
+      toastError: 'Toast Error',
+      validationSourceRequired: 'Validation Source Required',
+      validationDestRequired: 'Validation Dest Required',
+      validationSameLocation: 'Validation Same Location',
+      validationNoLines: 'Validation No Lines',
+      validationQtyPositive: 'Validation Qty Positive',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      step1Title: 'Step 1',
+      step2Title: 'Step 2',
+      sectionDirection: 'Direction',
+      labelSource: 'Source',
+      placeholderSource: 'Select source',
+      labelDest: 'Destination',
+      placeholderDest: 'Select destination',
+      sectionProjects: 'Projects',
+      labelSourceProject: 'Source Project',
+      placeholderProject: 'Placeholder Project',
+      labelDestProject: 'Destination Project',
+      sectionAdditional: 'Additional',
+      labelResponsible: 'Responsible',
+      placeholderResponsible: 'Placeholder Responsible',
+      labelNotes: 'Notes',
+      placeholderNotes: 'Placeholder Notes',
+      btnNext: 'Next',
+      sectionMaterials: 'Materials',
+      btnAddLine: 'Btn Add Line',
+      colMaterial: 'Material',
+      placeholderMaterial: 'Select material',
+      colQuantity: 'Quantity',
+      btnCreate: 'Create',
+      btnBack: 'Back'
+    },
+    limitFenceSheet: {
+      toastIssued: 'Toast Issued',
+      toastError: 'Toast Error',
+      toastReturned: 'Toast Returned',
+      toastClosed: 'Toast Closed',
+      toastDeleted: 'Toast Deleted',
+      detailTitle: 'Detail Title',
+      breadcrumb: 'Navigation',
+      actionIssue: 'Action Issue',
+      actionReturn: 'Action Return',
+      actionClose: 'Action Close',
+      actionEdit: 'Action Edit',
+      actionDelete: 'Action Delete',
+      detailLimitProgress: 'Detail Limit Progress',
+      columnLimit: 'Column Limit',
+      detailIssued: 'Detail Issued',
+      detailReturned: 'Detail Returned',
+      detailRemaining: 'Detail Remaining',
+      detailMaterial: 'Detail Material',
+      detailPeriod: 'Detail Period',
+      detailNotes: 'Detail Notes',
+      issueTitle: 'Issue Title',
+      issueConfirm: 'Issue Confirm',
+      returnTitle: 'Return Title',
+      returnConfirm: 'Return Confirm',
+      closeConfirmTitle: 'Close Confirm Title',
+      closeConfirmMessage: 'Close Confirm Message',
+      deleteConfirmTitle: 'Delete Confirm Title',
+      deleteConfirmMessage: 'Delete Confirm Message',
+      validationNumberRequired: 'Validation Number Required',
+      validationProjectRequired: 'Validation Project Required',
+      validationMaterialRequired: 'Validation Material Required',
+      validationLimitRequired: 'Validation Limit Required',
+      validationLimitPositive: 'Validation Limit Positive',
+      validationPeriodStartRequired: 'Validation Period Start Required',
+      validationPeriodEndRequired: 'Validation Period End Required',
+      toastCreated: 'Toast Created',
+      toastUpdated: 'Toast Updated',
+      formEditTitle: 'Form Edit Title',
+      formTitle: 'Form Title',
+      formSubtitle: 'Form Subtitle',
+      formSectionMain: 'Form Section Main',
+      formLabelNumber: 'Form Label Number',
+      formPlaceholderNumber: 'Form Placeholder Number',
+      formLabelProject: 'Form Label Project',
+      formLabelMaterial: 'Form Label Material',
+      formLabelUnit: 'Form Label Unit',
+      formPlaceholderUnit: 'Form Placeholder Unit',
+      formSectionPeriod: 'Form Section Period',
+      formLabelLimitQuantity: 'Form Label Limit Quantity',
+      formLabelPeriodStart: 'Form Label Period Start',
+      formLabelPeriodEnd: 'Form Label Period End',
+      formSectionAdditional: 'Form Section Additional',
+      formLabelWarehouse: 'Form Label Warehouse',
+      formLabelResponsible: 'Form Label Responsible',
+      formLabelNotes: 'Form Label Notes',
+      formPlaceholderNotes: 'Form Placeholder Notes',
+      formUpdate: 'Form Update',
+      formSave: 'Form Save',
+      columnNumber: 'Column Number',
+      columnMaterial: 'Material',
+      columnUnit: 'Unit',
+      columnIssued: 'Column Issued',
+      columnRemaining: 'Column Remaining',
+      columnPeriod: 'Column Period',
+      columnStatus: 'Status',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      newSheet: 'New Sheet',
+      filterAll: 'Filter All',
+      filterActive: 'Filter Active',
+      filterExhausted: 'Filter Exhausted',
+      filterClosed: 'Filter Closed',
+      searchPlaceholder: 'Search...',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    },
+    quickReceipt: {
+      toastSuccess: 'Toast Success',
+      toastError: 'Toast Error',
+      validationQtyPositive: 'Validation Qty Positive',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      step1: 'Step1',
+      step2: 'Step2',
+      scanTitle: 'Scan Title',
+      scanHint: 'Scan Hint',
+      orManual: 'Or Manual',
+      labelMaterial: 'Label Material',
+      placeholderMaterial: 'Select material',
+      labelQuantity: 'Label Quantity',
+      summaryTitle: 'Summary Title',
+      summaryMaterial: 'Summary Material',
+      summaryQuantity: 'Summary Quantity',
+      summaryType: 'Summary Type',
+      typeReceipt: 'Type Receipt',
+      summaryResponsible: 'Summary Responsible',
+      labelLocation: 'Label Location',
+      placeholderLocation: 'Placeholder Location',
+      backToStep1: 'Back To Step1',
+      btnNext: 'Next',
+      btnConfirm: 'Confirm'
+    },
+    scanner: {
+      found: 'Found',
+      notFound: 'Not Found'
+    },
+    orders: {
+      toastConfirmed: 'Toast Confirmed',
+      toastError: 'Toast Error',
+      toastCancelled: 'Toast Cancelled',
+      toastDeleted: 'Toast Deleted',
+      toastItemAdded: 'Toast Item Added',
+      itemColumnMaterial: 'Item Column Material',
+      itemColumnUnit: 'Item Column Unit',
+      itemColumnQuantity: 'Item Column Quantity',
+      itemColumnPrice: 'Item Column Price',
+      itemColumnTotal: 'Item Column Total',
+      itemColumnLot: 'Item Column Lot',
+      detailTitle: 'Detail Title',
+      breadcrumb: 'Navigation',
+      actionConfirm: 'Action Confirm',
+      actionEdit: 'Action Edit',
+      actionCancel: 'Action Cancel',
+      actionDelete: 'Action Delete',
+      detailDate: 'Detail Date',
+      detailTotalQuantity: 'Detail Total Quantity',
+      detailTotalAmount: 'Detail Total Amount',
+      detailNotes: 'Detail Notes',
+      detailItems: 'Detail Items',
+      addItem: 'Add Item',
+      emptyTitle: 'No Data',
+      addItemTitle: 'Add Item Title',
+      itemColumnCertificate: 'Item Column Certificate',
+      confirmTitle: 'Confirm Title',
+      confirmMessage: 'Confirm Message',
+      cancelTitle: 'Cancel Title',
+      cancelMessage: 'Cancel Message',
+      deleteTitle: 'Delete Title',
+      deleteMessage: 'Delete Message',
+      validationNumberRequired: 'Validation Number Required',
+      validationTypeRequired: 'Validation Type Required',
+      validationDateRequired: 'Validation Date Required',
+      validationWarehouseRequired: 'Validation Warehouse Required',
+      toastCreated: 'Toast Created',
+      toastUpdated: 'Toast Updated',
+      formEditTitle: 'Form Edit Title',
+      formTitle: 'Form Title',
+      formSubtitle: 'Form Subtitle',
+      formSectionMain: 'Form Section Main',
+      formLabelNumber: 'Form Label Number',
+      formPlaceholderNumber: 'Form Placeholder Number',
+      formLabelType: 'Form Label Type',
+      formLabelDate: 'Form Label Date',
+      formLabelWarehouse: 'Form Label Warehouse',
+      formSectionDetails: 'Form Section Details',
+      formLabelCounterparty: 'Form Label Counterparty',
+      formLabelContract: 'Form Label Contract',
+      formLabelResponsible: 'Form Label Responsible',
+      formLabelReceiver: 'Form Label Receiver',
+      formLabelNotes: 'Form Label Notes',
+      formPlaceholderNotes: 'Form Placeholder Notes',
+      formUpdate: 'Form Update',
+      formSave: 'Form Save',
+      columnNumber: 'Column Number',
+      columnType: 'Type',
+      columnDate: 'Date',
+      columnQuantity: 'Quantity',
+      columnAmount: 'Amount',
+      columnStatus: 'Status',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      newOrder: 'New Order',
+      tabAll: 'All',
+      tabDraft: 'Tab Draft',
+      tabConfirmed: 'Tab Confirmed',
+      tabCancelled: 'Tab Cancelled',
+      searchPlaceholder: 'Search...',
+      emptyDescription: 'No data found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Fleet & Equipment
-  // ---------------------------------------------------------------------------
   fleet: {
     title: 'Fleet & Equipment',
     vehicles: 'Vehicles',
@@ -5495,8 +6879,6 @@ export const en: TranslationKeys = {
     fuelConsumption: 'Fuel Consumption',
     assignedTo: 'Assigned To',
     emptyState: 'No equipment found',
-
-    // -- Fleet List (FleetListPage) --
     list: {
       title: 'Fleet & Equipment',
       subtitleSuffix: 'units',
@@ -5553,9 +6935,17 @@ export const en: TranslationKeys = {
       toastDeleteError: 'Error deleting',
       emptyTitle: 'No vehicles',
       emptyDescription: 'Add the first vehicle',
+      deleteSuccess: 'Deleted successfully',
+      deleteError: 'Delete error',
+      colCode: 'Code',
+      colName: 'Name',
+      colNextMaintenance: 'Col Next Maintenance',
+      subtitleUnits: 'Subtitle Units',
+      createHint: 'Create Hint',
+      addVehicle: 'Add Vehicle',
+      allTypes: 'All Types',
+      allStatuses: 'All Statuses'
     },
-
-    // -- Fleet Detail (FleetDetailPage) --
     detail: {
       breadcrumbHome: 'Home',
       breadcrumbFleet: 'Fleet',
@@ -5655,10 +7045,8 @@ export const en: TranslationKeys = {
       infoEngineHours: 'Engine Hours',
       infoFuel: 'Fuel',
       infoLastMaintenance: 'Last Maintenance',
-      infoNextMaintenance: 'Next Maintenance',
+      infoNextMaintenance: 'Next Maintenance'
     },
-
-    // -- Maintenance Page (MaintenancePage) --
     maintenance: {
       title: 'Maintenance',
       subtitleSuffix: 'records',
@@ -5687,9 +7075,19 @@ export const en: TranslationKeys = {
       statusCancelled: 'Cancelled',
       emptyTitle: 'No maintenance records',
       emptyDescription: 'Create the first maintenance record',
+      statusPlanned: 'Status Planned',
+      statusOverdue: 'Status Overdue',
+      colMaintenanceType: 'Col Maintenance Type',
+      colScheduledDate: 'Col Scheduled Date',
+      colMechanic: 'Col Mechanic',
+      colProject: 'Project',
+      subtitle: 'Subtitle',
+      newMaintenance: 'New Maintenance',
+      tabPlanned: 'Tab Planned',
+      totalRecords: 'Total Records',
+      overdue: 'Overdue',
+      costsCurrentMonth: 'Costs Current Month'
     },
-
-    // -- Fuel Page (FuelPage) --
     fuel: {
       title: 'Fuel Tracking',
       subtitleSuffix: 'records',
@@ -5714,9 +7112,23 @@ export const en: TranslationKeys = {
       litersUnit: 'L',
       emptyTitle: 'No fuel records',
       emptyDescription: 'Create the first fuel record',
+      fuelGasoline92: 'Fuel Gasoline92',
+      fuelGasoline95: 'Fuel Gasoline95',
+      colLiters: 'Col Liters',
+      colMileage: 'Col Mileage',
+      colDriver: 'Col Driver',
+      colStation: 'Col Station',
+      subtitle: 'Subtitle',
+      addRefueling: 'Add Refueling',
+      totalCosts: 'Total Costs',
+      currentMonth: 'Current Month',
+      totalConsumption: 'Total Consumption',
+      litersShort: 'Liters Short',
+      avgConsumption: 'Avg Consumption',
+      topConsumer: 'Top Consumer',
+      dateFrom: 'Date From',
+      dateTo: 'Date To'
     },
-
-    // -- Fleet Maintenance Board (FleetMaintenanceBoardPage) --
     maintenanceBoard: {
       title: 'Maintenance - Board',
       subtitleSuffix: 'records',
@@ -5738,9 +7150,14 @@ export const en: TranslationKeys = {
       priorityCritical: 'Critical',
       emptyColumn: 'No records',
       emptyColumnHint: 'Drag a card here',
+      recordsSuffix: 'Records Suffix',
+      filters: 'Filters',
+      newRecord: 'New Record',
+      allStatuses: 'All Statuses',
+      resetFilters: 'Reset Filters',
+      dragHint: 'Drag Hint',
+      kmSuffix: 'Km Suffix'
     },
-
-    // -- Vehicle Create Modal (VehicleCreateModal) --
     createModal: {
       modalTitle: 'Add Vehicle',
       modalDescription: 'Add a new vehicle to the fleet',
@@ -5789,9 +7206,26 @@ export const en: TranslationKeys = {
       validationFuelTypeRequired: 'Select fuel type',
       toastCreated: 'Vehicle added',
       toastCreateError: 'Failed to add vehicle',
+      validationLicensePlate: 'Validation License Plate',
+      validationMaxChars: 'Validation Max Chars',
+      validationBrand: 'Validation Brand',
+      validationModel: 'Validation Model',
+      validationYear: 'Validation Year',
+      validationYearRange: 'Validation Year Range',
+      validationType: 'Validation Type',
+      validationStatus: 'Validation Status',
+      statusDecommissioned: 'Status Decommissioned',
+      noProject: 'No Project',
+      successToast: 'Success Toast',
+      errorToast: 'Error Toast',
+      title: 'Title',
+      description: 'Description',
+      cancel: 'Cancel',
+      submit: 'Submit',
+      labelBrand: 'Label Brand',
+      labelProject: 'Project',
+      placeholderProject: 'Placeholder Project'
     },
-
-    // -- Waybills ESM-2 (WaybillsPage) --
     waybillsEsm: {
       title: 'Waybills — ESM-2',
       subtitle: 'Waybill registration and accounting',
@@ -5872,10 +7306,8 @@ export const en: TranslationKeys = {
       toastStatusChanged: 'Status updated',
       toastError: 'Error processing waybill',
       toastPrintReady: 'ESM-2 form ready',
-      toastPrintError: 'Error generating ESM-2 form',
+      toastPrintError: 'Error generating ESM-2 form'
     },
-
-    // -- Fuel Accounting (FuelAccountingPage) --
     fuelAccounting: {
       title: 'Fuel Accounting',
       subtitle: 'Fuel consumption and cost control',
@@ -5902,9 +7334,32 @@ export const en: TranslationKeys = {
       colConsumption: 'Actual / Norm',
       emptyTitle: 'No fuel records',
       emptyDescription: 'Fuel data will appear after adding records',
+      fuelDiesel: 'Fuel Diesel',
+      fuelGasoline92: 'Fuel Gasoline92',
+      fuelGasoline95: 'Fuel Gasoline95',
+      fuelGasoline98: 'Fuel Gasoline98',
+      fuelLpg: 'Fuel Lpg',
+      toastCreated: 'Toast Created',
+      toastError: 'Toast Error',
+      colNorm: 'Col Norm',
+      newRecord: 'New Record',
+      metricAvgDeviation: 'Metric Avg Deviation',
+      normComparisonTitle: 'Norm Comparison Title',
+      filterAllFuelTypes: 'Filter All Fuel Types',
+      modalTitle: 'Modal Title',
+      formVehicle: 'Form Vehicle',
+      formVehiclePlaceholder: 'Form Vehicle Placeholder',
+      formDate: 'Form Date',
+      formFuelType: 'Form Fuel Type',
+      formLiters: 'Form Liters',
+      formCost: 'Form Cost',
+      formStation: 'Form Station',
+      formStationPlaceholder: 'Form Station Placeholder',
+      formMileage: 'Form Mileage',
+      formDriver: 'Form Driver',
+      formDriverPlaceholder: 'Form Driver Placeholder',
+      costPerLiter: 'Cost Per Liter'
     },
-
-    // -- Maintenance & Repair (MaintenanceToRepairPage) --
     maintRepair: {
       title: 'Maintenance & Repair',
       subtitle: 'Service and repair schedule for vehicles',
@@ -5946,9 +7401,46 @@ export const en: TranslationKeys = {
       formCost: 'Estimated Cost',
       toastCreated: 'Maintenance record created',
       toastError: 'Error creating record',
+      tabAll: 'All',
+      tabScheduled: 'Tab Scheduled',
+      tabOverdue: 'Tab Overdue',
+      tabInProgress: 'Tab In Progress',
+      tabCompleted: 'Completed',
+      triggerDate: 'Trigger Date',
+      triggerMileage: 'Trigger Mileage',
+      triggerHours: 'Trigger Hours',
+      statusScheduled: 'Status Scheduled',
+      statusInProgress: 'Status In Progress',
+      toastCompleted: 'Toast Completed',
+      colWorkType: 'Col Work Type',
+      colScheduled: 'Col Scheduled',
+      colActual: 'Col Actual',
+      actionComplete: 'Action Complete',
+      metricScheduled: 'Metric Scheduled',
+      metricInProgress: 'Metric In Progress',
+      overdueAlert: 'Overdue Alert',
+      searchPlaceholder: 'Search...',
+      filterAllWorkTypes: 'Filter All Work Types',
+      legendScheduled: 'Legend Scheduled',
+      legendInProgress: 'Legend In Progress',
+      formWorkType: 'Form Work Type',
+      formTrigger: 'Form Trigger',
+      formScheduledDate: 'Form Scheduled Date',
+      formIntervalDays: 'Form Interval Days',
+      formIntervalDaysPlaceholder: 'Form Interval Days Placeholder',
+      formScheduledMileage: 'Form Scheduled Mileage',
+      formScheduledMileagePlaceholder: 'Form Scheduled Mileage Placeholder',
+      formIntervalMileage: 'Form Interval Mileage',
+      formIntervalMileagePlaceholder: 'Form Interval Mileage Placeholder',
+      formIntervalHoursPlaceholder: 'Form Interval Hours Placeholder',
+      completeModalTitle: 'Complete Modal Title',
+      completeActualDate: 'Complete Actual Date',
+      completeActualMileage: 'Complete Actual Mileage',
+      completeActualCost: 'Complete Actual Cost',
+      completeNotes: 'Complete Notes',
+      completeNotesPlaceholder: 'Complete Notes Placeholder',
+      completeBtn: 'Complete Btn'
     },
-
-    // -- GPS Tracking (GpsTrackingPage) --
     gps: {
       title: 'GPS Tracking',
       subtitle: 'Real-time vehicle location monitoring',
@@ -5975,9 +7467,29 @@ export const en: TranslationKeys = {
       detailLocation: 'Last Location',
       detailDistance: 'Distance Today',
       detailLastUpdate: 'Last Update',
+      statusStopped: 'Status Stopped',
+      justNow: 'Just Now',
+      minutesAgo: 'Minutes Ago',
+      filterStopped: 'Filter Stopped',
+      livePolling: 'Live Polling',
+      geofenceAlertsTitle: 'Geofence Alerts Title',
+      geofenceEntered: 'Geofence Entered',
+      geofenceExited: 'Geofence Exited',
+      metricStopped: 'Metric Stopped',
+      filterAllTypes: 'Filter All Types',
+      mapVehicleCount: 'Map Vehicle Count',
+      detailStops: 'Detail Stops',
+      detailCoordinates: 'Detail Coordinates',
+      trackHistoryTitle: 'Track History Title',
+      trackDistance: 'Track Distance',
+      trackStops: 'Track Stops',
+      trackAvgSpeed: 'Track Avg Speed',
+      trackMaxSpeed: 'Track Max Speed',
+      trackColTime: 'Track Col Time',
+      trackColLocation: 'Track Col Location',
+      trackColSpeed: 'Track Col Speed',
+      trackNoData: 'Track No Data'
     },
-
-    // -- Driver Rating (DriverRatingPage) --
     driverRating: {
       title: 'Driver Rating',
       subtitle: 'Driving efficiency and safety assessment',
@@ -5998,12 +7510,326 @@ export const en: TranslationKeys = {
       lPer100km: 'L/100km',
       emptyTitle: 'No driver data',
       emptyDescription: 'Rating is formed based on trip data',
+      breakdownFuel: 'Breakdown Fuel',
+      breakdownSpeed: 'Breakdown Speed',
+      breakdownMaintenance: 'Breakdown Maintenance',
+      breakdownIdle: 'Breakdown Idle',
+      periodMonth: 'Period Month',
+      periodQuarter: 'Period Quarter',
+      periodYear: 'Period Year',
+      colDistance: 'Col Distance',
+      km: 'Km',
+      clickForBreakdown: 'Click For Breakdown',
+      metricTotalViolations: 'Metric Total Violations',
+      metricTotalDistance: 'Metric Total Distance',
+      topPerformers: 'Top Performers',
+      bottomPerformers: 'Bottom Performers',
+      legendGood: 'Legend Good',
+      legendAverage: 'Legend Average',
+      legendPoor: 'Legend Poor',
+      breakdownTitle: 'Breakdown Title',
+      overallScore: 'Overall Score',
+      ratingComponents: 'Rating Components',
+      statsTitle: 'Stats Title',
+      statIdleTime: 'Stat Idle Time',
+      hours: 'Hours',
+      minutes: 'Minutes'
     },
+    schedule: {
+      typeScheduled: 'Type Scheduled',
+      typeUnscheduled: 'Type Unscheduled',
+      typeRepair: 'Type Repair',
+      typeInspection: 'Type Inspection',
+      toastRuleCreated: 'Toast Rule Created',
+      toastError: 'Toast Error',
+      toastRuleUpdated: 'Toast Rule Updated',
+      toastRuleDeleted: 'Toast Rule Deleted',
+      colName: 'Name',
+      colVehicle: 'Col Vehicle',
+      allVehicles: 'All Vehicles',
+      specificVehicle: 'Specific Vehicle',
+      colType: 'Type',
+      colIntervalHours: 'Col Interval Hours',
+      colIntervalMileage: 'Col Interval Mileage',
+      colIntervalDays: 'Col Interval Days',
+      colActive: 'Col Active',
+      active: 'Active',
+      inactive: 'Inactive',
+      colRule: 'Col Rule',
+      colTrigger: 'Col Trigger',
+      colCurrentHours: 'Col Current Hours',
+      colThresholdHours: 'Col Threshold Hours',
+      colCurrentMileage: 'Col Current Mileage',
+      colThresholdMileage: 'Col Threshold Mileage',
+      colOverdue: 'Col Overdue',
+      overdue: 'Overdue',
+      approaching: 'Approaching',
+      colExpiryDate: 'Col Expiry Date',
+      colDaysRemaining: 'Col Days Remaining',
+      expired: 'Expired',
+      daysLeft: 'Days Left',
+      tabRules: 'Tab Rules',
+      tabDue: 'Tab Due',
+      tabCompliance: 'Tab Compliance',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      breadcrumbFleet: 'Fleet',
+      breadcrumbSchedule: 'Breadcrumb Schedule',
+      newRule: 'New Rule',
+      rulesEmpty: 'Rules Empty',
+      rulesEmptyDesc: 'Rules Empty Desc',
+      dueEmpty: 'Due Empty',
+      dueEmptyDesc: 'Due Empty Desc',
+      formTitle: 'Form Title',
+      formName: 'Form Name',
+      formNamePlaceholder: 'Form Name Placeholder',
+      formDescription: 'Form Description',
+      formType: 'Form Type',
+      formVehicle: 'Form Vehicle',
+      formVehiclePlaceholder: 'Form Vehicle Placeholder',
+      formAllVehicles: 'Form All Vehicles',
+      formIntervalHours: 'Form Interval Hours',
+      formIntervalMileage: 'Form Interval Mileage',
+      formIntervalDays: 'Form Interval Days',
+      formLeadTimeHours: 'Form Lead Time Hours',
+      formLeadTimeMileage: 'Form Lead Time Mileage',
+      formLeadTimeDays: 'Form Lead Time Days',
+      formNotes: 'Form Notes',
+      formBtnCancel: 'Form Btn Cancel',
+      formBtnUpdate: 'Form Btn Update',
+      formBtnCreate: 'Form Btn Create',
+      metricTotal: 'Total',
+      metricOverdue: 'Metric Overdue',
+      metricApproaching: 'Metric Approaching',
+      metricExpiredIns: 'Metric Expired Ins',
+      metricExpiringIns: 'Metric Expiring Ins',
+      metricExpiredTech: 'Metric Expired Tech',
+      metricExpiringTech: 'Metric Expiring Tech',
+      sectionInsurance: 'Section Insurance',
+      sectionTechInspection: 'Section Tech Inspection'
+    },
+    usageLogs: {
+      toastDeleted: 'Toast Deleted',
+      detailTitle: 'Detail Title',
+      breadcrumbHome: 'Home',
+      breadcrumbFleet: 'Fleet',
+      breadcrumbUsageLogs: 'Breadcrumb Usage Logs',
+      editButton: 'Edit Button',
+      confirmDeleteTitle: 'Confirm Delete Title',
+      confirmDeleteDescription: 'Confirm Delete Description',
+      confirmDeleteConfirm: 'Confirm Delete Confirm',
+      confirmDeleteCancel: 'Confirm Delete Cancel',
+      deleteButton: 'Delete Button',
+      labelHoursWorked: 'Label Hours Worked',
+      labelDate: 'Date',
+      labelVehicle: 'Label Vehicle',
+      labelProject: 'Project',
+      labelOperator: 'Label Operator',
+      hours: 'Hours',
+      labelHoursStart: 'Label Hours Start',
+      labelHoursEnd: 'Label Hours End',
+      labelFuelConsumed: 'Label Fuel Consumed',
+      liters: 'Liters',
+      labelDescription: 'Description',
+      labelNotes: 'Notes',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'Toast Update Error',
+      formTitleEdit: 'Form Title Edit',
+      formTitleNew: 'Form Title New',
+      breadcrumbEdit: 'Breadcrumb Edit',
+      breadcrumbNew: 'Breadcrumb New',
+      formVehicle: 'Form Vehicle',
+      formVehiclePlaceholder: 'Form Vehicle Placeholder',
+      formProject: 'Form Project',
+      formProjectPlaceholder: 'Form Project Placeholder',
+      formDate: 'Form Date',
+      formOperatorName: 'Form Operator Name',
+      formOperatorNamePlaceholder: 'Form Operator Name Placeholder',
+      formHoursWorked: 'Form Hours Worked',
+      formHoursStart: 'Form Hours Start',
+      formHoursEnd: 'Form Hours End',
+      formFuelConsumed: 'Form Fuel Consumed',
+      formDescription: 'Form Description',
+      formDescriptionPlaceholder: 'Form Description Placeholder',
+      formNotes: 'Form Notes',
+      formNotesPlaceholder: 'Form Notes Placeholder',
+      formBtnCancel: 'Form Btn Cancel',
+      formBtnUpdate: 'Form Btn Update',
+      formBtnCreate: 'Form Btn Create',
+      calcPerHour: 'Calc Per Hour',
+      calcPerYear: 'Calc Per Year',
+      tabLogs: 'Tab Logs',
+      tabCalculator: 'Tab Calculator',
+      tabComparison: 'Tab Comparison',
+      colDate: 'Date',
+      colVehicle: 'Col Vehicle',
+      colProject: 'Project',
+      colOperator: 'Col Operator',
+      colHoursWorked: 'Col Hours Worked',
+      colHoursStart: 'Col Hours Start',
+      colHoursEnd: 'Col Hours End',
+      colFuelConsumed: 'Col Fuel Consumed',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      newEntry: 'New Entry',
+      metricTotalHours: 'Metric Total Hours',
+      metricTotalEntries: 'Metric Total Entries',
+      metricAvgHoursPerDay: 'Metric Avg Hours Per Day',
+      metricTotalFuel: 'Metric Total Fuel',
+      searchPlaceholder: 'Search...',
+      filterAllVehicles: 'Filter All Vehicles',
+      filterAllProjects: 'Filter All Projects',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found',
+      calcTitle: 'Calc Title',
+      compTitle: 'Comp Title',
+      calcSubtitle: 'Calc Subtitle',
+      compSubtitle: 'Comp Subtitle',
+      calcSelectVehicle: 'Calc Select Vehicle',
+      calcFuelPricePlaceholder: 'Calc Fuel Price Placeholder',
+      calcTotalRate: 'Calc Total Rate',
+      calcAnnualTotal: 'Calc Annual Total',
+      calcInputParams: 'Calc Input Params',
+      calcParamPurchasePrice: 'Calc Param Purchase Price',
+      calcParamUsefulLife: 'Calc Param Useful Life',
+      calcParamAnnualHours: 'Calc Param Annual Hours',
+      calcParamFuelRate: 'Calc Param Fuel Rate',
+      calcResultTitle: 'Calc Result Title',
+      calcDepreciation: 'Calc Depreciation',
+      calcFuel: 'Calc Fuel',
+      calcMaintenance: 'Calc Maintenance',
+      calcInsurance: 'Calc Insurance',
+      calcOperator: 'Calc Operator',
+      compNoRentalRate: 'Comp No Rental Rate',
+      compOwnCosts: 'Comp Own Costs',
+      compPerHour: 'Comp Per Hour',
+      compPerMonth: 'Comp Per Month',
+      compPerYear: 'Comp Per Year',
+      compRentCosts: 'Comp Rent Costs',
+      compRecommendation: 'Comp Recommendation',
+      compSavings: 'Comp Savings',
+      compSavingsPercent: 'Comp Savings Percent'
+    },
+    waybills: {
+      toastStatusChanged: 'Toast Status Changed',
+      toastStatusError: 'Toast Status Error',
+      toastDeleted: 'Toast Deleted',
+      detailTitle: 'Detail Title',
+      breadcrumbHome: 'Home',
+      breadcrumbFleet: 'Fleet',
+      breadcrumbWaybills: 'Breadcrumb Waybills',
+      editButton: 'Edit Button',
+      confirmDeleteTitle: 'Confirm Delete Title',
+      confirmDeleteDescription: 'Confirm Delete Description',
+      confirmDeleteConfirm: 'Confirm Delete Confirm',
+      confirmDeleteCancel: 'Confirm Delete Cancel',
+      deleteButton: 'Delete Button',
+      sectionRoute: 'Section Route',
+      labelNumber: 'Label Number',
+      labelDate: 'Date',
+      labelVehicle: 'Label Vehicle',
+      labelProject: 'Project',
+      labelDriver: 'Label Driver',
+      labelDeparturePoint: 'Label Departure Point',
+      labelDestinationPoint: 'Label Destination Point',
+      labelRouteDescription: 'Label Route Description',
+      labelDepartureTime: 'Label Departure Time',
+      labelReturnTime: 'Label Return Time',
+      sectionMileage: 'Section Mileage',
+      labelMileageStart: 'Label Mileage Start',
+      km: 'Km',
+      labelMileageEnd: 'Label Mileage End',
+      labelDistance: 'Label Distance',
+      labelEngineHoursStart: 'Label Engine Hours Start',
+      hours: 'Hours',
+      labelEngineHoursEnd: 'Label Engine Hours End',
+      labelEngineHoursWorked: 'Label Engine Hours Worked',
+      sectionFuel: 'Section Fuel',
+      labelFuelDispensed: 'Label Fuel Dispensed',
+      liters: 'Liters',
+      labelFuelConsumed: 'Label Fuel Consumed',
+      labelFuelNorm: 'Label Fuel Norm',
+      labelFuelRemaining: 'Label Fuel Remaining',
+      labelFuelVariance: 'Label Fuel Variance',
+      fuelOverNorm: 'Fuel Over Norm',
+      fuelUnderNorm: 'Fuel Under Norm',
+      sectionPreTrip: 'Section Pre Trip',
+      labelMedicalExam: 'Label Medical Exam',
+      passed: 'Passed',
+      notPassed: 'Not Passed',
+      labelMedicalExaminer: 'Label Medical Examiner',
+      labelMechanicApproval: 'Label Mechanic Approval',
+      approved: 'Approved',
+      notApproved: 'Not Approved',
+      labelMechanicName: 'Label Mechanic Name',
+      sectionNotes: 'Section Notes',
+      colStatus: 'Status',
+      changeStatus: 'Change Status',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'Toast Update Error',
+      formTitleEdit: 'Form Title Edit',
+      formTitleNew: 'Form Title New',
+      breadcrumbEdit: 'Breadcrumb Edit',
+      breadcrumbNew: 'Breadcrumb New',
+      formVehicle: 'Form Vehicle',
+      formVehiclePlaceholder: 'Form Vehicle Placeholder',
+      formProject: 'Form Project',
+      formProjectPlaceholder: 'Form Project Placeholder',
+      formDate: 'Form Date',
+      formDriverName: 'Form Driver Name',
+      formDriverNamePlaceholder: 'Form Driver Name Placeholder',
+      formDeparturePoint: 'Form Departure Point',
+      formDestinationPoint: 'Form Destination Point',
+      formRouteDescription: 'Form Route Description',
+      formRouteDescriptionPlaceholder: 'Form Route Description Placeholder',
+      formMileageStart: 'Form Mileage Start',
+      formMileageEnd: 'Form Mileage End',
+      formEngineHoursStart: 'Form Engine Hours Start',
+      formEngineHoursEnd: 'Form Engine Hours End',
+      formFuelDispensed: 'Form Fuel Dispensed',
+      formFuelConsumed: 'Form Fuel Consumed',
+      formFuelRemaining: 'Form Fuel Remaining',
+      formMedicalExamPassed: 'Form Medical Exam Passed',
+      formMedicalExaminer: 'Form Medical Examiner',
+      formMechanicApproved: 'Form Mechanic Approved',
+      formMechanicName: 'Form Mechanic Name',
+      formNotes: 'Form Notes',
+      formNotesPlaceholder: 'Form Notes Placeholder',
+      formBtnCancel: 'Form Btn Cancel',
+      formBtnUpdate: 'Form Btn Update',
+      formBtnCreate: 'Form Btn Create',
+      tabAll: 'All',
+      tabDraft: 'Tab Draft',
+      tabIssued: 'Tab Issued',
+      tabInProgress: 'Tab In Progress',
+      tabCompleted: 'Completed',
+      tabClosed: 'Tab Closed',
+      colNumber: 'Col Number',
+      colDate: 'Date',
+      colVehicle: 'Col Vehicle',
+      colDriver: 'Col Driver',
+      colRoute: 'Col Route',
+      colDistance: 'Col Distance',
+      colFuelConsumed: 'Col Fuel Consumed',
+      colMedical: 'Col Medical',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      newWaybill: 'New Waybill',
+      metricTotal: 'Total',
+      metricDraft: 'Metric Draft',
+      metricInProgress: 'Metric In Progress',
+      metricCompleted: 'Completed',
+      searchPlaceholder: 'Search...',
+      filterAllVehicles: 'Filter All Vehicles',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // HR
-  // ---------------------------------------------------------------------------
   hr: {
     title: 'Human Resources',
     employees: 'Employees',
@@ -6017,11 +7843,8 @@ export const en: TranslationKeys = {
     email: 'Email',
     tabNumber: 'Employee ID',
     emptyState: 'No employees found',
-
     breadcrumbHome: 'Home',
     breadcrumbPersonnel: 'Personnel',
-
-    // EmployeeListPage
     employeeList: {
       title: 'Employees',
       subtitle: '{count} employees in the system',
@@ -6042,11 +7865,18 @@ export const en: TranslationKeys = {
         active: 'Active',
         onLeave: 'On Leave',
         terminated: 'Terminated',
-        suspended: 'Suspended',
+        suspended: 'Suspended'
       },
+      statusLabels: {
+        all: 'All',
+        active: 'Active',
+        onLeave: 'On Leave',
+        terminated: 'Terminated',
+        suspended: 'Suspended'
+      },
+      columnEmployeeNumber: 'Column Employee Number',
+      breadcrumbHome: 'Home'
     },
-
-    // EmployeeDetailPage
     employeeDetail: {
       breadcrumbEmployees: 'Employees',
       editButton: 'Edit',
@@ -6090,9 +7920,37 @@ export const en: TranslationKeys = {
       hoursMetricWorkDays: 'Work Days',
       hoursDetailTitle: 'Hours Detail',
       hoursDetailDescription: 'Detailed information about working hours is available in the timesheet section.',
+      expiringSoon: 'Expiring Soon',
+      expired: 'Expired',
+      assignColumnProject: 'Assign Column Project',
+      assignColumnRole: 'Assign Column Role',
+      assignColumnStart: 'Assign Column Start',
+      assignColumnEnd: 'Assign Column End',
+      toPresent: 'To Present',
+      breadcrumbHome: 'Home',
+      btnEdit: 'Edit',
+      sectionPersonalData: 'Section Personal Data',
+      labelFullName: 'Label Full Name',
+      labelEmployeeNumber: 'Label Employee Number',
+      labelPhone: 'Label Phone',
+      labelEmail: 'Label Email',
+      sectionWorkInfo: 'Section Work Info',
+      labelDepartment: 'Label Department',
+      labelPosition: 'Label Position',
+      labelHireDate: 'Label Hire Date',
+      labelTenure: 'Label Tenure',
+      years: 'Years',
+      expiryWarning: 'Expiry Warning',
+      emptyCertTitle: 'Empty Cert Title',
+      emptyCertDescription: 'Empty Cert Description',
+      emptyAssignTitle: 'Empty Assign Title',
+      emptyAssignDescription: 'Empty Assign Description',
+      metricHoursMonth: 'Metric Hours Month',
+      metricOvertime: 'Metric Overtime',
+      metricWorkDays: 'Metric Work Days',
+      sectionHoursDetail: 'Section Hours Detail',
+      infoHoursDetail: 'Info Hours Detail'
     },
-
-    // CrewPage
     crews: {
       title: 'Crews',
       subtitle: 'Manage construction crews',
@@ -6130,11 +7988,19 @@ export const en: TranslationKeys = {
         active: 'On Site',
         idle: 'Available',
         onLeave: 'On Leave',
-        disbanded: 'Disbanded',
+        disbanded: 'Disbanded'
       },
+      notAssigned: 'Not Assigned',
+      breadcrumbHome: 'Home',
+      metricAvailable: 'Metric Available',
+      personsSuffix: 'Persons Suffix',
+      modalTitle: 'Modal Title',
+      modalFieldProject: 'Modal Field Project',
+      modalFieldProjectPlaceholder: 'Modal Field Project Placeholder',
+      modalFieldStartDate: 'Modal Field Start Date',
+      modalFieldComment: 'Modal Field Comment',
+      modalFieldCommentPlaceholder: 'Modal Field Comment Placeholder'
     },
-
-    // CrewTimeEntriesPage
     crewTimeEntries: {
       title: 'Crew Time Entries',
       subtitle: '{count} entries',
@@ -6156,9 +8022,13 @@ export const en: TranslationKeys = {
       hoursUnit: 'h',
       emptyTitle: 'No time entries',
       emptyDescription: 'Entries will appear after crew working time data is entered',
+      columnDescription: 'Description',
+      personsSuffix: 'Persons Suffix',
+      hoursSuffix: 'Hours Suffix',
+      breadcrumbHome: 'Home',
+      breadcrumbTimeEntries: 'Breadcrumb Time Entries',
+      metricTotal: 'Total'
     },
-
-    // CrewTimeCalendarPage
     crewTimeCalendar: {
       title: 'Crew Timesheet - Calendar',
       subtitle: 'Track crew working hours by shift',
@@ -6183,7 +8053,7 @@ export const en: TranslationKeys = {
       shiftLabels: {
         day: 'Day',
         night: 'Night',
-        overtime: 'Overtime',
+        overtime: 'Overtime'
       },
       months: {
         january: 'January',
@@ -6197,7 +8067,7 @@ export const en: TranslationKeys = {
         september: 'September',
         october: 'October',
         november: 'November',
-        december: 'December',
+        december: 'December'
       },
       daysShort: {
         mon: 'Mon',
@@ -6206,11 +8076,43 @@ export const en: TranslationKeys = {
         thu: 'Thu',
         fri: 'Fri',
         sat: 'Sat',
-        sun: 'Sun',
+        sun: 'Sun'
       },
+      monthJan: 'January',
+      monthFeb: 'February',
+      monthMar: 'March',
+      monthApr: 'April',
+      monthMay: 'May',
+      monthJun: 'June',
+      monthJul: 'July',
+      monthAug: 'August',
+      monthSep: 'September',
+      monthOct: 'October',
+      monthNov: 'November',
+      monthDec: 'December',
+      dayMon: 'Mon',
+      dayTue: 'Tue',
+      dayWed: 'Wed',
+      dayThu: 'Thu',
+      dayFri: 'Fri',
+      daySat: 'Sat',
+      daySun: 'Sun',
+      shiftDay: 'Day Shift',
+      shiftNight: 'Night Shift',
+      shiftOvertime: 'Shift Overtime',
+      breadcrumbHome: 'Home',
+      breadcrumbCalendar: 'Breadcrumb Calendar',
+      summaryDayShift: 'Summary Day Shift',
+      summaryNightShift: 'Summary Night Shift',
+      summaryOvertimeShift: 'Summary Overtime Shift',
+      hoursSuffix: 'Hours Suffix',
+      hoursLabel: 'Hours Label',
+      personsSuffix: 'Persons Suffix',
+      foremanPrefix: 'Foreman Prefix',
+      dayTotal: 'Day Total',
+      manHours: 'Man Hours',
+      selectDayPrompt: 'Select Day Prompt'
     },
-
-    // CrewTimeSheetsPage
     crewTimeSheets: {
       title: 'Crew Timesheets',
       subtitle: '{count} timesheets in the system',
@@ -6238,9 +8140,12 @@ export const en: TranslationKeys = {
       hoursUnit: 'h',
       emptyTitle: 'No crew timesheets',
       emptyDescription: 'Create the first timesheet for crew time tracking',
+      foremanPrefix: 'Foreman Prefix',
+      hoursSuffix: 'Hours Suffix',
+      breadcrumbHome: 'Home',
+      breadcrumbTimeSheets: 'Breadcrumb Time Sheets',
+      metricTotal: 'Total'
     },
-
-    // TimesheetPivotPage
     timesheetPivot: {
       title: 'Timesheet Pivot Table',
       subtitle: 'Employee working hours analysis by week, February 2026',
@@ -6256,9 +8161,16 @@ export const en: TranslationKeys = {
       aggregationAverage: 'Average',
       pivotRowLabel: 'Employee',
       pivotTitle: 'Employee / Week (February 2026)',
+      breadcrumbHome: 'Home',
+      totalHours: 'Total Hours',
+      employeeCount: 'Employee Count',
+      avgPerWeek: 'Avg Per Week',
+      overtimeCount: 'Overtime Count',
+      aggSum: 'Agg Sum',
+      aggCount: 'Agg Count',
+      aggAverage: 'Agg Average',
+      hoursSuffix: 'Hours Suffix'
     },
-
-    // TimesheetDetailPage
     timesheetDetail: {
       titlePrefix: 'Timesheet',
       breadcrumbTimesheets: 'Timesheets',
@@ -6286,9 +8198,32 @@ export const en: TranslationKeys = {
       statusActionApprove: 'Approve',
       statusActionReject: 'Reject',
       statusActionResubmit: 'Resubmit',
+      actionSubmit: 'Action Submit',
+      actionApprove: 'Action Approve',
+      actionReject: 'Action Reject',
+      actionResubmit: 'Action Resubmit',
+      title: 'Title',
+      breadcrumbHome: 'Home',
+      toastStatusChanged: 'Toast Status Changed',
+      toastEditAvailable: 'Toast Edit Available',
+      btnEdit: 'Edit',
+      sectionPeriodResults: 'Section Period Results',
+      mainHours: 'Main Hours',
+      sectionDailyDetail: 'Section Daily Detail',
+      headerDate: 'Header Date',
+      headerDay: 'Header Day',
+      headerHours: 'Header Hours',
+      headerOvertime: 'Header Overtime',
+      headerTotal: 'Header Total',
+      sectionEmployee: 'Section Employee',
+      labelDepartment: 'Label Department',
+      labelProject: 'Project',
+      sectionApproval: 'Section Approval',
+      labelPeriod: 'Label Period',
+      labelApprovedBy: 'Label Approved By',
+      awaitingApproval: 'Awaiting Approval',
+      labelApprovalDate: 'Label Approval Date'
     },
-
-    // TimesheetListPage
     timesheetList: {
       title: 'Timesheet',
       subtitleRecords: '{count} records',
@@ -6311,10 +8246,8 @@ export const en: TranslationKeys = {
       colStatus: 'Status',
       searchPlaceholder: 'Search by employee, project...',
       emptyTitle: 'No records',
-      emptyDescription: 'No timesheet data available',
+      emptyDescription: 'No timesheet data available'
     },
-
-    // StaffingSchedulePage
     staffing: {
       title: 'Staffing Schedule',
       subtitle: 'Manage positions and vacancies',
@@ -6350,10 +8283,8 @@ export const en: TranslationKeys = {
       modalFieldSalaryMin: 'Salary Min',
       modalFieldSalaryMax: 'Salary Max',
       modalCancel: 'Cancel',
-      modalCreate: 'Create',
+      modalCreate: 'Create'
     },
-
-    // TimesheetT13Page
     timesheetT13: {
       title: 'Timesheet T-13',
       subtitle: 'Working time tracking per Goskomstat form T-13',
@@ -6383,11 +8314,9 @@ export const en: TranslationKeys = {
         businessTrip: 'BT - Business Trip',
         absent: 'A - Absent',
         weekend: 'WE - Weekend',
-        nightShift: 'NS - Night Shift',
-      },
+        nightShift: 'NS - Night Shift'
+      }
     },
-
-    // WorkOrderFormPage
     workOrders: {
       title: 'Work Orders',
       subtitle: 'Task orders and access permits management',
@@ -6431,10 +8360,8 @@ export const en: TranslationKeys = {
       modalFieldPermits: 'Required Permits',
       modalFieldPermitsPlaceholder: 'Comma separated',
       modalCancel: 'Cancel',
-      modalCreate: 'Create',
+      modalCreate: 'Create'
     },
-
-    // QualificationsJournalPage
     qualifications: {
       title: 'Qualifications Journal',
       subtitle: 'Employee qualifications and permits tracking',
@@ -6471,10 +8398,8 @@ export const en: TranslationKeys = {
       modalFieldIssueDate: 'Issue Date',
       modalFieldExpiryDate: 'Valid Until',
       modalCancel: 'Cancel',
-      modalCreate: 'Add',
+      modalCreate: 'Add'
     },
-
-    // SeniorityLeavePage
     seniority: {
       title: 'Seniority & Leave',
       subtitle: 'Seniority calculation and leave balance',
@@ -6497,13 +8422,9 @@ export const en: TranslationKeys = {
       seniorityFormat: '{years}y {months}m {days}d',
       daysUnit: 'days',
       emptyTitle: 'No data',
-      emptyDescription: 'No seniority and leave data available',
-    },
+      emptyDescription: 'No seniority and leave data available'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Analytics & Dashboard
-  // ---------------------------------------------------------------------------
   analytics: {
     title: 'Analytics',
     overview: 'Overview',
@@ -6520,8 +8441,6 @@ export const en: TranslationKeys = {
     thisYear: 'This Year',
     period: 'Period',
     comparison: 'Comparison',
-
-    // -- Dashboard --
     dashboard: {
       title: 'Analytics',
       subtitle: 'Summary dashboard across all projects',
@@ -6557,9 +8476,8 @@ export const en: TranslationKeys = {
       warehouseStockLevels: 'Warehouse Stock Levels',
       belowMinimum: 'below minimum',
       redLineNote: 'Red line — minimum stock threshold',
+      millionShort: 'Million Short'
     },
-
-    // -- Reports --
     reports: {
       title: 'Reports',
       subtitle: 'Generate and export reports',
@@ -6597,10 +8515,8 @@ export const en: TranslationKeys = {
       allProjects: 'All projects',
       dateFrom: 'Start date',
       dateTo: 'End date',
-      format: 'Format',
+      format: 'Format'
     },
-
-    // -- KPI --
     kpi: {
       title: 'Key Performance Indicators (KPI)',
       subtitle: 'Monitoring key indicators across projects',
@@ -6642,10 +8558,8 @@ export const en: TranslationKeys = {
       openRemarksDesc: 'Unclosed quality remarks',
       unitPcs: 'pcs',
       fleetLoadName: 'Fleet Load',
-      fleetLoadDesc: 'Equipment utilization rate',
+      fleetLoadDesc: 'Equipment utilization rate'
     },
-
-    // -- KPI Achievements --
     kpiAchievements: {
       title: 'KPI Achievements',
       subtitleCount: 'indicators',
@@ -6674,9 +8588,15 @@ export const en: TranslationKeys = {
       emptyTitle: 'No KPI data',
       emptyDescription: 'KPI achievement data will appear after calculation',
       general: 'General',
+      catSchedule: 'Cat Schedule',
+      catCost: 'Cat Cost',
+      catQuality: 'Cat Quality',
+      catSafety: 'Cat Safety',
+      catProductivity: 'Cat Productivity',
+      indicatorsCount: 'Indicators Count',
+      exceeded: 'Exceeded',
+      none: 'None'
     },
-
-    // -- Bonus Calculations --
     bonusCalculations: {
       title: 'Bonus Calculations',
       subtitleCount: 'calculations',
@@ -6707,9 +8627,13 @@ export const en: TranslationKeys = {
       colKpiCount: 'KPI',
       emptyTitle: 'No bonus calculations',
       emptyDescription: 'Bonus calculations will appear after KPI evaluation',
+      colBonusPct: 'Col Bonus Pct',
+      calculationsCount: 'Calculations Count',
+      totalCalculations: 'Total Calculations',
+      totalAmount: 'Total Amount',
+      paidAmount: 'Paid Amount',
+      avgAchievement: 'Avg Achievement'
     },
-
-    // -- Project Analytics Chart --
     projectChart: {
       title: 'Project Analytics - Charts',
       subtitle: 'Budget, progress and fund distribution visualization',
@@ -6742,9 +8666,16 @@ export const en: TranslationKeys = {
       catEquipment: 'Equipment',
       catPayroll: 'Payroll',
       catOverhead: 'Overhead',
+      breadcrumb: 'Navigation',
+      projects: 'Projects',
+      budgetVsActual: 'Budget Vs Actual',
+      budgetVsActualDesc: 'Budget Vs Actual Desc',
+      budgetByCategory: 'Budget By Category',
+      budgetByCategoryDesc: 'Budget By Category Desc',
+      projectDetails: 'Project Details',
+      variance: 'Variance',
+      completionPct: 'Completion Pct'
     },
-
-    // -- Audit Pivot --
     auditPivot: {
       title: 'Audit Log - Pivot Table',
       subtitle: 'Audit log analysis by modules and action types',
@@ -6777,9 +8708,25 @@ export const en: TranslationKeys = {
       actionView: 'View',
       actionExport: 'Export',
       infoNote: 'Data for period: February 2026. All user actions across system modules are included. High values in the "View" column indicate the most popular sections. The "Delete" column helps monitor potentially destructive actions.',
-    },
+      modProjects: 'Mod Projects',
+      modContracts: 'Mod Contracts',
+      modEstimates: 'Mod Estimates',
+      modPayments: 'Mod Payments',
+      modWarehouse: 'Mod Warehouse',
+      modPersonnel: 'Mod Personnel',
+      modDocuments: 'Mod Documents',
+      modQuality: 'Mod Quality',
+      modProcurement: 'Mod Procurement',
+      modTasks: 'Mod Tasks',
+      actCreate: 'Act Create',
+      actEdit: 'Act Edit',
+      actDelete: 'Act Delete',
+      actView: 'Act View',
+      actExport: 'Act Export',
+      breadcrumb: 'Navigation',
+      rowLabelModule: 'Row Label Module'
+    }
   },
-
   dashboard: {
     title: 'Dashboard',
     welcome: 'Welcome',
@@ -6817,12 +8764,8 @@ export const en: TranslationKeys = {
     code: 'Code',
     name: 'Name',
     manager: 'Manager',
-    millionRub: 'M \u20BD',
+    millionRub: 'M ₽'
   },
-
-  // ---------------------------------------------------------------------------
-  // Operations
-  // ---------------------------------------------------------------------------
   operations: {
     dashboard: {
       title: 'Operations',
@@ -6848,7 +8791,7 @@ export const en: TranslationKeys = {
       unapprovedLog: '{count} log not approved',
       awaitingApproval: 'awaiting approval',
       completedOrders: '{count} orders completed',
-      thisMonth: 'This month',
+      thisMonth: 'This month'
     },
     dailyLogList: {
       title: 'Daily Work Log',
@@ -6884,6 +8827,21 @@ export const en: TranslationKeys = {
       btnOpen: 'Open',
       emptyTitle: 'No log entries',
       emptyDescription: 'Create your first daily work log entry',
+      draft: 'Draft',
+      submitted: 'Submitted',
+      approved: 'Approved',
+      rejected: 'Rejected',
+      columnDate: 'Date',
+      columnProject: 'Project',
+      columnStatus: 'Status',
+      columnWeather: 'Column Weather',
+      columnWorkers: 'Column Workers',
+      personAbbr: 'Person Abbr',
+      columnSupervisor: 'Column Supervisor',
+      open: 'Open',
+      subtitle: 'Subtitle',
+      breadcrumbDailyLogs: 'Breadcrumb Daily Logs',
+      unitAbbr: 'Unit Abbr'
     },
     dailyLogDetail: {
       titlePrefix: 'Log for',
@@ -6923,6 +8881,34 @@ export const en: TranslationKeys = {
       awaitingApproval: 'Awaiting approval',
       labelCreated: 'Created',
       sectionNotes: 'Notes',
+      actionSubmit: 'Action Submit',
+      actionApprove: 'Action Approve',
+      actionReject: 'Action Reject',
+      actionResubmit: 'Action Resubmit',
+      deleteSuccess: 'Deleted successfully',
+      deleteTitle: 'Delete Title',
+      deleteDescription: 'Delete Description',
+      deleteConfirm: 'Are you sure you want to delete?',
+      deleteCancel: 'Delete Cancel',
+      title: 'Title',
+      breadcrumbDailyLogs: 'Breadcrumb Daily Logs',
+      editAvailableInList: 'Edit Available In List',
+      edit: 'Edit',
+      delete: 'Delete',
+      weatherAndSummary: 'Weather And Summary',
+      logEntries: 'Log Entries',
+      workforce: 'Workforce',
+      trade: 'Trade',
+      people: 'People',
+      hours: 'Hours',
+      materialsReceived: 'Materials Received',
+      incidents: 'Incidents',
+      details: 'Details',
+      date: 'Date',
+      author: 'Author',
+      approvedBy: 'Approved By',
+      created: 'Created',
+      notes: 'Notes'
     },
     dailyLogCreate: {
       title: 'New Log Entry',
@@ -6970,6 +8956,38 @@ export const en: TranslationKeys = {
       weatherWind: 'Wind',
       weatherFrost: 'Frost',
       weatherFog: 'Fog',
+      createSuccess: 'Created successfully',
+      breadcrumbDailyLogs: 'Breadcrumb Daily Logs',
+      back: 'Back',
+      generalInfo: 'General Information',
+      project: 'Project',
+      selectProject: 'Select Project',
+      date: 'Date',
+      weatherConditions: 'Weather Conditions',
+      weather: 'Weather',
+      tempMin: 'Temp Min',
+      tempMax: 'Temp Max',
+      workersOnSite: 'Workers On Site',
+      equipmentUnits: 'Equipment Units',
+      workDescriptionLabel: 'Work Description Label',
+      workDescriptionPlaceholder: 'Work Description Placeholder',
+      issuesLabel: 'Issues Label',
+      issuesPlaceholder: 'Issues Placeholder',
+      safetyLabel: 'Safety Label',
+      safetyPlaceholder: 'Safety Placeholder',
+      workDetailByArea: 'Work Detail By Area',
+      areaNumber: 'Area Number',
+      workAreaLabel: 'Work Area Label',
+      workAreaPlaceholder: 'Work Area Placeholder',
+      equipmentLabel: 'Equipment Label',
+      equipmentPlaceholder: 'Equipment Placeholder',
+      workDescriptionEntryLabel: 'Work Description Entry Label',
+      workDescriptionEntryPlaceholder: 'Work Description Entry Placeholder',
+      workersLabel: 'Workers Label',
+      hoursLabel: 'Hours Label',
+      completionPercent: 'Completion Percent',
+      cancel: 'Cancel',
+      save: 'Save'
     },
     workOrderList: {
       title: 'Work Orders',
@@ -7002,6 +9020,13 @@ export const en: TranslationKeys = {
       colDeadline: 'Deadline',
       emptyTitle: 'No work orders',
       emptyDescription: 'Create your first work order',
+      columnTitle: 'Column Title',
+      columnStatus: 'Status',
+      columnPriority: 'Column Priority',
+      columnAssignee: 'Column Assignee',
+      columnProgress: 'Column Progress',
+      columnDeadline: 'Column Deadline',
+      subtitle: 'Subtitle'
     },
     workOrderDetail: {
       breadcrumbHome: 'Home',
@@ -7044,7 +9069,6 @@ export const en: TranslationKeys = {
       sectionCreation: 'Creation',
       labelCreatedBy: 'Created By',
       labelCreatedAt: 'Created',
-      // Aliases used by WorkOrderDetailPage component
       actionStart: 'Start Work',
       actionComplete: 'Complete',
       actionPause: 'Pause',
@@ -7078,7 +9102,7 @@ export const en: TranslationKeys = {
       actualEnd: 'Actual End',
       creation: 'Creation',
       createdBy: 'Created By',
-      created: 'Created',
+      created: 'Created'
     },
     workOrderBoard: {
       title: 'Work Orders - Board',
@@ -7101,6 +9125,15 @@ export const en: TranslationKeys = {
       priorityCritical: 'Critical',
       emptyColumn: 'No work orders',
       emptyColumnHint: 'Drag a card here',
+      columnPlanned: 'Column Planned',
+      columnInProgress: 'Column In Progress',
+      columnCompleted: 'Column Completed',
+      columnCancelled: 'Column Cancelled',
+      subtitle: 'Subtitle',
+      filters: 'Filters',
+      reset: 'Reset',
+      noOrders: 'No Orders',
+      dragCardHere: 'Drag Card Here'
     },
     dispatchCalendar: {
       title: 'Dispatch Calendar',
@@ -7141,13 +9174,9 @@ export const en: TranslationKeys = {
       legendDelivered: 'Delivered',
       more: 'more',
       noDispatches: 'No dispatches for this date',
-      selectDayPrompt: 'Select a day to view dispatches',
-    },
+      selectDayPrompt: 'Select a day to view dispatches'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Cost Management
-  // ---------------------------------------------------------------------------
   costManagement: {
     budgetOverview: {
       title: 'Budget Overview',
@@ -7168,7 +9197,7 @@ export const en: TranslationKeys = {
       cpiLabel: 'CPI (Cost Performance Index)',
       spiLabel: 'SPI (Schedule Performance Index)',
       budgetUtilization: 'Budget Utilization',
-      contracting: 'Contracting',
+      contracting: 'Contracting'
     },
     costCodeList: {
       title: 'Cost Codes',
@@ -7192,7 +9221,7 @@ export const en: TranslationKeys = {
       columnVariance: 'Variance',
       columnUtilization: 'Utilization',
       emptyTitle: 'No cost codes',
-      emptyDescription: 'No cost codes loaded',
+      emptyDescription: 'No cost codes loaded'
     },
     costCodeDetail: {
       breadcrumbHome: 'Home',
@@ -7229,6 +9258,31 @@ export const en: TranslationKeys = {
       commitmentStatusCommitted: 'Committed',
       commitmentStatusClosed: 'Closed',
       commitmentStatusVoid: 'Void',
+      statusDraft: 'Draft',
+      statusPending: 'Pending',
+      statusApproved: 'Approved',
+      statusCommitted: 'Status Committed',
+      statusClosed: 'Status Closed',
+      statusVoid: 'Status Void',
+      deleteTitle: 'Delete Title',
+      deleteDescription: 'Delete Description',
+      deleteConfirm: 'Are you sure you want to delete?',
+      deleteCancel: 'Delete Cancel',
+      deleteSuccess: 'Deleted successfully',
+      editAvailableInList: 'Edit Available In List',
+      edit: 'Edit',
+      delete: 'Delete',
+      hierarchy: 'Hierarchy',
+      budgetVsActual: 'Budget Vs Actual',
+      actual: 'Actual',
+      varianceAnalysis: 'Variance Analysis',
+      linkedCommitments: 'Linked Commitments',
+      details: 'Details',
+      code: 'Code',
+      name: 'Name',
+      parentCode: 'Parent Code',
+      created: 'Created',
+      updated: 'Updated'
     },
     costCashflow: {
       title: 'Cash Flow',
@@ -7260,6 +9314,23 @@ export const en: TranslationKeys = {
       colCumPlan: 'Cum. Plan',
       colCumFactForecast: 'Cum. Actual/Forecast',
       colVariance: 'Variance',
+      plannedExpenses: 'Planned Expenses',
+      actualSpent: 'Actual Spent',
+      forecastExpenses: 'Forecast Expenses',
+      planVariance: 'Plan Variance',
+      overrun: 'Overrun',
+      monthlyExpensesSubtitle: 'Monthly Expenses Subtitle',
+      plan: 'Plan',
+      fact: 'Fact',
+      forecastLabel: 'Forecast Label',
+      cumulativeSubtitle: 'Cumulative Subtitle',
+      cumPlan: 'Cum Plan',
+      cumFact: 'Cum Fact',
+      cumForecast: 'Cum Forecast',
+      monthlyDetail: 'Monthly Detail',
+      columnMonth: 'Column Month',
+      cumFactForecast: 'Cum Fact Forecast',
+      columnVariance: 'Column Variance'
     },
     commitments: {
       title: 'Commitments',
@@ -7294,6 +9365,19 @@ export const en: TranslationKeys = {
       colDeadline: 'Deadline',
       emptyTitle: 'No commitments',
       emptyDescription: 'Create your first commitment to get started',
+      columnName: 'Name',
+      columnStatus: 'Status',
+      columnType: 'Type',
+      columnAmount: 'Amount',
+      columnInvoiced: 'Column Invoiced',
+      columnRemaining: 'Column Remaining',
+      columnUtilization: 'Column Utilization',
+      columnDeadline: 'Column Deadline',
+      subtitle: 'Subtitle',
+      totalCommitments: 'Total Commitments',
+      totalAmount: 'Total Amount',
+      invoiced: 'Invoiced',
+      remainingToUtilize: 'Remaining To Utilize'
     },
     commitmentDetail: {
       breadcrumbHome: 'Home',
@@ -7336,6 +9420,40 @@ export const en: TranslationKeys = {
       labelCreatedBy: 'Created By',
       labelCreatedAt: 'Created',
       sectionLinkedContract: 'Linked Contract',
+      actionSubmitForApproval: 'Action Submit For Approval',
+      actionApprove: 'Action Approve',
+      actionReject: 'Action Reject',
+      actionConfirm: 'Action Confirm',
+      actionClose: 'Action Close',
+      statusChanged: 'Status Changed',
+      deleteTitle: 'Delete Title',
+      deleteDescription: 'Delete Description',
+      deleteConfirm: 'Are you sure you want to delete?',
+      deleteCancel: 'Delete Cancel',
+      deleteSuccess: 'Deleted successfully',
+      editAvailableInList: 'Edit Available In List',
+      edit: 'Edit',
+      delete: 'Delete',
+      amounts: 'Amounts',
+      invoiced: 'Invoiced',
+      paid: 'Paid',
+      remaining: 'Remaining',
+      executionProgress: 'Execution Progress',
+      lineItems: 'Line Items',
+      columnDescription: 'Description',
+      columnCostCode: 'Column Cost Code',
+      columnQuantity: 'Quantity',
+      columnUnit: 'Unit',
+      columnPrice: 'Price',
+      columnTotal: 'Total',
+      changeOrders: 'Change Orders',
+      details: 'Details',
+      vendor: 'Vendor',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      createdBy: 'Created By',
+      createdAt: 'Created At',
+      linkedContract: 'Linked Contract'
     },
     commitmentCreate: {
       modalTitle: 'New Commitment',
@@ -7369,6 +9487,15 @@ export const en: TranslationKeys = {
       validationAmountPositive: 'Amount must be greater than 0',
       validationStartDate: 'Specify start date',
       validationEndDate: 'Specify end date',
+      validationTitle: 'Validation Title',
+      validationMaxChars: 'Validation Max Chars',
+      validationType: 'Validation Type',
+      validationVendor: 'Validation Vendor',
+      validationAmount: 'Validation Amount',
+      createSuccess: 'Created successfully',
+      createError: 'Creation error',
+      cancel: 'Cancel',
+      createButton: 'Create Button'
     },
     forecast: {
       title: 'Cost Forecast',
@@ -7393,12 +9520,114 @@ export const en: TranslationKeys = {
       overBudgetItems: 'Items Over Budget',
       overBudgetPercent: 'Over budget:',
       allWithinBudget: 'All items within budget',
+      budget: 'Budget',
+      forecastEAC: 'Forecast E A C',
+      varianceVAC: 'Variance V A C',
+      withinBudget: 'Within Budget',
+      problematicItems: 'Problematic Items',
+      columnCostCode: 'Column Cost Code',
+      columnBudget: 'Column Budget',
+      columnForecast: 'Column Forecast',
+      columnVariance: 'Column Variance',
+      excess: 'Excess'
     },
+    cashFlowForecastDeleteConfirm: 'Cash Flow Forecast Delete Confirm',
+    cashFlowForecastColName: 'Cash Flow Forecast Col Name',
+    cashFlowForecastColHorizon: 'Cash Flow Forecast Col Horizon',
+    cashFlowForecastColGrowth: 'Cash Flow Forecast Col Growth',
+    cashFlowForecastColDelay: 'Cash Flow Forecast Col Delay',
+    cashFlowForecastColRetention: 'Cash Flow Forecast Col Retention',
+    cashFlowForecastGenerate: 'Cash Flow Forecast Generate',
+    cashFlowForecastColPeriod: 'Cash Flow Forecast Col Period',
+    cashFlowForecastColForecastIncome: 'Cash Flow Forecast Col Forecast Income',
+    cashFlowForecastColForecastExpense: 'Cash Flow Forecast Col Forecast Expense',
+    cashFlowForecastColForecastNet: 'Cash Flow Forecast Col Forecast Net',
+    cashFlowForecastColActualIncome: 'Cash Flow Forecast Col Actual Income',
+    cashFlowForecastColActualExpense: 'Cash Flow Forecast Col Actual Expense',
+    cashFlowForecastColVariance: 'Cash Flow Forecast Col Variance',
+    cashFlowForecastColCumForecast: 'Cash Flow Forecast Col Cum Forecast',
+    cashFlowForecastTitle: 'Cash Flow Forecast Title',
+    cashFlowForecastSubtitle: 'Cash Flow Forecast Subtitle',
+    cashFlowForecastCreateScenario: 'Cash Flow Forecast Create Scenario',
+    cashFlowForecastEmpty: 'Cash Flow Forecast Empty',
+    cashFlowForecastEmptyDesc: 'Cash Flow Forecast Empty Desc',
+    cashFlowForecastBuckets: 'Cash Flow Forecast Buckets',
+    cashFlowForecastVarianceTotal: 'Cash Flow Forecast Variance Total',
+    cashFlowForecastVarianceAvg: 'Cash Flow Forecast Variance Avg',
+    cashFlowForecastFormTitleEdit: 'Cash Flow Forecast Form Title Edit',
+    cashFlowForecastFormTitle: 'Cash Flow Forecast Form Title',
+    cashFlowForecastFieldName: 'Cash Flow Forecast Field Name',
+    cashFlowForecastFieldDesc: 'Cash Flow Forecast Field Desc',
+    cashFlowForecastFieldBaseline: 'Cash Flow Forecast Field Baseline',
+    cashFlowForecastFieldHorizon: 'Cash Flow Forecast Field Horizon',
+    cashFlowForecastFieldGrowth: 'Cash Flow Forecast Field Growth',
+    cashFlowForecastFieldDelay: 'Cash Flow Forecast Field Delay',
+    cashFlowForecastFieldRetention: 'Cash Flow Forecast Field Retention',
+    cashFlowForecastFieldVat: 'Cash Flow Forecast Field Vat',
+    commitmentForm: {
+      placeholderName: 'Enter name'
+    },
+    forecastingHub: {
+      riskLow: 'Risk Low',
+      riskMedium: 'Risk Medium',
+      riskHigh: 'Risk High',
+      riskCritical: 'Risk Critical',
+      colProject: 'Project',
+      eacCpi: 'Eac Cpi',
+      eacSpiCpi: 'Eac Spi Cpi',
+      eacBottomUp: 'Eac Bottom Up',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      metricEac: 'Metric Eac',
+      metricEacHint: 'Metric Eac Hint',
+      metricEtc: 'Metric Etc',
+      metricEtcHint: 'Metric Etc Hint',
+      metricCashflow: 'Metric Cashflow',
+      next3Months: 'Next3 Months',
+      metricRisk: 'Metric Risk',
+      evmPanel: 'Evm Panel',
+      viewAll: 'View All',
+      eacTrend: 'Eac Trend',
+      cashflowPanel: 'Cashflow Panel',
+      income: 'Income',
+      expense: 'Expense',
+      noCashflowData: 'No Cashflow Data',
+      riskPanel: 'Risk Panel',
+      topAtRisk: 'Top At Risk',
+      eacTableTitle: 'Eac Table Title',
+      eacTableSubtitle: 'Eac Table Subtitle',
+      eacTableEmpty: 'Eac Table Empty',
+      eacTableEmptyDesc: 'Eac Table Empty Desc'
+    },
+    profitability: {
+      tabAll: 'All',
+      tabAtRisk: 'Tab At Risk',
+      tabLoss: 'Tab Loss',
+      tabPortfolio: 'Tab Portfolio',
+      colProject: 'Project',
+      colContract: 'Contract',
+      colEAC: 'Col E A C',
+      colETC: 'Col E T C',
+      colMargin: 'Col Margin',
+      colMarginPct: 'Col Margin Pct',
+      colProfitFade: 'Col Profit Fade',
+      colCompletion: 'Col Completion',
+      colRisk: 'Col Risk',
+      snapshotDate: 'Snapshot Date',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      recalculateAll: 'Recalculate All',
+      portfolioTotalContracts: 'Portfolio Total Contracts',
+      portfolioForecastMargin: 'Portfolio Forecast Margin',
+      portfolioAvgMargin: 'Portfolio Avg Margin',
+      portfolioProfitFade: 'Portfolio Profit Fade',
+      portfolioAtRisk: 'Portfolio At Risk',
+      portfolioLoss: 'Portfolio Loss',
+      noForecasts: 'No Forecasts',
+      snapshotsTitle: 'Snapshots Title'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Statuses (used across modules)
-  // ---------------------------------------------------------------------------
   status: {
     draft: 'Draft',
     active: 'Active',
@@ -7422,23 +9651,15 @@ export const en: TranslationKeys = {
     submitted: 'Submitted',
     planning: 'Planning',
     execution: 'Execution',
-    closing: 'Closing',
+    closing: 'Closing'
   },
-
-  // ---------------------------------------------------------------------------
-  // Priority levels
-  // ---------------------------------------------------------------------------
   priority: {
     critical: 'Critical',
     high: 'High',
     medium: 'Medium',
     low: 'Low',
-    none: 'No Priority',
+    none: 'No Priority'
   },
-
-  // ---------------------------------------------------------------------------
-  // Table & Data grid
-  // ---------------------------------------------------------------------------
   table: {
     noData: 'No data',
     loading: 'Loading data...',
@@ -7471,12 +9692,8 @@ export const en: TranslationKeys = {
     hideColumnPicker: 'Hide column picker',
     exportCsv: 'Export table to CSV',
     showing: 'Showing {from} - {to} of {total}',
-    savedViewName: 'View {number}',
+    savedViewName: 'View {number}'
   },
-
-  // ---------------------------------------------------------------------------
-  // Messaging
-  // ---------------------------------------------------------------------------
   messaging: {
     edited: '(edited)',
     pinned: 'pinned',
@@ -7523,12 +9740,8 @@ export const en: TranslationKeys = {
     pinnedTitle: 'Pinned',
     channelInfoTitle: 'Channel info',
     messageInChannel: 'Message in #{channel}...',
-    messageTo: 'Message to {user}...',
+    messageTo: 'Message to {user}...'
   },
-
-  // ---------------------------------------------------------------------------
-  // Task Detail Panel
-  // ---------------------------------------------------------------------------
   taskDetail: {
     priority: 'Priority',
     project: 'Project',
@@ -7556,12 +9769,8 @@ export const en: TranslationKeys = {
     addDependency: 'Add dependency',
     depFinishToStart: 'Finish → Start',
     depStartToStart: 'Start → Start',
-    depFinishToFinish: 'Finish → Finish',
+    depFinishToFinish: 'Finish → Finish'
   },
-
-  // ---------------------------------------------------------------------------
-  // Placeholder Page
-  // ---------------------------------------------------------------------------
   placeholder: {
     home: 'Home',
     unavailable: 'Section is not available in current configuration',
@@ -7598,12 +9807,8 @@ export const en: TranslationKeys = {
     parentMessaging: 'Messaging',
     parentFleet: 'Equipment',
     parentAnalytics: 'Analytics',
-    parentWarehouse: 'Warehouse',
+    parentWarehouse: 'Warehouse'
   },
-
-  // ---------------------------------------------------------------------------
-  // Gantt Chart
-  // ---------------------------------------------------------------------------
   gantt: {
     title: 'Tasks — Gantt Chart',
     subtitle: '{count} tasks on timeline',
@@ -7632,7 +9837,7 @@ export const en: TranslationKeys = {
       sep: 'Sep',
       oct: 'Oct',
       nov: 'Nov',
-      dec: 'Dec',
+      dec: 'Dec'
     },
     mockProjects: {
       solnechny: 'RC "Solnechny"',
@@ -7641,7 +9846,7 @@ export const en: TranslationKeys = {
       mostVyatkaShort: 'Vyatka Bridge',
       school15: 'School N15',
       prostor: 'SC "Prostor"',
-      tsentralny: 'SC "Tsentralny"',
+      tsentralny: 'SC "Tsentralny"'
     },
     mockVendors: {
       stroyMontazh: 'LLC "StroyMontazh"',
@@ -7650,7 +9855,7 @@ export const en: TranslationKeys = {
       proektGrupp: 'LLC "ProektGrupp"',
       dorStroy: 'JSC "DorStroy"',
       metallTrade: 'PJSC "MetallTrade"',
-      krovlyaPro: 'LLC "KrovlyaPro"',
+      krovlyaPro: 'LLC "KrovlyaPro"'
     },
     mockContracts: {
       dg001: 'GC-2025-001 - General contract RC "Solnechny"',
@@ -7660,13 +9865,9 @@ export const en: TranslationKeys = {
       dg001Short: 'GC-2025-001',
       dg002Short: 'GC-2025-002',
       dg003Short: 'GC-2025-003',
-      dg004Short: 'GC-2025-004',
-    },
+      dg004Short: 'GC-2025-004'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Calls
-  // ---------------------------------------------------------------------------
   calls: {
     title: 'Call Center',
     subtitle: 'Video and audio calls for project coordination',
@@ -7689,12 +9890,8 @@ export const en: TranslationKeys = {
     statusActive: 'Active',
     statusEnded: 'Ended',
     statusCancelled: 'Cancelled',
-    statusMissed: 'Missed',
+    statusMissed: 'Missed'
   },
-
-  // ---------------------------------------------------------------------------
-  // Favorites
-  // ---------------------------------------------------------------------------
   favorites: {
     title: 'Favorites',
     subtitle: '{count} saved messages',
@@ -7709,12 +9906,8 @@ export const en: TranslationKeys = {
     repliesCount: '{count} replies',
     addNote: '+ Add note',
     notePlaceholder: 'Add a note...',
-    saveNote: 'Save',
+    saveNote: 'Save'
   },
-
-  // ---------------------------------------------------------------------------
-  // Filters
-  // ---------------------------------------------------------------------------
   filters: {
     title: 'Filters',
     status: 'Status',
@@ -7730,12 +9923,8 @@ export const en: TranslationKeys = {
     clearAll: 'Clear All',
     applyFilters: 'Apply Filters',
     noResults: 'No results match your criteria',
-    activeFilters: 'Active Filters',
+    activeFilters: 'Active Filters'
   },
-
-  // ---------------------------------------------------------------------------
-  // Forms
-  // ---------------------------------------------------------------------------
   form: {
     requiredField: 'This field is required',
     invalidEmail: 'Invalid email address',
@@ -7749,12 +9938,8 @@ export const en: TranslationKeys = {
     enterValue: 'Enter a value',
     unsavedChanges: 'You have unsaved changes. Leave the page?',
     submitError: 'Error submitting form',
-    submitSuccess: 'Form submitted successfully',
+    submitSuccess: 'Form submitted successfully'
   },
-
-  // ---------------------------------------------------------------------------
-  // Errors
-  // ---------------------------------------------------------------------------
   errors: {
     generic: 'An error occurred',
     unexpectedError: 'An unexpected error occurred',
@@ -7776,12 +9961,8 @@ export const en: TranslationKeys = {
     timeout: 'Request Timeout',
     tryAgain: 'Try Again',
     goHome: 'Go Home',
-    contactSupport: 'Contact Support',
+    contactSupport: 'Contact Support'
   },
-
-  // ---------------------------------------------------------------------------
-  // Empty states
-  // ---------------------------------------------------------------------------
   empty: {
     noProjects: 'No projects',
     noContracts: 'No contracts',
@@ -7791,12 +9972,8 @@ export const en: TranslationKeys = {
     noComments: 'No comments',
     noResults: 'Nothing found',
     noResultsDescription: 'Try adjusting your search or filter criteria',
-    createFirst: 'Create your first entry to get started',
+    createFirst: 'Create your first entry to get started'
   },
-
-  // ---------------------------------------------------------------------------
-  // Confirmation dialogs
-  // ---------------------------------------------------------------------------
   confirm: {
     deleteTitle: 'Confirm Deletion',
     deleteMessage: 'Are you sure you want to delete this record? This action cannot be undone.',
@@ -7811,12 +9988,8 @@ export const en: TranslationKeys = {
     submitTitle: 'Confirm Submission',
     submitMessage: 'Editing will not be possible after submission. Continue?',
     affectedItems: 'Affected items',
-    andMore: 'and {count} more',
+    andMore: 'and {count} more'
   },
-
-  // ---------------------------------------------------------------------------
-  // TopBar
-  // ---------------------------------------------------------------------------
   topbar: {
     enableLightTheme: 'Switch to light theme',
     enableDarkTheme: 'Switch to dark theme',
@@ -7829,31 +10002,19 @@ export const en: TranslationKeys = {
     defaultUser: 'User',
     profile: 'Profile',
     settings: 'Settings',
-    logout: 'Log out',
+    logout: 'Log out'
   },
-
-  // ---------------------------------------------------------------------------
-  // Access control
-  // ---------------------------------------------------------------------------
   access: {
     forbidden: 'Access Denied',
     noPermission: 'You do not have permission to view this page.',
-    backToHome: 'Back to home',
+    backToHome: 'Back to home'
   },
-
-  // ---------------------------------------------------------------------------
-  // MessageInput
-  // ---------------------------------------------------------------------------
   messageInput: {
     defaultPlaceholder: 'Write a message...',
     attachFile: 'Attach file',
     emoji: 'Emoji',
-    send: 'Send',
+    send: 'Send'
   },
-
-  // ---------------------------------------------------------------------------
-  // Sidebar
-  // ---------------------------------------------------------------------------
   sidebar: {
     collapse: 'Collapse',
     expand: 'Expand',
@@ -7866,12 +10027,8 @@ export const en: TranslationKeys = {
     roleManager: 'Manager',
     roleAccountant: 'Accountant',
     roleViewer: 'Viewer',
-    roleEngineer: 'Engineer',
+    roleEngineer: 'Engineer'
   },
-
-  // ---------------------------------------------------------------------------
-  // Notifications
-  // ---------------------------------------------------------------------------
   notifications: {
     title: 'Notifications',
     markAllRead: 'Mark all as read',
@@ -7882,13 +10039,9 @@ export const en: TranslationKeys = {
       info: 'Information',
       warning: 'Warning',
       error: 'Error',
-      success: 'Success',
-    },
+      success: 'Success'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Date & Time formats (patterns for date-fns)
-  // ---------------------------------------------------------------------------
   dateFormats: {
     short: 'MM/dd/yyyy',
     long: 'MMMM d, yyyy',
@@ -7903,13 +10056,9 @@ export const en: TranslationKeys = {
       daysAgo: '{count} days ago',
       hoursAgo: '{count} hours ago',
       minutesAgo: '{count} min ago',
-      justNow: 'Just now',
-    },
+      justNow: 'Just now'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Number formats
-  // ---------------------------------------------------------------------------
   numberFormats: {
     currency: '${value}',
     currencyCode: 'USD',
@@ -7919,12 +10068,8 @@ export const en: TranslationKeys = {
     area: '{value} sq ft',
     volume: '{value} cu ft',
     length: '{value} ft',
-    weight: '{value} lb',
+    weight: '{value} lb'
   },
-
-  // ---------------------------------------------------------------------------
-  // Task Board
-  // ---------------------------------------------------------------------------
   taskBoard: {
     title: 'Tasks',
     subtitle: '{count} tasks in system',
@@ -7973,12 +10118,8 @@ export const en: TranslationKeys = {
     bulkChangePriority: 'Priority',
     bulkChangePrioritySuccess: 'Priority updated for {count} tasks',
     emptyTitle: 'No tasks',
-    emptyDescription: 'Create your first task',
+    emptyDescription: 'Create your first task'
   },
-
-  // ---------------------------------------------------------------------------
-  // Settings
-  // ---------------------------------------------------------------------------
   settings: {
     title: 'Settings',
     general: 'General',
@@ -7988,7 +10129,7 @@ export const en: TranslationKeys = {
     themes: {
       light: 'Light',
       dark: 'Dark',
-      system: 'System',
+      system: 'System'
     },
     notifications: 'Notifications',
     emailNotifications: 'Email Notifications',
@@ -7999,12 +10140,9 @@ export const en: TranslationKeys = {
     timezone: 'Timezone',
     dateFormat: 'Date Format',
     numberFormat: 'Number Format',
-
     breadcrumbHome: 'Home',
     breadcrumbSettings: 'Settings',
     breadcrumbAdmin: 'Administration',
-
-    // SettingsPage
     page: {
       title: 'Settings',
       subtitle: 'Manage system parameters',
@@ -8014,7 +10152,6 @@ export const en: TranslationKeys = {
       tabIntegrations: 'Integrations',
       tabNotifications: 'Notifications',
       tabBackup: 'Backup',
-      // General tab
       companyInfoTitle: 'Company Information',
       logoLabel: 'Logo',
       companyLogoTitle: 'Company Logo',
@@ -8034,13 +10171,12 @@ export const en: TranslationKeys = {
       currencyOptions: {
         rub: 'Ruble (₽)',
         usd: 'Dollar ($)',
-        eur: 'Euro (€)',
+        eur: 'Euro (€)'
       },
       languageOptions: {
         ru: 'Русский',
-        en: 'English',
+        en: 'English'
       },
-      // Email tab
       smtpTitle: 'SMTP Settings',
       smtpHostLabel: 'SMTP Host',
       smtpPortLabel: 'Port',
@@ -8051,7 +10187,6 @@ export const en: TranslationKeys = {
       smtpTls: 'Use TLS/SSL',
       smtpSave: 'Save',
       smtpTestEmail: 'Send Test Email',
-      // Security tab
       securityTitle: 'Security Settings',
       sessionLifetimeLabel: 'Session Lifetime (minutes)',
       sessionLifetimeHint: 'Auto-logout on inactivity',
@@ -8063,19 +10198,16 @@ export const en: TranslationKeys = {
       twoFaLabel: 'Two-Factor Authentication (2FA)',
       twoFaDescription: 'Require login confirmation via authenticator app',
       saveSettings: 'Save Settings',
-      // Integrations tab (inline in SettingsPage)
       integrationsTitle: 'Integrations',
       integrationsSubtitle: 'Connect external systems',
       lastSync: 'Last sync:',
       configureButton: 'Configure',
       syncButton: 'Sync',
-      // Notifications tab
       notificationMatrixTitle: 'Notification Matrix',
       notificationMatrixSubtitle: 'Configure delivery channels for each notification type',
       notificationTypeColumn: 'Notification Type',
       notificationInApp: 'In-App',
       saveNotificationSettings: 'Save Settings',
-      // Backup tab
       backupScheduleTitle: 'Backup Schedule',
       backupScheduleLabel: 'Schedule',
       backupScheduleDaily: 'Daily',
@@ -8098,12 +10230,12 @@ export const en: TranslationKeys = {
       integrationStatusLabels: {
         active: 'Active',
         inactive: 'Not Connected',
-        error: 'Error',
+        error: 'Error'
       },
       backupStatusLabels: {
         completed: 'Completed',
         inProgress: 'In Progress',
-        failed: 'Failed',
+        failed: 'Failed'
       },
       toastSaved: 'Settings saved',
       toastError: 'Failed to save settings',
@@ -8112,7 +10244,6 @@ export const en: TranslationKeys = {
       toastBackupStarted: 'Backup started',
       toastBackupError: 'Failed to start backup',
       loading: 'Loading...',
-      // General tab — keys used by SettingsPage component
       generalTitle: 'General Settings',
       companyLogo: 'Company Logo',
       logoHint: 'PNG, JPG up to 2 MB. Recommended size 200x200 px',
@@ -8131,7 +10262,6 @@ export const en: TranslationKeys = {
       fieldLanguage: 'Language',
       fieldTimezone: 'Timezone',
       btnSave: 'Save',
-      // Email tab — keys used by SettingsPage component
       emailTitle: 'SMTP Settings',
       fieldSmtpHost: 'SMTP Host',
       fieldPort: 'Port',
@@ -8141,7 +10271,6 @@ export const en: TranslationKeys = {
       fieldSenderName: 'Sender Name',
       tlsLabel: 'Use TLS/SSL',
       btnTestEmail: 'Send Test Email',
-      // Security tab — keys used by SettingsPage component
       fieldSessionLife: 'Session Lifetime (minutes)',
       fieldSessionLifeHint: 'Auto-logout on inactivity',
       fieldMaxAttempts: 'Max Login Attempts',
@@ -8150,10 +10279,8 @@ export const en: TranslationKeys = {
       fieldPasswordExpiry: 'Password Expiry (days)',
       fieldPasswordExpiryHint: '0 — no limit',
       btnSaveSettings: 'Save Settings',
-      // Integrations tab — keys used by SettingsPage component
       btnConfigure: 'Configure',
       btnSync: 'Sync',
-      // Notifications tab — keys used by SettingsPage component
       notificationsTitle: 'Notification Matrix',
       notificationsSubtitle: 'Configure delivery channels for each notification type',
       colNotificationType: 'Notification Type',
@@ -8161,7 +10288,6 @@ export const en: TranslationKeys = {
       colPush: 'Push',
       colTelegram: 'Telegram',
       colInApp: 'In-App',
-      // Backup tab — keys used by SettingsPage component
       fieldSchedule: 'Schedule',
       scheduleDaily: 'Daily',
       scheduleWeekly: 'Weekly',
@@ -8178,19 +10304,15 @@ export const en: TranslationKeys = {
       typeAuto: 'Automatic',
       typeManual: 'Manual',
       btnDownload: 'Download',
-      // Status labels — keys used by SettingsPage component
       integrationActive: 'Active',
       integrationInactive: 'Not Connected',
       integrationError: 'Error',
       backupCompleted: 'Completed',
       backupInProgress: 'In Progress',
       backupFailed: 'Failed',
-      // Breadcrumbs — keys used by SettingsPage component
       breadcrumbHome: 'Home',
-      breadcrumbSettings: 'Settings',
+      breadcrumbSettings: 'Settings'
     },
-
-    // UsersAdminPage
     users: {
       title: 'Users',
       subtitle: '{count} users in the system',
@@ -8244,18 +10366,53 @@ export const en: TranslationKeys = {
       statusLabels: {
         active: 'Active',
         blocked: 'Blocked',
-        pending: 'Pending',
+        pending: 'Pending'
       },
       roleLabels: {
         admin: 'Administrator',
         manager: 'Manager',
         engineer: 'Engineer',
         accountant: 'Accountant',
-        viewer: 'Viewer',
+        viewer: 'Viewer'
       },
+      statusActive: 'Active',
+      statusBlocked: 'Status Blocked',
+      statusPending: 'Pending',
+      roleAdmin: 'Role Admin',
+      roleManager: 'Role Manager',
+      roleEngineer: 'Role Engineer',
+      roleAccountant: 'Role Accountant',
+      roleViewer: 'Role Viewer',
+      neverLoggedIn: 'Never Logged In',
+      breadcrumbHome: 'Home',
+      breadcrumbAdmin: 'Breadcrumb Admin',
+      btnCreateUser: 'Btn Create User',
+      btnBlock: 'Btn Block',
+      btnUnblock: 'Btn Unblock',
+      btnResetPassword: 'Btn Reset Password',
+      btnForceLogout: 'Btn Force Logout',
+      detailProfile: 'Detail Profile',
+      detailGroups: 'Detail Groups',
+      detailActivity: 'Detail Activity',
+      detailSessions: 'Detail Sessions',
+      fieldFirstName: 'Field First Name',
+      fieldLastName: 'Field Last Name',
+      fieldEmail: 'Field Email',
+      fieldRole: 'Field Role',
+      fieldStatus: 'Field Status',
+      btnSave: 'Save',
+      groupsInstruction: 'Groups Instruction',
+      btnSaveGroups: 'Btn Save Groups',
+      currentSession: 'Current Session',
+      btnEndSession: 'Btn End Session',
+      sessionIP: 'Session I P',
+      sessionStarted: 'Session Started',
+      createTitle: 'Create Title',
+      createCancel: 'Create Cancel',
+      createSubmit: 'Create Submit',
+      fieldPassword: 'Field Password',
+      fieldAccessGroups: 'Field Access Groups'
     },
-
-    // PermissionsPage
     permissions: {
       title: 'Access Rights',
       subtitle: 'Manage groups and permissions',
@@ -8272,31 +10429,26 @@ export const en: TranslationKeys = {
       tabFields: 'Field Access',
       tabUsers: 'Users',
       searchPlaceholder: 'Search...',
-      // Models tab
       modelColumnModel: 'Model',
       modelColumnRead: 'Read',
       modelColumnCreate: 'Create',
       modelColumnUpdate: 'Update',
       modelColumnDelete: 'Delete',
       modelSaveRights: 'Save Rights',
-      // Rules tab
       addRule: 'Add Rule',
       ruleReadLabel: 'Read:',
       ruleWriteLabel: 'Write:',
       ruleYes: 'Yes',
       ruleNo: 'No',
-      // Fields tab
       fieldColumnModel: 'Model',
       fieldColumnField: 'Field',
       fieldColumnRead: 'Read',
       fieldColumnWrite: 'Write',
-      // Users tab
       usersInGroupCount: '{count} users in group',
       addUserToGroup: 'Add User',
       userColumnUser: 'User',
       userColumnEmail: 'Email',
       userColumnRole: 'Role',
-      // New group modal
       newGroupModalTitle: 'New Group',
       newGroupModalDescription: 'Create a permission group',
       newGroupNameLabel: 'Group Name',
@@ -8307,15 +10459,53 @@ export const en: TranslationKeys = {
       newGroupNoParent: 'No parent (root)',
       modalCancel: 'Cancel',
       modalCreate: 'Create',
-      // Add user modal
       addUserModalTitle: 'Add User to Group',
       addUserSearchLabel: 'Search User',
       addUserSearchPlaceholder: 'Name or email...',
       addUserCancel: 'Cancel',
       addUserConfirm: 'Add',
+      tabModelAccess: 'Tab Model Access',
+      tabRecordRules: 'Tab Record Rules',
+      tabFieldAccess: 'Tab Field Access',
+      breadcrumbHome: 'Home',
+      breadcrumbAdmin: 'Breadcrumb Admin',
+      btnAdd: 'Add',
+      systemLabel: 'System Label',
+      parentGroupLabel: 'Parent Group Label',
+      btnEdit: 'Edit',
+      btnDelete: 'Delete',
+      headerModel: 'Header Model',
+      headerRead: 'Header Read',
+      headerCreate: 'Header Create',
+      headerUpdate: 'Header Update',
+      headerDelete: 'Header Delete',
+      btnSavePermissions: 'Btn Save Permissions',
+      btnAddRule: 'Btn Add Rule',
+      readLabel: 'Read Label',
+      yesLabel: 'Yes Label',
+      noLabel: 'No Label',
+      writeLabel: 'Write Label',
+      headerField: 'Header Field',
+      headerWrite: 'Header Write',
+      usersInGroup: 'Users In Group',
+      addUser: 'Add User',
+      headerUser: 'Header User',
+      headerEmail: 'Header Email',
+      headerRole: 'Header Role',
+      selectGroupPrompt: 'Select Group Prompt',
+      newGroupTitle: 'New Group Title',
+      newGroupDescription: 'New Group Description',
+      btnCancel: 'Cancel',
+      btnCreate: 'Create',
+      fieldGroupName: 'Field Group Name',
+      groupNamePlaceholder: 'Group Name Placeholder',
+      fieldDescription: 'Field Description',
+      descriptionPlaceholder: 'Description Placeholder',
+      fieldParentGroup: 'Field Parent Group',
+      noParent: 'No Parent',
+      addUserTitle: 'Add User Title',
+      searchUserPlaceholder: 'Search User Placeholder'
     },
-
-    // IntegrationsPage
     integrations: {
       title: 'Integrations',
       subtitle: 'Manage connections to external systems',
@@ -8337,14 +10527,13 @@ export const en: TranslationKeys = {
       statusLabels: {
         connected: 'Connected',
         disconnected: 'Disconnected',
-        error: 'Error',
+        error: 'Error'
       },
       modalTitle1c: 'Configure: 1C:Enterprise',
       modalTitleTelegram: 'Configure: Telegram Bot',
       modalTitleSbis: 'Configure: SBIS',
       modalTitleEdo: 'Configure: EDO',
       modalTitleDefault: 'Configure Integration',
-      // 1C config
       oneCConfigName: 'Configuration Name',
       oneCServerUrl: '1C Server URL',
       oneCServerUrlHint: 'e.g., http://server:8080/1c',
@@ -8366,7 +10555,6 @@ export const en: TranslationKeys = {
       oneCConfigError: 'Error saving 1C configuration',
       oneCConnectionSuccess: '1C connection established',
       oneCTestError: 'Connection test error',
-      // Telegram config
       telegramBotToken: 'Bot Token',
       telegramBotTokenHint: 'Get it from @BotFather in Telegram',
       telegramBotUsername: 'Bot Username',
@@ -8375,7 +10563,6 @@ export const en: TranslationKeys = {
       telegramWebhookHint: 'Automatically configured',
       telegramConfigSaved: 'Telegram configuration saved',
       telegramConfigError: 'Error saving Telegram configuration',
-      // SBIS config
       sbisConfigName: 'Configuration Name',
       sbisApiUrl: 'SBIS API URL',
       sbisLogin: 'Login',
@@ -8385,7 +10572,6 @@ export const en: TranslationKeys = {
       sbisCertThumbprint: 'Certificate Thumbprint',
       sbisConfigSaved: 'SBIS configuration saved',
       sbisConfigError: 'Error saving SBIS configuration',
-      // EDO config
       edoProvider: 'EDO Provider',
       edoApiKey: 'API Key / Token',
       edoApiKeyPlaceholder: 'Enter EDO provider API key',
@@ -8394,12 +10580,66 @@ export const en: TranslationKeys = {
       edoHint: 'EDO setup depends on the selected provider. Diadoc requires a developer key, SBIS requires API credentials. Refer to your provider documentation.',
       cancel: 'Cancel',
       save: 'Save',
-    },
+      statusConnected: 'Status Connected',
+      statusDisconnected: 'Status Disconnected',
+      statusError: 'Status Error',
+      toastConfigSaved1C: 'Toast Config Saved1 C',
+      toastConfigError1C: 'Toast Config Error1 C',
+      testSuccess: 'Test Success',
+      testFailed: 'Test Failed',
+      fieldConfigName: 'Field Config Name',
+      fieldServerUrl: 'Field Server Url',
+      fieldUsername: 'Field Username',
+      fieldPassword: 'Field Password',
+      fieldDatabaseName: 'Field Database Name',
+      fieldSyncDirection: 'Field Sync Direction',
+      syncImport: 'Sync Import',
+      syncExport: 'Sync Export',
+      syncBidirectional: 'Sync Bidirectional',
+      fieldSyncInterval: 'Field Sync Interval',
+      every15: 'Every 15 minutes',
+      every30: 'Every 30 minutes',
+      everyHour: 'Every hour',
+      every6Hours: 'Every 6 hours',
+      everyDay: 'Daily',
+      btnCancel: 'Cancel',
+      btnTest: 'Test',
+      btnSave: 'Save',
+      toastConfigSavedTelegram: 'Toast Config Saved Telegram',
+      toastConfigErrorTelegram: 'Toast Config Error Telegram',
+      fieldBotToken: 'Field Bot Token',
+      fieldBotTokenHint: 'Field Bot Token Hint',
+      fieldBotUsername: 'Field Bot Username',
+      fieldBotUsernameHint: 'Field Bot Username Hint',
+      fieldWebhookUrl: 'Field Webhook Url',
+      fieldWebhookUrlHint: 'Field Webhook Url Hint',
+      toastConfigSavedSBIS: 'Toast Config Saved S B I S',
+      toastConfigErrorSBIS: 'Toast Config Error S B I S',
+      fieldSbisApiUrl: 'Field Sbis Api Url',
+      fieldLogin: 'Field Login',
+      fieldOrgINN: 'Field Org I N N',
+      fieldOrgKPP: 'Field Org K P P',
+      fieldCertThumbprint: 'Field Cert Thumbprint',
+      fieldEdoProvider: 'Field Edo Provider',
+      providerDiadoc: 'Provider Diadoc',
+      providerSBIS: 'Provider S B I S',
+      providerKontur: 'Provider Kontur',
+      fieldApiKey: 'Field Api Key',
+      fieldApiKeyPlaceholder: 'Field Api Key Placeholder',
+      toastSyncStarted: 'Toast Sync Started',
+      toastSyncFailed: 'Toast Sync Failed',
+      configTitle1C: 'Config Title1 C',
+      configTitleTelegram: 'Config Title Telegram',
+      configTitleSBIS: 'Config Title S B I S',
+      configTitleEDO: 'Config Title E D O',
+      configTitleDefault: 'Config Title Default',
+      breadcrumbHome: 'Home',
+      btnConfigure: 'Configure',
+      btnSyncing: 'Syncing...',
+      btnSync: 'Sync',
+      btnConnect: 'Connect'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Shortcuts & Command Palette
-  // ---------------------------------------------------------------------------
   shortcuts: {
     title: 'Keyboard Shortcuts',
     general: 'General',
@@ -8414,55 +10654,34 @@ export const en: TranslationKeys = {
     goFinance: 'Go to → Finance',
     goSettings: 'Go to → Settings',
     goMessenger: 'Go to → Messenger',
-    goAnalytics: 'Go to → Analytics',
+    goAnalytics: 'Go to → Analytics'
   },
-
   commandPalette: {
     createProject: 'Create Project',
     createTask: 'Create Task',
     createContract: 'Create Contract',
     createDocument: 'Create Document',
-    actions: 'Actions',
+    actions: 'Actions'
   },
-
-  // ---------------------------------------------------------------------------
-  // NotFound page
-  // ---------------------------------------------------------------------------
   notFound: {
     title: 'Page not found',
     description: 'The link is outdated or the address is incorrect. Go to the home page or open search.',
     goHome: 'Go home',
-    openSearch: 'Open search',
+    openSearch: 'Open search'
   },
-
-  // ---------------------------------------------------------------------------
-  // PivotTable
-  // ---------------------------------------------------------------------------
   pivotTable: {
     noData: 'No data to display',
-    total: 'Total',
+    total: 'Total'
   },
-
-  // ---------------------------------------------------------------------------
-  // Modal
-  // ---------------------------------------------------------------------------
   modal: {
-    close: 'Close modal',
+    close: 'Close modal'
   },
-
-  // ---------------------------------------------------------------------------
-  // Emoji picker
-  // ---------------------------------------------------------------------------
   emoji: {
     frequentlyUsed: 'Frequently used',
     emotions: 'Emotions',
     gestures: 'Gestures',
-    objects: 'Objects',
+    objects: 'Objects'
   },
-
-  // ---------------------------------------------------------------------------
-  // Status Badge Labels (domain-specific status/type/priority labels)
-  // ---------------------------------------------------------------------------
   statusLabels: {
     projectStatus: {
       DRAFT: 'Draft',
@@ -8470,21 +10689,21 @@ export const en: TranslationKeys = {
       IN_PROGRESS: 'In Progress',
       ON_HOLD: 'On Hold',
       COMPLETED: 'Completed',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     priority: {
       LOW: 'Low',
       NORMAL: 'Normal',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     projectType: {
       RESIDENTIAL: 'Residential',
       COMMERCIAL: 'Commercial',
       INDUSTRIAL: 'Industrial',
       INFRASTRUCTURE: 'Infrastructure',
-      RENOVATION: 'Renovation',
+      RENOVATION: 'Renovation'
     },
     contractStatus: {
       DRAFT: 'Draft',
@@ -8497,25 +10716,25 @@ export const en: TranslationKeys = {
       ACTIVE: 'Active',
       CLOSED: 'Closed',
       REJECTED: 'Rejected',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     specificationStatus: {
       DRAFT: 'Draft',
       IN_REVIEW: 'In Review',
       APPROVED: 'Approved',
-      ACTIVE: 'Active',
+      ACTIVE: 'Active'
     },
     estimateStatus: {
       DRAFT: 'Draft',
       IN_WORK: 'In Work',
       APPROVED: 'Approved',
-      ACTIVE: 'Active',
+      ACTIVE: 'Active'
     },
     closingDocStatus: {
       DRAFT: 'Draft',
       SUBMITTED: 'Submitted',
       SIGNED: 'Signed',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     purchaseRequestStatus: {
       DRAFT: 'Draft',
@@ -8527,36 +10746,36 @@ export const en: TranslationKeys = {
       ORDERED: 'Ordered',
       DELIVERED: 'Delivered',
       CLOSED: 'Closed',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     purchaseRequestPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     specItemType: {
       MATERIAL: 'Material',
       EQUIPMENT: 'Equipment',
-      WORK: 'Work',
+      WORK: 'Work'
     },
     budgetStatus: {
       DRAFT: 'Draft',
       APPROVED: 'Approved',
       ACTIVE: 'Active',
       FROZEN: 'Frozen',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     paymentStatusLower: {
       DRAFT: 'Draft',
       PENDING: 'Pending',
       APPROVED: 'Approved',
       PAID: 'Paid',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     paymentType: {
       INCOMING: 'Incoming',
-      OUTGOING: 'Outgoing',
+      OUTGOING: 'Outgoing'
     },
     invoiceStatus: {
       NEW: 'New',
@@ -8571,17 +10790,17 @@ export const en: TranslationKeys = {
       PARTIALLY_PAID: 'Partially Paid',
       PAID: 'Paid',
       OVERDUE: 'Overdue',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     invoiceType: {
       ISSUED: 'Issued',
-      RECEIVED: 'Received',
+      RECEIVED: 'Received'
     },
     stockMovementStatus: {
       DRAFT: 'Draft',
       CONFIRMED: 'Confirmed',
       DONE: 'Done',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     stockMovementType: {
       RECEIPT: 'Receipt',
@@ -8589,7 +10808,7 @@ export const en: TranslationKeys = {
       TRANSFER: 'Transfer',
       ADJUSTMENT: 'Adjustment',
       RETURN: 'Return',
-      WRITE_OFF: 'Write-off',
+      WRITE_OFF: 'Write-off'
     },
     materialCategory: {
       CONCRETE: 'Concrete',
@@ -8601,33 +10820,33 @@ export const en: TranslationKeys = {
       FINISHING: 'Finishing',
       FASTENERS: 'Fasteners',
       TOOLS: 'Tools',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     employeeStatus: {
       ACTIVE: 'Active',
       ON_LEAVE: 'On Leave',
       TERMINATED: 'Terminated',
-      SUSPENDED: 'Suspended',
+      SUSPENDED: 'Suspended'
     },
     timesheetStatus: {
       DRAFT: 'Draft',
       SUBMITTED: 'Submitted',
       APPROVED: 'Approved',
-      REJECTED: 'Rejected',
+      REJECTED: 'Rejected'
     },
     incidentSeverity: {
       MINOR: 'Minor',
       MODERATE: 'Moderate',
       SERIOUS: 'Serious',
       CRITICAL: 'Critical',
-      FATAL: 'Fatal',
+      FATAL: 'Fatal'
     },
     incidentStatus: {
       REPORTED: 'Reported',
       UNDER_INVESTIGATION: 'Under Investigation',
       CORRECTIVE_ACTION: 'Corrective Action',
       RESOLVED: 'Resolved',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     taskStatus: {
       BACKLOG: 'Backlog',
@@ -8635,14 +10854,14 @@ export const en: TranslationKeys = {
       IN_PROGRESS: 'In Progress',
       IN_REVIEW: 'In Review',
       DONE: 'Done',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     taskPriority: {
       LOW: 'Low',
       NORMAL: 'Normal',
       HIGH: 'High',
       URGENT: 'Urgent',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     documentStatusLower: {
       DRAFT: 'Draft',
@@ -8650,7 +10869,7 @@ export const en: TranslationKeys = {
       APPROVED: 'Approved',
       ACTIVE: 'Active',
       ARCHIVED: 'Archived',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     documentCategory: {
       CONTRACT: 'Contract',
@@ -8664,7 +10883,7 @@ export const en: TranslationKeys = {
       CORRESPONDENCE: 'Correspondence',
       PHOTO: 'Photo',
       REPORT: 'Report',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     budgetCategory: {
       MATERIALS: 'Materials',
@@ -8672,7 +10891,7 @@ export const en: TranslationKeys = {
       EQUIPMENT: 'Equipment',
       SUBCONTRACT: 'Subcontract',
       OVERHEAD: 'Overhead',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     rfiStatus: {
       DRAFT: 'Draft',
@@ -8680,13 +10899,13 @@ export const en: TranslationKeys = {
       ANSWERED: 'Answered',
       CLOSED: 'Closed',
       OVERDUE: 'Overdue',
-      VOID: 'Void',
+      VOID: 'Void'
     },
     rfiPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     submittalStatus: {
       DRAFT: 'Draft',
@@ -8696,7 +10915,7 @@ export const en: TranslationKeys = {
       APPROVED_AS_NOTED: 'Approved as Noted',
       REVISE_RESUBMIT: 'Revise & Resubmit',
       REJECTED: 'Rejected',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     submittalType: {
       SHOP_DRAWING: 'Shop Drawing',
@@ -8705,14 +10924,14 @@ export const en: TranslationKeys = {
       DESIGN_DATA: 'Design Data',
       TEST_REPORT: 'Test Report',
       CERTIFICATE: 'Certificate',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     issueStatus: {
       OPEN: 'Open',
       IN_PROGRESS: 'In Progress',
       ON_HOLD: 'On Hold',
       RESOLVED: 'Resolved',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     issueType: {
       DEFECT: 'Defect',
@@ -8720,13 +10939,13 @@ export const en: TranslationKeys = {
       DESIGN: 'Design',
       COORDINATION: 'Coordination',
       SCHEDULE: 'Schedule',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     issuePriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     changeEventStatus: {
       IDENTIFIED: 'Identified',
@@ -8734,7 +10953,7 @@ export const en: TranslationKeys = {
       PENDING_APPROVAL: 'Pending Approval',
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
-      VOID: 'Void',
+      VOID: 'Void'
     },
     changeEventSource: {
       RFI: 'RFI',
@@ -8743,7 +10962,7 @@ export const en: TranslationKeys = {
       OWNER_REQUEST: 'Owner Request',
       FIELD_CONDITION: 'Field Condition',
       REGULATORY: 'Regulatory',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     changeOrderStatus: {
       DRAFT: 'Draft',
@@ -8752,13 +10971,13 @@ export const en: TranslationKeys = {
       APPROVED: 'Approved',
       EXECUTED: 'Executed',
       REJECTED: 'Rejected',
-      VOID: 'Void',
+      VOID: 'Void'
     },
     changeOrderType: {
       ADDITION: 'Addition',
       DEDUCTION: 'Deduction',
       NO_COST: 'No Cost',
-      TIME_EXTENSION: 'Time Extension',
+      TIME_EXTENSION: 'Time Extension'
     },
     commitmentStatus: {
       DRAFT: 'Draft',
@@ -8766,13 +10985,13 @@ export const en: TranslationKeys = {
       APPROVED: 'Approved',
       COMMITTED: 'Committed',
       CLOSED: 'Closed',
-      VOID: 'Void',
+      VOID: 'Void'
     },
     commitmentType: {
       SUBCONTRACT: 'Subcontract',
       PURCHASE_ORDER: 'Purchase Order',
       SERVICE_AGREEMENT: 'Service Agreement',
-      RENTAL: 'Rental',
+      RENTAL: 'Rental'
     },
     russianDocType: {
       KS2: 'KS-2',
@@ -8783,7 +11002,7 @@ export const en: TranslationKeys = {
       GENERAL_JOURNAL: 'General Journal',
       COMMISSIONING_ACT: 'Commissioning Act',
       PASSPORT: 'Passport',
-      PROTOCOL: 'Protocol',
+      PROTOCOL: 'Protocol'
     },
     russianDocStatus: {
       DRAFT: 'Draft',
@@ -8791,26 +11010,26 @@ export const en: TranslationKeys = {
       ON_SIGNING: 'On Signing',
       SIGNED: 'Signed',
       REJECTED: 'Rejected',
-      ARCHIVED: 'Archived',
+      ARCHIVED: 'Archived'
     },
     dailyLogStatus: {
       DRAFT: 'Draft',
       SUBMITTED: 'Submitted',
       APPROVED: 'Approved',
-      REJECTED: 'Rejected',
+      REJECTED: 'Rejected'
     },
     workOrderStatus: {
       PLANNED: 'Planned',
       IN_PROGRESS: 'In Progress',
       COMPLETED: 'Completed',
       ON_HOLD: 'On Hold',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     workOrderPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      URGENT: 'Urgent',
+      URGENT: 'Urgent'
     },
     weather: {
       CLEAR: 'Clear',
@@ -8819,7 +11038,7 @@ export const en: TranslationKeys = {
       SNOW: 'Snow',
       WIND: 'Wind',
       FROST: 'Frost',
-      FOG: 'Fog',
+      FOG: 'Fog'
     },
     permitStatus: {
       DRAFT: 'Draft',
@@ -8829,7 +11048,7 @@ export const en: TranslationKeys = {
       ACTIVE: 'Active',
       EXPIRED: 'Expired',
       REVOKED: 'Revoked',
-      REJECTED: 'Rejected',
+      REJECTED: 'Rejected'
     },
     permitType: {
       BUILDING_PERMIT: 'Building Permit',
@@ -8839,14 +11058,14 @@ export const en: TranslationKeys = {
       FIRE_SAFETY: 'Fire Safety',
       SANITARY: 'Sanitary Permit',
       ROSTECHNADZOR: 'Rostechnadzor',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     licenseStatus: {
       ACTIVE: 'Active',
       EXPIRING_SOON: 'Expiring Soon',
       EXPIRED: 'Expired',
       SUSPENDED: 'Suspended',
-      REVOKED: 'Revoked',
+      REVOKED: 'Revoked'
     },
     inspectionStatus: {
       SCHEDULED: 'Scheduled',
@@ -8854,7 +11073,7 @@ export const en: TranslationKeys = {
       PASSED: 'Passed',
       FAILED: 'Failed',
       RESCHEDULED: 'Rescheduled',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     inspectionType: {
       ROSTECHNADZOR: 'Rostechnadzor',
@@ -8864,13 +11083,13 @@ export const en: TranslationKeys = {
       LABOR_INSPECTION: 'Labor Inspection',
       INTERNAL_AUDIT: 'Internal Audit',
       CUSTOMER_INSPECTION: 'Customer Inspection',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     complianceResult: {
       COMPLIANT: 'Compliant',
       NON_COMPLIANT: 'Non-Compliant',
       PARTIALLY_COMPLIANT: 'Partially Compliant',
-      PENDING: 'Pending Review',
+      PENDING: 'Pending Review'
     },
     punchItemStatus: {
       OPEN: 'Open',
@@ -8878,13 +11097,13 @@ export const en: TranslationKeys = {
       READY_FOR_REVIEW: 'Ready for Review',
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     punchItemPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     punchCategory: {
       STRUCTURAL: 'Structural',
@@ -8895,34 +11114,34 @@ export const en: TranslationKeys = {
       FINISHING: 'Finishing',
       FIRE_SAFETY: 'Fire Safety',
       LANDSCAPING: 'Landscaping',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     punchListStatus: {
       DRAFT: 'Draft',
       ACTIVE: 'Active',
       IN_REVIEW: 'In Review',
       COMPLETED: 'Completed',
-      CLOSED: 'Closed',
+      CLOSED: 'Closed'
     },
     kepCertStatus: {
       ACTIVE: 'Active',
       EXPIRING_SOON: 'Expiring Soon',
       EXPIRED: 'Expired',
       REVOKED: 'Revoked',
-      SUSPENDED: 'Suspended',
+      SUSPENDED: 'Suspended'
     },
     kepSigningStatus: {
       PENDING: 'Pending Signature',
       SIGNED: 'Signed',
       REJECTED: 'Rejected',
       EXPIRED: 'Expired',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     kepPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     designVersionStatus: {
       DRAFT: 'Draft',
@@ -8930,14 +11149,14 @@ export const en: TranslationKeys = {
       APPROVED: 'Approved',
       SUPERSEDED: 'Superseded',
       REJECTED: 'Rejected',
-      ARCHIVED: 'Archived',
+      ARCHIVED: 'Archived'
     },
     designReviewStatus: {
       PENDING: 'Pending',
       IN_PROGRESS: 'In Progress',
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
-      REVISION_REQUESTED: 'Revision Requested',
+      REVISION_REQUESTED: 'Revision Requested'
     },
     dispatchStatus: {
       DRAFT: 'Draft',
@@ -8946,18 +11165,18 @@ export const en: TranslationKeys = {
       IN_TRANSIT: 'In Transit',
       DELIVERED: 'Delivered',
       COMPLETED: 'Completed',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     stockLimitType: {
       MIN: 'Minimum',
       MAX: 'Maximum',
       REORDER_POINT: 'Reorder Point',
-      SAFETY_STOCK: 'Safety Stock',
+      SAFETY_STOCK: 'Safety Stock'
     },
     stockAlertSeverity: {
       INFO: 'Information',
       WARNING: 'Warning',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
     toleranceCategory: {
       GEOMETRIC: 'Geometric',
@@ -8968,14 +11187,14 @@ export const en: TranslationKeys = {
       FIRE_RESISTANCE: 'Fire Resistance',
       SURFACE_FINISH: 'Surface Finish',
       ALIGNMENT: 'Alignment',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     toleranceCheckStatus: {
       PLANNED: 'Planned',
       IN_PROGRESS: 'In Progress',
       PASSED: 'Passed',
       FAILED: 'Failed',
-      DEVIATION_ACCEPTED: 'Deviation Accepted',
+      DEVIATION_ACCEPTED: 'Deviation Accepted'
     },
     applicantStatus: {
       NEW: 'New',
@@ -8984,62 +11203,62 @@ export const en: TranslationKeys = {
       OFFER: 'Offer',
       HIRED: 'Hired',
       REJECTED: 'Rejected',
-      WITHDRAWN: 'Withdrawn',
+      WITHDRAWN: 'Withdrawn'
     },
     applicantPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      URGENT: 'Urgent',
+      URGENT: 'Urgent'
     },
     jobPositionStatus: {
       DRAFT: 'Draft',
       OPEN: 'Open',
       IN_PROGRESS: 'In Progress',
       FILLED: 'Filled',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     employmentType: {
       FULL_TIME: 'Full-time',
       PART_TIME: 'Part-time',
       CONTRACT: 'Contract',
-      INTERNSHIP: 'Internship',
+      INTERNSHIP: 'Internship'
     },
     leaveRequestStatus: {
       DRAFT: 'Draft',
       SUBMITTED: 'Submitted',
       APPROVED: 'Approved',
       REFUSED: 'Refused',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     leaveAllocationStatus: {
       DRAFT: 'Draft',
       APPROVED: 'Approved',
-      EXPIRED: 'Expired',
+      EXPIRED: 'Expired'
     },
     maintenanceRequestStatus: {
       NEW: 'New',
       IN_PROGRESS: 'In Progress',
       REPAIRED: 'Repaired',
       SCRAP: 'Scrapped',
-      CANCELLED: 'Cancelled',
+      CANCELLED: 'Cancelled'
     },
     maintenancePriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      URGENT: 'Urgent',
+      URGENT: 'Urgent'
     },
     maintenanceType: {
       CORRECTIVE: 'Corrective',
       PREVENTIVE: 'Preventive',
-      PREDICTIVE: 'Predictive',
+      PREDICTIVE: 'Predictive'
     },
     equipmentStatus: {
       OPERATIONAL: 'Operational',
       MAINTENANCE: 'Under Maintenance',
       OUT_OF_SERVICE: 'Out of Service',
-      RETIRED: 'Retired',
+      RETIRED: 'Retired'
     },
     legalCaseStatus: {
       DRAFT: 'Draft',
@@ -9048,7 +11267,7 @@ export const en: TranslationKeys = {
       ON_HOLD: 'On Hold',
       RESOLVED: 'Resolved',
       CLOSED: 'Closed',
-      APPEAL: 'Appeal',
+      APPEAL: 'Appeal'
     },
     legalCaseType: {
       LITIGATION: 'Litigation',
@@ -9056,12 +11275,12 @@ export const en: TranslationKeys = {
       CLAIM: 'Claim',
       CONSULTATION: 'Consultation',
       CONTRACT_DISPUTE: 'Contract Dispute',
-      REGULATORY: 'Regulatory',
+      REGULATORY: 'Regulatory'
     },
     legalTemplateStatus: {
       DRAFT: 'Draft',
       ACTIVE: 'Active',
-      ARCHIVED: 'Archived',
+      ARCHIVED: 'Archived'
     },
     legalTemplateCategory: {
       CONSTRUCTION: 'Construction',
@@ -9070,7 +11289,7 @@ export const en: TranslationKeys = {
       SUBCONTRACT: 'Subcontract',
       LEASE: 'Lease',
       NDA: 'NDA',
-      OTHER: 'Other',
+      OTHER: 'Other'
     },
     crmLeadStatus: {
       NEW: 'New',
@@ -9078,19 +11297,21 @@ export const en: TranslationKeys = {
       PROPOSITION: 'Proposition',
       NEGOTIATION: 'Negotiation',
       WON: 'Won',
-      LOST: 'Lost',
+      LOST: 'Lost'
     },
     crmLeadPriority: {
       LOW: 'Low',
       MEDIUM: 'Medium',
       HIGH: 'High',
-      CRITICAL: 'Critical',
+      CRITICAL: 'Critical'
     },
+    warehouseOrderType: {
+      RECEIPT: 'R E C E I P T',
+      ISSUE: 'I S S U E',
+      INTERNAL_TRANSFER: 'I N T E R N A L_ T R A N S F E R',
+      RETURN: 'R E T U R N'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Navigation
-  // ---------------------------------------------------------------------------
   navigation: {
     groups: {
       home: 'Home',
@@ -9113,18 +11334,18 @@ export const en: TranslationKeys = {
       site: 'Construction Site',
       closeout: 'Closeout',
       analytics: 'Analytics',
-      admin: 'Settings',
+      admin: 'Settings'
     },
     items: {
-      'dashboard': 'Dashboard',
+      dashboard: 'Dashboard',
       'projects-list': 'Objects',
-      'counterparties': 'Counterparties',
-      'CONTRACTS': 'Contracts',
-      'estimates': 'Estimates',
+      counterparties: 'Counterparties',
+      CONTRACTS: 'Contracts',
+      estimates: 'Estimates',
       'estimates-pricing-databases': 'Pricing Databases',
       'estimates-pricing-rates': 'Normative Rates',
       'estimates-pricing-calc': 'Price Calculator',
-      'specifications': 'Specifications',
+      specifications: 'Specifications',
       'spec-analogs': 'Material Analogs',
       'spec-analog-requests': 'Replacement Requests',
       'pm-rfis': 'RFI (Requests)',
@@ -9183,10 +11404,11 @@ export const en: TranslationKeys = {
       'fin-rev-dashboard': 'Revenue Dashboard',
       'fin-opportunities': 'Opportunities',
       'site-assessments': 'Site Assessments',
-      'prequalifications': 'Prequalification',
+      prequalifications: 'Prequalification',
       'fin-tenders': 'Tenders',
       'fin-bid-comparison': 'Bid Comparison',
       'fin-procurement': 'Procurement',
+      'fin-prequalification': 'Vendor Prequalification',
       'fin-price-coefficients': 'Price Coefficients',
       'fin-tax-risk': 'Tax Risks',
       'wh-locations': 'Warehouses',
@@ -9298,13 +11520,9 @@ export const en: TranslationKeys = {
       'adm-api-keys': 'API Keys',
       'adm-webhooks': 'Webhooks',
       'adm-subscription': 'Subscription',
-      'adm-marketplace': 'Marketplace',
-    },
+      'adm-marketplace': 'Marketplace'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Forms
-  // ---------------------------------------------------------------------------
   forms: {
     common: {
       saveChanges: 'Save Changes',
@@ -9312,7 +11530,7 @@ export const en: TranslationKeys = {
       editing: 'Edit',
       home: 'Home',
       basicInfo: 'Basic Information',
-      maxChars: 'Maximum {count} characters',
+      maxChars: 'Maximum {count} characters'
     },
     journalEntry: {
       createTitle: 'New Journal Entry',
@@ -9347,7 +11565,7 @@ export const en: TranslationKeys = {
         debitRequired: 'Select a debit account',
         creditRequired: 'Select a credit account',
         amountRequired: 'Amount is required',
-        amountPositive: 'Amount must be greater than 0',
+        amountPositive: 'Amount must be greater than 0'
       },
       accounts: {
         a01: '01 - Fixed Assets',
@@ -9369,8 +11587,8 @@ export const en: TranslationKeys = {
         a84: '84 - Retained Earnings',
         a90: '90 - Sales',
         a91: '91 - Other Income & Expenses',
-        a99: '99 - Profit & Loss',
-      },
+        a99: '99 - Profit & Loss'
+      }
     },
     calendarEvent: {
       createTitle: 'New Event',
@@ -9410,7 +11628,7 @@ export const en: TranslationKeys = {
         endDateRequired: 'End date is required',
         organizerIdRequired: 'Select an organizer',
         organizerNameRequired: 'Organizer name is required',
-        invalidUrl: 'Invalid URL',
+        invalidUrl: 'Invalid URL'
       },
       eventTypes: {
         meeting: 'Meeting',
@@ -9420,8 +11638,8 @@ export const en: TranslationKeys = {
         milestone: 'Milestone',
         holiday: 'Holiday',
         training: 'Training',
-        other: 'Other',
-      },
+        other: 'Other'
+      }
     },
     dailyLog: {
       createTitle: 'New Daily Log Entry',
@@ -9464,7 +11682,7 @@ export const en: TranslationKeys = {
         windSpeedRange: 'Wind speed must be between 0 and 100 m/s',
         workDescriptionRequired: 'Work description is required',
         crewCountPositive: 'Count must be positive',
-        hoursRange: 'Hours must be between 0 and 24',
+        hoursRange: 'Hours must be between 0 and 24'
       },
       weatherTypes: {
         clear: 'Clear',
@@ -9472,8 +11690,8 @@ export const en: TranslationKeys = {
         rain: 'Rain',
         snow: 'Snow',
         fog: 'Fog',
-        wind: 'Wind',
-      },
+        wind: 'Wind'
+      }
     },
     contract: {
       createTitle: 'New Contract',
@@ -9523,15 +11741,17 @@ export const en: TranslationKeys = {
         amountRequired: 'Amount is required',
         amountPositive: 'Amount must be greater than 0',
         startDateRequired: 'Start date is required',
-        endDateRequired: 'End date is required',
+        endDateRequired: 'End date is required'
       },
       contractTypes: {
         general: 'General Contract',
         subcontract: 'Subcontract',
         supply: 'Supply',
         design: 'Design',
-        services: 'Services',
+        services: 'Services'
       },
+      directionClient: 'Direction Client',
+      directionContractor: 'Direction Contractor'
     },
     rfi: {
       createTitle: 'New Request for Information (RFI)',
@@ -9563,7 +11783,7 @@ export const en: TranslationKeys = {
         questionRequired: 'Question is required',
         projectRequired: 'Select a project',
         priorityRequired: 'Select a priority',
-        categoryRequired: 'Select a category',
+        categoryRequired: 'Select a category'
       },
       categories: {
         design: 'Design',
@@ -9571,14 +11791,14 @@ export const en: TranslationKeys = {
         material: 'Materials',
         schedule: 'Schedule',
         cost: 'Cost',
-        other: 'Other',
+        other: 'Other'
       },
       priorities: {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
-      },
+        critical: 'Critical'
+      }
     },
     issue: {
       createTitle: 'New Issue',
@@ -9605,21 +11825,21 @@ export const en: TranslationKeys = {
         titleRequired: 'Issue title is required',
         typeRequired: 'Select an issue type',
         priorityRequired: 'Select a priority',
-        projectRequired: 'Select a project',
+        projectRequired: 'Select a project'
       },
       issueTypes: {
         defect: 'Defect',
         safety: 'Safety',
         coordination: 'Coordination',
         design: 'Design',
-        schedule: 'Schedule',
+        schedule: 'Schedule'
       },
       priorities: {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
-      },
+        critical: 'Critical'
+      }
     },
     submittal: {
       createTitle: 'New Submittal',
@@ -9651,13 +11871,13 @@ export const en: TranslationKeys = {
       validation: {
         titleRequired: 'Title is required',
         projectRequired: 'Select a project',
-        priorityRequired: 'Select a priority',
+        priorityRequired: 'Select a priority'
       },
       priorities: {
         low: 'Low',
         medium: 'Medium',
-        high: 'High',
-      },
+        high: 'High'
+      }
     },
     budget: {
       createTitle: 'New Budget',
@@ -9683,7 +11903,7 @@ export const en: TranslationKeys = {
         nameRequired: 'Budget name is required',
         periodRequired: 'Period is required',
         amountRequired: 'Original amount is required',
-        amountPositive: 'Amount must be greater than 0',
+        amountPositive: 'Amount must be greater than 0'
       },
       periods: {
         q1_2025: 'Q1 2025',
@@ -9692,8 +11912,8 @@ export const en: TranslationKeys = {
         q4_2025: 'Q4 2025',
         q1_2026: 'Q1 2026',
         q2_2026: 'Q2 2026',
-        annual_2026: 'Annual 2026',
-      },
+        annual_2026: 'Annual 2026'
+      }
     },
     invoice: {
       createTitle: 'New Invoice',
@@ -9731,12 +11951,12 @@ export const en: TranslationKeys = {
         dueDateRequired: 'Due date is required',
         typeRequired: 'Select an invoice type',
         amountRequired: 'Amount excl. VAT is required',
-        amountPositive: 'Amount must be greater than 0',
+        amountPositive: 'Amount must be greater than 0'
       },
       invoiceTypes: {
         issued: 'Issued',
-        received: 'Received',
-      },
+        received: 'Received'
+      }
     },
     payment: {
       createTitle: 'New Payment',
@@ -9771,18 +11991,18 @@ export const en: TranslationKeys = {
         amountRequired: 'Amount is required',
         amountPositive: 'Amount must be greater than 0',
         dateRequired: 'Payment date is required',
-        methodRequired: 'Select a payment method',
+        methodRequired: 'Select a payment method'
       },
       paymentTypes: {
         incoming: 'Incoming',
-        outgoing: 'Outgoing',
+        outgoing: 'Outgoing'
       },
       paymentMethods: {
         bankTransfer: 'Bank Transfer',
         cash: 'Cash',
         letterOfCredit: 'Letter of Credit',
-        offset: 'Offset',
-      },
+        offset: 'Offset'
+      }
     },
     movement: {
       createTitle: 'New Movement',
@@ -9815,7 +12035,7 @@ export const en: TranslationKeys = {
         quantityRequired: 'Quantity is required',
         quantityPositive: 'Quantity must be greater than 0',
         dateRequired: 'Date is required',
-        responsibleRequired: 'Responsible person is required',
+        responsibleRequired: 'Responsible person is required'
       },
       movementTypes: {
         receipt: 'Receipt',
@@ -9823,8 +12043,8 @@ export const en: TranslationKeys = {
         transfer: 'Transfer',
         adjustment: 'Adjustment',
         return: 'Return',
-        writeOff: 'Write-off',
-      },
+        writeOff: 'Write-off'
+      }
     },
     material: {
       createTitle: 'New Material',
@@ -9851,7 +12071,7 @@ export const en: TranslationKeys = {
         nameRequired: 'Material name is required',
         codeRequired: 'Material code is required',
         categoryRequired: 'Select a category',
-        unitRequired: 'Unit of measure is required',
+        unitRequired: 'Unit of measure is required'
       },
       categories: {
         concrete: 'Concrete & Mortar',
@@ -9863,7 +12083,7 @@ export const en: TranslationKeys = {
         finishing: 'Finishing Materials',
         fasteners: 'Fasteners',
         tools: 'Tools',
-        other: 'Other',
+        other: 'Other'
       },
       units: {
         piece: 'pcs',
@@ -9874,8 +12094,8 @@ export const en: TranslationKeys = {
         ton: 't',
         liter: 'L',
         pack: 'pack',
-        set: 'set',
-      },
+        set: 'set'
+      }
     },
     safetyInspection: {
       createTitle: 'New Safety Inspection',
@@ -9902,14 +12122,14 @@ export const en: TranslationKeys = {
       validation: {
         dateRequired: 'Inspection date is required',
         typeRequired: 'Select an inspection type',
-        projectRequired: 'Select a project',
+        projectRequired: 'Select a project'
       },
       inspectionTypes: {
         routine: 'Routine',
         unscheduled: 'Unscheduled',
         followup: 'Follow-up',
-        regulatory: 'Regulatory',
-      },
+        regulatory: 'Regulatory'
+      }
     },
     safetyIncident: {
       createTitle: 'New Incident',
@@ -9949,7 +12169,7 @@ export const en: TranslationKeys = {
         typeRequired: 'Select an incident type',
         severityRequired: 'Select severity level',
         projectRequired: 'Select a project',
-        dateRequired: 'Incident date is required',
+        dateRequired: 'Incident date is required'
       },
       incidentTypes: {
         fall: 'Fall',
@@ -9960,15 +12180,15 @@ export const en: TranslationKeys = {
         fire: 'Fire',
         chemical: 'Chemical Exposure',
         equipment: 'Equipment Incident',
-        other: 'Other',
+        other: 'Other'
       },
       severityLevels: {
         minor: 'Minor',
         moderate: 'Moderate',
         serious: 'Serious',
         critical: 'Critical',
-        fatal: 'Fatal',
-      },
+        fatal: 'Fatal'
+      }
     },
     employee: {
       createTitle: 'New Employee',
@@ -10016,7 +12236,7 @@ export const en: TranslationKeys = {
         phoneInvalid: 'Invalid phone number format',
         emailInvalid: 'Invalid email format',
         hireDateRequired: 'Hire date is required',
-        contractTypeRequired: 'Select a contract type',
+        contractTypeRequired: 'Select a contract type'
       },
       departments: {
         construction: 'Construction',
@@ -10026,15 +12246,15 @@ export const en: TranslationKeys = {
         finance: 'Finance',
         legal: 'Legal',
         hr: 'HR',
-        it: 'IT',
+        it: 'IT'
       },
       contractTypes: {
         permanent: 'Permanent',
         fixedTerm: 'Fixed-term',
         civil: 'Civil Contract',
         partTime: 'Part-time',
-        probation: 'Probation',
-      },
+        probation: 'Probation'
+      }
     },
     qualityInspection: {
       createTitle: 'New Quality Inspection',
@@ -10069,20 +12289,20 @@ export const en: TranslationKeys = {
         titleRequired: 'Inspection title is required',
         typeRequired: 'Select an inspection type',
         projectRequired: 'Select a project',
-        statusRequired: 'Select a status',
+        statusRequired: 'Select a status'
       },
       inspectionTypes: {
         visual: 'Visual',
         measurement: 'Measurement',
         test: 'Testing',
-        audit: 'Audit',
+        audit: 'Audit'
       },
       statuses: {
         scheduled: 'Scheduled',
         inProgress: 'In Progress',
         completed: 'Completed',
-        failed: 'Failed',
-      },
+        failed: 'Failed'
+      }
     },
     project: {
       createTitle: 'New Object',
@@ -10139,7 +12359,7 @@ export const en: TranslationKeys = {
         typeRequired: 'Select a type',
         priorityRequired: 'Select a priority',
         statusRequired: 'Select a status',
-        customerRequired: 'Customer is required',
+        customerRequired: 'Customer is required'
       },
       statuses: {
         draft: 'Draft',
@@ -10147,28 +12367,28 @@ export const en: TranslationKeys = {
         inProgress: 'In Progress',
         onHold: 'On Hold',
         completed: 'Completed',
-        cancelled: 'Cancelled',
+        cancelled: 'Cancelled'
       },
       constructionKinds: {
         newConstruction: 'New Construction',
         reconstruction: 'Reconstruction',
         overhaul: 'Capital Repair',
         demolition: 'Demolition',
-        techReequipment: 'Technical Re-equipment',
+        techReequipment: 'Technical Re-equipment'
       },
       projectTypes: {
         residential: 'Residential',
         commercial: 'Commercial',
         industrial: 'Industrial',
         infrastructure: 'Infrastructure',
-        renovation: 'Renovation',
+        renovation: 'Renovation'
       },
       priorities: {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
-      },
+        critical: 'Critical'
+      }
     },
     crmLead: {
       createTitle: 'New Lead',
@@ -10202,7 +12422,7 @@ export const en: TranslationKeys = {
         phoneInvalid: 'Invalid phone number format',
         statusRequired: 'Select a status',
         amountPositive: 'Amount must be positive',
-        probabilityRange: 'Probability must be between 0 and 100',
+        probabilityRange: 'Probability must be between 0 and 100'
       },
       statuses: {
         new: 'New',
@@ -10210,7 +12430,7 @@ export const en: TranslationKeys = {
         proposition: 'Proposition',
         negotiation: 'Negotiation',
         won: 'Won',
-        lost: 'Lost',
+        lost: 'Lost'
       },
       sources: {
         website: 'Website',
@@ -10219,10 +12439,10 @@ export const en: TranslationKeys = {
         exhibition: 'Exhibition',
         tender: 'Tender',
         social: 'Social Media',
-        other: 'Other',
+        other: 'Other'
       },
       placeholderContactName: 'John Doe',
-      placeholderCompany: 'Acme Corp',
+      placeholderCompany: 'Acme Corp'
     },
     dispatchOrder: {
       createTitle: 'New Dispatch Order',
@@ -10273,8 +12493,8 @@ export const en: TranslationKeys = {
         originRequired: 'Origin is required',
         destinationRequired: 'Destination is required',
         scheduledDateRequired: 'Dispatch date is required',
-        weightPositive: 'Weight must be positive',
-      },
+        weightPositive: 'Weight must be positive'
+      }
     },
     punchListItem: {
       createTitle: 'New Punch List Item',
@@ -10310,20 +12530,20 @@ export const en: TranslationKeys = {
         descriptionRequired: 'Description is required',
         projectRequired: 'Select a project',
         categoryRequired: 'Select a category',
-        priorityRequired: 'Select a priority',
+        priorityRequired: 'Select a priority'
       },
       categories: {
         deficiency: 'Deficiency',
         incompleteWork: 'Incomplete Work',
         damage: 'Damage',
-        safety: 'Safety',
+        safety: 'Safety'
       },
       priorities: {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
-      },
+        critical: 'Critical'
+      }
     },
     applicant: {
       createTitle: 'New Applicant',
@@ -10360,7 +12580,7 @@ export const en: TranslationKeys = {
         phoneInvalid: 'Invalid phone number format',
         positionRequired: 'Select a position',
         resumeUrlInvalid: 'Invalid URL',
-        statusRequired: 'Select a status',
+        statusRequired: 'Select a status'
       },
       statuses: {
         new: 'New',
@@ -10369,8 +12589,8 @@ export const en: TranslationKeys = {
         offer: 'Offer',
         hired: 'Hired',
         rejected: 'Rejected',
-        withdrawn: 'Withdrawn',
-      },
+        withdrawn: 'Withdrawn'
+      }
     },
     contractor: {
       createTitle: 'New Self-Employed Contractor',
@@ -10402,8 +12622,8 @@ export const en: TranslationKeys = {
         fullNameRequired: 'Full name is required',
         innLength: 'TIN must be 12 digits',
         innFormat: 'TIN must consist of 12 digits',
-        emailInvalid: 'Invalid email',
-      },
+        emailInvalid: 'Invalid email'
+      }
     },
     document: {
       createTitle: 'New Document',
@@ -10446,13 +12666,13 @@ export const en: TranslationKeys = {
         photo: 'Photo',
         correspondence: 'Correspondence',
         permit: 'Permit',
-        other: 'Other',
+        other: 'Other'
       },
       validation: {
         titleRequired: 'Enter document title',
         documentTypeRequired: 'Select document type',
-        projectRequired: 'Select project',
-      },
+        projectRequired: 'Select project'
+      }
     },
     fleetVehicle: {
       createTitle: 'New Vehicle',
@@ -10500,20 +12720,20 @@ export const en: TranslationKeys = {
         welding: 'Welding Machine',
         car: 'Car',
         bus: 'Bus',
-        other: 'Other',
+        other: 'Other'
       },
       statuses: {
         available: 'Available',
         inUse: 'In Use',
         maintenance: 'Under Maintenance',
         repair: 'Repair',
-        decommissioned: 'Decommissioned',
+        decommissioned: 'Decommissioned'
       },
       fuelTypes: {
         diesel: 'Diesel',
         gasoline: 'Gasoline',
         electric: 'Electric',
-        hybrid: 'Hybrid',
+        hybrid: 'Hybrid'
       },
       validation: {
         licensePlateRequired: 'Enter license plate',
@@ -10523,8 +12743,8 @@ export const en: TranslationKeys = {
         vinMaxLength: 'VIN is maximum 17 characters',
         vehicleTypeRequired: 'Select vehicle type',
         statusRequired: 'Select status',
-        fuelTypeRequired: 'Select fuel type',
-      },
+        fuelTypeRequired: 'Select fuel type'
+      }
     },
     changeOrder: {
       createTitle: 'New Change Order',
@@ -10560,20 +12780,20 @@ export const en: TranslationKeys = {
         designChange: 'Design Change',
         unforeseenCondition: 'Unforeseen Conditions',
         clientRequest: 'Client Request',
-        regulatory: 'Regulatory Requirements',
+        regulatory: 'Regulatory Requirements'
       },
       priorities: {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
+        critical: 'Critical'
       },
       validation: {
         titleRequired: 'Enter title',
         projectRequired: 'Select project',
         contractRequired: 'Select contract',
         reasonRequired: 'Select reason',
-        priorityRequired: 'Select priority',
+        priorityRequired: 'Select priority'
       },
       projectSolnechny: 'RC "Solnechny"',
       projectGorizont: 'BC "Gorizont"',
@@ -10581,7 +12801,7 @@ export const en: TranslationKeys = {
       projectCentralny: 'SC "Centralny"',
       contractSmr: 'Contract CMW-2024/01',
       contractPir: 'Contract DES-2024/05',
-      contractEmr: 'Contract ELW-2024/12',
+      contractEmr: 'Contract ELW-2024/12'
     },
     designVersion: {
       createTitle: 'New Design Version',
@@ -10612,13 +12832,13 @@ export const en: TranslationKeys = {
         eo: 'EO - Electrical Equipment',
         vk: 'VK - Water Supply & Sewage',
         ov: 'OV - Heating & Ventilation',
-        pos: 'POS - Construction Management Plan',
+        pos: 'POS - Construction Management Plan'
       },
       statuses: {
         draft: 'Draft',
         review: 'In Review',
         approved: 'Approved',
-        superseded: 'Superseded',
+        superseded: 'Superseded'
       },
       validation: {
         nameRequired: 'Enter version name',
@@ -10626,8 +12846,8 @@ export const en: TranslationKeys = {
         versionRequired: 'Enter version number',
         fileUrlInvalid: 'Invalid file URL',
         statusRequired: 'Select status',
-        projectRequired: 'Select project',
-      },
+        projectRequired: 'Select project'
+      }
     },
     commitment: {
       createTitle: 'New Commitment',
@@ -10663,13 +12883,13 @@ export const en: TranslationKeys = {
         subcontract: 'Subcontract',
         purchaseOrder: 'Purchase Order',
         serviceAgreement: 'Service Agreement',
-        rental: 'Rental',
+        rental: 'Rental'
       },
       currencies: {
         rub: 'Rubles (RUB)',
         usd: 'Dollars (USD)',
         eur: 'Euros (EUR)',
-        cny: 'Yuan (CNY)',
+        cny: 'Yuan (CNY)'
       },
       validation: {
         nameRequired: 'Enter title',
@@ -10680,8 +12900,8 @@ export const en: TranslationKeys = {
         amountPositive: 'Amount must be greater than 0',
         currencyRequired: 'Select currency',
         startDateRequired: 'Enter start date',
-        endDateRequired: 'Enter end date',
-      },
+        endDateRequired: 'Enter end date'
+      }
     },
     maintenanceRequest: {
       createTitle: 'New Maintenance Request',
@@ -10710,19 +12930,19 @@ export const en: TranslationKeys = {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        urgent: 'Urgent',
+        urgent: 'Urgent'
       },
       requestTypes: {
         corrective: 'Corrective',
-        preventive: 'Preventive',
+        preventive: 'Preventive'
       },
       validation: {
         titleRequired: 'Enter request title',
         equipmentRequired: 'Select equipment',
         priorityRequired: 'Select priority',
         requestTypeRequired: 'Select maintenance type',
-        startDateRequired: 'Enter start date',
-      },
+        startDateRequired: 'Enter start date'
+      }
     },
     priceCoefficient: {
       createTitle: 'New Price Coefficient',
@@ -10758,7 +12978,7 @@ export const en: TranslationKeys = {
         labor: 'Labor',
         equipment: 'Equipment',
         overhead: 'Overhead',
-        custom: 'Custom',
+        custom: 'Custom'
       },
       validation: {
         codeRequired: 'Enter coefficient code',
@@ -10766,8 +12986,8 @@ export const en: TranslationKeys = {
         typeRequired: 'Select type',
         valueRequired: 'Enter value',
         valuePositive: 'Value must be greater than 0',
-        effectiveFromRequired: 'Enter start date',
-      },
+        effectiveFromRequired: 'Enter start date'
+      }
     },
     payrollTemplate: {
       createTitle: 'New Payroll Template',
@@ -10801,13 +13021,13 @@ export const en: TranslationKeys = {
         salary: 'Salary',
         hourly: 'Hourly',
         pieceRate: 'Piece Rate',
-        mixed: 'Mixed',
+        mixed: 'Mixed'
       },
       validation: {
         codeRequired: 'Enter template code',
         nameRequired: 'Enter name',
-        typeRequired: 'Select type',
-      },
+        typeRequired: 'Select type'
+      }
     },
     taxRisk: {
       createTitle: 'New Tax Risk Assessment',
@@ -10833,7 +13053,7 @@ export const en: TranslationKeys = {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
+        critical: 'Critical'
       },
       projectSunny: 'RC "Solnechny"',
       projectHorizon: 'BC "Horizont"',
@@ -10844,8 +13064,8 @@ export const en: TranslationKeys = {
         nameRequired: 'Enter name',
         assessmentDateRequired: 'Enter assessment date',
         riskLevelRequired: 'Select risk level',
-        scoreRange: 'Score must be 0-100',
-      },
+        scoreRange: 'Score must be 0-100'
+      }
     },
     simulation: {
       createTitle: 'New Monte Carlo Simulation',
@@ -10876,8 +13096,8 @@ export const en: TranslationKeys = {
       updateSuccess: 'Simulation updated',
       updateError: 'Failed to update simulation',
       validation: {
-        nameRequired: 'Enter name',
-      },
+        nameRequired: 'Enter name'
+      }
     },
     specification: {
       createTitle: 'New Specification',
@@ -10912,14 +13132,14 @@ export const en: TranslationKeys = {
         draft: 'Draft',
         inReview: 'In Review',
         approved: 'Approved',
-        active: 'Active',
+        active: 'Active'
       },
       validation: {
         nameRequired: 'Enter specification name',
         codeRequired: 'Enter code',
         projectRequired: 'Select project',
-        statusRequired: 'Select status',
-      },
+        statusRequired: 'Select status'
+      }
     },
     purchaseRequest: {
       createTitle: 'New Purchase Request',
@@ -10949,7 +13169,7 @@ export const en: TranslationKeys = {
         low: 'Low',
         medium: 'Medium',
         high: 'High',
-        critical: 'Critical',
+        critical: 'Critical'
       },
       validation: {
         requestDateRequired: 'Enter request date',
@@ -10960,13 +13180,13 @@ export const en: TranslationKeys = {
         itemMaterialRequired: 'Material is required in row',
         itemQuantityPositive: 'Quantity must be greater than zero in row',
         itemUnitRequired: 'Unit is required in row',
-        itemPricePositive: 'Estimated price must be greater than zero in row',
+        itemPricePositive: 'Estimated price must be greater than zero in row'
       },
       demoProjects: {
         solar: 'Solar Park',
         horizon: 'Horizon Business Center',
         bridge: 'Volga River Bridge',
-        central: 'Central Mall',
+        central: 'Central Mall'
       },
       demoMaterials: {
         rebar: 'Rebar A500C d12mm',
@@ -10976,7 +13196,7 @@ export const en: TranslationKeys = {
         pipe: 'HDPE Pipe 110mm',
         cable: 'VVGng Cable 3x2.5',
         cement: 'Cement M500',
-        sand: 'Construction Sand',
+        sand: 'Construction Sand'
       },
       units: {
         pcs: 'pcs',
@@ -10986,8 +13206,8 @@ export const en: TranslationKeys = {
         kg: 'kg',
         t: 't',
         l: 'l',
-        pack: 'pack',
-      },
+        pack: 'pack'
+      }
     },
     opportunity: {
       createTitle: 'New Opportunity',
@@ -11025,20 +13245,20 @@ export const en: TranslationKeys = {
         proposal: 'Proposal',
         negotiation: 'Negotiation',
         won: 'Won',
-        lost: 'Lost',
+        lost: 'Lost'
       },
       projectTypes: {
         residential: 'Residential',
         commercial: 'Commercial',
         industrial: 'Industrial',
-        infrastructure: 'Infrastructure',
+        infrastructure: 'Infrastructure'
       },
       validation: {
         nameRequired: 'Enter name',
         clientRequired: 'Enter client name',
         stageRequired: 'Select stage',
-        projectTypeRequired: 'Select project type',
-      },
+        projectTypeRequired: 'Select project type'
+      }
     },
     ptoDocument: {
       createTitle: 'New PTO Document',
@@ -11071,27 +13291,101 @@ export const en: TranslationKeys = {
         act: 'Act',
         protocol: 'Protocol',
         certificate: 'Certificate',
-        testReport: 'Test Report',
+        testReport: 'Test Report'
       },
       results: {
         pass: 'Pass',
         fail: 'Fail',
-        conditional: 'Conditional',
+        conditional: 'Conditional'
       },
       validation: {
         titleRequired: 'Enter document title',
         documentTypeRequired: 'Select document type',
         projectRequired: 'Select project',
-        resultRequired: 'Select result',
-      },
+        resultRequired: 'Select result'
+      }
     },
+    ks3: {
+      validation: {
+        numberRequired: 'Number Required',
+        nameRequired: 'Name Required',
+        documentDateRequired: 'Document Date Required',
+        periodFromRequired: 'Period From Required',
+        periodToRequired: 'Period To Required',
+        projectRequired: 'Project Required',
+        contractRequired: 'Contract Required'
+      },
+      createSuccess: 'Created successfully',
+      createError: 'Creation error',
+      updateSuccess: 'Updated successfully',
+      updateError: 'Update Error',
+      editTitle: 'Edit Title',
+      createTitle: 'Create Title',
+      editSubtitle: 'Edit Subtitle',
+      createSubtitle: 'Create Subtitle',
+      breadcrumbKs3: 'Breadcrumb Ks3',
+      sectionBasic: 'Section Basic',
+      labelNumber: 'Label Number',
+      placeholderNumber: 'Placeholder Number',
+      labelDocumentDate: 'Label Document Date',
+      labelName: 'Name',
+      placeholderName: 'Enter name',
+      sectionPeriod: 'Section Period',
+      labelPeriodFrom: 'Label Period From',
+      labelPeriodTo: 'Label Period To',
+      sectionBinding: 'Section Binding',
+      labelProject: 'Project',
+      placeholderProject: 'Placeholder Project',
+      labelContract: 'Label Contract',
+      placeholderContract: 'Placeholder Contract',
+      sectionRetention: 'Section Retention',
+      labelRetentionPercent: 'Label Retention Percent',
+      hintRetentionPercent: 'Hint Retention Percent',
+      labelNotes: 'Notes',
+      placeholderNotes: 'Placeholder Notes',
+      createButton: 'Create Button'
+    },
+    draftRestored: 'Draft Restored',
+    clearDraft: 'Clear Draft',
+    draftSavedAt: 'Draft Saved At',
+    dispatchRoute: {
+      validation: {
+        nameRequired: 'Name Required',
+        originRequired: 'Origin Required',
+        destinationRequired: 'Destination Required',
+        distancePositive: 'Distance Positive',
+        durationPositive: 'Duration Positive'
+      },
+      createSuccess: 'Created successfully',
+      createError: 'Creation error',
+      updateSuccess: 'Updated successfully',
+      updateError: 'Update Error',
+      editTitle: 'Edit Title',
+      createTitle: 'Create Title',
+      editSubtitlePrefix: 'Edit Subtitle Prefix',
+      createSubtitle: 'Create Subtitle',
+      breadcrumbDispatch: 'Breadcrumb Dispatch',
+      breadcrumbRoutes: 'Breadcrumb Routes',
+      sectionRouteInfo: 'Section Route Info',
+      labelName: 'Name',
+      placeholderName: 'Enter name',
+      labelActive: 'Label Active',
+      sectionPathMetrics: 'Section Path Metrics',
+      labelOrigin: 'Label Origin',
+      placeholderOrigin: 'Placeholder Origin',
+      labelDestination: 'Destination',
+      placeholderDestination: 'Placeholder Destination',
+      labelDistance: 'Label Distance',
+      placeholderDistance: 'Placeholder Distance',
+      labelDuration: 'Label Duration',
+      placeholderDuration: 'Placeholder Duration',
+      sectionAdditional: 'Additional',
+      labelNotes: 'Notes',
+      placeholderNotes: 'Placeholder Notes',
+      createButton: 'Create Button'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Integrations (module-level)
-  // ---------------------------------------------------------------------------
   integrations: {
-    // -- Integrations Main (IntegrationsPage) --
     main: {
       title: 'Integrations',
       subtitle: 'External services and integrations management',
@@ -11125,9 +13419,34 @@ export const en: TranslationKeys = {
       cardWeatherDescription: 'Weather monitoring at construction sites',
       cardBimTitle: 'BIM',
       cardBimDescription: 'BIM model integration (IFC, Revit)',
+      oneCName: 'One C Name',
+      oneCDescription: 'One C Description',
+      telegramDescription: 'Telegram Description',
+      sbisName: 'Sbis Name',
+      sbisDescription: 'Sbis Description',
+      edoName: 'Edo Name',
+      edoDescription: 'Edo Description',
+      smsDescription: 'Sms Description',
+      weatherName: 'Weather Name',
+      weatherDescription: 'Weather Description',
+      bimDescription: 'Bim Description',
+      govRegistriesName: 'Gov Registries Name',
+      govRegistriesDescription: 'Gov Registries Description',
+      apiKeysName: 'Api Keys Name',
+      apiKeysDescription: 'Api Keys Description',
+      syncStarted: 'Sync Started',
+      syncFailed: 'Sync Failed',
+      breadcrumbSettings: 'Settings',
+      metricConnected: 'Metric Connected',
+      metricOutOf: 'Metric Out Of',
+      metricActiveServices: 'Metric Active Services',
+      metricLastSync: 'Metric Last Sync',
+      lastSyncShort: 'Last Sync Short',
+      configure: 'Configure',
+      syncing: 'Syncing',
+      synchronize: 'Synchronize',
+      connect: 'Connect'
     },
-
-    // -- 1C Settings (OneCSettingsPage) --
     oneC: {
       title: '1C:Enterprise Settings',
       subtitle: '1C integration configuration',
@@ -11165,9 +13484,67 @@ export const en: TranslationKeys = {
       modalSyncDescription: 'This may take several minutes',
       modalSyncConfirm: 'Start',
       modalSyncCancel: 'Cancel',
+      logStatusCompleted: 'Log Status Completed',
+      logStatusFailed: 'Log Status Failed',
+      logStatusRunning: 'Log Status Running',
+      logStatusPending: 'Log Status Pending',
+      configSaved: 'Config Saved',
+      saveError: 'Save error',
+      connectionEstablished: 'Connection Established',
+      ms: 'Ms',
+      testError: 'Test Error',
+      syncStarted: 'Sync Started',
+      syncFailed: 'Sync Failed',
+      colName: 'Name',
+      colDatabase: 'Col Database',
+      colDirection: 'Col Direction',
+      colStatus: 'Status',
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      colLastSync: 'Col Last Sync',
+      test: 'Test',
+      syncShort: 'Sync Short',
+      logColConfig: 'Log Col Config',
+      logColExchangeType: 'Log Col Exchange Type',
+      logColProcessed: 'Log Col Processed',
+      logColErrors: 'Log Col Errors',
+      addConfig: 'Add Config',
+      tabConfigs: 'Tab Configs',
+      tabLogs: 'Tab Logs',
+      notConfigured: 'Not Configured',
+      addConfigHint: 'Add Config Hint',
+      connected: 'Connected',
+      notConnected: 'Not Connected',
+      metricConfigs: 'Metric Configs',
+      metricInterval: 'Metric Interval',
+      minutes: 'Minutes',
+      metricLastSync: 'Metric Last Sync',
+      metricDirection: 'Metric Direction',
+      connectionError: 'Connection Error',
+      emptyConfigsTitle: 'Empty Configs Title',
+      emptyConfigsDescription: 'Empty Configs Description',
+      emptyLogsTitle: 'Empty Logs Title',
+      emptyLogsDescription: 'Empty Logs Description',
+      newConfigTitle: 'New Config Title',
+      cancel: 'Cancel',
+      save: 'Save',
+      fieldName: 'Field Name',
+      placeholderName: 'Enter name',
+      fieldServerUrl: 'Field Server Url',
+      fieldUsername: 'Field Username',
+      fieldPassword: 'Field Password',
+      fieldDatabaseName: 'Field Database Name',
+      fieldSyncDirection: 'Field Sync Direction',
+      syncImportOnly: 'Sync Import Only',
+      syncExportOnly: 'Sync Export Only',
+      syncBidirectional: 'Sync Bidirectional',
+      fieldInterval: 'Field Interval',
+      interval15min: 'Interval15min',
+      interval30min: 'Interval30min',
+      interval1hour: 'Interval1hour',
+      interval6hours: 'Interval6hours',
+      interval1day: 'Interval1day'
     },
-
-    // -- Telegram (TelegramPage) --
     telegram: {
       title: 'Telegram Bot',
       subtitle: 'Telegram bot notification and command settings',
@@ -11204,7 +13581,6 @@ export const en: TranslationKeys = {
       toastDeactivated: 'Bot deactivated',
       toastError: 'Error saving',
       modalConfigTitle: 'Channel Configuration',
-      // TelegramPage keys
       breadcrumbSettings: 'Settings',
       tabSubscribers: 'Subscribers',
       tabMessages: 'Messages',
@@ -11248,10 +13624,8 @@ export const en: TranslationKeys = {
       fieldMessagePlaceholder: 'Enter message text...',
       testMessageSent: 'Test message sent',
       testMessageFailed: 'Error sending test message',
-      enterMessageText: 'Enter message text',
+      enterMessageText: 'Enter message text'
     },
-
-    // -- SBIS Settings (SbisSettingsPage) --
     sbis: {
       title: 'SBIS Settings',
       subtitle: 'SBIS integration configuration',
@@ -11280,7 +13654,6 @@ export const en: TranslationKeys = {
       toastSyncStarted: 'Document synchronization started',
       toastConnectionOk: 'SBIS connection established',
       toastConnectionError: 'SBIS connection error',
-      // SbisSettingsPage keys
       tabConfigs: 'Configurations',
       tabDocuments: 'Documents',
       add: 'Add',
@@ -11331,10 +13704,8 @@ export const en: TranslationKeys = {
       fieldKpp: 'Organization KPP',
       fieldCertificateThumbprint: 'Certificate Thumbprint',
       docStatusDelivered: 'Delivered',
-      docStatusCancelled: 'Cancelled',
+      docStatusCancelled: 'Cancelled'
     },
-
-    // -- EDO Settings (EdoSettingsPage) --
     edo: {
       title: 'Electronic Document Interchange',
       subtitle: 'EDI settings: Diadoc, SBIS EDI, Kontur',
@@ -11369,7 +13740,6 @@ export const en: TranslationKeys = {
       toastSaved: 'EDI settings saved',
       toastSigned: 'Document signed',
       toastRejected: 'Document rejected',
-      // EdoSettingsPage keys
       tabAll: 'All',
       tabInbox: 'Inbox',
       tabOutbox: 'Outbox',
@@ -11416,10 +13786,8 @@ export const en: TranslationKeys = {
       docStatusCreated: 'Created',
       docStatusSigning: 'Signing',
       docStatusDelivered: 'Delivered',
-      docStatusExpired: 'Expired',
+      docStatusExpired: 'Expired'
     },
-
-    // -- Weather (WeatherPage) --
     weather: {
       title: 'Weather Monitoring',
       subtitle: 'Weather data for construction sites',
@@ -11442,7 +13810,6 @@ export const en: TranslationKeys = {
       btnRefresh: 'Refresh Data',
       toastRefreshed: 'Data refreshed',
       toastSaved: 'Settings saved',
-      // WeatherPage keys
       breadcrumbSettings: 'Settings',
       settings: 'Settings',
       refresh: 'Refresh',
@@ -11477,13 +13844,11 @@ export const en: TranslationKeys = {
       intervalEveryHour: 'Every hour',
       intervalEvery2hours: 'Every 2 hours',
       fieldTempUnit: 'Temperature Units',
-      tempCelsius: 'Celsius (\u00B0C)',
-      tempFahrenheit: 'Fahrenheit (\u00B0F)',
+      tempCelsius: 'Celsius (°C)',
+      tempFahrenheit: 'Fahrenheit (°F)',
       fieldWindUnit: 'Wind Speed Units',
-      linkedSites: 'Linked Sites',
+      linkedSites: 'Linked Sites'
     },
-
-    // -- BIM (BimPage) --
     bim: {
       title: 'BIM Integration',
       subtitle: 'Building Information Model management',
@@ -11519,9 +13884,52 @@ export const en: TranslationKeys = {
       toastClashRunStarted: 'Clash detection started',
       emptyModels: 'No uploaded models',
       emptyClashes: 'No clashes detected',
+      fileStatusReady: 'File Status Ready',
+      fileStatusProcessing: 'File Status Processing',
+      fileStatusError: 'File Status Error',
+      fileStatusPending: 'File Status Pending',
+      severityCritical: 'Severity Critical',
+      severityMajor: 'Severity Major',
+      severityMinor: 'Severity Minor',
+      clashStatusOpen: 'Clash Status Open',
+      uploadSuccess: 'Upload Success',
+      uploadError: 'Upload Error',
+      exportSuccess: 'Export Success',
+      exportError: 'Export Error',
+      onlyIfcSupported: 'Only Ifc Supported',
+      colFile: 'Col File',
+      colFormat: 'Col Format',
+      colSize: 'Col Size',
+      colStatus: 'Status',
+      colElements: 'Col Elements',
+      colUploaded: 'Col Uploaded',
+      colUploadedBy: 'Col Uploaded By',
+      colDescription: 'Description',
+      colType: 'Type',
+      colSeverity: 'Col Severity',
+      colLocation: 'Location',
+      colClashStatus: 'Col Clash Status',
+      colDetected: 'Col Detected',
+      breadcrumbSettings: 'Settings',
+      exportVolumes: 'Export Volumes',
+      uploadIfc: 'Upload Ifc',
+      tabFiles: 'Tab Files',
+      tabClashes: 'Tab Clashes',
+      metricFilesUploaded: 'Metric Files Uploaded',
+      metricProcessed: 'Metric Processed',
+      metricElements: 'Metric Elements',
+      metricOpenClashes: 'Metric Open Clashes',
+      criticalCount: 'Critical Count',
+      uploading: 'Uploading',
+      dropZoneText: 'Drop Zone Text',
+      supportedFormat: 'Supported Format',
+      searchFiles: 'Search Files',
+      searchClashes: 'Search Clashes',
+      emptyFilesTitle: 'Empty Files Title',
+      emptyFilesDescription: 'Empty Files Description',
+      emptyClashesTitle: 'Empty Clashes Title',
+      emptyClashesDescription: 'Empty Clashes Description'
     },
-
-    // -- API Keys (ApiKeysPage) --
     apiKeys: {
       title: 'API Keys',
       subtitle: 'API access key management',
@@ -11557,14 +13965,222 @@ export const en: TranslationKeys = {
       toastCopied: 'Key copied to clipboard',
       emptyTitle: 'No API keys',
       emptyDescription: 'Create the first API key',
+      keyCreated: 'Key Created',
+      createError: 'Creation error',
+      keyRevoked: 'Key Revoked',
+      revokeError: 'Revoke Error',
+      enterKeyName: 'Enter Key Name',
+      keyCopied: 'Key Copied',
+      colRequests: 'Col Requests',
+      notUsed: 'Not Used',
+      permanent: 'Permanent',
+      colCreatedBy: 'Col Created By',
+      revoke: 'Revoke',
+      keysCount: 'Keys Count',
+      breadcrumbSettings: 'Settings',
+      createKey: 'Create Key',
+      tabAll: 'All',
+      tabActive: 'Active',
+      tabRevoked: 'Tab Revoked',
+      metricTotalKeys: 'Metric Total Keys',
+      metricTotalRequests: 'Metric Total Requests',
+      createKeyTitle: 'Create Key Title',
+      createKeyDescription: 'Create Key Description',
+      cancel: 'Cancel',
+      create: 'Create',
+      fieldKeyName: 'Field Key Name',
+      fieldKeyNamePlaceholder: 'Field Key Name Placeholder',
+      fieldExpiry: 'Field Expiry',
+      fieldExpiryHint: 'Field Expiry Hint',
+      expiry30days: 'Expiry30days',
+      expiry90days: 'Expiry90days',
+      expiry180days: 'Expiry180days',
+      expiry1year: 'Expiry1year',
+      expiry2years: 'Expiry2years',
+      expiryPermanent: 'Expiry Permanent',
+      keyCreatedTitle: 'Key Created Title',
+      keyCreatedDescription: 'Key Created Description',
+      done: 'Done',
+      fieldNameLabel: 'Field Name Label',
+      fieldApiKey: 'Field Api Key',
+      copy: 'Copy',
+      saveKeyWarning: 'Save Key Warning',
+      revokeKeyTitle: 'Revoke Key Title',
+      revokeKeyDescription: 'Revoke Key Description',
+      revokeFieldName: 'Revoke Field Name',
+      revokeFieldPrefix: 'Revoke Field Prefix',
+      revokeFieldRequests: 'Revoke Field Requests'
     },
+    govRegistries: {
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      statusError: 'Status Error',
+      checkStatusOk: 'Check Status Ok',
+      checkStatusWarning: 'Check Status Warning',
+      checkStatusError: 'Check Status Error',
+      checkStatusNotFound: 'Check Status Not Found',
+      riskLow: 'Risk Low',
+      riskMedium: 'Risk Medium',
+      riskHigh: 'Risk High',
+      riskCritical: 'Risk Critical',
+      toastConfigUpdated: 'Toast Config Updated',
+      toastConfigError: 'Toast Config Error',
+      toastCheckComplete: 'Toast Check Complete',
+      toastCheckError: 'Toast Check Error',
+      innRequired: 'Inn Required',
+      innInvalid: 'Inn Invalid',
+      colType: 'Type',
+      colDescription: 'Description',
+      colStatus: 'Status',
+      colApiUrl: 'Col Api Url',
+      colLastCheck: 'Col Last Check',
+      colActions: 'Col Actions',
+      actionDisable: 'Action Disable',
+      actionEnable: 'Action Enable',
+      histColDate: 'Hist Col Date',
+      histColInn: 'Hist Col Inn',
+      histColRegistry: 'Hist Col Registry',
+      histColStatus: 'Hist Col Status',
+      histColRisk: 'Hist Col Risk',
+      histColSource: 'Hist Col Source',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      breadcrumbIntegrations: 'Breadcrumb Integrations',
+      tabConfigs: 'Tab Configs',
+      tabCheckCounterparty: 'Tab Check Counterparty',
+      tabHistory: 'Tab History',
+      summaryTitle: 'Summary Title',
+      summaryDescription: 'Summary Description',
+      metricTotal: 'Total',
+      metricActive: 'Active',
+      metricErrors: 'Metric Errors',
+      metricChecks: 'Metric Checks',
+      emptyConfigsTitle: 'Empty Configs Title',
+      emptyConfigsDescription: 'Empty Configs Description',
+      checkTitle: 'Check Title',
+      checkInnLabel: 'Check Inn Label',
+      checkInnPlaceholder: 'Check Inn Placeholder',
+      checkButton: 'Check Button',
+      checkHint: 'Check Hint',
+      resultInn: 'Result Inn',
+      resultOverallRisk: 'Result Overall Risk',
+      resultCheckedAt: 'Result Checked At',
+      resultStatus: 'Result Status',
+      resultSource: 'Result Source',
+      resultDate: 'Result Date',
+      emptyHistoryTitle: 'Empty History Title',
+      emptyHistoryDescription: 'Empty History Description'
+    },
+    sms: {
+      statusPending: 'Pending',
+      statusSent: 'Status Sent',
+      statusDelivered: 'Status Delivered',
+      statusFailed: 'Failed',
+      configSaved: 'Config Saved',
+      configError: 'Config Error',
+      messageSent: 'Message Sent',
+      sendError: 'Send Error',
+      colRecipient: 'Col Recipient',
+      colText: 'Col Text',
+      colStatus: 'Status',
+      colSentAt: 'Col Sent At',
+      colDeliveredAt: 'Col Delivered At',
+      colCost: 'Col Cost',
+      currency: 'Currency',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      breadcrumbIntegrations: 'Breadcrumb Integrations',
+      sendMessage: 'Send Message',
+      tabConfig: 'Tab Config',
+      tabMessages: 'Tab Messages',
+      providerLabel: 'Provider Label',
+      notConfigured: 'Not Configured',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      metricMessages: 'Metric Messages',
+      metricBalance: 'Metric Balance',
+      metricDelivered: 'Metric Delivered',
+      configTitle: 'Config Title',
+      fieldProvider: 'Field Provider',
+      fieldApiUrl: 'Field Api Url',
+      hintApiUrl: 'Hint Api Url',
+      fieldApiKey: 'Field Api Key',
+      fieldSenderName: 'Field Sender Name',
+      hintSenderName: 'Hint Sender Name',
+      toggleEnabled: 'Toggle Enabled',
+      toggleDisabled: 'Toggle Disabled',
+      balanceLabel: 'Balance Label',
+      save: 'Save',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found',
+      sendModalTitle: 'Send Modal Title',
+      cancel: 'Cancel',
+      sendButton: 'Send Button',
+      fieldRecipient: 'Field Recipient',
+      fieldText: 'Field Text',
+      placeholderText: 'Placeholder Text',
+      charCount: 'Char Count'
+    },
+    webdav: {
+      statusSynced: 'Status Synced',
+      statusPending: 'Pending',
+      statusConflict: 'Status Conflict',
+      statusError: 'Status Error',
+      connConnected: 'Conn Connected',
+      connDisconnected: 'Conn Disconnected',
+      connError: 'Conn Error',
+      configSaved: 'Config Saved',
+      configError: 'Config Error',
+      syncComplete: 'Sync Complete',
+      syncError: 'Sync Error',
+      testSuccess: 'Test Success',
+      ms: 'Ms',
+      testFailed: 'Test Failed',
+      fileSynced: 'File Synced',
+      fileSyncError: 'File Sync Error',
+      colFileName: 'Col File Name',
+      colRemotePath: 'Col Remote Path',
+      colSize: 'Col Size',
+      colSyncStatus: 'Col Sync Status',
+      colLastModified: 'Col Last Modified',
+      colSyncedAt: 'Col Synced At',
+      syncFile: 'Sync File',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      breadcrumbIntegrations: 'Breadcrumb Integrations',
+      syncAll: 'Sync All',
+      tabConfig: 'Tab Config',
+      tabFiles: 'Tab Files',
+      notConfigured: 'Not Configured',
+      metricFiles: 'Metric Files',
+      metricSynced: 'Metric Synced',
+      metricConflicts: 'Metric Conflicts',
+      metricErrors: 'Metric Errors',
+      configTitle: 'Config Title',
+      fieldServerUrl: 'Field Server Url',
+      fieldUsername: 'Field Username',
+      fieldPassword: 'Field Password',
+      fieldBasePath: 'Field Base Path',
+      hintBasePath: 'Hint Base Path',
+      autoSyncLabel: 'Auto Sync Label',
+      interval15: 'Interval15',
+      interval30: 'Interval30',
+      interval60: 'Interval60',
+      interval360: 'Interval360',
+      interval1440: 'Interval1440',
+      toggleEnabled: 'Toggle Enabled',
+      toggleDisabled: 'Toggle Disabled',
+      lastTested: 'Last Tested',
+      testConnection: 'Test Connection',
+      save: 'Save',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Change Management
-  // ---------------------------------------------------------------------------
   changeManagement: {
-    // -- Change Order List (ChangeOrderListPage) --
     orderList: {
       title: 'Change Orders',
       subtitleOrders: 'orders',
@@ -11606,10 +14222,8 @@ export const en: TranslationKeys = {
       toastDeleted: 'Orders deleted',
       toastDeleteError: 'Error deleting orders',
       emptyTitle: 'No change orders',
-      emptyDescription: 'Create the first change order',
+      emptyDescription: 'Create the first change order'
     },
-
-    // -- Change Order Detail (ChangeOrderDetailPage) --
     orderDetail: {
       breadcrumbHome: 'Home',
       breadcrumbChangeManagement: 'Change Management',
@@ -11653,10 +14267,8 @@ export const en: TranslationKeys = {
       linkedEvents: 'Linked Events',
       actions: 'Actions',
       exportPdf: 'Export to PDF',
-      print: 'Print',
+      print: 'Print'
     },
-
-    // -- Change Order Board (ChangeOrderBoardPage) --
     orderBoard: {
       title: 'Change Orders - Board',
       subtitleSuffix: 'orders',
@@ -11680,9 +14292,14 @@ export const en: TranslationKeys = {
       priorityCritical: 'Critical',
       emptyColumn: 'No orders',
       emptyColumnHint: 'Drag a card here',
+      subtitleOrders: 'Subtitle Orders',
+      filters: 'Filters',
+      newOrder: 'New Order',
+      allStatuses: 'All Statuses',
+      reset: 'Reset',
+      noOrders: 'No Orders',
+      dragHere: 'Drag Here'
     },
-
-    // -- Change Event List (ChangeEventListPage) --
     eventList: {
       title: 'Change Events',
       subtitleSuffix: 'change events',
@@ -11724,9 +14341,20 @@ export const en: TranslationKeys = {
       colDate: 'Date',
       emptyTitle: 'No change events',
       emptyDescription: 'Create the first change event to get started',
+      filterIdentified: 'Filter Identified',
+      filterEvaluating: 'Filter Evaluating',
+      filterPendingApproval: 'Filter Pending Approval',
+      filterApproved: 'Filter Approved',
+      filterRejected: 'Filter Rejected',
+      filterIssue: 'Filter Issue',
+      filterDesignChange: 'Filter Design Change',
+      filterOwnerRequest: 'Filter Owner Request',
+      filterFieldCondition: 'Filter Field Condition',
+      filterRegulatory: 'Filter Regulatory',
+      days: 'Days',
+      colInitiator: 'Col Initiator',
+      subtitleEvents: 'Subtitle Events'
     },
-
-    // -- Change Event Detail (ChangeEventDetailPage) --
     eventDetail: {
       breadcrumbHome: 'Home',
       breadcrumbChangeManagement: 'Change Management',
@@ -11761,9 +14389,27 @@ export const en: TranslationKeys = {
       actionsTitle: 'Actions',
       actionCreateOrder: 'Create Change Order',
       actionExportPdf: 'Export to PDF',
+      approvalProcess: 'Approval Process',
+      description: 'Description',
+      impactAssessment: 'Impact Assessment',
+      costImpact: 'Cost Impact',
+      scheduleImpact: 'Schedule Impact',
+      noChange: 'No Change',
+      linkedItems: 'Linked Items',
+      issue: 'Issue',
+      details: 'Details',
+      initiator: 'Initiator',
+      approvedBy: 'Approved By',
+      created: 'Created',
+      approved: 'Approved',
+      project: 'Project',
+      cost: 'Cost',
+      schedule: 'Schedule',
+      daysShort: 'Days Short',
+      actions: 'Actions',
+      createChangeOrder: 'Create Change Order',
+      exportPdf: 'Export Pdf'
     },
-
-    // -- Change Event Create Modal (ChangeEventCreateModal) --
     eventCreate: {
       modalTitle: 'New Change Event',
       modalDescription: 'Record a potential project change',
@@ -11799,14 +14445,18 @@ export const en: TranslationKeys = {
       projectGorizont: 'BC "Gorizont"',
       projectBridge: 'Bridge over Vyatka River',
       projectCentralny: 'SC "Centralny"',
+      validationTitleMax: 'Validation Title Max',
+      validationDescriptionMax: 'Validation Description Max',
+      toastSuccess: 'Toast Success',
+      toastError: 'Toast Error',
+      cancel: 'Cancel',
+      createButton: 'Create Button'
     },
+    analytics: {
+      affectedWbsNodes: 'Affected Wbs Nodes'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Maintenance Module
-  // ---------------------------------------------------------------------------
   maintenance: {
-    // EquipmentListPage
     title: 'Equipment',
     unitsCount: '{count} units',
     breadcrumbHome: 'Home',
@@ -11837,8 +14487,6 @@ export const en: TranslationKeys = {
     colTeam: 'Team',
     emptyEquipmentTitle: 'No equipment',
     emptyEquipmentDescription: 'Add the first piece of equipment',
-
-    // MaintenanceRequestListPage
     requestsTitle: 'Maintenance requests',
     requestsCount: '{count} requests',
     breadcrumbRequests: 'Requests',
@@ -11878,8 +14526,6 @@ export const en: TranslationKeys = {
     bulkDeleteError: 'Error deleting',
     emptyRequestsTitle: 'No maintenance requests',
     emptyRequestsDescription: 'Create the first request to get started',
-
-    // MaintenanceRequestFormPage
     equipmentOptionCrane: 'Tower crane KB-403',
     equipmentOptionExcavator: 'Excavator CAT 320',
     equipmentOptionPump: 'Concrete pump Putzmeister BSA',
@@ -11887,8 +14533,6 @@ export const en: TranslationKeys = {
     equipmentOptionGenerator: 'Generator Caterpillar DE220',
     equipmentOptionWelder: 'Welding machine Lincoln V350',
     placeholderRequestTitle: 'Crane winch bearing replacement',
-
-    // MaintenanceBoardPage
     boardTitle: 'Maintenance - Board',
     boardRequestsCount: '{count} requests',
     boardBreadcrumb: 'Board',
@@ -11906,8 +14550,6 @@ export const en: TranslationKeys = {
     boardPriorityCritical: 'Critical',
     boardNoRequests: 'No requests',
     boardDragHint: 'Drag card here',
-
-    // MaintenanceDashboardPage
     dashboardTitle: 'Maintenance - Dashboard',
     dashboardSubtitle: 'Maintenance overview',
     dashboardBreadcrumb: 'Dashboard',
@@ -11930,14 +14572,9 @@ export const en: TranslationKeys = {
     quickActionsTitle: 'Quick actions',
     quickAllRequests: 'All requests',
     quickEquipment: 'Equipment',
-    quickCreateRequest: 'Create request',
+    quickCreateRequest: 'Create request'
   },
-
-  // ---------------------------------------------------------------------------
-  // Design Module
-  // ---------------------------------------------------------------------------
   design: {
-    // DesignReviewPage
     reviewsTitle: 'Design documentation reviews',
     reviewsSubtitle: '{count} reviews in system',
     breadcrumbHome: 'Home',
@@ -11970,8 +14607,6 @@ export const en: TranslationKeys = {
     versionLabel: 'Version {version}',
     emptyReviewsTitle: 'No reviews',
     emptyReviewsDescription: 'No design documentation reviews found',
-
-    // DesignSectionListPage
     sectionsTitle: 'Design documentation sections',
     sectionsSubtitle: '{count} sections in system',
     breadcrumbSections: 'Sections',
@@ -11993,8 +14628,6 @@ export const en: TranslationKeys = {
     versionStatusSuperseded: 'Superseded',
     versionStatusRejected: 'Rejected',
     versionStatusArchived: 'Archived',
-
-    // DesignVersionListPage
     versionsTitle: 'Design documentation versions',
     versionsSubtitle: '{count} versions in system',
     breadcrumbVersions: 'Versions',
@@ -12018,15 +14651,11 @@ export const en: TranslationKeys = {
     colReviewCount: 'Reviews',
     emptyVersionsTitle: 'No documentation versions',
     emptyVersionsDescription: 'Create the first design documentation version',
-
-    // DesignVersionFormPage
     projectOptionSolnechny: 'RC "Solnechny"',
     projectOptionHorizont: 'BC "Horizont"',
     projectOptionBridge: 'Bridge over Vyatka River',
     projectOptionCentral: 'SC "Central"',
     placeholderVersionName: 'Architectural solutions - Section A',
-
-    // DesignReviewBoardPage
     reviewBoardTitle: 'Design documentation review - Board',
     reviewBoardSubtitle: '{count} sections',
     reviewBoardBreadcrumb: 'Board',
@@ -12044,14 +14673,9 @@ export const en: TranslationKeys = {
     reviewBoardPriorityCritical: 'Critical',
     reviewBoardNoSections: 'No sections',
     reviewBoardDragHint: 'Drag card here',
-    reviewBoardCommentsAbbrev: 'comments',
+    reviewBoardCommentsAbbrev: 'comments'
   },
-
-  // ---------------------------------------------------------------------------
-  // Data Exchange Module
-  // ---------------------------------------------------------------------------
   dataExchange: {
-    // Common entity type labels
     entityProjects: 'Projects',
     entityContracts: 'Contracts',
     entityMaterials: 'Materials',
@@ -12060,13 +14684,9 @@ export const en: TranslationKeys = {
     entityWbs: 'Work breakdown structure',
     entityBudgetItems: 'Budget items',
     entityInvoices: 'Invoices',
-
-    // Common direction labels
     directionImport: 'Import',
     directionExport: 'Export',
     directionBidirectional: 'Bidirectional',
-
-    // ExportJobListPage
     exportTitle: 'Data export',
     exportSubtitle: '{count} export jobs',
     breadcrumbHome: 'Home',
@@ -12104,8 +14724,6 @@ export const en: TranslationKeys = {
     fileSizeB: '{size} B',
     fileSizeKB: '{size} KB',
     fileSizeMB: '{size} MB',
-
-    // ImportJobListPage
     importTitle: 'Data import',
     importSubtitle: '{count} import jobs',
     breadcrumbImport: 'Import',
@@ -12132,8 +14750,6 @@ export const en: TranslationKeys = {
     errorsAbbrev: 'err.',
     emptyImportTitle: 'No import jobs',
     emptyImportDescription: 'Upload a file to start importing data',
-
-    // OneCConfigPage
     onecTitle: '1C Integration',
     onecSubtitle: '{count} connections',
     breadcrumbOnec: '1C Integration',
@@ -12162,8 +14778,6 @@ export const en: TranslationKeys = {
     syncButton: 'Sync',
     emptyOnecTitle: 'No 1C connections',
     emptyOnecDescription: 'Set up the first connection to a 1C database',
-
-    // OneCExchangeLogPage
     exchangeLogTitle: '1C Exchange log',
     exchangeLogSubtitle: '{count} records',
     breadcrumbExchangeLog: '1C Exchange log',
@@ -12199,8 +14813,6 @@ export const en: TranslationKeys = {
     secondsAbbrev: 's',
     emptyLogTitle: 'No exchange records',
     emptyLogDescription: 'Records will appear after the first synchronization with 1C',
-
-    // MappingConfigPage
     mappingTitle: 'Field mapping configuration',
     mappingSubtitle: 'Import column to system field mapping',
     breadcrumbMapping: 'Mapping',
@@ -12233,8 +14845,6 @@ export const en: TranslationKeys = {
     helpTargetField: 'System field -- technical field name in the database',
     helpTransformations: 'Transformations: PARSE_DATE converts date strings, PARSE_NUMBER -- numbers, LOOKUP searches by reference',
     helpRequired: 'Required fields will cause an error if the value is missing',
-
-    // MappingConfigPage - source column names (data, not UI labels per se, but displayed)
     mappingSourceName: 'Name',
     mappingSourceProductCode: 'Product code',
     mappingSourceCategory: 'Category',
@@ -12249,14 +14859,9 @@ export const en: TranslationKeys = {
     mappingSourceContractNumber: 'Contract number',
     mappingSourceContractor: 'Contractor',
     mappingSourceAmount: 'Amount',
-    mappingSourceContractDate: 'Contract date',
+    mappingSourceContractDate: 'Contract date'
   },
-
-  // ---------------------------------------------------------------------------
-  // BIM Module
-  // ---------------------------------------------------------------------------
   bim: {
-    // BimModelListPage
     modelsTitle: 'BIM Models',
     modelsSubtitle: '{count} models in system',
     breadcrumbHome: 'Home',
@@ -12288,8 +14893,6 @@ export const en: TranslationKeys = {
     statusError: 'Error',
     emptyModelsTitle: 'No models',
     emptyModelsDescription: 'Upload the first BIM model',
-
-    // ClashDetectionPage
     clashTitle: 'Clash detection',
     clashSubtitle: '{count} clashes found',
     breadcrumbClashes: 'Clashes',
@@ -12320,8 +14923,6 @@ export const en: TranslationKeys = {
     notAssigned: 'Not assigned',
     emptyClashTitle: 'No clashes detected',
     emptyClashDescription: 'Run a check to detect clashes',
-
-    // DesignPackagePage
     packagesTitle: 'Design packages',
     packagesSubtitle: '{count} packages in system',
     breadcrumbPackages: 'Design packages',
@@ -12354,8 +14955,6 @@ export const en: TranslationKeys = {
     packageStatusSuperseded: 'Superseded',
     emptyPackagesTitle: 'No packages',
     emptyPackagesDescription: 'Create the first design package',
-
-    // BimModelDetailPage
     breadcrumbBimModels: 'BIM models',
     newVersionButton: 'New version',
     editButton: 'Edit',
@@ -12390,16 +14989,12 @@ export const en: TranslationKeys = {
     detailLastModified: 'Last modified',
     detailCreated: 'Created',
     detailUpdated: 'Updated',
-
-    // BimModelDetailPage - status labels
     modelStatusDraft: 'Draft',
     modelStatusInProgress: 'In progress',
     modelStatusReview: 'In review',
     modelStatusApproved: 'Approved',
     modelStatusPublished: 'Published',
     modelStatusArchived: 'Archived',
-
-    // ClashBoardPage
     clashBoardTitle: 'BIM Clashes - Board',
     clashBoardSubtitle: '{count} clashes',
     clashBoardBreadcrumb: 'Board',
@@ -12418,8 +15013,6 @@ export const en: TranslationKeys = {
     clashBoardSeverityCritical: 'Critical',
     clashBoardNoClashes: 'No clashes',
     clashBoardDragHint: 'Drag card here',
-
-    // ClashDetectionResultsPage
     clashResultTitle: 'Clash Detection Results',
     clashResultSubtitle: '{count} results found',
     clashResultBreadcrumb: 'Clash Results',
@@ -12458,8 +15051,6 @@ export const en: TranslationKeys = {
     clashResultDetailDetectedDate: 'Detected date',
     clashResultMarkResolved: 'Mark as resolved',
     clashResultMarkIgnored: 'Ignore',
-
-    // DefectHeatmapPage
     heatmapTitle: 'Defect Heatmap',
     heatmapSubtitle: 'Defect density visualization by area',
     heatmapBreadcrumb: 'Heatmap',
@@ -12477,8 +15068,6 @@ export const en: TranslationKeys = {
     heatmapFilterAllTypes: 'All types',
     heatmapFilterAllSeverities: 'All severities',
     heatmapNoDefectsInZone: 'No defects found',
-
-    // ConstructionProgressPage
     progressTitle: '4D Construction Progress',
     progressSubtitle: '{count} elements in schedule',
     progressBreadcrumb: '4D Progress',
@@ -12501,8 +15090,6 @@ export const en: TranslationKeys = {
     progressMetricDelayed: 'Delayed',
     progressEmptyTitle: 'No progress data',
     progressEmptyDescription: 'Construction progress data will appear after BIM model sync',
-
-    // PropertySetsPage
     propSetsTitle: 'Element Specifications',
     propSetsSubtitle: '{count} elements in model',
     propSetsBreadcrumb: 'Specifications',
@@ -12522,8 +15109,6 @@ export const en: TranslationKeys = {
     propSetsColValue: 'Value',
     propSetsColUnit: 'Unit',
     propSetsEmpty: 'empty',
-
-    // BcfIssuesPage
     bcfTitle: 'BCF Issues',
     bcfSubtitle: '{count} topics in system',
     bcfBreadcrumb: 'BCF Issues',
@@ -12578,13 +15163,36 @@ export const en: TranslationKeys = {
     bcfNoComments: 'No comments yet',
     bcfCommentPlaceholder: 'Write a comment...',
     bcfSendComment: 'Send',
+    linking: {
+      toastLinked: 'Toast Linked',
+      toastUnlinked: 'Toast Unlinked',
+      linkedClashesCount: 'Linked Clashes Count',
+      linkedClashes: 'Linked Clashes',
+      linkClash: 'Link Clash',
+      noLinkedClashes: 'No Linked Clashes',
+      noLinkedClashesDescription: 'No Linked Clashes Description',
+      unlinkItem: 'Unlink Item',
+      cancelButton: 'Cancel Button',
+      linkButton: 'Link Button',
+      noResultsFound: 'No Results Found',
+      entityTypeIssue: 'Entity Type Issue',
+      entityTypeRfi: 'Entity Type Rfi',
+      entityTypeChangeOrder: 'Entity Type Change Order',
+      entityTypeDefect: 'Entity Type Defect',
+      toastCreateIssueHint: 'Toast Create Issue Hint',
+      linkedItemsCount: 'Linked Items Count',
+      linkedItems: 'Linked Items',
+      createIssueFromClash: 'Create Issue From Clash',
+      linkItem: 'Link Item',
+      emptyState: 'Empty State',
+      emptyStateDescription: 'Empty State Description',
+      linkedAt: 'Linked At',
+      linkModalTitle: 'Link Modal Title',
+      linkModalDescription: 'Link Modal Description',
+      searchPlaceholder: 'Search...'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Accounting module
-  // ---------------------------------------------------------------------------
   accounting: {
-    // Breadcrumbs & navigation
     breadcrumbHome: 'Home',
     breadcrumbAccounting: 'Accounting',
     breadcrumbChartOfAccounts: 'Chart of Accounts',
@@ -12594,15 +15202,11 @@ export const en: TranslationKeys = {
     breadcrumbFixedAssets: 'Fixed Assets',
     breadcrumbEditing: 'Edit',
     breadcrumbCreating: 'Create',
-
-    // Common
     retry: 'Retry',
     checkConnectionRetry: 'Check your connection and try again',
     checkConnectionTryAgain: 'Check your connection and try again',
     system: 'System',
     notSpecified: 'Not specified',
-
-    // Dashboard
     dashboardTitle: 'Accounting',
     dashboardSubtitle: 'Accounting summary',
     dashboardErrorTitle: 'Failed to load accounting data',
@@ -12630,8 +15234,6 @@ export const en: TranslationKeys = {
     recentEntriesTitle: 'Recent Entries',
     dashboardEmptyTitle: 'No entries',
     dashboardEmptyDescription: 'Entries will appear after the first transaction',
-
-    // Dashboard columns
     colNumber: '#',
     colDate: 'Date',
     colDescription: 'Description',
@@ -12639,8 +15241,6 @@ export const en: TranslationKeys = {
     colCredit: 'Credit',
     colAmount: 'Amount',
     colAuthor: 'Author',
-
-    // Chart of accounts
     chartTitle: 'Chart of Accounts',
     chartSubtitle: 'Total accounts: {count}',
     chartErrorTitle: 'Failed to load chart of accounts',
@@ -12655,8 +15255,6 @@ export const en: TranslationKeys = {
     chartAnalytical: 'Analytical',
     chartSynthetic: 'Synthetic',
     chartEmpty: 'Chart of accounts is empty.',
-
-    // Journal entries list
     journalTitle: 'Journal Entries',
     journalSubtitle: '{count} entries | Filtered: {amount}',
     journalSubtitleAccounting: 'Accounting journal entries',
@@ -12687,8 +15285,6 @@ export const en: TranslationKeys = {
     journalBulkDeleteCancel: 'Cancel',
     journalEmptyTitle: 'No entries',
     journalEmptyDescription: 'Create your first accounting entry',
-
-    // Journal entry detail
     detailSubtitle: 'Accounting entry',
     detailLoadingSubtitle: 'Loading...',
     detailViewSubtitle: 'Detail view',
@@ -12720,8 +15316,6 @@ export const en: TranslationKeys = {
     detailLabelPeriodUuid: 'Period UUID',
     detailLabelJournalUuid: 'Journal UUID',
     detailAmountTitle: 'Amount',
-
-    // Journal entry form
     formTitle: 'Entry',
     formEditTitle: 'Edit Entry',
     formCreateTitle: 'New Entry',
@@ -12771,8 +15365,6 @@ export const en: TranslationKeys = {
     formCreateError: 'Failed to create entry',
     formUpdateSuccess: 'Entry updated',
     formUpdateError: 'Failed to update entry',
-
-    // Zod validation messages
     validationInvalidUuid: 'Invalid UUID format',
     validationDateRequired: 'Entry date is required',
     validationDescriptionRequired: 'Description is required',
@@ -12782,8 +15374,6 @@ export const en: TranslationKeys = {
     validationDocTypeMax: 'Maximum 50 characters',
     validationNotesMax: 'Maximum 2000 characters',
     validationInvalidDocUuid: 'Invalid document UUID',
-
-    // Financial journals
     fjTitle: 'Financial Journals',
     fjSubtitle: 'Reference of accounting journals',
     fjSubtitleCount: '{count} journals',
@@ -12823,15 +15413,11 @@ export const en: TranslationKeys = {
     fjTypeSales: 'Sales',
     fjTypePurchase: 'Purchase',
     fjTypeGeneral: 'General',
-
-    // Zod validation for financial journals
     fjValidationCodeMin: 'Minimum 2 characters',
     fjValidationCodeMax: 'Maximum 20 characters',
     fjValidationCodeFormat: 'Only Latin letters, digits, "_" and "-"',
     fjValidationNameMin: 'Minimum 2 characters',
     fjValidationNameMax: 'Maximum 500 characters',
-
-    // Fixed assets
     faTitle: 'Fixed Assets',
     faSubtitleRegistry: 'Asset Registry',
     faSubtitleCount: '{count} fixed assets',
@@ -12862,12 +15448,8 @@ export const en: TranslationKeys = {
     faStatusDisposed: 'Disposed',
     faDeprLinear: 'Straight-Line',
     faDeprReducingBalance: 'Declining Balance',
-    faDeprSumOfYears: 'Sum-of-Years-Digits',
+    faDeprSumOfYears: 'Sum-of-Years-Digits'
   },
-
-  // ---------------------------------------------------------------------------
-  // PTO Module
-  // ---------------------------------------------------------------------------
   pto: {
     breadcrumbHome: 'Home',
     breadcrumbPto: 'PTO',
@@ -12876,7 +15458,6 @@ export const en: TranslationKeys = {
     breadcrumbWorkPermits: 'Work Permits',
     breadcrumbLabTests: 'Lab Tests',
     breadcrumbKs6: 'KS-6 Journal',
-
     ks6Title: 'KS-6 Journal - Calendar',
     ks6Subtitle: 'Daily record of completed works in KS-6 format',
     ks6IntensityLabel: 'Work intensity:',
@@ -12915,7 +15496,6 @@ export const en: TranslationKeys = {
     ks6DayFri: 'Fri',
     ks6DaySat: 'Sat',
     ks6DaySun: 'Sun',
-
     boardTitle: 'PTO Documents - Board',
     boardSubtitle: '{count} documents',
     boardFilters: 'Filters',
@@ -12933,7 +15513,6 @@ export const en: TranslationKeys = {
     boardPriorityCritical: 'Critical',
     boardNoDocuments: 'No documents',
     boardDragHint: 'Drag card here',
-
     docListTitle: 'PTO Documentation',
     docListSubtitle: '{count} documents in system',
     docListNewDocument: 'New document',
@@ -12968,7 +15547,6 @@ export const en: TranslationKeys = {
     docListStatusApproved: 'Approved',
     docListStatusRejected: 'Rejected',
     docListStatusArchived: 'Archived',
-
     docDetailLoading: 'Loading...',
     docDetailBreadcrumbDocuments: 'PTO Documents',
     docDetailContent: 'Content',
@@ -12997,7 +15575,6 @@ export const en: TranslationKeys = {
     docDetailActionReject: 'Reject',
     docDetailActionSigned: 'Signed',
     docDetailActionRevise: 'Revise',
-
     wpListTitle: 'Work Permits',
     wpListSubtitle: '{count} work permits',
     wpListNewPermit: 'New work permit',
@@ -13031,7 +15608,6 @@ export const en: TranslationKeys = {
     wpStatusExpired: 'Expired',
     wpStatusClosed: 'Closed',
     wpStatusSuspended: 'Suspended',
-
     wpDetailLoading: 'Loading...',
     wpDetailBreadcrumbPermits: 'Work Permits',
     wpDetailDescriptionTitle: 'Work description',
@@ -13078,7 +15654,6 @@ export const en: TranslationKeys = {
     wpDetailTypeElectrical: 'Electrical work',
     wpDetailTypeCrane: 'Crane operations',
     wpDetailTypeDemolition: 'Demolition work',
-
     labTestTitle: 'Laboratory Tests',
     labTestSubtitle: '{count} tests',
     labTestNewTest: 'New test',
@@ -13117,12 +15692,8 @@ export const en: TranslationKeys = {
     labTestResultPassed: 'Passed',
     labTestResultFailed: 'Failed',
     labTestResultConditional: 'Conditionally passed',
-    labTestResultPending: 'Pending',
+    labTestResultPending: 'Pending'
   },
-
-  // ---------------------------------------------------------------------------
-  // Closeout Module
-  // ---------------------------------------------------------------------------
   closeout: {
     breadcrumbHome: 'Home',
     breadcrumbCloseout: 'Closeout',
@@ -13135,7 +15706,6 @@ export const en: TranslationKeys = {
     checkConnection: 'Check your connection and try again',
     retryAction: 'Retry',
     openAction: 'Open',
-
     dashboardTitle: 'Project Closeout',
     dashboardSubtitle: 'Overview of commissioning, handover, and warranty obligations',
     dashboardMetricTotalChecklists: 'Total checklists',
@@ -13169,7 +15739,6 @@ export const en: TranslationKeys = {
     dashboardColDefect: 'Defect',
     dashboardColClaimStatus: 'Status',
     dashboardColEstimate: 'Estimate',
-
     commListTitle: 'Commissioning Works',
     commListSubtitle: '{count} checklists in system',
     commListBoardButton: 'Board',
@@ -13195,7 +15764,6 @@ export const en: TranslationKeys = {
     commListColPassedFailed: 'Passed / Failed',
     commListColInspector: 'Inspector',
     commListColInspectionDate: 'Inspection date',
-
     commDetailChecklistTitle: 'Commissioning Checklist',
     commDetailErrorTitle: 'Failed to load checklist',
     commDetailLoading: 'Loading checklist...',
@@ -13215,7 +15783,6 @@ export const en: TranslationKeys = {
     commDetailInspectionDate: 'Inspection date',
     commDetailProject: 'Project',
     commDetailCreatedAt: 'Created',
-
     commBoardTitle: 'Commissioning - Board',
     commBoardSubtitle: '{count} objects',
     commBoardFilters: 'Filters',
@@ -13234,13 +15801,11 @@ export const en: TranslationKeys = {
     commBoardDragHint: 'Drag card here',
     commBoardErrorTitle: 'Failed to load commissioning board',
     commBoardStatusError: 'Failed to update checklist status',
-
     commStatusNotStarted: 'Not started',
     commStatusInProgress: 'In progress',
     commStatusCompleted: 'Completed',
     commStatusFailed: 'Failed',
     commStatusOnHold: 'On hold',
-
     handoverListTitle: 'Document Handover',
     handoverListSubtitle: '{count} packages in system',
     handoverListNewPackage: 'New package',
@@ -13269,7 +15834,6 @@ export const en: TranslationKeys = {
     handoverStatusSubmitted: 'Submitted',
     handoverStatusAccepted: 'Accepted',
     handoverStatusRejected: 'Rejected',
-
     handoverDetailTitle: 'Handover Package',
     handoverDetailErrorTitle: 'Failed to load handover package',
     handoverDetailLoading: 'Loading handover package...',
@@ -13287,7 +15851,6 @@ export const en: TranslationKeys = {
     handoverDetailAcceptedDate: 'Acceptance date',
     handoverDetailAcceptedBy: 'Accepted by',
     handoverDetailCreatedAt: 'Created',
-
     warrantyListTitle: 'Warranty Claims',
     warrantyListSubtitle: '{count} claims in system',
     warrantyListNewClaim: 'New claim',
@@ -13312,7 +15875,6 @@ export const en: TranslationKeys = {
     warrantyListColEstimatedCost: 'Estimated cost',
     warrantyListColReporter: 'Reporter',
     warrantyListColWarrantyExpiry: 'Warranty until',
-
     warrantyDetailTitle: 'Warranty Claim',
     warrantyDetailErrorTitle: 'Failed to load claim',
     warrantyDetailLoading: 'Loading warranty claim...',
@@ -13331,7 +15893,6 @@ export const en: TranslationKeys = {
     warrantyDetailWarrantyExpiry: 'Warranty until',
     warrantyDetailResolvedDate: 'Resolution date',
     warrantyDetailCreatedAt: 'Created',
-
     warrantyStatusOpen: 'Open',
     warrantyStatusInReview: 'In review',
     warrantyStatusApproved: 'Approved',
@@ -13339,7 +15900,6 @@ export const en: TranslationKeys = {
     warrantyStatusResolved: 'Resolved',
     warrantyStatusRejected: 'Rejected',
     warrantyStatusClosed: 'Closed',
-
     defectTypeStructural: 'Structural',
     defectTypeMechanical: 'Mechanical',
     defectTypeElectrical: 'Electrical',
@@ -13347,8 +15907,6 @@ export const en: TranslationKeys = {
     defectTypeFinishing: 'Finishing',
     defectTypeWaterproofing: 'Waterproofing',
     defectTypeOther: 'Other',
-
-    // --- WarrantyObligationListPage ---
     warrantyOblTitle: 'Warranty Obligations',
     warrantyOblSubtitle: 'Manage warranty obligations across projects',
     warrantyOblCreate: 'New obligation',
@@ -13381,8 +15939,6 @@ export const en: TranslationKeys = {
     warrantyOblFieldCoverage: 'Coverage',
     warrantyOblFieldExclusions: 'Exclusions',
     warrantyOblFieldNotes: 'Notes',
-
-    // --- ZosDocumentListPage ---
     zosTitle: 'ZOS Documents',
     zosSubtitle: 'Compliance conclusions',
     zosCreate: 'New ZOS',
@@ -13408,8 +15964,6 @@ export const en: TranslationKeys = {
     zosFieldIssuedByOrg: 'Organization',
     zosFieldConclusion: 'Conclusion',
     zosFieldRemarks: 'Remarks',
-
-    // --- CommissioningChecklistPage ---
     commChecklistTitle: 'Commissioning Readiness Checklist',
     commChecklistSubtitle: 'System readiness for commissioning',
     commChecklistStatusCompleted: 'Completed',
@@ -13431,8 +15985,6 @@ export const en: TranslationKeys = {
     commChecklistMarkInProgress: 'Start',
     commChecklistStatusUpdated: 'Status updated',
     commChecklistStatusError: 'Failed to update status',
-
-    // --- ZosFormPage ---
     zosFormTitle: 'Compliance Conclusion (ZOS)',
     zosFormSubtitle: 'Generate and review compliance conclusions',
     zosFormGenerate: 'Generate ZOS',
@@ -13462,8 +16014,6 @@ export const en: TranslationKeys = {
     zosFormFieldConclusion: 'Conclusion text',
     zosFormFieldRemarks: 'Remarks',
     zosFormPreviewTitle: 'ZOS Preview',
-
-    // --- StroyNadzorPackagePage ---
     stroyNadzorTitle: 'Construction Supervision Package',
     stroyNadzorSubtitle: 'Document package assembly for construction supervision authority',
     stroyNadzorStatusAttached: 'Attached',
@@ -13488,8 +16038,6 @@ export const en: TranslationKeys = {
     stroyNadzorStatusError: 'Failed to update status',
     stroyNadzorEmpty: 'No documents',
     stroyNadzorEmptyDesc: 'No documents found for the supervision package',
-
-    // --- WarrantyTrackingPage ---
     warrantyTrackingTitle: 'Warranty Tracking',
     warrantyTrackingSubtitle: 'Track warranty periods and defects',
     warrantyTrackingStatusActive: 'Active',
@@ -13511,8 +16059,6 @@ export const en: TranslationKeys = {
     warrantyTrackingEmptyDesc: 'No warranty obligations found',
     warrantyTrackingDetailTitle: 'Warranty Details',
     warrantyTrackingTerms: 'Warranty terms',
-
-    // --- ExecutiveSchemasPage ---
     execSchemaTitle: 'Executive Schemas',
     execSchemaSubtitle: 'Manage executive schemas by work type',
     execSchemaStatusDraft: 'Draft',
@@ -13554,19 +16100,103 @@ export const en: TranslationKeys = {
     execSchemaLinkError: 'Failed to link schema',
     execSchemaEmpty: 'No executive schemas',
     execSchemaEmptyDesc: 'Upload the first executive schema',
+    asBuiltColWbs: 'As Built Col Wbs',
+    asBuiltColRequired: 'As Built Col Required',
+    asBuiltColSubmitted: 'As Built Col Submitted',
+    asBuiltColAccepted: 'As Built Col Accepted',
+    asBuiltColCompletion: 'As Built Col Completion',
+    asBuiltColQualityGate: 'As Built Col Quality Gate',
+    asBuiltQualityNoReqs: 'As Built Quality No Reqs',
+    asBuiltQualityPassed: 'As Built Quality Passed',
+    asBuiltQualityNotPassed: 'As Built Quality Not Passed',
+    asBuiltSelectProject: 'As Built Select Project',
+    asBuiltTitle: 'As Built Title',
+    asBuiltSubtitle: 'As Built Subtitle',
+    asBuiltOfWbsElements: 'As Built Of Wbs Elements',
+    asBuiltNoData: 'As Built No Data',
+    asBuiltNoDataDesc: 'As Built No Data Desc',
+    commChecklistStatusNA: 'Comm Checklist Status N A',
+    commChecklistSectionElevators: 'Comm Checklist Section Elevators',
+    commChecklistSectionLandscaping: 'Comm Checklist Section Landscaping',
+    commChecklistAllProjects: 'Comm Checklist All Projects',
+    commChecklistPrint: 'Comm Checklist Print',
+    commChecklistProject: 'Comm Checklist Project',
+    commChecklistItemsLabel: 'Comm Checklist Items Label',
+    commChecklistRequirement: 'Comm Checklist Requirement',
+    commChecklistEditNotes: 'Comm Checklist Edit Notes',
+    commChecklistEditNotesTitle: 'Comm Checklist Edit Notes Title',
+    commChecklistNotesLabel: 'Comm Checklist Notes Label',
+    templateDeleteConfirm: 'Template Delete Confirm',
+    templateColName: 'Template Col Name',
+    templateColSystem: 'Template Col System',
+    templateColItems: 'Template Col Items',
+    templateColActive: 'Template Col Active',
+    templateTitle: 'Template Title',
+    templateSubtitle: 'Template Subtitle',
+    templateCreate: 'Template Create',
+    templateEmpty: 'Template Empty',
+    templateEmptyDesc: 'Template Empty Desc',
+    templateFormTitleEdit: 'Template Form Title Edit',
+    templateFormTitle: 'Template Form Title',
+    templateFieldName: 'Template Field Name',
+    templateFieldSystem: 'Template Field System',
+    templateFieldDescription: 'Template Field Description',
+    templateFieldItems: 'Template Field Items',
+    stroyNadzorStatusExpired: 'Stroy Nadzor Status Expired',
+    stroyNadzorCatDesignDocs: 'Stroy Nadzor Cat Design Docs',
+    stroyNadzorCatPermits: 'Stroy Nadzor Cat Permits',
+    stroyNadzorCatInspectionActs: 'Stroy Nadzor Cat Inspection Acts',
+    stroyNadzorCatTestProtocols: 'Stroy Nadzor Cat Test Protocols',
+    stroyNadzorCatCertificates: 'Stroy Nadzor Cat Certificates',
+    stroyNadzorCatAsBuilt: 'Stroy Nadzor Cat As Built',
+    stroyNadzorUploadSuccess: 'Stroy Nadzor Upload Success',
+    stroyNadzorUploadError: 'Stroy Nadzor Upload Error',
+    stroyNadzorSelectProject: 'Stroy Nadzor Select Project',
+    stroyNadzorPackageGenerated: 'Stroy Nadzor Package Generated',
+    stroyNadzorPackageError: 'Stroy Nadzor Package Error',
+    stroyNadzorColRequired: 'Stroy Nadzor Col Required',
+    stroyNadzorRequired: 'Stroy Nadzor Required',
+    stroyNadzorOptional: 'Stroy Nadzor Optional',
+    stroyNadzorColExpiryDate: 'Stroy Nadzor Col Expiry Date',
+    stroyNadzorUploadFile: 'Stroy Nadzor Upload File',
+    stroyNadzorAllProjects: 'Stroy Nadzor All Projects',
+    stroyNadzorAllCategories: 'Stroy Nadzor All Categories',
+    stroyNadzorGeneratePackage: 'Stroy Nadzor Generate Package',
+    stroyNadzorProject: 'Stroy Nadzor Project',
+    stroyNadzorRequiredProgress: 'Stroy Nadzor Required Progress',
+    stroyNadzorMissingRequired: 'Stroy Nadzor Missing Required',
+    stroyNadzorGeneratePackageTitle: 'Stroy Nadzor Generate Package Title',
+    stroyNadzorGeneratePackageDesc: 'Stroy Nadzor Generate Package Desc',
+    stroyNadzorGeneratePackageWarning: 'Stroy Nadzor Generate Package Warning',
+    zosFormExportSuccess: 'Zos Form Export Success',
+    zosFormExportError: 'Zos Form Export Error',
+    zosFormSectionObjectInfo: 'Zos Form Section Object Info',
+    zosFormFieldObjectName: 'Zos Form Field Object Name',
+    zosFormFieldObjectAddress: 'Zos Form Field Object Address',
+    zosFormFieldPermitNumber: 'Zos Form Field Permit Number',
+    zosFormFieldPermitDate: 'Zos Form Field Permit Date',
+    zosFormSectionDesignDocs: 'Zos Form Section Design Docs',
+    zosFormFieldDesignDocRefs: 'Zos Form Field Design Doc Refs',
+    zosFormDesignDocPlaceholder: 'Zos Form Design Doc Placeholder',
+    zosFormComplianceSection: 'Zos Form Compliance Section',
+    zosFormComplianceSectionName: 'Zos Form Compliance Section Name',
+    zosFormCompliant: 'Zos Form Compliant',
+    zosFormNonCompliant: 'Zos Form Non Compliant',
+    zosFormComplianceNotes: 'Zos Form Compliance Notes',
+    zosFormAddComplianceSection: 'Zos Form Add Compliance Section',
+    zosFormSectionSignatures: 'Zos Form Section Signatures',
+    zosFormSignature: 'Zos Form Signature',
+    zosFormSignatureRole: 'Zos Form Signature Role',
+    zosFormSignatureFullName: 'Zos Form Signature Full Name',
+    zosFormSignatureOrg: 'Zos Form Signature Org',
+    zosFormAddSignature: 'Zos Form Add Signature',
+    zosFormExportPdf: 'Zos Form Export Pdf'
   },
-
-  // ---------------------------------------------------------------------------
-  // Mock / placeholder data labels (shared across forms)
-  // ---------------------------------------------------------------------------
   mockData: {
-    // Projects
     projectSolnechny: 'RC "Solnechny"',
     projectHorizon: 'BC "Horizon"',
     projectBridge: 'Bridge over Vyatka River',
     projectCentral: 'SC "Central"',
-
-    // Persons
     personIvanovAS: 'Ivanov A.S.',
     personPetrovVK: 'Petrov V.K.',
     personSidorovMN: 'Sidorov M.N.',
@@ -13576,16 +16206,12 @@ export const en: TranslationKeys = {
     personPetrovPP: 'Petrov P.P.',
     personSidorovSS: 'Sidorov S.S.',
     personKozlovKK: 'Kozlov K.K.',
-
-    // Materials
     materialRebar: 'Rebar A500C d12 (kg)',
     materialConcrete: 'Concrete B25 (m3)',
     materialBrick: 'Facing Brick (pcs)',
     materialInsulation: 'Insulation Rockwool 100mm (m2)',
     materialPipe: 'HDPE Pipe 110mm (m)',
     materialCable: 'Cable VVGng 3x2.5 (m)',
-
-    // Locations
     locationWarehouseA: 'Warehouse A - Main',
     locationWarehouseB: 'Warehouse B - Auxiliary',
     locationSiteSolnechny: 'Site RC "Solnechny"',
@@ -13593,21 +16219,13 @@ export const en: TranslationKeys = {
     locationSiteBridge: 'Site Bridge',
     locationCentralWarehouse: 'Central Warehouse',
     locationSiteHorizonShort: 'Site "Horizon"',
-
-    // Movement prefix
     movementNumberPrefix: 'MV',
-
-    // Timezone labels
     timezoneMoscow: 'Moscow (UTC+3)',
     timezoneSamara: 'Samara (UTC+4)',
     timezoneYekaterinburg: 'Yekaterinburg (UTC+5)',
     timezoneNovosibirsk: 'Novosibirsk (UTC+7)',
     timezoneVladivostok: 'Vladivostok (UTC+10)',
-
-    // Language labels
     languageRussian: 'Russian',
-
-    // User groups
     groupAdmins: 'Administrators',
     groupProjectManagers: 'Project Managers',
     groupSeniorManagers: 'Senior Managers',
@@ -13617,8 +16235,6 @@ export const en: TranslationKeys = {
     groupAccounting: 'Accounting',
     groupProcurement: 'Procurement',
     groupObservers: 'Observers',
-
-    // Integration fallback data
     integration1CName: '1C:Enterprise',
     integration1CDescription: 'Sync directories, documents, accounting entries and settlements.',
     integrationTelegramDescription: 'Push notifications to Telegram, sending reports and task alerts.',
@@ -13626,15 +16242,11 @@ export const en: TranslationKeys = {
     integrationSBISDescription: 'Document exchange via SBIS: sending, receiving and signing primary documents.',
     integrationEDOName: 'EDO (Diadoc / Kontur)',
     integrationEDODescription: 'Electronic document exchange: sending and receiving documents via EDO.',
-
-    // Misc
     connectedOf: '{connected} of {total}',
     placeholder1CMain: 'Main 1C',
     hintServerUrl: 'e.g., http://server:8080/1c',
     placeholderSBISMain: 'SBIS main',
     ariaDeleteRule: 'Delete rule',
-
-    // Additional project / person / timesheet mock data
     projectGorizont: 'BC "Gorizont"',
     projectBridgeVyatka: 'Vyatka River Bridge',
     projectTsCentralny: 'SC "Tsentralny"',
@@ -13661,14 +16273,9 @@ export const en: TranslationKeys = {
     deptElectrical: 'Electrical',
     deptFinishing: 'Finishing',
     deptLogistics: 'Logistics',
-    deptPto: 'PTO',
+    deptPto: 'PTO'
   },
-
-  // ---------------------------------------------------------------------------
-  // Russian Documents (russianDocs)
-  // ---------------------------------------------------------------------------
   russianDocs: {
-    // Breadcrumbs & navigation
     breadcrumbHome: 'Home',
     breadcrumbExecDocs: 'Exec. Documentation',
     breadcrumbRussianDocs: 'Russian Documents',
@@ -13679,8 +16286,6 @@ export const en: TranslationKeys = {
     breadcrumbNewKs2: 'New KS-2',
     breadcrumbNewKs3: 'New KS-3',
     breadcrumbNewDocument: 'New Document',
-
-    // Common actions
     back: 'Back',
     cancel: 'Cancel',
     open: 'Open',
@@ -13695,8 +16300,6 @@ export const en: TranslationKeys = {
     newDocument: 'New Document',
     newReport: 'New Report',
     addRow: 'Add Row',
-
-    // Common labels
     number: '#',
     document: 'Document',
     status: 'Status',
@@ -13713,8 +16316,6 @@ export const en: TranslationKeys = {
     recipient: 'Recipient',
     signatures: 'Signatures',
     nameLabel: 'Name',
-
-    // Tabs
     tabAll: 'All',
     tabDrafts: 'Drafts',
     tabDraft: 'Draft',
@@ -13726,8 +16327,6 @@ export const en: TranslationKeys = {
     tabArchive: 'Archive',
     tabSigning: 'Signing',
     tabDelivered: 'Delivered',
-
-    // Metrics
     metricTotalDocs: 'Total Documents',
     metricSignedAmount: 'Signed Amount',
     metricTotalAmount: 'Total Amount',
@@ -13740,14 +16339,10 @@ export const en: TranslationKeys = {
     metricSigned: 'Signed',
     metricOnSigning: 'On Signing',
     metricDelivered: 'Delivered',
-
-    // Search
     searchByNumberNameCounterparty: 'Search by number, name, counterparty...',
     searchByNumberProjectPeriod: 'Search by number, project, period...',
     searchByNumberName: 'Search by number, name...',
     searchByNumberDocCounterparty: 'Search by number, document, counterparty...',
-
-    // Document types (filter)
     allTypes: 'All types',
     typeKs2: 'KS-2',
     typeKs3: 'KS-3',
@@ -13755,8 +16350,6 @@ export const en: TranslationKeys = {
     typeExecScheme: 'Exec. Scheme',
     typeHiddenWorksAct: 'Hidden Works Act',
     typeGeneralJournal: 'General Journal',
-
-    // DocumentListPage
     docListTitle: 'Executive Documentation',
     docListSubtitle: '{count} documents in system',
     docListColumnName: 'Name',
@@ -13764,8 +16357,6 @@ export const en: TranslationKeys = {
     docListColumnAmountWithVat: 'Amount with VAT',
     docListEmptyTitle: 'No documents',
     docListEmptyDescription: 'Create the first executive documentation document',
-
-    // DocumentCreatePage
     docCreateTitle: 'New Document',
     docCreateSubtitle: 'Create executive documentation document',
     docCreateMainData: 'Main Data',
@@ -13783,8 +16374,6 @@ export const en: TranslationKeys = {
     docCreateNotes: 'Notes',
     docCreateNotesPlaceholder: 'Additional information...',
     docCreateSubmit: 'Create Document',
-
-    // Document type options (DocumentCreatePage)
     docTypeKs2Full: 'KS-2 (Completed Works Act)',
     docTypeKs3Full: 'KS-3 (Cost Certificate)',
     docTypeM29Full: 'M-29 (Material Consumption Report)',
@@ -13794,8 +16383,6 @@ export const en: TranslationKeys = {
     docTypeCommissioningAct: 'Commissioning Act',
     docTypePassport: 'Object Passport',
     docTypeProtocol: 'Test Protocol',
-
-    // DocumentDetailPage
     docDetailInfo: 'Document Information',
     docDetailDocType: 'Document Type',
     docDetailProject: 'Project',
@@ -13821,8 +16408,6 @@ export const en: TranslationKeys = {
     docDetailLines: 'Lines',
     docDetailToReview: 'Submit for Review',
     docDetailToSigning: 'Submit for Signing',
-
-    // FormKs2Page
     ks2Title: 'New KS-2 Act',
     ks2Subtitle: 'Completed Works Acceptance Act (Form KS-2)',
     ks2Requisites: 'Act Details',
@@ -13845,8 +16430,6 @@ export const en: TranslationKeys = {
     ks2Vat20: 'VAT (20%):',
     ks2TotalWithVat: 'Total incl. VAT:',
     ks2Submit: 'Create KS-2 Act',
-
-    // FormKs3Page
     ks3Title: 'New KS-3 Certificate',
     ks3Subtitle: 'Certificate of Cost of Completed Works (Form KS-3)',
     ks3Requisites: 'Certificate Details',
@@ -13864,51 +16447,37 @@ export const en: TranslationKeys = {
     ks3SelectedCount: 'Acts selected',
     ks3WorksTotal: 'Total works cost',
     ks3Submit: 'Create KS-3 Certificate',
-
-    // M29ListPage
     m29Title: 'M-29 Reports',
     m29Subtitle: 'Material consumption reports in construction',
     m29ColumnMaterials: 'Materials',
     m29ColumnWithVat: 'With VAT',
     m29EmptyTitle: 'No M-29 Reports',
     m29EmptyDescription: 'No material consumption reports found',
-
-    // SbisDocumentsPage
     sbisTitle: 'SBIS Documents',
     sbisSubtitle: '{count} documents',
     sbisEmptyTitle: 'No SBIS Documents',
     sbisEmptyDescription: 'Documents will appear after SBIS integration setup',
-
-    // SBIS statuses
     sbisStatusDraft: 'Draft',
     sbisStatusSent: 'Sent',
     sbisStatusDelivered: 'Delivered',
     sbisStatusSigned: 'Signed',
     sbisStatusRejected: 'Rejected',
     sbisStatusCancelled: 'Cancelled',
-
-    // SBIS document types
     sbisTypeInvoice: 'Invoice',
     sbisTypeAct: 'Act',
     sbisTypeWaybill: 'Waybill',
     sbisTypePowerOfAttorney: 'Power of Attorney',
     sbisTypeContract: 'Contract',
     sbisTypeOther: 'Other',
-
-    // M29 statuses
     m29StatusDraft: 'Draft',
     m29StatusInReview: 'In Review',
     m29StatusApproved: 'Approved',
     m29StatusRejected: 'Rejected',
-
-    // EdoDocumentsPage
     edoTitle: 'Electronic Document Interchange (EDI)',
     edoSubtitle: '{count} documents',
     edoOperator: 'EDI Operator',
     edoEmptyTitle: 'No EDI Documents',
     edoEmptyDescription: 'Documents will appear after EDI operator setup',
-
-    // EDO statuses
     edoStatusCreated: 'Created',
     edoStatusSigning: 'Signing',
     edoStatusSigned: 'Signed',
@@ -13916,15 +16485,11 @@ export const en: TranslationKeys = {
     edoStatusDelivered: 'Delivered',
     edoStatusRejected: 'Rejected',
     edoStatusExpired: 'Expired',
-
-    // EDO providers
     edoProviderDiadoc: 'Diadoc',
     edoProviderSbis: 'SBIS',
     edoProviderTaxcom: 'Taxcom',
     edoProviderKalugaAstral: 'Kaluga Astral',
     edoProviderOther: 'Other',
-
-    // KepSignWizard
     kepTitle: 'KEP Document Signing',
     kepDescription: 'Qualified Electronic Signature',
     kepStepDocument: 'Select Document',
@@ -13959,19 +16524,13 @@ export const en: TranslationKeys = {
     kepSignErrorPin: 'Invalid private key container PIN. Please verify your input.',
     kepToastSuccess: 'Document signed with KEP',
     kepToastError: 'KEP signing error',
-
-    // Project/Contract placeholder options
     projectSolnechny: 'RC "Solnechny"',
     projectBridge: 'Bridge over Vyatka River',
     projectMall: 'SC "Tsentralny"',
     contractGP: 'GC Contract #12-2025',
     contractSubcontract: 'Subcontract #45-2025',
-    contractSupply: 'Supply Contract #88-2025',
+    contractSupply: 'Supply Contract #88-2025'
   },
-
-  // ---------------------------------------------------------------------------
-  // Regulatory
-  // ---------------------------------------------------------------------------
   regulatory: {
     dashboardTitle: 'Regulatory & Compliance',
     dashboardSubtitle: 'Regulatory compliance overview',
@@ -14168,8 +16727,6 @@ export const en: TranslationKeys = {
     licTypeSroEngineering: 'SRO Engineering',
     licTypeSpecialPermit: 'Special Permit',
     licTypeOther: 'Other',
-
-    // Prescription List Page (existing page refs)
     prescriptionsTitle: 'Prescriptions',
     prescriptionsSubtitle: '{count} prescriptions in system',
     breadcrumbPrescriptions: 'Prescriptions',
@@ -14204,8 +16761,6 @@ export const en: TranslationKeys = {
     bodyTypeRospotrebnadzor: 'Rospotrebnadzor',
     bodyTypeEnvironmental: 'Environmental',
     bodyTypeOther: 'Other',
-
-    // Prescriptions Journal Page
     pjTitle: 'Rostechnadzor Prescriptions Journal',
     pjSubtitle: '{count} prescriptions',
     pjBreadcrumb: 'Prescriptions Journal',
@@ -14234,8 +16789,6 @@ export const en: TranslationKeys = {
     pjFieldDescription: 'Violation Description',
     pjCreateSuccess: 'Prescription created',
     pjCreateError: 'Error creating prescription',
-
-    // Prescription Response Page
     prTitle: 'Prescription Responses',
     prSubtitle: '{count} responses',
     prBreadcrumb: 'Prescription Responses',
@@ -14271,8 +16824,6 @@ export const en: TranslationKeys = {
     prGenerateError: 'Error generating response',
     prPreviewCategory: 'Category',
     prPreviewText: 'Template Text',
-
-    // SRO License Registry Page
     sroTitle: 'SRO & License Registry',
     sroSubtitle: '{count} records in registry',
     sroBreadcrumb: 'SRO Registry',
@@ -14309,8 +16860,6 @@ export const en: TranslationKeys = {
     sroFieldExpiryDate: 'Expiry Date',
     sroCreateSuccess: 'Record added to registry',
     sroCreateError: 'Error adding record',
-
-    // Inspection Prep Page
     ipTitle: 'Inspection Preparation',
     ipSubtitle: 'Document checklist for inspection',
     ipBreadcrumb: 'Inspection Preparation',
@@ -14330,8 +16879,6 @@ export const en: TranslationKeys = {
     ipStatusUpdated: 'Status updated',
     ipStatusError: 'Error updating status',
     ipResponsible: 'Responsible',
-
-    // Inspection History Page
     ihTitle: 'Inspection & Fines History',
     ihSubtitle: '{count} inspections in system',
     ihBreadcrumb: 'Inspection History',
@@ -14365,14 +16912,10 @@ export const en: TranslationKeys = {
     ihDetailTitle: 'Inspection Details',
     ihDetailFindings: 'Findings',
     ihYearFilterAll: 'All years',
-
-    // Prescriptions Journal - additional
     pjColSubject: 'Subject',
     pjColOverdueDays: 'Overdue Days',
     pjDateFrom: 'Date from',
     pjDateTo: 'Date to',
-
-    // Prescription Response - additional
     prCorrectiveActions: 'Corrective Actions',
     prAddAction: 'Add Action',
     prNoActions: 'No corrective actions added',
@@ -14382,16 +16925,12 @@ export const en: TranslationKeys = {
     prAttachFiles: 'Attach files',
     prFilesCount: '{count} file(s) attached',
     prNoFiles: 'No files attached',
-
-    // SRO License Registry - type labels
     sroTypeSroConstruction: 'SRO Construction',
     sroTypeSroDesign: 'SRO Design',
     sroTypeSroSurvey: 'SRO Survey',
     sroTypeLicenseHazardous: 'License - Hazardous',
     sroTypeLicenseFire: 'License - Fire Safety',
     sroTypeLicenseNuclear: 'License - Nuclear',
-
-    // Inspection Prep - additional
     ipBtnGeneratePackage: 'Generate Package',
     ipInspectionType: 'Inspection Type',
     ipType_scheduled: 'Scheduled',
@@ -14401,11 +16940,81 @@ export const en: TranslationKeys = {
     ipType_labor: 'Labor Inspection',
     ipPackageGenerated: 'Package generated successfully',
     ipPackageError: 'Error generating package',
+    prescription: {
+      statusReceived: 'Status Received',
+      statusUnderReview: 'Status Under Review',
+      statusInProgress: 'Status In Progress',
+      statusResponseSubmitted: 'Status Response Submitted',
+      statusCompleted: 'Completed',
+      statusClosed: 'Status Closed'
+    },
+    toastStatusChanged: 'Toast Status Changed',
+    toastAppealFiled: 'Toast Appeal Filed',
+    toastAppealExpired: 'Toast Appeal Expired',
+    toastPrescriptionDeleted: 'Toast Prescription Deleted',
+    warningOverdue: 'Warning Overdue',
+    warningOverdueDesc: 'Warning Overdue Desc',
+    warningApproachingDeadline: 'Warning Approaching Deadline',
+    warningApproachingDeadlineDesc: 'Warning Approaching Deadline Desc',
+    prescriptionDetailTitle: 'Prescription Detail Title',
+    prescriptionDetailSubtitle: 'Prescription Detail Subtitle',
+    prescriptionBtnEdit: 'Prescription Btn Edit',
+    btnDeletePrescription: 'Btn Delete Prescription',
+    sectionPrescriptionDetails: 'Section Prescription Details',
+    labelPrescriptionNumber: 'Label Prescription Number',
+    labelBodyType: 'Label Body Type',
+    labelProject: 'Project',
+    prescriptionLabelResponsible: 'Prescription Label Responsible',
+    labelReceivedDate: 'Label Received Date',
+    labelDeadline: 'Label Deadline',
+    labelRegulatoryReference: 'Label Regulatory Reference',
+    labelViolationCount: 'Label Violation Count',
+    sectionFinancial: 'Section Financial',
+    labelFineAmount: 'Label Fine Amount',
+    labelCorrectiveActionCost: 'Label Corrective Action Cost',
+    labelNotes: 'Notes',
+    labelEvidenceUrl: 'Label Evidence Url',
+    labelResponseLetterUrl: 'Label Response Letter Url',
+    btnChangeStatus: 'Btn Change Status',
+    btnFileAppeal: 'Btn File Appeal',
+    labelAppealDeadline: 'Label Appeal Deadline',
+    appealWindowClosed: 'Appeal Window Closed',
+    sectionTimeline: 'Section Timeline',
+    tabReceived: 'Tab Received',
+    confirmDeletePrescription: 'Confirm Delete Prescription',
+    confirmDeletePrescriptionDesc: 'Confirm Delete Prescription Desc',
+    confirmDeletePrescriptionBtn: 'Confirm Delete Prescription Btn',
+    validationRequired: 'Required field',
+    bodyGIT: 'Body G I T',
+    bodyRostekhnadzor: 'Body Rostekhnadzor',
+    bodyStroynadzor: 'Body Stroynadzor',
+    bodyMCHS: 'Body M C H S',
+    bodyRospotrebnadzor: 'Body Rospotrebnadzor',
+    bodyEnvironmental: 'Body Environmental',
+    bodyOther: 'Body Other',
+    toastPrescriptionUpdated: 'Toast Prescription Updated',
+    toastPrescriptionCreated: 'Toast Prescription Created',
+    prescriptionFormEditTitle: 'Prescription Form Edit Title',
+    prescriptionFormTitle: 'Prescription Form Title',
+    prescriptionFormSubtitle: 'Prescription Form Subtitle',
+    formDescription: 'Form Description',
+    formDescriptionPlaceholder: 'Form Description Placeholder',
+    formRegulatoryBodyType: 'Form Regulatory Body Type',
+    formProject: 'Form Project',
+    formReceivedDate: 'Form Received Date',
+    formDeadline: 'Form Deadline',
+    formAppealDeadline: 'Form Appeal Deadline',
+    formResponsible: 'Form Responsible',
+    formResponsiblePlaceholder: 'Form Responsible Placeholder',
+    formFineAmount: 'Form Fine Amount',
+    formViolationCount: 'Form Violation Count',
+    formRegulatoryReference: 'Form Regulatory Reference',
+    formRegulatoryReferencePlaceholder: 'Form Regulatory Reference Placeholder',
+    formNotes: 'Form Notes',
+    formNotesPlaceholder: 'Form Notes Placeholder',
+    btnCancel: 'Cancel',
+    btnSavePrescription: 'Btn Save Prescription'
   },
-
-  // ---------------------------------------------------------------------------
-  // Punchlist
-  // ---------------------------------------------------------------------------
   punchlist: {
     boardTitle: 'Punchlist - Board',
     boardSubtitle: '{count} items',
@@ -14539,12 +17148,8 @@ export const en: TranslationKeys = {
     catOther: 'Other',
     listSectionA: 'Section A items',
     listParking: 'Parking items',
-    listLandscaping: 'Landscaping items',
+    listLandscaping: 'Landscaping items'
   },
-
-  // ---------------------------------------------------------------------------
-  // Support
-  // ---------------------------------------------------------------------------
   support: {
     boardTitle: 'Support Tickets - Board',
     boardSubtitle: '{count} tickets',
@@ -14689,12 +17294,8 @@ export const en: TranslationKeys = {
     currentUser: 'Current User',
     ticketCreated: 'Support ticket created',
     errorCreateTicket: 'Failed to create support ticket',
-    validationRequired: 'Subject and description are required',
+    validationRequired: 'Subject and description are required'
   },
-
-  // ---------------------------------------------------------------------------
-  // Legal Module
-  // ---------------------------------------------------------------------------
   legal: {
     breadcrumbHome: 'Home',
     breadcrumbLegal: 'Legal Department',
@@ -14805,12 +17406,8 @@ export const en: TranslationKeys = {
     actionResolved: 'Resolved',
     actionSuspend: 'Suspend',
     actionResume: 'Resume',
-    actionCloseCase: 'Close Case',
+    actionCloseCase: 'Close Case'
   },
-
-  // ---------------------------------------------------------------------------
-  // Workflow Module
-  // ---------------------------------------------------------------------------
   workflow: {
     breadcrumbHome: 'Home',
     breadcrumbWorkflows: 'Workflows',
@@ -14909,11 +17506,78 @@ export const en: TranslationKeys = {
     actionSendEmail: 'Send Email',
     emptyExecutionsTitle: 'No executions',
     emptyExecutionsDescription: 'Executions will appear after automation rules are triggered',
+    conditionBuilder: {
+      fieldStatus: 'Field Status',
+      fieldAmount: 'Field Amount',
+      fieldPriority: 'Field Priority',
+      fieldAssignee: 'Field Assignee',
+      fieldDepartment: 'Field Department',
+      fieldEntityType: 'Field Entity Type',
+      fieldCreatedBy: 'Field Created By',
+      fieldDueDate: 'Field Due Date',
+      opEquals: 'Op Equals',
+      opNotEquals: 'Op Not Equals',
+      opGreaterThan: 'Op Greater Than',
+      opLessThan: 'Op Less Than',
+      opContains: 'Op Contains',
+      opInList: 'Op In List',
+      logicAnd: 'Logic And',
+      logicOr: 'Logic Or',
+      fieldLabel: 'Field Label',
+      operatorLabel: 'Operator Label',
+      valuePlaceholder: 'Value Placeholder',
+      valueLabel: 'Value Label',
+      removeCondition: 'Remove Condition',
+      groupLabel: 'Group Label',
+      groupLogicLabel: 'Group Logic Label',
+      duplicateGroup: 'Duplicate Group',
+      removeGroup: 'Remove Group',
+      addCondition: 'Add Condition',
+      matchLabel: 'Match Label',
+      topLevelLogicLabel: 'Top Level Logic Label',
+      groupsOfConditions: 'Groups Of Conditions',
+      addGroup: 'Add Group'
+    },
+    ruleTemplates: {
+      categoryApproval: 'Category Approval',
+      categoryNotification: 'Category Notification',
+      categoryAssignment: 'Category Assignment',
+      categoryEscalation: 'Category Escalation',
+      categoryBudget: 'Category Budget',
+      tplAutoApproveName: 'Tpl Auto Approve Name',
+      tplAutoApproveDesc: 'Tpl Auto Approve Desc',
+      tplEscalateOverdueName: 'Tpl Escalate Overdue Name',
+      tplEscalateOverdueDesc: 'Tpl Escalate Overdue Desc',
+      tplSafetyNotifyName: 'Tpl Safety Notify Name',
+      tplSafetyNotifyDesc: 'Tpl Safety Notify Desc',
+      tplAutoAssignName: 'Tpl Auto Assign Name',
+      tplAutoAssignDesc: 'Tpl Auto Assign Desc',
+      tplBudgetThresholdName: 'Tpl Budget Threshold Name',
+      tplBudgetThresholdDesc: 'Tpl Budget Threshold Desc',
+      filterAll: 'Filter All',
+      searchPlaceholder: 'Search...',
+      emptySearch: 'Empty Search',
+      useTemplate: 'Use Template'
+    },
+    stepDesigner: {
+      untitledStep: 'Untitled Step',
+      hoursAbbrev: 'Hours Abbrev',
+      badgeAuto: 'Badge Auto',
+      badgeManual: 'Badge Manual',
+      moveUp: 'Move Up',
+      moveDown: 'Move Down',
+      removeStep: 'Remove Step',
+      hasBranching: 'Has Branching',
+      editStepTitle: 'Edit Step Title',
+      conditionsLabel: 'Conditions Label',
+      conditionsPlaceholder: 'Conditions Placeholder',
+      insertStep: 'Insert Step',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found',
+      addFirstStep: 'Add First Step',
+      flowOverview: 'Flow Overview'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Tax Risk Module
-  // ---------------------------------------------------------------------------
   taxRisk: {
     breadcrumbHome: 'Home',
     breadcrumbTaxRisks: 'Tax Risks',
@@ -14973,12 +17637,8 @@ export const en: TranslationKeys = {
     mitigationPlanned: 'Planned',
     mitigationInProgress: 'In Progress',
     mitigationCompleted: 'Completed',
-    mitigationOverdue: 'Overdue',
+    mitigationOverdue: 'Overdue'
   },
-
-  // ---------------------------------------------------------------------------
-  // Payroll
-  // ---------------------------------------------------------------------------
   payroll: {
     templateList: {
       title: 'Payroll Templates',
@@ -15007,7 +17667,7 @@ export const en: TranslationKeys = {
       confirmDeleteDescription: 'This action is irreversible. Selected payroll templates will be deleted.',
       confirmDeleteBtn: 'Delete',
       emptyTitle: 'No templates',
-      emptyDescription: 'Create the first payroll template',
+      emptyDescription: 'Create the first payroll template'
     },
     calculation: {
       title: 'Payroll Calculation',
@@ -15050,13 +17710,9 @@ export const en: TranslationKeys = {
       emptyTitle: 'Run a calculation',
       emptyDescription: 'Select a payroll template, employee and specify the period. The calculation result with deduction details will appear here.',
       selectTemplate: 'Select Template',
-      selectEmployee: 'Select Employee',
-    },
+      selectEmployee: 'Select Employee'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Price Coefficients
-  // ---------------------------------------------------------------------------
   priceCoefficients: {
     listTitle: 'Price Coefficients',
     listSubtitle: '{count} coefficients in system',
@@ -15108,12 +17764,8 @@ export const en: TranslationKeys = {
     calculateBtn: 'Calculate',
     coefficientLabel: 'Coefficient',
     resultLabel: 'Result',
-    differenceLabel: 'Difference',
+    differenceLabel: 'Difference'
   },
-
-  // ---------------------------------------------------------------------------
-  // Closing (KS-2, KS-3)
-  // ---------------------------------------------------------------------------
   closing: {
     ks3: {
       title: 'KS-3 Certificates',
@@ -15137,6 +17789,34 @@ export const en: TranslationKeys = {
       actUnit: 'act',
       emptyTitle: 'No KS-3 certificates',
       emptyDescription: 'KS-3 certificates are generated based on KS-2 acts',
+      pickerTitle: 'Picker Title',
+      pickerDescription: 'Picker Description',
+      pickerEmpty: 'Picker Empty',
+      pickerLink: 'Picker Link',
+      toastSubmitted: 'Toast Submitted',
+      toastError: 'Toast Error',
+      toastSigned: 'Toast Signed',
+      toastClosed: 'Toast Closed',
+      toastLinked: 'Toast Linked',
+      toastUnlinked: 'Toast Unlinked',
+      loadError: 'Load Error',
+      actionSubmit: 'Action Submit',
+      actionSign: 'Action Sign',
+      actionClose: 'Action Close',
+      detailTitlePrefix: 'Detail Title Prefix',
+      cardPeriod: 'Card Period',
+      cardTotalAmount: 'Card Total Amount',
+      cardRetention: 'Card Retention',
+      cardNetAmount: 'Card Net Amount',
+      sectionKs2: 'Section Ks2',
+      addKs2: 'Add Ks2',
+      emptyKs2: 'Empty Ks2',
+      colKs2Number: 'Col Ks2 Number',
+      colKs2Name: 'Col Ks2 Name',
+      colKs2Date: 'Col Ks2 Date',
+      colKs2Status: 'Col Ks2 Status',
+      colKs2Actions: 'Col Ks2 Actions',
+      unlinkKs2: 'Unlink Ks2'
     },
     ks2: {
       title: 'KS-2 Acts',
@@ -15159,7 +17839,7 @@ export const en: TranslationKeys = {
       colVolume: 'Volume',
       posUnit: 'pos.',
       emptyTitle: 'No KS-2 acts',
-      emptyDescription: 'KS-2 acts are generated based on completed work',
+      emptyDescription: 'KS-2 acts are generated based on completed work'
     },
     ks2Detail: {
       titlePrefix: 'KS-2 Act',
@@ -15204,7 +17884,6 @@ export const en: TranslationKeys = {
       validationQtyPositive: 'Quantity must be greater than 0',
       validationPricePositive: 'Price cannot be negative',
       validationVatRange: 'VAT rate must be between 0 and 100%',
-      // Cross-cutting: Volume check inline
       volumeEstimate: 'Estimate',
       volumeSubmitted: 'Previously submitted',
       volumeRemaining: 'Remaining',
@@ -15212,7 +17891,6 @@ export const en: TranslationKeys = {
       volumeWarning: 'Warning: >80% of estimate',
       volumeExceeds: 'Exceeds estimate limit',
       sectionVolumeCheck: 'Volume Control',
-      // Cross-cutting: Payment status
       sectionPaymentStatus: 'Payment Status',
       paymentInvoiceNumber: 'Invoice #',
       paymentInvoiceStatus: 'Invoice status',
@@ -15222,7 +17900,6 @@ export const en: TranslationKeys = {
       paymentPercent: 'Paid, %',
       paymentNoInvoice: 'No invoice created',
       paymentGoToInvoice: 'Go to invoice',
-      // Cross-cutting: Import from estimate
       importFromEstimate: 'Import from Estimate',
       importSelectEstimate: 'Select estimate',
       importSelectEstimatePlaceholder: 'Select project estimate...',
@@ -15234,13 +17911,31 @@ export const en: TranslationKeys = {
       importButton: 'Import selected',
       importSuccess: 'Items imported from estimate',
       importError: 'Error importing from estimate',
-      // Cross-cutting: Create invoice from KS-2
       createInvoice: 'Create Invoice from KS-2',
       createInvoiceConfirm: 'Create a payment invoice based on the signed KS-2 act?',
       createInvoiceSuccess: 'Invoice created',
       createInvoiceError: 'Error creating invoice',
+      paymentStatusTitle: 'Payment Status Title',
+      paymentInvoiceAmount: 'Payment Invoice Amount',
+      paymentRemaining: 'Payment Remaining',
+      paymentProgress: 'Payment Progress',
+      importPartialError: 'Import Partial Error',
+      importModalTitle: 'Import Modal Title',
+      importModalDescription: 'Import Modal Description',
+      importEstimatePlaceholder: 'Import Estimate Placeholder',
+      importEstimateQty: 'Import Estimate Qty',
+      importQtyToAdd: 'Import Qty To Add',
+      importExceedsRemaining: 'Import Exceeds Remaining',
+      toastInvoiceCreated: 'Toast Invoice Created',
+      toastInvoiceCreateError: 'Toast Invoice Create Error',
+      actionImportFromEstimate: 'Action Import From Estimate',
+      actionCreateInvoice: 'Action Create Invoice',
+      createInvoicePromptTitle: 'Create Invoice Prompt Title',
+      createInvoicePromptDescription: 'Create Invoice Prompt Description',
+      volumeLegendOk: 'Volume Legend Ok',
+      volumeLegendWarning: 'Volume Legend Warning',
+      volumeLegendExceeds: 'Volume Legend Exceeds'
     },
-    // KS-2 Approval Workflow
     approval: {
       title: 'KS-2 Approval Workflow',
       subtitle: 'Multi-step approval pipeline for completed works acts',
@@ -15270,9 +17965,8 @@ export const en: TranslationKeys = {
       toastApproved: 'Act approved',
       toastApproveError: 'Error approving act',
       toastRejected: 'Act rejected',
-      toastRejectError: 'Error rejecting act',
+      toastRejectError: 'Error rejecting act'
     },
-    // KS-2 Volume Verification
     volumeCheck: {
       title: 'KS-2 Volume Verification',
       subtitle: 'Automatic verification of KS-2 volumes against estimate limits',
@@ -15296,9 +17990,8 @@ export const en: TranslationKeys = {
       metricWarnings: 'Warnings',
       metricViolations: 'Violations',
       emptyTitle: 'No data',
-      emptyDescription: 'No items to verify for the selected act',
+      emptyDescription: 'No items to verify for the selected act'
     },
-    // KS-6a Journal
     ks6a: {
       title: 'KS-6a Journal',
       subtitle: 'Journal of completed works',
@@ -15315,9 +18008,8 @@ export const en: TranslationKeys = {
       colThisMonthQty: 'This Month Qty',
       colProgress: 'Progress',
       emptyTitle: 'No entries',
-      emptyDescription: 'No KS-6a journal entries for the selected period',
+      emptyDescription: 'No KS-6a journal entries for the selected period'
     },
-    // Correction Acts
     correctionActs: {
       title: 'Correction Acts',
       subtitle: 'Correction acts (negative volumes)',
@@ -15354,9 +18046,8 @@ export const en: TranslationKeys = {
       toastCreateError: 'Error creating correction act',
       validationSelectAct: 'Select original act',
       validationReasonRequired: 'Provide a correction reason',
-      validationNoItems: 'Add at least one item',
+      validationNoItems: 'Add at least one item'
     },
-    // KS Print Forms
     printForms: {
       title: 'KS-2/KS-3 Print Forms',
       subtitle: 'Preview and print forms per Goskomstat format',
@@ -15395,16 +18086,40 @@ export const en: TranslationKeys = {
       ks3ColAmount: 'Amount',
       ks3CompletedFromStart: 'Completed from start of construction',
       ks3CompletedThisPeriod: 'Completed this period',
-      ks3CompletedTotal: 'Total from start of construction',
+      ks3CompletedTotal: 'Total from start of construction'
     },
+    ks2Form: {
+      validationNumber: 'Validation Number',
+      validationName: 'Validation Name',
+      validationDate: 'Validation Date',
+      validationProject: 'Validation Project',
+      validationContract: 'Validation Contract',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'Toast Update Error',
+      titleEdit: 'Title Edit',
+      titleCreate: 'Title Create',
+      subtitleEdit: 'Subtitle Edit',
+      subtitleCreate: 'Subtitle Create',
+      sectionBasicData: 'Section Basic Data',
+      labelNumber: 'Label Number',
+      labelDocDate: 'Label Doc Date',
+      labelName: 'Name',
+      placeholderName: 'Enter name',
+      sectionBinding: 'Section Binding',
+      labelProject: 'Project',
+      placeholderProject: 'Placeholder Project',
+      labelContract: 'Label Contract',
+      placeholderSelectProjectFirst: 'Placeholder Select Project First',
+      placeholderContract: 'Placeholder Contract',
+      labelNotes: 'Notes',
+      placeholderNotes: 'Placeholder Notes',
+      createButton: 'Create Button'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Executive Documentation (AOSR, KS-6, Incoming Control, Welding, Special)
-  // ---------------------------------------------------------------------------
   execDocs: {
     breadcrumbHome: 'Home',
-
     aosr: {
       title: 'AOSR',
       subtitle: 'Acts of hidden works inspection',
@@ -15454,9 +18169,8 @@ export const en: TranslationKeys = {
       toastCreated: 'AOSR act created',
       toastCreateError: 'Error creating AOSR act',
       validationWorkType: 'Please specify work type',
-      validationProject: 'Please select a project',
+      validationProject: 'Please select a project'
     },
-
     ks6: {
       title: 'General Works Journal (KS-6)',
       subtitle: 'Daily construction progress entries',
@@ -15495,9 +18209,8 @@ export const en: TranslationKeys = {
       toastCreateError: 'Error adding entry',
       toastExportStarted: 'Journal export started',
       validationDate: 'Please specify date',
-      validationWorkDescription: 'Please specify work description',
+      validationWorkDescription: 'Please specify work description'
     },
-
     incomingControl: {
       title: 'Incoming Control Journal',
       subtitle: 'Quality control of incoming materials',
@@ -15536,9 +18249,8 @@ export const en: TranslationKeys = {
       toastCreated: 'Incoming control entry added',
       toastCreateError: 'Error adding entry',
       validationDate: 'Please specify date',
-      validationMaterial: 'Please specify material name',
+      validationMaterial: 'Please specify material name'
     },
-
     welding: {
       title: 'Welding Works Journal',
       subtitle: 'Welded joint quality control',
@@ -15580,9 +18292,8 @@ export const en: TranslationKeys = {
       toastCreated: 'Welding entry added',
       toastCreateError: 'Error adding entry',
       validationDate: 'Please specify date',
-      validationWeldNumber: 'Please specify weld number',
+      validationWeldNumber: 'Please specify weld number'
     },
-
     specialJournals: {
       title: 'Special Works Journals',
       subtitle: 'Concrete, installation and pile works',
@@ -15618,13 +18329,9 @@ export const en: TranslationKeys = {
       toastCreated: 'Entry added to journal',
       toastCreateError: 'Error adding entry',
       validationDate: 'Please specify date',
-      validationWorkDescription: 'Please specify work description',
-    },
+      validationWorkDescription: 'Please specify work description'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Global Search
-  // ---------------------------------------------------------------------------
   search: {
     title: 'Search',
     subtitle: 'Search across all system sections',
@@ -15665,12 +18372,8 @@ export const en: TranslationKeys = {
     statusDraft: 'Draft',
     statusInProgress: 'In Progress',
     statusCompleted: 'Completed',
-    statusOverdue: 'Overdue',
+    statusOverdue: 'Overdue'
   },
-
-  // ---------------------------------------------------------------------------
-  // Notifications Page
-  // ---------------------------------------------------------------------------
   notificationsPage: {
     title: 'Notifications',
     unreadCount: '{count} unread',
@@ -15696,15 +18399,11 @@ export const en: TranslationKeys = {
     markAllReadError: 'Failed to mark all as read',
     markAsReadTooltip: 'Mark as read',
     emptyTitle: 'No notifications',
-    emptyDescription: 'New notifications will appear here',
+    emptyDescription: 'New notifications will appear here'
   },
-
-  // ---------------------------------------------------------------------------
-  // Onboarding
-  // ---------------------------------------------------------------------------
   onboarding: {
     welcomeTitle: 'Welcome to Privod!',
-    progressLabel: 'Complete the steps for a quick start \u2014 {completed} of {total}',
+    progressLabel: 'Complete the steps for a quick start — {completed} of {total}',
     stepViewProjects: 'View projects',
     stepViewProjectsDesc: 'Review current projects and their statuses',
     stepCreateTask: 'Create a task',
@@ -15712,12 +18411,8 @@ export const en: TranslationKeys = {
     stepExploreDocuments: 'Explore documents',
     stepExploreDocumentsDesc: 'Browse the documents section and upload a file',
     stepCheckAnalytics: 'Check analytics',
-    stepCheckAnalyticsDesc: 'Open the analytics dashboard for an overview of metrics',
+    stepCheckAnalyticsDesc: 'Open the analytics dashboard for an overview of metrics'
   },
-
-  // ---------------------------------------------------------------------------
-  // Monitoring
-  // ---------------------------------------------------------------------------
   monitoring: {
     title: 'System Monitoring',
     subtitle: 'Service status and system events',
@@ -15752,12 +18447,8 @@ export const en: TranslationKeys = {
     prometheusTitle: 'Prometheus Metrics Export',
     prometheusDescription: 'Application metrics are exported for Prometheus collection and Grafana visualization',
     prometheusExporting: 'Exporting',
-    prometheusUnavailable: 'Unavailable',
+    prometheusUnavailable: 'Unavailable'
   },
-
-  // ---------------------------------------------------------------------------
-  // Dispatch
-  // ---------------------------------------------------------------------------
   dispatch: {
     orders: {
       title: 'Dispatch Orders',
@@ -15797,7 +18488,7 @@ export const en: TranslationKeys = {
       colRoute: 'Route',
       colDate: 'Date',
       emptyTitle: 'No dispatch orders',
-      emptyDescription: 'Create the first dispatch order',
+      emptyDescription: 'Create the first dispatch order'
     },
     routes: {
       title: 'Delivery Routes',
@@ -15826,267 +18517,595 @@ export const en: TranslationKeys = {
       minUnit: 'min',
       colOrders: 'Orders',
       emptyTitle: 'No routes',
-      emptyDescription: 'Create the first delivery route',
-    },
+      emptyDescription: 'Create the first delivery route'
+    }
   },
-
-  // Estimates Module
   estimates: {
     list: {
-      title: 'Estimates', subtitle: '{count} estimates in system', breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates',
-      tabAll: 'All', tabDraft: 'Draft', tabInWork: 'In Progress', tabActive: 'Active',
-      colName: 'Name', colProject: 'Project', colSpecification: 'Specification', colStatus: 'Status',
-      colPlan: 'Plan', colFact: 'Actual', colVariance: 'Variance',
-      searchPlaceholder: 'Search by name, project...', emptyTitle: 'No estimates', emptyDescription: 'Estimates are created from specifications',
+      title: 'Estimates',
+      subtitle: '{count} estimates in system',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      tabAll: 'All',
+      tabDraft: 'Draft',
+      tabInWork: 'In Progress',
+      tabActive: 'Active',
+      colName: 'Name',
+      colProject: 'Project',
+      colSpecification: 'Specification',
+      colStatus: 'Status',
+      colPlan: 'Plan',
+      colFact: 'Actual',
+      colVariance: 'Variance',
+      searchPlaceholder: 'Search by name, project...',
+      emptyTitle: 'No estimates',
+      emptyDescription: 'Estimates are created from specifications'
     },
     detail: {
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates',
-      colItemName: 'Name', colQuantity: 'Qty', colUnitPrice: 'Unit Price', colAmountPlan: 'Plan Amount',
-      colOrdered: 'Ordered', colPaid: 'Paid', colBalance: 'Balance', colExecution: '% Complete',
-      metricPlanned: 'Planned Amount', metricOrdered: 'Ordered', metricPaid: 'Paid', metricBalance: 'Balance',
-      budgetExecution: 'Budget Execution', emptyItemsTitle: 'No items', emptyItemsDescription: 'Items are created from specification',
-      financialSummary: 'Financial Summary', labelVariance: 'Variance',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      colItemName: 'Name',
+      colQuantity: 'Qty',
+      colUnitPrice: 'Unit Price',
+      colAmountPlan: 'Plan Amount',
+      colOrdered: 'Ordered',
+      colPaid: 'Paid',
+      colBalance: 'Balance',
+      colExecution: '% Complete',
+      metricPlanned: 'Planned Amount',
+      metricOrdered: 'Ordered',
+      metricPaid: 'Paid',
+      metricBalance: 'Balance',
+      budgetExecution: 'Budget Execution',
+      emptyItemsTitle: 'No items',
+      emptyItemsDescription: 'Items are created from specification',
+      financialSummary: 'Financial Summary',
+      labelVariance: 'Variance',
+      labelBudgetRemaining: 'Label Budget Remaining',
+      labelOverspend: 'Label Overspend'
     },
     pivot: {
-      title: 'Estimate Pivot Table', subtitle: 'Analysis of estimate items by category and status',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbPivot: 'Pivot Table',
-      aggregation: 'Aggregation', aggSum: 'Sum', aggCount: 'Count', aggAverage: 'Average',
-      rowLabel: 'Work Category', tableTitle: 'Work Category / Estimate Status',
-      referenceInfo: 'Reference Information', totalItems: 'Total Items', totalAmount: 'Total Amount', totalCategories: 'Work Categories',
-      statusApproved: 'Approved', statusInReview: 'In Review', statusDraft: 'Draft', categoryOther: 'Other',
-      catEarthworks: 'Earthworks', catConcrete: 'Concrete Works', catMasonry: 'Masonry', catMetalStructures: 'Metal Structures',
-      catRoofing: 'Roofing', catFacade: 'Facade', catElectrical: 'Electrical', catPlumbing: 'Plumbing', catFinishing: 'Finishing',
+      title: 'Estimate Pivot Table',
+      subtitle: 'Analysis of estimate items by category and status',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbPivot: 'Pivot Table',
+      aggregation: 'Aggregation',
+      aggSum: 'Sum',
+      aggCount: 'Count',
+      aggAverage: 'Average',
+      rowLabel: 'Work Category',
+      tableTitle: 'Work Category / Estimate Status',
+      referenceInfo: 'Reference Information',
+      totalItems: 'Total Items',
+      totalAmount: 'Total Amount',
+      totalCategories: 'Work Categories',
+      statusApproved: 'Approved',
+      statusInReview: 'In Review',
+      statusDraft: 'Draft',
+      categoryOther: 'Other',
+      catEarthworks: 'Earthworks',
+      catConcrete: 'Concrete Works',
+      catMasonry: 'Masonry',
+      catMetalStructures: 'Metal Structures',
+      catRoofing: 'Roofing',
+      catFacade: 'Facade',
+      catElectrical: 'Electrical',
+      catPlumbing: 'Plumbing',
+      catFinishing: 'Finishing'
     },
     import: {
-      title: 'Import Estimate', formatArps: 'ARPS (Grand-Smeta)', formatXml: 'XML (estimate)',
-      fieldSkip: '-- Skip --', fieldCode: 'Rate Code', fieldWorkName: 'Work Name',
-      fieldUnit: 'Unit of Measure', fieldQuantity: 'Quantity', fieldUnitPrice: 'Unit Price',
-      fieldTotal: 'Total', fieldLaborCost: 'Labor Cost (man-hours)', fieldMaterialsCost: 'Materials Cost',
-      fieldMachinesCost: 'Equipment Cost', fieldSection: 'Estimate Section',
-      stepUpload: 'Upload File', stepMapping: 'Column Mapping', stepPreview: 'Preview', stepImport: 'Import',
-      btnImport: 'Import', labelFormat: 'File Format', labelFile: 'Estimate File',
-      clickToReplace: 'Click to replace', dropzoneText: 'Click or drag file here',
+      title: 'Import Estimate',
+      formatArps: 'ARPS (Grand-Smeta)',
+      formatXml: 'XML (estimate)',
+      fieldSkip: '-- Skip --',
+      fieldCode: 'Rate Code',
+      fieldWorkName: 'Work Name',
+      fieldUnit: 'Unit of Measure',
+      fieldQuantity: 'Quantity',
+      fieldUnitPrice: 'Unit Price',
+      fieldTotal: 'Total',
+      fieldLaborCost: 'Labor Cost (man-hours)',
+      fieldMaterialsCost: 'Materials Cost',
+      fieldMachinesCost: 'Equipment Cost',
+      fieldSection: 'Estimate Section',
+      stepUpload: 'Upload File',
+      stepMapping: 'Column Mapping',
+      stepPreview: 'Preview',
+      stepImport: 'Import',
+      btnImport: 'Import',
+      labelFormat: 'File Format',
+      labelFile: 'Estimate File',
+      clickToReplace: 'Click to replace',
+      dropzoneText: 'Click or drag file here',
       supportedFormats: 'Supported: XLSX, CSV, ARPS, XML',
       arpsAutoHint: 'ARPS format will be automatically recognized. Column mapping will not be required.',
       mappingHint: 'Map file columns to system fields. Mapped: {mapped} of {total}.',
-      selectField: 'Select field', previewHint: 'Preview of imported data ({count} items):',
-      thCode: 'Code', thName: 'Name', thUnit: 'Unit', thQty: 'Qty', thPrice: 'Price', thTotal: 'Total',
-      totalLabel: 'Total:', summaryFile: 'File', summaryFormat: 'Format', summaryItems: 'Items',
-      summaryMapped: 'Columns Mapped', summaryTotal: 'Grand Total',
+      selectField: 'Select field',
+      previewHint: 'Preview of imported data ({count} items):',
+      thCode: 'Code',
+      thName: 'Name',
+      thUnit: 'Unit',
+      thQty: 'Qty',
+      thPrice: 'Price',
+      thTotal: 'Total',
+      totalLabel: 'Total:',
+      summaryFile: 'File',
+      summaryFormat: 'Format',
+      summaryItems: 'Items',
+      summaryMapped: 'Columns Mapped',
+      summaryTotal: 'Grand Total',
       confirmWarning: 'Data will be imported into a new estimate. Verify data correctness before confirming.',
-      toastSuccess: 'Estimate imported: {count} items',
+      toastSuccess: 'Estimate imported: {count} items'
     },
     normative: {
-      title: 'Normative Estimate', subtitle: 'Calculation based on normative database with price indices',
-      statusDraft: 'Draft', statusCalculated: 'Calculated', statusApproved: 'Approved', statusArchived: 'Archived',
+      title: 'Normative Estimate',
+      subtitle: 'Calculation based on normative database with price indices',
+      statusDraft: 'Draft',
+      statusCalculated: 'Calculated',
+      statusApproved: 'Approved',
+      statusArchived: 'Archived',
       btnCalculate: 'Calculate',
-      colJustification: 'Justification', colNormCode: 'Rate Code', colName: 'Name',
-      colUnit: 'Unit', colQty: 'Qty', colNormHours: 'Norm Hours',
-      colBasePrice2001: 'Price 2001', colPriceIndex: 'Index', colCurrentPrice: 'Current Price',
-      colDirectCosts: 'Direct Costs', colOverheadCosts: 'Overhead', colProfit: 'Est. Profit', colTotal: 'Total',
-      metricDirectCost: 'Direct Costs', metricOverhead: 'Overhead',
-      metricProfit: 'Estimated Profit', metricTotalVat: 'Total incl. VAT',
-      emptyTitle: 'No estimate lines', emptyDescription: 'Add items from normative database or import',
-      totals: 'Estimate Totals', linesCount: 'Lines in estimate',
+      colJustification: 'Justification',
+      colNormCode: 'Rate Code',
+      colName: 'Name',
+      colUnit: 'Unit',
+      colQty: 'Qty',
+      colNormHours: 'Norm Hours',
+      colBasePrice2001: 'Price 2001',
+      colPriceIndex: 'Index',
+      colCurrentPrice: 'Current Price',
+      colDirectCosts: 'Direct Costs',
+      colOverheadCosts: 'Overhead',
+      colProfit: 'Est. Profit',
+      colTotal: 'Total',
+      metricDirectCost: 'Direct Costs',
+      metricOverhead: 'Overhead',
+      metricProfit: 'Estimated Profit',
+      metricTotalVat: 'Total incl. VAT',
+      emptyTitle: 'No estimate lines',
+      emptyDescription: 'Add items from normative database or import',
+      totals: 'Estimate Totals',
+      linesCount: 'Lines in estimate',
       toastCalculated: 'Estimate calculated',
+      normativeSource: 'Normative Source',
+      gesn: 'Gesn',
+      fer: 'Fer',
+      ter: 'Ter',
+      manual: 'Manual',
+      browseRatesTitle: 'Browse Rates Title',
+      browseRatesHint: 'Browse Rates Hint',
+      searchNormative: 'Search Normative',
+      browseRatesEmpty: 'Browse Rates Empty',
+      browseRatesSelect: 'Browse Rates Select'
     },
     reconciliation: {
-      title: 'Reconciliation: Estimate vs FM', subtitle: 'Comparing estimate data with financial model by sections',
+      title: 'Reconciliation: Estimate vs FM',
+      subtitle: 'Comparing estimate data with financial model by sections',
       breadcrumbReconciliation: 'FM Reconciliation',
-      selectBudget: 'Budget (FM) for comparison', budgetIdPlaceholder: 'Enter budget ID...',
-      colSection: 'Section', colEstimate: 'Estimate Amount', colFm: 'FM Amount',
-      colDelta: 'Delta', colDeltaPercent: '% Deviation', colStatus: 'Status',
-      statusDiscrepancy: 'Discrepancy', statusOk: 'OK',
-      totalEstimate: 'Total Estimate', totalFm: 'Total FM', totalDelta: 'Total Deviation', discrepancies: 'Discrepancies > 10%',
-      emptyTitle: 'No comparison data', emptyDescription: 'No matching sections between estimate and FM',
-      selectBudgetHint: 'Select a budget', selectBudgetDescription: 'Enter budget ID to compare with the estimate',
+      selectBudget: 'Budget (FM) for comparison',
+      budgetIdPlaceholder: 'Enter budget ID...',
+      colSection: 'Section',
+      colEstimate: 'Estimate Amount',
+      colFm: 'FM Amount',
+      colDelta: 'Delta',
+      colDeltaPercent: '% Deviation',
+      colStatus: 'Status',
+      statusDiscrepancy: 'Discrepancy',
+      statusOk: 'OK',
+      totalEstimate: 'Total Estimate',
+      totalFm: 'Total FM',
+      totalDelta: 'Total Deviation',
+      discrepancies: 'Discrepancies > 10%',
+      emptyTitle: 'No comparison data',
+      emptyDescription: 'No matching sections between estimate and FM',
+      selectBudgetHint: 'Select a budget',
+      selectBudgetDescription: 'Enter budget ID to compare with the estimate'
     },
     advancedImport: {
       title: 'Import Estimate from GRAND-Smeta',
       subtitle: 'Import from ARPS, XML, GSFX formats',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbImport: 'Import',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbImport: 'Import',
       uploadSection: 'File Upload',
-      labelFormat: 'File Format', labelFile: 'Estimate File',
-      importing: 'Importing...', importComplete: 'Import complete',
+      labelFormat: 'File Format',
+      labelFile: 'Estimate File',
+      importing: 'Importing...',
+      importComplete: 'Import complete',
       validationErrors: 'Validation Errors',
       importSuccessMsg: 'Successfully imported: {count} items',
-      btnPreview: 'Preview', btnImport: 'Import', btnConfirmImport: 'Confirm Import',
-      previewTitle: 'Import Preview', previewFile: 'File', previewFormat: 'Format',
+      btnPreview: 'Preview',
+      btnImport: 'Import',
+      btnConfirmImport: 'Confirm Import',
+      previewTitle: 'Import Preview',
+      previewFile: 'File',
+      previewFormat: 'Format',
       previewHint: 'After confirmation, data will be imported into the system.',
-      historyTitle: 'Import History', historyEmpty: 'No import history', historyEmptyDesc: 'Imported files will appear here',
-      colFileName: 'File Name', colFormat: 'Format', colDate: 'Date', colStatus: 'Status', colItemsCount: 'Items',
-      statusSuccess: 'Success', statusPartial: 'Partial', statusFailed: 'Failed',
+      historyTitle: 'Import History',
+      historyEmpty: 'No import history',
+      historyEmptyDesc: 'Imported files will appear here',
+      colFileName: 'File Name',
+      colFormat: 'Format',
+      colDate: 'Date',
+      colStatus: 'Status',
+      colItemsCount: 'Items',
+      statusSuccess: 'Success',
+      statusPartial: 'Partial',
+      statusFailed: 'Failed'
     },
     export: {
       title: 'Export to GGE Format',
       subtitle: 'Export estimate for State Expert Review',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbExport: 'GGE Export',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbExport: 'GGE Export',
       configSection: 'Export Configuration',
-      labelEstimate: 'Estimate', selectEstimate: 'Select estimate',
+      labelEstimate: 'Estimate',
+      selectEstimate: 'Select estimate',
       labelFormatVersion: 'Format Version',
-      optIncludeSummary: 'Include summary', optIncludeDetails: 'Include details',
-      btnValidate: 'Validate', btnExport: 'Export',
-      metricValidation: 'Validation', metricErrors: 'Errors', metricWarnings: 'Warnings',
-      validationPassed: 'Passed', validationFailed: 'Failed',
+      optIncludeSummary: 'Include summary',
+      optIncludeDetails: 'Include details',
+      btnValidate: 'Validate',
+      btnExport: 'Export',
+      metricValidation: 'Validation',
+      metricErrors: 'Errors',
+      metricWarnings: 'Warnings',
+      validationPassed: 'Passed',
+      validationFailed: 'Failed',
       validationPassedMsg: 'All checks passed. Estimate is ready for export.',
-      errorsTitle: 'Errors', warningsTitle: 'Warnings',
-      historyTitle: 'Export History', historyEmpty: 'No export history', historyEmptyDesc: 'Exported files will appear here',
-      colEstimate: 'Estimate', colDate: 'Date', colFormat: 'Format', colStatus: 'Status',
-      statusSuccess: 'Success', statusFailed: 'Failed',
+      errorsTitle: 'Errors',
+      warningsTitle: 'Warnings',
+      historyTitle: 'Export History',
+      historyEmpty: 'No export history',
+      historyEmptyDesc: 'Exported files will appear here',
+      colEstimate: 'Estimate',
+      colDate: 'Date',
+      colFormat: 'Format',
+      colStatus: 'Status',
+      statusSuccess: 'Success',
+      statusFailed: 'Failed'
     },
     volume: {
       title: 'Physical Volume Calculator',
       subtitle: 'Calculate volumes for construction works',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbCalc: 'Volume Calculator',
-      typeEarthwork: 'Earthwork', typeConcrete: 'Concrete',
-      typeMasonry: 'Masonry', typeRoofing: 'Roofing', typeFinishing: 'Finishing',
-      fieldLength: 'Length', fieldWidth: 'Width', fieldHeight: 'Height', fieldDepth: 'Depth',
-      fieldSlopeCoeff: 'Slope Coefficient', fieldCount: 'Count', fieldThickness: 'Thickness',
-      fieldOpeningArea: 'Opening Area', fieldSlopeAngle: 'Slope Angle', fieldOverlapCoeff: 'Overlap Coefficient',
-      fieldPerimeter: 'Perimeter', fieldLayers: 'Number of Layers',
-      unitM: 'm', unitM2: 'm\u00b2', unitM3: 'm\u00b3', unitPcs: 'pcs', unitDeg: '\u00b0',
-      resultLabel: 'Result', formulaLabel: 'Formula',
-      labelLinkedItem: 'Link to Estimate Item', linkedItemHint: 'Estimate item ID (optional)',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbCalc: 'Volume Calculator',
+      typeEarthwork: 'Earthwork',
+      typeConcrete: 'Concrete',
+      typeMasonry: 'Masonry',
+      typeRoofing: 'Roofing',
+      typeFinishing: 'Finishing',
+      fieldLength: 'Length',
+      fieldWidth: 'Width',
+      fieldHeight: 'Height',
+      fieldDepth: 'Depth',
+      fieldSlopeCoeff: 'Slope Coefficient',
+      fieldCount: 'Count',
+      fieldThickness: 'Thickness',
+      fieldOpeningArea: 'Opening Area',
+      fieldSlopeAngle: 'Slope Angle',
+      fieldOverlapCoeff: 'Overlap Coefficient',
+      fieldPerimeter: 'Perimeter',
+      fieldLayers: 'Number of Layers',
+      unitM: 'm',
+      unitM2: 'm²',
+      unitM3: 'm³',
+      unitPcs: 'pcs',
+      unitDeg: '°',
+      resultLabel: 'Result',
+      formulaLabel: 'Formula',
+      labelLinkedItem: 'Link to Estimate Item',
+      linkedItemHint: 'Estimate item ID (optional)',
       linkedItemPlaceholder: 'Enter item ID...',
-      btnClear: 'Clear', btnSave: 'Save Calculation',
+      btnClear: 'Clear',
+      btnSave: 'Save Calculation',
       metricSaved: 'Saved Calculations',
       savedTitle: 'Saved Calculations',
-      colWorkType: 'Work Type', colResult: 'Result', colLinkedItem: 'Linked Item',
-      emptyTitle: 'No saved calculations', emptyDescription: 'Perform a calculation and save the result',
+      colWorkType: 'Work Type',
+      colResult: 'Result',
+      colLinkedItem: 'Linked Item',
+      emptyTitle: 'No saved calculations',
+      emptyDescription: 'Perform a calculation and save the result'
     },
     comparison: {
       title: 'Comparison: Plan vs Actual',
       subtitle: 'Compare planned and actual costs by estimate',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbComparison: 'Plan vs Actual',
-      labelEstimate: 'Estimate', selectEstimate: 'Select estimate',
-      labelSection: 'Section', labelThreshold: 'Variance Threshold',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbComparison: 'Plan vs Actual',
+      labelEstimate: 'Estimate',
+      selectEstimate: 'Select estimate',
+      labelSection: 'Section',
+      labelThreshold: 'Variance Threshold',
       thresholdAll: 'All',
-      metricPlan: 'Plan', metricFact: 'Actual', metricVariance: 'Variance', metricVariancePercent: 'Variance %',
-      chartTitle: 'Top 10 Items by Variance', chartVariance: 'Variance',
-      colName: 'Name', colUnit: 'Unit', colPlanQty: 'Plan Qty', colPlanTotal: 'Plan Total',
-      colFactQty: 'Actual Qty', colFactTotal: 'Actual Total', colVariance: 'Variance', colVariancePct: 'Var %',
-      noData: 'No data to display', selectHint: 'Select an estimate for comparison',
+      metricPlan: 'Plan',
+      metricFact: 'Actual',
+      metricVariance: 'Variance',
+      metricVariancePercent: 'Variance %',
+      chartTitle: 'Top 10 Items by Variance',
+      chartVariance: 'Variance',
+      colName: 'Name',
+      colUnit: 'Unit',
+      colPlanQty: 'Plan Qty',
+      colPlanTotal: 'Plan Total',
+      colFactQty: 'Actual Qty',
+      colFactTotal: 'Actual Total',
+      colVariance: 'Variance',
+      colVariancePct: 'Var %',
+      noData: 'No data to display',
+      selectHint: 'Select an estimate for comparison'
     },
     minstroy: {
       title: 'Minstroy Indices',
       subtitle: 'Apply regional price indices from Ministry of Construction',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbMinstroy: 'Minstroy Indices',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbMinstroy: 'Minstroy Indices',
       filterSection: 'Index Parameters',
-      labelRegion: 'Region', labelQuarter: 'Quarter', labelYear: 'Year', labelEstimate: 'Estimate',
+      labelRegion: 'Region',
+      labelQuarter: 'Quarter',
+      labelYear: 'Year',
+      labelEstimate: 'Estimate',
       selectEstimate: 'Select estimate',
-      regionMoscow: 'Moscow', regionSpb: 'Saint Petersburg', regionNovosibirsk: 'Novosibirsk',
-      regionYekaterinburg: 'Yekaterinburg', regionKazan: 'Kazan', regionKrasnodar: 'Krasnodar',
-      regionTyumen: 'Tyumen', regionVladivostok: 'Vladivostok',
+      regionMoscow: 'Moscow',
+      regionSpb: 'Saint Petersburg',
+      regionNovosibirsk: 'Novosibirsk',
+      regionYekaterinburg: 'Yekaterinburg',
+      regionKazan: 'Kazan',
+      regionKrasnodar: 'Krasnodar',
+      regionTyumen: 'Tyumen',
+      regionVladivostok: 'Vladivostok',
       quarterShort: 'Q',
-      typeConstruction: 'Construction Works', typeInstallation: 'Installation Works',
-      typeEquipment: 'Equipment', typeOther: 'Other',
-      metricIndicesCount: 'Indices', metricAvgIndex: 'Average Index',
-      metricRegion: 'Region', metricPeriod: 'Period',
+      typeConstruction: 'Construction Works',
+      typeInstallation: 'Installation Works',
+      typeEquipment: 'Equipment',
+      typeOther: 'Other',
+      metricIndicesCount: 'Indices',
+      metricAvgIndex: 'Average Index',
+      metricRegion: 'Region',
+      metricPeriod: 'Period',
       indicesTitle: 'Indices Table',
-      colRegion: 'Region', colPeriod: 'Period', colIndexType: 'Index Type', colValue: 'Value',
+      colRegion: 'Region',
+      colPeriod: 'Period',
+      colIndexType: 'Index Type',
+      colValue: 'Value',
       btnApply: 'Apply to Estimate',
-      emptyTitle: 'No indices', emptyDescription: 'Adjust search parameters to find indices',
+      emptyTitle: 'No indices',
+      emptyDescription: 'Adjust search parameters to find indices',
       applyResultTitle: 'Index Application Result',
       applyResultDesc: 'Indices applied: {count}',
-      colItemName: 'Name', colOldPrice: 'Old Price', colNewPrice: 'New Price', colIndexApplied: 'Index',
+      colItemName: 'Name',
+      colOldPrice: 'Old Price',
+      colNewPrice: 'New Price',
+      colIndexApplied: 'Index'
     },
     summary: {
       title: 'Summary Estimate Report',
       subtitle: 'Consolidation of project estimates into a summary report',
-      breadcrumbHome: 'Home', breadcrumbEstimates: 'Estimates', breadcrumbSummary: 'Summary Report',
-      labelProject: 'Project', selectProject: 'Select project',
-      metricTotal: 'Grand Total', metricConstruction: 'Construction', metricEquipment: 'Equipment', metricOther: 'Other Expenses',
-      directCosts: 'Direct Costs', overheadCosts: 'Overhead Costs', profitLabel: 'Estimated Profit',
+      breadcrumbHome: 'Home',
+      breadcrumbEstimates: 'Estimates',
+      breadcrumbSummary: 'Summary Report',
+      labelProject: 'Project',
+      selectProject: 'Select project',
+      metricTotal: 'Grand Total',
+      metricConstruction: 'Construction',
+      metricEquipment: 'Equipment',
+      metricOther: 'Other Expenses',
+      directCosts: 'Direct Costs',
+      overheadCosts: 'Overhead Costs',
+      profitLabel: 'Estimated Profit',
       chaptersTitle: 'Summary Report Chapters',
-      expandAll: 'Expand all', collapseAll: 'Collapse all',
-      colChapterNum: '#', colName: 'Name', colEstimateNum: 'Estimate #', colAmount: 'Amount',
+      expandAll: 'Expand all',
+      collapseAll: 'Collapse all',
+      colChapterNum: '#',
+      colName: 'Name',
+      colEstimateNum: 'Estimate #',
+      colAmount: 'Amount',
       grandTotalLabel: 'GRAND TOTAL',
-      selectHint: 'Select a project to generate the summary report',
+      selectHint: 'Select a project to generate the summary report'
     },
+    form: {
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      toastUpdated: 'Toast Updated',
+      toastUpdateError: 'Toast Update Error',
+      titleEdit: 'Title Edit',
+      titleCreate: 'Title Create',
+      subtitleCreate: 'Subtitle Create',
+      fieldName: 'Field Name',
+      placeholderName: 'Enter name',
+      fieldProject: 'Field Project',
+      placeholderProject: 'Placeholder Project',
+      fieldSpecification: 'Field Specification',
+      placeholderSpecification: 'Placeholder Specification',
+      fieldContract: 'Field Contract',
+      noContract: 'No Contract',
+      placeholderContract: 'Placeholder Contract',
+      placeholderNotes: 'Placeholder Notes',
+      createButton: 'Create Button'
+    }
   },
-
-  // Issues Page (additional keys)
   issuesPage: {
     list: {
-      colAssignee: 'Assignee', colDueDate: 'Due Date',
-      deleteSuccess: 'Issues deleted', deleteError: 'Error deleting issues',
-      confirmDeleteTitle: 'Delete {count} issue(s)?', confirmDeleteDescription: 'This action cannot be undone. Selected issues will be deleted.',
-      confirmDeleteLabel: 'Delete', confirmDeleteCancel: 'Cancel',
-      emptyTitle: 'No issues', emptyDescription: 'Issue tracker is empty',
-      title: 'Issues & Problems', subtitle: '{count} issues in system',
-      breadcrumbHome: 'Home', breadcrumbIssues: 'Issues',
-      newIssue: 'New Issue', tabAll: 'All', tabOpen: 'Open', tabInProgress: 'In Progress',
-      tabResolved: 'Resolved', tabClosed: 'Closed', searchPlaceholder: 'Search by number, title...',
+      colAssignee: 'Assignee',
+      colDueDate: 'Due Date',
+      deleteSuccess: 'Issues deleted',
+      deleteError: 'Error deleting issues',
+      confirmDeleteTitle: 'Delete {count} issue(s)?',
+      confirmDeleteDescription: 'This action cannot be undone. Selected issues will be deleted.',
+      confirmDeleteLabel: 'Delete',
+      confirmDeleteCancel: 'Cancel',
+      emptyTitle: 'No issues',
+      emptyDescription: 'Issue tracker is empty',
+      title: 'Issues & Problems',
+      subtitle: '{count} issues in system',
+      breadcrumbHome: 'Home',
+      breadcrumbIssues: 'Issues',
+      newIssue: 'New Issue',
+      tabAll: 'All',
+      tabOpen: 'Open',
+      tabInProgress: 'In Progress',
+      tabResolved: 'Resolved',
+      tabClosed: 'Closed',
+      searchPlaceholder: 'Search by number, title...',
       bulkDelete: 'Delete',
-      kanbanOpen: 'Open', kanbanInProgress: 'In Progress', kanbanOnHold: 'On Hold',
-      kanbanResolved: 'Resolved', kanbanClosed: 'Closed',
-      toastNewIssueHint: 'Issue creation available in PM / Issue card',
+      kanbanOpen: 'Open',
+      kanbanInProgress: 'In Progress',
+      kanbanOnHold: 'On Hold',
+      kanbanResolved: 'Resolved',
+      kanbanClosed: 'Closed',
+      toastNewIssueHint: 'Issue creation available in PM / Issue card'
     },
     detail: {
-      breadcrumbHome: 'Home', breadcrumbIssues: 'Issues', backToList: 'Back to List',
-      loading: 'Loading...', sectionDescription: 'Description', noDescription: 'No description',
-      sectionResolution: 'Resolution', sectionComments: 'Comments',
-      addComment: 'Add Comment', commentPlaceholder: 'Enter a comment...', sendButton: 'Send',
-      toastCommentAdded: 'Comment added', you: 'You',
-      sectionInfo: 'Information', labelStatus: 'Status', labelType: 'Type', labelPriority: 'Priority',
-      sectionDetails: 'Details', labelAuthor: 'Author', labelAssignee: 'Assignee',
-      notAssigned: 'Unassigned', labelProject: 'Project', labelDueDate: 'Due Date',
-      notSet: 'Not set', labelCreated: 'Created', labelLinkedDocs: 'Linked Documents',
-      sectionActions: 'Actions', changeStatus: 'Change Status',
+      breadcrumbHome: 'Home',
+      breadcrumbIssues: 'Issues',
+      backToList: 'Back to List',
+      loading: 'Loading...',
+      sectionDescription: 'Description',
+      noDescription: 'No description',
+      sectionResolution: 'Resolution',
+      sectionComments: 'Comments',
+      addComment: 'Add Comment',
+      commentPlaceholder: 'Enter a comment...',
+      sendButton: 'Send',
+      toastCommentAdded: 'Comment added',
+      you: 'You',
+      sectionInfo: 'Information',
+      labelStatus: 'Status',
+      labelType: 'Type',
+      labelPriority: 'Priority',
+      sectionDetails: 'Details',
+      labelAuthor: 'Author',
+      labelAssignee: 'Assignee',
+      notAssigned: 'Unassigned',
+      labelProject: 'Project',
+      labelDueDate: 'Due Date',
+      notSet: 'Not set',
+      labelCreated: 'Created',
+      labelLinkedDocs: 'Linked Documents',
+      sectionActions: 'Actions',
+      changeStatus: 'Change Status',
       toastStatusChanged: 'Issue status: {status}',
-      statusOpen: 'Open', statusInProgress: 'In Progress', statusOnHold: 'On Hold',
-      statusResolved: 'Resolved', statusClosed: 'Closed',
-    },
+      statusOpen: 'Open',
+      statusInProgress: 'In Progress',
+      statusOnHold: 'On Hold',
+      statusResolved: 'Resolved',
+      statusClosed: 'Closed'
+    }
   },
-
-  // API Management Module
   apiManagement: {
     keys: {
-      title: 'API Keys', subtitle: '{count} keys',
-      breadcrumbHome: 'Home', breadcrumbApiManagement: 'API Management', breadcrumbApiKeys: 'API Keys',
-      createKey: 'Create Key', tabAll: 'All', tabActive: 'Active', tabRevoked: 'Revoked',
-      metricTotal: 'Total Keys', metricActive: 'Active', metricTotalRequests: 'Total Requests',
-      metricAvgRateLimit: 'Avg. Rate Limit', perMinute: '/min',
+      title: 'API Keys',
+      subtitle: '{count} keys',
+      breadcrumbHome: 'Home',
+      breadcrumbApiManagement: 'API Management',
+      breadcrumbApiKeys: 'API Keys',
+      createKey: 'Create Key',
+      tabAll: 'All',
+      tabActive: 'Active',
+      tabRevoked: 'Revoked',
+      metricTotal: 'Total Keys',
+      metricActive: 'Active',
+      metricTotalRequests: 'Total Requests',
+      metricAvgRateLimit: 'Avg. Rate Limit',
+      perMinute: '/min',
       searchPlaceholder: 'Search by name, key...',
-      colName: 'Name', colStatus: 'Status', colPermissions: 'Permissions', colRequests: 'Requests',
-      colRateLimit: 'Rate Limit', colLastUsed: 'Last Used', colExpires: 'Expires', colCreatedBy: 'Created By',
-      notUsed: 'Not used', unlimited: 'Unlimited', revokeButton: 'Revoke',
-      statusActive: 'Active', statusExpired: 'Expired', statusRevoked: 'Revoked', statusSuspended: 'Suspended',
-      emptyTitle: 'No API Keys', emptyDescription: 'Create your first API key for integration',
+      colName: 'Name',
+      colStatus: 'Status',
+      colPermissions: 'Permissions',
+      colRequests: 'Requests',
+      colRateLimit: 'Rate Limit',
+      colLastUsed: 'Last Used',
+      colExpires: 'Expires',
+      colCreatedBy: 'Created By',
+      notUsed: 'Not used',
+      unlimited: 'Unlimited',
+      revokeButton: 'Revoke',
+      statusActive: 'Active',
+      statusExpired: 'Expired',
+      statusRevoked: 'Revoked',
+      statusSuspended: 'Suspended',
+      emptyTitle: 'No API Keys',
+      emptyDescription: 'Create your first API key for integration'
     },
     webhooks: {
-      title: 'Webhooks', subtitle: '{count} webhooks',
-      breadcrumbHome: 'Home', breadcrumbApiManagement: 'API Management', breadcrumbWebhooks: 'Webhooks',
-      createWebhook: 'Create Webhook', tabAll: 'All', tabActive: 'Active', tabFailed: 'Failed', tabInactive: 'Inactive',
-      metricTotal: 'Total Webhooks', metricActive: 'Active', metricDeliveries: 'Total Deliveries', metricSuccessRate: 'Success Rate',
+      title: 'Webhooks',
+      subtitle: '{count} webhooks',
+      breadcrumbHome: 'Home',
+      breadcrumbApiManagement: 'API Management',
+      breadcrumbWebhooks: 'Webhooks',
+      createWebhook: 'Create Webhook',
+      tabAll: 'All',
+      tabActive: 'Active',
+      tabFailed: 'Failed',
+      tabInactive: 'Inactive',
+      metricTotal: 'Total Webhooks',
+      metricActive: 'Active',
+      metricDeliveries: 'Total Deliveries',
+      metricSuccessRate: 'Success Rate',
       searchPlaceholder: 'Search by name, URL...',
-      colWebhook: 'Webhook', colStatus: 'Status', colEvents: 'Events', colSuccess: 'Success',
-      colErrors: 'Errors', colHttpCode: 'HTTP Code', colLastDelivery: 'Last Delivery', testButton: 'Test',
-      statusActive: 'Active', statusInactive: 'Inactive', statusFailed: 'Failed',
-      emptyTitle: 'No Webhooks', emptyDescription: 'Create your first webhook for notifications',
-    },
+      colWebhook: 'Webhook',
+      colStatus: 'Status',
+      colEvents: 'Events',
+      colSuccess: 'Success',
+      colErrors: 'Errors',
+      colHttpCode: 'HTTP Code',
+      colLastDelivery: 'Last Delivery',
+      testButton: 'Test',
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
+      statusFailed: 'Failed',
+      emptyTitle: 'No Webhooks',
+      emptyDescription: 'Create your first webhook for notifications'
+    }
   },
-
-  // KEP Module
   kepModule: {
-    title: 'KEP Signing Requests', subtitle: '{count} requests in system',
-    breadcrumbHome: 'Home', breadcrumbKep: 'KEP', breadcrumbSigningRequests: 'Signing Requests',
-    tabAll: 'All', tabPending: 'Pending', tabSigned: 'Signed', tabRejected: 'Rejected',
-    metricTotal: 'Total Requests', metricPending: 'Pending Signing', metricSigned: 'Signed',
-    metricRejectedExpired: 'Rejected / Expired', trendPcs: '{count} pcs.', trendNeedAttention: 'Need Attention',
+    title: 'KEP Signing Requests',
+    subtitle: '{count} requests in system',
+    breadcrumbHome: 'Home',
+    breadcrumbKep: 'KEP',
+    breadcrumbSigningRequests: 'Signing Requests',
+    tabAll: 'All',
+    tabPending: 'Pending',
+    tabSigned: 'Signed',
+    tabRejected: 'Rejected',
+    metricTotal: 'Total Requests',
+    metricPending: 'Pending Signing',
+    metricSigned: 'Signed',
+    metricRejectedExpired: 'Rejected / Expired',
+    trendPcs: '{count} pcs.',
+    trendNeedAttention: 'Need Attention',
     searchPlaceholder: 'Search by number, document...',
-    filterAllStatuses: 'All Statuses', filterPending: 'Pending Signing', filterSigned: 'Signed',
-    filterRejected: 'Rejected', filterExpired: 'Expired', filterCancelled: 'Cancelled',
-    filterAllPriorities: 'All Priorities', priorityLow: 'Low', priorityMedium: 'Medium', priorityHigh: 'High', priorityCritical: 'Critical',
-    colNumber: '#', colDocument: 'Document', colStatus: 'Status', colPriority: 'Priority', colSigner: 'Signer', colDueDate: 'Due Date',
-    openButton: 'Open', signButton: 'Sign', rejectButton: 'Reject',
-    statusPending: 'Pending Signing', statusSigned: 'Signed', statusRejected: 'Rejected', statusExpired: 'Expired', statusCancelled: 'Cancelled',
-    emptyTitle: 'No signing requests', emptyDescription: 'No KEP signing requests found',
+    filterAllStatuses: 'All Statuses',
+    filterPending: 'Pending Signing',
+    filterSigned: 'Signed',
+    filterRejected: 'Rejected',
+    filterExpired: 'Expired',
+    filterCancelled: 'Cancelled',
+    filterAllPriorities: 'All Priorities',
+    priorityLow: 'Low',
+    priorityMedium: 'Medium',
+    priorityHigh: 'High',
+    priorityCritical: 'Critical',
+    colNumber: '#',
+    colDocument: 'Document',
+    colStatus: 'Status',
+    colPriority: 'Priority',
+    colSigner: 'Signer',
+    colDueDate: 'Due Date',
+    openButton: 'Open',
+    signButton: 'Sign',
+    rejectButton: 'Reject',
+    statusPending: 'Pending Signing',
+    statusSigned: 'Signed',
+    statusRejected: 'Rejected',
+    statusExpired: 'Expired',
+    statusCancelled: 'Cancelled',
+    emptyTitle: 'No signing requests',
+    emptyDescription: 'No KEP signing requests found'
   },
-
-  // ---------------------------------------------------------------------------
-  // Leave Management
-  // ---------------------------------------------------------------------------
   leave: {
     board: {
       title: 'Leave Board',
@@ -16106,7 +19125,7 @@ export const en: TranslationKeys = {
       colDraft: 'Draft',
       colSubmitted: 'Submitted',
       colApproved: 'Approved',
-      colRejected: 'Rejected',
+      colRejected: 'Rejected'
     },
     types: {
       title: 'Leave Types',
@@ -16135,7 +19154,7 @@ export const en: TranslationKeys = {
       activeYes: 'Yes',
       activeNo: 'No',
       emptyTitle: 'No leave types',
-      emptyDescription: 'Create your first leave type',
+      emptyDescription: 'Create your first leave type'
     },
     requests: {
       title: 'Leave Requests',
@@ -16172,7 +19191,7 @@ export const en: TranslationKeys = {
       actionRefuse: 'Refuse',
       refuseReason: 'Refused by manager',
       emptyTitle: 'No requests',
-      emptyDescription: 'No leave requests found',
+      emptyDescription: 'No leave requests found'
     },
     allocations: {
       title: 'Leave Allocations',
@@ -16200,13 +19219,9 @@ export const en: TranslationKeys = {
       colProgress: 'Progress',
       daysSuffix: 'd.',
       emptyTitle: 'No allocations',
-      emptyDescription: 'No leave allocations found',
-    },
+      emptyDescription: 'No leave allocations found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // IoT Monitoring
-  // ---------------------------------------------------------------------------
   iot: {
     statusOnline: 'Online',
     statusOffline: 'Offline',
@@ -16221,7 +19236,6 @@ export const en: TranslationKeys = {
     sensorDust: 'Dust',
     sensorNoise: 'Noise',
     sensorStructural: 'Structural',
-
     devices: {
       title: 'IoT Devices',
       subtitleDevices: '{count} devices',
@@ -16252,9 +19266,8 @@ export const en: TranslationKeys = {
       colProject: 'Project',
       colLastReading: 'Last Reading',
       emptyTitle: 'No devices',
-      emptyDescription: 'Add your first IoT device',
+      emptyDescription: 'Add your first IoT device'
     },
-
     sensors: {
       title: 'Sensors',
       subtitle: 'Sensor monitoring by type',
@@ -16268,9 +19281,8 @@ export const en: TranslationKeys = {
       trendAttention: 'Need attention',
       trendNo: 'None',
       onlineSuffix: 'online',
-      lastUpdate: 'Last update:',
+      lastUpdate: 'Last update:'
     },
-
     alerts: {
       title: 'Alerts & Rules',
       subtitleAlerts: '{alertCount} alerts, {ruleCount} rules',
@@ -16322,9 +19334,8 @@ export const en: TranslationKeys = {
       conditionBelow: 'Below threshold',
       conditionOutOfRange: 'Out of range',
       labelThreshold: 'Threshold',
-      labelEmail: 'Notification email',
+      labelEmail: 'Notification email'
     },
-
     detail: {
       breadcrumbHome: 'Home',
       breadcrumbIot: 'IoT Monitoring',
@@ -16357,13 +19368,9 @@ export const en: TranslationKeys = {
       statMin: 'Minimum',
       statMax: 'Maximum',
       statAvg: 'Average',
-      statAnomalies: 'Anomalies',
-    },
+      statAnomalies: 'Anomalies'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // HR Russian
-  // ---------------------------------------------------------------------------
   hrRussian: {
     timesheet: {
       title: 'Timesheet',
@@ -16419,10 +19426,9 @@ export const en: TranslationKeys = {
         september: 'September',
         october: 'October',
         november: 'November',
-        december: 'December',
-      },
+        december: 'December'
+      }
     },
-
     contracts: {
       title: 'Employment Contracts',
       subtitleContracts: '{count} contracts',
@@ -16456,9 +19462,8 @@ export const en: TranslationKeys = {
       colStartDate: 'Start Date',
       colSalary: 'Salary',
       emptyTitle: 'No contracts',
-      emptyDescription: 'Create your first employment contract',
+      emptyDescription: 'Create your first employment contract'
     },
-
     orders: {
       title: 'Personnel Orders',
       subtitleOrders: '{count} orders',
@@ -16498,9 +19503,8 @@ export const en: TranslationKeys = {
       colOrderDate: 'Order Date',
       colEffectiveDate: 'Effective Date',
       emptyTitle: 'No personnel orders',
-      emptyDescription: 'Create your first order',
+      emptyDescription: 'Create your first order'
     },
-
     staffing: {
       title: 'Staffing Table',
       subtitlePositions: '{count} positions in staffing table',
@@ -16540,13 +19544,9 @@ export const en: TranslationKeys = {
       colSalaryRange: 'Salary Range',
       colStatus: 'Status',
       emptyTitle: 'No positions',
-      emptyDescription: 'Staffing table is empty',
-    },
+      emptyDescription: 'Staffing table is empty'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Recruitment
-  // ---------------------------------------------------------------------------
   recruitment: {
     detail: {
       statusNew: 'New',
@@ -16598,7 +19598,7 @@ export const en: TranslationKeys = {
       labelUpdated: 'Updated',
       sectionActions: 'Actions',
       downloadResume: 'Download Resume',
-      exportPdf: 'Export to PDF',
+      exportPdf: 'Export to PDF'
     },
     list: {
       title: 'Applicants',
@@ -16646,7 +19646,7 @@ export const en: TranslationKeys = {
       priorityLow: 'Low',
       priorityMedium: 'Medium',
       priorityHigh: 'High',
-      priorityUrgent: 'Urgent',
+      priorityUrgent: 'Urgent'
     },
     positions: {
       title: 'Positions',
@@ -16680,7 +19680,7 @@ export const en: TranslationKeys = {
       statusOpen: 'Open',
       statusInProgress: 'In Progress',
       statusFilled: 'Filled',
-      statusCancelled: 'Cancelled',
+      statusCancelled: 'Cancelled'
     },
     form: {
       positionEngineer: 'Civil Engineer',
@@ -16689,13 +19689,28 @@ export const en: TranslationKeys = {
       positionEstimator: 'Estimator',
       positionPtoEngineer: 'PTO Engineer',
       positionSupplyManager: 'Supply Manager',
-      positionAccountant: 'Accountant',
+      positionAccountant: 'Accountant'
     },
+    board: {
+      statusNew: 'Status New',
+      statusScreening: 'Status Screening',
+      statusInterview: 'Status Interview',
+      statusOffer: 'Status Offer',
+      statusHired: 'Status Hired',
+      statusRejected: 'Rejected',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      filters: 'Filters',
+      addApplicant: 'Add Applicant',
+      searchPlaceholder: 'Search...',
+      allStatuses: 'All Statuses',
+      reset: 'Reset',
+      noApplicants: 'No Applicants',
+      dragHere: 'Drag Here'
+    },
+    breadcrumb: 'Navigation'
   },
-
-  // ---------------------------------------------------------------------------
-  // Portal
-  // ---------------------------------------------------------------------------
   portal: {
     messages: {
       title: 'Portal Messages',
@@ -16730,7 +19745,7 @@ export const en: TranslationKeys = {
       composeMessagePlaceholder: 'Message text...',
       composeCancel: 'Cancel',
       composeSend: 'Send',
-      messageSent: 'Message sent',
+      messageSent: 'Message sent'
     },
     dashboard: {
       title: 'Portal',
@@ -16753,7 +19768,7 @@ export const en: TranslationKeys = {
       sectionQuickActions: 'Quick Actions',
       actionSendMessage: 'Send Message',
       actionViewDocuments: 'View Documents',
-      actionManageAccess: 'Manage Access',
+      actionManageAccess: 'Manage Access'
     },
     documents: {
       title: 'Portal Documents',
@@ -16786,7 +19801,7 @@ export const en: TranslationKeys = {
       categoryPermit: 'Permit',
       categoryReport: 'Report',
       categoryPhoto: 'Photo',
-      categoryOther: 'Other',
+      categoryOther: 'Other'
     },
     projects: {
       title: 'Portal Projects',
@@ -16815,7 +19830,7 @@ export const en: TranslationKeys = {
       statusPlanning: 'Planning',
       statusOnHold: 'On Hold',
       statusCompleted: 'Completed',
-      statusDraft: 'Draft',
+      statusDraft: 'Draft'
     },
     admin: {
       title: 'Portal Management',
@@ -16874,13 +19889,9 @@ export const en: TranslationKeys = {
       accessView: 'View',
       accessComment: 'Comment',
       accessUpload: 'Upload',
-      accessFull: 'Full',
-    },
+      accessFull: 'Full'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Mobile Module
-  // ---------------------------------------------------------------------------
   mobileModule: {
     dashboard: {
       title: 'Mobile Dashboard',
@@ -16963,7 +19974,7 @@ export const en: TranslationKeys = {
       dueDatePrefix: 'due {date}',
       demoTaskUpdate: 'Task update',
       recentReports: 'Recent Reports',
-      noReportsYet: 'No reports yet',
+      noReportsYet: 'No reports yet'
     },
     reportDetail: {
       notFoundTitle: 'Report Not Found',
@@ -17022,7 +20033,7 @@ export const en: TranslationKeys = {
       notFoundOrUnavailable: 'Report not found or unavailable.',
       workDescription: 'Work Description',
       noDescription: 'No description provided',
-      photoDocumentation: 'Photo Documentation',
+      photoDocumentation: 'Photo Documentation'
     },
     reportNew: {
       title: 'New Field Report',
@@ -17092,7 +20103,7 @@ export const en: TranslationKeys = {
       toastQueuedForSync: 'Report added to sync queue',
       toastReportSubmitted: 'Field report submitted',
       toastSubmittedPhotoCleanupFailed: 'Report submitted but local photos could not be cleaned',
-      toastSubmitFailedQueued: 'Failed to submit. Report added to sync queue',
+      toastSubmitFailedQueued: 'Failed to submit. Report added to sync queue'
     },
     reports: {
       title: 'Field Reports',
@@ -17143,7 +20154,7 @@ export const en: TranslationKeys = {
       tabReview: 'Under Review',
       syncRequired: 'Sync required',
       allSynced: 'All synced',
-      localQueue: 'Local queue: {total} report(s), {photos} photos.',
+      localQueue: 'Local queue: {total} report(s), {photos} photos.'
     },
     photos: {
       title: 'Site Photos',
@@ -17179,13 +20190,9 @@ export const en: TranslationKeys = {
       syncRequired: 'Sync required',
       allUploaded: 'All uploaded',
       allStatuses: 'All statuses',
-      localQueue: 'In local queue: {photos} photos from {reports} report(s).',
-    },
+      localQueue: 'In local queue: {photos} photos from {reports} report(s).'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Self-Employed
-  // ---------------------------------------------------------------------------
   selfEmployed: {
     registries: {
       title: 'Payment Registries',
@@ -17207,7 +20214,7 @@ export const en: TranslationKeys = {
       statusDraft: 'Draft',
       statusInProgress: 'In Progress',
       statusCompleted: 'Completed',
-      statusApproved: 'Approved',
+      statusApproved: 'Approved'
     },
     payments: {
       title: 'Self-Employed Payments',
@@ -17231,7 +20238,7 @@ export const en: TranslationKeys = {
       statusPending: 'Pending',
       statusPaid: 'Paid',
       statusReceiptIssued: 'Receipt Issued',
-      statusCancelled: 'Cancelled',
+      statusCancelled: 'Cancelled'
     },
     contractors: {
       title: 'Self-Employed Registry',
@@ -17264,13 +20271,9 @@ export const en: TranslationKeys = {
       taxStatusRegistered: 'Registered',
       taxStatusUnregistered: 'Unregistered',
       taxStatusSuspended: 'Suspended',
-      taxStatusRevoked: 'Revoked',
-    },
+      taxStatusRevoked: 'Revoked'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Portfolio module
-  // ---------------------------------------------------------------------------
   portfolio: {
     bidComparison: {
       title: 'Bid Comparison',
@@ -17301,7 +20304,7 @@ export const en: TranslationKeys = {
       colTimeline: 'Timeline',
       colTotal: 'Total',
       colRecommendation: 'Recommendation',
-      priceComparison: 'Bid Price Comparison',
+      priceComparison: 'Bid Price Comparison'
     },
     tenders: {
       title: 'Tenders',
@@ -17331,7 +20334,7 @@ export const en: TranslationKeys = {
       colScore: 'Score',
       colResponsible: 'Responsible',
       colDeadline: 'Deadline',
-      colSubmitted: 'Submitted',
+      colSubmitted: 'Submitted'
     },
     opportunities: {
       title: 'Opportunities (Pipeline)',
@@ -17361,7 +20364,7 @@ export const en: TranslationKeys = {
       colProbability: 'Probability',
       colWeightedValue: 'Weighted Value',
       colOwner: 'Owner',
-      colExpectedClose: 'Expected Close',
+      colExpectedClose: 'Expected Close'
     },
     opportunityDetail: {
       moveToStage: 'Move to "{stage}"',
@@ -17385,7 +20388,7 @@ export const en: TranslationKeys = {
       activityAdded: 'Activity added',
       createBid: 'Create Tender Bid',
       exportPdf: 'Export to PDF',
-      exportStarted: 'PDF export started',
+      exportStarted: 'PDF export started'
     },
     goNoGo: {
       title: 'Go/No-Go Checklist',
@@ -17402,13 +20405,9 @@ export const en: TranslationKeys = {
       saved: 'Checklist saved',
       saveError: 'Error saving checklist',
       analogError: 'Analog assessment error',
-      analogCount: '{count} analogs found',
-    },
+      analogCount: '{count} analogs found'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Monte Carlo module
-  // ---------------------------------------------------------------------------
   monteCarlo: {
     title: 'Monte Carlo Simulations',
     subtitle: '{count} simulations',
@@ -17454,12 +20453,8 @@ export const en: TranslationKeys = {
     colP85: 'P85 (days)',
     colP95: 'P95 (days)',
     deleteTitle: 'Delete {count} simulation(s)?',
-    deleteDescription: 'This action is irreversible. Selected simulations will be deleted.',
+    deleteDescription: 'This action is irreversible. Selected simulations will be deleted.'
   },
-
-  // ---------------------------------------------------------------------------
-  // Revenue Recognition module
-  // ---------------------------------------------------------------------------
   revenueRecognition: {
     title: 'Revenue Recognition',
     dashboardSubtitle: 'Summary overview per IFRS 15 / RAS standards',
@@ -17535,12 +20530,8 @@ export const en: TranslationKeys = {
     cumulativeCost: 'Cumulative Cost',
     periodRevenue: 'Period Revenue',
     cumulativeRevenue: 'Cumulative Revenue',
-    periodProfit: 'Period Profit',
+    periodProfit: 'Period Profit'
   },
-
-  // ---------------------------------------------------------------------------
-  // AI Assistant
-  // ---------------------------------------------------------------------------
   ai: {
     assistant: {
       title: 'AI Assistant',
@@ -17569,13 +20560,144 @@ export const en: TranslationKeys = {
       mockSafety: '## Weekly Safety Summary\n**Period:** 03/08/2025 - 03/15/2025\n\n### Statistics\n- Incidents: **2** (previous week: 1)\n- Inspections: **12** of 15 planned\n- Violations: **8** (resolved: 5)\n- Days without injuries: **23**\n\n### Incidents\n1. Object fell from height (RC "Solnechny", 03/10) - no injuries\n2. Minor hand injury (SC "Tsentralny", 03/12) - first aid provided\n\n### Recommendations\n- Conduct unscheduled height work briefing\n- Strengthen barrier control at RC "Solnechny"\n- Update PPE stock',
       mockOverdue: '## Overdue Tasks\n\nFound **14** overdue tasks across 3 projects:\n\n### RC "Solnechny" (7 tasks)\n- 4th floor formwork installation - 3 days overdue\n- Rebar acceptance from supplier - 5 days overdue\n- Hidden work report #12 - 2 days overdue\n- Concrete cube test series #8 - 4 days overdue\n- 3 more tasks...\n\n### Vyatka Bridge (4 tasks)\n- Excavation dewatering - 7 days overdue\n- Geodetic marking of pier #3 - 2 days overdue\n- 2 more tasks...\n\n### SC "Tsentralny" (3 tasks)\n- Project change approval - 10 days overdue\n- 2 more tasks...',
       mockSupply: '## Material Supply Status\n\n### Expected Deliveries (next 7 days)\n| Material | Supplier | Site | Date | Status |\n|----------|----------|------|------|--------|\n| Rebar A500C d16 | StalTorg | RC Solnechny | 03/17 | In transit |\n| Concrete B25 | BetonServis | SC Tsentralny | 03/18 | Confirmed |\n| Brick M150 | StroyKomplekt | RC NG | 03/19 | Confirmed |\n| Gravel fr 5-20 | PromSnab | Bridge | 03/20 | Pending |\n\n### Problem Deliveries\n- **Steel structures** (LLC "MetallStroy") - 14 day delay, new date: 03/28\n- **Insulation** (LLC "TeploDom") - partial delivery, 60% of order\n\n### Warehouse - Critically Low Stock\n- Cement M500: 3 days of work remaining\n- Electrodes: 2 days of work remaining',
-      mockDefault: 'Thank you for your question. Here is what I found:\n\n### Brief Summary\nCurrently **4 active projects** in the system with a total budget of **1.2B RUB**.\n\n### Key Metrics\n- Average project progress: **47%**\n- Open tasks: **156**\n- Active contracts: **23**\n- Remarks in progress: **34**\n\nIf you need more detailed information on a specific aspect, please clarify your question.',
+      mockDefault: 'Thank you for your question. Here is what I found:\n\n### Brief Summary\nCurrently **4 active projects** in the system with a total budget of **1.2B RUB**.\n\n### Key Metrics\n- Average project progress: **47%**\n- Open tasks: **156**\n- Active contracts: **23**\n- Remarks in progress: **34**\n\nIf you need more detailed information on a specific aspect, please clarify your question.'
     },
+    photoAnalysis: {
+      dropZoneTitle: 'Drop Zone Title',
+      dropZoneDragActive: 'Drop Zone Drag Active',
+      dropZoneDescription: 'Drop Zone Description',
+      confidence: 'Confidence',
+      suggestedAction: 'Suggested Action',
+      safetyScore: 'Safety Score',
+      progressEstimate: 'Progress Estimate',
+      findingsCount: 'Findings Count',
+      overallAssessment: 'Overall Assessment',
+      findingType: {
+        SAFETY_VIOLATION: 'S A F E T Y_ V I O L A T I O N',
+        DEFECT: 'D E F E C T'
+      },
+      analysisResults: 'Analysis Results',
+      noFindings: 'No Findings',
+      actions: {
+        createDefect: 'Create Defect',
+        createIncident: 'Create Incident',
+        addToDailyLog: 'Add To Daily Log'
+      },
+      history: {
+        noHistory: 'No History',
+        date: 'Date',
+        photo: 'Photo',
+        findings: 'Findings',
+        status: 'Status',
+        statusCompleted: 'Completed',
+        title: 'Title'
+      },
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbAi: 'AI',
+      breadcrumbPhotoAnalysis: 'Breadcrumb Photo Analysis',
+      analyzing: 'Analyzing',
+      analyze: 'Analyze'
+    },
+    riskDashboard: {
+      riskLevel: {
+        low: 'Low',
+        medium: 'Medium',
+        high: 'High',
+        critical: 'Critical'
+      },
+      riskTrend: {
+        title: 'Title',
+        description: 'Description'
+      },
+      factors: {
+        noFactors: 'No Factors',
+        name: 'Name',
+        category: 'Category',
+        probability: 'Probability',
+        impact: 'Impact',
+        riskScore: 'Risk Score',
+        mitigationStatus: 'Mitigation Status',
+        suggestedMitigation: 'Suggested Mitigation',
+        title: 'Title'
+      },
+      alerts: {
+        title: 'Title',
+        noAlerts: 'No Alerts',
+        recommendedAction: 'Recommended Action'
+      },
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbAi: 'AI',
+      breadcrumbRiskDashboard: 'Breadcrumb Risk Dashboard',
+      filters: {
+        project: 'Project',
+        allProjects: 'All Projects',
+        timeRange: 'Time Range',
+        last7Days: 'Last 7 days',
+        last30Days: 'Last 30 days',
+        last90Days: 'Last 90 days'
+      },
+      overallRisk: 'Overall Risk',
+      scheduleRisk: 'Schedule Risk',
+      costRisk: 'Cost Risk',
+      safetyRisk: 'Safety Risk',
+      predictedAt: 'Predicted At'
+    },
+    settings: {
+      provider: 'Provider',
+      model: 'Model',
+      modelPlaceholder: 'Model Placeholder',
+      apiUrl: 'Api Url',
+      apiUrlHint: 'Api Url Hint',
+      apiKey: 'Api Key',
+      apiKeyUnchanged: 'Api Key Unchanged',
+      temperature: 'Temperature',
+      temperaturePrecise: 'Temperature Precise',
+      temperatureCreative: 'Temperature Creative',
+      maxTokens: 'Max Tokens',
+      setAsDefault: 'Set As Default',
+      noConfigs: 'No Configs',
+      default: 'Default',
+      temp: 'Temp',
+      tokens: 'Tokens',
+      active: 'Active',
+      inactive: 'Inactive',
+      usageLast7d: 'Last 7 days',
+      usageLast30d: 'Last 30 days',
+      usageAllTime: 'Usage All Time',
+      usageColDate: 'Usage Col Date',
+      usageColFeature: 'Usage Col Feature',
+      usageColTokens: 'Usage Col Tokens',
+      usageColCost: 'Usage Col Cost',
+      usageColDuration: 'Usage Col Duration',
+      usageColStatus: 'Usage Col Status',
+      usageSuccess: 'Usage Success',
+      usageFailed: 'Usage Failed',
+      usageTitle: 'Usage Title',
+      metricTotalRequests: 'Metric Total Requests',
+      metricTotalTokens: 'Metric Total Tokens',
+      metricEstimatedCost: 'Metric Estimated Cost',
+      metricAvgResponseTime: 'Metric Avg Response Time',
+      usageEmpty: 'Usage Empty',
+      usageEmptyDesc: 'Usage Empty Desc',
+      saveSuccess: 'Saved successfully',
+      saveError: 'Save error',
+      deleteSuccess: 'Deleted successfully',
+      deleteError: 'Delete error',
+      deleteConfirm: 'Are you sure you want to delete?',
+      tabConfig: 'Tab Config',
+      tabUsage: 'Tab Usage',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumbHome: 'Home',
+      breadcrumbSettings: 'Settings',
+      breadcrumbAi: 'AI',
+      addConfig: 'Add Config',
+      editConfig: 'Edit Config',
+      newConfig: 'New Config'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // KEP Certificates (KepCertificateListPage)
-  // ---------------------------------------------------------------------------
   kep: {
     certificates: {
       title: 'KEP Certificates',
@@ -17622,7 +20744,7 @@ export const en: TranslationKeys = {
       deleteTitle: 'Delete Certificate',
       deleteDescription: 'Are you sure you want to delete this certificate? This action is irreversible.',
       deleteSuccess: 'Certificate deleted',
-      deleteError: 'Error deleting certificate',
+      deleteError: 'Error deleting certificate'
     },
     certDetail: {
       title: 'Certificate',
@@ -17662,7 +20784,7 @@ export const en: TranslationKeys = {
       revokeSuccess: 'Certificate successfully revoked',
       deleteTitle: 'Delete Certificate',
       deleteDescription: 'Are you sure you want to delete this certificate? This action is irreversible.',
-      deleteSuccess: 'Certificate deleted',
+      deleteSuccess: 'Certificate deleted'
     },
     mchd: {
       title: 'Machine-Readable Powers of Attorney (MChD)',
@@ -17702,7 +20824,7 @@ export const en: TranslationKeys = {
       fieldValidTo: 'Valid To',
       fieldScope: 'Scope',
       scopePlaceholder: 'Description of representative powers...',
-      fieldNotes: 'Notes',
+      fieldNotes: 'Notes'
     },
     signing: {
       title: 'KEP Document Signing',
@@ -17779,7 +20901,7 @@ export const en: TranslationKeys = {
       batchSignSuccess: 'Documents successfully signed',
       batchSignError: 'Error during batch signing',
       emptyTitle: 'No signing requests',
-      emptyDescription: 'Create a new request to sign a document with KEP',
+      emptyDescription: 'Create a new request to sign a document with KEP'
     },
     verification: {
       title: 'Electronic Signature Verification',
@@ -17805,7 +20927,7 @@ export const en: TranslationKeys = {
       detailValidity: 'Validity',
       signatureValid: 'Valid',
       signatureInvalid: 'Invalid',
-      verifyAnother: 'Verify another signature',
+      verifyAnother: 'Verify another signature'
     },
     widget: {
       title: 'Electronic Signature',
@@ -17821,13 +20943,9 @@ export const en: TranslationKeys = {
       lastSignedBy: 'Last signed by',
       noSignatures: 'Document has not been signed with an electronic signature yet.',
       statusValid: 'Valid',
-      statusInvalid: 'Invalid',
-    },
+      statusInvalid: 'Invalid'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // DailyLogPage (detail view)
-  // ---------------------------------------------------------------------------
   dailyLogPage: {
     title: 'Daily Work Log (KS-6)',
     loading: 'Loading...',
@@ -17875,12 +20993,8 @@ export const en: TranslationKeys = {
     projectBridge: 'Bridge over Vyatka River',
     projectCentral: 'SC "Central"',
     personsAbbrev: 'ppl.',
-    unitsAbbrev: 'units',
+    unitsAbbrev: 'units'
   },
-
-  // ---------------------------------------------------------------------------
-  // DailyLogBoardPage
-  // ---------------------------------------------------------------------------
   dailyLogBoard: {
     title: 'Daily Log - Board',
     subtitle: '{count} entries',
@@ -17898,14 +21012,9 @@ export const en: TranslationKeys = {
     noEntries: 'No entries',
     dragHint: 'Drag a card here',
     personsAbbrev: 'ppl.',
-    unitsAbbrev: 'units',
+    unitsAbbrev: 'units'
   },
-
-  // ---------------------------------------------------------------------------
-  // CRM Module
-  // ---------------------------------------------------------------------------
   crm: {
-    // CrmLeadListPage
     leadList: {
       title: 'CRM Leads',
       leadsCount: 'leads',
@@ -17934,10 +21043,8 @@ export const en: TranslationKeys = {
       toastDeleteError: 'Failed to delete lead',
       confirmDeleteTitle: 'Delete lead?',
       confirmDeleteDescription: 'This action is irreversible. The lead will be deleted.',
-      confirmDeleteConfirm: 'Delete',
+      confirmDeleteConfirm: 'Delete'
     },
-
-    // CrmDashboardPage
     dashboard: {
       title: 'CRM - Dashboard',
       subtitle: 'Sales & pipeline overview',
@@ -17962,10 +21069,8 @@ export const en: TranslationKeys = {
       teamVolume: 'Volume',
       quickActions: 'Quick Actions',
       quickPipeline: 'Pipeline (funnel)',
-      quickAllLeadsList: 'All Leads (list)',
+      quickAllLeadsList: 'All Leads (list)'
     },
-
-    // CrmLeadDetailPage
     detail: {
       breadcrumbHome: 'Home',
       breadcrumbCrm: 'CRM',
@@ -18013,12 +21118,18 @@ export const en: TranslationKeys = {
       actions: 'Actions',
       addActivity: 'Add Activity',
       exportPdf: 'Export to PDF',
-    },
+      convertSuccess: 'Convert Success',
+      convertError: 'Convert Error',
+      projectLinked: 'Project Linked',
+      goToProject: 'Go To Project',
+      convertToProject: 'Convert To Project',
+      convertModalTitle: 'Convert Modal Title',
+      convertModalSubmit: 'Convert Modal Submit',
+      convertToProjectDesc: 'Convert To Project Desc',
+      convertModalName: 'Convert Modal Name',
+      convertModalCode: 'Convert Modal Code'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Calendar Module
-  // ---------------------------------------------------------------------------
   calendar: {
     title: 'Calendar',
     subtitle: 'Event planning and deadline tracking',
@@ -18063,12 +21174,8 @@ export const en: TranslationKeys = {
     colDate: 'Date',
     colEvent: 'Event',
     colType: 'Type',
-    colTime: 'Time',
+    colTime: 'Time'
   },
-
-  // ---------------------------------------------------------------------------
-  // ISUP (ISUP Minstroy)
-  // ---------------------------------------------------------------------------
   isup: {
     wizard: {
       title: 'ISUP Minstroy',
@@ -18131,7 +21238,7 @@ export const en: TranslationKeys = {
       creating: 'Creating configuration...',
       configCreated: 'ISUP configuration created',
       createError: 'Error creating configuration',
-      finish: 'Finish',
+      finish: 'Finish'
     },
     transmissions: {
       title: 'ISUP Data Transmissions',
@@ -18168,7 +21275,7 @@ export const en: TranslationKeys = {
       retrySuccess: 'Transmission queued for retry',
       retryError: 'Retry failed',
       emptyTitle: 'No transmissions',
-      emptyDescription: 'No data has been transmitted to ISUP yet',
+      emptyDescription: 'No data has been transmitted to ISUP yet'
     },
     mappings: {
       title: 'ISUP Project Mappings',
@@ -18206,13 +21313,9 @@ export const en: TranslationKeys = {
       noConfigTitle: 'No active ISUP configuration',
       noConfigDescription: 'Create and activate an ISUP configuration in settings first',
       emptyTitle: 'No project mappings',
-      emptyDescription: 'Add mappings to sync projects with ISUP',
-    },
+      emptyDescription: 'Add mappings to sync projects with ISUP'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // Offline Mode
-  // ---------------------------------------------------------------------------
   offline: {
     indicatorOffline: 'No internet connection',
     indicatorPending: '{count} changes pending sync',
@@ -18267,13 +21370,9 @@ export const en: TranslationKeys = {
       emptyDescription: 'No requests waiting to be sent',
       justNow: 'just now',
       minutesAgo: '{count} min ago',
-      hoursAgo: '{count} hr ago',
-    },
+      hoursAgo: '{count} hr ago'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // PWA
-  // ---------------------------------------------------------------------------
   pwa: {
     installTitle: 'Install PRIVOD',
     installDescription: 'Install the app for quick access and offline support',
@@ -18283,12 +21382,8 @@ export const en: TranslationKeys = {
     notificationEnable: 'Enable Notifications',
     notificationDisable: 'Disable Notifications',
     notificationGranted: 'Notifications enabled',
-    notificationDenied: 'Notifications blocked in browser settings',
+    notificationDenied: 'Notifications blocked in browser settings'
   },
-
-  // ---------------------------------------------------------------------------
-  // Subscription
-  // ---------------------------------------------------------------------------
   subscription: {
     pricing: {
       title: 'Pricing Plans',
@@ -18307,7 +21402,7 @@ export const en: TranslationKeys = {
       startFree: 'Start Free',
       contactSales: 'Contact Sales',
       featureComparison: 'Feature Comparison',
-      feature: 'Feature',
+      feature: 'Feature'
     },
     dashboard: {
       title: 'Subscription',
@@ -18320,7 +21415,7 @@ export const en: TranslationKeys = {
       availablePlans: 'Available Plans',
       planChanged: 'Subscription plan changed successfully',
       planChangeError: 'Failed to change subscription plan',
-      contactSalesHint: 'Contact our sales team to upgrade to Enterprise',
+      contactSalesHint: 'Contact our sales team to upgrade to Enterprise'
     },
     featureGate: {
       title: 'Feature Unavailable',
@@ -18330,7 +21425,7 @@ export const en: TranslationKeys = {
       requiredPlan: 'Required plan: {plan}',
       upgrade: 'Upgrade Plan',
       comparePlans: 'Compare Plans',
-      defaultFeature: 'This feature',
+      defaultFeature: 'This feature'
     },
     billing: {
       title: 'Billing History',
@@ -18340,12 +21435,12 @@ export const en: TranslationKeys = {
       amount: 'Amount',
       status: 'Status',
       page: 'Page',
-      empty: 'No billing records yet',
+      empty: 'No billing records yet'
     },
     quotas: {
       users: 'Users',
       projects: 'Projects',
-      storage: 'Storage',
+      storage: 'Storage'
     },
     features: {
       projects: 'Projects',
@@ -18369,20 +21464,13 @@ export const en: TranslationKeys = {
       sla_support: 'SLA Support',
       dedicated_manager: 'Dedicated Manager',
       sso: 'Single Sign-On (SSO)',
-      audit_log: 'Audit Log',
-    },
+      audit_log: 'Audit Log'
+    }
   },
-
-  // ---------------------------------------------------------------------------
-  // 1C Integration Module
-  // ---------------------------------------------------------------------------
   integration1c: {
-    // Dashboard
     dashboardTitle: '1C Integration',
     dashboardSubtitle: 'Manage data exchange with 1C:Accounting and 1C:HRM',
     breadcrumbSettings: 'Settings',
-
-    // Connection
     connectionActive: 'Connection established',
     connectionInactive: 'Connection unavailable',
     noConnectionInfo: 'No connection information',
@@ -18392,8 +21480,6 @@ export const en: TranslationKeys = {
     lastCheck: 'Last check',
     connected: 'Connected',
     disconnected: 'Disconnected',
-
-    // Metrics
     metricConnectionStatus: 'Connection Status',
     metricTodaySyncs: 'Today\'s Syncs',
     metricPendingItems: 'Pending Items',
@@ -18411,8 +21497,6 @@ export const en: TranslationKeys = {
     metricSynced: 'Synced',
     metricConflicts: 'Conflicts',
     metricLastSync: 'Last Sync',
-
-    // Quick links
     quickLinks: 'Quick Access',
     linkKsExport: 'KS-2/KS-3 Export',
     linkKsExportDesc: 'Export KS-2 acts and KS-3 certificates to 1C:Accounting',
@@ -18422,14 +21506,10 @@ export const en: TranslationKeys = {
     linkBankImportDesc: 'Import bank statement from 1C',
     linkSync: 'Synchronization',
     linkSyncDesc: 'Sync contractors and nomenclature',
-
-    // Recent activity
     recentActivity: 'Recent Activity',
     activityImport: 'Import',
     activityExport: 'Export',
     activitySync: 'Sync',
-
-    // KS export page
     ksExportTitle: 'KS-2 / KS-3 Export',
     ksExportSubtitle: 'Export acts and certificates in 1C:Accounting format',
     tabKs2: 'KS-2 Acts',
@@ -18442,14 +21522,10 @@ export const en: TranslationKeys = {
     exportBtn: 'Export',
     exportSuccess: 'Export completed successfully',
     exportError: 'Export error',
-
-    // Payment export page
     paymentExportTitle: 'Payment Export',
     paymentExportSubtitle: 'Export payment orders in XML (DirectBank) format',
     tabPayments: 'Payments',
     exportToDirectBank: 'Export to DirectBank',
-
-    // Bank import page
     bankImportTitle: 'Bank Statement Import',
     bankImportSubtitle: 'Upload bank statement from 1C for payment reconciliation',
     uploadBankStatement: 'Upload Statement',
@@ -18465,8 +21541,6 @@ export const en: TranslationKeys = {
     unmatched: 'Unmatched',
     errorsFound: 'Errors found: {count}',
     importHistoryTitle: 'Import History',
-
-    // Sync page
     syncTitle: 'Directory Synchronization',
     syncSubtitle: 'Exchange contractors and nomenclature between Privod and 1C',
     tabContractors: 'Contractors',
@@ -18476,8 +21550,6 @@ export const en: TranslationKeys = {
     syncCompleteMsg: 'Synchronization completed successfully',
     syncError: 'Synchronization error',
     conflictsTitle: 'Conflicts',
-
-    // Table columns
     colNumber: 'Number',
     colDate: 'Date',
     colContractor: 'Contractor',
@@ -18501,13 +21573,9 @@ export const en: TranslationKeys = {
     colDetectedAt: 'Detected',
     colDescription: 'Description',
     colTimestamp: 'Time',
-
-    // Statuses
     statusSuccess: 'Success',
     statusFailed: 'Failed',
     statusPartial: 'Partial',
-
-    // Empty states
     emptyKs2Title: 'No KS-2 Acts',
     emptyKs2Description: 'No KS-2 acts found for export',
     emptyKs3Title: 'No KS-3 Certificates',
@@ -18521,6 +21589,473 @@ export const en: TranslationKeys = {
     emptyConflictsTitle: 'No Conflicts',
     emptyConflictsDescription: 'All data is synchronized without discrepancies',
     emptyActivityTitle: 'No Activity',
-    emptyActivityDescription: 'No 1C exchange operations have been performed yet',
+    emptyActivityDescription: 'No 1C exchange operations have been performed yet'
   },
-} as const;
+  T: 'T',
+  executiveKpi: {
+    tabOverview: 'Tab Overview',
+    tabProjects: 'Tab Projects',
+    tabCashflow: 'Tab Cashflow',
+    tabSafety: 'Tab Safety',
+    colProject: 'Project',
+    colHealth: 'Col Health',
+    colContract: 'Contract',
+    colBudget: 'Col Budget',
+    colSpent: 'Col Spent',
+    title: 'Title',
+    subtitle: 'Subtitle',
+    metricContractValue: 'Metric Contract Value',
+    metricEbit: 'Metric Ebit',
+    metricProjects: 'Metric Projects',
+    totalProjects: 'Total Projects',
+    metricNetCash: 'Metric Net Cash',
+    metricTrir: 'Metric Trir',
+    metricDaysSafe: 'Metric Days Safe',
+    metricWorkerUtil: 'Metric Worker Util',
+    metricEquipUtil: 'Metric Equip Util',
+    projectHealth: 'Project Health',
+    healthGreen: 'Health Green',
+    healthYellow: 'Health Yellow',
+    healthRed: 'Health Red',
+    metricAR: 'Metric A R',
+    metricAP: 'Metric A P',
+    metricInvoiced: 'Metric Invoiced',
+    arAging: 'Ar Aging',
+    days: 'Days',
+    metricIncidents: 'Metric Incidents',
+    severityBreakdown: 'Severity Breakdown'
+  },
+  a: 'A',
+  three: 'Three',
+  budgetId: 'Budget Id',
+  projectId: 'Project Id',
+  defects: {
+    dashboard: {
+      colName: 'Name',
+      colTotal: 'Total',
+      colProgress: 'Col Progress',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      openDefects: 'Open Defects',
+      overdueDefects: 'Overdue Defects',
+      avgResolution: 'Avg Resolution',
+      bySeverity: 'By Severity',
+      severityBreakdown: 'Severity Breakdown',
+      byContractor: 'By Contractor',
+      byProject: 'By Project'
+    },
+    statusOpen: 'Status Open',
+    statusInProgress: 'Status In Progress',
+    statusFixed: 'Status Fixed',
+    statusVerified: 'Status Verified',
+    slaHours: 'Sla Hours',
+    breadcrumb: 'Navigation',
+    severityLow: 'Severity Low',
+    severityMedium: 'Severity Medium',
+    severityHigh: 'Severity High',
+    severityCritical: 'Severity Critical',
+    statusClosed: 'Status Closed',
+    statusRejected: 'Rejected',
+    overdue: 'Overdue',
+    dueToday: 'Due Today',
+    dueSoon: 'Due Soon',
+    toastStatusChanged: 'Toast Status Changed',
+    toastTransitionError: 'Toast Transition Error',
+    toastDeleted: 'Toast Deleted',
+    toastDeleteError: 'Toast Delete Error',
+    promptFixDescription: 'Prompt Fix Description',
+    confirmDeleteTitle: 'Confirm Delete Title',
+    confirmDeleteDescription: 'Confirm Delete Description',
+    confirmDeleteBtn: 'Confirm Delete Btn',
+    reinspectionCount: 'Reinspection Count',
+    fieldLocation: 'Field Location',
+    fieldDeadline: 'Field Deadline',
+    fieldFixedAt: 'Field Fixed At',
+    fieldFixDescription: 'Field Fix Description',
+    slaTimer: 'Sla Timer',
+    slaElapsed: 'Sla Elapsed',
+    slaOverdue: 'Sla Overdue',
+    slaRemaining: 'Sla Remaining',
+    slaFromAssignment: 'Sla From Assignment',
+    sectionPhotos: 'Section Photos',
+    photoAlt: 'Photo Alt',
+    sectionActions: 'Section Actions',
+    sectionDetails: 'Section Details',
+    fieldCode: 'Field Code',
+    fieldSeverity: 'Field Severity',
+    fieldStatus: 'Field Status',
+    fieldContractor: 'Field Contractor',
+    fieldReinspections: 'Field Reinspections',
+    fieldCreated: 'Field Created',
+    fieldCreatedBy: 'Field Created By',
+    fieldPhotos: 'Field Photos',
+    form: {
+      sla24h: 'Sla24h',
+      sla48h: 'Sla48h',
+      sla72h: 'Sla72h',
+      sla120h: 'Sla120h',
+      sla168h: 'Sla168h',
+      sla336h: 'Sla336h',
+      validationProject: 'Validation Project',
+      validationTitle: 'Validation Title',
+      createSuccess: 'Created successfully',
+      createError: 'Creation error',
+      updateSuccess: 'Updated successfully',
+      updateError: 'Update Error',
+      editTitle: 'Edit Title',
+      createTitle: 'Create Title',
+      createSubtitle: 'Create Subtitle',
+      labelTitle: 'Label Title',
+      placeholderTitle: 'Placeholder Title',
+      labelProject: 'Project',
+      placeholderProject: 'Placeholder Project',
+      labelSeverity: 'Label Severity',
+      labelContractor: 'Label Contractor',
+      placeholderContractor: 'Placeholder Contractor',
+      labelAssignee: 'Label Assignee',
+      placeholderAssignee: 'Placeholder Assignee',
+      labelDeadline: 'Label Deadline',
+      labelSla: 'Label Sla',
+      labelLocation: 'Label Location',
+      placeholderLocation: 'Placeholder Location',
+      placeholderDescription: 'Placeholder Description',
+      createButton: 'Create Button'
+    },
+    colCode: 'Code',
+    colTitle: 'Col Title',
+    colSeverity: 'Col Severity',
+    colStatus: 'Status',
+    colDeadline: 'Col Deadline',
+    colPhotos: 'Col Photos',
+    colCreated: 'Created',
+    title: 'Title',
+    subtitle: 'Subtitle',
+    btnDashboard: 'Btn Dashboard',
+    btnNew: 'Btn New',
+    tabAll: 'All',
+    tabOpen: 'Tab Open',
+    tabInProgress: 'Tab In Progress',
+    tabFixed: 'Tab Fixed',
+    searchPlaceholder: 'Search...',
+    filterAllSeverities: 'Filter All Severities',
+    bulkDelete: 'Bulk Delete',
+    emptyTitle: 'No Data',
+    emptyDescription: 'No data found'
+  },
+  specificationId: 'Specification Id',
+  ocrEstimate: {
+    taskCreated: 'Task Created',
+    taskCreateError: 'Task Create Error',
+    processSuccess: 'Process Success',
+    processError: 'Process Error',
+    acceptSuccess: 'Accept Success',
+    acceptError: 'Accept Error',
+    rejectSuccess: 'Reject Success',
+    rejectError: 'Reject Error',
+    uploadFile: 'Upload File',
+    processEstimate: 'Process Estimate',
+    acceptResults: 'Accept Results',
+    rejectResult: 'Reject Result',
+    colCode: 'Code',
+    colName: 'Name',
+    colUnit: 'Unit',
+    colQty: 'Col Qty',
+    colUnitPrice: 'Col Unit Price',
+    colTotal: 'Total',
+    colConfidence: 'Col Confidence',
+    colStatus: 'Status',
+    statusAccepted: 'Status Accepted',
+    statusPending: 'Pending',
+    reject: 'Reject',
+    title: 'Title',
+    subtitle: 'Subtitle',
+    breadcrumbHome: 'Home',
+    breadcrumbEstimates: 'Breadcrumb Estimates',
+    breadcrumbOcr: 'Breadcrumb Ocr',
+    dropzoneTitle: 'Dropzone Title',
+    dropzoneHint: 'Dropzone Hint',
+    selectFile: 'Select File',
+    tasksTitle: 'Tasks Title',
+    processing: 'Processing',
+    startProcessing: 'Start Processing',
+    acceptSelected: 'Accept Selected',
+    statsInfo: 'Stats Info',
+    processingMessage: 'Processing Message',
+    emptyTitle: 'No Data',
+    emptyDescription: 'No data found',
+    noTasksTitle: 'No Tasks Title',
+    noTasksDescription: 'No Tasks Description'
+  },
+  accepted: 'Accepted',
+  pass: 'Pass',
+  certification: {
+    statusValid: 'Valid',
+    statusExpiring: 'Expiring',
+    statusExpired: 'Expired',
+    typeSafetyGeneral: 'Type Safety General',
+    typeSafetyHeights: 'Type Safety Heights',
+    typeSafetyElectrical: 'Type Safety Electrical',
+    typeSafetyFire: 'Type Safety Fire',
+    typeMedical: 'Type Medical',
+    typeQualification: 'Type Qualification',
+    typeDrivingLicense: 'Type Driving License',
+    typeWelding: 'Type Welding',
+    typeOther: 'Type Other',
+    filterAllTypes: 'Filter All Types',
+    colEmployee: 'Employee',
+    colCertificate: 'Certificate',
+    colNumber: 'Col Number',
+    colIssued: 'Col Issued',
+    colExpiry: 'Expiry',
+    daysOverdue: 'Days Overdue',
+    daysLeft: 'Days Left',
+    colStatus: 'Status',
+    colIssuedBy: 'Col Issued By',
+    title: 'Title',
+    subtitle: 'Subtitle',
+    breadcrumbHR: 'Breadcrumb H R',
+    breadcrumbMatrix: 'Breadcrumb Matrix',
+    tabAll: 'All',
+    tabExpiring: 'Tab Expiring',
+    tabExpired: 'Tab Expired',
+    metricTotal: 'Total',
+    metricValid: 'Valid',
+    metricExpiring: 'Expiring',
+    requireAttention: 'Require Attention',
+    metricExpired: 'Expired',
+    critical: 'Critical',
+    complianceTitle: 'Compliance Title',
+    searchPlaceholder: 'Search...',
+    emptyTitle: 'No Data',
+    emptyDescription: 'No data found'
+  },
+  '': {
+    '': ''
+  },
+  marketplace: {
+    noScreenshots: 'No Screenshots',
+    installSuccess: 'Install Success',
+    installError: 'Install Error',
+    uninstallSuccess: 'Uninstall Success',
+    uninstallError: 'Uninstall Error',
+    breadcrumbHome: 'Home',
+    title: 'Title',
+    developer: 'Developer',
+    reviews: 'Reviews',
+    installs: 'Installs',
+    version: 'Version',
+    installedVersion: 'Installed Version',
+    installedAt: 'Installed At',
+    installing: 'Installing',
+    install: 'Install',
+    update: 'Update',
+    configure: 'Configure',
+    uninstall: 'Uninstall',
+    permissions: 'Permissions',
+    tags: 'Tags',
+    noReviews: 'No Reviews',
+    noChangelog: 'No Changelog',
+    confirmUninstallTitle: 'Confirm Uninstall Title',
+    confirmUninstallDescription: 'Confirm Uninstall Description',
+    checkUpdates: 'Check Updates',
+    installedTitle: 'Installed Title',
+    installedSubtitle: 'Installed Subtitle',
+    installed: 'Installed',
+    catalog: 'Catalog',
+    noInstalledPlugins: 'No Installed Plugins',
+    noInstalledDescription: 'No Installed Description',
+    browseMarketplace: 'Browse Marketplace',
+    statusUpdateAvailable: 'Status Update Available',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    statusInstalled: 'Status Installed',
+    statusDeprecated: 'Status Deprecated',
+    subtitle: 'Subtitle',
+    search: 'Search',
+    noPluginsFound: 'No Plugins Found',
+    noPluginsDescription: 'No Plugins Description',
+    configSaved: 'Config Saved',
+    configError: 'Config Error',
+    pluginConfiguration: 'Plugin Configuration',
+    saveConfig: 'Save Config',
+    pluginEnabled: 'Plugin Enabled'
+  },
+  pricing: {
+    calculator: {
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      tabCalculator: 'Tab Calculator',
+      tabIndices: 'Tab Indices',
+      selectRate: 'Select Rate',
+      searchRatePlaceholder: 'Search Rate Placeholder',
+      basePriceLabel: 'Base Price Label',
+      changeRate: 'Change Rate',
+      parameters: 'Parameters',
+      fieldQuantity: 'Field Quantity',
+      fieldRegion: 'Field Region',
+      fieldRegionPlaceholder: 'Field Region Placeholder',
+      btnCalculate: 'Btn Calculate',
+      baseTotalLabel: 'Base Total Label',
+      indexLabel: 'Index Label',
+      currentPriceLabel: 'Current Price Label',
+      currentTotalLabel: 'Current Total Label',
+      costBreakdown: 'Cost Breakdown',
+      costComponent: 'Cost Component',
+      costPerUnit: 'Cost Per Unit',
+      costTotal: 'Cost Total',
+      costTotalRow: 'Cost Total Row',
+      indexNote: 'Index Note'
+    },
+    databases: {
+      breadcrumb: 'Navigation',
+      colName: 'Name',
+      colType: 'Type',
+      colRegion: 'Col Region',
+      colBaseYear: 'Col Base Year',
+      colCoefficient: 'Col Coefficient',
+      colActive: 'Col Active',
+      yes: 'Yes',
+      no: 'No',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      demoCreate: 'Demo Create',
+      btnCreate: 'Create',
+      tabActive: 'Active',
+      tabInactive: 'Tab Inactive',
+      searchPlaceholder: 'Search...',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found',
+      toastCreated: 'Toast Created',
+      toastCreateError: 'Toast Create Error',
+      createTitle: 'Create Title',
+      fieldName: 'Field Name',
+      fieldNameRequired: 'Field Name Required',
+      fieldNamePlaceholder: 'Field Name Placeholder',
+      fieldType: 'Field Type',
+      fieldRegion: 'Field Region',
+      fieldRegionPlaceholder: 'Field Region Placeholder',
+      fieldBaseYear: 'Field Base Year',
+      fieldCoefficient: 'Field Coefficient',
+      fieldSourceUrl: 'Field Source Url'
+    },
+    rates: {
+      colUnit: 'Unit',
+      colLabor: 'Col Labor',
+      colMaterial: 'Material',
+      colEquipment: 'Col Equipment',
+      colOverhead: 'Col Overhead',
+      allDatabases: 'All Databases',
+      toastImported: 'Toast Imported',
+      toastImportError: 'Toast Import Error',
+      selectDbFirst: 'Select Db First',
+      demoImport: 'Demo Import',
+      toastExported: 'Toast Exported',
+      toastExportError: 'Toast Export Error',
+      colCode: 'Code',
+      colName: 'Name',
+      colTotal: 'Total',
+      title: 'Title',
+      subtitle: 'Subtitle',
+      breadcrumb: 'Navigation',
+      btnImport: 'Import',
+      btnExport: 'Export',
+      searchPlaceholder: 'Search...',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    },
+    indices: {
+      colRegion: 'Col Region',
+      colWorkType: 'Col Work Type',
+      colBaseQuarter: 'Col Base Quarter',
+      colTargetQuarter: 'Col Target Quarter',
+      colIndexValue: 'Col Index Value',
+      colSource: 'Col Source',
+      searchRegionPlaceholder: 'Search Region Placeholder',
+      searchWorkTypePlaceholder: 'Search Work Type Placeholder',
+      emptyTitle: 'No Data',
+      emptyDescription: 'No data found'
+    },
+    database: {
+      typeFER: 'Type F E R',
+      typeTER: 'Type T E R',
+      typeGESN: 'Type G E S N',
+      typeLocal: 'Type Local'
+    }
+  },
+  purchaseRequestId: 'Purchase Request Id',
+  sourceRequestName: 'Source Request Name',
+  send: 'Send',
+  invoice: 'Invoice',
+  close: 'Close',
+  cancel: 'Cancel',
+  supplierId: 'Supplier Id',
+  qualityGates: {
+    tabAll: 'All',
+    tabPending: 'Pending',
+    tabBlocked: 'Blocked',
+    tabPassed: 'Passed',
+    colName: 'Name',
+    colWbs: 'WBS',
+    colStatus: 'Status',
+    colDocs: 'Documents',
+    colQuality: 'Quality',
+    colVolumes: 'Volumes',
+    evaluateBtn: 'Evaluate Btn',
+    title: 'Title',
+    subtitle: 'Subtitle',
+    evaluateAllBtn: 'Evaluate All Btn',
+    createBtn: 'Create',
+    selectProject: 'Select Project',
+    selectProjectPlaceholder: 'Select Project',
+    metricTotal: 'Total',
+    metricPassed: 'Passed',
+    metricBlocked: 'Blocked',
+    metricProgress: 'Progress',
+    createModalTitle: 'Create Modal Title',
+    fieldName: 'Field Name',
+    fieldWbsNode: 'Field Wbs Node',
+    fieldThreshold: 'Field Threshold',
+    fieldDescription: 'Field Description'
+  },
+  SUCCESS: 'S U C C E S S',
+  ERROR: 'E R R O R',
+  safetyCompliance: {
+    tabDashboard: 'Tab Dashboard',
+    tabBlocks: 'Tab Blocks',
+    tabPrescriptions: 'Tab Prescriptions',
+    colEmployee: 'Employee',
+    colReason: 'Col Reason',
+    colStatus: 'Status',
+    colBlockedAt: 'Col Blocked At',
+    resolveBtn: 'Resolve Btn',
+    colNumber: 'Col Number',
+    colDescription: 'Description',
+    colIssuedBy: 'Col Issued By',
+    colDeadline: 'Col Deadline',
+    colDaysRemaining: 'Col Days Remaining',
+    colResponsible: 'Responsible',
+    title: 'Title',
+    subtitle: 'Subtitle',
+    checkEmployee: 'Check Employee',
+    autoScheduleBtn: 'Auto Schedule Btn',
+    metricTotal: 'Total',
+    metricCompliant: 'Metric Compliant',
+    metricNonCompliant: 'Metric Non Compliant',
+    metricExpiring: 'Expiring',
+    metricScheduled: 'Metric Scheduled',
+    metricOverdue: 'Metric Overdue',
+    complianceOverview: 'Compliance Overview',
+    complianceRate: 'Compliance Rate',
+    checkModalTitle: 'Check Modal Title',
+    employeeIdField: 'Employee Id Field',
+    employeeIdPlaceholder: 'Employee Id Placeholder',
+    checkBtn: 'Check Btn'
+  },
+  q: 'Q',
+  xlsx: 'Xlsx',
+  feature: 'Feature',
+  plan: 'Plan',
+  featureKey: 'Feature Key'
+}

@@ -108,7 +108,7 @@ function IndexGauge({
     <div className="flex flex-col items-center">
       <div className={cn('w-20 h-20 rounded-full flex items-center justify-center ring-4', bgClass)}>
         <span className={cn('text-lg font-bold tabular-nums', colorClass)}>
-          {value.toFixed(2)}
+          {isFinite(value) ? value.toFixed(2) : '—'}
         </span>
       </div>
       <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 mt-2 text-center">
@@ -140,6 +140,8 @@ const EvmIndicatorsPage: React.FC = () => {
     queryKey: ['evm-indicators', selectedProjectId],
     queryFn: () => planningApi.getEvmIndicators(selectedProjectId),
     enabled: !!selectedProjectId,
+    retry: false,
+    throwOnError: false,
   });
 
   const evm = data ?? defaultIndicators;
@@ -285,7 +287,7 @@ const EvmIndicatorsPage: React.FC = () => {
                   {t('planning.evmIndicators.costPerformance')}
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-                  {costInterpretation} (CV: {evm.cvPercent.toFixed(1)}%)
+                  {costInterpretation} (CV: {isFinite(evm.cvPercent) ? evm.cvPercent.toFixed(1) : '0.0'}%)
                 </p>
               </div>
             </div>
@@ -305,7 +307,7 @@ const EvmIndicatorsPage: React.FC = () => {
                   {t('planning.evmIndicators.schedulePerformance')}
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-                  {scheduleInterpretation} (SV: {evm.svPercent.toFixed(1)}%)
+                  {scheduleInterpretation} (SV: {isFinite(evm.svPercent) ? evm.svPercent.toFixed(1) : '0.0'}%)
                 </p>
               </div>
             </div>

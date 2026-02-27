@@ -6,8 +6,10 @@ import {
   Edit3,
   ChevronDown,
   Calendar,
+  CalendarDays,
   Wallet,
   CreditCard,
+  DollarSign,
   FileText,
   Building2,
   User,
@@ -16,6 +18,7 @@ import {
   XCircle,
   AlertCircle,
   Receipt,
+  Shield,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -32,6 +35,7 @@ import { formatMoney, formatMoneyCompact, formatDate, formatDateLong, formatPerc
 import { cn } from '@/lib/cn';
 import type { Contract, ContractStatus, ContractApproval } from '@/types';
 import ContractBudgetItemsTab from './ContractBudgetItemsTab';
+import ProcurementCompliancePanel from './components/ProcurementCompliancePanel';
 
 type DetailTab = 'overview' | 'approval' | 'documents' | 'FINANCE' | 'fmItems';
 
@@ -118,6 +122,15 @@ const ContractDetailPage: React.FC = () => {
               label={contractStatusLabels[c?.status ?? ''] ?? c?.status ?? ''}
               size="md"
             />
+            {c?.procurementLaw && c.procurementLaw !== 'COMMERCIAL' && (
+              <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                c.procurementLaw === '44-FZ'
+                  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                  : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+              }`}>
+                {c.procurementLaw === '44-FZ' ? t('contracts.procurement.44fz') : t('contracts.procurement.223fz')}
+              </span>
+            )}
             {statusActions.map((action) => (
               <Button
                 key={action.targetStatus}
@@ -216,6 +229,20 @@ const ContractDetailPage: React.FC = () => {
                 )}
                 <InfoItem icon={<CreditCard size={15} />} label={t('contracts.detail.infoPaymentTerms')} value={c?.paymentTerms ?? '---'} />
                 <InfoItem icon={<FileText size={15} />} label={t('contracts.detail.infoVersion')} value={`v${c?.version ?? ''}`} />
+                {c?.procurementLaw && (
+                  <InfoItem
+                    icon={<FileText size={15} />}
+                    label={t('contracts.procurement.law')}
+                    value={
+                      c.procurementLaw === '44-FZ' ? t('contracts.procurement.44fz')
+                        : c.procurementLaw === '223-FZ' ? t('contracts.procurement.223fz')
+                        : t('contracts.procurement.commercial')
+                    }
+                  />
+                )}
+                {c?.tenderNumber && (
+                  <InfoItem icon={<FileText size={15} />} label={t('contracts.procurement.tenderNumber')} value={c.tenderNumber} />
+                )}
               </div>
             </div>
 
@@ -246,6 +273,44 @@ const ContractDetailPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Procurement Compliance */}
+          {c?.procurementLaw && c.procurementLaw !== 'COMMERCIAL' && (
+            <ProcurementCompliancePanel contractId={id!} procurementLaw={c.procurementLaw} />
+          )}
+
+          {/* Insurance & Bonds */}
+          {(c?.insuranceType || c?.performanceBondNumber || c?.paymentBondNumber) && (
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('contracts.insurance.sectionTitle')}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
+                {c.insuranceType && (
+                  <InfoItem icon={<Shield size={15} />} label={t('contracts.insurance.type')} value={t(`contracts.insurance.types.${c.insuranceType}`)} />
+                )}
+                {c.insurancePolicyNumber && (
+                  <InfoItem icon={<FileText size={15} />} label={t('contracts.insurance.policyNumber')} value={c.insurancePolicyNumber} />
+                )}
+                {c.insuranceAmount != null && c.insuranceAmount > 0 && (
+                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.amount')} value={`${c.insuranceAmount.toLocaleString('ru-RU')} ₽`} />
+                )}
+                {c.insuranceExpiryDate && (
+                  <InfoItem icon={<CalendarDays size={15} />} label={t('contracts.insurance.expiryDate')} value={c.insuranceExpiryDate} />
+                )}
+                {c.performanceBondNumber && (
+                  <InfoItem icon={<Shield size={15} />} label={t('contracts.insurance.performanceBondNumber')} value={c.performanceBondNumber} />
+                )}
+                {c.performanceBondAmount != null && c.performanceBondAmount > 0 && (
+                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.performanceBondAmount')} value={`${c.performanceBondAmount.toLocaleString('ru-RU')} ₽`} />
+                )}
+                {c.paymentBondNumber && (
+                  <InfoItem icon={<Shield size={15} />} label={t('contracts.insurance.paymentBondNumber')} value={c.paymentBondNumber} />
+                )}
+                {c.paymentBondAmount != null && c.paymentBondAmount > 0 && (
+                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.paymentBondAmount')} value={`${c.paymentBondAmount.toLocaleString('ru-RU')} ₽`} />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

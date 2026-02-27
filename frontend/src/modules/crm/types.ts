@@ -28,6 +28,7 @@ export interface CrmLead {
   source?: string;
   description?: string;
   lostReason?: string;
+  projectId?: string;
   expectedCloseDate?: string;
   wonDate?: string;
   open?: boolean;

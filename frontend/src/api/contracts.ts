@@ -101,4 +101,23 @@ export const contractsApi = {
   deleteCounterparty: async (id: string): Promise<void> => {
     await apiClient.delete(`/counterparties/${id}`);
   },
+
+  validateProcurementCompliance: async (contractId: string): Promise<ProcurementComplianceResult> => {
+    const response = await apiClient.get<ProcurementComplianceResult>(`/contracts/${contractId}/procurement-compliance`);
+    return response.data;
+  },
 };
+
+export interface ProcurementComplianceResult {
+  contractId: string;
+  procurementLaw: '44-FZ' | '223-FZ' | 'COMMERCIAL';
+  overallStatus: 'COMPLIANT' | 'PARTIAL' | 'NON_COMPLIANT';
+  checklist: ProcurementChecklistItem[];
+}
+
+export interface ProcurementChecklistItem {
+  code: string;
+  name: string;
+  required: boolean;
+  provided: boolean;
+}

@@ -44,7 +44,7 @@ const NavItemComponent: React.FC<{
       <Icon size={collapsed ? 20 : 18} className="flex-shrink-0" />
       {!collapsed && (
         <>
-          <span className="flex-1 text-left text-sm font-medium truncate">
+          <span className="flex-1 text-left text-sm font-medium truncate" title={item.label}>
             {item.label}
           </span>
           {item.badge != null && item.badge > 0 && (

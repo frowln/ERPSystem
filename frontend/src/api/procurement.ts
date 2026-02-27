@@ -5,6 +5,7 @@ import type {
   PurchaseRequestStatus,
   PaginatedResponse,
   PaginationParams,
+  VendorPrequalification,
 } from '@/types';
 
 export interface ProcurementFilters extends PaginationParams {
@@ -188,6 +189,13 @@ export const procurementApi = {
 
   createPurchaseRequest: async (data: CreatePurchaseRequestPayload): Promise<PurchaseRequest> => {
     const response = await apiClient.post<PurchaseRequest>('/procurement/requests', data);
+    return response.data;
+  },
+
+  createFromSpecItems: async (projectId: string, specId: string, specItemIds: string[]): Promise<PurchaseRequest> => {
+    const response = await apiClient.post<PurchaseRequest>('/procurement/requests/from-spec', specItemIds, {
+      params: { projectId, specId },
+    });
     return response.data;
   },
 
@@ -405,6 +413,22 @@ export const procurementApi = {
       '/procurement/purchase-orders/bulk-transition',
       data,
     );
+    return response.data;
+  },
+
+  // Vendor Prequalification
+  getPrequalifications: async (): Promise<VendorPrequalification[]> => {
+    const response = await apiClient.get<VendorPrequalification[]>('/procurement/prequalifications');
+    return response.data;
+  },
+
+  createPrequalification: async (data: Partial<VendorPrequalification>): Promise<VendorPrequalification> => {
+    const response = await apiClient.post<VendorPrequalification>('/procurement/prequalifications', data);
+    return response.data;
+  },
+
+  updatePrequalification: async (id: string, data: Partial<VendorPrequalification>): Promise<VendorPrequalification> => {
+    const response = await apiClient.put<VendorPrequalification>(`/procurement/prequalifications/${id}`, data);
     return response.data;
   },
 };

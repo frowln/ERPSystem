@@ -620,6 +620,23 @@ public class CommercialProposalService {
 
     // ── Private Helpers ─────────────────────────────────────────────────────────
 
+    @Transactional
+    public void deleteProposal(UUID id) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CommercialProposal proposal = getProposalOrThrow(id, organizationId);
+
+        // Hard delete all items first (CommercialProposalItem has no soft delete)
+        List<CommercialProposalItem> items = itemRepository.findByProposalId(id);
+        itemRepository.deleteAll(items);
+
+        // Soft delete the proposal itself
+        proposal.softDelete();
+        proposalRepository.save(proposal);
+
+        auditService.logCreate("CommercialProposal.DELETE", proposal.getId());
+        log.info("КП удалено (soft): {} ({})", proposal.getName(), proposal.getId());
+    }
+
     private CommercialProposal getProposalOrThrow(UUID id, UUID organizationId) {
         CommercialProposal proposal = proposalRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("КП не найдено: " + id));
@@ -686,7 +703,7 @@ public class CommercialProposalService {
 
     private String mapBudgetItemType(BudgetItemType type) {
         if (type == null) {
-            return "WORK";
+            return "MATERIAL"; // Default to MATERIAL for items imported from specifications (equipment/materials)
         }
         return switch (type) {
             case MATERIALS, EQUIPMENT -> "MATERIAL";
