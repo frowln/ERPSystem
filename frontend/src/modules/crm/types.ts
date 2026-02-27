@@ -3,30 +3,39 @@ export type LeadPriority = 'LOW' | 'NORMAL' | 'HIGH';
 
 export interface CrmLead {
   id: string;
-  number: string;
+  number?: string;
   name: string;
-  contactName: string;
+  partnerName?: string;
+  contactName?: string;
+  email?: string;
   contactEmail?: string;
+  phone?: string;
   contactPhone?: string;
   companyName?: string;
   status: LeadStatus;
+  statusDisplayName?: string;
   priority: LeadPriority;
-  stageId: string;
-  stageName: string;
+  priorityDisplayName?: string;
+  stageId?: string;
+  stageName?: string;
   teamId?: string;
   teamName?: string;
   assignedToId?: string;
   assignedToName?: string;
   expectedRevenue?: number;
   probability?: number;
+  weightedRevenue?: number;
   source?: string;
   description?: string;
   lostReason?: string;
   expectedCloseDate?: string;
-  activityCount: number;
+  wonDate?: string;
+  open?: boolean;
+  activityCount?: number;
   lastActivityDate?: string;
   createdAt: string;
   updatedAt: string;
+  createdBy?: string;
 }
 
 export interface CrmStage {

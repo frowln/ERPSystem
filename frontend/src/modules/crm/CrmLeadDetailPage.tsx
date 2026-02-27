@@ -118,12 +118,12 @@ const CrmLeadDetailPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={l.name}
-        subtitle={`${l.number} / ${l.companyName ?? l.contactName}`}
+        subtitle={`${l.number ?? l.id.slice(0, 8)} / ${l.companyName ?? l.partnerName ?? l.contactName ?? ''}`}
         backTo="/crm/leads"
         breadcrumbs={[
           { label: t('crm.detail.breadcrumbHome'), href: '/' },
           { label: t('crm.detail.breadcrumbCrm'), href: '/crm/leads' },
-          { label: l.number },
+          { label: l.number ?? l.name },
         ]}
         actions={
           <div className="flex items-center gap-2">
@@ -193,7 +193,7 @@ const CrmLeadDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard icon={<DollarSign size={18} />} label={t('crm.detail.metricExpectedRevenue')} value={l.expectedRevenue ? formatMoneyCompact(l.expectedRevenue) : '---'} />
         <MetricCard icon={<Activity size={18} />} label={t('crm.detail.metricProbability')} value={l.probability != null ? formatPercent(l.probability) : '---'} />
-        <MetricCard icon={<Clock size={18} />} label={t('crm.detail.metricActivities')} value={l.activityCount} />
+        <MetricCard icon={<Clock size={18} />} label={t('crm.detail.metricActivities')} value={l.activityCount ?? 0} />
         <MetricCard icon={<Calendar size={18} />} label={t('crm.detail.metricCloseDate')} value={formatDateLong(l.expectedCloseDate)} />
       </div>
 
@@ -277,10 +277,10 @@ const CrmLeadDetailPage: React.FC = () => {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('crm.detail.contact')}</h3>
             <div className="space-y-4">
-              <InfoItem icon={<User size={15} />} label={t('crm.detail.contactPerson')} value={l.contactName} />
+              <InfoItem icon={<User size={15} />} label={t('crm.detail.contactPerson')} value={l.partnerName ?? l.contactName ?? '---'} />
               <InfoItem icon={<Building2 size={15} />} label={t('crm.detail.company')} value={l.companyName ?? '---'} />
-              <InfoItem icon={<Mail size={15} />} label="Email" value={l.contactEmail ?? '---'} />
-              <InfoItem icon={<Phone size={15} />} label={t('crm.detail.phone')} value={l.contactPhone ?? '---'} />
+              <InfoItem icon={<Mail size={15} />} label="Email" value={l.email ?? l.contactEmail ?? '---'} />
+              <InfoItem icon={<Phone size={15} />} label={t('crm.detail.phone')} value={l.phone ?? l.contactPhone ?? '---'} />
             </div>
           </div>
 

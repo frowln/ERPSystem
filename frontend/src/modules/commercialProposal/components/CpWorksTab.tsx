@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/cn';
@@ -9,6 +9,101 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { CheckCircle, XCircle, ExternalLink, Trophy, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { CommercialProposalItem } from '@/types';
+
+interface CostPriceModalProps {
+  item: CommercialProposalItem | null;
+  onSave: (itemId: string, costPrice: number) => void;
+  onClose: () => void;
+}
+
+const CostPriceModal: React.FC<CostPriceModalProps> = ({ item, onSave, onClose }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (item) {
+      setValue(String(item.costPrice ?? ''));
+      setError('');
+      setTimeout(() => inputRef.current?.select(), 50);
+    }
+  }, [item]);
+
+  const handleSubmit = useCallback(() => {
+    const normalized = Number(value.replace(/\s/g, '').replace(',', '.'));
+    if (!Number.isFinite(normalized) || normalized <= 0) {
+      setError(t('commercialProposal.invalidManualCostPrice'));
+      return;
+    }
+    onSave(item!.id, normalized);
+    onClose();
+  }, [value, item, onSave, onClose]);
+
+  if (!item) return null;
+
+  const estimatePrice = item.costPrice || 0;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+      <div
+        className="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl border border-neutral-200 dark:border-neutral-700 p-6 w-full max-w-md animate-fade-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+          {t('commercialProposal.enterManualCostPrice')}
+        </h3>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+          {item.budgetItemName}
+          <span className="ml-2 text-neutral-400">
+            {item.quantity} {item.budgetItemUnit}
+          </span>
+        </p>
+        {estimatePrice > 0 && (
+          <div className="mb-3 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm text-blue-700 dark:text-blue-300">
+            Сметная цена: <strong>{estimatePrice.toLocaleString('ru-RU')} ₽</strong> за ед.
+          </div>
+        )}
+        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+          Себестоимость за единицу, ₽
+        </label>
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="decimal"
+          className={cn(
+            'w-full px-3 py-2.5 rounded-lg border text-base tabular-nums',
+            'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500',
+            error
+              ? 'border-danger-400 bg-danger-50 dark:bg-danger-900/20'
+              : 'border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800',
+          )}
+          value={value}
+          onChange={(e) => { setValue(e.target.value); setError(''); }}
+          onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); if (e.key === 'Escape') onClose(); }}
+          placeholder="0"
+          autoFocus
+        />
+        {error && <p className="mt-1 text-sm text-danger-600">{error}</p>}
+        <div className="flex justify-end gap-3 mt-5">
+          <button
+            type="button"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            onClick={onClose}
+          >
+            Отмена
+          </button>
+          <button
+            type="button"
+            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+            onClick={handleSubmit}
+          >
+            Сохранить
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const cpItemStatusColorMap: Record<string, string> = {
   UNPROCESSED: 'gray',
@@ -56,6 +151,8 @@ interface CpWorksTabProps {
 const CpWorksTab: React.FC<CpWorksTabProps> = ({ proposalId, items, projectId }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [costPriceItem, setCostPriceItem] = useState<CommercialProposalItem | null>(null);
 
   // Тендер подрядчиков
   const [tenderOpen, setTenderOpen] = useState<string | null>(null); // discipline key
@@ -319,7 +416,7 @@ const CpWorksTab: React.FC<CpWorksTabProps> = ({ proposalId, items, projectId })
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-white dark:bg-neutral-900">
                 <tr className="border-b border-neutral-200 dark:border-neutral-700 text-left text-neutral-500 dark:text-neutral-400">
                   <th className="px-4 py-2 font-medium">{t('common.name')}</th>
                   <th className="px-3 py-2 font-medium text-right">{t('commercialProposal.colQty')}</th>
@@ -375,19 +472,7 @@ const CpWorksTab: React.FC<CpWorksTabProps> = ({ proposalId, items, projectId })
                           <button
                             type="button"
                             className="ml-2 text-xs text-primary-600 hover:underline"
-                            onClick={() => {
-                              const value = window.prompt(
-                                t('commercialProposal.enterManualCostPrice'),
-                                String(item.costPrice ?? ''),
-                              );
-                              if (value == null) return;
-                              const normalized = Number(value.replace(',', '.'));
-                              if (!Number.isFinite(normalized) || normalized <= 0) {
-                                toast.error(t('commercialProposal.invalidManualCostPrice'));
-                                return;
-                              }
-                              updateItemMutation.mutate({ itemId: item.id, costPrice: normalized });
-                            }}
+                            onClick={() => setCostPriceItem(item)}
                           >
                             {t('commercialProposal.setManualCostPrice')}
                           </button>
@@ -483,6 +568,12 @@ const CpWorksTab: React.FC<CpWorksTabProps> = ({ proposalId, items, projectId })
           </div>
         </div>
       ))}
+
+      <CostPriceModal
+        item={costPriceItem}
+        onSave={(itemId, costPrice) => updateItemMutation.mutate({ itemId, costPrice })}
+        onClose={() => setCostPriceItem(null)}
+      />
     </div>
   );
 };
