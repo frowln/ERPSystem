@@ -9181,6 +9181,7 @@ export const ru = {
       'fin-rev-periods': 'Периоды признания',
       'fin-rev-dashboard': 'Дашборд выручки',
       'fin-opportunities': 'Возможности',
+      'site-assessments': 'Обследование площадок',
       'fin-tenders': 'Тендеры',
       'fin-bid-comparison': 'Сравнение КП',
       'fin-procurement': 'Закупки',

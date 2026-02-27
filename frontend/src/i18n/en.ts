@@ -9182,6 +9182,7 @@ export const en: TranslationKeys = {
       'fin-rev-periods': 'Recognition Periods',
       'fin-rev-dashboard': 'Revenue Dashboard',
       'fin-opportunities': 'Opportunities',
+      'site-assessments': 'Site Assessments',
       'fin-tenders': 'Tenders',
       'fin-bid-comparison': 'Bid Comparison',
       'fin-procurement': 'Procurement',

@@ -149,6 +149,7 @@ export const navigation: NavGroup[] = [
   navGroup('precon', Target, [
     navItem('crm-leads', Target, '/crm/leads'),
     navItem('fin-opportunities', Briefcase, '/portfolio/opportunities'),
+    navItem('site-assessments', Search, '/site-assessments'),
     navItem('projects-list', FolderKanban, '/projects'),
     navItem('counterparties', Building2, '/counterparties'),
   ]),
