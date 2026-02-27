@@ -91,4 +91,19 @@ public class CashFlowController {
         CashFlowSummaryResponse response = cashFlowService.getCashFlowSummary(projectId);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
+
+    @PostMapping("/generate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Generate forecast cash flow entries from project budget")
+    public ResponseEntity<ApiResponse<List<CashFlowEntryResponse>>> generateForecast(
+            @RequestParam UUID projectId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(defaultValue = "30") int paymentDelayDays,
+            @RequestParam(defaultValue = "true") boolean includeVat) {
+        List<CashFlowEntryResponse> entries = cashFlowService.generateForecast(
+                projectId, startDate, endDate, paymentDelayDays, includeVat);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(entries));
+    }
 }

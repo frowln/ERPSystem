@@ -62,10 +62,26 @@ export const CashFlowForecastWizard: React.FC<CashFlowForecastWizardProps> = ({ 
 
   const handleFinish = async () => {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    toast.success(t('finance.cashFlowForecast.toastSuccess'));
-    setSubmitting(false);
-    resetAndClose();
+    try {
+      const projectIds = Array.from(selectedProjects);
+      for (const pid of projectIds) {
+        await apiClient.post('/cash-flow/generate', null, {
+          params: {
+            projectId: pid,
+            startDate,
+            endDate,
+            paymentDelayDays: Number(paymentDelay) || 30,
+            includeVat,
+          },
+        });
+      }
+      toast.success(t('finance.cashFlowForecast.toastSuccess'));
+      resetAndClose();
+    } catch {
+      toast.error('Ошибка генерации прогноза');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const resetAndClose = () => {

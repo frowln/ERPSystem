@@ -2,12 +2,18 @@ package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.finance.domain.BudgetItem;
+import com.privod.platform.modules.finance.domain.CashFlowCategory;
 import com.privod.platform.modules.finance.domain.CashFlowEntry;
+import com.privod.platform.modules.finance.repository.BudgetItemRepository;
+import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.finance.repository.CashFlowEntryRepository;
 import com.privod.platform.modules.finance.web.dto.CashFlowEntryResponse;
 import com.privod.platform.modules.finance.web.dto.CashFlowSummaryResponse;
 import com.privod.platform.modules.finance.web.dto.CreateCashFlowEntryRequest;
 import com.privod.platform.modules.project.repository.ProjectRepository;
+
+import java.math.RoundingMode;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +36,8 @@ import java.util.UUID;
 public class CashFlowService {
 
     private final CashFlowEntryRepository cashFlowEntryRepository;
+    private final BudgetRepository budgetRepository;
+    private final BudgetItemRepository budgetItemRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
@@ -156,6 +164,149 @@ public class CashFlowService {
                 .orElseThrow(() -> new EntityNotFoundException("Запись движения денежных средств не найдена: " + id));
         validateProjectTenant(entry.getProjectId(), organizationId);
         return entry;
+    }
+
+    @Transactional
+    public List<CashFlowEntryResponse> generateForecast(
+            UUID projectId, LocalDate startDate, LocalDate endDate,
+            int paymentDelayDays, boolean includeVat) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        validateProjectTenant(projectId, organizationId);
+
+        var budgets = budgetRepository.findByProjectIdAndDeletedFalse(projectId, Pageable.unpaged()).getContent();
+        if (budgets.isEmpty()) {
+            throw new IllegalStateException("Нет бюджетов для проекта. Создайте бюджет перед генерацией прогноза.");
+        }
+
+        List<BudgetItem> allItems = new ArrayList<>();
+        for (var budget : budgets) {
+            allItems.addAll(budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budget.getId()));
+        }
+
+        if (allItems.isEmpty()) {
+            throw new IllegalStateException("Нет позиций в бюджете. Импортируйте смету перед генерацией прогноза.");
+        }
+
+        BigDecimal totalRevenue = allItems.stream()
+                .map(i -> i.getCustomerTotal() != null ? i.getCustomerTotal() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalCost = allItems.stream()
+                .map(i -> {
+                    BigDecimal cp = i.getCostPrice() != null ? i.getCostPrice() : BigDecimal.ZERO;
+                    BigDecimal qty = i.getQuantity() != null ? i.getQuantity() : BigDecimal.ONE;
+                    return cp.multiply(qty);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalMaterials = allItems.stream()
+                .filter(i -> i.getCategory() == com.privod.platform.modules.finance.domain.BudgetCategory.MATERIALS)
+                .map(i -> i.getPlannedAmount() != null ? i.getPlannedAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalLabor = allItems.stream()
+                .filter(i -> i.getCategory() == com.privod.platform.modules.finance.domain.BudgetCategory.LABOR
+                        || i.getCategory() == com.privod.platform.modules.finance.domain.BudgetCategory.SUBCONTRACT)
+                .map(i -> i.getPlannedAmount() != null ? i.getPlannedAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalEquipment = allItems.stream()
+                .filter(i -> i.getCategory() == com.privod.platform.modules.finance.domain.BudgetCategory.EQUIPMENT)
+                .map(i -> i.getPlannedAmount() != null ? i.getPlannedAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        long totalMonths = java.time.temporal.ChronoUnit.MONTHS.between(startDate, endDate);
+        if (totalMonths <= 0) totalMonths = 6;
+
+        BigDecimal vatMultiplier = includeVat ? new BigDecimal("1.20") : BigDecimal.ONE;
+
+        cashFlowEntryRepository.deleteByProjectIdAndNotes(projectId, "AUTO_FORECAST");
+
+        List<CashFlowEntry> entries = new ArrayList<>();
+
+        BigDecimal advancePercent = new BigDecimal("0.30");
+        BigDecimal monthlyRevenue = totalRevenue.subtract(totalRevenue.multiply(advancePercent))
+                .divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP)
+                .multiply(vatMultiplier);
+
+        CashFlowEntry advance = CashFlowEntry.builder()
+                .projectId(projectId)
+                .entryDate(startDate)
+                .direction("in")
+                .category(CashFlowCategory.CONTRACT_PAYMENT)
+                .amount(totalRevenue.multiply(advancePercent).multiply(vatMultiplier).setScale(2, RoundingMode.HALF_UP))
+                .description("Аванс по договору (30%)")
+                .notes("AUTO_FORECAST")
+                .build();
+        entries.add(advance);
+
+        for (long m = 1; m <= totalMonths; m++) {
+            LocalDate monthDate = startDate.plusMonths(m);
+
+            entries.add(CashFlowEntry.builder()
+                    .projectId(projectId)
+                    .entryDate(monthDate)
+                    .direction("in")
+                    .category(CashFlowCategory.CONTRACT_PAYMENT)
+                    .amount(monthlyRevenue.setScale(2, RoundingMode.HALF_UP))
+                    .description("Оплата по КС-2/КС-3 за " + monthDate.getMonth().getValue() + " мес.")
+                    .notes("AUTO_FORECAST")
+                    .build());
+        }
+
+        BigDecimal monthlyMaterials = totalMaterials.divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP);
+        BigDecimal monthlyLabor = totalLabor.divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP);
+        BigDecimal monthlyEquipment = totalEquipment.divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP);
+
+        for (long m = 0; m < totalMonths; m++) {
+            LocalDate monthDate = startDate.plusMonths(m);
+
+            if (monthlyMaterials.compareTo(BigDecimal.ZERO) > 0) {
+                entries.add(CashFlowEntry.builder()
+                        .projectId(projectId)
+                        .entryDate(monthDate.plusDays(paymentDelayDays))
+                        .direction("out")
+                        .category(CashFlowCategory.MATERIAL_PURCHASE)
+                        .amount(monthlyMaterials.setScale(2, RoundingMode.HALF_UP))
+                        .description("Закупка материалов (" + (m + 1) + "/" + totalMonths + ")")
+                        .notes("AUTO_FORECAST")
+                        .build());
+            }
+
+            if (monthlyLabor.compareTo(BigDecimal.ZERO) > 0) {
+                entries.add(CashFlowEntry.builder()
+                        .projectId(projectId)
+                        .entryDate(monthDate.plusDays(15))
+                        .direction("out")
+                        .category(CashFlowCategory.SUBCONTRACT)
+                        .amount(monthlyLabor.setScale(2, RoundingMode.HALF_UP))
+                        .description("Оплата работ (" + (m + 1) + "/" + totalMonths + ")")
+                        .notes("AUTO_FORECAST")
+                        .build());
+            }
+
+            if (monthlyEquipment.compareTo(BigDecimal.ZERO) > 0) {
+                entries.add(CashFlowEntry.builder()
+                        .projectId(projectId)
+                        .entryDate(monthDate.plusDays(paymentDelayDays))
+                        .direction("out")
+                        .category(CashFlowCategory.EQUIPMENT)
+                        .amount(monthlyEquipment.setScale(2, RoundingMode.HALF_UP))
+                        .description("Оборудование (" + (m + 1) + "/" + totalMonths + ")")
+                        .notes("AUTO_FORECAST")
+                        .build());
+            }
+        }
+
+        List<CashFlowEntry> saved = new ArrayList<>();
+        for (CashFlowEntry entry : entries) {
+            saved.add(cashFlowEntryRepository.save(entry));
+        }
+
+        log.info("Сгенерирован прогноз Cash Flow для проекта {}: {} записей, выручка {}, себестоимость {}",
+                projectId, saved.size(), totalRevenue, totalCost);
+
+        return saved.stream().map(CashFlowEntryResponse::fromEntity).toList();
     }
 
     private List<UUID> getOrganizationProjectIds(UUID organizationId) {

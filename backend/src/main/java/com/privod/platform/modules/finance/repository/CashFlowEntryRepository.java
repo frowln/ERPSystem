@@ -42,4 +42,8 @@ public interface CashFlowEntryRepository extends JpaRepository<CashFlowEntry, UU
             "GROUP BY EXTRACT(YEAR FROM c.entryDate), EXTRACT(MONTH FROM c.entryDate), c.direction " +
             "ORDER BY EXTRACT(YEAR FROM c.entryDate), EXTRACT(MONTH FROM c.entryDate)")
     List<Object[]> getMonthlySummaryByProjectId(@Param("projectId") UUID projectId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM CashFlowEntry c WHERE c.projectId = :projectId AND c.notes = :notes")
+    void deleteByProjectIdAndNotes(@Param("projectId") UUID projectId, @Param("notes") String notes);
 }
