@@ -1,5 +1,5 @@
 export type LeadStatus = 'NEW' | 'QUALIFIED' | 'PROPOSITION' | 'NEGOTIATION' | 'WON' | 'LOST';
-export type LeadPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type LeadPriority = 'LOW' | 'NORMAL' | 'HIGH';
 
 export interface CrmLead {
   id: string;

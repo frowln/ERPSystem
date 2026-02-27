@@ -40,7 +40,7 @@ const crmLeadSchema = z.object({
     .optional()
     .transform((val) => (val ? Number(val) : undefined))
     .refine((val) => val === undefined || (val >= 0 && val <= 100), t('forms.crmLead.validation.probabilityRange')),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH']).optional(),
   notes: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
 });
 
@@ -48,9 +48,8 @@ type CrmLeadFormData = z.input<typeof crmLeadSchema>;
 
 const priorityOptions = [
   { value: 'LOW', label: 'Низкий' },
-  { value: 'MEDIUM', label: 'Средний' },
+  { value: 'NORMAL', label: 'Обычный' },
   { value: 'HIGH', label: 'Высокий' },
-  { value: 'CRITICAL', label: 'Критический' },
 ];
 
 const sourceOptions = [
@@ -104,7 +103,7 @@ const CrmLeadFormPage: React.FC = () => {
           source: '',
           estimatedValue: '',
           probability: '',
-          priority: 'MEDIUM' as const,
+          priority: 'NORMAL' as const,
           notes: '',
         },
   });
