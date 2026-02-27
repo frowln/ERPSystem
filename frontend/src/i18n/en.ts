@@ -9183,6 +9183,7 @@ export const en: TranslationKeys = {
       'fin-rev-dashboard': 'Revenue Dashboard',
       'fin-opportunities': 'Opportunities',
       'site-assessments': 'Site Assessments',
+      'prequalifications': 'Prequalification',
       'fin-tenders': 'Tenders',
       'fin-bid-comparison': 'Bid Comparison',
       'fin-procurement': 'Procurement',

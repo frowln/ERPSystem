@@ -166,6 +166,7 @@ export const navigation: NavGroup[] = [
     navItem('fin-budgets', Wallet, '/budgets'),
     navItem('fin-fm', TableProperties, '/financial-models'),
     navItem('fin-commercial-proposals', FileText, '/commercial-proposals'),
+    navItem('prequalifications', Shield, '/prequalifications'),
     navItem('fin-tenders', FileSearch, '/portfolio/tenders'),
     navItem('fin-bid-comparison', Scale, '/portfolio/bid-comparison'),
     navItem('CONTRACTS', FileSignature, '/contracts'),
