@@ -2,56 +2,39 @@
 
 ## Cursor Cloud specific instructions
 
-### Architecture
-PRIVOD NEXT is a construction ERP (monorepo) with:
-- **Backend**: Java 21 / Spring Boot 3.4 / Gradle 8.12 (in `/backend`)
-- **Frontend**: React 19 / Vite 6 / TypeScript (in `/frontend`, uses `npm`)
-- **Infrastructure**: PostgreSQL 16, Redis 7, MinIO, MailHog — all via Docker Compose
+### Architecture Overview
 
-### Running services
+Privod Next is a construction industry ERP with a Java 21 / Spring Boot 3.4 backend and a React 19 / TypeScript / Vite 6 frontend. Infrastructure (PostgreSQL 16, Redis 7) runs via Docker Compose.
 
-**Infrastructure** (Docker Compose):
-```
-sudo docker compose -f docker-compose.yml -p privod_next up -d postgres redis minio minio-init mailhog
-```
-Ports: Postgres=15432, Redis=16379, MinIO API=19000, MinIO Console=19001, MailHog SMTP=11025, MailHog UI=18025.
+### Running Services
 
-**Backend** (Docker — recommended due to Flyway migration ordering issues):
-```
-sudo docker compose -f docker-compose.yml -p privod_next up -d --build backend
-```
-Backend runs on port **18080** (mapped from container 8080). Health: `curl http://localhost:18080/actuator/health`
+| Service | Command | Port | Notes |
+|---------|---------|------|-------|
+| PostgreSQL + Redis | `docker compose up -d postgres redis` (from repo root) | 15432, 16379 | Required before backend |
+| Backend | `cd backend && DB_URL="jdbc:postgresql://localhost:15432/privod2" SPRING_PROFILES_ACTIVE=dev SPRING_FLYWAY_ENABLED=false ./gradlew bootRun --no-daemon` | 8080 | See Flyway note below |
+| Frontend | `cd frontend && npm run dev -- --host 0.0.0.0` | 4000 | Vite proxies `/api` → backend:8080 |
 
-**Frontend** (local dev server):
-```
-cd frontend && BACKEND_URL=http://localhost:18080 npm run dev
-```
-Runs on port **4000** with API proxy to backend.
+### Critical Gotchas
 
-### Critical gotchas
+1. **Flyway migrations are broken on fresh DB.** Migration V240 references table `minstroy_price_indices` created by V1027 (ordering conflict). Workaround: start backend with `SPRING_FLYWAY_ENABLED=false` and rely on `ddl-auto: update`. This means some columns may be missing — add them manually via `psql` if you get "column does not exist" errors (e.g. `is_current`, `doc_version` on `commercial_proposals`; `sla_status` on `support_tickets`).
 
-1. **Flyway migration ordering bug**: Migration V240 references `minstroy_price_indices` table which is only created in V1027. On a fresh database, you must pre-create this table AND run V1's `update_updated_at_column()` function before starting the backend. The database init sequence is:
-   - Create extensions (uuid-ossp, pg_trgm, citext, unaccent, btree_gist)
-   - Create function `update_updated_at_column()` (from V1)
-   - Create table `minstroy_price_indices` (from V1027)
-   - Then start the backend (Flyway baseline-on-migrate handles the rest)
+2. **`DB_URL` env var override.** A pre-existing `DB_URL` secret may point to a different database name (`privod_next` instead of `privod2`). Always explicitly set `DB_URL=jdbc:postgresql://localhost:15432/privod2` when starting the backend locally.
 
-2. **Injected secrets override local config**: Environment secrets like `DB_URL`, `DB_PASSWORD`, `JWT_SECRET` take precedence over `application.yml` defaults. When running locally against Docker infra, ensure `DB_URL=jdbc:postgresql://localhost:15432/privod2` is set correctly.
+3. **`gradlew` is a stub.** It just runs `exec gradle "$@"`. You must install Gradle 8.12 globally first: download from `https://services.gradle.org/distributions/gradle-8.12-bin.zip` and symlink to `/usr/local/bin/gradle`.
 
-3. **`gradlew` is a stub**: The wrapper script just calls `exec gradle "$@"`. Gradle 8.12 must be installed system-wide (installed at `/opt/gradle-8.12/bin/gradle`).
+4. **Docker in Cloud Agent.** Requires fuse-overlayfs storage driver and iptables-legacy. See setup instructions in the system prompt.
 
-4. **ESLint not in devDependencies**: The `npm run lint` script calls `eslint .` but ESLint isn't a declared dependency and there's no eslint config file. Use `npm run typecheck` for static analysis instead.
+5. **CORS.** The Vite dev server runs on port 4000 (not 3000). The Vite proxy strips the `Origin` header, so CORS config doesn't need updating. Always access the app via `http://localhost:4000`.
 
-5. **ROI uses `customerPrice` not `estimatePrice`**: The Budget ROI endpoint (`GET /budgets/{id}/roi`) calculates revenue from `customerPrice × quantity`. Validation enforces `customerPrice ≤ estimatePrice`.
+6. **Admin credentials (dev profile).** `DataInitializer` seeds admin users on every boot: `admin@privod.com` / `admin123` and `admin@privod.ru` / `admin123`.
 
-### Standard commands
-See `Makefile` for all available targets. Key ones:
-- `make test` — runs backend + frontend tests
-- `make lint` — runs backend check + frontend lint
-- Frontend tests: `cd frontend && npm run test:run` (611 tests via Vitest)
-- Frontend typecheck: `cd frontend && npm run typecheck`
-- Backend build: `cd backend && gradle build -x test`
-- Backend tests: `cd backend && gradle test` (requires Testcontainers / Docker)
+7. **ESLint not installed.** `npm run lint` fails because eslint is not in `package.json` devDependencies. This is a pre-existing repo issue.
 
-### Auth
-Default admin: `admin@privod.ru` / `admin123` (seeded via V2 migration).
+### Standard Commands
+
+- Lint: `cd backend && ./gradlew check` (backend); `cd frontend && npm run lint` (frontend, currently broken — see note above)
+- Test: `cd frontend && npx vitest run --dir src` (52 files, 611 tests); `cd backend && ./gradlew test` (requires Testcontainers / Docker)
+- Build: `cd frontend && npm run build`; `cd backend && ./gradlew build -x test`
+- Type check: `cd frontend && npx tsc -b`
+
+See `Makefile` at repo root for additional convenience targets.

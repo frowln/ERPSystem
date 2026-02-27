@@ -9093,6 +9093,9 @@ export const ru = {
   navigation: {
     groups: {
       home: 'Главная',
+      precon: 'Предварительный этап',
+      pricing: 'Ценообразование',
+      economics: 'Экономика проекта',
       projects: 'Объекты',
       pm: 'Управление объектами',
       DOCUMENTS: 'Документы',
@@ -9178,6 +9181,8 @@ export const ru = {
       'fin-rev-periods': 'Периоды признания',
       'fin-rev-dashboard': 'Дашборд выручки',
       'fin-opportunities': 'Возможности',
+      'site-assessments': 'Обследование площадок',
+      'prequalifications': 'Преквалификация',
       'fin-tenders': 'Тендеры',
       'fin-bid-comparison': 'Сравнение КП',
       'fin-procurement': 'Закупки',

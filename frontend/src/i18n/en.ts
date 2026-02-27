@@ -9094,6 +9094,9 @@ export const en: TranslationKeys = {
   navigation: {
     groups: {
       home: 'Home',
+      precon: 'Pre-Construction',
+      pricing: 'Pricing',
+      economics: 'Project Economics',
       projects: 'Projects',
       pm: 'Project Management',
       DOCUMENTS: 'Documents',
@@ -9179,6 +9182,8 @@ export const en: TranslationKeys = {
       'fin-rev-periods': 'Recognition Periods',
       'fin-rev-dashboard': 'Revenue Dashboard',
       'fin-opportunities': 'Opportunities',
+      'site-assessments': 'Site Assessments',
+      'prequalifications': 'Prequalification',
       'fin-tenders': 'Tenders',
       'fin-bid-comparison': 'Bid Comparison',
       'fin-procurement': 'Procurement',

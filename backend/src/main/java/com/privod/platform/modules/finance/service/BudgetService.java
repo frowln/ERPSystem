@@ -19,6 +19,8 @@ import com.privod.platform.modules.finance.web.dto.FinanceExpenseItemResponse;
 import com.privod.platform.modules.finance.web.dto.UpdateBudgetItemRequest;
 import com.privod.platform.modules.finance.web.dto.UpdateBudgetRequest;
 import com.privod.platform.modules.project.repository.ProjectRepository;
+import com.privod.platform.modules.specification.domain.SpecItemType;
+import com.privod.platform.modules.specification.repository.SpecItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,7 @@ public class BudgetService {
     private final com.privod.platform.modules.estimate.repository.EstimateRepository estimateRepository;
     private final com.privod.platform.modules.estimate.repository.EstimateItemRepository estimateItemRepository;
     private final BudgetSnapshotService budgetSnapshotService;
+    private final SpecItemRepository specItemRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -509,27 +512,42 @@ public class BudgetService {
             BigDecimal price = estItem.getUnitPrice() != null ? estItem.getUnitPrice() : BigDecimal.ZERO;
             BigDecimal qty = estItem.getQuantity() != null ? estItem.getQuantity() : BigDecimal.ONE;
 
+            var budgetItemType = com.privod.platform.modules.finance.domain.BudgetItemType.WORKS;
+            var budgetCategory = com.privod.platform.modules.finance.domain.BudgetCategory.LABOR;
+            if (estItem.getSpecItemId() != null) {
+                var specItem = specItemRepository.findById(estItem.getSpecItemId()).orElse(null);
+                if (specItem != null && specItem.getItemType() != null) {
+                    switch (specItem.getItemType()) {
+                        case MATERIAL -> { budgetItemType = com.privod.platform.modules.finance.domain.BudgetItemType.MATERIALS; budgetCategory = com.privod.platform.modules.finance.domain.BudgetCategory.MATERIALS; }
+                        case EQUIPMENT -> { budgetItemType = com.privod.platform.modules.finance.domain.BudgetItemType.EQUIPMENT; budgetCategory = com.privod.platform.modules.finance.domain.BudgetCategory.EQUIPMENT; }
+                        case WORK -> { budgetItemType = com.privod.platform.modules.finance.domain.BudgetItemType.WORKS; budgetCategory = com.privod.platform.modules.finance.domain.BudgetCategory.LABOR; }
+                    }
+                }
+            }
+
+            BigDecimal customerTotal = price.multiply(qty).setScale(2, RoundingMode.HALF_UP);
+
             BudgetItem bi = BudgetItem.builder()
                     .budgetId(budgetId)
                     .sequence(maxSequence)
                     .name(estItem.getName())
                     .quantity(qty)
                     .unit(estItem.getUnitOfMeasure())
-                    .costPrice(price)
+                    .costPrice(BigDecimal.ZERO)
                     .estimatePrice(price)
                     .salePrice(price)
                     .customerPrice(price)
-                    .itemType(com.privod.platform.modules.finance.domain.BudgetItemType.WORKS)
-                    .category(com.privod.platform.modules.finance.domain.BudgetCategory.LABOR)
-                    .plannedAmount(price.multiply(qty).setScale(2, RoundingMode.HALF_UP))
+                    .itemType(budgetItemType)
+                    .category(budgetCategory)
+                    .plannedAmount(customerTotal)
                     .priceSourceType(com.privod.platform.modules.finance.domain.BudgetItemPriceSource.ESTIMATE)
                     .priceSourceId(estItem.getId())
                     .docStatus(com.privod.platform.modules.finance.domain.BudgetItemDocStatus.PLANNED)
                     .notes(estItem.getNotes())
                     .build();
 
-            bi.setCustomerTotal(bi.getPlannedAmount());
-            bi.setRemainingAmount(bi.getPlannedAmount());
+            bi.setCustomerTotal(customerTotal);
+            bi.setRemainingAmount(customerTotal);
             bi.recalculateMargin();
             bi.recalculatePrices();
             newItems.add(budgetItemRepository.save(bi));

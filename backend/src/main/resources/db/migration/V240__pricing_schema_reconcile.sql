@@ -120,44 +120,29 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_pi_region_work_base_target_active
     WHERE deleted = false;
 
 -- Backfill legacy Minstroy indices only when matching row is absent.
-INSERT INTO price_indices (
-    id,
-    organization_id,
-    region,
-    work_type,
-    base_quarter,
-    target_quarter,
-    index_value,
-    source,
-    created_at,
-    updated_at,
-    created_by,
-    updated_by,
-    version,
-    deleted
-)
-SELECT
-    gen_random_uuid(),
-    mpi.organization_id,
-    mpi.region,
-    COALESCE(NULLIF(TRIM(mpi.section_name), ''), 'СМР'),
-    mpi.quarter,
-    mpi.quarter,
-    mpi.index_value,
-    mpi.source,
-    COALESCE(mpi.created_at, now()),
-    mpi.updated_at,
-    NULL,
-    NULL,
-    0,
-    COALESCE(mpi.deleted, false)
-FROM minstroy_price_indices mpi
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM price_indices pi
-    WHERE pi.deleted = false
-      AND pi.region = mpi.region
-      AND pi.work_type = COALESCE(NULLIF(TRIM(mpi.section_name), ''), 'СМР')
-      AND pi.base_quarter = mpi.quarter
-      AND pi.target_quarter = mpi.quarter
-);
+-- Wrapped in DO block: minstroy_price_indices may not exist on fresh databases
+-- where V1027 runs after V240 due to version ordering.
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'minstroy_price_indices') THEN
+        INSERT INTO price_indices (
+            id, organization_id, region, work_type, base_quarter, target_quarter,
+            index_value, source, created_at, updated_at, created_by, updated_by, version, deleted
+        )
+        SELECT
+            gen_random_uuid(), mpi.organization_id, mpi.region,
+            COALESCE(NULLIF(TRIM(mpi.section_name), ''), 'СМР'),
+            mpi.quarter, mpi.quarter, mpi.index_value, mpi.source,
+            COALESCE(mpi.created_at, now()), mpi.updated_at, NULL, NULL, 0,
+            COALESCE(mpi.deleted, false)
+        FROM minstroy_price_indices mpi
+        WHERE NOT EXISTS (
+            SELECT 1 FROM price_indices pi
+            WHERE pi.deleted = false
+              AND pi.region = mpi.region
+              AND pi.work_type = COALESCE(NULLIF(TRIM(mpi.section_name), ''), 'СМР')
+              AND pi.base_quarter = mpi.quarter
+              AND pi.target_quarter = mpi.quarter
+        );
+    END IF;
+END $$;

@@ -150,8 +150,11 @@ export const financeApi = {
   },
 
   getCashFlow: async (): Promise<CashFlowEntry[]> => {
-    const response = await apiClient.get<CashFlowEntry[]>('/cash-flow');
-    return response.data;
+    const response = await apiClient.get<any>('/cash-flow');
+    const data = response.data;
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.content)) return data.content;
+    return [];
   },
 
   getCashFlowChart: async (): Promise<CashFlowChartData> => {

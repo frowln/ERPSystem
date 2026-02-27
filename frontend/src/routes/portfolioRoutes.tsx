@@ -8,6 +8,12 @@ const TendersPage = lazy(() => import('@/modules/portfolio/TendersPage'));
 const BidComparisonPage = lazy(() => import('@/modules/portfolio/BidComparisonPage'));
 const OpportunityFormPage = lazy(() => import('@/modules/portfolio/OpportunityFormPage'));
 
+// Site Assessment
+const SiteAssessmentListPage = lazy(() => import('@/modules/siteAssessment/SiteAssessmentListPage'));
+
+// Prequalification
+const PrequalificationListPage = lazy(() => import('@/modules/prequalification/PrequalificationListPage'));
+
 // CRM
 const CrmLeadListPage = lazy(() => import('@/modules/crm/CrmLeadListPage'));
 const CrmLeadDetailPage = lazy(() => import('@/modules/crm/CrmLeadDetailPage'));
@@ -58,6 +64,12 @@ const AiAssistantPage = lazy(() => import('@/modules/ai/AiAssistantPage'));
 export function portfolioRoutes() {
   return (
     <>
+      {/* Site Assessment */}
+      <Route path="site-assessments" element={<SiteAssessmentListPage />} />
+
+      {/* Prequalification */}
+      <Route path="prequalifications" element={<PrequalificationListPage />} />
+
       {/* Portfolio */}
       <Route path="portfolio/opportunities" element={<OpportunitiesPage />} />
       <Route path="portfolio/opportunities/new" element={<OpportunityFormPage />} />

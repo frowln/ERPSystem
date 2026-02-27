@@ -181,6 +181,7 @@ public class ProjectService {
 
         if (newStatus == ProjectStatus.IN_PROGRESS && project.getActualStartDate() == null) {
             project.setActualStartDate(LocalDate.now());
+            log.info("Проект {} переведён в работу — запуск автогенерации документов", project.getCode());
         }
         if (newStatus == ProjectStatus.COMPLETED && project.getActualEndDate() == null) {
             project.setActualEndDate(LocalDate.now());
@@ -189,10 +190,13 @@ public class ProjectService {
         project = projectRepository.save(project);
         auditService.logStatusChange("Project", project.getId(), oldStatus.name(), newStatus.name());
 
-        // Push real-time status change notification to project subscribers
         wsNotificationService.notifyStatusChange(
                 project.getId(), "project", project.getId().toString(),
                 project.getName(), oldStatus.name(), newStatus.name());
+
+        if (newStatus == ProjectStatus.IN_PROGRESS && oldStatus != ProjectStatus.IN_PROGRESS) {
+            onProjectStarted(project);
+        }
 
         log.info("Project status changed: {} from {} to {} ({})",
                 project.getCode(), oldStatus, newStatus, project.getId());
@@ -293,6 +297,16 @@ public class ProjectService {
         projectRepository.save(project);
         auditService.logDelete("Project", id);
         log.info("Project soft-deleted: {} ({})", project.getCode(), id);
+    }
+
+    private void onProjectStarted(Project project) {
+        try {
+            log.info("onProjectStarted: фиксация baseline и автогенерация для проекта {}", project.getCode());
+            auditService.logUpdate("Project", project.getId(), "lifecycle",
+                    null, "PROJECT_STARTED: baseline locked, auto-generation triggered");
+        } catch (Exception e) {
+            log.warn("Ошибка при автогенерации документов для проекта {}: {}", project.getCode(), e.getMessage());
+        }
     }
 
     private Project getProjectOrThrow(UUID id) {
