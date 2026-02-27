@@ -525,27 +525,29 @@ public class BudgetService {
                 }
             }
 
+            BigDecimal customerTotal = price.multiply(qty).setScale(2, RoundingMode.HALF_UP);
+
             BudgetItem bi = BudgetItem.builder()
                     .budgetId(budgetId)
                     .sequence(maxSequence)
                     .name(estItem.getName())
                     .quantity(qty)
                     .unit(estItem.getUnitOfMeasure())
-                    .costPrice(price)
+                    .costPrice(BigDecimal.ZERO)
                     .estimatePrice(price)
                     .salePrice(price)
                     .customerPrice(price)
                     .itemType(budgetItemType)
                     .category(budgetCategory)
-                    .plannedAmount(price.multiply(qty).setScale(2, RoundingMode.HALF_UP))
+                    .plannedAmount(customerTotal)
                     .priceSourceType(com.privod.platform.modules.finance.domain.BudgetItemPriceSource.ESTIMATE)
                     .priceSourceId(estItem.getId())
                     .docStatus(com.privod.platform.modules.finance.domain.BudgetItemDocStatus.PLANNED)
                     .notes(estItem.getNotes())
                     .build();
 
-            bi.setCustomerTotal(bi.getPlannedAmount());
-            bi.setRemainingAmount(bi.getPlannedAmount());
+            bi.setCustomerTotal(customerTotal);
+            bi.setRemainingAmount(customerTotal);
             bi.recalculateMargin();
             bi.recalculatePrices();
             newItems.add(budgetItemRepository.save(bi));
