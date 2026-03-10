@@ -36,6 +36,7 @@ public class S3StorageService implements StorageService {
             case "bim-models" -> "bim";
             case "images", "photos" -> "image";
             case "exports", "csv" -> "csv";
+            case "attachments" -> "messaging";
             default -> "document";
         };
     }

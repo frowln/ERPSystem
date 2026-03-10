@@ -26,7 +26,8 @@ public record ChannelResponse(
         // DM-specific fields
         UUID otherUserId,
         String otherUserName,
-        String otherUserAvatarUrl
+        String otherUserAvatarUrl,
+        String otherUserAvailabilityStatus
 ) {
     public static ChannelResponse fromEntity(Channel channel) {
         return new ChannelResponse(
@@ -46,11 +47,15 @@ public record ChannelResponse(
                 channel.getCreatedAt(),
                 channel.getUpdatedAt(),
                 channel.getCreatedBy(),
-                null, null, null
+                null, null, null, null
         );
     }
 
     public static ChannelResponse fromEntityWithDm(Channel channel, UUID otherUserId, String otherUserName, String otherUserAvatarUrl) {
+        return fromEntityWithDm(channel, otherUserId, otherUserName, otherUserAvatarUrl, null);
+    }
+
+    public static ChannelResponse fromEntityWithDm(Channel channel, UUID otherUserId, String otherUserName, String otherUserAvatarUrl, String otherUserAvailabilityStatus) {
         return new ChannelResponse(
                 channel.getId(),
                 channel.getCode(),
@@ -68,7 +73,7 @@ public record ChannelResponse(
                 channel.getCreatedAt(),
                 channel.getUpdatedAt(),
                 channel.getCreatedBy(),
-                otherUserId, otherUserName, otherUserAvatarUrl
+                otherUserId, otherUserName, otherUserAvatarUrl, otherUserAvailabilityStatus
         );
     }
 }

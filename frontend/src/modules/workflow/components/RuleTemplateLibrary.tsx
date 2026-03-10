@@ -78,8 +78,8 @@ function getBuiltInTemplates(): RuleTemplate[] {
       description: t('workflow.ruleTemplates.tplAutoApproveDesc'),
       category: 'APPROVAL',
       icon: 'check',
-      triggerType: 'CREATION',
-      actionType: 'UPDATE_STATUS',
+      triggerType: 'ON_CREATE',
+      actionType: 'CHANGE_STATUS',
       defaultConditions: emptyConditions,
       defaultActionConfig: { targetStatus: 'APPROVED' },
     },
@@ -89,7 +89,7 @@ function getBuiltInTemplates(): RuleTemplate[] {
       description: t('workflow.ruleTemplates.tplEscalateOverdueDesc'),
       category: 'ESCALATION',
       icon: 'alert',
-      triggerType: 'TIME_BASED',
+      triggerType: 'SCHEDULED',
       actionType: 'SEND_NOTIFICATION',
       defaultConditions: {
         logic: 'AND',
@@ -109,7 +109,7 @@ function getBuiltInTemplates(): RuleTemplate[] {
       description: t('workflow.ruleTemplates.tplSafetyNotifyDesc'),
       category: 'NOTIFICATION',
       icon: 'bell',
-      triggerType: 'CREATION',
+      triggerType: 'ON_CREATE',
       actionType: 'SEND_NOTIFICATION',
       defaultConditions: {
         logic: 'AND',
@@ -129,8 +129,8 @@ function getBuiltInTemplates(): RuleTemplate[] {
       description: t('workflow.ruleTemplates.tplAutoAssignDesc'),
       category: 'ASSIGNMENT',
       icon: 'users',
-      triggerType: 'CREATION',
-      actionType: 'ASSIGN_ROLE',
+      triggerType: 'ON_CREATE',
+      actionType: 'ASSIGN_USER',
       defaultConditions: {
         logic: 'AND',
         groups: [
@@ -149,7 +149,7 @@ function getBuiltInTemplates(): RuleTemplate[] {
       description: t('workflow.ruleTemplates.tplBudgetThresholdDesc'),
       category: 'BUDGET',
       icon: 'dollar',
-      triggerType: 'FIELD_UPDATE',
+      triggerType: 'ON_FIELD_CHANGE',
       actionType: 'SEND_NOTIFICATION',
       defaultConditions: {
         logic: 'AND',

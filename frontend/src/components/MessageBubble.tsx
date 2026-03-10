@@ -9,6 +9,8 @@ import {
   Trash2,
   Loader2,
   Forward,
+  Check,
+  CheckCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
@@ -17,13 +19,88 @@ import { formatRelativeTime } from '@/lib/format';
 import type { Message, MessageAttachment } from '@/api/messaging';
 import { messagingApi } from '@/api/messaging';
 
-/* ─── Attachment link with lazy presigned URL fetch ─── */
+const IMAGE_MIME_RE = /^image\/(jpeg|png|gif|webp|bmp)$/;
+const AUDIO_MIME_RE = /^audio\//;
+
+const formatFileSize = (bytes: number): string => {
+  if (!bytes || bytes <= 0) return '—';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+/* ─── Image attachment — displayed inline as a photo ─── */
+const ImageAttachment: React.FC<{
+  attachment: MessageAttachment;
+  onImageClick?: (url: string) => void;
+}> = ({ attachment, onImageClick }) => {
+  const [imgUrl, setImgUrl] = useState<string>(attachment.url || '');
+  const [loading, setLoading] = useState(!attachment.url && !!attachment.attachmentId);
+
+  useCallback(() => {}, []); // keep hooks stable
+
+  // Fetch presigned URL for images that use att: references
+  React.useEffect(() => {
+    if (!attachment.url && attachment.attachmentId) {
+      setLoading(true);
+      messagingApi.getAttachmentDownloadUrl(attachment.attachmentId)
+        .then((url) => setImgUrl(url))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }
+  }, [attachment.attachmentId, attachment.url]);
+
+  if (loading) {
+    return (
+      <div className="w-48 h-32 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+        <Loader2 size={20} className="animate-spin text-neutral-400" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imgUrl}
+      alt={attachment.fileName}
+      onClick={() => onImageClick?.(imgUrl)}
+      className="max-w-[320px] max-h-[400px] rounded-lg cursor-pointer object-cover hover:opacity-90 transition-opacity"
+      loading="lazy"
+    />
+  );
+};
+
+/* ─── Audio attachment — inline player ─── */
+const AudioAttachment: React.FC<{ attachment: MessageAttachment }> = ({ attachment }) => {
+  const [audioUrl, setAudioUrl] = useState<string>(attachment.url || '');
+
+  React.useEffect(() => {
+    if (!attachment.url && attachment.attachmentId) {
+      messagingApi.getAttachmentDownloadUrl(attachment.attachmentId)
+        .then((url) => setAudioUrl(url))
+        .catch(() => {});
+    }
+  }, [attachment.attachmentId, attachment.url]);
+
+  if (!audioUrl) return null;
+
+  return (
+    <div className="flex items-center gap-2 mt-1">
+      <audio controls preload="none" className="h-8 max-w-[280px]">
+        <source src={audioUrl} type={attachment.mimeType || 'audio/webm'} />
+      </audio>
+      <span className="text-[10px] text-neutral-400">
+        {formatFileSize(attachment.fileSize)}
+      </span>
+    </div>
+  );
+};
+
+/* ─── File attachment link with lazy presigned URL fetch ─── */
 const AttachmentLink: React.FC<{ attachment: MessageAttachment }> = ({ attachment }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = useCallback(
     async (e: React.MouseEvent) => {
-      // If attachment has an attachmentId, we need to fetch a fresh presigned URL
       if (attachment.attachmentId) {
         e.preventDefault();
         if (loading) return;
@@ -32,7 +109,6 @@ const AttachmentLink: React.FC<{ attachment: MessageAttachment }> = ({ attachmen
           const freshUrl = await messagingApi.getAttachmentDownloadUrl(attachment.attachmentId);
           window.open(freshUrl, '_blank', 'noopener,noreferrer');
         } catch {
-          // Fallback: if the API call fails, try opening the stored URL anyway
           if (attachment.url) {
             window.open(attachment.url, '_blank', 'noopener,noreferrer');
           }
@@ -40,10 +116,8 @@ const AttachmentLink: React.FC<{ attachment: MessageAttachment }> = ({ attachmen
           setLoading(false);
         }
       } else if (!attachment.url || !attachment.url.startsWith('http')) {
-        // URL is not a valid http URL (e.g. raw storage path) — prevent default
         e.preventDefault();
       }
-      // else: it's a regular http URL, let the <a> handle it
     },
     [attachment.attachmentId, attachment.url, loading],
   );
@@ -61,7 +135,7 @@ const AttachmentLink: React.FC<{ attachment: MessageAttachment }> = ({ attachmen
         {attachment.fileName}
       </span>
       <span className="text-[10px] text-neutral-400">
-        {t('messaging.fileSizeKb', { size: String(Math.round(attachment.fileSize / 1024)) })}
+        {formatFileSize(attachment.fileSize)}
       </span>
     </a>
   );
@@ -69,6 +143,8 @@ const AttachmentLink: React.FC<{ attachment: MessageAttachment }> = ({ attachmen
 
 interface MessageBubbleProps {
   message: Message;
+  isOwn?: boolean;
+  readStatus?: 'sent' | 'delivered' | 'read';
   onReply?: (messageId: string) => void;
   onReact?: (messageId: string) => void;
   onPin?: (messageId: string) => void;
@@ -76,11 +152,17 @@ interface MessageBubbleProps {
   onEdit?: (messageId: string) => void;
   onDelete?: (messageId: string) => void;
   onForward?: (messageId: string) => void;
+  onImageClick?: (url: string) => void;
   className?: string;
 }
 
+/* Detect forwarded messages by prefix pattern */
+const FORWARDED_RE = /^(?:Переслано от |Forwarded from )(.+?):\n/;
+
 export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   message,
+  isOwn = false,
+  readStatus,
   onReply,
   onReact,
   onPin,
@@ -88,6 +170,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   onEdit,
   onDelete,
   onForward,
+  onImageClick,
   className,
 }) => {
   const [showActions, setShowActions] = useState(false);
@@ -138,6 +221,30 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           <span className="text-[11px] text-neutral-400">
             {formatRelativeTime(message.createdAt)}
           </span>
+          {/* Read receipt checkmarks (Telegram-style) */}
+          {isOwn && readStatus && (
+            <span
+              className={cn(
+                'inline-flex items-center ml-0.5',
+                readStatus === 'read'
+                  ? 'text-primary-500'
+                  : 'text-neutral-300 dark:text-neutral-600',
+              )}
+              title={
+                readStatus === 'read'
+                  ? t('messaging.statusRead')
+                  : readStatus === 'delivered'
+                    ? t('messaging.statusDelivered')
+                    : t('messaging.statusSent')
+              }
+            >
+              {readStatus === 'sent' ? (
+                <Check size={12} />
+              ) : (
+                <CheckCheck size={12} />
+              )}
+            </span>
+          )}
           {message.isEdited && (
             <span className="text-[10px] text-neutral-400">{t('messaging.edited')}</span>
           )}
@@ -151,17 +258,43 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           )}
         </div>
 
+        {/* Forwarded message indicator */}
+        {(() => {
+          const fwdMatch = message.content.match(FORWARDED_RE);
+          if (!fwdMatch) return null;
+          return (
+            <div className="flex items-center gap-1 mt-0.5 mb-0.5">
+              <Forward size={10} className="text-neutral-400" />
+              <span className="text-[10px] text-neutral-400 italic">
+                {t('messaging.forwardedLabel')} — {fwdMatch[1]}
+              </span>
+            </div>
+          );
+        })()}
+
         {/* Message text */}
         <div className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap break-words mt-0.5">
-          {message.content}
+          {(() => {
+            const fwdMatch = message.content.match(FORWARDED_RE);
+            if (fwdMatch) {
+              return message.content.slice(fwdMatch[0].length);
+            }
+            return message.content;
+          })()}
         </div>
 
         {/* Attachments */}
         {message.attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
-            {message.attachments.map((att) => (
-              <AttachmentLink key={att.id} attachment={att} />
-            ))}
+            {message.attachments.map((att) =>
+              IMAGE_MIME_RE.test(att.mimeType) ? (
+                <ImageAttachment key={att.id} attachment={att} onImageClick={onImageClick} />
+              ) : AUDIO_MIME_RE.test(att.mimeType) ? (
+                <AudioAttachment key={att.id} attachment={att} />
+              ) : (
+                <AttachmentLink key={att.id} attachment={att} />
+              ),
+            )}
           </div>
         )}
 
@@ -245,6 +378,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
             </button>
             {showMore && (
               <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg py-1 z-20">
+                <button
+                  onClick={() => { setShowMore(false); onForward?.(message.id); }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2"
+                >
+                  <Forward size={11} /> {t('messaging.forward')}
+                </button>
                 <button
                   onClick={() => { setShowMore(false); onEdit?.(message.id); }}
                   className="w-full text-left px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2"

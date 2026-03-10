@@ -85,7 +85,7 @@ describe('crmApi', () => {
       mockPatch.mockResolvedValue({ data: updated } as never);
 
       const result = await crmApi.moveLeadToStage('l1', 's2');
-      expect(mockPatch).toHaveBeenCalledWith('/v1/crm/leads/l1/stage', { stageId: 's2' });
+      expect(mockPatch).toHaveBeenCalledWith('/v1/crm/leads/l1/stage/s2');
       expect(result).toEqual(updated);
     });
   });
@@ -124,13 +124,13 @@ describe('crmApi', () => {
   });
 
   describe('createActivity', () => {
-    it('calls POST /v1/crm/leads/:id/activities with data', async () => {
-      const data = { type: 'EMAIL', description: 'Sent proposal' };
+    it('calls POST /v1/crm/activities with data', async () => {
+      const data: Record<string, unknown> = { leadId: 'l1', activityType: 'EMAIL', summary: 'Sent proposal' };
       const created = { id: 'a2', ...data };
       mockPost.mockResolvedValue({ data: created } as never);
 
-      const result = await crmApi.createActivity('l1', data as never);
-      expect(mockPost).toHaveBeenCalledWith('/v1/crm/leads/l1/activities', data);
+      const result = await crmApi.createActivity(data);
+      expect(mockPost).toHaveBeenCalledWith('/v1/crm/activities', data);
       expect(result).toEqual(created);
     });
   });

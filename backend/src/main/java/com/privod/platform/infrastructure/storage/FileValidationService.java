@@ -37,6 +37,7 @@ public class FileValidationService {
                     "text/plain",
                     "text/csv",
                     "text/xml",
+                    "text/html",
                     "application/xml",
                     "application/json",
                     // Archives (проектная документация часто упакована в ZIP/RAR/7z)
@@ -59,6 +60,29 @@ public class FileValidationService {
                     "image/svg+xml",
                     "image/bmp",
                     "image/tiff"
+            ),
+            "messaging", Set.of(
+                    // All document types
+                    "application/pdf",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "application/vnd.ms-excel",
+                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    "application/vnd.ms-powerpoint",
+                    "text/plain", "text/csv", "text/xml", "text/html",
+                    "application/xml", "application/json",
+                    "application/zip", "application/x-zip-compressed",
+                    "application/x-rar-compressed", "application/vnd.rar", "application/x-7z-compressed",
+                    "application/octet-stream",
+                    // Images
+                    "image/jpeg", "image/png", "image/gif", "image/webp",
+                    "image/svg+xml", "image/bmp", "image/tiff",
+                    // Audio (voice messages, audio files)
+                    "audio/webm", "audio/ogg", "audio/mpeg", "audio/mp4", "audio/wav",
+                    "audio/x-wav", "audio/aac", "audio/flac",
+                    // Video
+                    "video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"
             ),
             "csv", Set.of("text/plain", "text/csv", "application/csv"),
             "bim", Set.of("application/octet-stream"), // IFC files are detected as octet-stream

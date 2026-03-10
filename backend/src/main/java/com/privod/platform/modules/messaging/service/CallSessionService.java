@@ -1,6 +1,8 @@
 package com.privod.platform.modules.messaging.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.messaging.domain.CallParticipant;
 import com.privod.platform.modules.messaging.domain.CallParticipantStatus;
 import com.privod.platform.modules.messaging.domain.CallSession;
@@ -16,6 +18,7 @@ import com.privod.platform.modules.messaging.web.dto.LeaveCallRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,29 @@ public class CallSessionService {
     private final CallSessionRepository callSessionRepository;
     private final CallParticipantRepository callParticipantRepository;
     private final AuditService auditService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
+
+    /**
+     * Resolve WebSocket principal name (email) from user UUID.
+     * Spring STOMP routes /user/{principal}/queue/... by the authentication principal name,
+     * which in our case is the email (set in WebSocketAuthInterceptor from JWT subject).
+     */
+    private String resolveWsPrincipal(UUID userId) {
+        return userRepository.findById(userId)
+                .map(User::getEmail)
+                .orElse(null);
+    }
+
+    private void sendSignalToUser(UUID userId, java.util.Map<String, String> signal) {
+        String principal = resolveWsPrincipal(userId);
+        if (principal == null) {
+            log.warn("Cannot send WS signal to user {}: user not found", userId);
+            return;
+        }
+        messagingTemplate.convertAndSendToUser(principal, "/queue/signal", signal);
+        log.debug("Sent {} signal to user {} (principal={})", signal.get("type"), userId, principal);
+    }
 
     @Transactional
     public CallSessionResponse createCall(CreateCallRequest request) {
@@ -73,8 +99,29 @@ public class CallSessionService {
         callParticipantRepository.saveAll(participants);
         auditService.logCreate("CallSession", session.getId());
 
+        // Send call-invite signal to each invitee via WebSocket
+        CallSessionResponse resp = toResponse(session);
+        if (request.inviteeIds() != null) {
+            for (UUID inviteeId : request.inviteeIds()) {
+                if (inviteeId == null || inviteeId.equals(request.initiatorId())) continue;
+                try {
+                    var signal = java.util.Map.of(
+                            "type", "call-invite",
+                            "callId", session.getId().toString(),
+                            "fromUserId", request.initiatorId().toString(),
+                            "toUserId", inviteeId.toString(),
+                            "callType", request.callType().name(),
+                            "callerName", request.initiatorName() != null ? request.initiatorName() : ""
+                    );
+                    sendSignalToUser(inviteeId, signal);
+                } catch (Exception e) {
+                    log.warn("Failed to send call-invite to user {}: {}", inviteeId, e.getMessage());
+                }
+            }
+        }
+
         log.info("Создан {} звонок {} (sessionId={})", request.callType(), request.title(), session.getId());
-        return toResponse(session);
+        return resp;
     }
 
     @Transactional(readOnly = true)
@@ -120,7 +167,27 @@ public class CallSessionService {
         callSessionRepository.save(session);
         auditService.logUpdate("CallSession", session.getId(), "join", null, request.userId().toString());
 
-        return toResponse(session);
+        // Notify all other joined participants that someone joined
+        CallSessionResponse resp = toResponse(session);
+        List<CallParticipant> allParticipants = callParticipantRepository.findByCallSessionIdAndDeletedFalse(callId);
+        for (CallParticipant p : allParticipants) {
+            if (p.getUserId().equals(request.userId())) continue;
+            if (p.getParticipantStatus() != CallParticipantStatus.JOINED) continue;
+            try {
+                var signal = java.util.Map.of(
+                        "type", "call-accept",
+                        "callId", callId.toString(),
+                        "fromUserId", request.userId().toString(),
+                        "toUserId", p.getUserId().toString(),
+                        "callType", session.getCallType().name()
+                );
+                sendSignalToUser(p.getUserId(), signal);
+            } catch (Exception e) {
+                log.warn("Failed to send call-accept to user {}: {}", p.getUserId(), e.getMessage());
+            }
+        }
+
+        return resp;
     }
 
     @Transactional

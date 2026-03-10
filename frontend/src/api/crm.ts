@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
-import type { CrmLead, LeadStatus, LeadPriority, CrmStage, CrmTeam, CrmActivity } from '@/modules/crm/types';
+import type { CrmLead, LeadStatus, LeadPriority, CrmStage, CrmTeam, CrmActivity, CrmPipeline } from '@/modules/crm/types';
 
 export interface CrmLeadFilters extends PaginationParams {
   status?: LeadStatus;
@@ -32,7 +32,19 @@ export const crmApi = {
   },
 
   moveLeadToStage: async (id: string, stageId: string): Promise<CrmLead> => {
-    const response = await apiClient.patch<CrmLead>(`/v1/crm/leads/${id}/stage`, { stageId });
+    const response = await apiClient.patch<CrmLead>(`/v1/crm/leads/${id}/stage/${stageId}`);
+    return response.data;
+  },
+
+  markAsWon: async (id: string): Promise<CrmLead> => {
+    const response = await apiClient.post<CrmLead>(`/v1/crm/leads/${id}/won`);
+    return response.data;
+  },
+
+  markAsLost: async (id: string, reason?: string): Promise<CrmLead> => {
+    const response = await apiClient.post<CrmLead>(`/v1/crm/leads/${id}/lost`, null, {
+      params: reason ? { reason } : undefined,
+    });
     return response.data;
   },
 
@@ -51,8 +63,15 @@ export const crmApi = {
     return response.data;
   },
 
-  createActivity: async (leadId: string, data: Partial<CrmActivity>): Promise<CrmActivity> => {
-    const response = await apiClient.post<CrmActivity>(`/v1/crm/leads/${leadId}/activities`, data);
+  createActivity: async (data: Record<string, unknown>): Promise<CrmActivity> => {
+    const response = await apiClient.post<CrmActivity>('/v1/crm/activities', data);
+    return response.data;
+  },
+
+  completeActivity: async (id: string, result?: string): Promise<CrmActivity> => {
+    const response = await apiClient.post<CrmActivity>(`/v1/crm/activities/${id}/complete`, null, {
+      params: result ? { result } : undefined,
+    });
     return response.data;
   },
 
@@ -62,6 +81,11 @@ export const crmApi = {
 
   convertToProject: async (id: string, data: { projectName: string; projectCode: string }): Promise<CrmLead> => {
     const response = await apiClient.post<CrmLead>(`/v1/crm/leads/${id}/convert`, data);
+    return response.data;
+  },
+
+  getPipeline: async (): Promise<CrmPipeline> => {
+    const response = await apiClient.get<CrmPipeline>('/v1/crm/pipeline');
     return response.data;
   },
 };

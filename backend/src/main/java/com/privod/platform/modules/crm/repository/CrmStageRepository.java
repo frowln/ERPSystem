@@ -31,4 +31,12 @@ public interface CrmStageRepository extends JpaRepository<CrmStage, UUID> {
     Optional<CrmStage> findFirstByWonTrueAndDeletedFalse();
 
     Optional<CrmStage> findFirstByClosedTrueAndWonFalseAndDeletedFalse();
+
+    @Query("SELECT s FROM CrmStage s WHERE s.deleted = false AND s.won = true AND " +
+            "(s.organizationId = :organizationId OR s.organizationId IS NULL) ORDER BY s.sequence ASC")
+    Optional<CrmStage> findWonStage(@Param("organizationId") UUID organizationId);
+
+    @Query("SELECT s FROM CrmStage s WHERE s.deleted = false AND s.closed = true AND s.won = false AND " +
+            "(s.organizationId = :organizationId OR s.organizationId IS NULL) ORDER BY s.sequence ASC")
+    Optional<CrmStage> findLostStage(@Param("organizationId") UUID organizationId);
 }

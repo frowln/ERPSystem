@@ -39,17 +39,17 @@ function genStepId(): string {
   return `step_${Date.now()}_${_sid}`;
 }
 
-function createEmptyStep(order: number, workflowId: string): WorkflowStep {
+function createEmptyStep(order: number, workflowDefinitionId: string): WorkflowStep {
   return {
     id: genStepId(),
-    workflowId,
-    stepOrder: order,
+    workflowDefinitionId,
+    sortOrder: order,
     name: '',
     fromStatus: '',
     toStatus: '',
     requiredRole: '',
     slaHours: undefined,
-    isAutomatic: false,
+
     conditions: undefined,
   };
 }
@@ -109,7 +109,7 @@ const StepCard: React.FC<StepCardProps> = ({
         {/* Step number */}
         <div className={cn(
           'flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold flex-shrink-0',
-          step.isAutomatic
+          step.conditions
             ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
             : 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-400',
         )}>
@@ -154,9 +154,9 @@ const StepCard: React.FC<StepCardProps> = ({
             </div>
           )}
           <StatusBadge
-            status={step.isAutomatic ? 'auto' : 'manual'}
+            status={step.conditions ? 'auto' : 'manual'}
             colorMap={{ auto: 'green', manual: 'blue' }}
-            label={step.isAutomatic ? t('workflow.stepDesigner.badgeAuto') : t('workflow.stepDesigner.badgeManual')}
+            label={step.conditions ? t('workflow.stepDesigner.badgeAuto') : t('workflow.stepDesigner.badgeManual')}
           />
         </div>
 
@@ -276,8 +276,8 @@ const StepCard: React.FC<StepCardProps> = ({
             <div className="flex items-end">
               <Checkbox
                 id={`auto-${step.id}`}
-                checked={step.isAutomatic}
-                onChange={(e) => onUpdate({ isAutomatic: e.target.checked })}
+                checked={!!step.conditions}
+                onChange={(e) => onUpdate({ conditions: e.target.checked ? '{}' : undefined })}
                 label={t('workflow.labelAutomatic')}
               />
             </div>
@@ -352,20 +352,20 @@ export const WorkflowStepDesigner: React.FC<WorkflowStepDesignerProps> = ({
 }) => {
   const [editingStepId, setEditingStepId] = useState<string | null>(null);
 
-  const workflowId = steps.length > 0 ? steps[0].workflowId : '';
+  const workflowDefinitionId = steps.length > 0 ? steps[0].workflowDefinitionId : '';
 
   // --- Actions ---
 
   const addStepAt = useCallback(
     (index: number) => {
-      const newStep = createEmptyStep(index + 1, workflowId);
+      const newStep = createEmptyStep(index + 1, workflowDefinitionId);
       const updated = [...steps];
       updated.splice(index, 0, newStep);
       // Recalculate step orders
-      onChange(updated.map((s, i) => ({ ...s, stepOrder: i + 1 })));
+      onChange(updated.map((s, i) => ({ ...s, sortOrder: i + 1 })));
       setEditingStepId(newStep.id);
     },
-    [steps, onChange, workflowId],
+    [steps, onChange, workflowDefinitionId],
   );
 
   const addStepAtEnd = useCallback(() => {
@@ -375,7 +375,7 @@ export const WorkflowStepDesigner: React.FC<WorkflowStepDesignerProps> = ({
   const removeStep = useCallback(
     (stepId: string) => {
       const updated = steps.filter((s) => s.id !== stepId);
-      onChange(updated.map((s, i) => ({ ...s, stepOrder: i + 1 })));
+      onChange(updated.map((s, i) => ({ ...s, sortOrder: i + 1 })));
       if (editingStepId === stepId) setEditingStepId(null);
     },
     [steps, onChange, editingStepId],
@@ -399,7 +399,7 @@ export const WorkflowStepDesigner: React.FC<WorkflowStepDesignerProps> = ({
       const temp = updated[idx];
       updated[idx] = updated[newIdx];
       updated[newIdx] = temp;
-      onChange(updated.map((s, i) => ({ ...s, stepOrder: i + 1 })));
+      onChange(updated.map((s, i) => ({ ...s, sortOrder: i + 1 })));
     },
     [steps, onChange],
   );
@@ -474,7 +474,7 @@ export const WorkflowStepDesigner: React.FC<WorkflowStepDesignerProps> = ({
                 <div
                   className={cn(
                     'flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium',
-                    step.isAutomatic
+                    step.conditions
                       ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
                       : 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-400',
                   )}

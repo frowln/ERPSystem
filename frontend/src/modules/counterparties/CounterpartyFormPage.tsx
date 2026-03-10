@@ -15,6 +15,7 @@ import { t } from '@/i18n';
 
 const schema = z.object({
   name: z.string().min(1, t('counterparties.validation.nameRequired')),
+  shortName: z.string().optional(),
   inn: z
     .string()
     .optional()
@@ -30,8 +31,16 @@ const schema = z.object({
   bik: z.string().optional(),
   correspondentAccount: z.string().optional(),
   bankName: z.string().optional(),
+  contactPerson: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  website: z.string().optional(),
   supplier: z.boolean().optional(),
   customer: z.boolean().optional(),
+  contractor: z.boolean().optional(),
+  subcontractor: z.boolean().optional(),
+  designer: z.boolean().optional(),
+  notes: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -62,6 +71,7 @@ const CounterpartyFormPage: React.FC = () => {
     values: existing
       ? {
           name: existing.name,
+          shortName: existing.shortName ?? '',
           inn: existing.inn ?? '',
           kpp: existing.kpp ?? '',
           ogrn: existing.ogrn ?? '',
@@ -70,9 +80,17 @@ const CounterpartyFormPage: React.FC = () => {
           bankAccount: existing.bankAccount ?? '',
           bik: existing.bik ?? '',
           correspondentAccount: existing.correspondentAccount ?? '',
-          bankName: (existing as any).bankName ?? '',
+          bankName: existing.bankName ?? '',
+          contactPerson: existing.contactPerson ?? '',
+          phone: existing.phone ?? '',
+          email: existing.email ?? '',
+          website: existing.website ?? '',
           supplier: existing.supplier,
           customer: existing.customer,
+          contractor: existing.contractor,
+          subcontractor: existing.subcontractor,
+          designer: existing.designer,
+          notes: existing.notes ?? '',
         }
       : undefined,
   });
@@ -110,7 +128,7 @@ const CounterpartyFormPage: React.FC = () => {
     try {
       const party = await findPartyByInn(innValue);
       if (!party) {
-        toast.error('Организация с таким ИНН не найдена');
+        toast.error(t('counterparties.innLookupNotFound'));
         return;
       }
       const mapped = mapDadataToCounterparty(party);
@@ -120,9 +138,9 @@ const CounterpartyFormPage: React.FC = () => {
       setValue('legalAddress', mapped.legalAddress, { shouldDirty: true });
       setValue('actualAddress', mapped.actualAddress, { shouldDirty: true });
       setInnLookupResult(mapped.name);
-      toast.success(`Найдено: ${mapped.name}`);
+      toast.success(`${t('counterparties.innLookupFound')}: ${mapped.name}`);
     } catch {
-      toast.error('Ошибка при запросе к Dadata');
+      toast.error(t('counterparties.innLookupError'));
     } finally {
       setInnLookupLoading(false);
     }
@@ -166,8 +184,15 @@ const CounterpartyFormPage: React.FC = () => {
               />
             </FormField>
 
+            <FormField label={t('counterparties.labelShortName')} className="sm:col-span-2">
+              <Input
+                placeholder={t('counterparties.placeholderShortName')}
+                {...register('shortName')}
+              />
+            </FormField>
+
             {/* Роль */}
-            <div className="sm:col-span-2 flex items-center gap-6">
+            <div className="sm:col-span-2 flex flex-wrap items-center gap-x-6 gap-y-2">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" {...register('customer')} className="rounded" />
                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
@@ -178,6 +203,24 @@ const CounterpartyFormPage: React.FC = () => {
                 <input type="checkbox" {...register('supplier')} className="rounded" />
                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
                   {t('counterparties.labelIsSupplier')}
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" {...register('contractor')} className="rounded" />
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                  {t('counterparties.labelIsContractor')}
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" {...register('subcontractor')} className="rounded" />
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                  {t('counterparties.labelIsSubcontractor')}
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" {...register('designer')} className="rounded" />
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                  {t('counterparties.labelIsDesigner')}
                 </span>
               </label>
             </div>
@@ -195,9 +238,10 @@ const CounterpartyFormPage: React.FC = () => {
             <div className="mb-4 flex items-start gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-400">
               <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
               <span>
-                Автозаполнение по ИНН недоступно. Укажите{' '}
-                <code className="font-mono">VITE_DADATA_TOKEN</code> в <code>.env.local</code>
-                {' '}(бесплатно на{' '}
+                {t('counterparties.dadataUnavailable')}{' '}
+                <code className="font-mono">VITE_DADATA_TOKEN</code> {t('counterparties.dadataIn')}{' '}
+                <code>.env.local</code>
+                {' '}({t('counterparties.dadataFreeAt')}{' '}
                 <a
                   href="https://dadata.ru"
                   target="_blank"
@@ -214,7 +258,7 @@ const CounterpartyFormPage: React.FC = () => {
           {innLookupResult && (
             <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 text-sm text-success-700 dark:text-success-400">
               <CheckCircle size={15} />
-              <span>Данные заполнены: <strong>{innLookupResult}</strong></span>
+              <span>{t('counterparties.innLookupFound')}: <strong>{innLookupResult}</strong></span>
             </div>
           )}
 
@@ -237,9 +281,9 @@ const CounterpartyFormPage: React.FC = () => {
                     loading={innLookupLoading}
                     disabled={!innReady || innLookupLoading}
                     onClick={handleInnLookup}
-                    title={innReady ? 'Заполнить по ИНН' : 'Введите 10 или 12 цифр ИНН'}
+                    title={innReady ? t('counterparties.innLookupHint') : t('counterparties.innLookupEnterDigits')}
                   >
-                    Найти
+                    {t('counterparties.innLookupButton')}
                   </Button>
                 )}
               </div>
@@ -281,6 +325,41 @@ const CounterpartyFormPage: React.FC = () => {
           </div>
         </section>
 
+        {/* Contact info */}
+        <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('counterparties.sectionContacts')}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <FormField label={t('counterparties.labelContactPerson')} className="sm:col-span-2">
+              <Input
+                placeholder={t('counterparties.placeholderContactPerson')}
+                {...register('contactPerson')}
+              />
+            </FormField>
+            <FormField label={t('counterparties.labelPhone')}>
+              <Input
+                placeholder={t('counterparties.placeholderPhone')}
+                type="tel"
+                {...register('phone')}
+              />
+            </FormField>
+            <FormField label={t('counterparties.labelEmail')}>
+              <Input
+                placeholder={t('counterparties.placeholderEmail')}
+                type="email"
+                {...register('email')}
+              />
+            </FormField>
+            <FormField label={t('counterparties.labelWebsite')} className="sm:col-span-2">
+              <Input
+                placeholder={t('counterparties.placeholderWebsite')}
+                {...register('website')}
+              />
+            </FormField>
+          </div>
+        </section>
+
         {/* Bank */}
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
@@ -288,7 +367,7 @@ const CounterpartyFormPage: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('counterparties.labelBankName')} className="sm:col-span-2">
-              <Input placeholder="ПАО «Сбербанк»" {...register('bankName')} />
+              <Input placeholder={t('counterparties.placeholderBankName')} {...register('bankName')} />
             </FormField>
             <FormField label={t('counterparties.labelBik')}>
               <Input
@@ -315,6 +394,21 @@ const CounterpartyFormPage: React.FC = () => {
               />
             </FormField>
           </div>
+        </section>
+
+        {/* Notes */}
+        <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('counterparties.sectionNotes')}
+          </h2>
+          <textarea
+            {...register('notes')}
+            rows={3}
+            placeholder={t('counterparties.labelNotes')}
+            className="w-full rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm
+              bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100
+              focus:outline-none focus:ring-2 focus:ring-primary-500 resize-y"
+          />
         </section>
 
         <div className="flex items-center gap-3">

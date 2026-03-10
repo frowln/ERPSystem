@@ -153,7 +153,7 @@ export default function ApprovalConfigPage() {
       name: rule.name,
       description: rule.description ?? '',
       entityType: rule.entityType,
-      conditions: rule.conditions,
+      conditions: rule.conditions ?? '',
       approverRole: rule.approverRole ?? '',
     });
   }, []);

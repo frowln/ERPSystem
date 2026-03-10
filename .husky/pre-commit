@@ -1,1 +1,2 @@
-exit 0
+cd frontend
+npx lint-staged --allow-empty

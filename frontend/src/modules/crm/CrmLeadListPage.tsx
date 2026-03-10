@@ -62,7 +62,7 @@ const CrmLeadListPage: React.FC = () => {
 
   const { data: leadData, isLoading } = useQuery<PaginatedResponse<CrmLead>>({
     queryKey: ['crm-leads'],
-    queryFn: () => crmApi.getLeads(),
+    queryFn: () => crmApi.getLeads({ size: 500 }),
   });
 
   const { data: stages } = useQuery<CrmStage[]>({
@@ -102,13 +102,27 @@ const CrmLeadListPage: React.FC = () => {
   }, [leads]);
 
   const pipelineStages = useMemo(() => {
-    return stageList.map((stage) => ({
-      ...stage,
-      leads: filteredLeads.filter((l) => l.stageName === stage.name),
-      stageRevenue: filteredLeads
-        .filter((l) => l.stageName === stage.name)
-        .reduce((s, l) => s + (l.expectedRevenue ?? 0), 0),
-    }));
+    // Map lead status to stage name for fallback grouping
+    const statusToStageName: Record<string, string> = {};
+    for (const stage of stageList) {
+      if (stage.isWon) statusToStageName['WON'] = stage.name;
+      if (stage.isClosed && !stage.isWon) statusToStageName['LOST'] = stage.name;
+    }
+    return stageList.map((stage) => {
+      const stageLeads = filteredLeads.filter((l) => {
+        // Primary: match by stageId or stageName
+        if (l.stageId === stage.id || l.stageName === stage.name) return true;
+        // Fallback: match WON/LOST status to the correct stage
+        const mappedStageName = statusToStageName[l.status];
+        if (mappedStageName === stage.name) return true;
+        return false;
+      });
+      return {
+        ...stage,
+        leads: stageLeads,
+        stageRevenue: stageLeads.reduce((s, l) => s + (l.expectedRevenue ?? 0), 0),
+      };
+    });
   }, [stageList, filteredLeads]);
 
   const handleLeadClick = useCallback(

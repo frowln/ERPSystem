@@ -12,18 +12,16 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { workflowApi } from '@/api/workflow';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
-import type { WorkflowDefinition, WorkflowStatus, EntityType } from './types';
+import type { WorkflowDefinition } from './types';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'> = {
   ACTIVE: 'green',
   INACTIVE: 'gray',
-  DRAFT: 'yellow',
 };
 
 const getStatusLabels = (): Record<string, string> => ({
   ACTIVE: t('workflow.statusActive'),
   INACTIVE: t('workflow.statusInactive'),
-  DRAFT: t('workflow.statusDraft'),
 });
 
 const getEntityTypeLabels = (): Record<string, string> => ({
@@ -35,7 +33,11 @@ const getEntityTypeLabels = (): Record<string, string> => ({
   CHANGE_ORDER: t('workflow.entityChangeOrder'),
 });
 
-type TabId = 'all' | 'ACTIVE' | 'DRAFT' | 'INACTIVE';
+function deriveStatus(wf: WorkflowDefinition): string {
+  return wf.isActive ? 'ACTIVE' : 'INACTIVE';
+}
+
+type TabId = 'all' | 'ACTIVE' | 'INACTIVE';
 
 const WorkflowTemplateListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -55,9 +57,8 @@ const WorkflowTemplateListPage: React.FC = () => {
 
   const filtered = useMemo(() => {
     let result = workflows;
-    if (activeTab === 'ACTIVE') result = result.filter((w) => w.status === 'ACTIVE');
-    else if (activeTab === 'DRAFT') result = result.filter((w) => w.status === 'DRAFT');
-    else if (activeTab === 'INACTIVE') result = result.filter((w) => w.status === 'INACTIVE');
+    if (activeTab === 'ACTIVE') result = result.filter((w) => w.isActive);
+    else if (activeTab === 'INACTIVE') result = result.filter((w) => !w.isActive);
 
     if (entityFilter) result = result.filter((w) => w.entityType === entityFilter);
     if (search) {
@@ -65,8 +66,7 @@ const WorkflowTemplateListPage: React.FC = () => {
       result = result.filter(
         (w) =>
           w.name.toLowerCase().includes(lower) ||
-          (w.description ?? '').toLowerCase().includes(lower) ||
-          w.createdByName.toLowerCase().includes(lower),
+          (w.description ?? '').toLowerCase().includes(lower),
       );
     }
     return result;
@@ -74,9 +74,8 @@ const WorkflowTemplateListPage: React.FC = () => {
 
   const counts = useMemo(() => ({
     all: workflows.length,
-    active: workflows.filter((w) => w.status === 'ACTIVE').length,
-    draft: workflows.filter((w) => w.status === 'DRAFT').length,
-    inactive: workflows.filter((w) => w.status === 'INACTIVE').length,
+    active: workflows.filter((w) => w.isActive).length,
+    inactive: workflows.filter((w) => !w.isActive).length,
   }), [workflows]);
 
   const columns = useMemo<ColumnDef<WorkflowDefinition, unknown>[]>(
@@ -101,37 +100,19 @@ const WorkflowTemplateListPage: React.FC = () => {
         ),
       },
       {
-        accessorKey: 'status',
+        id: 'status',
         header: t('workflow.colStatus'),
         size: 130,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={statusColorMap}
-            label={statusLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
-      },
-      {
-        accessorKey: 'stepsCount',
-        header: t('workflow.colSteps'),
-        size: 80,
-        cell: ({ getValue }) => (
-          <span className="font-mono text-neutral-600">{getValue<number>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'version',
-        header: t('workflow.colVersion'),
-        size: 80,
-        cell: ({ getValue }) => (
-          <span className="font-mono text-xs text-primary-600">v{getValue<number>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'createdByName',
-        header: t('workflow.colAuthor'),
-        size: 150,
+        cell: ({ row }) => {
+          const status = deriveStatus(row.original);
+          return (
+            <StatusBadge
+              status={status}
+              colorMap={statusColorMap}
+              label={statusLabels[status] ?? status}
+            />
+          );
+        },
       },
       {
         accessorKey: 'updatedAt',
@@ -149,7 +130,7 @@ const WorkflowTemplateListPage: React.FC = () => {
           <Button
             variant="ghost"
             size="xs"
-            onClick={(e) => { e.stopPropagation(); navigate(`/workflows/${row.original.id}/designer`); }}
+            onClick={(e) => { e.stopPropagation(); navigate(`/workflow/designer/${row.original.id}`); }}
           >
             {t('common.open')}
           </Button>
@@ -160,7 +141,7 @@ const WorkflowTemplateListPage: React.FC = () => {
   );
 
   const handleRowClick = useCallback(
-    (wf: WorkflowDefinition) => navigate(`/workflows/${wf.id}/designer`),
+    (wf: WorkflowDefinition) => navigate(`/workflow/designer/${wf.id}`),
     [navigate],
   );
 
@@ -174,24 +155,22 @@ const WorkflowTemplateListPage: React.FC = () => {
           { label: t('workflow.breadcrumbWorkflows') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/workflows/new/designer')}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/workflow/designer')}>
             {t('workflow.newProcess')}
           </Button>
         }
         tabs={[
           { id: 'all', label: t('workflow.tabAll'), count: counts.all },
           { id: 'ACTIVE', label: t('workflow.tabActive'), count: counts.active },
-          { id: 'DRAFT', label: t('workflow.tabDrafts'), count: counts.draft },
           { id: 'INACTIVE', label: t('workflow.tabInactive'), count: counts.inactive },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <MetricCard icon={<GitBranch size={18} />} label={t('workflow.metricTotalProcesses')} value={counts.all} />
         <MetricCard icon={<PlayCircle size={18} />} label={t('workflow.tabActive')} value={counts.active} />
-        <MetricCard icon={<Zap size={18} />} label={t('workflow.tabDrafts')} value={counts.draft} subtitle={t('workflow.draftsSubtitle')} />
         <MetricCard icon={<PauseCircle size={18} />} label={t('workflow.tabInactive')} value={counts.inactive} />
       </div>
 

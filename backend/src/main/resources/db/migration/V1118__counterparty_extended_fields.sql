@@ -1,0 +1,11 @@
+-- Add extended fields to counterparties for production-level CRM
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS short_name VARCHAR(200);
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS bank_name VARCHAR(300);
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS contact_person VARCHAR(300);
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS phone VARCHAR(50);
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS email VARCHAR(200);
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS website VARCHAR(300);
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS is_contractor BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS is_subcontractor BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS is_designer BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE counterparties ADD COLUMN IF NOT EXISTS notes TEXT;

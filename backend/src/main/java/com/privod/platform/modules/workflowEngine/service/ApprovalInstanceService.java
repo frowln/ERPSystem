@@ -2,6 +2,8 @@ package com.privod.platform.modules.workflowEngine.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.notification.domain.NotificationType;
+import com.privod.platform.modules.notification.service.NotificationService;
 import com.privod.platform.modules.workflowEngine.domain.ApprovalDecision;
 import com.privod.platform.modules.workflowEngine.domain.ApprovalDecisionType;
 import com.privod.platform.modules.workflowEngine.domain.ApprovalInstance;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +41,7 @@ public class ApprovalInstanceService {
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
     private final WorkflowStepRepository workflowStepRepository;
     private final AuditService auditService;
+    private final NotificationService notificationService;
 
     // ── Response / Request records ──────────────────────────────────────────────
 
@@ -89,6 +93,25 @@ public class ApprovalInstanceService {
     public record DelegateRequest(
             UUID delegateToId,
             String comments
+    ) {}
+
+    public record BatchDecisionRequest(
+            List<UUID> instanceIds,
+            String decision,
+            String comments
+    ) {}
+
+    public record BatchDecisionResult(
+            UUID instanceId,
+            boolean success,
+            String error
+    ) {}
+
+    public record BatchDecisionResponse(
+            int total,
+            int succeeded,
+            int failed,
+            List<BatchDecisionResult> results
     ) {}
 
     // ── Public API ──────────────────────────────────────────────────────────────
@@ -153,6 +176,12 @@ public class ApprovalInstanceService {
 
         log.info("Approval workflow started: instance={} entity={}:{} workflow={}",
                 instance.getId(), request.entityType(), request.entityId(), definition.getName());
+
+        sendApprovalNotification(instance,
+                "Согласование запущено",
+                "Запущен процесс согласования «" + definition.getName()
+                        + "» для " + request.entityType()
+                        + (request.entityNumber() != null ? " №" + request.entityNumber() : ""));
 
         return toResponse(instance, definition.getName(), firstStep.getName());
     }
@@ -235,6 +264,25 @@ public class ApprovalInstanceService {
 
         instance = approvalInstanceRepository.save(instance);
         auditService.logStatusChange("ApprovalInstance", instance.getId(), oldStatus, instance.getStatus().name());
+
+        // Notify the initiator about the decision
+        String entityLabel = instance.getEntityType()
+                + (instance.getEntityNumber() != null ? " №" + instance.getEntityNumber() : "");
+        if (decisionType == ApprovalDecisionType.APPROVED
+                && instance.getStatus() == ApprovalInstanceStatus.APPROVED) {
+            sendApprovalNotification(instance,
+                    "Согласование завершено",
+                    "Документ " + entityLabel + " полностью согласован");
+        } else if (decisionType == ApprovalDecisionType.APPROVED) {
+            sendApprovalNotification(instance,
+                    "Этап согласования пройден",
+                    "Этап «" + currentStep.getName() + "» одобрен для " + entityLabel);
+        } else if (decisionType == ApprovalDecisionType.REJECTED) {
+            sendApprovalNotification(instance,
+                    "Согласование отклонено",
+                    "Документ " + entityLabel + " отклонён на этапе «" + currentStep.getName() + "»"
+                            + (request.comments() != null ? ": " + request.comments() : ""));
+        }
 
         // Resolve workflow name for response
         workflowName = resolveWorkflowName(instance.getWorkflowDefinitionId());
@@ -365,6 +413,44 @@ public class ApprovalInstanceService {
     }
 
     /**
+     * Process a batch of approval decisions. Individual failures are captured
+     * without aborting the entire batch.
+     */
+    @Transactional
+    public BatchDecisionResponse batchDecision(BatchDecisionRequest request) {
+        if (request.instanceIds() == null || request.instanceIds().isEmpty()) {
+            throw new IllegalArgumentException("Список идентификаторов процессов согласования не может быть пустым");
+        }
+
+        if (request.decision() == null || request.decision().isBlank()) {
+            throw new IllegalArgumentException("Решение (decision) обязательно для пакетной обработки");
+        }
+
+        List<BatchDecisionResult> results = new ArrayList<>();
+        int succeeded = 0;
+        int failed = 0;
+
+        for (UUID instanceId : request.instanceIds()) {
+            try {
+                SubmitDecisionRequest decisionReq = new SubmitDecisionRequest(
+                        request.decision(), request.comments());
+                submitDecision(instanceId, decisionReq);
+                results.add(new BatchDecisionResult(instanceId, true, null));
+                succeeded++;
+            } catch (Exception e) {
+                log.warn("Ошибка пакетного решения для instance={}: {}", instanceId, e.getMessage());
+                results.add(new BatchDecisionResult(instanceId, false, e.getMessage()));
+                failed++;
+            }
+        }
+
+        log.info("Пакетное решение выполнено: всего={}, успешно={}, ошибок={}",
+                request.instanceIds().size(), succeeded, failed);
+
+        return new BatchDecisionResponse(request.instanceIds().size(), succeeded, failed, results);
+    }
+
+    /**
      * Check for overdue approval instances and escalate them.
      * Intended to be called by a scheduler.
      */
@@ -419,12 +505,26 @@ public class ApprovalInstanceService {
             return false;
         }
 
+        // Check if user has ADMIN role — admins see all pending approvals
+        var userRoles = SecurityUtils.getCurrentUserRoles();
+        if (userRoles != null && userRoles.stream().anyMatch(r ->
+                r.contains("ADMIN") || r.contains("admin"))) {
+            return true;
+        }
+
         return workflowStepRepository.findById(instance.getCurrentStepId())
                 .filter(step -> !step.isDeleted())
                 .map(step -> {
+                    // Check explicit approver IDs
                     String approverIds = step.getApproverIds();
                     if (approverIds != null && approverIds.contains(userId.toString())) {
                         return true;
+                    }
+                    // Check role-based assignment
+                    String requiredRole = step.getRequiredRole();
+                    if (requiredRole != null && userRoles != null) {
+                        return userRoles.stream().anyMatch(r ->
+                                r.toUpperCase().contains(requiredRole.toUpperCase()));
                     }
                     return false;
                 })
@@ -476,6 +576,30 @@ public class ApprovalInstanceService {
                 instance.getCreatedAt(),
                 instance.getCompletedAt()
         );
+    }
+
+    /**
+     * Send an approval-related notification to the initiator.
+     * Best-effort: failures are logged but never propagated.
+     */
+    private void sendApprovalNotification(ApprovalInstance instance, String title, String message) {
+        try {
+            if (notificationService == null || instance.getInitiatedById() == null) {
+                return;
+            }
+            notificationService.send(
+                    instance.getInitiatedById(),
+                    title,
+                    message,
+                    NotificationType.APPROVAL,
+                    "ApprovalInstance",
+                    instance.getId(),
+                    "/approval-instances/" + instance.getId()
+            );
+        } catch (Exception e) {
+            log.error("Не удалось отправить уведомление о согласовании для instance={}: {}",
+                    instance.getId(), e.getMessage());
+        }
     }
 
     private ApprovalDecisionResponse toDecisionResponse(ApprovalDecision decision) {

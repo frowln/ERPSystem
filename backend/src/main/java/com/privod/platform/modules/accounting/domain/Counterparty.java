@@ -57,6 +57,24 @@ public class Counterparty extends BaseEntity {
     @Column(name = "correspondent_account", length = 20)
     private String correspondentAccount;
 
+    @Column(name = "short_name", length = 200)
+    private String shortName;
+
+    @Column(name = "bank_name", length = 300)
+    private String bankName;
+
+    @Column(name = "contact_person", length = 300)
+    private String contactPerson;
+
+    @Column(name = "phone", length = 50)
+    private String phone;
+
+    @Column(name = "email", length = 200)
+    private String email;
+
+    @Column(name = "website", length = 300)
+    private String website;
+
     @Column(name = "is_supplier", nullable = false)
     @Builder.Default
     private boolean supplier = false;
@@ -65,7 +83,22 @@ public class Counterparty extends BaseEntity {
     @Builder.Default
     private boolean customer = false;
 
+    @Column(name = "is_contractor", nullable = false)
+    @Builder.Default
+    private boolean contractor = false;
+
+    @Column(name = "is_subcontractor", nullable = false)
+    @Builder.Default
+    private boolean subcontractor = false;
+
+    @Column(name = "is_designer", nullable = false)
+    @Builder.Default
+    private boolean designer = false;
+
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private boolean active = true;
+
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
 }

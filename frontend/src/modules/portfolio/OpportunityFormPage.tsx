@@ -67,7 +67,7 @@ const OpportunityFormPage: React.FC = () => {
     formState: { errors },
   } = useForm<OpportunityFormData>({
     resolver: zodResolver(opportunitySchema),
-    defaultValues: existingOpportunity
+    values: existingOpportunity
       ? {
           name: existingOpportunity.name ?? '',
           description: existingOpportunity.description ?? '',
@@ -80,18 +80,7 @@ const OpportunityFormPage: React.FC = () => {
           location: '',
           notes: '',
         }
-      : {
-          name: '',
-          description: '',
-          clientName: '',
-          estimatedValue: '',
-          probability: '',
-          stage: 'LEAD',
-          projectType: 'COMMERCIAL',
-          bidDeadline: '',
-          location: '',
-          notes: '',
-        },
+      : undefined,
   });
 
   const estimatedValueWatch = useWatch({ control, name: 'estimatedValue' });
@@ -102,17 +91,18 @@ const OpportunityFormPage: React.FC = () => {
         name: data.name,
         description: data.description || undefined,
         clientName: data.clientName,
-        value: data.estimatedValue ? Number(data.estimatedValue) : 0,
+        estimatedValue: data.estimatedValue ? Number(data.estimatedValue) : 0,
         probability: data.probability ? Number(data.probability) : undefined,
         stage: data.stage,
         expectedCloseDate: data.bidDeadline || new Date().toISOString().slice(0, 10),
-        ownerName: existingOpportunity?.ownerName ?? t('forms.opportunity.ownerNotAssigned'),
-      });
+        projectType: data.projectType,
+        region: data.location || undefined,
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['opportunities'] });
       toast.success(t('forms.opportunity.createSuccess'));
-      navigate('/portfolio');
+      navigate('/portfolio/opportunities');
     },
     onError: () => {
       toast.error(t('forms.opportunity.createError'));
@@ -125,17 +115,19 @@ const OpportunityFormPage: React.FC = () => {
         name: data.name,
         description: data.description || undefined,
         clientName: data.clientName,
-        value: data.estimatedValue ? Number(data.estimatedValue) : undefined,
+        estimatedValue: data.estimatedValue ? Number(data.estimatedValue) : undefined,
         probability: data.probability ? Number(data.probability) : undefined,
         stage: data.stage,
         expectedCloseDate: data.bidDeadline || undefined,
-      });
+        projectType: data.projectType,
+        region: data.location || undefined,
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['opportunities'] });
       queryClient.invalidateQueries({ queryKey: ['opportunity', id] });
       toast.success(t('forms.opportunity.updateSuccess'));
-      navigate(`/portfolio/${id}`);
+      navigate(`/portfolio/opportunities/${id}`);
     },
     onError: () => {
       toast.error(t('forms.opportunity.updateError'));
@@ -157,10 +149,10 @@ const OpportunityFormPage: React.FC = () => {
       <PageHeader
         title={isEdit ? t('forms.opportunity.editTitle') : t('forms.opportunity.createTitle')}
         subtitle={isEdit ? existingOpportunity?.name : t('forms.opportunity.createSubtitle')}
-        backTo={isEdit ? `/portfolio/${id}` : '/portfolio'}
+        backTo={isEdit ? `/portfolio/opportunities/${id}` : '/portfolio/opportunities'}
         breadcrumbs={[
           { label: t('forms.common.home'), href: '/' },
-          { label: t('forms.opportunity.breadcrumbPortfolio'), href: '/portfolio' },
+          { label: t('forms.opportunity.breadcrumbPortfolio'), href: '/portfolio/opportunities' },
           { label: isEdit ? t('forms.common.editing') : t('forms.common.creating') },
         ]}
       />
@@ -272,7 +264,7 @@ const OpportunityFormPage: React.FC = () => {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => navigate(isEdit ? `/portfolio/${id}` : '/portfolio')}
+            onClick={() => navigate(isEdit ? `/portfolio/opportunities/${id}` : '/portfolio/opportunities')}
           >
             {t('common.back')}
           </Button>

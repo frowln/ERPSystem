@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { crmApi } from '@/api/crm';
+import { useAuthStore } from '@/stores/authStore';
 import toast from 'react-hot-toast';
 import {
   User,
@@ -17,6 +18,9 @@ import {
   CheckCircle,
   HardHat,
   ExternalLink,
+  Plus,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -43,12 +47,16 @@ const getStageFlow = () => [
 ];
 
 const getActivityTypeLabels = (): Record<string, string> => ({
-  call: t('crm.detail.activityCall'), email: 'Email', meeting: t('crm.detail.activityMeeting'), note: t('crm.detail.activityNote'), task: t('crm.detail.activityTask'), presentation: t('crm.detail.activityPresentation'),
+  CALL: t('crm.detail.activityCall'),
+  EMAIL: t('crm.detail.activityTypeEmail'),
+  MEETING: t('crm.detail.activityMeeting'),
+  PROPOSAL: t('crm.detail.activityProposal'),
+  SITE_VISIT: t('crm.detail.activitySiteVisit'),
 });
 
 const activityTypeIcons: Record<string, string> = {
-  call: 'text-green-500', email: 'text-blue-500', meeting: 'text-purple-500',
-  note: 'text-neutral-500 dark:text-neutral-400', task: 'text-orange-500', presentation: 'text-cyan-500',
+  CALL: 'text-green-500', EMAIL: 'text-blue-500', MEETING: 'text-purple-500',
+  PROPOSAL: 'text-orange-500', SITE_VISIT: 'text-cyan-500',
 };
 
 const CrmLeadDetailPage: React.FC = () => {
@@ -57,6 +65,54 @@ const CrmLeadDetailPage: React.FC = () => {
   const queryClient = useQueryClient();
   const [convertOpen, setConvertOpen] = useState(false);
   const [convertForm, setConvertForm] = useState({ projectName: '', projectCode: '' });
+  const [activityOpen, setActivityOpen] = useState(false);
+  const [activityForm, setActivityForm] = useState({
+    activityType: 'CALL',
+    summary: '',
+    notes: '',
+    scheduledAt: '',
+  });
+  const currentUser = useAuthStore((s) => s.user);
+
+  const activityMutation = useMutation({
+    mutationFn: () =>
+      crmApi.createActivity({
+        leadId: id!,
+        activityType: activityForm.activityType,
+        summary: activityForm.summary,
+        notes: activityForm.notes || undefined,
+        scheduledAt: activityForm.scheduledAt || undefined,
+        userId: currentUser?.id,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['crm-lead-activities', id] });
+      queryClient.invalidateQueries({ queryKey: ['crm-lead', id] });
+      toast.success(t('crm.detail.activitySuccess'));
+      setActivityOpen(false);
+      setActivityForm({ activityType: 'CALL', summary: '', notes: '', scheduledAt: '' });
+    },
+    onError: () => toast.error(t('crm.detail.activityError')),
+  });
+
+  const completeActivityMutation = useMutation({
+    mutationFn: (activityId: string) => crmApi.completeActivity(activityId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['crm-lead-activities', id] });
+      queryClient.invalidateQueries({ queryKey: ['crm-lead', id] });
+      toast.success(t('crm.detail.activityCompleted'));
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
+
+  const deleteLeadMutation = useMutation({
+    mutationFn: () => crmApi.deleteLead(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
+      toast.success(t('crm.leadList.toastDeleted'));
+      navigate('/crm/leads');
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
 
   const statusMutation = useMutation({
     mutationFn: ({ leadId, status }: { leadId: string; status: string }) =>
@@ -245,7 +301,7 @@ const CrmLeadDetailPage: React.FC = () => {
                 <Clock size={16} className="text-warning-500" />
                 {t('crm.detail.upcomingActivities')} ({pendingActivities.length})
               </h3>
-              <Button variant="secondary" size="sm" onClick={() => navigate(`/crm/leads/${id}/activities/new`)}>
+              <Button variant="secondary" size="sm" iconLeft={<Plus size={14} />} onClick={() => setActivityOpen(true)}>
                 {t('crm.detail.schedule')}
               </Button>
             </div>
@@ -255,15 +311,22 @@ const CrmLeadDetailPage: React.FC = () => {
               <div className="space-y-2">
                 {pendingActivities.map((act) => (
                   <div key={act.id} className="flex items-center gap-3 p-3 rounded-lg border border-warning-100 bg-warning-50/30">
-                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${activityTypeIcons[act.type] ?? 'bg-neutral-400'}`}
+                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${activityTypeIcons[act.activityType] ?? 'bg-neutral-400'}`}
                       style={{ backgroundColor: 'currentColor' }}
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{act.title}</p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                        {activityTypeLabels[act.type] ?? act.type} | {act.assignedToName} | {formatDateLong(act.scheduledAt)}
+                        {activityTypeLabels[act.activityType] ?? act.activityTypeDisplayName ?? act.activityType} | {act.assignedToName} | {formatDateLong(act.scheduledAt)}
                       </p>
                     </div>
+                    <button
+                      onClick={() => completeActivityMutation.mutate(act.id)}
+                      className="flex-shrink-0 p-1.5 rounded-md text-success-600 hover:bg-success-50 dark:hover:bg-success-900/30 transition-colors"
+                      title={t('crm.detail.markDone')}
+                    >
+                      <CheckCircle size={16} />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -286,7 +349,7 @@ const CrmLeadDetailPage: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-neutral-700 dark:text-neutral-300">{act.title}</p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                        {activityTypeLabels[act.type] ?? act.type} | {act.assignedToName} | {formatDateLong(act.completedAt)}
+                        {activityTypeLabels[act.activityType] ?? act.activityTypeDisplayName ?? act.activityType} | {act.assignedToName} | {formatDateLong(act.completedAt)}
                       </p>
                       {act.description && (
                         <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 italic">"{act.description}"</p>
@@ -306,7 +369,7 @@ const CrmLeadDetailPage: React.FC = () => {
             <div className="space-y-4">
               <InfoItem icon={<User size={15} />} label={t('crm.detail.contactPerson')} value={l.partnerName ?? l.contactName ?? '---'} />
               <InfoItem icon={<Building2 size={15} />} label={t('crm.detail.company')} value={l.companyName ?? '---'} />
-              <InfoItem icon={<Mail size={15} />} label="Email" value={l.email ?? l.contactEmail ?? '---'} />
+              <InfoItem icon={<Mail size={15} />} label={t('crm.detail.activityEmail')} value={l.email ?? l.contactEmail ?? '---'} />
               <InfoItem icon={<Phone size={15} />} label={t('crm.detail.phone')} value={l.phone ?? l.contactPhone ?? '---'} />
             </div>
           </div>
@@ -387,11 +450,34 @@ const CrmLeadDetailPage: React.FC = () => {
                   {t('crm.detail.convertToProject')}
                 </Button>
               )}
-              <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => navigate(`/crm/leads/${id}/activities/new`)}>
+              <Button variant="secondary" size="sm" className="w-full justify-start" iconLeft={<Plus size={14} />} onClick={() => setActivityOpen(true)}>
                 {t('crm.detail.addActivity')}
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-full justify-start"
+                iconLeft={<Pencil size={14} />}
+                onClick={() => navigate(`/crm/leads/${id}/edit`)}
+              >
+                {t('crm.detail.editLead')}
               </Button>
               <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => window.open(`/api/crm/leads/${id}/export?format=pdf`, '_blank')}>
                 {t('crm.detail.exportPdf')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-danger-600 hover:text-danger-700 hover:bg-danger-50"
+                iconLeft={<Trash2 size={14} />}
+                loading={deleteLeadMutation.isPending}
+                onClick={() => {
+                  if (window.confirm(t('crm.leadList.confirmDeleteDescription'))) {
+                    deleteLeadMutation.mutate();
+                  }
+                }}
+              >
+                {t('crm.detail.deleteLead')}
               </Button>
             </div>
           </div>
@@ -460,6 +546,89 @@ const CrmLeadDetailPage: React.FC = () => {
                 <span className="font-bold text-primary-700 dark:text-primary-300">{formatMoney(l.expectedRevenue)}</span>
               </div>
             )}
+          </div>
+        </Modal>
+      )}
+      {/* New activity modal */}
+      {activityOpen && (
+        <Modal
+          open={activityOpen}
+          onClose={() => setActivityOpen(false)}
+          title={t('crm.detail.newActivityTitle')}
+          size="md"
+          footer={
+            <>
+              <Button variant="secondary" size="sm" onClick={() => setActivityOpen(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                iconLeft={<Plus size={14} />}
+                loading={activityMutation.isPending}
+                disabled={!activityForm.summary.trim()}
+                onClick={() => activityMutation.mutate()}
+              >
+                {t('crm.detail.activitySubmit')}
+              </Button>
+            </>
+          }
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {t('crm.detail.newActivityDesc')}
+            </p>
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                {t('crm.detail.activityTypeLabel')}
+              </label>
+              <select
+                value={activityForm.activityType}
+                onChange={(e) => setActivityForm((prev) => ({ ...prev, activityType: e.target.value }))}
+                className="w-full h-9 px-3 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="CALL">{t('crm.detail.activityTypeCall')}</option>
+                <option value="MEETING">{t('crm.detail.activityTypeMeeting')}</option>
+                <option value="EMAIL">{t('crm.detail.activityTypeEmail')}</option>
+                <option value="PROPOSAL">{t('crm.detail.activityTypeProposal')}</option>
+                <option value="SITE_VISIT">{t('crm.detail.activityTypeSiteVisit')}</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                {t('crm.detail.activitySummaryLabel')} *
+              </label>
+              <input
+                type="text"
+                value={activityForm.summary}
+                onChange={(e) => setActivityForm((prev) => ({ ...prev, summary: e.target.value }))}
+                placeholder={t('crm.detail.activitySummaryPlaceholder')}
+                className="w-full h-9 px-3 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                {t('crm.detail.activityDateLabel')}
+              </label>
+              <input
+                type="datetime-local"
+                value={activityForm.scheduledAt}
+                onChange={(e) => setActivityForm((prev) => ({ ...prev, scheduledAt: e.target.value }))}
+                className="w-full h-9 px-3 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+                {t('crm.detail.activityNotesLabel')}
+              </label>
+              <textarea
+                value={activityForm.notes}
+                onChange={(e) => setActivityForm((prev) => ({ ...prev, notes: e.target.value }))}
+                rows={3}
+                placeholder={t('crm.detail.activityNotesPlaceholder')}
+                className="w-full px-3 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              />
+            </div>
           </div>
         </Modal>
       )}

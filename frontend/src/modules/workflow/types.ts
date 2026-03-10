@@ -1,68 +1,74 @@
-// Workflow types
+// Workflow types — aligned with backend DTOs
 
 export type WorkflowStatus = 'ACTIVE' | 'INACTIVE' | 'DRAFT';
 export type EntityType = 'CONTRACT' | 'DOCUMENT' | 'PURCHASE_REQUEST' | 'INVOICE' | 'BUDGET' | 'CHANGE_ORDER';
-export type TriggerType = 'STATUS_CHANGE' | 'FIELD_UPDATE' | 'TIME_BASED' | 'APPROVAL' | 'CREATION';
-export type ActionType = 'SEND_NOTIFICATION' | 'ASSIGN_ROLE' | 'UPDATE_STATUS' | 'CREATE_TASK' | 'SEND_EMAIL' | 'WEBHOOK';
-export type ExecutionStatus = 'SUCCESS' | 'FAILURE' | 'SKIPPED' | 'PENDING';
+export type TriggerType = 'MANUAL' | 'ON_CREATE' | 'ON_STATUS_CHANGE' | 'ON_FIELD_CHANGE' | 'SCHEDULED';
+export type ActionType = 'CHANGE_STATUS' | 'SEND_NOTIFICATION' | 'ASSIGN_USER' | 'CREATE_TASK' | 'SEND_EMAIL' | 'WEBHOOK';
+export type ExecutionStatus = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'SKIPPED';
 
 export interface WorkflowDefinition {
   id: string;
   name: string;
   description?: string;
-  entityType: EntityType;
-  status: WorkflowStatus;
-  stepsCount: number;
-  version: number;
-  createdByName: string;
+  entityType: string;
+  isActive: boolean;
+  organizationId?: string;
+  createdById?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface WorkflowStep {
   id: string;
-  workflowId: string;
-  stepOrder: number;
+  workflowDefinitionId: string;
   name: string;
+  description?: string;
+  actionType?: string;
+  actionConfig?: string;
   fromStatus: string;
   toStatus: string;
   requiredRole: string;
+  approverIds?: string;
   slaHours?: number;
-  isAutomatic: boolean;
+  sortOrder: number;
   conditions?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AutomationRule {
   id: string;
   name: string;
   description?: string;
-  entityType: EntityType;
+  entityType: string;
   triggerType: TriggerType;
+  triggerTypeDisplayName?: string;
+  triggerCondition?: string;
   actionType: ActionType;
-  isEnabled: boolean;
-  executionCount: number;
+  actionTypeDisplayName?: string;
+  actionConfig?: string;
+  isActive: boolean;
+  organizationId?: string;
+  priority?: number;
   lastExecutedAt?: string;
-  conditions: string;
-  actionConfig: string;
-  createdByName: string;
+  executionCount: number;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AutomationExecution {
   id: string;
-  ruleId: string;
-  ruleName: string;
-  entityType: EntityType;
+  automationRuleId: string;
   entityId: string;
-  status: ExecutionStatus;
-  triggerType: TriggerType;
-  actionType: ActionType;
+  entityType: string;
+  executionStatus: ExecutionStatus;
+  executionStatusDisplayName?: string;
   startedAt: string;
   completedAt?: string;
-  durationMs?: number;
+  triggerData?: string;
+  resultData?: string;
   errorMessage?: string;
-  inputData?: string;
-  outputData?: string;
+  createdAt: string;
 }
 
 // Approval inbox types
@@ -73,11 +79,15 @@ export interface ApprovalInstance {
   entityType: string;
   entityId: string;
   entityNumber?: string;
+  workflowName?: string;
   currentStepName?: string;
+  currentStepOrder?: number;
   status: ApprovalInstanceStatus;
   slaDeadline?: string;
   isOverdue?: boolean;
+  notes?: string;
   createdAt: string;
+  completedAt?: string;
   updatedAt?: string;
 }
 

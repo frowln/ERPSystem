@@ -308,7 +308,8 @@ class WebSocketClient {
     this._pendingSubscriptions = [];
 
     for (const { dest, cb, resolve } of pending) {
-      const sub = this._doSubscribe(dest, cb);
+      // Use raw subscribe to avoid double-wrapping typed subscriptions
+      const sub = this._doSubscribeRaw(dest, cb);
       resolve(sub);
     }
   }

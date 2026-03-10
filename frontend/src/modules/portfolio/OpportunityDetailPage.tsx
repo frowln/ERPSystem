@@ -21,11 +21,13 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { portfolioApi } from '@/api/portfolio';
+import { apiClient } from '@/api/client';
 import { formatDateLong, formatMoney, formatMoneyCompact, formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { Opportunity, OpportunityActivity } from './types';
 import toast from 'react-hot-toast';
+import { Edit } from 'lucide-react';
 
 const stageColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
   LEAD: 'gray',
@@ -100,7 +102,6 @@ const OpportunityDetailPage: React.FC = () => {
   const stageLabels = getStageLabels();
   const activityTypeLabels = getActivityTypeLabels();
 
-  const [stageOverride, setStageOverride] = useState<Opportunity['stage'] | null>(null);
   const [goNoGoOpen, setGoNoGoOpen] = useState(false);
   const [checklist, setChecklist] = useState<GoNoGoChecklist>(defaultChecklist);
   const [analogResult, setAnalogResult] = useState<{ analogCount: number; avgEstimatedValue?: number; avgWinProbability?: number; recommendation: string } | null>(null);
@@ -116,6 +117,16 @@ const OpportunityDetailPage: React.FC = () => {
     onError: () => toast.error(t('portfolio.goNoGo.saveError')),
   });
 
+  const stageMutation = useMutation({
+    mutationFn: (stage: Opportunity['stage']) =>
+      apiClient.patch(`/portfolio/opportunities/${id}/stage`, { stage }).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['opportunity', id] });
+      queryClient.invalidateQueries({ queryKey: ['opportunities'] });
+    },
+    onError: () => toast.error(t('common.error')),
+  });
+
   const analogMutation = useMutation({
     mutationFn: () => portfolioApi.getAnalogAssessment(id!),
     onSuccess: (data) => setAnalogResult(data),
@@ -128,17 +139,16 @@ const OpportunityDetailPage: React.FC = () => {
 
   const o = opportunity;
   const acts = activities ?? [];
-  const effectiveStage = stageOverride ?? o.stage;
 
   const stageActions = (() => {
-    const idx = stageFlow.indexOf(effectiveStage);
+    const idx = stageFlow.indexOf(o.stage);
     if (idx >= 0 && idx < stageFlow.length - 1) {
       return [{ label: t('portfolio.opportunityDetail.moveToStage', { stage: stageLabels[stageFlow[idx + 1]] }), targetStage: stageFlow[idx + 1] }];
     }
     return [];
   })();
 
-  const currentStageIdx = stageFlow.indexOf(effectiveStage);
+  const currentStageIdx = stageFlow.indexOf(o.stage);
 
   return (
     <div className="animate-fade-in">
@@ -155,9 +165,9 @@ const OpportunityDetailPage: React.FC = () => {
         actions={
           <div className="flex items-center gap-2">
             <StatusBadge
-              status={effectiveStage}
+              status={o.stage}
               colorMap={stageColorMap}
-              label={stageLabels[effectiveStage] ?? effectiveStage}
+              label={stageLabels[o.stage] ?? o.stage}
               size="md"
             />
             {stageActions.map((action) => (
@@ -165,14 +175,24 @@ const OpportunityDetailPage: React.FC = () => {
                 key={action.targetStage}
                 variant="secondary"
                 size="sm"
+                loading={stageMutation.isPending}
                 onClick={() => {
-                  setStageOverride(action.targetStage);
-                  toast.success(t('portfolio.opportunityDetail.stageChanged', { stage: stageLabels[action.targetStage] ?? action.targetStage }));
+                  stageMutation.mutate(action.targetStage, {
+                    onSuccess: () => toast.success(t('portfolio.opportunityDetail.stageChanged', { stage: stageLabels[action.targetStage] ?? action.targetStage })),
+                  });
                 }}
               >
                 {action.label}
               </Button>
             ))}
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={<Edit size={14} />}
+              onClick={() => navigate(`/portfolio/opportunities/${id}/edit`)}
+            >
+              {t('common.edit')}
+            </Button>
           </div>
         }
       />

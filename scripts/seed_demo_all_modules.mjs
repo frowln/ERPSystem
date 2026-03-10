@@ -69,7 +69,9 @@ function track(module, id) {
 
 async function login() {
   console.log('\n=== Авторизация ===');
-  const res = await post('/auth/login', { email: 'admin@privod.ru', password: 'admin123' });
+  const email = process.env.PRIVOD_EMAIL || 'admin@privod.ru';
+  const password = process.env.PRIVOD_PASSWORD || 'admin123';
+  const res = await post('/auth/login', { email, password });
   if (!res?.accessToken) {
     // попробуем demo-аккаунт
     const res2 = await post('/auth/login', { email: 'admin@demo.privod.ru', password: 'Demo123!' });
@@ -191,16 +193,95 @@ async function seedDepartments() {
 async function seedCounterparties() {
   console.log('\n=== Контрагенты ===');
   const counterparties = [
-    { name: 'ООО "СтройМонтаж"', inn: '7701234567', kpp: '770101001', legalAddress: 'г. Москва, ул. Строителей, д. 15', supplier: true, customer: false, bankAccount: '40702810500000012345', bik: '044525225' },
-    { name: 'АО "ТехноСтрой Инжиниринг"', inn: '7702345678', kpp: '770201001', legalAddress: 'г. Москва, Варшавское ш., д. 42', supplier: true, customer: false, bankAccount: '40702810600000023456', bik: '044525593' },
-    { name: 'ООО "ЭлектроПроф"', inn: '7703456789', kpp: '770301001', legalAddress: 'г. Москва, ул. Энергетиков, д. 8', supplier: true, customer: false },
-    { name: 'ПАО "Стальконструкция"', inn: '7704567890', kpp: '770401001', legalAddress: 'г. Москва, Промышленный пр., д. 22', supplier: true, customer: false },
-    { name: 'ООО "КлиматВент"', inn: '7705678901', kpp: '770501001', legalAddress: 'г. Москва, ул. Инженерная, д. 5', supplier: true, customer: false },
-    { name: 'ИП Смирнов А.В. (бетон)', inn: '770612345678', legalAddress: 'г. Москва, п. Внуково', supplier: true, customer: false },
-    { name: 'ООО "ДевелопИнвест"', inn: '7707890123', kpp: '770701001', legalAddress: 'г. Москва, Ленинский пр., д. 119', supplier: false, customer: true },
-    { name: 'АО "Жилстрой-1"', inn: '7708901234', kpp: '770801001', legalAddress: 'г. Москва, ул. Академика Пилюгина, д. 2', supplier: false, customer: true },
-    { name: 'ООО "Сантехмонтаж Плюс"', inn: '5001234567', kpp: '500101001', legalAddress: 'г. Подольск, ул. Литейная, д. 10', supplier: true, customer: false },
-    { name: 'ООО "ФасадМастер"', inn: '5002345678', kpp: '500201001', legalAddress: 'г. Мытищи, Олимпийский пр., д. 33', supplier: true, customer: false },
+    {
+      name: 'ООО "СтройМонтаж"', shortName: 'СтройМонтаж', inn: '7701234567', kpp: '770101001', ogrn: '1027700123456',
+      legalAddress: 'г. Москва, ул. Строителей, д. 15, оф. 301', actualAddress: 'г. Москва, ул. Строителей, д. 15, оф. 301',
+      supplier: true, customer: false, contractor: true, subcontractor: false, designer: false,
+      bankAccount: '40702810500000012345', bik: '044525225', correspondentAccount: '30101810400000000225', bankName: 'ПАО Сбербанк',
+      contactPerson: 'Козлов Дмитрий Сергеевич', phone: '+7 (495) 123-45-67', email: 'info@stroymontazh.ru', website: 'https://stroymontazh.ru',
+      notes: 'Генподрядчик. Специализация: монолитные работы, фундаменты.'
+    },
+    {
+      name: 'АО "ТехноСтрой Инжиниринг"', shortName: 'ТехноСтрой', inn: '7702345678', kpp: '770201001', ogrn: '1027700234567',
+      legalAddress: 'г. Москва, Варшавское ш., д. 42, стр. 2', actualAddress: 'г. Москва, Варшавское ш., д. 42, стр. 2',
+      supplier: true, customer: false, contractor: true, subcontractor: false, designer: false,
+      bankAccount: '40702810600000023456', bik: '044525593', correspondentAccount: '30101810200000000593', bankName: 'АО «Альфа-Банк»',
+      contactPerson: 'Петрова Наталья Владимировна', phone: '+7 (495) 234-56-78', email: 'n.petrova@technostroy.ru',
+      notes: 'Комплексный подрядчик. Инженерные сети, вентиляция, электрика.'
+    },
+    {
+      name: 'ООО "ЭлектроПроф"', shortName: 'ЭлектроПроф', inn: '7703456789', kpp: '770301001', ogrn: '1027700345678',
+      legalAddress: 'г. Москва, ул. Энергетиков, д. 8', actualAddress: 'г. Москва, ул. Энергетиков, д. 8, оф. 12',
+      supplier: true, customer: false, contractor: false, subcontractor: true, designer: false,
+      contactPerson: 'Иванченко Алексей Петрович', phone: '+7 (495) 345-67-89', email: 'ivanchenko@elektroprof.ru',
+      notes: 'Субподрядчик по электромонтажным работам. СРО допуски актуальны.'
+    },
+    {
+      name: 'ПАО "Стальконструкция"', shortName: 'Стальконструкция', inn: '7704567890', kpp: '770401001', ogrn: '1027700456789',
+      legalAddress: 'г. Москва, Промышленный пр., д. 22',
+      supplier: true, customer: false, contractor: false, subcontractor: false, designer: false,
+      bankAccount: '40702810700000034567', bik: '044525225', correspondentAccount: '30101810400000000225', bankName: 'ПАО Сбербанк',
+      contactPerson: 'Сидоров Павел Михайлович', phone: '+7 (495) 456-78-90', email: 'sales@stalkonstrukciya.ru', website: 'https://stalkonstrukciya.ru',
+      notes: 'Поставщик металлоконструкций. Собственное производство.'
+    },
+    {
+      name: 'ООО "КлиматВент"', shortName: 'КлиматВент', inn: '7705678901', kpp: '770501001',
+      legalAddress: 'г. Москва, ул. Инженерная, д. 5',
+      supplier: true, customer: false, contractor: false, subcontractor: true, designer: false,
+      contactPerson: 'Белова Елена Игоревна', phone: '+7 (495) 567-89-01', email: 'info@klimatvent.ru',
+      notes: 'Субподрядчик по вентиляции и кондиционированию.'
+    },
+    {
+      name: 'ИП Смирнов А.В.', shortName: 'ИП Смирнов', inn: '770612345678',
+      legalAddress: 'г. Москва, п. Внуково, ул. Центральная, д. 3',
+      supplier: true, customer: false, contractor: false, subcontractor: false, designer: false,
+      contactPerson: 'Смирнов Андрей Валерьевич', phone: '+7 (916) 678-90-12',
+      notes: 'Поставщик бетона и ЖБИ. Доставка по Москве и МО.'
+    },
+    {
+      name: 'ООО "ДевелопИнвест"', shortName: 'ДевелопИнвест', inn: '7707890123', kpp: '770701001', ogrn: '1027700789012',
+      legalAddress: 'г. Москва, Ленинский пр., д. 119, оф. 500',
+      supplier: false, customer: true, contractor: false, subcontractor: false, designer: false,
+      bankAccount: '40702810800000045678', bik: '044525411', correspondentAccount: '30101810145250000411', bankName: 'ПАО «Банк ВТБ»',
+      contactPerson: 'Громов Артём Викторович', phone: '+7 (495) 789-01-23', email: 'gromov@developinvest.ru', website: 'https://developinvest.ru',
+      notes: 'Заказчик-застройщик. Жилое строительство комфорт-класса.'
+    },
+    {
+      name: 'АО "Жилстрой-1"', shortName: 'Жилстрой-1', inn: '7708901234', kpp: '770801001', ogrn: '1027700890123',
+      legalAddress: 'г. Москва, ул. Академика Пилюгина, д. 2',
+      supplier: false, customer: true, contractor: false, subcontractor: false, designer: false,
+      contactPerson: 'Никитин Сергей Алексеевич', phone: '+7 (495) 890-12-34', email: 'nikitin@zhilstroy1.ru',
+      notes: 'Заказчик. Многоэтажное жилое строительство.'
+    },
+    {
+      name: 'ООО "Сантехмонтаж Плюс"', shortName: 'Сантехмонтаж+', inn: '5001234567', kpp: '500101001',
+      legalAddress: 'г. Подольск, ул. Литейная, д. 10',
+      supplier: true, customer: false, contractor: false, subcontractor: true, designer: false,
+      contactPerson: 'Кузнецов Виктор Андреевич', phone: '+7 (496) 901-23-45', email: 'v.kuznetsov@santehmontazh.ru',
+      notes: 'Субподрядчик. Внутренние сантехнические работы, отопление, водоснабжение.'
+    },
+    {
+      name: 'ООО "ФасадМастер"', shortName: 'ФасадМастер', inn: '5002345678', kpp: '500201001',
+      legalAddress: 'г. Мытищи, Олимпийский пр., д. 33',
+      supplier: true, customer: false, contractor: false, subcontractor: true, designer: false,
+      contactPerson: 'Волков Олег Николаевич', phone: '+7 (495) 012-34-56', email: 'o.volkov@fasadmaster.ru', website: 'https://fasadmaster.ru',
+      notes: 'Субподрядчик. Вентилируемые фасады, НВФ, штукатурные системы.'
+    },
+    {
+      name: 'ООО "ПроектГрупп"', shortName: 'ПроектГрупп', inn: '7709012345', kpp: '770901001', ogrn: '1027700901234',
+      legalAddress: 'г. Москва, Ленинградский пр., д. 80, корп. 16',
+      supplier: false, customer: false, contractor: false, subcontractor: false, designer: true,
+      bankAccount: '40702810900000056789', bik: '044525225', correspondentAccount: '30101810400000000225', bankName: 'ПАО Сбербанк',
+      contactPerson: 'Архипова Мария Дмитриевна', phone: '+7 (495) 111-22-33', email: 'arkhipova@proektgrupp.ru', website: 'https://proektgrupp.ru',
+      notes: 'Проектная организация. Разделы АР, КР, ИОС. Допуск СРО.'
+    },
+    {
+      name: 'ООО "Геотех Изыскания"', shortName: 'Геотех', inn: '7710123456', kpp: '771001001',
+      legalAddress: 'г. Москва, ул. Академика Варги, д. 14',
+      supplier: false, customer: false, contractor: false, subcontractor: false, designer: true,
+      contactPerson: 'Рябов Константин Игоревич', phone: '+7 (495) 222-33-44', email: 'ryabov@geotech-iz.ru',
+      notes: 'Проектировщик. Инженерно-геологические, инженерно-геодезические изыскания.'
+    },
   ];
 
   for (const cp of counterparties) {
@@ -292,6 +373,311 @@ async function seedCrmLeads() {
     track('crmLeads', res?.id);
   }
   console.log(`  Создано лидов: ${created.crmLeads?.length || 0}`);
+}
+
+// ── 4.1 Возможности (Portfolio Opportunities) ───────────────────────────────
+
+async function seedOpportunities() {
+  console.log('\n=== Портфолио: Возможности ===');
+
+  const opportunities = [
+    {
+      name: 'ЖК "Аквамарин" — генподряд на инженерные системы',
+      description: 'Комплекс из 5 корпусов, 1200 квартир. Полный цикл инженерных систем: ОВиК, ВК, ЭОМ, слаботочные системы. Площадь 85 000 м².',
+      clientName: 'ООО "Аквамарин Девелопмент"',
+      clientType: 'DEVELOPER',
+      estimatedValue: 890000000,
+      probability: 75,
+      expectedCloseDate: daysFromNow(45),
+      source: 'Тендерная площадка',
+      region: 'Москва',
+      projectType: 'RESIDENTIAL',
+      tags: 'ЖК,инженерные системы,генподряд',
+    },
+    {
+      name: 'БЦ "Столичный" — навесной вентилируемый фасад',
+      description: 'Бизнес-центр класса А, 28 этажей. Фасад из керамогранита и алюминиевых композитных панелей. Площадь фасада 12 000 м².',
+      clientName: 'АО "Столица Груп"',
+      clientType: 'COMMERCIAL',
+      estimatedValue: 340000000,
+      probability: 60,
+      expectedCloseDate: daysFromNow(30),
+      source: 'Рекомендация партнёра',
+      region: 'Москва',
+      projectType: 'COMMERCIAL',
+      tags: 'фасад,НВФ,класс А',
+    },
+    {
+      name: 'Школа на 1100 мест — г. Одинцово (44-ФЗ)',
+      description: 'Государственный контракт. Строительство общеобразовательной школы. Этап подачи заявки. Электронный аукцион.',
+      clientName: 'Департамент строительства МО',
+      clientType: 'GOVERNMENT',
+      estimatedValue: 1250000000,
+      probability: 25,
+      expectedCloseDate: daysFromNow(90),
+      source: 'Госзакупки (44-ФЗ)',
+      region: 'Московская область',
+      projectType: 'INFRASTRUCTURE',
+      tags: 'госзаказ,44-ФЗ,школа',
+    },
+    {
+      name: 'Склад класса А — логистический парк "Южные Врата"',
+      description: 'Складской комплекс 60 000 м², высота 12 м, кросс-докинг. Заказчик ищет генподрядчика с опытом промышленного строительства.',
+      clientName: 'ООО "Логистик Инвест"',
+      clientType: 'INDUSTRIAL',
+      estimatedValue: 720000000,
+      probability: 50,
+      expectedCloseDate: daysFromNow(60),
+      source: 'Выставка "СтройЭкспо 2026"',
+      region: 'Московская область',
+      projectType: 'INDUSTRIAL',
+      tags: 'склад,логистика,генподряд',
+    },
+    {
+      name: 'ЖК "Серебряные Пруды" — отделочные работы',
+      description: 'Чистовая отделка 800 квартир. Классы отделки: стандарт, комфорт, бизнес. Срок 8 месяцев.',
+      clientName: 'ГК "Самолёт"',
+      clientType: 'DEVELOPER',
+      estimatedValue: 480000000,
+      probability: 85,
+      expectedCloseDate: daysFromNow(15),
+      source: 'Прямое обращение',
+      region: 'Москва',
+      projectType: 'RESIDENTIAL',
+      tags: 'отделка,ЖК,чистовая',
+    },
+    {
+      name: 'Реконструкция ТЦ "Галерея" — усиление конструкций',
+      description: 'Торговый центр 35 000 м². Усиление несущих конструкций, замена кровли, модернизация инженерии. Работы без остановки ТЦ.',
+      clientName: 'ООО "Галерея Управление"',
+      clientType: 'COMMERCIAL',
+      estimatedValue: 195000000,
+      probability: 40,
+      expectedCloseDate: daysFromNow(75),
+      source: 'Входящий звонок',
+      region: 'Санкт-Петербург',
+      projectType: 'COMMERCIAL',
+      tags: 'реконструкция,ТЦ,усиление',
+    },
+    {
+      name: 'Поликлиника на 350 посещений — г. Химки',
+      description: 'Строительство поликлиники по госзаказу. ПСД готова. Этап переговоров по цене контракта.',
+      clientName: 'Администрация г.о. Химки',
+      clientType: 'GOVERNMENT',
+      estimatedValue: 580000000,
+      probability: 65,
+      expectedCloseDate: daysFromNow(20),
+      source: 'Госзакупки',
+      region: 'Московская область',
+      projectType: 'INFRASTRUCTURE',
+      tags: 'поликлиника,госзаказ,медицина',
+    },
+    {
+      name: 'Завод "ТехноПром" — монтаж технологического оборудования',
+      description: 'Монтаж производственной линии, подключение коммуникаций, пусконаладка. Контракт выигран, подписание на следующей неделе.',
+      clientName: 'АО "ТехноПром"',
+      clientType: 'INDUSTRIAL',
+      estimatedValue: 156000000,
+      probability: 95,
+      expectedCloseDate: daysFromNow(7),
+      source: 'Повторный клиент',
+      region: 'Калужская область',
+      projectType: 'INDUSTRIAL',
+      tags: 'промышленность,монтаж,оборудование',
+    },
+    {
+      name: 'Гостиница "Приморская" — Сочи, новое строительство',
+      description: 'Гостиничный комплекс 4* на 200 номеров. Первая линия. Подземный паркинг. Бассейн и SPA. Проект проиграли конкуренту.',
+      clientName: 'ООО "Курорт Девелопмент"',
+      clientType: 'COMMERCIAL',
+      estimatedValue: 920000000,
+      probability: 0,
+      expectedCloseDate: daysAgo(10),
+      source: 'Тендерная площадка',
+      region: 'Краснодарский край',
+      projectType: 'COMMERCIAL',
+      tags: 'гостиница,Сочи,курорт',
+    },
+    {
+      name: 'ИЖС коттеджный посёлок "Лесная Поляна" — 48 домов',
+      description: 'Строительство коттеджного посёлка под ключ. 48 домов от 120 до 280 м². Инфраструктура: дороги, сети, благоустройство.',
+      clientName: 'ООО "Лесная Поляна"',
+      clientType: 'RESIDENTIAL',
+      estimatedValue: 620000000,
+      probability: 35,
+      expectedCloseDate: daysFromNow(120),
+      source: 'Сайт',
+      region: 'Тульская область',
+      projectType: 'RESIDENTIAL',
+      tags: 'ИЖС,коттеджи,под ключ',
+    },
+    {
+      name: 'Мост через р. Ока — субподряд на сваи',
+      description: 'Устройство буронабивных свай диаметром 1200 мм, глубина до 25 м. 180 свай. Генподрядчик — ООО "Мостовик".',
+      clientName: 'ООО "Мостовик"',
+      clientType: 'INFRASTRUCTURE',
+      estimatedValue: 245000000,
+      probability: 70,
+      expectedCloseDate: daysFromNow(35),
+      source: 'Прямое обращение',
+      region: 'Нижегородская область',
+      projectType: 'INFRASTRUCTURE',
+      tags: 'мост,сваи,субподряд',
+    },
+    {
+      name: 'Жилой комплекс "Звёздный" — выигранный контракт',
+      description: 'Генподряд на строительство 2 корпусов по 22 этажа. Монолитный каркас + кирпичная кладка. Контракт подписан, проект в работе.',
+      clientName: 'ООО "Звёздный Девелопмент"',
+      clientType: 'DEVELOPER',
+      estimatedValue: 1100000000,
+      probability: 100,
+      expectedCloseDate: daysAgo(30),
+      source: 'Тендер',
+      region: 'Москва',
+      projectType: 'RESIDENTIAL',
+      tags: 'ЖК,генподряд,монолит',
+    },
+  ];
+
+  for (const opp of opportunities) {
+    const res = await post('/portfolio/opportunities', opp);
+    track('opportunities', res?.id);
+    // Переводим некоторые по стадиям
+    if (res?.id) {
+      if (opp.probability >= 95) {
+        // WON: LEAD → QUALIFICATION → PROPOSAL → NEGOTIATION → WON
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'QUALIFICATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'PROPOSAL' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'NEGOTIATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'WON' });
+      } else if (opp.probability === 100) {
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'QUALIFICATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'PROPOSAL' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'NEGOTIATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'WON' });
+      } else if (opp.probability === 0) {
+        // LOST: LEAD → QUALIFICATION → PROPOSAL → LOST
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'QUALIFICATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'PROPOSAL' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'LOST', lostReason: 'Проиграли по цене конкуренту (ООО "СтройГарант")' });
+      } else if (opp.probability >= 80) {
+        // NEGOTIATION
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'QUALIFICATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'PROPOSAL' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'NEGOTIATION' });
+      } else if (opp.probability >= 55) {
+        // PROPOSAL
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'QUALIFICATION' });
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'PROPOSAL' });
+      } else if (opp.probability >= 30) {
+        // QUALIFICATION
+        await patch(`/portfolio/opportunities/${res.id}/stage`, { stage: 'QUALIFICATION' });
+      }
+      // probability < 30 stays in LEAD
+    }
+  }
+  console.log(`  Создано возможностей: ${created.opportunities?.length || 0}`);
+}
+
+// ── 4.2 Тендерные пакеты (Bid Packages) ─────────────────────────────────────
+
+async function seedBidPackages() {
+  console.log('\n=== Портфолио: Тендерные пакеты ===');
+
+  const oppIds = created.opportunities || [];
+  if (oppIds.length === 0) {
+    console.log('  Пропуск — нет возможностей');
+    return;
+  }
+
+  const bidPackages = [
+    {
+      opportunityId: oppIds[0],
+      projectName: 'ЖК "Аквамарин" — ОВиК, 1 очередь',
+      bidNumber: 'BP-2026-001',
+      clientOrganization: 'ООО "Аквамарин Девелопмент"',
+      submissionDeadline: new Date(Date.now() + 30 * 86400000).toISOString(),
+      bidAmount: 320000000,
+      estimatedCost: 272000000,
+      estimatedMargin: 15.0,
+      bondRequired: true,
+      bondAmount: 16000000,
+      notes: 'Обеспечение заявки — банковская гарантия. Подать вместе с ЛСР и графиком.',
+    },
+    {
+      opportunityId: oppIds[0],
+      projectName: 'ЖК "Аквамарин" — ВК и канализация',
+      bidNumber: 'BP-2026-002',
+      clientOrganization: 'ООО "Аквамарин Девелопмент"',
+      submissionDeadline: new Date(Date.now() + 30 * 86400000).toISOString(),
+      bidAmount: 185000000,
+      estimatedCost: 159000000,
+      estimatedMargin: 14.0,
+      bondRequired: true,
+      bondAmount: 9250000,
+      notes: 'Лот 2 — водоснабжение и канализация, включая наружные сети.',
+    },
+    {
+      opportunityId: oppIds[2],
+      projectName: 'Школа 1100 мест — общестроительные работы',
+      bidNumber: 'BP-2026-003',
+      clientOrganization: 'Департамент строительства МО',
+      submissionDeadline: new Date(Date.now() + 60 * 86400000).toISOString(),
+      bidAmount: 850000000,
+      estimatedCost: 765000000,
+      estimatedMargin: 10.0,
+      bondRequired: true,
+      bondAmount: 85000000,
+      competitorInfo: 'Конкуренты: ООО "СтройГарант" (≈880 млн), АО "МосСтрой" (≈830 млн)',
+      notes: '44-ФЗ электронный аукцион. НМЦК = 1,25 млрд. Обеспечение исполнения 10%.',
+    },
+    {
+      opportunityId: oppIds[3],
+      projectName: 'Склад "Южные Врата" — монолит + кровля',
+      bidNumber: 'BP-2026-004',
+      clientOrganization: 'ООО "Логистик Инвест"',
+      submissionDeadline: new Date(Date.now() + 45 * 86400000).toISOString(),
+      bidAmount: 420000000,
+      estimatedCost: 357000000,
+      estimatedMargin: 15.0,
+      bondRequired: false,
+      bondAmount: 0,
+      notes: 'Заказчик ожидает TLP в течение 2 недель. Провести встречу на площадке.',
+    },
+    {
+      opportunityId: oppIds[6],
+      projectName: 'Поликлиника Химки — полный цикл СМР',
+      bidNumber: 'BP-2026-005',
+      clientOrganization: 'Администрация г.о. Химки',
+      submissionDeadline: new Date(Date.now() + 14 * 86400000).toISOString(),
+      bidAmount: 540000000,
+      estimatedCost: 475000000,
+      estimatedMargin: 12.0,
+      bondRequired: true,
+      bondAmount: 54000000,
+      competitorInfo: 'Конкуренты: ООО "МедСтрой" (≈560 млн), ООО "СпецМонтаж" (≈520 млн)',
+      notes: 'Переговоры по финальной цене. Заказчик просит скидку 3%.',
+    },
+    {
+      opportunityId: oppIds[10],
+      projectName: 'Мост через р. Ока — буронабивные сваи',
+      bidNumber: 'BP-2026-006',
+      clientOrganization: 'ООО "Мостовик"',
+      submissionDeadline: new Date(Date.now() + 20 * 86400000).toISOString(),
+      bidAmount: 245000000,
+      estimatedCost: 208000000,
+      estimatedMargin: 15.1,
+      bondRequired: false,
+      bondAmount: 0,
+      notes: 'Субподрядный лот. Потребуется мобилизация буровой установки Bauer BG 28.',
+    },
+  ];
+
+  for (const bp of bidPackages) {
+    const res = await post('/portfolio/bid-packages', bp);
+    track('bidPackages', res?.id);
+  }
+  console.log(`  Создано тендерных пакетов: ${created.bidPackages?.length || 0}`);
 }
 
 // ── 5. Тикеты техподдержки ──────────────────────────────────────────────────
@@ -1977,6 +2363,204 @@ async function seedPlanning() {
   console.log('  ✅ Planning seeded (WBS nodes, dependencies, baselines, 10 EVM snapshots, 8 resource allocations, 4 multi-project allocations, 15 work volumes)');
 }
 
+async function seedWorkflows() {
+  console.log('\n=== Бизнес-процессы (Workflow Definitions + Steps + Approval Rules + Approval Instances) ===');
+
+  // 1. Workflow definitions
+  const workflows = [
+    {
+      name: 'Согласование договора',
+      description: 'Процесс согласования нового договора с контрагентом',
+      entityType: 'CONTRACT',
+      isActive: true,
+    },
+    {
+      name: 'Утверждение счёта на оплату',
+      description: 'Проверка и утверждение входящих счетов',
+      entityType: 'INVOICE',
+      isActive: true,
+    },
+    {
+      name: 'Обработка заявки на закупку',
+      description: 'Многоэтапное согласование заявок на закупку материалов',
+      entityType: 'PURCHASE_REQUEST',
+      isActive: true,
+    },
+    {
+      name: 'Утверждение бюджета проекта',
+      description: 'Согласование и утверждение бюджетных корректировок',
+      entityType: 'BUDGET',
+      isActive: false,
+    },
+    {
+      name: 'Согласование дополнительного соглашения',
+      description: 'Процесс согласования изменений к договору',
+      entityType: 'CHANGE_ORDER',
+      isActive: true,
+    },
+  ];
+
+  // Check existing workflows to avoid duplicates
+  const existingWf = await get('/workflow-definitions?size=100');
+  const existingNames = new Set((existingWf?.content || []).map(w => w.name));
+
+  const createdWfIds = [];
+  for (const wf of workflows) {
+    if (existingNames.has(wf.name)) {
+      const existing = (existingWf?.content || []).find(w => w.name === wf.name);
+      if (existing) { createdWfIds.push(existing.id); track('workflows', existing.id); }
+      continue;
+    }
+    const res = await post('/workflow-definitions', wf);
+    if (res?.id) {
+      createdWfIds.push(res.id);
+      track('workflows', res.id);
+    }
+  }
+
+  // 2. Steps for each workflow
+  const stepSets = [
+    // Договор
+    [
+      { name: 'Проверка юристом', fromStatus: 'DRAFT', toStatus: 'LEGAL_REVIEW', requiredRole: 'MANAGER', slaHours: 24, sortOrder: 1 },
+      { name: 'Согласование руководителем', fromStatus: 'LEGAL_REVIEW', toStatus: 'MANAGER_APPROVAL', requiredRole: 'ADMIN', slaHours: 48, sortOrder: 2 },
+      { name: 'Подписание', fromStatus: 'MANAGER_APPROVAL', toStatus: 'SIGNED', requiredRole: 'ADMIN', slaHours: 72, sortOrder: 3 },
+    ],
+    // Счёт
+    [
+      { name: 'Проверка бухгалтером', fromStatus: 'NEW', toStatus: 'ACCOUNTING_CHECK', requiredRole: 'ACCOUNTANT', slaHours: 8, sortOrder: 1 },
+      { name: 'Утверждение финансовым директором', fromStatus: 'ACCOUNTING_CHECK', toStatus: 'APPROVED', requiredRole: 'ADMIN', slaHours: 24, sortOrder: 2 },
+    ],
+    // Закупка
+    [
+      { name: 'Проверка спецификации', fromStatus: 'CREATED', toStatus: 'SPEC_CHECK', requiredRole: 'ENGINEER', slaHours: 16, sortOrder: 1 },
+      { name: 'Согласование бюджета', fromStatus: 'SPEC_CHECK', toStatus: 'BUDGET_APPROVAL', requiredRole: 'ACCOUNTANT', slaHours: 24, sortOrder: 2 },
+      { name: 'Утверждение руководителем', fromStatus: 'BUDGET_APPROVAL', toStatus: 'APPROVED', requiredRole: 'ADMIN', slaHours: 48, sortOrder: 3 },
+      { name: 'Размещение заказа', fromStatus: 'APPROVED', toStatus: 'ORDERED', requiredRole: 'MANAGER', slaHours: 24, sortOrder: 4 },
+    ],
+    // Бюджет
+    [
+      { name: 'Подготовка сметы', fromStatus: 'DRAFT', toStatus: 'ESTIMATION', requiredRole: 'ENGINEER', slaHours: 48, sortOrder: 1 },
+      { name: 'Утверждение', fromStatus: 'ESTIMATION', toStatus: 'APPROVED', requiredRole: 'ADMIN', slaHours: 72, sortOrder: 2 },
+    ],
+    // Доп. соглашение
+    [
+      { name: 'Оценка влияния', fromStatus: 'NEW', toStatus: 'IMPACT_ASSESSMENT', requiredRole: 'ENGINEER', slaHours: 24, sortOrder: 1 },
+      { name: 'Согласование с заказчиком', fromStatus: 'IMPACT_ASSESSMENT', toStatus: 'CLIENT_APPROVAL', requiredRole: 'MANAGER', slaHours: 72, sortOrder: 2 },
+      { name: 'Подписание', fromStatus: 'CLIENT_APPROVAL', toStatus: 'SIGNED', requiredRole: 'ADMIN', slaHours: 48, sortOrder: 3 },
+    ],
+  ];
+
+  for (let i = 0; i < createdWfIds.length && i < stepSets.length; i++) {
+    const steps = stepSets[i].map(s => ({
+      ...s,
+      workflowDefinitionId: createdWfIds[i],
+    }));
+    await request('PUT', `/workflow-definitions/${createdWfIds[i]}/steps`, steps);
+  }
+
+  // 3. Auto-approval rules
+  const rules = [
+    {
+      name: 'Авто-утверждение мелких счетов',
+      description: 'Счета до 50 000 ₽ утверждаются автоматически',
+      entityType: 'INVOICE',
+      conditions: '{"logic":"AND","groups":[{"logic":"AND","conditions":[{"field":"amount","operator":"less_than","value":"50000"}]}]}',
+      autoApproveThreshold: 50000,
+      requiredApprovers: 1,
+      escalationTimeoutHours: 24,
+      isActive: true,
+    },
+    {
+      name: 'Эскалация просроченных договоров',
+      description: 'Если договор не согласован за 5 дней — эскалация руководителю',
+      entityType: 'CONTRACT',
+      conditions: '{"logic":"AND","groups":[{"logic":"AND","conditions":[{"field":"status","operator":"equals","value":"IN_PROGRESS"}]}]}',
+      requiredApprovers: 2,
+      escalationTimeoutHours: 120,
+      isActive: true,
+    },
+    {
+      name: 'Обязательное согласование крупных закупок',
+      description: 'Закупки свыше 500 000 ₽ требуют согласования генерального директора',
+      entityType: 'PURCHASE_REQUEST',
+      conditions: '{"logic":"AND","groups":[{"logic":"AND","conditions":[{"field":"amount","operator":"greater_than","value":"500000"}]}]}',
+      autoApproveThreshold: 500000,
+      requiredApprovers: 3,
+      escalationTimeoutHours: 48,
+      isActive: true,
+    },
+    {
+      name: 'Авто-согласование типовых изменений',
+      description: 'Типовые изменения на сумму до 100 000 ₽',
+      entityType: 'CHANGE_ORDER',
+      conditions: '{"logic":"AND","groups":[{"logic":"AND","conditions":[{"field":"amount","operator":"less_than","value":"100000"}]}]}',
+      autoApproveThreshold: 100000,
+      requiredApprovers: 1,
+      escalationTimeoutHours: 72,
+      isActive: false,
+    },
+  ];
+
+  // Check existing rules to avoid duplicates
+  const existingRules = await get('/approval-rules?size=100');
+  const existingRuleNames = new Set((existingRules?.content || []).map(r => r.name));
+
+  for (const rule of rules) {
+    if (existingRuleNames.has(rule.name)) continue;
+    const res = await post('/approval-rules', rule);
+    if (res?.id) track('approvalRules', res.id);
+  }
+
+  // 4. Approval instances (active approvals in inbox)
+  const instances = [
+    {
+      entityType: 'CONTRACT',
+      entityId: uuid(),
+      entityNumber: 'ДОГ-2026-0042',
+      notes: 'Договор на поставку арматуры — ожидает согласования',
+    },
+    {
+      entityType: 'INVOICE',
+      entityId: uuid(),
+      entityNumber: 'СЧ-2026-0185',
+      notes: 'Счёт от ООО "СтройМонтаж" на 1 250 000 ₽',
+    },
+    {
+      entityType: 'PURCHASE_REQUEST',
+      entityId: uuid(),
+      entityNumber: 'ЗАК-2026-0073',
+      notes: 'Заявка на закупку бетонных блоков — срочная',
+    },
+    {
+      entityType: 'CHANGE_ORDER',
+      entityId: uuid(),
+      entityNumber: 'ДС-2026-0012',
+      notes: 'Дополнительное соглашение по увеличению объёмов',
+    },
+    {
+      entityType: 'INVOICE',
+      entityId: uuid(),
+      entityNumber: 'СЧ-2026-0199',
+      notes: 'Счёт за транспортные услуги — 85 000 ₽',
+    },
+  ];
+
+  // Check existing instances to avoid duplicates
+  const existingInst = await get('/approval-instances/inbox?size=100');
+  const existingEntityNums = new Set((existingInst?.content || []).filter(i => i.status === 'IN_PROGRESS').map(i => i.entityNumber));
+
+  for (const inst of instances) {
+    if (existingEntityNums.has(inst.entityNumber)) continue;
+    const res = await post('/approval-instances', inst);
+    if (res?.id) track('approvalInstances', res.id);
+  }
+
+  const wfCount = createdWfIds.length;
+  const stepCount = stepSets.reduce((sum, set) => sum + set.length, 0);
+  console.log(`  ✅ Workflows seeded (${wfCount} definitions, ${stepCount} steps, ${rules.length} rules, ${instances.length} instances)`);
+}
+
 async function main() {
   console.log('╔══════════════════════════════════════════════════════════╗');
   console.log('║  ПРИВОД — Seed демо-данных по всем модулям             ║');
@@ -1997,6 +2581,8 @@ async function main() {
   // Проектное управление
   await seedTasksAndStages();
   await seedCrmLeads();
+  await seedOpportunities();
+  await seedBidPackages();
 
   // Документы и контракты
   await seedContracts();
@@ -2048,6 +2634,9 @@ async function main() {
 
   // Администрирование / Безопасность
   await seedSecurity();
+
+  // Бизнес-процессы / Согласования
+  await seedWorkflows();
 
   // Итоги
   console.log('\n══════════════════════════════════════════════════════════');

@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 
 // Portfolio
 const OpportunitiesPage = lazy(() => import('@/modules/portfolio/OpportunitiesPage'));
@@ -111,6 +111,7 @@ export function portfolioRoutes() {
       <Route path="portfolio/bid-comparison" element={<BidComparisonPage />} />
 
       {/* CRM */}
+      <Route path="crm" element={<Navigate to="/crm/dashboard" replace />} />
       <Route path="crm/leads" element={<CrmLeadListPage />} />
       <Route path="crm/leads/new" element={<CrmLeadFormPage />} />
       <Route path="crm/leads/:id" element={<CrmLeadDetailPage />} />

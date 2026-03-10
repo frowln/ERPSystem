@@ -20,7 +20,9 @@ public enum NotificationType {
     DOCUMENT_UPLOADED("Документ загружен"),
     APPROVAL_REQUIRED("Требуется согласование"),
     BUDGET_THRESHOLD("Порог бюджета"),
-    SAFETY_ALERT("Предупреждение безопасности");
+    SAFETY_ALERT("Предупреждение безопасности"),
+    MESSAGE("Сообщение"),
+    CALL("Звонок");
 
     private final String displayName;
 }

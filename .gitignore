@@ -52,3 +52,18 @@ ui_audit/
 frontend/e2e/screenshots/
 frontend/e2e/visual/*.png
 frontend/e2e/visual/*-snapshots/
+
+# --- Data / Uploads (runtime artifacts, not source) ---
+backend/data/
+
+# --- Audit / Analysis (generated reports, not source) ---
+.audit_venv/
+equivalence_audit/
+.backend_bootrun.log
+.backend_bootrun.pid
+
+# --- UX audit docs ---
+UX_UI_Audit_Report_Privod.*
+
+# --- Claude Code (user-specific) ---
+.claude/

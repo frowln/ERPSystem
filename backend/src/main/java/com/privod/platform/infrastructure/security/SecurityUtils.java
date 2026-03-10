@@ -5,6 +5,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,6 +48,14 @@ public final class SecurityUtils {
     public static UUID requireCurrentOrganizationId() {
         return getCurrentOrganizationId()
                 .orElseThrow(() -> new AccessDeniedException("Organization context is required"));
+    }
+
+    public static List<String> getCurrentUserRoles() {
+        return getCurrentUserDetails()
+                .map(details -> details.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList())
+                .orElse(Collections.emptyList());
     }
 
     public static boolean hasRole(String roleCode) {

@@ -54,6 +54,7 @@ public class CounterpartyService {
         Counterparty counterparty = Counterparty.builder()
                 .organizationId(organizationId)
                 .name(request.name())
+                .shortName(request.shortName())
                 .inn(request.inn())
                 .kpp(request.kpp())
                 .ogrn(request.ogrn())
@@ -62,8 +63,17 @@ public class CounterpartyService {
                 .bankAccount(request.bankAccount())
                 .bik(request.bik())
                 .correspondentAccount(request.correspondentAccount())
+                .bankName(request.bankName())
+                .contactPerson(request.contactPerson())
+                .phone(request.phone())
+                .email(request.email())
+                .website(request.website())
                 .supplier(request.supplier())
                 .customer(request.customer())
+                .contractor(request.contractor())
+                .subcontractor(request.subcontractor())
+                .designer(request.designer())
+                .notes(request.notes())
                 .active(true)
                 .build();
 
@@ -88,6 +98,7 @@ public class CounterpartyService {
         }
 
         if (request.name() != null) counterparty.setName(request.name());
+        if (request.shortName() != null) counterparty.setShortName(request.shortName());
         if (request.inn() != null) counterparty.setInn(request.inn());
         if (request.kpp() != null) counterparty.setKpp(request.kpp());
         if (request.ogrn() != null) counterparty.setOgrn(request.ogrn());
@@ -96,8 +107,17 @@ public class CounterpartyService {
         if (request.bankAccount() != null) counterparty.setBankAccount(request.bankAccount());
         if (request.bik() != null) counterparty.setBik(request.bik());
         if (request.correspondentAccount() != null) counterparty.setCorrespondentAccount(request.correspondentAccount());
+        if (request.bankName() != null) counterparty.setBankName(request.bankName());
+        if (request.contactPerson() != null) counterparty.setContactPerson(request.contactPerson());
+        if (request.phone() != null) counterparty.setPhone(request.phone());
+        if (request.email() != null) counterparty.setEmail(request.email());
+        if (request.website() != null) counterparty.setWebsite(request.website());
         counterparty.setSupplier(request.supplier());
         counterparty.setCustomer(request.customer());
+        counterparty.setContractor(request.contractor());
+        counterparty.setSubcontractor(request.subcontractor());
+        counterparty.setDesigner(request.designer());
+        if (request.notes() != null) counterparty.setNotes(request.notes());
 
         counterparty = counterpartyRepository.save(counterparty);
         auditService.logUpdate("Counterparty", counterparty.getId(), "multiple", null, null);

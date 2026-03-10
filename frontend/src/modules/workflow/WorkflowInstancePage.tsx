@@ -13,37 +13,22 @@ import { t } from '@/i18n';
 import type { AutomationExecution, ExecutionStatus } from './types';
 
 const executionStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple'> = {
-  SUCCESS: 'green',
-  FAILURE: 'red',
+  COMPLETED: 'green',
+  FAILED: 'red',
   SKIPPED: 'gray',
   PENDING: 'yellow',
+  RUNNING: 'blue',
 };
 
 const getExecutionStatusLabels = (): Record<string, string> => ({
-  SUCCESS: t('workflow.execStatusSuccess'),
-  FAILURE: t('workflow.execStatusFailure'),
+  COMPLETED: t('workflow.execStatusSuccess'),
+  FAILED: t('workflow.execStatusFailure'),
   SKIPPED: t('workflow.execStatusSkipped'),
   PENDING: t('workflow.execStatusPending'),
+  RUNNING: t('workflow.execStatusRunning'),
 });
 
-const getTriggerTypeLabels = (): Record<string, string> => ({
-  STATUS_CHANGE: t('workflow.triggerStatusChange'),
-  FIELD_UPDATE: t('workflow.triggerFieldUpdate'),
-  TIME_BASED: t('workflow.triggerTimeBased'),
-  APPROVAL: t('workflow.triggerApproval'),
-  CREATION: t('workflow.triggerCreation'),
-});
-
-const getActionTypeLabels = (): Record<string, string> => ({
-  SEND_NOTIFICATION: t('workflow.actionNotification'),
-  ASSIGN_ROLE: t('workflow.actionAssignRole'),
-  UPDATE_STATUS: t('workflow.actionUpdateStatus'),
-  CREATE_TASK: t('workflow.actionCreateTask'),
-  SEND_EMAIL: t('workflow.actionSendEmail'),
-  WEBHOOK: 'Webhook',
-});
-
-type TabId = 'all' | 'SUCCESS' | 'failure' | 'PENDING';
+type TabId = 'all' | 'COMPLETED' | 'FAILED' | 'PENDING';
 
 const WorkflowInstancePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
@@ -58,22 +43,20 @@ const WorkflowInstancePage: React.FC = () => {
   const executions = data?.content ?? [];
 
   const executionStatusLabels = getExecutionStatusLabels();
-  const triggerTypeLabels = getTriggerTypeLabels();
-  const actionTypeLabels = getActionTypeLabels();
 
   const filtered = useMemo(() => {
     let result = executions;
-    if (activeTab === 'SUCCESS') result = result.filter((e) => e.status === 'SUCCESS');
-    else if (activeTab === 'failure') result = result.filter((e) => e.status === 'FAILURE');
-    else if (activeTab === 'PENDING') result = result.filter((e) => e.status === 'PENDING');
+    if (activeTab === 'COMPLETED') result = result.filter((e) => e.executionStatus === 'COMPLETED');
+    else if (activeTab === 'FAILED') result = result.filter((e) => e.executionStatus === 'FAILED');
+    else if (activeTab === 'PENDING') result = result.filter((e) => e.executionStatus === 'PENDING');
 
-    if (statusFilter) result = result.filter((e) => e.status === statusFilter);
+    if (statusFilter) result = result.filter((e) => e.executionStatus === statusFilter);
     if (search) {
       const lower = search.toLowerCase();
       result = result.filter(
         (e) =>
-          e.ruleName.toLowerCase().includes(lower) ||
-          e.entityId.toLowerCase().includes(lower),
+          (e.entityType ?? '').toLowerCase().includes(lower) ||
+          (e.entityId ?? '').toLowerCase().includes(lower),
       );
     }
     return result;
@@ -81,32 +64,36 @@ const WorkflowInstancePage: React.FC = () => {
 
   const counts = useMemo(() => ({
     all: executions.length,
-    success: executions.filter((e) => e.status === 'SUCCESS').length,
-    failure: executions.filter((e) => e.status === 'FAILURE').length,
-    pending: executions.filter((e) => e.status === 'PENDING').length,
+    completed: executions.filter((e) => e.executionStatus === 'COMPLETED').length,
+    failed: executions.filter((e) => e.executionStatus === 'FAILED').length,
+    pending: executions.filter((e) => e.executionStatus === 'PENDING').length,
   }), [executions]);
 
   const avgDuration = useMemo(() => {
-    const completed = executions.filter((e) => e.durationMs);
+    const completed = executions.filter((e) => e.startedAt && e.completedAt);
     if (completed.length === 0) return 0;
-    return completed.reduce((sum, e) => sum + (e.durationMs ?? 0), 0) / completed.length;
+    return completed.reduce((sum, e) => {
+      const start = new Date(e.startedAt).getTime();
+      const end = new Date(e.completedAt!).getTime();
+      return sum + (end - start);
+    }, 0) / completed.length;
   }, [executions]);
 
   const columns = useMemo<ColumnDef<AutomationExecution, unknown>[]>(
     () => [
       {
-        accessorKey: 'ruleName',
-        header: t('workflow.colRule'),
-        size: 280,
+        accessorKey: 'entityType',
+        header: t('workflow.colEntityType'),
+        size: 160,
         cell: ({ row }) => (
           <div>
-            <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[260px]">{row.original.ruleName}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">ID: {row.original.entityId}</p>
+            <p className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.entityType}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 truncate max-w-[140px]">ID: {row.original.entityId}</p>
           </div>
         ),
       },
       {
-        accessorKey: 'status',
+        accessorKey: 'executionStatus',
         header: t('workflow.colStatus'),
         size: 120,
         cell: ({ getValue }) => (
@@ -118,28 +105,14 @@ const WorkflowInstancePage: React.FC = () => {
         ),
       },
       {
-        accessorKey: 'triggerType',
-        header: t('workflow.colTrigger'),
-        size: 140,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600">{triggerTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'actionType',
-        header: t('workflow.colAction'),
-        size: 150,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600">{actionTypeLabels[getValue<string>()] ?? getValue<string>()}</span>
-        ),
-      },
-      {
-        accessorKey: 'durationMs',
+        id: 'duration',
         header: t('workflow.colDuration'),
         size: 100,
-        cell: ({ getValue }) => {
-          const ms = getValue<number | undefined>();
-          return <span className="font-mono text-xs tabular-nums">{ms != null ? `${ms} ${t('workflow.msAbbrev')}` : '---'}</span>;
+        cell: ({ row }) => {
+          const e = row.original;
+          if (!e.startedAt || !e.completedAt) return <span className="text-neutral-400">---</span>;
+          const ms = new Date(e.completedAt).getTime() - new Date(e.startedAt).getTime();
+          return <span className="font-mono text-xs tabular-nums">{ms} {t('workflow.msAbbrev')}</span>;
         },
       },
       {
@@ -147,7 +120,7 @@ const WorkflowInstancePage: React.FC = () => {
         header: t('workflow.colStartedAt'),
         size: 160,
         cell: ({ getValue }) => (
-          <span className="tabular-nums text-sm">{formatDateTime(getValue<string>())}</span>
+          <span className="tabular-nums text-sm">{getValue<string>() ? formatDateTime(getValue<string>()) : '---'}</span>
         ),
       },
       {
@@ -160,7 +133,7 @@ const WorkflowInstancePage: React.FC = () => {
         },
       },
     ],
-    [executionStatusLabels, triggerTypeLabels, actionTypeLabels],
+    [executionStatusLabels],
   );
 
   return (
@@ -175,8 +148,8 @@ const WorkflowInstancePage: React.FC = () => {
         ]}
         tabs={[
           { id: 'all', label: t('workflow.tabAll'), count: counts.all },
-          { id: 'SUCCESS', label: t('workflow.tabSuccess'), count: counts.success },
-          { id: 'failure', label: t('workflow.tabFailure'), count: counts.failure },
+          { id: 'COMPLETED', label: t('workflow.tabSuccess'), count: counts.completed },
+          { id: 'FAILED', label: t('workflow.tabFailure'), count: counts.failed },
           { id: 'PENDING', label: t('workflow.tabPending'), count: counts.pending },
         ]}
         activeTab={activeTab}
@@ -185,8 +158,8 @@ const WorkflowInstancePage: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <MetricCard icon={<Activity size={18} />} label={t('workflow.metricTotalExecutions')} value={counts.all} />
-        <MetricCard icon={<CheckCircle2 size={18} />} label={t('workflow.tabSuccess')} value={counts.success} trend={{ direction: 'up', value: `${((counts.success / Math.max(counts.all, 1)) * 100).toFixed(0)}%` }} />
-        <MetricCard icon={<XCircle size={18} />} label={t('workflow.tabFailure')} value={counts.failure} trend={{ direction: counts.failure > 0 ? 'down' : 'neutral', value: counts.failure > 0 ? t('workflow.needAttention') : t('workflow.noErrors') }} />
+        <MetricCard icon={<CheckCircle2 size={18} />} label={t('workflow.tabSuccess')} value={counts.completed} trend={{ direction: 'up', value: `${((counts.completed / Math.max(counts.all, 1)) * 100).toFixed(0)}%` }} />
+        <MetricCard icon={<XCircle size={18} />} label={t('workflow.tabFailure')} value={counts.failed} trend={{ direction: counts.failed > 0 ? 'down' : 'neutral', value: counts.failed > 0 ? t('workflow.needAttention') : t('workflow.noErrors') }} />
         <MetricCard icon={<Clock size={18} />} label={t('workflow.metricAvgTime')} value={`${avgDuration.toFixed(0)} ${t('workflow.msAbbrev')}`} />
       </div>
 

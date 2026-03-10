@@ -192,7 +192,7 @@ export function projectRoutes() {
       {/* Counterparties */}
       <Route path="counterparties" element={<CounterpartyListPage />} />
       <Route path="counterparties/new" element={<CounterpartyFormPage />} />
-      <Route path="counterparties/:id" element={<CounterpartyFormPage />} />
+      <Route path="counterparties/:id" element={<CounterpartyDetailPage />} />
       <Route path="counterparties/:id/edit" element={<CounterpartyFormPage />} />
 
       {/* Contracts */}
@@ -321,7 +321,7 @@ export function projectRoutes() {
       <Route path="bid-packages/:id" element={<BidPackageDetailPage />} />
       <Route path="workflow/approval-inbox" element={<ApprovalInboxPage />} />
       <Route path="estimates/ocr-scanner" element={<OcrScannerPage />} />
-      <Route path="counterparties/:id/detail" element={<CounterpartyDetailPage />} />
+      {/* counterparties/:id/detail moved to counterparties/:id */}
       <Route path="documents/drawing-viewer" element={<DrawingViewerPage />} />
     </>
   );

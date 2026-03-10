@@ -113,6 +113,7 @@ interface BackendChannel {
   otherUserId?: string;
   otherUserName?: string;
   otherUserAvatarUrl?: string;
+  otherUserAvailabilityStatus?: string;
 }
 
 const mapBackendMessage = (message: BackendMessage): Message => ({
@@ -177,6 +178,7 @@ const mapBackendChannel = (channel: BackendChannel): Channel => ({
   otherUserId: channel.otherUserId,
   otherUserName: channel.otherUserName,
   otherUserAvatarUrl: channel.otherUserAvatarUrl,
+  otherUserStatus: (channel.otherUserAvailabilityStatus as UserStatus) ?? undefined,
 });
 
 export interface FavoriteMessage {
@@ -438,7 +440,8 @@ export const messagingApi = {
     formData.append('entityType', 'channel_message');
     formData.append('entityId', channelId);
     const response = await apiClient.post<FileAttachmentResponse>('/attachments/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
+      timeout: 120000,
     });
     return response.data;
   },

@@ -16,6 +16,8 @@ import com.privod.platform.modules.support.web.dto.SupportTicketResponse;
 import com.privod.platform.modules.support.web.dto.TicketCommentResponse;
 import com.privod.platform.modules.support.web.dto.TicketDashboardResponse;
 import com.privod.platform.modules.support.web.dto.UpdateSupportTicketRequest;
+import com.privod.platform.modules.notification.domain.NotificationType;
+import com.privod.platform.modules.notification.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,7 @@ public class SupportTicketService {
     private final TicketCommentRepository commentRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public Page<SupportTicketResponse> listTickets(TicketStatus status, Pageable pageable) {
@@ -184,6 +187,23 @@ public class SupportTicketService {
         auditService.logStatusChange("SupportTicket", ticket.getId(),
                 oldStatus.name(), TicketStatus.RESOLVED.name());
 
+        // Notify the reporter that their ticket has been resolved
+        if (ticket.getReporterId() != null) {
+            try {
+                notificationService.send(
+                        ticket.getReporterId(),
+                        "Заявка решена: " + ticket.getCode(),
+                        "Ваша заявка «" + ticket.getSubject() + "» была решена",
+                        NotificationType.SUCCESS,
+                        "SupportTicket",
+                        ticket.getId(),
+                        "/support/tickets/" + ticket.getId()
+                );
+            } catch (Exception e) {
+                log.warn("Failed to send resolve notification for ticket {}: {}", id, e.getMessage());
+            }
+        }
+
         log.info("Support ticket resolved: {} ({})", ticket.getCode(), ticket.getId());
         return SupportTicketResponse.fromEntity(ticket);
     }
@@ -238,7 +258,7 @@ public class SupportTicketService {
     public TicketCommentResponse addComment(UUID ticketId, CreateTicketCommentRequest request) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         UUID currentUserId = SecurityUtils.requireCurrentUserId();
-        getTicketOrThrow(ticketId, organizationId);
+        SupportTicket ticket = getTicketOrThrow(ticketId, organizationId);
         validateUserTenant(currentUserId, organizationId);
 
         TicketComment comment = TicketComment.builder()
@@ -251,6 +271,48 @@ public class SupportTicketService {
 
         comment = commentRepository.save(comment);
         auditService.logCreate("TicketComment", comment.getId());
+
+        // Send notification to the ticket reporter when a non-internal comment is added
+        if (!request.isInternal() && ticket.getReporterId() != null
+                && !currentUserId.equals(ticket.getReporterId())) {
+            try {
+                String authorName = userRepository.findById(currentUserId)
+                        .map(User::getFullName)
+                        .orElse("Техподдержка");
+                notificationService.send(
+                        ticket.getReporterId(),
+                        "Ответ по заявке " + ticket.getCode(),
+                        authorName + " ответил на вашу заявку «" + ticket.getSubject() + "»",
+                        NotificationType.COMMENT_ADDED,
+                        "SupportTicket",
+                        ticket.getId(),
+                        "/support/tickets/" + ticket.getId()
+                );
+            } catch (Exception e) {
+                log.warn("Failed to send notification for ticket comment {}: {}", ticketId, e.getMessage());
+            }
+        }
+
+        // Also notify assignee if comment is from the reporter
+        if (!request.isInternal() && ticket.getAssigneeId() != null
+                && !currentUserId.equals(ticket.getAssigneeId())) {
+            try {
+                String authorName = userRepository.findById(currentUserId)
+                        .map(User::getFullName)
+                        .orElse("Пользователь");
+                notificationService.send(
+                        ticket.getAssigneeId(),
+                        "Новый комментарий: " + ticket.getCode(),
+                        authorName + " оставил комментарий к заявке «" + ticket.getSubject() + "»",
+                        NotificationType.COMMENT_ADDED,
+                        "SupportTicket",
+                        ticket.getId(),
+                        "/support/tickets/" + ticket.getId()
+                );
+            } catch (Exception e) {
+                log.warn("Failed to send notification for ticket comment {}: {}", ticketId, e.getMessage());
+            }
+        }
 
         log.info("Comment added to ticket {}: ({})", ticketId, comment.getId());
         return TicketCommentResponse.fromEntity(comment);

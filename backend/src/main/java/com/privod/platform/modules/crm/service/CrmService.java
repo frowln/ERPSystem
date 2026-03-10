@@ -156,9 +156,15 @@ public class CrmService {
             lead.setStatus(request.status());
             if (request.status() == LeadStatus.WON) {
                 lead.setWonDate(LocalDate.now());
+                lead.setProbability(100);
+                CrmStage wonStage = stageRepository.findWonStage(organizationId).orElse(null);
+                if (wonStage != null) lead.setStageId(wonStage.getId());
             }
-            if (request.status() == LeadStatus.LOST && request.lostReason() != null) {
-                lead.setLostReason(request.lostReason());
+            if (request.status() == LeadStatus.LOST) {
+                lead.setProbability(0);
+                if (request.lostReason() != null) lead.setLostReason(request.lostReason());
+                CrmStage lostStage = stageRepository.findLostStage(organizationId).orElse(null);
+                if (lostStage != null) lead.setStageId(lostStage.getId());
             }
             auditService.logStatusChange("CrmLead", lead.getId(), oldStatus.name(), request.status().name());
         }
@@ -246,11 +252,13 @@ public class CrmService {
         lead.setStatus(LeadStatus.WON);
         lead.setWonDate(LocalDate.now());
         lead.setProbability(100);
+        CrmStage wonStage = stageRepository.findWonStage(organizationId).orElse(null);
+        if (wonStage != null) lead.setStageId(wonStage.getId());
         lead = leadRepository.save(lead);
         auditService.logStatusChange("CrmLead", lead.getId(), oldStatus.name(), LeadStatus.WON.name());
 
         log.info("CRM lead marked as won: {} ({})", lead.getName(), lead.getId());
-        return CrmLeadResponse.fromEntity(lead);
+        return enrichLeadResponse(lead);
     }
 
     @Transactional
@@ -266,11 +274,13 @@ public class CrmService {
         lead.setStatus(LeadStatus.LOST);
         lead.setLostReason(reason);
         lead.setProbability(0);
+        CrmStage lostStage = stageRepository.findLostStage(organizationId).orElse(null);
+        if (lostStage != null) lead.setStageId(lostStage.getId());
         lead = leadRepository.save(lead);
         auditService.logStatusChange("CrmLead", lead.getId(), oldStatus.name(), LeadStatus.LOST.name());
 
         log.info("CRM lead marked as lost: {} - {} ({})", lead.getName(), reason, lead.getId());
-        return CrmLeadResponse.fromEntity(lead);
+        return enrichLeadResponse(lead);
     }
 
     @Transactional

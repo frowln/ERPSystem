@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Mic, Square, Play, Pause, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 
@@ -87,7 +88,7 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
         setDuration((prev) => prev + 1);
       }, 1000);
     } catch {
-      // Microphone access denied -- ignore
+      toast.error(t('messaging.micPermissionDenied'));
     }
   }, [cleanup]);
 

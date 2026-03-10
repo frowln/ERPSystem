@@ -253,7 +253,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           type="file"
           className="hidden"
           onChange={handleFileSelect}
-          accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.7z,.dwg,.ifc"
+          accept="*/*"
         />
 
         {/* Attach button */}

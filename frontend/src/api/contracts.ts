@@ -26,17 +26,27 @@ export interface ContractDashboard {
 export interface Counterparty {
   id: string;
   name: string;
+  shortName?: string;
   inn: string;
-  kpp: string;
-  ogrn: string;
-  legalAddress: string;
-  actualAddress: string;
-  bankAccount: string;
-  bik: string;
-  correspondentAccount: string;
+  kpp?: string;
+  ogrn?: string;
+  legalAddress?: string;
+  actualAddress?: string;
+  bankAccount?: string;
+  bik?: string;
+  correspondentAccount?: string;
+  bankName?: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
   supplier: boolean;
   customer: boolean;
+  contractor: boolean;
+  subcontractor: boolean;
+  designer: boolean;
   active: boolean;
+  notes?: string;
   createdAt: string;
 }
 

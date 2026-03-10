@@ -1,0 +1,217 @@
+# =============================================================================
+# PRIVOD NEXT -- Demo Environment (one-command setup with pre-seeded data)
+#
+# Usage:
+#   docker compose -f docker-compose.demo.yml up -d --build
+#   ./scripts/demo-setup.sh          # full setup + seed
+#
+# Ports:
+#   3000  - Frontend (Nginx + React SPA)
+#   8080  - Backend API (Spring Boot)
+#   9001  - MinIO Console (S3 file browser)
+#   15432 - PostgreSQL (direct access)
+#   16379 - Redis (direct access)
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 -- demo database
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: privod_demo_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: privod2_demo
+      POSTGRES_USER: privod
+      POSTGRES_PASSWORD: demo_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "15432:5432"
+    volumes:
+      - demo_pgdata:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/01-init-extensions.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U privod -d privod2_demo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=128MB"
+      - "-c"
+      - "work_mem=8MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+      - "-c"
+      - "max_connections=100"
+    networks:
+      - privod_demo
+
+  # ---------------------------------------------------------------------------
+  # Redis 7 -- caching and sessions
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: privod_demo_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --maxmemory 64mb
+      --maxmemory-policy allkeys-lru
+      --appendonly no
+      --save ""
+    ports:
+      - "16379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - privod_demo
+
+  # ---------------------------------------------------------------------------
+  # MinIO -- S3-compatible object storage for file uploads
+  # ---------------------------------------------------------------------------
+  minio:
+    image: minio/minio:latest
+    container_name: privod_demo_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - demo_minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - privod_demo
+
+  # ---------------------------------------------------------------------------
+  # MinIO Init -- create default bucket on startup
+  # ---------------------------------------------------------------------------
+  minio-init:
+    image: minio/mc:latest
+    container_name: privod_demo_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set privod http://minio:9000 minioadmin minioadmin;
+      mc mb --ignore-existing privod/privod-uploads;
+      mc anonymous set download privod/privod-uploads/public;
+      echo 'MinIO bucket initialized';
+      exit 0;
+      "
+    networks:
+      - privod_demo
+
+  # ---------------------------------------------------------------------------
+  # Backend -- Java 21 / Spring Boot 3.4 (demo profile)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: privod_demo_backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: demo
+      # Datasource
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/privod2_demo
+      SPRING_DATASOURCE_USERNAME: privod
+      SPRING_DATASOURCE_PASSWORD: demo_password
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 10
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 2
+      # JPA / Hibernate
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # Redis
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      # JWT
+      APP_JWT_SECRET: demo-secret-key-not-for-production-use-change-me-in-prod-1234567890
+      APP_JWT_EXPIRATION_MS: 86400000
+      # CORS
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+      # MinIO / S3
+      APP_STORAGE_ENDPOINT: http://minio:9000
+      APP_STORAGE_ACCESS_KEY: minioadmin
+      APP_STORAGE_SECRET_KEY: minioadmin
+      APP_STORAGE_BUCKET: privod-uploads
+      # Mail (disabled in demo)
+      SPRING_MAIL_HOST: localhost
+      SPRING_MAIL_PORT: 25
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+      # JVM
+      JAVA_OPTS: >-
+        -Xms256m -Xmx512m
+        -XX:+UseG1GC
+        -XX:+UseStringDeduplication
+        -XX:MaxMetaspaceSize=192m
+        -XX:+UseContainerSupport
+        -Djava.security.egd=file:/dev/./urandom
+        -Dspring.jmx.enabled=false
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    networks:
+      - privod_demo
+
+  # ---------------------------------------------------------------------------
+  # Frontend -- React 19 production build served by Nginx
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: privod_demo_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - privod_demo
+
+# =============================================================================
+# Volumes (named, demo-scoped)
+# =============================================================================
+volumes:
+  demo_pgdata:
+    name: privod_demo_pgdata
+  demo_minio:
+    name: privod_demo_minio
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  privod_demo:
+    name: privod_demo
+    driver: bridge

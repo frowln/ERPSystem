@@ -12,9 +12,7 @@ import {
   FileText,
   Phone,
   Video,
-  Forward,
   Link2,
-  Users,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
@@ -34,7 +32,6 @@ import { DateSeparator, shouldShowDateSeparator } from '@/components/DateSeparat
 import { TypingIndicator } from '@/components/TypingIndicator';
 import { ReplyQuote } from '@/components/ReplyQuote';
 import { ForwardModal } from '@/components/ForwardModal';
-import { VoiceRecorder } from '@/components/VoiceRecorder';
 import { ImageLightbox } from '@/components/ImageLightbox';
 import CallDialog, { type CallDialogMode } from '@/components/CallDialog';
 import type { CallSession } from '@/api/calls';
@@ -48,8 +45,6 @@ import { Skeleton } from '@/design-system/components/Skeleton';
 import toast from 'react-hot-toast';
 
 /* ─── Image MIME types for inline preview ─── */
-const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-const isImageAttachment = (mimeType: string) => IMAGE_MIME_TYPES.includes(mimeType);
 
 /* ─── Component ─── */
 const MessagingPage: React.FC = () => {
@@ -186,6 +181,11 @@ const MessagingPage: React.FC = () => {
   });
 
   // Listen for incoming call signals via WebSocket
+  const activeCallIdRef = React.useRef(activeCallId);
+  const callDialogModeRef = React.useRef(callDialogMode);
+  activeCallIdRef.current = activeCallId;
+  callDialogModeRef.current = callDialogMode;
+
   useEffect(() => {
     if (!user) return;
     const sub = wsClient.subscribeRaw<{
@@ -196,8 +196,9 @@ const MessagingPage: React.FC = () => {
       callType?: string;
       callerName?: string;
     }>('/user/queue/signal', (signal) => {
-      if (signal.type === 'call-invite' && signal.toUserId === user.id && !activeCallId) {
+      if (signal.type === 'call-invite' && signal.toUserId === user.id && !activeCallIdRef.current) {
         // Incoming call — load the session and show the dialog
+        notificationSounds.playCallRing();
         callsApi.list().then((calls) => {
           const session = calls.find((c) => c.id === signal.callId);
           if (session && session.status !== 'ENDED' && session.status !== 'CANCELLED') {
@@ -206,12 +207,26 @@ const MessagingPage: React.FC = () => {
             setCallDialogMode('ringing-incoming');
           }
         }).catch(() => { /* ignore */ });
+      } else if (signal.type === 'call-accept' && signal.callId === activeCallIdRef.current) {
+        // Someone accepted — transition to active and refresh session
+        callsApi.listActive().then((calls) => {
+          const session = calls.find((c) => c.id === signal.callId);
+          if (session) {
+            setActiveCallSession(session);
+            setCallDialogMode('active');
+          }
+        }).catch(() => {
+          // Fallback: just transition to active
+          setCallDialogMode('active');
+        });
+      } else if (signal.type === 'call-end' && signal.callId === activeCallIdRef.current) {
+        setCallDialogMode('ended');
       }
     });
     return () => sub.unsubscribe();
-  }, [user, activeCallId]);
+  }, [user]);
 
-  // Auto-transition from ringing-outgoing to active when participants join
+  // Fallback polling: auto-transition from ringing-outgoing to active
   useEffect(() => {
     if (!activeCallId || callDialogMode !== 'ringing-outgoing') return;
     const interval = setInterval(async () => {
@@ -223,7 +238,7 @@ const MessagingPage: React.FC = () => {
           setCallDialogMode('active');
         }
       } catch { /* ignore */ }
-    }, 3000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [activeCallId, callDialogMode]);
 
@@ -233,6 +248,17 @@ const MessagingPage: React.FC = () => {
       .flatMap((m) => m.attachments.map((att) => ({ ...att, authorName: m.authorName, createdAt: m.createdAt })))
       .slice(0, 20);
   }, [currentMessages]);
+
+  /* ─── WebSocket: Real-time message push ─── */
+  useEffect(() => {
+    if (!activeChannelId) return;
+    const sub = wsClient.subscribeToChannelMessages(activeChannelId, () => {
+      // Instantly refresh messages when a new message arrives via WebSocket
+      queryClient.invalidateQueries({ queryKey: ['messaging-messages', activeChannelId] });
+      queryClient.invalidateQueries({ queryKey: ['messaging-channels'] });
+    });
+    return () => sub.unsubscribe();
+  }, [activeChannelId, queryClient]);
 
   /* ─── WebSocket: Typing indicator ─── */
   useEffect(() => {
@@ -266,8 +292,16 @@ const MessagingPage: React.FC = () => {
 
   /* ─── Mark messages as read when entering channel ─── */
   useEffect(() => {
-    if (!activeChannelId || !user?.id) return;
-    wsClient.publish('/app/read', { channelId: activeChannelId, userId: user.id, status: 'read' });
+    if (!activeChannelId || !user?.id || currentMessages.length === 0) return;
+    // Find the last message from another user and mark everything as read
+    const lastMsg = currentMessages[currentMessages.length - 1];
+    if (!lastMsg) return;
+    wsClient.publish('/app/read', {
+      channelId: activeChannelId,
+      userId: user.id,
+      messageId: lastMsg.id,
+      status: 'read',
+    });
   }, [activeChannelId, user?.id, currentMessages.length]);
 
   /* ─── Notification sounds ─── */
@@ -312,24 +346,6 @@ const MessagingPage: React.FC = () => {
       setTimeout(() => { el.classList.remove('bg-yellow-50', 'dark:bg-yellow-900/20'); }, 2000);
     }
   }, []);
-
-  /* ─── Render @mentions as highlighted spans ─── */
-  const renderContent = useCallback((text: string) => {
-    const parts = text.split(/(@\S+)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith('@')) {
-        return (
-          <span key={i} className="text-primary-600 dark:text-primary-400 font-medium bg-primary-50 dark:bg-primary-900/30 rounded px-0.5">
-            {part}
-          </span>
-        );
-      }
-      return <React.Fragment key={i}>{part}</React.Fragment>;
-    });
-  }, []);
-
-  /* ─── Total unread for sidebar badge ─── */
-  const totalUnread = useMemo(() => channels.reduce((sum, ch) => sum + (ch.unreadCount ?? 0), 0), [channels]);
 
   type SendMessageVars = { channelId: string; content: string; parentMessageId?: string | null };
   type SendMessageContext = { previous: Message[]; optimisticId: string };
@@ -567,14 +583,7 @@ const MessagingPage: React.FC = () => {
     [currentMessages],
   );
 
-  const handleOpenThread = useCallback(
-    (messageId: string) => {
-      setActiveThreadMessageId(messageId);
-    },
-    [setActiveThreadMessageId],
-  );
-
-  /* (A) handleReact -- open emoji picker, then call API */
+  /* handleReact -- open emoji picker, then call API */
   const handleReact = useCallback((messageId: string) => {
     setEmojiPickerMessageId((prev) => (prev === messageId ? null : messageId));
   }, []);
@@ -705,7 +714,7 @@ const MessagingPage: React.FC = () => {
           title: callType === 'VIDEO' ? t('calls.quickVideoCall') : t('calls.quickAudioCall'),
           inviteeIds: activeChannel.type === 'direct' && activeChannel.otherUserId
             ? [activeChannel.otherUserId]
-            : undefined,
+            : channelMembers.filter((m) => m.userId !== user.id).map((m) => m.userId),
         });
         setActiveCallId(session.id);
         setActiveCallSession(session);
@@ -1024,7 +1033,7 @@ const MessagingPage: React.FC = () => {
                     </div>
                   ) : (
                     filteredMessages.map((message, idx) => (
-                      <div key={message.id} className="relative">
+                      <div key={message.id} id={`msg-${message.id}`} className="relative transition-colors duration-500">
                         {/* Date separator between messages on different days */}
                         {shouldShowDateSeparator(
                           message.createdAt,
@@ -1032,6 +1041,21 @@ const MessagingPage: React.FC = () => {
                         ) && (
                           <DateSeparator date={message.createdAt} />
                         )}
+
+                        {/* Reply quote reference (if this message is a reply) */}
+                        {message.parentMessageId && (() => {
+                          const parent = currentMessages.find((m) => m.id === message.parentMessageId);
+                          return parent ? (
+                            <button
+                              onClick={() => scrollToMessage(parent.id)}
+                              className="ml-14 mb-0.5 flex items-center gap-1.5 text-xs text-neutral-400 hover:text-primary-500 transition-colors"
+                            >
+                              <span className="w-3 border-t border-l border-neutral-300 dark:border-neutral-600 h-2 rounded-tl" />
+                              <span className="font-medium">{parent.authorName}</span>
+                              <span className="truncate max-w-[200px]">{parent.content}</span>
+                            </button>
+                          ) : null;
+                        })()}
 
                         {/* Inline edit mode */}
                         {editingMessageId === message.id ? (
@@ -1088,25 +1112,24 @@ const MessagingPage: React.FC = () => {
                             </div>
                           </div>
                         ) : (
-                          <MessageBubble
-                            message={message}
-                            onReply={(msgId) => {
-                              const msg = currentMessages.find((m) => m.id === msgId);
-                              if (msg) setReplyToMessage(msg);
-                            }}
-                            onReact={handleReact}
-                            onPin={handlePin}
-                            onFavorite={handleFavorite}
-                            onEdit={handleEditMessage}
-                            onDelete={handleDeleteMessage}
-                            onForward={(msgId) => {
-                              const msg = currentMessages.find((m) => m.id === msgId);
-                              if (msg) {
-                                setForwardMessage(msg);
-                                setShowForwardModal(true);
-                              }
-                            }}
-                          />
+                          <>
+                            <MessageBubble
+                              message={message}
+                              isOwn={message.authorId === user?.id}
+                              readStatus={message.authorId === user?.id ? (readStatuses[message.id] ?? 'sent') : undefined}
+                              onReply={(msgId) => {
+                                const msg = currentMessages.find((m) => m.id === msgId);
+                                if (msg) setReplyToMessage(msg);
+                              }}
+                              onReact={handleReact}
+                              onPin={handlePin}
+                              onFavorite={handleFavorite}
+                              onEdit={handleEditMessage}
+                              onDelete={handleDeleteMessage}
+                              onForward={handleForwardAction}
+                              onImageClick={(url) => setLightboxSrc(url)}
+                            />
+                          </>
                         )}
 
                         {/* Emoji picker for this message */}
@@ -1126,7 +1149,7 @@ const MessagingPage: React.FC = () => {
               </div>
 
               {/* Typing indicator */}
-              <TypingIndicator typingUsers={[]} />
+              <TypingIndicator typingUsers={typingUsers} />
 
               {/* Reply quote bar */}
               {replyToMessage && (
@@ -1136,24 +1159,20 @@ const MessagingPage: React.FC = () => {
                 />
               )}
 
-              {/* Message input with voice recorder */}
-              <div className="flex items-end gap-1 border-t border-neutral-200 dark:border-neutral-700">
-                <div className="flex-1">
-                  <MessageInput
-                    onSend={replyToMessage ? handleReplyWithQuote : handleSendMessage}
-                    onSendWithFile={handleSendWithFile}
-                    uploading={fileUploading}
-                    placeholder={
-                      activeChannel.type === 'direct'
-                        ? t('messaging.messageTo', { user: channelDisplayName(activeChannel) })
-                        : t('messaging.messageInChannel', { channel: activeChannel.name })
-                    }
-                  />
-                </div>
-                <div className="flex-shrink-0 pb-2 pr-2">
-                  <VoiceRecorder onSend={handleVoiceSend} disabled={fileUploading} />
-                </div>
-              </div>
+              {/* Message input with voice recorder, @mentions, typing */}
+              <MessageInput
+                onSend={replyToMessage ? handleReplyWithQuote : handleSendMessage}
+                onSendWithFile={handleSendWithFile}
+                onSendVoice={handleVoiceSend}
+                onTyping={handleTyping}
+                channelMembers={channelMembers}
+                uploading={fileUploading}
+                placeholder={
+                  activeChannel.type === 'direct'
+                    ? t('messaging.messageTo', { user: channelDisplayName(activeChannel) })
+                    : t('messaging.messageInChannel', { channel: activeChannel.name })
+                }
+              />
             </DropZone>
           </>
         ) : (
@@ -1276,12 +1295,21 @@ const MessagingPage: React.FC = () => {
             ) : (
               <div className="space-y-1.5">
                 {sharedFiles.map((file) => (
-                  <a
+                  <button
                     key={file.id}
-                    href={file.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                    onClick={async () => {
+                      if (file.attachmentId) {
+                        try {
+                          const freshUrl = await messagingApi.getAttachmentDownloadUrl(file.attachmentId);
+                          window.open(freshUrl, '_blank', 'noopener,noreferrer');
+                        } catch {
+                          if (file.url) window.open(file.url, '_blank', 'noopener,noreferrer');
+                        }
+                      } else if (file.url) {
+                        window.open(file.url, '_blank', 'noopener,noreferrer');
+                      }
+                    }}
+                    className="w-full flex items-center gap-2 p-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors text-left"
                   >
                     <FileText size={14} className="text-neutral-400" />
                     <div className="flex-1 min-w-0">
@@ -1290,7 +1318,7 @@ const MessagingPage: React.FC = () => {
                         {t('messaging.fileSizeKb', { size: String(Math.round(file.fileSize / 1024)) })}
                       </p>
                     </div>
-                  </a>
+                  </button>
                 ))}
               </div>
             )}

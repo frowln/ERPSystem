@@ -32,6 +32,15 @@ public class WorkflowStep extends BaseEntity {
     @Column(name = "name", nullable = false, length = 500)
     private String name;
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "action_type", length = 50)
+    private String actionType;
+
+    @Column(name = "action_config", columnDefinition = "JSONB")
+    private String actionConfig;
+
     @Column(name = "from_status", length = 50)
     private String fromStatus;
 

@@ -9,13 +9,20 @@ export interface Opportunity {
   name: string;
   clientName: string;
   stage: OpportunityStage;
+  estimatedValue?: number;
   value: number;
   probability: number;
   weightedValue: number;
   expectedCloseDate: string;
   ownerName: string;
+  ownerId?: string;
   source?: string;
   description?: string;
+  region?: string;
+  projectType?: string;
+  lostReason?: string;
+  goNoGoChecklist?: string;
+  checklistScore?: number;
   createdAt: string;
   updatedAt: string;
 }

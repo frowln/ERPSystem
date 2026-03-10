@@ -34,12 +34,16 @@ import com.privod.platform.modules.messaging.web.dto.SetUserStatusRequest;
 import com.privod.platform.modules.messaging.web.dto.UserStatusResponse;
 import com.privod.platform.modules.project.domain.Project;
 import com.privod.platform.modules.project.repository.ProjectRepository;
+import com.privod.platform.modules.notification.domain.NotificationType;
+import com.privod.platform.modules.notification.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +55,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessagingService {
 
     private final ChannelRepository channelRepository;
@@ -62,6 +67,8 @@ public class MessagingService {
     private final UserRepository userRepository;
     private final AuditService auditService;
     private final ProjectRepository projectRepository;
+    private final NotificationService notificationService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Transactional(readOnly = true)
     public List<ChannelResponse> getMyChannels() {
@@ -93,7 +100,10 @@ public class MessagingService {
                     .orElse(null);
             String otherName = otherUser != null ? otherUser.getFullName() : other.getUserName();
             String otherAvatar = otherUser != null ? otherUser.getAvatarUrl() : null;
-            return ChannelResponse.fromEntityWithDm(channel, other.getUserId(), otherName, otherAvatar);
+            String otherStatus = userStatusRepository.findByUserId(other.getUserId())
+                    .map(us -> us.getAvailabilityStatus().name())
+                    .orElse("OFFLINE");
+            return ChannelResponse.fromEntityWithDm(channel, other.getUserId(), otherName, otherAvatar, otherStatus);
         }
         return ChannelResponse.fromEntity(channel);
     }
@@ -271,7 +281,44 @@ public class MessagingService {
         channel.setLastMessageAt(Instant.now());
         channelRepository.save(channel);
 
+        // Send notification to other channel members
+        try {
+            List<ChannelMember> members = channelMemberRepository.findByChannelId(channelId);
+            String preview = message.getContent() != null && message.getContent().length() > 80
+                    ? message.getContent().substring(0, 80) + "..."
+                    : message.getContent();
+            for (ChannelMember member : members) {
+                if (member.getUserId().equals(current.getId())) continue;
+                try {
+                    notificationService.send(
+                            member.getUserId(),
+                            current.getFullName() + " в " + channel.getName(),
+                            preview,
+                            NotificationType.MESSAGE,
+                            "Message",
+                            message.getId(),
+                            "/messaging"
+                    );
+                } catch (Exception e) {
+                    log.debug("Failed to send message notification to user {}: {}", member.getUserId(), e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to send message notifications: {}", e.getMessage());
+        }
+
         auditService.logCreate("Message", message.getId());
+
+        // Broadcast new message to channel topic for real-time delivery
+        try {
+            simpMessagingTemplate.convertAndSend(
+                    "/topic/channel." + channelId + ".messages",
+                    Map.of("messageId", message.getId().toString(), "channelId", channelId.toString())
+            );
+        } catch (Exception e) {
+            log.debug("Failed to broadcast message via WebSocket: {}", e.getMessage());
+        }
+
         return MessageResponse.fromEntity(message);
     }
 

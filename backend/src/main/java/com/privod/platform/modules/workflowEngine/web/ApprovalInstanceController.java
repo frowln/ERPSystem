@@ -5,6 +5,8 @@ import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService;
 import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.ApprovalDecisionResponse;
 import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.ApprovalInstanceResponse;
+import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.BatchDecisionRequest;
+import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.BatchDecisionResponse;
 import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.DelegateRequest;
 import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.StartApprovalRequest;
 import com.privod.platform.modules.workflowEngine.service.ApprovalInstanceService.SubmitDecisionRequest;
@@ -68,6 +70,14 @@ public class ApprovalInstanceController {
             @PathVariable UUID id,
             @Valid @RequestBody SubmitDecisionRequest request) {
         ApprovalInstanceResponse response = approvalInstanceService.submitDecision(id, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/batch-decision")
+    @Operation(summary = "Пакетное принятие решений по нескольким процессам согласования")
+    public ResponseEntity<ApiResponse<BatchDecisionResponse>> batchDecision(
+            @Valid @RequestBody BatchDecisionRequest request) {
+        BatchDecisionResponse response = approvalInstanceService.batchDecision(request);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 

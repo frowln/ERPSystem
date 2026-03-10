@@ -1,5 +1,6 @@
 export type LeadStatus = 'NEW' | 'QUALIFIED' | 'PROPOSITION' | 'NEGOTIATION' | 'WON' | 'LOST';
 export type LeadPriority = 'LOW' | 'NORMAL' | 'HIGH';
+export type CrmActivityType = 'CALL' | 'MEETING' | 'EMAIL' | 'PROPOSAL' | 'SITE_VISIT';
 
 export interface CrmLead {
   id: string;
@@ -26,11 +27,13 @@ export interface CrmLead {
   probability?: number;
   weightedRevenue?: number;
   source?: string;
+  medium?: string;
   description?: string;
   lostReason?: string;
   projectId?: string;
   expectedCloseDate?: string;
   wonDate?: string;
+  nextActivityDate?: string;
   open?: boolean;
   activityCount?: number;
   lastActivityDate?: string;
@@ -44,32 +47,58 @@ export interface CrmStage {
   name: string;
   sequence: number;
   probability: number;
-  isWon: boolean;
-  leadCount: number;
-  totalRevenue: number;
+  closed: boolean;
+  won: boolean;
+  requirements?: string;
+  // Computed aliases from backend
+  isWon?: boolean;
+  isClosed?: boolean;
+  leadCount?: number;
+  totalRevenue?: number;
 }
 
 export interface CrmTeam {
   id: string;
   name: string;
-  leadName: string;
-  memberCount: number;
-  activeLeads: number;
-  wonLeads: number;
-  totalRevenue: number;
-  isActive: boolean;
+  leaderId?: string;
+  memberIds?: string;
+  targetRevenue?: number;
+  color?: string;
+  active: boolean;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface CrmActivity {
   id: string;
   leadId: string;
-  type: 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE' | 'TASK' | 'presentation';
-  title: string;
-  description?: string;
+  activityType: CrmActivityType;
+  activityTypeDisplayName?: string;
+  userId: string;
+  summary?: string;
+  notes?: string;
   scheduledAt?: string;
   completedAt?: string;
+  result?: string;
+  completed: boolean;
+  overdue: boolean;
+  createdAt: string;
+  // Aliases provided by backend
+  type: string;
+  title: string;
+  description?: string;
   assignedToName: string;
   isDone: boolean;
-  createdAt: string;
+}
+
+export interface CrmPipeline {
+  totalLeads: number;
+  statusCounts: Record<string, number>;
+  stageCounts: Record<string, number>;
+  pipelineRevenue: number;
+  weightedPipelineRevenue: number;
+  wonRevenue: number;
+  openLeads: number;
+  wonLeads: number;
+  lostLeads: number;
 }
