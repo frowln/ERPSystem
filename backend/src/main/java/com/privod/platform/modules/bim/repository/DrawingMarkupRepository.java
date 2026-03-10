@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-@Repository
+@Repository("bimDrawingMarkupRepository")
 public interface DrawingMarkupRepository extends JpaRepository<DrawingMarkup, UUID> {
 
     Page<DrawingMarkup> findByDrawingIdAndDeletedFalse(UUID drawingId, Pageable pageable);

@@ -46,6 +46,9 @@ const FactoringCalculatorPage: React.FC = () => {
         t('finance.factoringCalculator.toastCalculated', { count: String(data.length) }),
       );
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const handleToggleInvoice = useCallback((invoiceId: string) => {

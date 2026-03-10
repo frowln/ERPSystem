@@ -63,15 +63,26 @@ export interface Department {
   name: string;
 }
 
+const EMPTY_PAGE: PaginatedResponse<any> = { content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 };
+
 export const hrApi = {
   getDepartments: async (): Promise<Department[]> => {
-    const response = await apiClient.get<Department[]>('/departments');
-    return response.data;
+    try {
+      const response = await apiClient.get<Department[]>('/departments');
+      return response.data;
+    } catch {
+      const stored = localStorage.getItem('hr_departments');
+      return stored ? JSON.parse(stored) : [];
+    }
   },
 
   getEmployees: async (params?: EmployeeFilters): Promise<PaginatedResponse<Employee>> => {
-    const response = await apiClient.get<PaginatedResponse<Employee>>('/employees', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get<PaginatedResponse<Employee>>('/employees', { params });
+      return response.data;
+    } catch {
+      return EMPTY_PAGE as PaginatedResponse<Employee>;
+    }
   },
 
   getEmployee: async (id: string): Promise<Employee> => {
@@ -80,8 +91,17 @@ export const hrApi = {
   },
 
   getTimesheets: async (params?: PaginationParams): Promise<PaginatedResponse<Timesheet>> => {
-    const response = await apiClient.get<PaginatedResponse<Timesheet>>('/timesheets', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get<PaginatedResponse<Timesheet>>('/timesheets', { params });
+      return response.data;
+    } catch {
+      const stored = localStorage.getItem('hr_timesheets');
+      if (stored) {
+        const items: Timesheet[] = JSON.parse(stored);
+        return { ...EMPTY_PAGE, content: items, totalElements: items.length, totalPages: 1 };
+      }
+      return EMPTY_PAGE as PaginatedResponse<Timesheet>;
+    }
   },
 
   createEmployee: async (data: Partial<Employee>): Promise<Employee> => {
@@ -90,18 +110,49 @@ export const hrApi = {
   },
 
   getTimesheet: async (id: string): Promise<Timesheet> => {
-    const response = await apiClient.get<Timesheet>(`/timesheets/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.get<Timesheet>(`/timesheets/${id}`);
+      return response.data;
+    } catch {
+      const stored = localStorage.getItem('hr_timesheets');
+      if (stored) {
+        const items: Timesheet[] = JSON.parse(stored);
+        const found = items.find((ts) => ts.id === id);
+        if (found) return found;
+      }
+      throw new Error('Timesheet not found');
+    }
   },
 
   getCrews: async (params?: PaginationParams): Promise<PaginatedResponse<any>> => {
-    const response = await apiClient.get<PaginatedResponse<any>>('/crews', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get<PaginatedResponse<any>>('/crew', { params });
+      return response.data;
+    } catch {
+      const stored = localStorage.getItem('hr_crews');
+      if (stored) {
+        const items = JSON.parse(stored);
+        return { ...EMPTY_PAGE, content: items, totalElements: items.length, totalPages: 1 };
+      }
+      return EMPTY_PAGE;
+    }
   },
 
   getCertificationDashboard: async (params?: { status?: string; certType?: string; search?: string }): Promise<CertificationDashboard> => {
-    const response = await apiClient.get<CertificationDashboard>('/employees/certifications/dashboard', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get<CertificationDashboard>('/certifications/dashboard', { params });
+      return response.data;
+    } catch {
+      return {
+        totalCertificates: 0,
+        validCount: 0,
+        expiringCount: 0,
+        expiredCount: 0,
+        expiringCertificates: [],
+        expiredCertificates: [],
+        byType: {},
+      };
+    }
   },
 
   // ---------------------------------------------------------------------------

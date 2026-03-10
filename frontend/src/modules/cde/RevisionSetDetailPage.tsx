@@ -32,6 +32,9 @@ const RevisionSetDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['revision-sets'] });
       navigate('/cde/revision-sets');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const defaultSet: RevisionSet = {

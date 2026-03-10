@@ -206,6 +206,20 @@ export const estimatesApi = {
     });
     return response.data;
   },
+
+  // --- Price Suggestion ---
+  getPriceSuggestion: async (itemName: string, unit?: string): Promise<PriceSuggestion> => {
+    const response = await apiClient.get<PriceSuggestion>('/estimates/price-suggestion', {
+      params: { itemName, unit },
+    });
+    return response.data;
+  },
+
+  // --- LSR Hierarchical Import ---
+  importLsrHierarchical: async (data: ImportLsrRequest): Promise<ImportLsrResult> => {
+    const response = await apiClient.post<ImportLsrResult>('/estimates/local/import-hierarchical', data);
+    return response.data;
+  },
 };
 
 export interface NormativeRateResult {
@@ -217,4 +231,71 @@ export interface NormativeRateResult {
   laborCost: number;
   materialCost: number;
   equipmentCost: number;
+}
+
+// --- Price Suggestion ---
+
+export interface PriceSuggestionMatch {
+  name?: string;
+  projectName: string;
+  itemName: string;
+  unitPrice: number;
+  date: string;
+  confidence: number;
+}
+
+export interface PriceSuggestion {
+  suggestedPrice: number;
+  avgPrice?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  medianPrice?: number;
+  matchCount?: number;
+  matches: PriceSuggestionMatch[];
+  recentMatches?: PriceSuggestionMatch[];
+  confidence: number;
+}
+
+// --- LSR Import ---
+
+export interface ImportLsrLine {
+  code?: string;
+  name: string;
+  unit?: string;
+  quantity?: number;
+  basePrice?: number;
+  laborCost?: number;
+  materialCost?: number;
+  equipmentCost?: number;
+  children?: ImportLsrLine[];
+  [key: string]: unknown;
+}
+
+export interface ImportLsrRequest {
+  estimateId?: string;
+  projectId?: string;
+  estimateName?: string;
+  file?: File;
+  lines?: ImportLsrLine[];
+  summary?: Record<string, unknown>;
+  options?: {
+    autoLinkSpec?: boolean;
+    autoPushFm?: boolean;
+    autoPushMaterials?: boolean;
+    budgetId?: string;
+  };
+}
+
+export interface ImportLsrResult {
+  totalLines: number;
+  importedLines: number;
+  errors: string[];
+  lines: ImportLsrLine[];
+  estimateId?: string;
+  sectionsCreated?: number;
+  positionsCreated?: number;
+  resourcesCreated?: number;
+  fmItemsCreated?: number;
+  fmItemsUpdated?: number;
+  specLinked?: number;
 }

@@ -134,13 +134,21 @@ describe('projectsApi', () => {
   });
 
   describe('getDashboardSummary', () => {
-    it('calls GET /projects/dashboard/summary', async () => {
-      const summary = { totalProjects: 5, activeProjects: 3 };
-      mockGet.mockResolvedValue({ data: summary } as never);
+    it('calls GET /projects/dashboard/summary and transforms response', async () => {
+      const backendResponse = { totalProjects: 5, totalBudget: 1000000, statusCounts: { IN_PROGRESS: 3, PLANNING: 2 }, computedTotalContractAmount: 500000, computedTotalPlannedBudget: 400000, computedTotalActualCost: 200000, computedTotalCashFlow: 100000 };
+      mockGet.mockResolvedValueOnce({ data: backendResponse } as never);
+      // Second call for recent projects
+      mockGet.mockResolvedValueOnce({ data: { content: [] } } as never);
 
       const result = await projectsApi.getDashboardSummary();
       expect(mockGet).toHaveBeenCalledWith('/projects/dashboard/summary');
-      expect(result).toEqual(summary);
+      expect(result.activeProjects).toBe(5);
+      expect(result.totalBudget).toBe(1000000);
+      expect(result.projectsByStatus).toEqual([
+        { status: 'IN_PROGRESS', count: 3 },
+        { status: 'PLANNING', count: 2 },
+      ]);
+      expect(result.computedTotalCashFlow).toBe(100000);
     });
   });
 

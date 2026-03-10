@@ -62,7 +62,7 @@ export function useContractOptions(projectId?: string): { options: SelectOption[
 }
 
 // ---------------------------------------------------------------------------
-// Employees
+// Employees (HR records)
 // ---------------------------------------------------------------------------
 
 export function useEmployeeOptions(status?: string): { options: SelectOption[]; isLoading: boolean } {
@@ -75,6 +75,40 @@ export function useEmployeeOptions(status?: string): { options: SelectOption[]; 
         value: e.id,
         label: e.fullName,
       })),
+  });
+  return { options: data ?? [], isLoading };
+}
+
+// ---------------------------------------------------------------------------
+// System Users (actual platform users, NOT HR employees)
+// ---------------------------------------------------------------------------
+
+interface AdminUserOption {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName?: string;
+  email: string;
+  enabled: boolean;
+}
+
+export function useUserOptions(): { options: SelectOption[]; isLoading: boolean } {
+  const { data, isLoading } = useQuery({
+    queryKey: ['select-options', 'system-users'],
+    queryFn: async () => {
+      const response = await apiClient.get<PaginatedResponse<AdminUserOption>>('/admin/users', {
+        params: { size: 200, page: 0 },
+      });
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    select: (res) =>
+      (res.content ?? [])
+        .filter((u) => u.enabled !== false)
+        .map((u) => ({
+          value: u.id,
+          label: u.fullName || `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || u.email,
+        })),
   });
   return { options: data ?? [], isLoading };
 }

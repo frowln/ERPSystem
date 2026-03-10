@@ -64,6 +64,9 @@ const ClashDetectionResultsPage: React.FC = () => {
       toast.success(t('bim.clashResultStatusUpdated'));
       setSelectedClash(null);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const clashes = clashData?.content ?? [];

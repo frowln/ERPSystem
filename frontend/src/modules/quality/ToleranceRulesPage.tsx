@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, Ruler, BookOpen, CheckCircle } from 'lucide-react';
@@ -62,6 +63,7 @@ const ToleranceRulesPage: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data: rulesData, isLoading } = useQuery({
     queryKey: ['tolerance-rules'],
     queryFn: () => toleranceApi.getRules(),
@@ -190,7 +192,7 @@ const ToleranceRulesPage: React.FC = () => {
           { label: t('quality.toleranceRules.breadcrumbTolerances') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/quality/tolerance-rules/new')}>
             {t('quality.toleranceRules.btnNewRule')}
           </Button>
         }

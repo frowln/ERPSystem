@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -119,6 +120,7 @@ const DocumentContainerDetailPage: React.FC = () => {
               <Button
                 size="sm"
                 iconLeft={<ArrowRightCircle size={14} />}
+                onClick={() => toast(t('common.operationStarted'))}
               >
                 {lifecycleStateLabels[nextState]}
               </Button>

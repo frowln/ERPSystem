@@ -187,7 +187,7 @@ const QualityListPage: React.FC = () => {
             <Button variant="secondary" iconLeft={<AlertTriangle size={16} />} onClick={() => navigate('/quality/non-conformances')}>
               {t('quality.list.btnNonConformances')}
             </Button>
-            <Button iconLeft={<Plus size={16} />}>
+            <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/quality/new')}>
               {t('quality.list.btnNewCheck')}
             </Button>
           </div>

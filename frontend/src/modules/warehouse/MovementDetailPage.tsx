@@ -57,6 +57,9 @@ const MovementDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['movement', id] });
       toast.success(t('warehouse.movementDetail.toastStatusChanged', { status: stockMovementStatusLabels[targetStatus] ?? targetStatus }));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -65,6 +68,9 @@ const MovementDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['stock-movements'] });
       toast.success(t('warehouse.movementDetail.toastDeleted'));
       navigate('/warehouse/movements');
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

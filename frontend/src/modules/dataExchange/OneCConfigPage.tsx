@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Plus, Settings, RefreshCw, Database, Link } from 'lucide-react';
@@ -43,6 +44,7 @@ const getEntityTypeLabels = (): Record<string, string> => ({
 const OneCConfigPage: React.FC = () => {
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
   const { data: configs = [], isLoading } = useQuery({
     queryKey: ['onec-configs'],
     queryFn: () => onecApi.getConfigs(),
@@ -172,7 +174,7 @@ const OneCConfigPage: React.FC = () => {
           { label: t('dataExchange.breadcrumbOnec') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('dataExchange.newConnection')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/data-exchange/1c/new')}>{t('dataExchange.newConnection')}</Button>
         }
       />
 

@@ -11,6 +11,7 @@ import { costManagementApi } from '@/api/costManagement';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 import type { ProfitabilityForecast, ProfitabilityPortfolio, ProfitabilitySnapshot, ProfitabilityRiskLevel } from './types';
+import toast from 'react-hot-toast';
 
 const riskColorMap: Record<string, string> = {
   LOW: 'green',
@@ -58,6 +59,9 @@ const ProfitabilityDashboardPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['profitability-forecasts'] });
       queryClient.invalidateQueries({ queryKey: ['profitability-portfolio'] });
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const recalculateAllMutation = useMutation({
@@ -65,6 +69,9 @@ const ProfitabilityDashboardPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profitability-forecasts'] });
       queryClient.invalidateQueries({ queryKey: ['profitability-portfolio'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

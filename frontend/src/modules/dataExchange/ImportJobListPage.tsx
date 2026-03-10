@@ -188,7 +188,7 @@ const ImportJobListPage: React.FC = () => {
           { label: t('dataExchange.breadcrumbImport') },
         ]}
         actions={
-          <Button iconLeft={<Upload size={16} />}>
+          <Button iconLeft={<Upload size={16} />} onClick={() => navigate('/data-exchange/import/new')}>
             {t('dataExchange.uploadFile')}
           </Button>
         }

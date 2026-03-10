@@ -14,6 +14,7 @@ import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { Estimate } from '@/types';
 import type { ExportConfig, ExportHistory, ExportValidation } from './types';
+import toast from 'react-hot-toast';
 
 const exportStatusColorMap: Record<string, string> = {
   success: 'green',
@@ -48,6 +49,9 @@ const EstimateExportPage: React.FC = () => {
   const validateMutation = useMutation({
     mutationFn: (estimateId: string) => estimatesApi.validateForExport(estimateId),
     onSuccess: (result) => setValidation(result),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const exportMutation = useMutation({
@@ -61,6 +65,9 @@ const EstimateExportPage: React.FC = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

@@ -7,6 +7,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +45,7 @@ public class DailyReport extends BaseEntity {
     private String issues;
 
     @Column(name = "materials_used", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String materialsUsed;
 
     @Column(name = "labor_hours", precision = 8, scale = 2)

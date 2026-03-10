@@ -22,7 +22,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input } from '@/design-system/components/FormField';
 import { apiClient } from '@/api/client';
-import { formatDateTime, formatFileSize } from '@/lib/format';
+import { formatDateTime, formatFileSize, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 
@@ -113,7 +113,7 @@ const BimPage: React.FC = () => {
     queryKey: ['bim-files'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/integrations/bim/files');
+        const res = await apiClient.get('/integrations/bim/files', { _silentErrors: true } as any);
         return res.data as BimFile[];
       } catch {
         return undefined;
@@ -126,7 +126,7 @@ const BimPage: React.FC = () => {
     queryKey: ['bim-clashes'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/integrations/bim/clashes');
+        const res = await apiClient.get('/integrations/bim/clashes', { _silentErrors: true } as any);
         return res.data as ClashResult[];
       } catch {
         return undefined;
@@ -292,7 +292,7 @@ const BimPage: React.FC = () => {
           const v = getValue<number>();
           return v > 0 ? (
             <span className="tabular-nums text-neutral-700 dark:text-neutral-300">
-              {v.toLocaleString('ru-RU')}
+              {formatNumber(v)}
             </span>
           ) : (
             <span className="text-neutral-400">--</span>
@@ -452,7 +452,7 @@ const BimPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
         <MetricCard icon={<FileText size={18} />} label={t('integrations.bim.metricFilesUploaded')} value={allFiles.length} />
         <MetricCard icon={<CheckCircle2 size={18} />} label={t('integrations.bim.metricProcessed')} value={readyFiles} />
-        <MetricCard icon={<Box size={18} />} label={t('integrations.bim.metricElements')} value={totalElements.toLocaleString('ru-RU')} />
+        <MetricCard icon={<Box size={18} />} label={t('integrations.bim.metricElements')} value={formatNumber(totalElements)} />
         <MetricCard
           icon={<AlertTriangle size={18} />}
           label={t('integrations.bim.metricOpenClashes')}

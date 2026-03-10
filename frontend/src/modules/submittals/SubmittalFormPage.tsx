@@ -22,25 +22,13 @@ const submittalSchema = z.object({
   submittedById: z.string().optional(),
   reviewerId: z.string().optional(),
   dueDate: z.string().optional(),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH'], {
-    required_error: t('forms.submittal.validation.priorityRequired'),
+  submittalType: z.enum(['SHOP_DRAWING', 'PRODUCT_DATA', 'SAMPLE', 'MOCK_UP', 'TEST_REPORT', 'CERTIFICATE', 'CALCULATION', 'DESIGN_MIX', 'OTHER'], {
+    required_error: t('forms.submittal.validation.typeRequired'),
   }),
   notes: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
 });
 
 type SubmittalFormData = z.infer<typeof submittalSchema>;
-
-const mapPriorityToType = (priority: SubmittalFormData['priority']): SubmittalType => {
-  if (priority === 'HIGH') return 'SHOP_DRAWING';
-  if (priority === 'MEDIUM') return 'PRODUCT_DATA';
-  return 'OTHER';
-};
-
-const mapTypeToPriority = (type: SubmittalType): SubmittalFormData['priority'] => {
-  if (type === 'SHOP_DRAWING') return 'HIGH';
-  if (type === 'PRODUCT_DATA') return 'MEDIUM';
-  return 'LOW';
-};
 
 const buildDescription = (description?: string, notes?: string): string | undefined => {
   const base = description?.trim() ?? '';
@@ -50,10 +38,16 @@ const buildDescription = (description?: string, notes?: string): string | undefi
   return `${base}${base ? '\n\n' : ''}${t('forms.submittal.notesPrefix')} ${extra}`;
 };
 
-const priorityOptions = [
-  { value: 'LOW', label: t('forms.submittal.priorities.low') },
-  { value: 'MEDIUM', label: t('forms.submittal.priorities.medium') },
-  { value: 'HIGH', label: t('forms.submittal.priorities.high') },
+const getTypeOptions = () => [
+  { value: 'SHOP_DRAWING', label: t('forms.submittal.types.shopDrawing') },
+  { value: 'PRODUCT_DATA', label: t('forms.submittal.types.productData') },
+  { value: 'SAMPLE', label: t('forms.submittal.types.sample') },
+  { value: 'MOCK_UP', label: t('forms.submittal.types.mockUp') },
+  { value: 'TEST_REPORT', label: t('forms.submittal.types.testReport') },
+  { value: 'CERTIFICATE', label: t('forms.submittal.types.certificate') },
+  { value: 'CALCULATION', label: t('forms.submittal.types.calculation') },
+  { value: 'DESIGN_MIX', label: t('forms.submittal.types.designMix') },
+  { value: 'OTHER', label: t('forms.submittal.types.other') },
 ];
 
 const SubmittalFormPage: React.FC = () => {
@@ -96,9 +90,9 @@ const SubmittalFormPage: React.FC = () => {
           specSection: existingSubmittal.specSection ?? '',
           projectId: existingSubmittal.projectId,
           submittedById: existingSubmittal.submittedById ?? '',
-          reviewerId: existingSubmittal.reviewerId ?? '',
+          reviewerId: existingSubmittal.reviewedById ?? '',
           dueDate: existingSubmittal.dueDate ?? '',
-          priority: mapTypeToPriority(existingSubmittal.type),
+          submittalType: existingSubmittal.submittalType,
           notes: '',
         }
       : {
@@ -109,7 +103,7 @@ const SubmittalFormPage: React.FC = () => {
           submittedById: '',
           reviewerId: '',
           dueDate: '',
-          priority: 'MEDIUM',
+          submittalType: 'SHOP_DRAWING',
           notes: '',
         },
   });
@@ -119,17 +113,17 @@ const SubmittalFormPage: React.FC = () => {
       return submittalsApi.createSubmittal({
         title: data.title,
         description: buildDescription(data.description, data.notes),
-        type: mapPriorityToType(data.priority),
+        submittalType: data.submittalType as SubmittalType,
         specSection: data.specSection || undefined,
         projectId: data.projectId,
-        reviewerId: data.reviewerId || undefined,
+        submittedById: data.submittedById || undefined,
         dueDate: data.dueDate || undefined,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['submittals'] });
       toast.success(t('forms.submittal.createSuccess'));
-      navigate('/submittals');
+      navigate('/pm/submittals');
     },
     onError: () => {
       toast.error(t('forms.submittal.createError'));
@@ -141,11 +135,10 @@ const SubmittalFormPage: React.FC = () => {
       return submittalsApi.updateSubmittal(id!, {
         title: data.title,
         description: buildDescription(data.description, data.notes),
-        type: mapPriorityToType(data.priority),
+        submittalType: data.submittalType as SubmittalType,
         specSection: data.specSection || undefined,
         projectId: data.projectId,
         submittedById: data.submittedById || undefined,
-        reviewerId: data.reviewerId || undefined,
         dueDate: data.dueDate || undefined,
       });
     },
@@ -153,7 +146,7 @@ const SubmittalFormPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['submittals'] });
       queryClient.invalidateQueries({ queryKey: ['submittal', id] });
       toast.success(t('forms.submittal.updateSuccess'));
-      navigate(`/submittals/${id}`);
+      navigate(`/pm/submittals/${id}`);
     },
     onError: () => {
       toast.error(t('forms.submittal.updateError'));
@@ -175,10 +168,10 @@ const SubmittalFormPage: React.FC = () => {
       <PageHeader
         title={isEdit ? t('forms.submittal.editTitle') : t('forms.submittal.createTitle')}
         subtitle={isEdit ? existingSubmittal?.title : t('forms.submittal.createSubtitle')}
-        backTo={isEdit ? `/submittals/${id}` : '/submittals'}
+        backTo={isEdit ? `/pm/submittals/${id}` : '/pm/submittals'}
         breadcrumbs={[
           { label: t('forms.common.home'), href: '/' },
-          { label: t('forms.submittal.breadcrumbSubmittals'), href: '/submittals' },
+          { label: t('forms.submittal.breadcrumbSubmittals'), href: '/pm/submittals' },
           { label: isEdit ? t('forms.common.editing') : t('forms.common.creating') },
         ]}
       />
@@ -202,11 +195,11 @@ const SubmittalFormPage: React.FC = () => {
                 {...register('specSection')}
               />
             </FormField>
-            <FormField label={t('forms.submittal.labelPriority')} error={errors.priority?.message} required>
+            <FormField label={t('forms.submittal.labelType')} error={errors.submittalType?.message} required>
               <Select
-                options={priorityOptions}
-                hasError={!!errors.priority}
-                {...register('priority')}
+                options={getTypeOptions()}
+                hasError={!!errors.submittalType}
+                {...register('submittalType')}
               />
             </FormField>
             <FormField label={t('forms.submittal.labelProject')} error={errors.projectId?.message} required>
@@ -278,7 +271,7 @@ const SubmittalFormPage: React.FC = () => {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => navigate(isEdit ? `/submittals/${id}` : '/submittals')}
+            onClick={() => navigate(isEdit ? `/pm/submittals/${id}` : '/pm/submittals')}
           >
             {t('common.back')}
           </Button>

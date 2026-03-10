@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -58,6 +59,19 @@ public class User extends BaseEntity {
 
     @Column(name = "organization_id")
     private UUID organizationId;
+
+    @Column(name = "two_factor_enabled")
+    @Builder.Default
+    private boolean twoFactorEnabled = false;
+
+    @Column(name = "two_factor_secret", length = 64)
+    private String twoFactorSecret;
+
+    @Column(name = "two_factor_recovery_codes", length = 500)
+    private String twoFactorRecoveryCodes;
+
+    @Column(name = "last_login_at")
+    private Instant lastLoginAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -12,6 +12,7 @@ import {
   specificationStatusLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { specificationsApi } from '@/api/specifications';
 import { formatMoney, formatDate } from '@/lib/format';
 import { t } from '@/i18n';
@@ -125,6 +126,10 @@ const SpecificationListPage: React.FC = () => {
     (spec: Specification) => navigate(`/specifications/${spec.id}`),
     [navigate],
   );
+
+  if (isLoading && specifications.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
 
   return (
     <div className="animate-fade-in">

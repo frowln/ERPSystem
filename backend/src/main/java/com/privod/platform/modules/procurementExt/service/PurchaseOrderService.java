@@ -28,7 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 
-@Service
+@Service("procurementExtPurchaseOrderService")
 @RequiredArgsConstructor
 @Slf4j
 public class PurchaseOrderService {

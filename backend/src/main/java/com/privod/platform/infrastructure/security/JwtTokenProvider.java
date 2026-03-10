@@ -119,6 +119,23 @@ public class JwtTokenProvider {
         }
     }
 
+    /**
+     * Generate a short-lived temporary token for 2FA verification (5 min).
+     */
+    public String generateTempToken(String email) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 300_000); // 5 minutes
+
+        return Jwts.builder()
+                .subject(email)
+                .claim("type", "2fa_temp")
+                .id(UUID.randomUUID().toString())
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+    }
+
     public long getExpirationMs() {
         return jwtExpirationMs;
     }

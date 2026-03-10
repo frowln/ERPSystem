@@ -17,7 +17,7 @@ interface RfiCreateModalProps {
 
 const getPriorityOptions = () => [
   { value: 'LOW', label: t('rfi.modalPriorityLow') },
-  { value: 'MEDIUM', label: t('rfi.modalPriorityMedium') },
+  { value: 'NORMAL', label: t('rfi.modalPriorityNormal') },
   { value: 'HIGH', label: t('rfi.modalPriorityHigh') },
   { value: 'CRITICAL', label: t('rfi.modalPriorityCritical') },
 ];
@@ -38,11 +38,11 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
   const assigneeOptions = (usersData?.content ?? []).map(u => ({ value: u.id, label: u.fullName ?? u.email }));
   const [subject, setSubject] = useState('');
   const [question, setQuestion] = useState('');
-  const [priority, setPriority] = useState('MEDIUM');
+  const [priority, setPriority] = useState('NORMAL');
   const [assigneeId, setAssigneeId] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [specSection, setSpecSection] = useState('');
-  const [projectId, setProjectId] = useState('1');
+  const [projectId, setProjectId] = useState('');
 
   const createMutation = useMutation({
     mutationFn: (payload: CreateRfiRequest) => rfiApi.createRfi(payload),
@@ -51,11 +51,11 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
       toast.success(t('rfi.modalCreateSuccess'));
       setSubject('');
       setQuestion('');
-      setPriority('MEDIUM');
+      setPriority('NORMAL');
       setAssigneeId('');
       setDueDate('');
       setSpecSection('');
-      setProjectId('1');
+      setProjectId('');
       onClose();
     },
     onError: () => {
@@ -161,3 +161,5 @@ export const RfiCreateModal: React.FC<RfiCreateModalProps> = ({ open, onClose })
     </Modal>
   );
 };
+
+export default RfiCreateModal;

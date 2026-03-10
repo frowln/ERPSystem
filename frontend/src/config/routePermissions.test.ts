@@ -6,18 +6,34 @@ describe('routePermissions', () => {
     expect(routePermissions['settings']).toContain('ADMIN');
     expect(routePermissions['admin']).toContain('ADMIN');
     expect(routePermissions['api-management']).toContain('ADMIN');
+    expect(routePermissions['marketplace']).toContain('ADMIN');
+    expect(routePermissions['integrations']).toContain('ADMIN');
   });
 
   it('defines permissions for finance routes', () => {
     expect(routePermissions['accounting']).toContain('ACCOUNTANT');
     expect(routePermissions['invoices']).toContain('FINANCE_MANAGER');
     expect(routePermissions['payments']).toContain('ADMIN');
+    expect(routePermissions['cash-flow']).toContain('COST_MANAGER');
+    expect(routePermissions['bank-export']).toContain('ACCOUNTANT');
   });
 
   it('defines permissions for engineer routes', () => {
     expect(routePermissions['planning']).toContain('ENGINEER');
-    expect(routePermissions['quality']).toContain('ENGINEER');
+    expect(routePermissions['quality']).toContain('QUALITY_MANAGER');
     expect(routePermissions['safety']).toContain('ADMIN');
+    expect(routePermissions['safety']).toContain('SAFETY_MANAGER');
+  });
+
+  it('defines permissions for HR routes', () => {
+    expect(routePermissions['employees']).toContain('HR_MANAGER');
+    expect(routePermissions['hr']).toContain('ADMIN');
+    expect(routePermissions['leave']).toContain('HR_MANAGER');
+  });
+
+  it('defines permissions for procurement routes', () => {
+    expect(routePermissions['procurement']).toContain('PROCUREMENT_MANAGER');
+    expect(routePermissions['warehouse']).toContain('WAREHOUSE_MANAGER');
   });
 });
 
@@ -80,5 +96,24 @@ describe('getRequiredRoles', () => {
     // "set" should NOT match "settings"
     const roles = getRequiredRoles('set');
     expect(roles).toBeUndefined();
+  });
+
+  it('returns safety roles for safety sub-paths', () => {
+    const roles = getRequiredRoles('safety/incidents');
+    expect(roles).toBeDefined();
+    expect(roles).toContain('SAFETY_MANAGER');
+    expect(roles).toContain('SAFETY_OFFICER');
+  });
+
+  it('returns HR roles for employee routes', () => {
+    const roles = getRequiredRoles('employees');
+    expect(roles).toBeDefined();
+    expect(roles).toContain('HR_MANAGER');
+  });
+
+  it('returns procurement roles for warehouse sub-paths', () => {
+    const roles = getRequiredRoles('warehouse/stock');
+    expect(roles).toBeDefined();
+    expect(roles).toContain('WAREHOUSE_MANAGER');
   });
 });

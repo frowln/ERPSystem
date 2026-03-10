@@ -36,6 +36,24 @@ const SroLicenseRegistryPage = lazy(() => import('@/modules/regulatory/SroLicens
 const InspectionPrepPage = lazy(() => import('@/modules/regulatory/InspectionPrepPage'));
 const InspectionHistoryPage = lazy(() => import('@/modules/regulatory/InspectionHistoryPage'));
 
+// Quality — additional
+const QualityChecklistListPage = lazy(() => import('@/modules/quality/QualityChecklistListPage'));
+const QualityChecklistDetailPage = lazy(() => import('@/modules/quality/QualityChecklistDetailPage'));
+const QualityGatesPage = lazy(() => import('@/modules/quality/QualityGatesPage'));
+
+// Punchlist — additional
+const PunchItemDetailPage = lazy(() => import('@/modules/punchlist/PunchItemDetailPage'));
+const PunchListPage = lazy(() => import('@/modules/punchlist/PunchListPage'));
+
+// Regulatory — additional
+const ComplianceDashboardPage = lazy(() => import('@/modules/regulatory/ComplianceDashboardPage'));
+const InspectionListPage = lazy(() => import('@/modules/regulatory/InspectionListPage'));
+const LicenseListPage = lazy(() => import('@/modules/regulatory/LicenseListPage'));
+const PermitListPage = lazy(() => import('@/modules/regulatory/PermitListPage'));
+const PrescriptionListPage = lazy(() => import('@/modules/regulatory/PrescriptionListPage'));
+const PrescriptionDetailPage = lazy(() => import('@/modules/regulatory/PrescriptionDetailPage'));
+const PrescriptionFormPage = lazy(() => import('@/modules/regulatory/PrescriptionFormPage'));
+
 export function qualityRoutes() {
   return (
     <>
@@ -76,6 +94,23 @@ export function qualityRoutes() {
       <Route path="regulatory/sro-licenses" element={<SroLicenseRegistryPage />} />
       <Route path="regulatory/inspection-prep" element={<InspectionPrepPage />} />
       <Route path="regulatory/inspection-history" element={<InspectionHistoryPage />} />
+      <Route path="regulatory/compliance" element={<ComplianceDashboardPage />} />
+      <Route path="regulatory/inspection-list" element={<InspectionListPage />} />
+      <Route path="regulatory/license-list" element={<LicenseListPage />} />
+      <Route path="regulatory/permit-list" element={<PermitListPage />} />
+      <Route path="regulatory/prescriptions" element={<PrescriptionListPage />} />
+      <Route path="regulatory/prescriptions/new" element={<PrescriptionFormPage />} />
+      <Route path="regulatory/prescriptions/:id" element={<PrescriptionDetailPage />} />
+      <Route path="regulatory/prescriptions/:id/edit" element={<PrescriptionFormPage />} />
+
+      {/* Quality — additional */}
+      <Route path="quality/checklists" element={<QualityChecklistListPage />} />
+      <Route path="quality/checklists/:id" element={<QualityChecklistDetailPage />} />
+      <Route path="quality/gates" element={<QualityGatesPage />} />
+
+      {/* Punchlist — additional */}
+      <Route path="punchlist/:id" element={<PunchItemDetailPage />} />
+      <Route path="punchlist/list" element={<PunchListPage />} />
     </>
   );
 }

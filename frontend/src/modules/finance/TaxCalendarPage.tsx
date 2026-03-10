@@ -56,6 +56,9 @@ const TaxCalendarPage: React.FC = () => {
         );
       }
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   // Get unique tax types for filter

@@ -244,9 +244,11 @@ public class OpsService {
 
     @Transactional
     public DefectResponse createDefect(CreateDefectRequest request) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String code = generateDefectCode();
 
         Defect d = Defect.builder()
+                .organizationId(organizationId)
                 .projectId(request.projectId())
                 .code(code)
                 .title(request.title())

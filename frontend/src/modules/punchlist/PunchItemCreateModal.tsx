@@ -6,6 +6,7 @@ import { FormField, Input, Textarea, Select } from '@/design-system/components/F
 import { punchlistApi } from '@/api/punchlist';
 import { permissionsApi } from '@/api/permissions';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 
 interface PunchItemCreateModalProps {
   open: boolean;
@@ -65,6 +66,9 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
       queryClient.invalidateQueries({ queryKey: ['punch-items'] });
       queryClient.invalidateQueries({ queryKey: ['punch-lists'] });
       onClose();
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -195,3 +199,5 @@ export const PunchItemCreateModal: React.FC<PunchItemCreateModalProps> = ({ open
     </Modal>
   );
 };
+
+export default PunchItemCreateModal;

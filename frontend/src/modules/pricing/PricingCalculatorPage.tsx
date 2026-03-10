@@ -10,6 +10,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { pricingApi, type PriceRate, type PriceCalculationResult, type PriceIndex } from '@/api/pricing';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 
 type TabId = 'calculator' | 'indices';
 
@@ -76,6 +77,9 @@ const CalculatorSection: React.FC = () => {
       return pricingApi.calculatePrice(selectedRate.id, parseFloat(quantity) || 1, region || undefined);
     },
     onSuccess: setResult,
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const handleCalculate = useCallback(() => {

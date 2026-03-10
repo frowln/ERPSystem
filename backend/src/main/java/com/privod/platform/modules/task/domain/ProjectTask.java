@@ -109,6 +109,17 @@ public class ProjectTask extends BaseEntity {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false, length = 30)
+    @Builder.Default
+    private TaskVisibility visibility = TaskVisibility.PARTICIPANTS_ONLY;
+
+    @Column(name = "delegated_to_id")
+    private UUID delegatedToId;
+
+    @Column(name = "delegated_to_name", length = 255)
+    private String delegatedToName;
+
     public boolean canTransitionTo(TaskStatus newStatus) {
         return this.status.canTransitionTo(newStatus);
     }

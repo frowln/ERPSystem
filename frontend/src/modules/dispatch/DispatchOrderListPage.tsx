@@ -14,6 +14,7 @@ import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { DispatchOrder, DispatchStatus } from './types';
 import type { PaginatedResponse } from '@/types';
+import toast from 'react-hot-toast';
 
 const dispatchStatusColorMap: Record<string, 'gray' | 'blue' | 'yellow' | 'orange' | 'cyan' | 'green' | 'purple'> = {
   draft: 'gray',
@@ -80,6 +81,9 @@ const DispatchOrderListPage: React.FC = () => {
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: DispatchStatus }) => dispatchApi.updateOrderStatus(id, status),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['dispatch-orders'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const orders = ordersData?.content ?? [];
@@ -249,7 +253,7 @@ const DispatchOrderListPage: React.FC = () => {
           { label: t('dispatch.orders.breadcrumbOrders') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/dispatch/orders/new')}>
             {t('dispatch.orders.newOrder')}
           </Button>
         }

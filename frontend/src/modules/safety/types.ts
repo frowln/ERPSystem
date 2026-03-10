@@ -15,22 +15,36 @@ export interface SafetyIncident {
   incidentDate: string;
   incidentTime?: string;
   projectId: string;
-  projectName: string;
-  location: string;
+  projectName?: string;
+  locationDescription: string;
+  /** Alias used by detail/form pages (same as locationDescription) */
+  location?: string;
   severity: IncidentSeverity;
+  severityDisplayName?: string;
   incidentType: IncidentType;
+  incidentTypeDisplayName?: string;
   status: IncidentStatus;
+  statusDisplayName?: string;
   description: string;
-  reportedById: string;
-  reportedByName: string;
+  rootCause?: string;
+  correctiveAction?: string;
+  correctiveActions?: string;
+  reportedById?: string;
+  reportedByName?: string;
   investigatorId?: string;
   investigatorName?: string;
-  injuredPersons: number;
-  workDaysLost: number;
-  rootCause?: string;
-  correctiveActions?: string;
+  injuredEmployeeId?: string;
+  injuredEmployeeName?: string;
+  injuredPersons?: number;
+  witnessNames?: string;
+  workDaysLost?: number;
+  medicalTreatment: boolean;
+  hospitalization: boolean;
+  resolvedAt?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
+  createdBy?: string;
 }
 
 export interface SafetyInspection {
@@ -78,13 +92,23 @@ export interface SafetyViolation {
 
 export interface CreateIncidentRequest {
   incidentDate: string;
-  incidentTime?: string;
   projectId: string;
-  location: string;
+  locationDescription?: string;
+  location?: string;
   severity: IncidentSeverity;
   incidentType: IncidentType;
   description: string;
-  injuredPersons: number;
+  reportedById?: string;
+  reportedByName?: string;
+  injuredEmployeeId?: string;
+  injuredEmployeeName?: string;
+  injuredPersons?: number;
+  witnessNames?: string;
+  workDaysLost?: number;
+  medicalTreatment?: boolean;
+  hospitalization?: boolean;
+  correctiveActions?: string;
+  notes?: string;
 }
 
 export type TrainingStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
@@ -285,3 +309,94 @@ export interface CreateAccidentActRequest {
   responsiblePersons: string;
   correctiveMeasures: string;
 }
+
+// ---------------------------------------------------------------------------
+// Safety Briefings (Инструктажи по охране труда)
+// ---------------------------------------------------------------------------
+
+export type BriefingType = 'INITIAL' | 'PRIMARY' | 'REPEAT' | 'UNSCHEDULED' | 'TARGET';
+export type BriefingStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface BriefingAttendee {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  signed?: boolean;
+  signedAt?: string;
+}
+
+export interface SafetyBriefing {
+  id: string;
+  briefingType: BriefingType;
+  status: BriefingStatus;
+  briefingDate: string;
+  projectId?: string;
+  projectName?: string;
+  instructorId?: string;
+  instructorName?: string;
+  topic?: string;
+  notes?: string;
+  attendees: BriefingAttendee[];
+  attendeeCount: number;
+  signedCount: number;
+  nextBriefingDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateBriefingRequest {
+  briefingType: BriefingType;
+  briefingDate: string;
+  instructorName: string;
+  topic: string;
+  notes?: string;
+  attendees?: { employeeId: string; employeeName: string }[];
+  projectId?: string;
+}
+
+export interface UpdateBriefingRequest {
+  briefingType?: BriefingType;
+  briefingDate?: string;
+  instructorName?: string;
+  topic?: string;
+  notes?: string;
+  status?: BriefingStatus;
+}
+
+// ---------------------------------------------------------------------------
+// Worker Certificates (Удостоверения работников)
+// ---------------------------------------------------------------------------
+
+export type CertExpiryStatus = 'valid' | 'caution' | 'warning' | 'critical' | 'expired';
+
+export interface WorkerCertificate {
+  id: string;
+  employeeId: string;
+  type: string;
+  number?: string;
+  issueDate: string;
+  expiryDate?: string;
+  issuingAuthority?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateCertificateRequest {
+  employeeId: string;
+  type: string;
+  number?: string;
+  issueDate: string;
+  expiryDate?: string;
+  issuingAuthority?: string;
+}
+
+export const CERT_TYPES = [
+  'ОТ и ТБ',
+  'Пожарная безопасность',
+  'Электробезопасность',
+  'Работа на высоте',
+  'Стропальщик',
+  'Допуск СРО',
+  'НАКС (сварщик)',
+  'Промышленная безопасность',
+];

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Repository("portfolioBidPackageRepository")
 public interface BidPackageRepository extends JpaRepository<BidPackage, UUID>, JpaSpecificationExecutor<BidPackage> {
 
     Page<BidPackage> findByOpportunityIdAndDeletedFalse(UUID opportunityId, Pageable pageable);

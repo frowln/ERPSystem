@@ -1,7 +1,7 @@
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FileText, Calendar, User, CheckCircle2, Wallet, ArrowUpRight, TrendingUp, FileDown, Copy, Building2 } from 'lucide-react';
+import { FileText, Calendar, User, CheckCircle2, Wallet, ArrowUpRight, TrendingUp, FileDown, Copy, Building2, Printer } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
@@ -12,6 +12,7 @@ import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import type { CommercialProposal, CommercialProposalItem, ProposalStatus } from '@/types';
+import { printCommercialProposal } from '@/components/PrintTemplates/CpPrintTemplate';
 import CpMaterialsTab from './components/CpMaterialsTab';
 import CpWorksTab from './components/CpWorksTab';
 import CpStatusPipeline from './components/CpStatusPipeline';
@@ -243,6 +244,48 @@ const CommercialProposalDetailPage: React.FC = () => {
               label={proposalStatusLabel(proposal.status)}
               size="md"
             />
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={<Printer size={14} />}
+              onClick={() => {
+                const mapItems = (items: typeof allItems, start: number) =>
+                  items.map((item, idx) => ({
+                    rowNumber: start + idx + 1,
+                    name: item.budgetItemName ?? `#${item.budgetItemId.slice(0, 8)}`,
+                    unitOfMeasure: item.budgetItemUnit ?? item.unit ?? '',
+                    quantity: item.quantity,
+                    costPrice: item.costPrice,
+                    customerPrice: item.unitPrice,
+                    totalCost: item.costPrice * item.quantity,
+                    totalCustomer: (item.unitPrice ?? item.costPrice) * item.quantity,
+                    notes: item.notes,
+                  }));
+                printCommercialProposal({
+                  name: proposal.name,
+                  projectName: proposal.projectName ?? '',
+                  status: proposal.status,
+                  statusDisplayName: proposalStatusLabel(proposal.status),
+                  companyName: proposal.companyName,
+                  companyInn: proposal.companyInn,
+                  companyKpp: proposal.companyKpp,
+                  companyAddress: proposal.companyAddress,
+                  signatoryName: proposal.signatoryName,
+                  signatoryPosition: proposal.signatoryPosition,
+                  createdAt: formatDate(proposal.createdAt),
+                  approvedAt: proposal.approvedAt ? formatDate(proposal.approvedAt) : undefined,
+                  notes: proposal.notes,
+                  totalCostPrice: proposal.totalCostPrice,
+                  totalCustomerPrice: proposal.totalCustomerPrice,
+                  totalMargin: proposal.totalMargin,
+                  marginPercent: proposal.marginPercent,
+                  materialItems: mapItems(materialItems, 0),
+                  workItems: mapItems(workItems, materialItems.length),
+                });
+              }}
+            >
+              {t('export.common.print')}
+            </Button>
             <Button
               variant="secondary"
               size="sm"

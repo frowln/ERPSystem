@@ -26,6 +26,7 @@ import com.privod.platform.modules.crm.web.dto.CrmStageResponse;
 import com.privod.platform.modules.crm.web.dto.CrmTeamResponse;
 import com.privod.platform.modules.crm.web.dto.UpdateCrmLeadRequest;
 import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.project.domain.ProjectStatus;
 import com.privod.platform.modules.project.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,10 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,33 +66,29 @@ public class CrmService {
     public Page<CrmLeadResponse> listLeads(String search, LeadStatus status, UUID stageId,
                                              UUID assignedToId, Pageable pageable) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Page<CrmLead> page;
         if (search != null && !search.isBlank()) {
-            return leadRepository.searchByOrganizationId(search, organizationId, pageable)
-                    .map(CrmLeadResponse::fromEntity);
-        }
-        if (status != null) {
-            return leadRepository.findByOrganizationIdAndStatusAndDeletedFalse(organizationId, status, pageable)
-                    .map(CrmLeadResponse::fromEntity);
-        }
-        if (stageId != null) {
+            page = leadRepository.searchByOrganizationId(search, organizationId, pageable);
+        } else if (status != null) {
+            page = leadRepository.findByOrganizationIdAndStatusAndDeletedFalse(organizationId, status, pageable);
+        } else if (stageId != null) {
             getStageOrThrow(stageId, organizationId);
-            return leadRepository.findByOrganizationIdAndStageIdAndDeletedFalse(organizationId, stageId, pageable)
-                    .map(CrmLeadResponse::fromEntity);
-        }
-        if (assignedToId != null) {
+            page = leadRepository.findByOrganizationIdAndStageIdAndDeletedFalse(organizationId, stageId, pageable);
+        } else if (assignedToId != null) {
             validateUserTenant(assignedToId, organizationId);
-            return leadRepository.findByOrganizationIdAndAssignedToIdAndDeletedFalse(organizationId, assignedToId, pageable)
-                    .map(CrmLeadResponse::fromEntity);
+            page = leadRepository.findByOrganizationIdAndAssignedToIdAndDeletedFalse(organizationId, assignedToId, pageable);
+        } else {
+            page = leadRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable);
         }
-        return leadRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
-                .map(CrmLeadResponse::fromEntity);
+
+        return enrichLeadPage(page);
     }
 
     @Transactional(readOnly = true)
     public CrmLeadResponse getLead(UUID id) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         CrmLead lead = getLeadOrThrow(id, organizationId);
-        return CrmLeadResponse.fromEntity(lead);
+        return enrichLeadResponse(lead);
     }
 
     @Transactional
@@ -122,7 +122,7 @@ public class CrmService {
         auditService.logCreate("CrmLead", lead.getId());
 
         log.info("CRM lead created: {} - {} ({})", lead.getName(), lead.getCompanyName(), lead.getId());
-        return CrmLeadResponse.fromEntity(lead);
+        return enrichLeadResponse(lead);
     }
 
     @Transactional
@@ -167,7 +167,7 @@ public class CrmService {
         auditService.logUpdate("CrmLead", lead.getId(), "multiple", null, null);
 
         log.info("CRM lead updated: {} ({})", lead.getName(), lead.getId());
-        return CrmLeadResponse.fromEntity(lead);
+        return enrichLeadResponse(lead);
     }
 
     @Transactional
@@ -192,28 +192,44 @@ public class CrmService {
                 oldStageId != null ? oldStageId.toString() : null, stageId.toString());
 
         log.info("CRM lead {} moved to stage {} ({})", lead.getName(), stage.getName(), lead.getId());
-        return CrmLeadResponse.fromEntity(lead);
+        return enrichLeadResponse(lead);
     }
 
     @Transactional
     public CrmLeadResponse convertToProject(UUID leadId, ConvertToProjectRequest request) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         CrmLead lead = getLeadOrThrow(leadId, organizationId);
-        validateProjectTenant(request.projectId(), organizationId);
 
         if (lead.getStatus() != LeadStatus.WON) {
             throw new IllegalStateException("Конвертировать в проект можно только выигранный лид");
         }
-
         if (lead.getProjectId() != null) {
             throw new IllegalStateException("Лид уже связан с проектом");
         }
 
-        lead.setProjectId(request.projectId());
-        lead = leadRepository.save(lead);
-        auditService.logUpdate("CrmLead", lead.getId(), "projectId", null, request.projectId().toString());
+        UUID projectId;
+        if (request.projectId() != null) {
+            validateProjectTenant(request.projectId(), organizationId);
+            projectId = request.projectId();
+        } else {
+            // Create new project
+            Project project = Project.builder()
+                    .organizationId(organizationId)
+                    .name(request.projectName() != null ? request.projectName() : lead.getName())
+                    .code(request.projectCode())
+                    .customerName(lead.getCompanyName())
+                    .status(ProjectStatus.PLANNING)
+                    .budgetAmount(lead.getExpectedRevenue())
+                    .build();
+            project = projectRepository.save(project);
+            projectId = project.getId();
+        }
 
-        log.info("CRM lead {} converted to project {} ({})", lead.getName(), request.projectId(), lead.getId());
+        lead.setProjectId(projectId);
+        lead = leadRepository.save(lead);
+        auditService.logUpdate("CrmLead", lead.getId(), "projectId", null, projectId.toString());
+
+        log.info("CRM lead {} converted to project {} ({})", lead.getName(), projectId, lead.getId());
         return CrmLeadResponse.fromEntity(lead);
     }
 
@@ -272,9 +288,24 @@ public class CrmService {
     @Transactional(readOnly = true)
     public List<CrmStageResponse> listStages() {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
-        return stageRepository.findAccessibleByOrganizationId(organizationId)
-                .stream()
-                .map(CrmStageResponse::fromEntity)
+        List<CrmStage> stages = stageRepository.findAccessibleByOrganizationId(organizationId);
+
+        // Compute lead counts and revenue per stage
+        Map<UUID, Long> leadCounts = new HashMap<>();
+        Map<UUID, BigDecimal> stageRevenue = new HashMap<>();
+        List<Object[]> stageData = leadRepository.countAndSumByStageAndOrganizationId(organizationId);
+        for (Object[] row : stageData) {
+            UUID stageId = (UUID) row[0];
+            if (stageId != null) {
+                leadCounts.put(stageId, (Long) row[1]);
+                stageRevenue.put(stageId, (BigDecimal) row[2]);
+            }
+        }
+
+        return stages.stream()
+                .map(s -> CrmStageResponse.fromEntity(s,
+                        leadCounts.getOrDefault(s.getId(), 0L),
+                        stageRevenue.getOrDefault(s.getId(), BigDecimal.ZERO)))
                 .toList();
     }
 
@@ -342,9 +373,17 @@ public class CrmService {
     public List<CrmActivityResponse> getLeadActivities(UUID leadId) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         getLeadOrThrow(leadId, organizationId);
-        return activityRepository.findByOrganizationIdAndLeadIdAndDeletedFalseOrderByScheduledAtDesc(organizationId, leadId)
-                .stream()
-                .map(CrmActivityResponse::fromEntity)
+        List<CrmActivity> activities = activityRepository
+                .findByOrganizationIdAndLeadIdAndDeletedFalseOrderByScheduledAtDesc(organizationId, leadId);
+
+        // Resolve user names for activities
+        Set<UUID> userIds = activities.stream()
+                .map(CrmActivity::getUserId).filter(Objects::nonNull).collect(Collectors.toSet());
+        Map<UUID, String> userNames = resolveUserNames(userIds);
+
+        return activities.stream()
+                .map(a -> CrmActivityResponse.fromEntity(a,
+                        a.getUserId() != null ? userNames.get(a.getUserId()) : null))
                 .toList();
     }
 
@@ -415,9 +454,9 @@ public class CrmService {
         Map<String, Long> stageCounts = new HashMap<>();
         List<Object[]> stageData = leadRepository.countByStageAndOrganizationId(organizationId);
         for (Object[] row : stageData) {
-            UUID stageId = (UUID) row[0];
+            UUID stageIdVal = (UUID) row[0];
             Long count = (Long) row[1];
-            stageCounts.put(stageId != null ? stageId.toString() : "unassigned", count);
+            stageCounts.put(stageIdVal != null ? stageIdVal.toString() : "unassigned", count);
         }
 
         BigDecimal pipelineRevenue = leadRepository.sumPipelineRevenueByOrganizationId(organizationId);
@@ -437,7 +476,69 @@ public class CrmService {
         );
     }
 
-    // ===================== Helpers =====================
+    // ===================== Enrichment Helpers =====================
+
+    private Page<CrmLeadResponse> enrichLeadPage(Page<CrmLead> page) {
+        Set<UUID> stageIds = page.getContent().stream()
+                .map(CrmLead::getStageId).filter(Objects::nonNull).collect(Collectors.toSet());
+        Set<UUID> userIds = page.getContent().stream()
+                .map(CrmLead::getAssignedToId).filter(Objects::nonNull).collect(Collectors.toSet());
+
+        Map<UUID, String> stageNames = resolveStageNames(stageIds);
+        Map<UUID, String> userNames = resolveUserNames(userIds);
+
+        // Count activities per lead
+        Map<UUID, Integer> activityCounts = new HashMap<>();
+        for (CrmLead lead : page.getContent()) {
+            activityCounts.put(lead.getId(),
+                    (int) activityRepository.countByOrganizationIdAndLeadIdAndDeletedFalse(
+                            lead.getOrganizationId(), lead.getId()));
+        }
+
+        return page.map(lead -> CrmLeadResponse.fromEntity(lead,
+                lead.getStageId() != null ? stageNames.get(lead.getStageId()) : null,
+                lead.getAssignedToId() != null ? userNames.get(lead.getAssignedToId()) : null,
+                activityCounts.getOrDefault(lead.getId(), 0)));
+    }
+
+    private CrmLeadResponse enrichLeadResponse(CrmLead lead) {
+        String stageName = null;
+        String assignedToName = null;
+
+        if (lead.getStageId() != null) {
+            Map<UUID, String> stageNames = resolveStageNames(Set.of(lead.getStageId()));
+            stageName = stageNames.get(lead.getStageId());
+        }
+        if (lead.getAssignedToId() != null) {
+            Map<UUID, String> userNames = resolveUserNames(Set.of(lead.getAssignedToId()));
+            assignedToName = userNames.get(lead.getAssignedToId());
+        }
+
+        int activityCount = (int) activityRepository
+                .countByOrganizationIdAndLeadIdAndDeletedFalse(lead.getOrganizationId(), lead.getId());
+
+        return CrmLeadResponse.fromEntity(lead, stageName, assignedToName, activityCount);
+    }
+
+    private Map<UUID, String> resolveStageNames(Set<UUID> stageIds) {
+        Map<UUID, String> stageNames = new HashMap<>();
+        if (!stageIds.isEmpty()) {
+            stageRepository.findAllById(stageIds).forEach(s -> stageNames.put(s.getId(), s.getName()));
+        }
+        return stageNames;
+    }
+
+    private Map<UUID, String> resolveUserNames(Set<UUID> userIds) {
+        Map<UUID, String> userNames = new HashMap<>();
+        if (!userIds.isEmpty()) {
+            userRepository.findAllById(userIds).forEach(u -> userNames.put(u.getId(),
+                    ((u.getFirstName() != null ? u.getFirstName() : "") + " " +
+                            (u.getLastName() != null ? u.getLastName() : "")).trim()));
+        }
+        return userNames;
+    }
+
+    // ===================== Validation Helpers =====================
 
     private CrmLead getLeadOrThrow(UUID id, UUID organizationId) {
         return leadRepository.findByIdAndOrganizationIdAndDeletedFalse(id, organizationId)

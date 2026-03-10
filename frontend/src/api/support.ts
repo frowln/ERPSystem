@@ -61,7 +61,7 @@ export interface TicketFilters extends PaginationParams {
 
 function shortUserLabel(userId?: string | null): string | undefined {
   if (!userId) return undefined;
-  return `Пользователь ${userId.slice(0, 8)}`;
+  return userId.slice(0, 8);
 }
 
 function mapTicket(ticket: BackendSupportTicketResponse): SupportTicket {
@@ -181,7 +181,7 @@ export const supportApi = {
   ): Promise<SupportTicket> => {
     if (status === 'ASSIGNED') {
       if (!options?.assigneeId) {
-        throw new Error('Для статуса ASSIGNED требуется assigneeId');
+        throw new Error('assigneeId is required for ASSIGNED status');
       }
       return supportApi.assignTicket(id, options.assigneeId);
     }

@@ -68,6 +68,9 @@ const MaterialDetailPage: React.FC = () => {
       toast.success(t('warehouse.materialDetail.toastDeleted'));
       navigate('/warehouse/materials');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const m = material;

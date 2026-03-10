@@ -7,10 +7,11 @@ import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
-import { Input, Select } from '@/design-system/components/FormField';
+import { Input, Select, Textarea } from '@/design-system/components/FormField';
 import { closeoutApi } from '@/api/closeout';
 import { t } from '@/i18n';
 import type { CommissioningChecklistTemplate } from './types';
+import toast from 'react-hot-toast';
 
 const activeColorMap: Record<string, 'green' | 'gray'> = {
   active: 'green',
@@ -62,6 +63,9 @@ const CommissioningTemplateListPage: React.FC = () => {
       setShowModal(false);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const updateMutation = useMutation({
@@ -73,12 +77,18 @@ const CommissioningTemplateListPage: React.FC = () => {
       setEditingId(null);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => closeoutApi.deleteCommissioningTemplate(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['commissioning-templates'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -251,8 +261,9 @@ const CommissioningTemplateListPage: React.FC = () => {
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {t('closeout.templateFieldItems')}
             </label>
-            <textarea
-              className="w-full h-32 px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-sm font-mono text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            <Textarea
+              rows={5}
+              className="font-mono"
               value={form.checkItemDefinitions}
               onChange={(e) => setForm((prev) => ({ ...prev, checkItemDefinitions: e.target.value }))}
             />

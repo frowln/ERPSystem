@@ -31,4 +31,10 @@ public interface ImmutableRecordRepository extends JpaRepository<ImmutableRecord
     List<ImmutableRecord> findChain(@Param("entityType") String entityType, @Param("entityId") UUID entityId);
 
     long countByEntityTypeAndEntityIdAndDeletedFalse(String entityType, UUID entityId);
+
+    @Query("SELECT r.entityType, r.action, COUNT(r) FROM ImmutableRecord r " +
+            "WHERE r.deleted = false GROUP BY r.entityType, r.action ORDER BY COUNT(r) DESC")
+    List<Object[]> countByEntityTypeAndAction();
+
+    long countByDeletedFalse();
 }

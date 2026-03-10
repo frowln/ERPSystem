@@ -15,6 +15,7 @@ import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { WarrantyObligation, WarrantyObligationStatus } from './types';
 import type { PaginatedResponse } from '@/types';
+import toast from 'react-hot-toast';
 
 const statusColorMap: Record<string, 'gray' | 'green' | 'yellow' | 'red' | 'purple'> = {
   ACTIVE: 'green',
@@ -89,6 +90,9 @@ const WarrantyObligationListPage: React.FC = () => {
       setShowModal(false);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const updateMutation = useMutation({
@@ -101,6 +105,9 @@ const WarrantyObligationListPage: React.FC = () => {
       setEditingId(null);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -108,6 +115,9 @@ const WarrantyObligationListPage: React.FC = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['warranty-obligations'] });
       void queryClient.invalidateQueries({ queryKey: ['warranty-obligations-dashboard'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

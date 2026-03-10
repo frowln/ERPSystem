@@ -19,7 +19,7 @@ const contractSchema = z.object({
   contractDate: z.string().min(1, t('forms.contract.validation.dateRequired')),
   partnerId: z.string().min(1, t('forms.contract.validation.partnerRequired')),
   projectId: z.string().min(1, t('forms.contract.validation.projectRequired')),
-  typeId: z.string().min(1, t('forms.contract.validation.typeRequired')),
+  typeId: z.string().optional(),
   amount: z
     .string()
     .min(1, t('forms.contract.validation.amountRequired'))
@@ -51,12 +51,12 @@ const contractSchema = z.object({
 
 type ContractFormData = z.input<typeof contractSchema>;
 
-const typeOptions = [
-  { value: 't1', label: t('forms.contract.contractTypes.general') },
-  { value: 't2', label: t('forms.contract.contractTypes.subcontract') },
-  { value: 't3', label: t('forms.contract.contractTypes.supply') },
-  { value: 't4', label: t('forms.contract.contractTypes.design') },
-  { value: 't5', label: t('forms.contract.contractTypes.services') },
+const fallbackTypeOptions = [
+  { value: '', label: t('forms.contract.contractTypes.general') },
+  { value: '', label: t('forms.contract.contractTypes.subcontract') },
+  { value: '', label: t('forms.contract.contractTypes.supply') },
+  { value: '', label: t('forms.contract.contractTypes.design') },
+  { value: '', label: t('forms.contract.contractTypes.services') },
 ];
 
 const vatRateOptions = [
@@ -91,6 +91,17 @@ const ContractFormPage: React.FC = () => {
     queryFn: () => contractsApi.getContract(id!),
     enabled: isEdit,
   });
+
+  const { data: contractTypesData } = useQuery({
+    queryKey: ['contract-types'],
+    queryFn: async () => {
+      const res = await contractsApi.getContractTypes();
+      return res;
+    },
+  });
+  const typeOptions = (contractTypesData ?? []).length > 0
+    ? contractTypesData!.map((ct: any) => ({ value: ct.id, label: ct.name }))
+    : fallbackTypeOptions;
 
   const { data: counterpartiesData } = useQuery({
     queryKey: ['counterparties'],
@@ -171,7 +182,27 @@ const ContractFormPage: React.FC = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: ContractFormData) => {
-      return contractsApi.createContract(data as any);
+      const payload: Record<string, unknown> = { ...data };
+      // Remove fields that backend generates or are not in DTO
+      delete payload.number;
+      delete payload.insuranceType;
+      delete payload.insurancePolicyNumber;
+      delete payload.insuranceAmount;
+      delete payload.insuranceExpiryDate;
+      delete payload.performanceBondNumber;
+      delete payload.performanceBondAmount;
+      delete payload.paymentBondNumber;
+      delete payload.paymentBondAmount;
+      delete payload.procurementLaw;
+      delete payload.procurementMethod;
+      delete payload.tenderNumber;
+      delete payload.tenderJustification;
+      // Convert empty strings to null for UUID fields
+      if (!payload.typeId) payload.typeId = null;
+      if (!payload.partnerId) payload.partnerId = null;
+      if (!payload.projectId) payload.projectId = null;
+      if (!payload.direction) delete payload.direction;
+      return contractsApi.createContract(payload as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['CONTRACTS'] });
@@ -185,7 +216,26 @@ const ContractFormPage: React.FC = () => {
 
   const updateMutation = useMutation({
     mutationFn: (data: ContractFormData) => {
-      return contractsApi.updateContract(id!, data as any);
+      const payload: Record<string, unknown> = { ...data };
+      // Remove fields not in backend UpdateContractRequest DTO
+      delete payload.number;
+      delete payload.insuranceType;
+      delete payload.insurancePolicyNumber;
+      delete payload.insuranceAmount;
+      delete payload.insuranceExpiryDate;
+      delete payload.performanceBondNumber;
+      delete payload.performanceBondAmount;
+      delete payload.paymentBondNumber;
+      delete payload.paymentBondAmount;
+      delete payload.procurementLaw;
+      delete payload.procurementMethod;
+      delete payload.tenderNumber;
+      delete payload.tenderJustification;
+      if (!payload.typeId) payload.typeId = null;
+      if (!payload.partnerId) payload.partnerId = null;
+      if (!payload.projectId) payload.projectId = null;
+      if (!payload.direction) delete payload.direction;
+      return contractsApi.updateContract(id!, payload as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['CONTRACTS'] });

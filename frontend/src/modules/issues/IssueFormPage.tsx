@@ -11,35 +11,38 @@ import { FormField, Input, Textarea, Select } from '@/design-system/components/F
 import { issuesApi } from '@/api/issues';
 import { projectsApi } from '@/api/projects';
 import { permissionsApi } from '@/api/permissions';
+import { useAuthStore } from '@/stores/authStore';
 import { t } from '@/i18n';
 
 const issueSchema = z.object({
-  title: z.string().min(1, t('forms.issue.validation.titleRequired')).max(300, t('forms.common.maxChars', { count: '300' })),
+  title: z.string().min(1, t('forms.issue.validation.titleRequired')).max(500, t('forms.common.maxChars', { count: '500' })),
   description: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
-  type: z.enum([ 'DEFECT', 'SAFETY', 'COORDINATION', 'DESIGN', 'SCHEDULE'], {
+  issueType: z.enum(['DESIGN', 'CONSTRUCTION', 'COORDINATION', 'SAFETY', 'QUALITY', 'OTHER'], {
     required_error: t('forms.issue.validation.typeRequired'),
   }),
-  priority: z.enum([ 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'], {
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'CRITICAL'], {
     required_error: t('forms.issue.validation.priorityRequired'),
   }),
   projectId: z.string().min(1, t('forms.issue.validation.projectRequired')),
   assignedToId: z.string().optional(),
   dueDate: z.string().optional(),
+  location: z.string().max(500).optional(),
 });
 
 type IssueFormData = z.input<typeof issueSchema>;
 
-const typeOptions = [
-  { value: 'DEFECT', label: t('forms.issue.issueTypes.defect') },
-  { value: 'SAFETY', label: t('forms.issue.issueTypes.safety') },
-  { value: 'COORDINATION', label: t('forms.issue.issueTypes.coordination') },
+const getTypeOptions = () => [
   { value: 'DESIGN', label: t('forms.issue.issueTypes.design') },
-  { value: 'SCHEDULE', label: t('forms.issue.issueTypes.schedule') },
+  { value: 'CONSTRUCTION', label: t('forms.issue.issueTypes.construction') },
+  { value: 'COORDINATION', label: t('forms.issue.issueTypes.coordination') },
+  { value: 'SAFETY', label: t('forms.issue.issueTypes.safety') },
+  { value: 'QUALITY', label: t('forms.issue.issueTypes.quality') },
+  { value: 'OTHER', label: t('forms.issue.issueTypes.other') },
 ];
 
-const priorityOptions = [
+const getPriorityOptions = () => [
   { value: 'LOW', label: t('forms.issue.priorities.low') },
-  { value: 'MEDIUM', label: t('forms.issue.priorities.medium') },
+  { value: 'NORMAL', label: t('forms.issue.priorities.normal') },
   { value: 'HIGH', label: t('forms.issue.priorities.high') },
   { value: 'CRITICAL', label: t('forms.issue.priorities.critical') },
 ];
@@ -49,9 +52,10 @@ const IssueFormPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+  const user = useAuthStore((s) => s.user);
 
   const { data: existingIssue } = useQuery({
-    queryKey: [ 'ISSUE', id],
+    queryKey: ['issue', id],
     queryFn: () => issuesApi.getIssue(id!),
     enabled: isEdit,
   });
@@ -68,7 +72,7 @@ const IssueFormPage: React.FC = () => {
   });
   const assigneeOptions = [
     { value: '', label: t('forms.issue.unassigned') },
-    ...(usersData?.content ?? []).map(u => ({ value: u.id, label: `${u.lastName} ${u.firstName}` })),
+    ...(usersData?.content ?? []).map(u => ({ value: u.id, label: u.fullName ?? u.email })),
   ];
 
   const {
@@ -81,20 +85,22 @@ const IssueFormPage: React.FC = () => {
       ? {
           title: existingIssue.title,
           description: existingIssue.description ?? '',
-          type: existingIssue.type,
+          issueType: existingIssue.issueType ?? 'OTHER',
           priority: existingIssue.priority,
           projectId: existingIssue.projectId,
           assignedToId: existingIssue.assignedToId ?? '',
           dueDate: existingIssue.dueDate ?? '',
+          location: existingIssue.location ?? '',
         }
       : {
           title: '',
           description: '',
-          type: '' as any,
-          priority: '' as any,
+          issueType: 'CONSTRUCTION' as const,
+          priority: 'NORMAL' as const,
           projectId: '',
           assignedToId: '',
           dueDate: '',
+          location: '',
         },
   });
 
@@ -103,17 +109,19 @@ const IssueFormPage: React.FC = () => {
       return issuesApi.createIssue({
         title: data.title,
         description: data.description || undefined,
-        type: data.type,
+        issueType: data.issueType,
         priority: data.priority,
         projectId: data.projectId,
         assignedToId: data.assignedToId || undefined,
+        reportedById: user?.id ?? '',
         dueDate: data.dueDate || undefined,
+        location: data.location || undefined,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['issues'] });
       toast.success(t('forms.issue.createSuccess'));
-      navigate('/issues');
+      navigate('/pm/issues');
     },
     onError: () => {
       toast.error(t('forms.issue.createError'));
@@ -125,18 +133,18 @@ const IssueFormPage: React.FC = () => {
       return issuesApi.updateIssue(id!, {
         title: data.title,
         description: data.description || undefined,
-        type: data.type,
+        issueType: data.issueType,
         priority: data.priority,
-        projectId: data.projectId,
         assignedToId: data.assignedToId || undefined,
         dueDate: data.dueDate || undefined,
+        location: data.location || undefined,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['issues'] });
-      queryClient.invalidateQueries({ queryKey: [ 'ISSUE', id] });
+      queryClient.invalidateQueries({ queryKey: ['issue', id] });
       toast.success(t('forms.issue.updateSuccess'));
-      navigate(`/issues/${id}`);
+      navigate(`/pm/issues/${id}`);
     },
     onError: () => {
       toast.error(t('forms.issue.updateError'));
@@ -158,10 +166,10 @@ const IssueFormPage: React.FC = () => {
       <PageHeader
         title={isEdit ? t('forms.issue.editTitle') : t('forms.issue.createTitle')}
         subtitle={isEdit ? existingIssue?.title : t('forms.issue.createSubtitle')}
-        backTo={isEdit ? `/issues/${id}` : '/issues'}
+        backTo={isEdit ? `/pm/issues/${id}` : '/pm/issues'}
         breadcrumbs={[
           { label: t('forms.common.home'), href: '/' },
-          { label: t('forms.issue.breadcrumbIssues'), href: '/issues' },
+          { label: t('forms.issue.breadcrumbIssues'), href: '/pm/issues' },
           { label: isEdit ? t('forms.common.editing') : t('forms.common.creating') },
         ]}
       />
@@ -178,16 +186,16 @@ const IssueFormPage: React.FC = () => {
                 {...register('title')}
               />
             </FormField>
-            <FormField label={t('forms.issue.labelType')} error={errors.type?.message} required>
+            <FormField label={t('forms.issue.labelType')} error={errors.issueType?.message} required>
               <Select
-                options={typeOptions}
-                hasError={!!errors.type}
-                {...register('type')}
+                options={getTypeOptions()}
+                hasError={!!errors.issueType}
+                {...register('issueType')}
               />
             </FormField>
             <FormField label={t('forms.issue.labelPriority')} error={errors.priority?.message} required>
               <Select
-                options={priorityOptions}
+                options={getPriorityOptions()}
                 hasError={!!errors.priority}
                 {...register('priority')}
               />
@@ -217,6 +225,9 @@ const IssueFormPage: React.FC = () => {
             <FormField label={t('forms.issue.labelDueDate')} error={errors.dueDate?.message}>
               <Input type="date" hasError={!!errors.dueDate} {...register('dueDate')} />
             </FormField>
+            <FormField label={t('issues.location')} error={errors.location?.message}>
+              <Input placeholder={t('issues.location')} hasError={!!errors.location} {...register('location')} />
+            </FormField>
           </div>
           <div className="mt-5">
             <FormField label={t('common.description')} error={errors.description?.message}>
@@ -238,7 +249,7 @@ const IssueFormPage: React.FC = () => {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => navigate(isEdit ? `/issues/${id}` : '/issues')}
+            onClick={() => navigate(isEdit ? `/pm/issues/${id}` : '/pm/issues')}
           >
             {t('common.back')}
           </Button>

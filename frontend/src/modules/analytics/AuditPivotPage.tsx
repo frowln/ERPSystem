@@ -6,7 +6,22 @@ import { analyticsApi, type AuditLogEntry } from '@/api/analytics';
 import { t } from '@/i18n';
 
 // ---------------------------------------------------------------------------
+// Map raw backend entity types → translated labels
 // ---------------------------------------------------------------------------
+
+const MODULE_MAP: Record<string, string> = {
+  PROJECT: 'modProjects', CONTRACT: 'modContracts', ESTIMATE: 'modEstimates',
+  PAYMENT: 'modPayments', INVOICE: 'modPayments', WAREHOUSE: 'modWarehouse',
+  STOCK: 'modWarehouse', PERSONNEL: 'modPersonnel', AUTH: 'modPersonnel',
+  DOCUMENT: 'modDocuments', QUALITY: 'modQuality', DEFECT: 'modQuality',
+  PROCUREMENT: 'modProcurement', TASK: 'modTasks', BUDGET: 'modPayments',
+  SAFETY: 'modQuality', CLOSING: 'modEstimates', SPECIFICATION: 'modEstimates',
+};
+
+const ACTION_MAP: Record<string, string> = {
+  CREATE: 'actCreate', UPDATE: 'actEdit', SUPERSEDE: 'actEdit',
+  DELETE: 'actDelete', VIEW: 'actView', EXPORT: 'actExport',
+};
 
 const getModules = () => [
   t('analytics.auditPivot.modProjects'),
@@ -42,7 +57,14 @@ const AuditPivotPage: React.FC = () => {
     queryKey: ['analytics-audit-log'],
     queryFn: () => analyticsApi.getAuditLog({ page: 0, size: 5000 }),
   });
-  const auditData: AuditLogEntry[] = useMemo(() => auditResponse?.content ?? [], [auditResponse]);
+  const auditData: AuditLogEntry[] = useMemo(() => {
+    const raw = auditResponse?.content ?? [];
+    return raw.map((entry) => ({
+      ...entry,
+      module: t(`analytics.auditPivot.${MODULE_MAP[entry.module] ?? 'modProjects'}`),
+      action_type: t(`analytics.auditPivot.${ACTION_MAP[entry.action_type] ?? 'actEdit'}`),
+    }));
+  }, [auditResponse]);
 
   const totalActions = auditData.length;
   const mostActiveModule = modules.reduce((best, mod) => {
@@ -72,9 +94,9 @@ const AuditPivotPage: React.FC = () => {
           <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{modules.length}</p>
           <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-0.5">{t('analytics.auditPivot.modulesCount')}</p>
         </div>
-        <div className="rounded-lg border bg-primary-50 border-primary-200 px-4 py-3">
-          <p className="text-2xl font-bold text-primary-700">{mostActiveModule.name}</p>
-          <p className="text-xs font-medium text-primary-600 mt-0.5">{t('analytics.auditPivot.mostActive')} ({mostActiveModule.count})</p>
+        <div className="rounded-lg border bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800 px-4 py-3">
+          <p className="text-2xl font-bold text-primary-700 dark:text-primary-400">{mostActiveModule.name}</p>
+          <p className="text-xs font-medium text-primary-600 dark:text-primary-400 mt-0.5">{t('analytics.auditPivot.mostActive')} ({mostActiveModule.count})</p>
         </div>
         <div className="rounded-lg border bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 px-4 py-3">
           <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{actionTypes.length}</p>

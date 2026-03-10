@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Repository("procurementExtPurchaseOrderItemRepository")
 public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrderItem, UUID> {
 
     List<PurchaseOrderItem> findByPurchaseOrderIdAndDeletedFalse(UUID purchaseOrderId);

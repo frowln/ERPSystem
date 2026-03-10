@@ -12,6 +12,7 @@ import {
   materialCategoryLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { warehouseApi } from '@/api/warehouse';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
@@ -118,6 +119,10 @@ const MaterialListPage: React.FC = () => {
     (material: Material) => navigate(`/warehouse/materials/${material.id}`),
     [navigate],
   );
+
+  if (isLoading && materials.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
 
   return (
     <div className="animate-fade-in">

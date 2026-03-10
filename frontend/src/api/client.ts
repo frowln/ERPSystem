@@ -26,6 +26,25 @@ export const apiClient = axios.create({
   },
 });
 
+// Refresh token rotation state
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
+  config: InternalAxiosRequestConfig;
+}[] = [];
+
+const processQueue = (error: unknown | null) => {
+  failedQueue.forEach(({ resolve, reject, config }) => {
+    if (error) {
+      reject(error);
+    } else {
+      apiClient(config).then(resolve).catch(reject);
+    }
+  });
+  failedQueue = [];
+};
+
 // Request interceptor: attach JWT
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -62,7 +81,7 @@ apiClient.interceptors.response.use(
     }
     return response;
   },
-  (error: AxiosError<{ message?: string; error?: { code?: number; message?: string } }>) => {
+  async (error: AxiosError<{ message?: string; error?: { code?: number; message?: string } }>) => {
     if (error.code === DEMO_MODE_BLOCKED_ERROR_CODE) {
       notifyDemoModeBlockedAction();
       return Promise.reject(error);
@@ -81,21 +100,82 @@ apiClient.interceptors.response.use(
       t('errors.unexpectedError');
 
     if (status === 401) {
+      const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+      // Don't retry refresh requests or already-retried requests
+      if (originalRequest?.url?.includes('/auth/refresh') || originalRequest?._retry) {
+        const authStore = useAuthStore.getState();
+        if (window.location.pathname !== '/login') {
+          authStore.setRedirectAfterLogin(window.location.pathname + window.location.search);
+        }
+        authStore.logout();
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      }
+
+      // Queue requests while refreshing
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject, config: originalRequest });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
       const authStore = useAuthStore.getState();
-      // Save current path for redirect after re-login
-      if (window.location.pathname !== '/login') {
-        authStore.setRedirectAfterLogin(window.location.pathname + window.location.search);
+      const currentRefreshToken = authStore.refreshToken;
+
+      if (!currentRefreshToken) {
+        isRefreshing = false;
+        processQueue(error);
+        if (window.location.pathname !== '/login') {
+          authStore.setRedirectAfterLogin(window.location.pathname + window.location.search);
+        }
+        authStore.logout();
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
       }
-      authStore.logout();
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+
+      try {
+        const refreshResponse = await axios.post('/api/auth/refresh', { refreshToken: currentRefreshToken });
+        const responseData = refreshResponse.data?.data ?? refreshResponse.data;
+        const newAccessToken = responseData.accessToken;
+        const newRefreshToken = responseData.refreshToken;
+
+        if (authStore.user) {
+          authStore.setAuth(authStore.user, newAccessToken, newRefreshToken);
+        }
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        isRefreshing = false;
+        processQueue(null);
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        processQueue(refreshError);
+        if (window.location.pathname !== '/login') {
+          authStore.setRedirectAfterLogin(window.location.pathname + window.location.search);
+        }
+        authStore.logout();
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
       }
-      return Promise.reject(error);
     }
 
+    const isGetRequest = error.config?.method?.toUpperCase() === 'GET';
+
     if (status === 400) {
-      // Check if it's a UUID format error (from mock data)
-      if (message.includes('Invalid ID format') || message.includes('UUID')) {
+      // UUID format errors on GET requests are usually from missing/empty data — suppress
+      if (isGetRequest && (message.includes('Invalid ID format') || message.includes('UUID'))) {
+        // Silent — page will show empty state
+      } else if (message.includes('Invalid ID format') || message.includes('UUID')) {
         toast.error(t('errors.invalidIdFormat'));
       } else {
         toast.error(message || t('errors.badRequest'));
@@ -103,11 +183,17 @@ apiClient.interceptors.response.use(
     } else if (status === 403) {
       toast.error(t('errors.forbiddenAction'));
     } else if (status === 404) {
-      toast.error(t('errors.resourceNotFound'));
+      // Don't show "Resource not found" on GET requests — page will show empty state
+      if (!isGetRequest) {
+        toast.error(t('errors.resourceNotFound'));
+      }
     } else if (status === 422) {
       toast.error(message);
     } else if (status && status >= 500) {
-      toast.error(t('errors.serverErrorRetry'));
+      // Don't show server errors on GET list requests — page will show empty state
+      if (!isGetRequest) {
+        toast.error(t('errors.serverErrorRetry'));
+      }
     } else if (!error.response) {
       toast.error(t('errors.noConnection'));
     }

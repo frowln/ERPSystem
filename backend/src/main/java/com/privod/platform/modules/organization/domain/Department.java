@@ -40,4 +40,14 @@ public class Department extends BaseEntity {
 
     @Column(name = "parent_id")
     private UUID parentId;
+
+    @Column(name = "description", length = 500)
+    private String description;
+
+    @Column(name = "sort_order")
+    private Integer sortOrder;
+
+    @Column(name = "active")
+    @Builder.Default
+    private Boolean active = true;
 }

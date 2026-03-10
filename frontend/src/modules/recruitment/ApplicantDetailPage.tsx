@@ -27,6 +27,7 @@ import { formatDateLong, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { Applicant, Interview } from './types';
+import toast from 'react-hot-toast';
 
 const statusFlow = [
   { status: 'NEW', label: t('recruitment.detail.statusNew') },
@@ -56,6 +57,9 @@ const ApplicantDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applicant', id] });
       queryClient.invalidateQueries({ queryKey: ['applicants'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

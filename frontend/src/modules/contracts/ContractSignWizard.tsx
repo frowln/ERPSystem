@@ -6,6 +6,7 @@ import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { contractsApi } from '@/api/contracts';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
+import { formatMoney } from '@/lib/format';
 
 interface ContractSignWizardProps {
   open: boolean;
@@ -74,10 +75,15 @@ export const ContractSignWizard: React.FC<ContractSignWizardProps> = ({ open, on
 
   const handleFinish = async () => {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    toast.success(t('contracts.sign.toastSigned', { number: contract.number }));
-    setSubmitting(false);
-    resetAndClose();
+    try {
+      await contractsApi.changeContractStatus(contractId!, 'SIGNED');
+      toast.success(t('contracts.sign.toastSigned', { number: contract.number }));
+      resetAndClose();
+    } catch {
+      toast.error(t('common.operationError'));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const resetAndClose = () => {
@@ -166,7 +172,7 @@ export const ContractSignWizard: React.FC<ContractSignWizardProps> = ({ open, on
               </div>
               <div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contracts.sign.contractAmountLabel')}</p>
-                <p className="text-sm font-semibold">{contract.amount.toLocaleString('ru-RU')} ₽</p>
+                <p className="text-sm font-semibold">{formatMoney(contract.amount)}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

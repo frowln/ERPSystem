@@ -2,11 +2,12 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import { Plus, Search, FolderKanban, Wallet, TrendingUp, Users } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
 import { ConfirmDialog } from '@/design-system/components/ConfirmDialog';
+import { MetricCard } from '@/design-system/components/MetricCard';
 import {
   StatusBadge,
   projectStatusColorMap,
@@ -14,11 +15,13 @@ import {
   projectTypeLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { projectsApi } from '@/api/projects';
-import { formatMoney, formatDate } from '@/lib/format';
+import { formatMoney, formatMoneyCompact, formatDate } from '@/lib/format';
 import { guardDemoModeAction, isDemoMode } from '@/lib/demoMode';
 import { t } from '@/i18n';
-import type { Project } from '@/types';
+import type { Project, ProjectStatus } from '@/types';
+import toast from 'react-hot-toast';
 
 type TabId = 'all' | 'IN_PROGRESS' | 'PLANNING' | 'COMPLETED';
 
@@ -33,11 +36,14 @@ const ProjectListPage: React.FC = () => {
   const deleteProjectsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       for (const id of ids) {
-        await projectsApi.changeStatus(id, 'CANCELLED' as any);
+        await projectsApi.changeStatus(id, 'CANCELLED' as ProjectStatus);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -72,9 +78,9 @@ const ProjectListPage: React.FC = () => {
       const lower = search.toLowerCase();
       filtered = filtered.filter(
         (p) =>
-          p.name.toLowerCase().includes(lower) ||
-          p.code.toLowerCase().includes(lower) ||
-          p.customerName.toLowerCase().includes(lower),
+          p.name?.toLowerCase().includes(lower) ||
+          p.code?.toLowerCase().includes(lower) ||
+          (p.customerName ?? '').toLowerCase().includes(lower),
       );
     }
 
@@ -87,6 +93,16 @@ const ProjectListPage: React.FC = () => {
     planning: projects.filter((p) => p.status === 'PLANNING' || p.status === 'DRAFT').length,
     completed: projects.filter((p) => p.status === 'COMPLETED').length,
   }), [projects]);
+
+  const kpi = useMemo(() => {
+    const totalBudget = projects.reduce((s, p) => s + (p.budget ?? 0), 0);
+    const totalSpent = projects.reduce((s, p) => s + (p.spentAmount ?? 0), 0);
+    const avgProgress = projects.length > 0
+      ? Math.round(projects.reduce((s, p) => s + (p.progress ?? 0), 0) / projects.length)
+      : 0;
+    const activeCount = projects.filter((p) => p.status === 'IN_PROGRESS').length;
+    return { totalBudget, totalSpent, avgProgress, activeCount };
+  }, [projects]);
 
   const columns = useMemo<ColumnDef<Project, unknown>[]>(
     () => [
@@ -142,7 +158,7 @@ const ProjectListPage: React.FC = () => {
       },
       {
         accessorKey: 'budget',
-        header: t('projects.budget'),
+        header: t('projects.budgetLabel'),
         size: 180,
         cell: ({ getValue }) => (
           <span className="font-medium tabular-nums text-right block">
@@ -199,6 +215,10 @@ const ProjectListPage: React.FC = () => {
     });
   }, [deleteProjectsMutation, pendingCancellation]);
 
+  if (isLoading && projects.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
+
   return (
     <div className="animate-fade-in">
       <PageHeader
@@ -228,6 +248,38 @@ const ProjectListPage: React.FC = () => {
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
+
+      {/* KPI Summary */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <MetricCard
+          icon={<FolderKanban size={16} />}
+          label={t('projects.kpi.totalProjects')}
+          value={projects.length}
+          subtitle={t('projects.kpi.activeCount', { count: String(kpi.activeCount) })}
+          compact
+        />
+        <MetricCard
+          icon={<Wallet size={16} />}
+          label={t('projects.kpi.totalBudget')}
+          value={formatMoneyCompact(kpi.totalBudget)}
+          subtitle={`${t('projects.kpi.spent')}: ${formatMoneyCompact(kpi.totalSpent)}`}
+          compact
+        />
+        <MetricCard
+          icon={<TrendingUp size={16} />}
+          label={t('projects.kpi.avgProgress')}
+          value={`${kpi.avgProgress}%`}
+          trend={{ direction: kpi.avgProgress >= 50 ? 'up' : 'neutral', value: t('projects.kpi.ofAllProjects') }}
+          compact
+        />
+        <MetricCard
+          icon={<Users size={16} />}
+          label={t('projects.kpi.teamSize')}
+          value={projects.reduce((s, p) => s + (p.membersCount ?? 0), 0)}
+          subtitle={t('projects.kpi.acrossProjects')}
+          compact
+        />
+      </div>
 
       {/* Filters */}
       <div className="flex items-center gap-3 mb-4">
@@ -260,21 +312,10 @@ const ProjectListPage: React.FC = () => {
         columns={columns}
         loading={isLoading}
         onRowClick={handleRowClick}
-        enableRowSelection
         enableColumnVisibility
         enableDensityToggle
         enableExport
         pageSize={20}
-        bulkActions={[
-          {
-            label: t('projects.cancelProjects'),
-            icon: <Trash2 size={13} />,
-            variant: 'danger',
-            onClick: (rows) => {
-              handleBulkCancelRequest(rows);
-            },
-          },
-        ]}
         emptyTitle={t('projects.emptyState')}
         emptyDescription={t('projects.emptyStateDescription')}
       />

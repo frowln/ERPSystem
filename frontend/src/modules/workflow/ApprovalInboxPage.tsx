@@ -11,6 +11,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { workflowApi } from './api';
 import { t } from '@/i18n';
 import type { ApprovalInstance } from './types';
+import toast from 'react-hot-toast';
 
 type TabId = 'pending' | 'completed' | 'all';
 
@@ -64,6 +65,9 @@ export default function ApprovalInboxPage() {
       queryClient.invalidateQueries({ queryKey: ['approval-inbox'] });
       closeModal();
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const cancelMutation = useMutation({
@@ -71,6 +75,9 @@ export default function ApprovalInboxPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['approval-inbox'] });
       closeModal();
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -205,11 +212,11 @@ export default function ApprovalInboxPage() {
         title={actionType === 'approve' ? tp('confirmApprove') : tp('confirmReject')}
       >
         <div className="space-y-4">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-neutral-600 dark:text-neutral-400">
             {selectedInstance?.entityNumber} — {selectedInstance?.entityType}
           </div>
           <textarea
-            className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            className="w-full rounded-md border border-neutral-300 p-2 text-sm dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200"
             rows={3}
             placeholder={tp('commentPlaceholder')}
             value={comments}

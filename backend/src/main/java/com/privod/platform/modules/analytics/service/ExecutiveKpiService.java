@@ -29,6 +29,8 @@ import com.privod.platform.modules.planning.repository.MultiProjectAllocationRep
 import com.privod.platform.modules.project.domain.Project;
 import com.privod.platform.modules.project.domain.ProjectStatus;
 import com.privod.platform.modules.project.repository.ProjectRepository;
+import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.repository.ProjectTaskRepository;
 import com.privod.platform.modules.safety.domain.IncidentSeverity;
 import com.privod.platform.modules.safety.domain.SafetyIncident;
 import com.privod.platform.modules.safety.repository.SafetyIncidentRepository;
@@ -71,10 +73,11 @@ public class ExecutiveKpiService {
     private final VehicleRepository vehicleRepository;
     private final EvmSnapshotRepository evmSnapshotRepository;
     private final MultiProjectAllocationRepository multiProjectAllocationRepository;
+    private final ProjectTaskRepository projectTaskRepository;
 
     // CPI/SPI thresholds for health status
-    private static final BigDecimal GREEN_THRESHOLD = new BigDecimal("0.90");
-    private static final BigDecimal YELLOW_THRESHOLD = new BigDecimal("0.80");
+    private static final BigDecimal GREEN_THRESHOLD = new BigDecimal("0.95");
+    private static final BigDecimal YELLOW_THRESHOLD = new BigDecimal("0.85");
 
     // ── Portfolio Summary ────────────────────────────────────────────────────
 
@@ -119,12 +122,15 @@ public class ExecutiveKpiService {
             }
         }
 
-        // EBIT margin = (totalPaid - totalSpent) / totalPaid * 100
+        // EBIT margin = (revenue - cost) / revenue * 100
+        // Use totalPaid as revenue when available, fall back to totalContractValue
         BigDecimal ebitMargin = BigDecimal.ZERO;
-        if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
-            ebitMargin = totalPaid.subtract(totalSpent)
+        BigDecimal revenue = totalPaid.compareTo(BigDecimal.ZERO) > 0 ? totalPaid : totalContractValue;
+        BigDecimal cost = totalSpent.compareTo(BigDecimal.ZERO) > 0 ? totalSpent : totalBudget.multiply(new BigDecimal("0.85"));
+        if (revenue.compareTo(BigDecimal.ZERO) > 0) {
+            ebitMargin = revenue.subtract(cost)
                     .multiply(new BigDecimal("100"))
-                    .divide(totalPaid, 2, RoundingMode.HALF_UP);
+                    .divide(revenue, 2, RoundingMode.HALF_UP);
         }
 
         return new PortfolioSummaryDto(
@@ -169,17 +175,38 @@ public class ExecutiveKpiService {
         for (Project project : activeProjects) {
             EvmSnapshot evm = latestEvmByProject.get(project.getId());
 
-            BigDecimal cpi = BigDecimal.ONE;
-            BigDecimal spi = BigDecimal.ONE;
+            BigDecimal cpi;
+            BigDecimal spi;
 
-            if (evm != null) {
-                cpi = evm.getCpi() != null ? evm.getCpi() : BigDecimal.ONE;
-                spi = evm.getSpi() != null ? evm.getSpi() : BigDecimal.ONE;
+            BigDecimal spentAmount = safe(budgetRepository.sumActualCostByProjectId(project.getId()));
+            BigDecimal plannedBudget = safe(budgetRepository.sumPlannedCostByProjectId(project.getId()));
+
+            if (evm != null && evm.getCpi() != null && evm.getSpi() != null
+                    && evm.getCpi().compareTo(BigDecimal.ONE) != 0) {
+                // Use EVM data when it contains meaningful (non-default) values
+                cpi = evm.getCpi();
+                spi = evm.getSpi();
+            } else {
+                // Compute CPI from budget data: CPI = planned / actual (cost efficiency)
+                // If we spent less than planned, CPI > 1 (good); more than planned, CPI < 1 (bad)
+                if (spentAmount.compareTo(BigDecimal.ZERO) > 0 && plannedBudget.compareTo(BigDecimal.ZERO) > 0) {
+                    // Compute time-proportional planned cost
+                    BigDecimal timeElapsedRatio = computeTimeElapsedRatio(project);
+                    BigDecimal expectedSpend = plannedBudget.multiply(timeElapsedRatio);
+                    cpi = expectedSpend.compareTo(BigDecimal.ZERO) > 0
+                            ? expectedSpend.divide(spentAmount, 4, RoundingMode.HALF_UP)
+                            : BigDecimal.ONE;
+                    // Clamp CPI to reasonable range [0.5, 1.5]
+                    cpi = cpi.max(new BigDecimal("0.50")).min(new BigDecimal("1.50"));
+                } else {
+                    cpi = BigDecimal.ONE;
+                }
+
+                // Compute SPI from task progress vs time elapsed
+                spi = computeSpiFromTasks(project);
             }
 
             String healthStatus = determineHealthStatus(cpi, spi);
-
-            BigDecimal spentAmount = safe(budgetRepository.sumActualCostByProjectId(project.getId()));
 
             // Forecast completion based on SPI
             LocalDate forecastCompletion = project.getPlannedEndDate();
@@ -196,8 +223,8 @@ public class ExecutiveKpiService {
             results.add(new ProjectHealthDto(
                     project.getId(),
                     project.getName(),
-                    cpi,
-                    spi,
+                    cpi.setScale(2, RoundingMode.HALF_UP),
+                    spi.setScale(2, RoundingMode.HALF_UP),
                     healthStatus,
                     safe(project.getContractAmount()),
                     safe(project.getBudgetAmount()),
@@ -425,15 +452,33 @@ public class ExecutiveKpiService {
         BigDecimal totalPaid = safe(paymentRepository.sumTotalByProjectIdAndType(projectId, PaymentType.INCOMING));
         BigDecimal totalSpent = safe(budgetRepository.sumActualCostByProjectId(projectId));
 
-        // EVM data
+        // EVM data — compute from real data when EVM snapshots don't have meaningful values
         Optional<EvmSnapshot> latestEvm = evmSnapshotRepository.findLatestByProjectId(projectId);
-        BigDecimal cpi = BigDecimal.ONE;
-        BigDecimal spi = BigDecimal.ONE;
-        if (latestEvm.isPresent()) {
+        BigDecimal cpi;
+        BigDecimal spi;
+        BigDecimal plannedBudget = safe(budgetRepository.sumPlannedCostByProjectId(projectId));
+
+        if (latestEvm.isPresent() && latestEvm.get().getCpi() != null && latestEvm.get().getSpi() != null
+                && latestEvm.get().getCpi().compareTo(BigDecimal.ONE) != 0) {
             EvmSnapshot evm = latestEvm.get();
-            cpi = evm.getCpi() != null ? evm.getCpi() : BigDecimal.ONE;
-            spi = evm.getSpi() != null ? evm.getSpi() : BigDecimal.ONE;
+            cpi = evm.getCpi();
+            spi = evm.getSpi();
+        } else {
+            // Compute CPI from budget data
+            if (totalSpent.compareTo(BigDecimal.ZERO) > 0 && plannedBudget.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal timeRatio = computeTimeElapsedRatio(project);
+                BigDecimal expectedSpend = plannedBudget.multiply(timeRatio);
+                cpi = expectedSpend.compareTo(BigDecimal.ZERO) > 0
+                        ? expectedSpend.divide(totalSpent, 4, RoundingMode.HALF_UP)
+                        : BigDecimal.ONE;
+                cpi = cpi.max(new BigDecimal("0.50")).min(new BigDecimal("1.50"));
+            } else {
+                cpi = BigDecimal.ONE;
+            }
+            spi = computeSpiFromTasks(project);
         }
+        cpi = cpi.setScale(2, RoundingMode.HALF_UP);
+        spi = spi.setScale(2, RoundingMode.HALF_UP);
         String healthStatus = determineHealthStatus(cpi, spi);
 
         // Budget items for this project
@@ -532,6 +577,62 @@ public class ExecutiveKpiService {
         } else {
             return "RED";
         }
+    }
+
+    /**
+     * Compute the ratio of elapsed time within the project schedule.
+     * Returns a value between 0.0 and 1.0.
+     */
+    private BigDecimal computeTimeElapsedRatio(Project project) {
+        if (project.getPlannedStartDate() == null || project.getPlannedEndDate() == null) {
+            return new BigDecimal("0.50"); // Default to 50% if no dates
+        }
+        LocalDate start = project.getActualStartDate() != null ? project.getActualStartDate() : project.getPlannedStartDate();
+        LocalDate end = project.getPlannedEndDate();
+        LocalDate today = LocalDate.now();
+
+        long totalDays = ChronoUnit.DAYS.between(start, end);
+        if (totalDays <= 0) return BigDecimal.ONE;
+
+        long elapsedDays = ChronoUnit.DAYS.between(start, today);
+        if (elapsedDays <= 0) return BigDecimal.ZERO;
+        if (elapsedDays >= totalDays) return BigDecimal.ONE;
+
+        return BigDecimal.valueOf(elapsedDays)
+                .divide(BigDecimal.valueOf(totalDays), 4, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Compute SPI from task completion progress vs time elapsed.
+     * SPI = (% tasks completed) / (% time elapsed).
+     * Clamped to [0.50, 1.50].
+     */
+    private BigDecimal computeSpiFromTasks(Project project) {
+        List<UUID> pids = List.of(project.getId());
+        long totalTasks = projectTaskRepository.countActiveTasksByProjectIds(pids);
+        if (totalTasks == 0) {
+            return BigDecimal.ONE;
+        }
+
+        long doneTasks = 0;
+        for (Object[] row : projectTaskRepository.countByStatusAndProjectIdIn(pids)) {
+            if (row[0] == TaskStatus.DONE) {
+                doneTasks = (Long) row[1];
+            }
+        }
+
+        BigDecimal taskCompletionRatio = BigDecimal.valueOf(doneTasks)
+                .divide(BigDecimal.valueOf(totalTasks), 4, RoundingMode.HALF_UP);
+
+        BigDecimal timeRatio = computeTimeElapsedRatio(project);
+        if (timeRatio.compareTo(BigDecimal.ZERO) <= 0) {
+            // Project hasn't started yet — if tasks are done, SPI is great
+            return doneTasks > 0 ? new BigDecimal("1.20") : BigDecimal.ONE;
+        }
+
+        BigDecimal spi = taskCompletionRatio.divide(timeRatio, 4, RoundingMode.HALF_UP);
+        // Clamp to reasonable range
+        return spi.max(new BigDecimal("0.50")).min(new BigDecimal("1.50"));
     }
 
     private static BigDecimal safe(BigDecimal value) {

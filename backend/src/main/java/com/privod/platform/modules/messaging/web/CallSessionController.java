@@ -5,6 +5,7 @@ import com.privod.platform.modules.messaging.service.CallSessionService;
 import com.privod.platform.modules.messaging.web.dto.CallSessionResponse;
 import com.privod.platform.modules.messaging.web.dto.CreateCallRequest;
 import com.privod.platform.modules.messaging.web.dto.EndCallRequest;
+import com.privod.platform.modules.messaging.web.dto.GuestJoinCallRequest;
 import com.privod.platform.modules.messaging.web.dto.JoinCallRequest;
 import com.privod.platform.modules.messaging.web.dto.LeaveCallRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,5 +85,27 @@ public class CallSessionController {
             @Valid @RequestBody EndCallRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.ok(callSessionService.endCall(id, request)));
+    }
+
+    @PostMapping("/{id}/invite-link")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Generate invite link for call session")
+    public ResponseEntity<ApiResponse<CallSessionResponse>> generateInviteLink(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(callSessionService.generateInviteLink(id)));
+    }
+
+    @GetMapping("/by-token/{token}")
+    @Operation(summary = "Get call session by invite token (no auth required)")
+    public ResponseEntity<ApiResponse<CallSessionResponse>> getByToken(@PathVariable String token) {
+        return ResponseEntity.ok(ApiResponse.ok(callSessionService.getByInviteToken(token)));
+    }
+
+    @PostMapping("/join-by-link/{token}")
+    @Operation(summary = "Join call by invite link (no auth for guests)")
+    public ResponseEntity<ApiResponse<CallSessionResponse>> joinByLink(
+            @PathVariable String token,
+            @Valid @RequestBody GuestJoinCallRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(callSessionService.joinByInviteToken(token, request.guestName())));
     }
 }

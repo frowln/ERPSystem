@@ -172,6 +172,7 @@ export interface ComputedFinancials {
 export interface DashboardSummary {
   activeProjects: number;
   totalBudget: number;
+  totalContractAmount: number;
   onWatch: number;
   overdue: number;
   projectsByStatus: { status: string; count: number }[];
@@ -605,6 +606,16 @@ export interface LocalEstimateLine {
   overheadCosts?: number;
   estimatedProfit?: number;
   budgetItemId?: string;
+  // Extended fields used by LsrTreeTable (full ЛСР hierarchy)
+  parentLineId?: string;
+  lineType?: LsrLineType;
+  positionType?: LsrPositionType;
+  resourceType?: LsrResourceType;
+  sectionName?: string;
+  quantityPerUnit?: number;
+  quantityCoeff?: number;
+  coefficients?: string;
+  totalAmount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -771,6 +782,11 @@ export interface BudgetItem {
   profitRate?: number;
   contingencyRate?: number;
   notes?: string;
+  // Long-lead items
+  isLongLead?: boolean;
+  orderDeadline?: string;
+  orderStatus?: string;
+  leadTimeDays?: number;
 }
 
 export interface BudgetSnapshot {
@@ -887,6 +903,11 @@ export interface CompetitiveList {
   budgetItemId?: string;
   bestPrice?: number;
   bestVendorName?: string;
+  projectId?: string;
+  projectName?: string;
+  positionCount?: number;
+  entryCount?: number;
+  vendorCount?: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -1038,7 +1059,7 @@ export interface SafetyIncident { id: string; number: string; incidentDate: stri
 // Tasks
 export type TaskStatus = 'BACKLOG' | 'TODO' | 'IN_PROGRESS' | 'IN_REVIEW' | 'DONE' | 'CANCELLED';
 export type TaskPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT' | 'CRITICAL';
-export interface ProjectTask { id: string; code: string; title: string; projectName?: string; status: TaskStatus; priority: TaskPriority; assigneeName?: string; plannedStartDate?: string; plannedEndDate?: string; progress: number; wbsCode?: string; subtaskCount: number; }
+export interface ProjectTask { id: string; code: string; title: string; projectId?: string; projectName?: string; status: TaskStatus; priority: TaskPriority; assigneeId?: string; assigneeName?: string; plannedStartDate?: string; plannedEndDate?: string; progress: number; wbsCode?: string; subtaskCount: number; }
 
 // Documents
 export type DocumentCategory = 'CONTRACT' | 'ESTIMATE' | 'SPECIFICATION' | 'DRAWING' | 'PERMIT' | 'ACT' | 'INVOICE' | 'PROTOCOL' | 'CORRESPONDENCE' | 'PHOTO' | 'REPORT' | 'OTHER';
@@ -1130,4 +1151,228 @@ export interface CommercialProposalItem {
   vendorName?: string;
   status: CpItemStatus;
   notes?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Expertise (Экспертиза проектной документации)
+// ---------------------------------------------------------------------------
+
+export type ExpertiseType = 'STATE' | 'NON_STATE' | 'ENVIRONMENTAL' | 'FIRE_SAFETY' | 'INDUSTRIAL_SAFETY';
+export type ExpertiseStatus = 'NOT_STARTED' | 'DOCUMENTS_PREP' | 'SUBMITTED' | 'IN_REVIEW' | 'REMARKS_RECEIVED' | 'REMARKS_RESOLVED' | 'POSITIVE' | 'NEGATIVE' | 'CONDITIONAL';
+
+export interface ExpertiseReview {
+  id: string;
+  projectId: string;
+  type: ExpertiseType;
+  status: ExpertiseStatus;
+  expertiseOrganization?: string;
+  applicationNumber?: string;
+  submissionDate?: string;
+  plannedCompletionDate?: string;
+  conclusionNumber?: string;
+  cost?: number;
+  remarksCount: number;
+  resolvedRemarksCount: number;
+  approvalChainId?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type ExpertiseRemarkStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+
+export interface ExpertiseRemark {
+  id: string;
+  expertiseId: string;
+  number: number;
+  description: string;
+  status: ExpertiseRemarkStatus;
+  responsible?: string;
+  dueDate?: string;
+  createdAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// GPZU (Градостроительный план земельного участка)
+// ---------------------------------------------------------------------------
+
+export type GpzuStatus = 'NOT_STARTED' | 'REQUESTED' | 'IN_REVIEW' | 'ISSUED' | 'EXPIRED';
+
+export interface GpzuDocument {
+  id: string;
+  projectId: string;
+  status: GpzuStatus;
+  number?: string;
+  cadastralNumber?: string;
+  issuingAuthority?: string;
+  requestDate?: string;
+  issueDate?: string;
+  landArea?: number;
+  buildingArea?: number;
+  maxFloors?: number;
+  maxHeight?: number;
+  landUseType?: string;
+  encumbrances?: string;
+  approvalChainId?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Mobilization (Мобилизация на площадке)
+// ---------------------------------------------------------------------------
+
+export type MobilizationItemType = 'TEMP_BUILDINGS' | 'FENCING' | 'ACCESS_ROADS' | 'UTILITIES' | 'EQUIPMENT' | 'LABOR' | 'MATERIALS_STAGING' | 'SIGNAGE' | 'FIRE_SAFETY' | 'COMMUNICATION' | 'OTHER';
+export type MobilizationItemStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'BLOCKED';
+
+export interface MobilizationItem {
+  id: string;
+  projectId: string;
+  type: MobilizationItemType;
+  name: string;
+  status: MobilizationItemStatus;
+  responsible?: string;
+  contractor?: string;
+  plannedDate?: string;
+  actualDate?: string;
+  cost?: number;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Project Design (Проектная документация — разделы ПП87)
+// ---------------------------------------------------------------------------
+
+export type ProjectDesignStatus = 'DRAFT' | 'IN_PROGRESS' | 'INTERNAL_REVIEW' | 'SENT_TO_EXPERTISE' | 'APPROVED' | 'ARCHIVED';
+export type DesignSectionStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'INTERNAL_REVIEW' | 'REVISION' | 'APPROVED' | 'SENT_TO_EXPERTISE';
+export type DesignSectionCode = 'PZ' | 'SPZU' | 'AR' | 'KR' | 'IOS_VS' | 'IOS_OV' | 'IOS_EO' | 'IOS_SS' | 'IOS_GS' | 'IOS_ST' | 'POS' | 'PODB' | 'IDEV' | 'MOOP' | 'EE' | 'SM' | string;
+
+export interface ProjectDesignSection {
+  id: string;
+  designId: string;
+  code: DesignSectionCode;
+  name: string;
+  status: DesignSectionStatus;
+  version: number;
+  completionPercent: number;
+  designerName?: string;
+  designerOrg?: string;
+  reviewComments?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ProjectDesign {
+  id: string;
+  projectId: string;
+  name: string;
+  status: ProjectDesignStatus;
+  sections: ProjectDesignSection[];
+  overallCompletion: number;
+  designOrganization?: string;
+  chiefDesigner?: string;
+  approvalChainId?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Technical Conditions (Технические условия на подключение)
+// ---------------------------------------------------------------------------
+
+export type TechnicalConditionType = 'WATER' | 'SEWER' | 'ELECTRICITY' | 'GAS' | 'HEAT' | 'TELECOM' | 'STORMWATER' | 'OTHER';
+export type TechnicalConditionStatus = 'NOT_STARTED' | 'REQUESTED' | 'IN_REVIEW' | 'ISSUED' | 'CONNECTED' | 'EXPIRED';
+
+export interface TechnicalCondition {
+  id: string;
+  projectId: string;
+  type: TechnicalConditionType;
+  status: TechnicalConditionStatus;
+  provider?: string;
+  requestNumber?: string;
+  requestDate?: string;
+  issueDate?: string;
+  validUntil?: string;
+  maxLoad?: string;
+  connectionPoint?: string;
+  connectionFee?: number;
+  approvalChainId?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ---------------------------------------------------------------------------
+// LSR Types (ЛСР — Локальный Сметный Расчёт)
+// ---------------------------------------------------------------------------
+
+export type LsrLineType = 'SECTION' | 'POSITION' | 'RESOURCE';
+export type LsrPositionType = 'GESN' | 'GESNr' | 'FSBC' | 'TC' | 'FER' | 'TER' | 'MANUAL';
+export type LsrResourceType = 'OT' | 'EM' | 'ZT' | 'M' | 'NR' | 'SP';
+
+// ---------------------------------------------------------------------------
+// Local Estimate Summary (итоги ЛСР)
+// ---------------------------------------------------------------------------
+
+export interface LocalEstimateSummary {
+  directCostTotal: number;
+  directCostsTotal?: number;
+  overheadTotal: number;
+  estimatedProfitTotal: number;
+  profitTotal?: number;
+  subtotal: number;
+  winterSurcharge?: number;
+  winterSurchargeRate?: number;
+  tempStructures?: number;
+  tempStructuresRate?: number;
+  contingency?: number;
+  contingencyRate?: number;
+  unforeseen?: number;
+  indexAdjustment?: number;
+  vatAmount?: number;
+  vatRate?: number;
+  grandTotal: number;
+}
+
+// ---------------------------------------------------------------------------
+// Pre-construction Pipeline
+// ---------------------------------------------------------------------------
+
+export type PreconStageKey =
+  | 'LEAD'
+  | 'FEASIBILITY'
+  | 'SITE_ASSESSMENT'
+  | 'SURVEYS'
+  | 'GPZU'
+  | 'TECHNICAL_CONDITIONS'
+  | 'ENGINEERING_SURVEYS'
+  | 'PROJECT_DESIGN'
+  | 'DESIGN_PD'
+  | 'EXPERTISE'
+  | 'PERMITS'
+  | 'CONSTRUCTION_PERMITS'
+  | 'TENDERS'
+  | 'CONTRACTS'
+  | 'MOBILIZATION';
+
+// ---------------------------------------------------------------------------
+// Dependency Type (task dependencies)
+// ---------------------------------------------------------------------------
+
+export type DependencyType = 'FINISH_TO_START' | 'START_TO_START' | 'FINISH_TO_FINISH' | 'START_TO_FINISH';
+
+export interface TaskDependencyDto {
+  id: string;
+  taskId: string;
+  dependsOnTaskId: string;
+  dependsOnTaskCode?: string;
+  dependsOnTaskTitle?: string;
+  type?: DependencyType;
+  dependencyType?: DependencyType;
+  lagDays?: number;
+  predecessorTaskTitle?: string;
+  successorTaskTitle?: string;
 }

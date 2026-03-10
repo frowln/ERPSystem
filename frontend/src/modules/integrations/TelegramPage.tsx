@@ -19,11 +19,10 @@ import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
-import { FormField, Input } from '@/design-system/components/FormField';
+import { FormField, Input, Textarea } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { apiClient } from '@/api/client';
 import { formatDateTime } from '@/lib/format';
-import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 
 // ---------------------------------------------------------------------------
@@ -106,7 +105,7 @@ const TelegramPage: React.FC = () => {
     queryKey: ['telegram-config'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/integrations/telegram/status');
+        const res = await apiClient.get('/integrations/telegram/status', { _silentErrors: true } as any);
         const status = res.data as {
           enabled: boolean;
           configured: boolean;
@@ -134,8 +133,12 @@ const TelegramPage: React.FC = () => {
   const { data: subscribers, isLoading: subscribersLoading } = useQuery<TelegramSubscriber[]>({
     queryKey: ['telegram-subscribers'],
     queryFn: async () => {
-      const res = await apiClient.get('/integrations/telegram/subscriptions');
-      return res.data as TelegramSubscriber[];
+      try {
+        const res = await apiClient.get('/integrations/telegram/subscriptions', { _silentErrors: true } as any);
+        return res.data as TelegramSubscriber[];
+      } catch {
+        return [];
+      }
     },
   });
 
@@ -143,8 +146,12 @@ const TelegramPage: React.FC = () => {
   const { data: messages, isLoading: messagesLoading } = useQuery<TelegramMessage[]>({
     queryKey: ['telegram-messages'],
     queryFn: async () => {
-      const res = await apiClient.get('/integrations/telegram/messages');
-      return res.data as TelegramMessage[];
+      try {
+        const res = await apiClient.get('/integrations/telegram/messages', { _silentErrors: true } as any);
+        return res.data as TelegramMessage[];
+      } catch {
+        return [];
+      }
     },
   });
 
@@ -324,13 +331,13 @@ const TelegramPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Telegram"
+        title={t('integrations.telegram.title')}
         subtitle={t('integrations.telegram.subtitle')}
         breadcrumbs={[
           { label: t('integrations.telegram.breadcrumbHome'), href: '/' },
           { label: t('integrations.telegram.breadcrumbSettings'), href: '/settings' },
           { label: t('integrations.telegram.breadcrumbIntegrations'), href: '/integrations' },
-          { label: 'Telegram' },
+          { label: t('integrations.telegram.title') },
         ]}
         backTo="/integrations"
         actions={
@@ -484,15 +491,11 @@ const TelegramPage: React.FC = () => {
             />
           </FormField>
           <FormField label={t('integrations.telegram.fieldMessageText')} required>
-            <textarea
-              className={cn(
-                'w-full px-3 py-2 text-sm bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-600 rounded-lg resize-y min-h-[100px]',
-                'placeholder:text-neutral-400',
-                'focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-primary-500 focus:ring-primary-100',
-              )}
+            <Textarea
               placeholder={t('integrations.telegram.fieldMessagePlaceholder')}
               value={testMessage}
               onChange={(e) => setTestMessage(e.target.value)}
+              rows={4}
             />
           </FormField>
         </div>

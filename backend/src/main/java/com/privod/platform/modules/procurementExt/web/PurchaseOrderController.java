@@ -34,7 +34,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("procurementExtPurchaseOrderController")
 @RequestMapping("/api/procurement/purchase-orders")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN', 'PROCUREMENT_MANAGER', 'PROJECT_MANAGER')")

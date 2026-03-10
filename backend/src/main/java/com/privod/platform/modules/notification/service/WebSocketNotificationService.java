@@ -1,5 +1,6 @@
 package com.privod.platform.modules.notification.service;
 
+import com.privod.platform.modules.notification.domain.NotificationEvent;
 import com.privod.platform.modules.notification.web.dto.WebSocketMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -147,5 +148,54 @@ public class WebSocketNotificationService {
         if ("CRITICAL".equalsIgnoreCase(severity)) {
             sendToAll(msg);
         }
+    }
+
+    // ── NotificationEvent-based convenience methods ──────────────────────
+
+    /**
+     * Send a {@link NotificationEvent} to a specific user's personal notification queue.
+     * Converts the event to a {@link WebSocketMessage} and dispatches via the
+     * user-specific destination.
+     *
+     * @param userId the target user's Spring Security principal name (email)
+     * @param event  the notification event to send
+     */
+    public void sendEventToUser(String userId, NotificationEvent event) {
+        WebSocketMessage msg = eventToMessage(event);
+        sendToUser(userId, msg);
+    }
+
+    /**
+     * Send a {@link NotificationEvent} to all subscribers of a project topic.
+     */
+    public void sendEventToProject(UUID projectId, NotificationEvent event) {
+        WebSocketMessage msg = eventToMessage(event);
+        sendToProject(projectId, msg);
+    }
+
+    /**
+     * Broadcast a {@link NotificationEvent} to all connected clients.
+     */
+    public void broadcastEvent(NotificationEvent event) {
+        WebSocketMessage msg = eventToMessage(event);
+        sendToAll(msg);
+    }
+
+    /**
+     * Convert a {@link NotificationEvent} to the wire-format {@link WebSocketMessage}.
+     */
+    private WebSocketMessage eventToMessage(NotificationEvent event) {
+        return WebSocketMessage.of(
+                event.type(),
+                event.entityType() != null ? event.entityType() : "notification",
+                event.entityId() != null ? event.entityId().toString() : event.id().toString(),
+                event.projectId() != null ? event.projectId().toString() : null,
+                event.title(),
+                event.message(),
+                Map.of(
+                        "eventId", event.id().toString(),
+                        "targetUserId", event.targetUserId() != null ? event.targetUserId().toString() : ""
+                )
+        );
     }
 }

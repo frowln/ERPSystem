@@ -84,8 +84,8 @@ const PortalDashboardPage: React.FC = () => {
             {projects.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center gap-4 p-3 rounded-lg border border-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
-                onClick={() => navigate('/portal/projects')}
+                className="flex items-center gap-4 p-3 rounded-lg border border-neutral-100 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
+                onClick={() => navigate(`/portal/projects/${p.id}`)}
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{p.name}</p>

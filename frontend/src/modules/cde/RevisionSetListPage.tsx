@@ -114,7 +114,7 @@ const RevisionSetListPage: React.FC = () => {
           { label: t('cde.revisionSets.breadcrumbRevisionSets') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/cde/revision-sets/new')}>
             {t('cde.revisionSets.createSet')}
           </Button>
         }

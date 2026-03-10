@@ -128,6 +128,9 @@ const PrescriptionFormPage: React.FC = () => {
       toast.success(isEdit ? t('regulatory.toastPrescriptionUpdated') : t('regulatory.toastPrescriptionCreated'));
       navigate(`/regulatory/prescriptions/${result.id}`);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const onSubmit = (data: FormValues) => {

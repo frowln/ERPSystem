@@ -11,7 +11,7 @@ import { supportApi } from '@/api/support';
 import { formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { SupportTicket, TicketStatus } from './types';
-import { TicketCreateModal } from './TicketCreateModal';
+const TicketCreateModal = React.lazy(() => import('./TicketCreateModal'));
 import { t } from '@/i18n';
 
 type BoardColumnId = TicketStatus;
@@ -25,11 +25,11 @@ interface BoardColumn {
 }
 
 const getDefaultColumns = (): BoardColumn[] => [
-  { id: 'OPEN', title: t('support.colOpen'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'ASSIGNED', title: t('support.colAssigned'), color: 'bg-cyan-500', headerBg: 'bg-cyan-50', collapsed: false },
-  { id: 'IN_PROGRESS', title: t('support.colInProgress'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'WAITING_RESPONSE', title: t('support.colWaitingResponse'), color: 'bg-orange-500', headerBg: 'bg-orange-50', collapsed: false },
-  { id: 'RESOLVED', title: t('support.colResolved'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
+  { id: 'OPEN', title: t('support.colOpen'), color: 'bg-primary-500', headerBg: 'bg-primary-50 dark:bg-primary-900/20', collapsed: false },
+  { id: 'ASSIGNED', title: t('support.colAssigned'), color: 'bg-cyan-500', headerBg: 'bg-cyan-50 dark:bg-cyan-900/20', collapsed: false },
+  { id: 'IN_PROGRESS', title: t('support.colInProgress'), color: 'bg-warning-500', headerBg: 'bg-warning-50 dark:bg-warning-900/20', collapsed: false },
+  { id: 'WAITING_RESPONSE', title: t('support.colWaitingResponse'), color: 'bg-orange-500', headerBg: 'bg-orange-50 dark:bg-orange-900/20', collapsed: false },
+  { id: 'RESOLVED', title: t('support.colResolved'), color: 'bg-success-500', headerBg: 'bg-success-50 dark:bg-success-900/20', collapsed: false },
   { id: 'CLOSED', title: t('support.colClosed'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
 ];
 
@@ -41,10 +41,10 @@ const getPriorityLabels = (): Record<string, string> => ({
 });
 
 const priorityColors: Record<string, string> = {
-  LOW: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600',
-  MEDIUM: 'bg-blue-100 text-blue-700',
-  HIGH: 'bg-orange-100 text-orange-700',
-  CRITICAL: 'bg-red-100 text-red-700',
+  LOW: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400',
+  MEDIUM: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+  HIGH: 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300',
+  CRITICAL: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
 };
 
 const getCategoryLabels = (): Record<string, string> => ({
@@ -55,6 +55,9 @@ const getCategoryLabels = (): Record<string, string> => ({
   SAFETY: t('support.catSafety'),
   SCHEDULE: t('support.catSchedule'),
   OTHER: t('support.catOther'),
+  BUG: t('support.catBug'),
+  QUESTION: t('support.catQuestion'),
+  FEATURE_REQUEST: t('support.catFeatureRequest'),
 });
 
 function categoryLabel(value?: string): string {
@@ -303,7 +306,7 @@ const TicketBoardPage: React.FC = () => {
                     <>
                       <span className={cn('w-2 h-2 rounded-full flex-shrink-0', column.color)} />
                       <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 flex-1 truncate">{column.title}</span>
-                      <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full bg-neutral-200 text-neutral-600">
+                      <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300">
                         {columnItems.length}
                       </span>
                     </>
@@ -393,10 +396,14 @@ const TicketBoardPage: React.FC = () => {
         </div>
       )}
 
-      <TicketCreateModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {createModalOpen && (
+        <React.Suspense fallback={null}>
+          <TicketCreateModal
+            open={createModalOpen}
+            onClose={() => setCreateModalOpen(false)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

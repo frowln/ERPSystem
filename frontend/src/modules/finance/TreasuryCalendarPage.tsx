@@ -19,6 +19,7 @@ import type { TreasuryPayment } from '@/modules/finance/types';
 import { formatMoney, formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 
 const WEEKDAYS_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -63,6 +64,9 @@ const TreasuryCalendarPage: React.FC = () => {
       financeApi.updatePaymentPriority(paymentId, priority),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['treasury-payments'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

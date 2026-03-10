@@ -12,6 +12,7 @@ import { costManagementApi } from '@/api/costManagement';
 import { formatMoney, formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { CashFlowScenario, CashFlowForecastBucket, VarianceSummary } from './types';
+import toast from 'react-hot-toast';
 
 interface ScenarioFormData {
   name: string;
@@ -68,6 +69,9 @@ const CashFlowForecastPage: React.FC = () => {
       setShowModal(false);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const updateMutation = useMutation({
@@ -79,6 +83,9 @@ const CashFlowForecastPage: React.FC = () => {
       setEditingId(null);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -87,6 +94,9 @@ const CashFlowForecastPage: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: ['cf-scenarios'] });
       if (selectedScenarioId === deleteMutation.variables) setSelectedScenarioId(null);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const generateMutation = useMutation({
@@ -94,6 +104,9 @@ const CashFlowForecastPage: React.FC = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['cf-buckets', selectedScenarioId] });
       void queryClient.invalidateQueries({ queryKey: ['cf-variance', selectedScenarioId] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

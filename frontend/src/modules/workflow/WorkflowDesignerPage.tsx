@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Save, Play, Plus, Trash2, GripVertical, ArrowRight, Settings2 } from 'lucide-react';
@@ -94,11 +95,11 @@ const WorkflowDesignerPage: React.FC = () => {
             <Button variant="outline" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/workflow/templates')}>
               {t('common.back')}
             </Button>
-            <Button variant="outline" iconLeft={<Save size={16} />}>
+            <Button variant="outline" iconLeft={<Save size={16} />} onClick={() => toast(t('common.operationStarted'))}>
               {t('common.save')}
             </Button>
             {!isNew && currentWorkflow.status === 'DRAFT' && (
-              <Button iconLeft={<Play size={16} />}>
+              <Button iconLeft={<Play size={16} />} onClick={() => toast(t('common.operationStarted'))}>
                 {t('workflow.activate')}
               </Button>
             )}

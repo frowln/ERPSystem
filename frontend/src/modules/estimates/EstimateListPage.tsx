@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Search } from 'lucide-react';
+import { Plus, FileUp, Search } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
+import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
 import {
   StatusBadge,
@@ -11,22 +12,31 @@ import {
   estimateStatusLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { estimatesApi } from '@/api/estimates';
 import { formatMoney, formatDate, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
+import { guardDemoModeAction } from '@/lib/demoMode';
 import type { Estimate } from '@/types';
 import { t } from '@/i18n';
+import { EstimateImportWizard } from './EstimateImportWizard';
 
 type TabId = 'all' | 'DRAFT' | 'IN_WORK' | 'ACTIVE';
 
 const EstimateListPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const projectIdFilter = searchParams.get('projectId') ?? '';
   const [activeTab, setActiveTab] = useState<TabId>('all');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') ?? '');
+  const [importWizardOpen, setImportWizardOpen] = useState(false);
 
   const { data: estimatesData, isLoading } = useQuery({
-    queryKey: ['estimates'],
-    queryFn: () => estimatesApi.getEstimates(),
+    queryKey: ['estimates', projectIdFilter],
+    queryFn: () => estimatesApi.getEstimates({
+      projectId: projectIdFilter || undefined,
+      size: 500,
+    }),
   });
 
   const estimates = estimatesData?.content ?? [];
@@ -152,6 +162,10 @@ const EstimateListPage: React.FC = () => {
     [navigate],
   );
 
+  if (isLoading && estimates.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
+
   return (
     <div className="animate-fade-in">
       <PageHeader
@@ -161,6 +175,26 @@ const EstimateListPage: React.FC = () => {
           { label: t('estimates.list.breadcrumbHome'), href: '/' },
           { label: t('estimates.list.breadcrumbEstimates') },
         ]}
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              iconLeft={<FileUp size={16} />}
+              onClick={() => setImportWizardOpen(true)}
+            >
+              {t('estimates.list.importLsrButton')}
+            </Button>
+            <Button
+              iconLeft={<Plus size={16} />}
+              onClick={() => {
+                if (guardDemoModeAction(t('estimates.list.demoCreate'))) return;
+                navigate(projectIdFilter ? `/estimates/new?projectId=${projectIdFilter}` : '/estimates/new');
+              }}
+            >
+              {t('estimates.list.createButton')}
+            </Button>
+          </div>
+        }
         tabs={[
           { id: 'all', label: t('estimates.list.tabAll'), count: tabCounts.all },
           { id: 'DRAFT', label: t('estimates.list.tabDraft'), count: tabCounts.draft },
@@ -197,6 +231,8 @@ const EstimateListPage: React.FC = () => {
         emptyTitle={t('estimates.list.emptyTitle')}
         emptyDescription={t('estimates.list.emptyDescription')}
       />
+
+      <EstimateImportWizard open={importWizardOpen} onClose={() => setImportWizardOpen(false)} />
     </div>
   );
 };

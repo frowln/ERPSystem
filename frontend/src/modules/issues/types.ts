@@ -1,35 +1,43 @@
-export type IssueStatus = 'OPEN' | 'IN_PROGRESS' | 'ON_HOLD' | 'RESOLVED' | 'CLOSED';
-export type IssueType = 'DEFECT' | 'SAFETY' | 'DESIGN' | 'COORDINATION' | 'SCHEDULE' | 'OTHER';
-export type IssuePriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type IssueStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REOPENED';
+export type IssueType = 'DESIGN' | 'CONSTRUCTION' | 'COORDINATION' | 'SAFETY' | 'QUALITY' | 'OTHER';
+export type IssuePriority = 'LOW' | 'NORMAL' | 'HIGH' | 'CRITICAL';
 
 export interface Issue {
   id: string;
+  projectId: string;
   number: string;
   title: string;
   description?: string;
-  type: IssueType;
+  issueType?: IssueType;
+  issueTypeDisplayName?: string;
   status: IssueStatus;
+  statusDisplayName?: string;
   priority: IssuePriority;
-  projectId: string;
-  projectName?: string;
+  priorityDisplayName?: string;
   assignedToId?: string;
-  assignedToName?: string;
-  reportedById: string;
-  reportedByName: string;
+  reportedById?: string;
   dueDate?: string;
   resolvedDate?: string;
-  resolution?: string;
+  resolvedById?: string;
+  location?: string;
   linkedRfiId?: string;
   linkedSubmittalId?: string;
+  linkedDocumentIds?: string;
+  rootCause?: string;
+  resolution?: string;
+  tags?: string;
   createdAt: string;
   updatedAt: string;
+  createdBy?: string;
 }
 
 export interface IssueComment {
   id: string;
   issueId: string;
   authorId: string;
-  authorName: string;
-  content: string;
+  commentText: string;
+  attachmentIds?: string;
+  postedAt?: string;
   createdAt: string;
+  createdBy?: string;
 }

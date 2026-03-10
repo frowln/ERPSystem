@@ -424,6 +424,7 @@ public class SafetyComplianceService {
     private TrainingType mapBriefingToTrainingType(BriefingType briefingType) {
         return switch (briefingType) {
             case INITIAL -> TrainingType.INITIAL;
+            case PRIMARY -> TrainingType.INITIAL;
             case REPEAT -> TrainingType.PERIODIC;
             case UNSCHEDULED -> TrainingType.UNSCHEDULED;
             case TARGET -> TrainingType.SPECIAL;

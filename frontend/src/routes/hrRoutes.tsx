@@ -48,6 +48,27 @@ const LeaveAllocationPage = lazy(() => import('@/modules/leave/LeaveAllocationPa
 const LeaveTypesPage = lazy(() => import('@/modules/leave/LeaveTypesPage'));
 const LeaveBoardPage = lazy(() => import('@/modules/leave/LeaveBoardPage'));
 
+// HR — additional
+const CertificationMatrixPage = lazy(() => import('@/modules/hr/CertificationMatrixPage'));
+const TimesheetDetailPage = lazy(() => import('@/modules/hr/TimesheetDetailPage'));
+
+// Safety — additional
+const SafetyCertificationMatrixPage = lazy(() => import('@/modules/safety/CertificationMatrixPage'));
+const SafetyBriefingListPage = lazy(() => import('@/modules/safety/SafetyBriefingListPage'));
+const SafetyBriefingDetailPage = lazy(() => import('@/modules/safety/SafetyBriefingDetailPage'));
+const SafetyBriefingFormPage = lazy(() => import('@/modules/safety/SafetyBriefingFormPage'));
+const SafetyComplianceDashboardPage = lazy(() => import('@/modules/safety/SafetyComplianceDashboardPage'));
+const SafetyIncidentListPage = lazy(() => import('@/modules/safety/SafetyIncidentListPage'));
+const SafetyIncidentDetailPage = lazy(() => import('@/modules/safety/SafetyIncidentDetailPage'));
+const SafetyInspectionListPage = lazy(() => import('@/modules/safety/SafetyInspectionListPage'));
+const SafetyInspectionDetailPage = lazy(() => import('@/modules/safety/SafetyInspectionDetailPage'));
+const SafetyInspectionFormPage = lazy(() => import('@/modules/safety/SafetyInspectionFormPage'));
+const SafetyTrainingListPage = lazy(() => import('@/modules/safety/SafetyTrainingListPage'));
+const SafetyTrainingDetailPage = lazy(() => import('@/modules/safety/SafetyTrainingDetailPage'));
+const SafetyTrainingFormPage = lazy(() => import('@/modules/safety/SafetyTrainingFormPage'));
+const SafetyViolationListPage = lazy(() => import('@/modules/safety/SafetyViolationListPage'));
+const WorkerCertsPage = lazy(() => import('@/modules/safety/WorkerCertsPage'));
+
 export function hrRoutes() {
   return (
     <>
@@ -102,6 +123,30 @@ export function hrRoutes() {
       <Route path="hr/work-orders" element={<WorkOrderFormPage />} />
       <Route path="hr/qualifications" element={<QualificationsJournalPage />} />
       <Route path="hr/seniority-leave" element={<SeniorityLeavePage />} />
+
+      {/* HR — additional */}
+      <Route path="hr/certification-matrix" element={<CertificationMatrixPage />} />
+      <Route path="timesheets/:id" element={<TimesheetDetailPage />} />
+
+      {/* Safety — additional */}
+      <Route path="safety/certification-matrix" element={<SafetyCertificationMatrixPage />} />
+      <Route path="safety/briefings" element={<SafetyBriefingListPage />} />
+      <Route path="safety/briefings/new" element={<SafetyBriefingFormPage />} />
+      <Route path="safety/briefings/:id" element={<SafetyBriefingDetailPage />} />
+      <Route path="safety/briefings/:id/edit" element={<SafetyBriefingFormPage />} />
+      <Route path="safety/compliance" element={<SafetyComplianceDashboardPage />} />
+      <Route path="safety/incidents" element={<SafetyIncidentListPage />} />
+      <Route path="safety/incidents/:id" element={<SafetyIncidentDetailPage />} />
+      <Route path="safety/inspections" element={<SafetyInspectionListPage />} />
+      <Route path="safety/inspections/new" element={<SafetyInspectionFormPage />} />
+      <Route path="safety/inspections/:id" element={<SafetyInspectionDetailPage />} />
+      <Route path="safety/inspections/:id/edit" element={<SafetyInspectionFormPage />} />
+      <Route path="safety/training" element={<SafetyTrainingListPage />} />
+      <Route path="safety/training/new" element={<SafetyTrainingFormPage />} />
+      <Route path="safety/training/:id" element={<SafetyTrainingDetailPage />} />
+      <Route path="safety/training/:id/edit" element={<SafetyTrainingFormPage />} />
+      <Route path="safety/violations" element={<SafetyViolationListPage />} />
+      <Route path="safety/worker-certs" element={<WorkerCertsPage />} />
     </>
   );
 }

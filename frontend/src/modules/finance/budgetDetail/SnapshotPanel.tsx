@@ -40,6 +40,9 @@ export default function SnapshotPanel({ budgetId, onCompare }: SnapshotPanelProp
       setSourceSnapshotId('');
       toast.success(t('finance.fm.snapshot.create'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const items = snapshots?.content ?? [];

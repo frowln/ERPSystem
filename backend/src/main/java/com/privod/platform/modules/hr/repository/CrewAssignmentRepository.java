@@ -1,6 +1,8 @@
 package com.privod.platform.modules.hr.repository;
 
 import com.privod.platform.modules.hr.domain.CrewAssignment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface CrewAssignmentRepository extends JpaRepository<CrewAssignment, UUID> {
+
+    Page<CrewAssignment> findByActiveTrueAndDeletedFalse(Pageable pageable);
 
     List<CrewAssignment> findByProjectIdAndActiveTrue(UUID projectId);
 

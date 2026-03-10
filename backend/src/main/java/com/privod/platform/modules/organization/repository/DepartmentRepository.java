@@ -17,4 +17,8 @@ public interface DepartmentRepository extends JpaRepository<Department, UUID> {
     List<Department> findByParentId(UUID parentId);
 
     List<Department> findByOrganizationIdAndDeletedFalse(UUID organizationId);
+
+    List<Department> findByOrganizationIdOrderBySortOrderAsc(UUID organizationId);
+
+    List<Department> findByOrganizationIdAndActiveTrueOrderBySortOrderAsc(UUID organizationId);
 }

@@ -60,11 +60,20 @@ const PermitsPanel: React.FC<{ projectId: string }> = ({ projectId }) => {
       setEditing(null);
       toast.success(t('common.saved'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const openAdd = () => {
     setEditing(null);
     setForm({ permitType: 'GPZU', status: 'NOT_STARTED' });
+    setModalOpen(true);
+  };
+
+  const openAddForType = (type: PermitType) => {
+    setEditing(null);
+    setForm({ permitType: type, status: 'NOT_STARTED' });
     setModalOpen(true);
   };
 
@@ -123,14 +132,12 @@ const PermitsPanel: React.FC<{ projectId: string }> = ({ projectId }) => {
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[status]}`}>
                   {t(`projects.permits.statuses.${status}`)}
                 </span>
-                {permit && (
-                  <button
-                    onClick={() => openEdit(permit)}
-                    className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400"
-                  >
-                    <Pencil size={13} />
-                  </button>
-                )}
+                <button
+                  onClick={() => permit ? openEdit(permit) : openAddForType(type)}
+                  className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-primary-500 transition-colors"
+                >
+                  <Pencil size={13} />
+                </button>
               </div>
             </div>
           );

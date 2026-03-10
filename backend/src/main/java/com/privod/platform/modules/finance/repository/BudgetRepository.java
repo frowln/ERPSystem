@@ -49,4 +49,7 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID>, JpaSpecif
     BigDecimal sumActualRevenueByProjectId(@Param("projectId") UUID projectId);
 
     long countByProjectIdAndDeletedFalse(UUID projectId);
+
+    @Query("SELECT b.id FROM Budget b WHERE b.projectId IN :projectIds AND b.deleted = false AND b.status <> 'CLOSED'")
+    List<UUID> findIdsByProjectIds(@Param("projectIds") List<UUID> projectIds);
 }

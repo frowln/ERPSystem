@@ -15,10 +15,10 @@ const CostCashflowPage: React.FC = () => {
     queryFn: () => costManagementApi.getCashFlow(),
   });
 
-  const cashFlow = Array.isArray(cashFlowData)
+  const cashFlow: CashFlowEntry[] = Array.isArray(cashFlowData)
     ? cashFlowData
-    : Array.isArray((cashFlowData as any)?.content)
-      ? (cashFlowData as any).content
+    : Array.isArray((cashFlowData as unknown as Record<string, unknown>)?.content)
+      ? (cashFlowData as unknown as Record<string, unknown>).content as CashFlowEntry[]
       : [];
 
   const metrics = useMemo(() => {

@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { dispatchApi } from '@/api/dispatch';
+import { useProjectOptions, useVehicleOptions, useDriverOptions } from '@/hooks/useSelectOptions';
 import { t } from '@/i18n';
 
 const dispatchOrderSchema = z.object({
@@ -29,36 +30,14 @@ const dispatchOrderSchema = z.object({
 
 type DispatchOrderFormData = z.input<typeof dispatchOrderSchema>;
 
-const getProjectOptions = () => [
-  { value: '', label: t('forms.dispatchOrder.noProject') },
-  { value: '1', label: t('forms.dispatchOrder.projectSolnechny') },
-  { value: '2', label: t('forms.dispatchOrder.projectHorizont') },
-  { value: '3', label: t('forms.dispatchOrder.projectBridge') },
-  { value: '6', label: t('forms.dispatchOrder.projectCentral') },
-];
-
-const getVehicleOptions = () => [
-  { value: '', label: t('forms.dispatchOrder.vehicleNotSelected') },
-  { value: 'v1', label: t('forms.dispatchOrder.vehicleKamaz') },
-  { value: 'v2', label: t('forms.dispatchOrder.vehicleMaz') },
-  { value: 'v3', label: t('forms.dispatchOrder.vehicleVolvo') },
-  { value: 'v4', label: t('forms.dispatchOrder.vehicleMan') },
-  { value: 'v5', label: t('forms.dispatchOrder.vehicleScania') },
-];
-
-const getDriverOptions = () => [
-  { value: '', label: t('forms.dispatchOrder.driverNotAssigned') },
-  { value: 'd1', label: t('forms.dispatchOrder.driverSmirnov') },
-  { value: 'd2', label: t('forms.dispatchOrder.driverKuznetsov') },
-  { value: 'd3', label: t('forms.dispatchOrder.driverPopov') },
-  { value: 'd4', label: t('forms.dispatchOrder.driverVasiliev') },
-];
-
 const DispatchOrderFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+  const { options: projectOptions } = useProjectOptions();
+  const { options: vehicleOptions } = useVehicleOptions();
+  const { options: driverOptions } = useDriverOptions();
 
   const { data: existingOrder } = useQuery({
     queryKey: ['dispatch-order', id],
@@ -185,7 +164,7 @@ const DispatchOrderFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.dispatchOrder.labelProject')} error={errors.projectId?.message}>
               <Select
-                options={getProjectOptions()}
+                options={[{ value: '', label: t('forms.dispatchOrder.noProject') }, ...projectOptions]}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
               />
@@ -201,14 +180,14 @@ const DispatchOrderFormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.dispatchOrder.labelVehicle')} error={errors.vehicleId?.message}>
               <Select
-                options={getVehicleOptions()}
+                options={[{ value: '', label: t('forms.dispatchOrder.vehicleNotSelected') }, ...vehicleOptions]}
                 hasError={!!errors.vehicleId}
                 {...register('vehicleId')}
               />
             </FormField>
             <FormField label={t('forms.dispatchOrder.labelDriver')} error={errors.driverId?.message}>
               <Select
-                options={getDriverOptions()}
+                options={[{ value: '', label: t('forms.dispatchOrder.driverNotAssigned') }, ...driverOptions]}
                 hasError={!!errors.driverId}
                 {...register('driverId')}
               />

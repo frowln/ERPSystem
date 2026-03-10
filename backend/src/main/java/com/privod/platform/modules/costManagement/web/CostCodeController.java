@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("costMgmtCostCodeController")
 @RequestMapping("/api/cost-codes")
 @RequiredArgsConstructor
 @Tag(name = "Cost Codes", description = "Cost code management endpoints")

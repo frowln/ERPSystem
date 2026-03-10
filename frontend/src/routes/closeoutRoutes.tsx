@@ -21,6 +21,9 @@ const ZosFormPage = lazy(() => import('@/modules/closeout/ZosFormPage'));
 const StroyNadzorPackagePage = lazy(() => import('@/modules/closeout/StroyNadzorPackagePage'));
 const WarrantyTrackingPage = lazy(() => import('@/modules/closeout/WarrantyTrackingPage'));
 const ExecutiveSchemasPage = lazy(() => import('@/modules/closeout/ExecutiveSchemasPage'));
+const CommissioningPage = lazy(() => import('@/modules/closeout/CommissioningPage'));
+const HandoverPage = lazy(() => import('@/modules/closeout/HandoverPage'));
+const WarrantyPage = lazy(() => import('@/modules/closeout/WarrantyPage'));
 
 export function closeoutRoutes() {
   return (
@@ -55,6 +58,9 @@ export function closeoutRoutes() {
       <Route path="closeout/stroynadzor" element={<StroyNadzorPackagePage />} />
       <Route path="closeout/warranty-tracking" element={<WarrantyTrackingPage />} />
       <Route path="closeout/executive-schemas" element={<ExecutiveSchemasPage />} />
+      <Route path="closeout/commissioning-page" element={<CommissioningPage />} />
+      <Route path="closeout/handover-page" element={<HandoverPage />} />
+      <Route path="closeout/warranty-page" element={<WarrantyPage />} />
     </>
   );
 }

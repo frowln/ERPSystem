@@ -191,7 +191,7 @@ const DocumentContainerListPage: React.FC = () => {
           { label: t('cde.breadcrumbCDE') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/cde/documents/new')}>
             {t('cde.documents.uploadDocument')}
           </Button>
         }

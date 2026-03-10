@@ -78,7 +78,7 @@ export interface SpecVersionHistory {
 
 export type SubstitutionType = 'equivalent' | 'superior' | 'inferior' | 'alternative';
 export type QualityRating = 'A' | 'B' | 'C' | 'D' | 'UNRATED';
-export type AnalogRequestStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'IMPLEMENTED';
+export type AnalogRequestStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'IMPLEMENTED' | 'PENDING';
 
 export interface MaterialAnalog {
   id: string;
@@ -122,6 +122,8 @@ export interface AnalogRequest {
   proposedAnalogCount: number;
   dueDate?: string;
   rejectionReason?: string;
+  qualityImpact?: string;
+  totalImpact?: number;
   notes?: string;
   createdAt: string;
   updatedAt: string;

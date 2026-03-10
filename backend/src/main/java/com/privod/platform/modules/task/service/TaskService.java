@@ -1,6 +1,7 @@
 package com.privod.platform.modules.task.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.notification.domain.NotificationType;
 import com.privod.platform.modules.notification.service.NotificationService;
 import com.privod.platform.modules.notification.service.WebSocketNotificationService;
@@ -10,9 +11,12 @@ import com.privod.platform.modules.task.domain.TaskComment;
 import com.privod.platform.modules.task.domain.TaskDependency;
 import com.privod.platform.modules.task.domain.TaskPriority;
 import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.domain.TaskVisibility;
+import com.privod.platform.modules.project.repository.ProjectRepository;
 import com.privod.platform.modules.task.repository.ProjectTaskRepository;
 import com.privod.platform.modules.task.repository.TaskCommentRepository;
 import com.privod.platform.modules.task.repository.TaskDependencyRepository;
+import com.privod.platform.modules.task.repository.TaskParticipantRepository;
 import com.privod.platform.modules.task.web.dto.AddCommentRequest;
 import com.privod.platform.modules.task.web.dto.AssignTaskRequest;
 import com.privod.platform.modules.task.web.dto.ChangeTaskStatusRequest;
@@ -21,6 +25,7 @@ import com.privod.platform.modules.task.web.dto.GanttTaskResponse;
 import com.privod.platform.modules.task.web.dto.TaskCommentResponse;
 import com.privod.platform.modules.task.web.dto.TaskDependencyResponse;
 import com.privod.platform.modules.task.web.dto.TaskResponse;
+import com.privod.platform.modules.task.web.dto.MyTasksResponse;
 import com.privod.platform.modules.task.web.dto.TaskSummaryResponse;
 import com.privod.platform.modules.task.web.dto.UpdateTaskRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,10 +38,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +54,9 @@ public class TaskService {
     private final ProjectTaskRepository taskRepository;
     private final TaskCommentRepository commentRepository;
     private final TaskDependencyRepository dependencyRepository;
+    private final TaskParticipantRepository participantRepository;
+    private final TaskParticipantService participantService;
+    private final ProjectRepository projectRepository;
     private final AuditService auditService;
     private final WebSocketNotificationService wsNotificationService;
     private final NotificationService notificationService;
@@ -60,7 +71,18 @@ public class TaskService {
                 .and(TaskSpecification.assignedTo(assigneeId))
                 .and(TaskSpecification.hasParentTask(parentTaskId));
 
-        return taskRepository.findAll(spec, pageable).map(TaskResponse::fromEntity);
+        Page<ProjectTask> page = taskRepository.findAll(spec, pageable);
+
+        // Batch resolve project names
+        Map<UUID, String> projectNames = resolveProjectNames(page.getContent());
+
+        // Batch resolve subtask counts
+        List<UUID> taskIds = page.getContent().stream().map(ProjectTask::getId).toList();
+        Map<UUID, Integer> subtaskCounts = resolveSubtaskCounts(taskIds);
+
+        return page.map(task -> TaskResponse.fromEntity(task, null, null,
+                task.getProjectId() != null ? projectNames.get(task.getProjectId()) : null,
+                subtaskCounts.getOrDefault(task.getId(), 0)));
     }
 
     @Transactional(readOnly = true)
@@ -71,7 +93,12 @@ public class TaskService {
                 .stream()
                 .map(TaskCommentResponse::fromEntity)
                 .toList();
-        return TaskResponse.fromEntity(task, comments);
+        var participants = participantRepository.findByTaskId(id).stream()
+                .map(com.privod.platform.modules.task.web.dto.TaskParticipantResponse::fromEntity)
+                .toList();
+        String projectName = resolveProjectName(task.getProjectId());
+        int subtaskCount = taskRepository.countByParentTaskIdAndDeletedFalse(id);
+        return TaskResponse.fromEntity(task, comments, participants, projectName, subtaskCount);
     }
 
     @Transactional
@@ -80,18 +107,34 @@ public class TaskService {
 
         String code = generateTaskCode();
 
+        // Auto-set reporter from current user if not provided
+        UUID reporterId = request.reporterId();
+        String reporterName = request.reporterName();
+        if (reporterId == null) {
+            var userDetails = SecurityUtils.getCurrentUserDetails().orElse(null);
+            if (userDetails != null) {
+                reporterId = userDetails.getId();
+                reporterName = userDetails.getFullName();
+            }
+        }
+
+        // Determine visibility
+        TaskVisibility visibility = request.visibility() != null
+                ? request.visibility()
+                : TaskVisibility.PARTICIPANTS_ONLY;
+
         ProjectTask task = ProjectTask.builder()
                 .code(code)
                 .title(request.title())
                 .description(request.description())
                 .projectId(request.projectId())
                 .parentTaskId(request.parentTaskId())
-                .status(TaskStatus.BACKLOG)
+                .status(request.status() != null ? request.status() : TaskStatus.BACKLOG)
                 .priority(request.priority() != null ? request.priority() : TaskPriority.NORMAL)
                 .assigneeId(request.assigneeId())
                 .assigneeName(request.assigneeName())
-                .reporterId(request.reporterId())
-                .reporterName(request.reporterName())
+                .reporterId(reporterId)
+                .reporterName(reporterName)
                 .plannedStartDate(request.plannedStartDate())
                 .plannedEndDate(request.plannedEndDate())
                 .estimatedHours(request.estimatedHours())
@@ -101,13 +144,24 @@ public class TaskService {
                 .specItemId(request.specItemId())
                 .tags(request.tags())
                 .notes(request.notes())
+                .visibility(visibility)
                 .build();
 
         task = taskRepository.save(task);
         auditService.logCreate("ProjectTask", task.getId());
 
-        log.info("Task created: {} - {} ({})", task.getCode(), task.getTitle(), task.getId());
-        return TaskResponse.fromEntity(task);
+        // Auto-create participants: creator as OBSERVER, assignee as RESPONSIBLE
+        if (reporterId != null) {
+            participantService.initializeParticipants(task, reporterId, reporterName != null ? reporterName : "");
+        }
+
+        log.info("Task created: {} - {} ({}) visibility={}", task.getCode(), task.getTitle(), task.getId(), visibility);
+
+        var participants = participantRepository.findByTaskId(task.getId()).stream()
+                .map(com.privod.platform.modules.task.web.dto.TaskParticipantResponse::fromEntity)
+                .toList();
+        String projectName = resolveProjectName(task.getProjectId());
+        return TaskResponse.fromEntity(task, null, participants, projectName, 0);
     }
 
     @Transactional
@@ -415,6 +469,28 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
+    public MyTasksResponse getMyTasks(UUID userId) {
+        // Tasks assigned to user
+        List<ProjectTask> assignedEntities = taskRepository.findByAssigneeIdAndDeletedFalseOrderByUpdatedAtDesc(userId);
+        Map<UUID, String> projectNames = resolveProjectNames(assignedEntities);
+        List<TaskResponse> assigned = assignedEntities.stream()
+                .map(t -> TaskResponse.fromEntity(t, null, null, projectNames.get(t.getProjectId()), null))
+                .toList();
+
+        // Tasks created by user but assigned to someone else (delegated)
+        List<ProjectTask> delegatedEntities = taskRepository.findByReporterIdAndDeletedFalseAndAssigneeIdNotOrderByUpdatedAtDesc(userId, userId);
+        Map<UUID, String> delegatedProjectNames = resolveProjectNames(delegatedEntities);
+        List<TaskResponse> delegatedByMe = delegatedEntities.stream()
+                .map(t -> TaskResponse.fromEntity(t, null, null, delegatedProjectNames.get(t.getProjectId()), null))
+                .toList();
+
+        // Favorites — for now return empty, can be implemented with a favorites table later
+        List<TaskResponse> favorites = Collections.emptyList();
+
+        return new MyTasksResponse(assigned, delegatedByMe, favorites);
+    }
+
+    @Transactional(readOnly = true)
     public List<TaskResponse> getOverdueTasks(UUID projectId) {
         List<TaskStatus> excludeStatuses = List.of(TaskStatus.DONE, TaskStatus.CANCELLED);
         return taskRepository.findOverdueTasks(projectId, LocalDate.now(), excludeStatuses)
@@ -438,5 +514,37 @@ public class TaskService {
         if (start != null && end != null && end.isBefore(start)) {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
         }
+    }
+
+    private String resolveProjectName(UUID projectId) {
+        if (projectId == null) return null;
+        return projectRepository.findById(projectId)
+                .map(p -> p.getName())
+                .orElse(null);
+    }
+
+    private Map<UUID, String> resolveProjectNames(List<ProjectTask> tasks) {
+        List<UUID> projectIds = tasks.stream()
+                .map(ProjectTask::getProjectId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        if (projectIds.isEmpty()) return Collections.emptyMap();
+
+        Map<UUID, String> result = new HashMap<>();
+        projectRepository.findNamesByIds(projectIds).forEach(row -> {
+            result.put((UUID) row[0], (String) row[1]);
+        });
+        return result;
+    }
+
+    private Map<UUID, Integer> resolveSubtaskCounts(List<UUID> parentTaskIds) {
+        if (parentTaskIds.isEmpty()) return Collections.emptyMap();
+        Map<UUID, Integer> result = new HashMap<>();
+        for (UUID parentId : parentTaskIds) {
+            int count = taskRepository.countByParentTaskIdAndDeletedFalse(parentId);
+            if (count > 0) result.put(parentId, count);
+        }
+        return result;
     }
 }

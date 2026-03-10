@@ -8,8 +8,9 @@ import {
   ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
+import { Button } from '@/design-system/components/Button';
 import { cn } from '@/lib/cn';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatMoneyWhole } from '@/lib/format';
 import { t } from '@/i18n';
 import {
   subscriptionApi,
@@ -45,12 +46,8 @@ function formatQuotaValue(value: number): string {
   return String(value);
 }
 
-function formatAmount(amount: number, currency: string): string {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(amount / 100);
+function formatAmount(amount: number): string {
+  return formatMoneyWhole(amount / 100);
 }
 
 const SubscriptionDashboardPage: React.FC = () => {
@@ -105,13 +102,14 @@ const SubscriptionDashboardPage: React.FC = () => {
           { label: t('subscription.dashboard.breadcrumb') },
         ]}
         actions={
-          <button
+          <Button
+            variant="primary"
+            size="sm"
+            iconLeft={<ArrowUpRight size={16} />}
             onClick={() => navigate('/pricing')}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm font-medium transition-colors"
           >
-            <ArrowUpRight size={16} />
             {t('subscription.dashboard.viewPlans')}
-          </button>
+          </Button>
         }
       />
 
@@ -239,26 +237,25 @@ const SubscriptionDashboardPage: React.FC = () => {
                       {formatQuotaValue(plan.maxProjects)} {t('subscription.pricing.projects').toLowerCase()}
                     </p>
                     {!isCurrent && (
-                      <button
+                      <Button
+                        variant={plan.name === 'ENTERPRISE' ? 'secondary' : 'primary'}
+                        size="sm"
+                        fullWidth
                         onClick={() => {
                           if (plan.name === 'ENTERPRISE') {
                             toast(t('subscription.dashboard.contactSalesHint'));
-                          } else {
+                          } else if (plan.price === 0) {
                             changePlanMutation.mutate(plan.id);
+                          } else {
+                            navigate('/pricing');
                           }
                         }}
                         disabled={changePlanMutation.isPending}
-                        className={cn(
-                          'w-full py-2 px-3 rounded-lg text-sm font-medium transition-colors',
-                          plan.name === 'ENTERPRISE'
-                            ? 'bg-warning-500 text-white hover:bg-warning-600'
-                            : 'bg-primary-500 text-white hover:bg-primary-600',
-                        )}
                       >
                         {plan.name === 'ENTERPRISE'
                           ? t('subscription.pricing.contactSales')
                           : t('subscription.pricing.upgrade')}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 );
@@ -314,7 +311,7 @@ const SubscriptionDashboardPage: React.FC = () => {
                             {record.planDisplayName}
                           </td>
                           <td className="py-3 px-6 text-sm text-right font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">
-                            {formatAmount(record.amount, record.currency)}
+                            {formatAmount(record.amount)}
                           </td>
                           <td className="py-3 px-6 text-center">
                             <span
@@ -339,20 +336,20 @@ const SubscriptionDashboardPage: React.FC = () => {
                       {t('subscription.billing.page')} {billingHistory.number + 1} / {billingHistory.totalPages}
                     </span>
                     <div className="flex items-center gap-2">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setBillingPage((p) => Math.max(0, p - 1))}
                         disabled={billingPage === 0}
-                        className="p-1.5 rounded-md border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <ChevronLeft size={16} />
-                      </button>
-                      <button
+                        iconLeft={<ChevronLeft size={16} />}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setBillingPage((p) => p + 1)}
                         disabled={billingPage >= billingHistory.totalPages - 1}
-                        className="p-1.5 rounded-md border border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        <ChevronRight size={16} />
-                      </button>
+                        iconLeft={<ChevronRight size={16} />}
+                      />
                     </div>
                   </div>
                 )}

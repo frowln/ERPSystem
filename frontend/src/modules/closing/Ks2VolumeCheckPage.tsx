@@ -14,6 +14,7 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { closingApi } from '@/api/closing';
+import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { Ks2VolumeCheck, VolumeCheckStatus } from './types';
@@ -119,7 +120,7 @@ const Ks2VolumeCheckPage: React.FC = () => {
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block">
-            {getValue<number>().toLocaleString('ru-RU')}
+            {formatNumber(getValue<number>())}
           </span>
         ),
       },
@@ -129,7 +130,7 @@ const Ks2VolumeCheckPage: React.FC = () => {
         size: 130,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block">
-            {getValue<number>().toLocaleString('ru-RU')}
+            {formatNumber(getValue<number>())}
           </span>
         ),
       },
@@ -139,7 +140,7 @@ const Ks2VolumeCheckPage: React.FC = () => {
         size: 130,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block font-medium">
-            {getValue<number>().toLocaleString('ru-RU')}
+            {formatNumber(getValue<number>())}
           </span>
         ),
       },
@@ -156,7 +157,7 @@ const Ks2VolumeCheckPage: React.FC = () => {
                 val < 0 ? 'text-red-600 dark:text-red-400' : 'text-neutral-700 dark:text-neutral-300',
               )}
             >
-              {val.toLocaleString('ru-RU')}
+              {formatNumber(val)}
             </span>
           );
         },

@@ -174,7 +174,7 @@ const DispatchRouteListPage: React.FC = () => {
           { label: t('dispatch.routes.breadcrumbRoutes') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/dispatch/routes/new')}>
             {t('dispatch.routes.newRoute')}
           </Button>
         }

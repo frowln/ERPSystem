@@ -14,6 +14,7 @@ import {
   crmLeadPriorityLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { crmApi } from '@/api/crm';
 import { formatDate, formatMoneyCompact } from '@/lib/format';
 import toast from 'react-hot-toast';
@@ -59,7 +60,7 @@ const CrmLeadListPage: React.FC = () => {
     deleteLeadMutation.mutate(leadId);
   };
 
-  const { data: leadData } = useQuery<PaginatedResponse<CrmLead>>({
+  const { data: leadData, isLoading } = useQuery<PaginatedResponse<CrmLead>>({
     queryKey: ['crm-leads'],
     queryFn: () => crmApi.getLeads(),
   });
@@ -115,6 +116,10 @@ const CrmLeadListPage: React.FC = () => {
     [navigate],
   );
 
+  if (isLoading && leads.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
+
   return (
     <div className="animate-fade-in">
       <PageHeader
@@ -132,7 +137,7 @@ const CrmLeadListPage: React.FC = () => {
                 className={`px-3 py-1.5 text-xs font-medium ${viewMode === 'pipeline' ? 'bg-primary-50 text-primary-700' : 'bg-white dark:bg-neutral-900 text-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
                 onClick={() => setViewMode('pipeline')}
               >
-                Pipeline
+                {t('crm.leadList.viewPipeline')}
               </button>
               <button
                 className={`px-3 py-1.5 text-xs font-medium border-l border-neutral-200 dark:border-neutral-700 ${viewMode === 'list' ? 'bg-primary-50 text-primary-700' : 'bg-white dark:bg-neutral-900 text-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
@@ -203,7 +208,7 @@ const CrmLeadListPage: React.FC = () => {
                           <StatusBadge
                             status={lead.priority}
                             colorMap={crmLeadPriorityColorMap}
-                            label={crmLeadPriorityLabels[lead.priority] ?? lead.priority}
+                            label={lead.priorityDisplayName ?? crmLeadPriorityLabels[lead.priority] ?? lead.priority}
                           />
                           <button
                             onClick={(e) => handleDeleteLead(e, lead.id)}
@@ -274,14 +279,14 @@ const CrmLeadListPage: React.FC = () => {
                     <StatusBadge
                       status={lead.status}
                       colorMap={crmLeadStatusColorMap}
-                      label={crmLeadStatusLabels[lead.status] ?? lead.status}
+                      label={lead.stageName ?? lead.statusDisplayName ?? crmLeadStatusLabels[lead.status] ?? lead.status}
                     />
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge
                       status={lead.priority}
                       colorMap={crmLeadPriorityColorMap}
-                      label={crmLeadPriorityLabels[lead.priority] ?? lead.priority}
+                      label={lead.priorityDisplayName ?? crmLeadPriorityLabels[lead.priority] ?? lead.priority}
                     />
                   </td>
                   <td className="px-4 py-3 tabular-nums text-sm font-medium text-neutral-700 dark:text-neutral-300">

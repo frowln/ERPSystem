@@ -170,7 +170,7 @@ const HandoverPackageListPage: React.FC = () => {
           { label: t('closeout.breadcrumbHandover') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/closeout/handover/new')}>
             {t('closeout.handoverListNewPackage')}
           </Button>
         }

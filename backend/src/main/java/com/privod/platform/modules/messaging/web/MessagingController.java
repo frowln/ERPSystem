@@ -4,11 +4,14 @@ import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.modules.messaging.domain.AvailabilityStatus;
 import com.privod.platform.modules.messaging.service.MessagingService;
 import com.privod.platform.modules.messaging.web.dto.AddReactionRequest;
+import com.privod.platform.modules.messaging.web.dto.ChannelMemberResponse;
 import com.privod.platform.modules.messaging.web.dto.ChannelResponse;
 import com.privod.platform.modules.messaging.web.dto.CreateChannelRequest;
 import com.privod.platform.modules.messaging.web.dto.EditMessageRequest;
 import com.privod.platform.modules.messaging.web.dto.FavoriteResponse;
+import com.privod.platform.modules.messaging.web.dto.MessageReactionInfo;
 import com.privod.platform.modules.messaging.web.dto.MessageResponse;
+import com.privod.platform.modules.messaging.web.dto.OrgUserResponse;
 import com.privod.platform.modules.messaging.web.dto.ReactionResponse;
 import com.privod.platform.modules.messaging.web.dto.SendMessageRequest;
 import com.privod.platform.modules.messaging.web.dto.SetUserStatusRequest;
@@ -155,6 +158,64 @@ public class MessagingController {
         )));
     }
 
+    @DeleteMapping("/messages/{messageId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Delete message (soft-delete)")
+    public ResponseEntity<ApiResponse<Void>> deleteMessage(@PathVariable UUID messageId) {
+        messagingService.deleteMessage(messageId);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @DeleteMapping("/messages/{messageId}/pin")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Unpin message")
+    public ResponseEntity<ApiResponse<Void>> unpinMessage(@PathVariable UUID messageId) {
+        messagingService.unpinMessage(messageId);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @GetMapping("/channels/{channelId}/members")
+    @Operation(summary = "Get channel members")
+    public ResponseEntity<ApiResponse<List<ChannelMemberResponse>>> getChannelMembers(
+            @PathVariable UUID channelId
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(messagingService.getChannelMembers(channelId)));
+    }
+
+    @PostMapping("/channels/{channelId}/members")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Add member to channel")
+    public ResponseEntity<ApiResponse<ChannelMemberResponse>> addMember(
+            @PathVariable UUID channelId,
+            @RequestBody AddMemberRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(messagingService.addMember(channelId, request.userId())));
+    }
+
+    @GetMapping("/channels/{channelId}/pinned")
+    @Operation(summary = "Get pinned messages in channel")
+    public ResponseEntity<ApiResponse<List<MessageResponse>>> getPinnedMessages(@PathVariable UUID channelId) {
+        return ResponseEntity.ok(ApiResponse.ok(messagingService.getPinnedMessages(channelId)));
+    }
+
+    @GetMapping("/messages/{parentMessageId}/replies")
+    @Operation(summary = "Get thread replies for a message")
+    public ResponseEntity<ApiResponse<List<MessageResponse>>> getThreadReplies(@PathVariable UUID parentMessageId) {
+        return ResponseEntity.ok(ApiResponse.ok(messagingService.getThreadReplies(parentMessageId)));
+    }
+
+    @PatchMapping("/favorites/{messageId}/note")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Update favorite note")
+    public ResponseEntity<ApiResponse<Void>> updateFavoriteNote(
+            @PathVariable UUID messageId,
+            @Valid @RequestBody FavoriteNoteRequest request
+    ) {
+        messagingService.updateFavoriteNote(messageId, request.note());
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
     @PatchMapping("/me/status")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Set my messaging status")
@@ -192,9 +253,26 @@ public class MessagingController {
         };
     }
 
+    @GetMapping("/users")
+    @Operation(summary = "Get organization users for member selection")
+    public ResponseEntity<ApiResponse<List<OrgUserResponse>>> getOrganizationUsers(
+            @RequestParam(required = false) String search
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(messagingService.getOrganizationUsers(search)));
+    }
+
+    @GetMapping("/messages/{messageId}/reactions")
+    @Operation(summary = "Get reactions for a message")
+    public ResponseEntity<ApiResponse<List<MessageReactionInfo>>> getMessageReactions(@PathVariable UUID messageId) {
+        return ResponseEntity.ok(ApiResponse.ok(messagingService.getMessageReactions(messageId)));
+    }
+
     public record FavoriteNoteRequest(
             @Size(max = 1000, message = "Заметка не должна превышать 1000 символов")
             String note
     ) {
+    }
+
+    public record AddMemberRequest(UUID userId) {
     }
 }

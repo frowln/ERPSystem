@@ -22,7 +22,11 @@ public record ChannelResponse(
         Boolean isArchived,
         Instant createdAt,
         Instant updatedAt,
-        String createdBy
+        String createdBy,
+        // DM-specific fields
+        UUID otherUserId,
+        String otherUserName,
+        String otherUserAvatarUrl
 ) {
     public static ChannelResponse fromEntity(Channel channel) {
         return new ChannelResponse(
@@ -41,7 +45,30 @@ public record ChannelResponse(
                 channel.getIsArchived(),
                 channel.getCreatedAt(),
                 channel.getUpdatedAt(),
-                channel.getCreatedBy()
+                channel.getCreatedBy(),
+                null, null, null
+        );
+    }
+
+    public static ChannelResponse fromEntityWithDm(Channel channel, UUID otherUserId, String otherUserName, String otherUserAvatarUrl) {
+        return new ChannelResponse(
+                channel.getId(),
+                channel.getCode(),
+                channel.getName(),
+                channel.getDescription(),
+                channel.getChannelType(),
+                channel.getChannelType().getDisplayName(),
+                channel.getAvatarUrl(),
+                channel.getCreatorId(),
+                channel.getProjectId(),
+                channel.getMemberCount(),
+                channel.getLastMessageAt(),
+                channel.getIsPinned(),
+                channel.getIsArchived(),
+                channel.getCreatedAt(),
+                channel.getUpdatedAt(),
+                channel.getCreatedBy(),
+                otherUserId, otherUserName, otherUserAvatarUrl
         );
     }
 }

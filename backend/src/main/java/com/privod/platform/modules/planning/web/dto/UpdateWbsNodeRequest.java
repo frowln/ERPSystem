@@ -25,6 +25,8 @@ public record UpdateWbsNodeRequest(
         LocalDate actualEndDate,
         Integer duration,
         BigDecimal percentComplete,
+        BigDecimal plannedVolume,
+        String volumeUnitOfMeasure,
         UUID costCodeId,
         UUID responsibleId
 ) {

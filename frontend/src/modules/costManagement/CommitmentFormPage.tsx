@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { costManagementApi } from '@/api/costManagement';
+import { useProjectOptions, usePartnerOptions, useContractOptions } from '@/hooks/useSelectOptions';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 
@@ -33,22 +34,6 @@ const commitmentSchema = z.object({
 
 type CommitmentFormData = z.input<typeof commitmentSchema>;
 
-const getProjectOptions = () => [
-  { value: '1', label: t('common.mockProjects.solnechny') },
-  { value: '2', label: t('common.mockProjects.gorizont') },
-  { value: '3', label: t('common.mockProjects.mostVyatka') },
-  { value: '6', label: t('common.mockProjects.tsentralny') },
-];
-
-const getVendorOptions = () => [
-  { value: 'v1', label: t('common.mockVendors.stroyMontazh') },
-  { value: 'v2', label: t('common.mockVendors.elektroStroy') },
-  { value: 'v3', label: t('common.mockVendors.betonServis') },
-  { value: 'v4', label: t('common.mockVendors.proektGrupp') },
-  { value: 'v5', label: t('common.mockVendors.dorStroy') },
-  { value: 'v6', label: t('common.mockVendors.metallTrade') },
-];
-
 const typeOptions = [
   { value: 'SUBCONTRACT', label: t('forms.commitment.commitmentTypes.subcontract') },
   { value: 'PURCHASE_ORDER', label: t('forms.commitment.commitmentTypes.purchaseOrder') },
@@ -63,19 +48,14 @@ const currencyOptions = [
   { value: 'CNY', label: t('forms.commitment.currencies.cny') },
 ];
 
-const getContractOptions = () => [
-  { value: '', label: t('forms.commitment.noContract') },
-  { value: 'c1', label: t('common.mockContracts.dg001') },
-  { value: 'c2', label: t('common.mockContracts.dg002') },
-  { value: 'c3', label: t('common.mockContracts.dg003') },
-  { value: 'c4', label: t('common.mockContracts.dg004') },
-];
-
 const CommitmentFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+  const { options: projectOptions } = useProjectOptions();
+  const { options: vendorOptions } = usePartnerOptions();
+  const { options: contractOptions } = useContractOptions();
 
   const { data: existingCommitment } = useQuery({
     queryKey: ['commitment', id],
@@ -220,7 +200,7 @@ const CommitmentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.commitment.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 placeholder={t('forms.commitment.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -228,7 +208,7 @@ const CommitmentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.commitment.labelVendor')} error={errors.vendorId?.message} required>
               <Select
-                options={getVendorOptions()}
+                options={vendorOptions}
                 placeholder={t('forms.commitment.placeholderVendor')}
                 hasError={!!errors.vendorId}
                 {...register('vendorId')}
@@ -236,7 +216,7 @@ const CommitmentFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.commitment.labelContract')} error={errors.contractId?.message}>
               <Select
-                options={getContractOptions()}
+                options={[{ value: '', label: t('forms.commitment.noContract') }, ...contractOptions]}
                 hasError={!!errors.contractId}
                 {...register('contractId')}
               />

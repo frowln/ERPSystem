@@ -1,0 +1,32 @@
+# =============================================================================
+# Demo profile — pre-seeded environment for demonstrations and testing
+# Activated by: SPRING_PROFILES_ACTIVE=demo
+# =============================================================================
+
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    show-sql: false
+
+app.cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:4000}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.privod: INFO
+    org.springframework.security: WARN
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

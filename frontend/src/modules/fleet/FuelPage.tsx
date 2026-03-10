@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, Fuel, TrendingUp, DollarSign, Gauge } from 'lucide-react';
@@ -48,6 +49,7 @@ const FuelPage: React.FC = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
 
+  const navigate = useNavigate();
   const { data: fuelData, isLoading } = useQuery({
     queryKey: ['fleet-fuel'],
     queryFn: () => fleetApi.getFuelRecords('all'),
@@ -112,7 +114,7 @@ const FuelPage: React.FC = () => {
         title={t('fleet.fuel.title')}
         subtitle={t('fleet.fuel.subtitle')}
         breadcrumbs={[{ label: t('fleet.fuel.breadcrumbHome'), href: '/' }, { label: t('fleet.fuel.breadcrumbFleet'), href: '/fleet' }, { label: t('fleet.fuel.breadcrumbFuel') }]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('fleet.fuel.addRefueling')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/fleet/fuel/new')}>{t('fleet.fuel.addRefueling')}</Button>}
       />
 
       {/* Metrics */}

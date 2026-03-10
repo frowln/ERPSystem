@@ -11,7 +11,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Select } from '@/design-system/components/FormField';
 import { closingApi } from '@/api/closing';
-import { formatMoney, formatDate } from '@/lib/format';
+import { formatMoney, formatDate, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
@@ -107,7 +107,7 @@ const Ks2PrintPreview: React.FC<{ data: Ks2PrintData }> = ({ data }) => (
                 {item.unit}
               </td>
               <td className="border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-right tabular-nums">
-                {item.qty.toLocaleString('ru-RU')}
+                {formatNumber(item.qty)}
               </td>
               <td className="border border-neutral-200 dark:border-neutral-700 px-3 py-2 text-right tabular-nums">
                 {formatMoney(item.price)}

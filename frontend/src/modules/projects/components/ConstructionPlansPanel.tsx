@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FileText, Upload } from 'lucide-react';
+import { FileText, Upload, Plus } from 'lucide-react';
 import { Button } from '@/design-system/components/Button';
 import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
@@ -24,6 +24,15 @@ const ConstructionPlansPanel: React.FC<{ projectId: string }> = ({ projectId }) 
     queryFn: () => projectsApi.getConstructionPlans(projectId),
   });
 
+  const initMutation = useMutation({
+    mutationFn: () => projectsApi.initializeConstructionPlans(projectId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['construction-plans', projectId] });
+      toast.success(t('common.saved'));
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
+
   const updateMutation = useMutation({
     mutationFn: ({ planId, data }: { planId: string; data: Partial<ConstructionPlan> }) =>
       projectsApi.updateConstructionPlan(projectId, planId, data),
@@ -31,15 +40,26 @@ const ConstructionPlansPanel: React.FC<{ projectId: string }> = ({ projectId }) 
       queryClient.invalidateQueries({ queryKey: ['construction-plans', projectId] });
       toast.success(t('common.saved'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const planByType = new Map(plans.map(p => [p.planType, p]));
+  const hasPlans = plans.length > 0;
 
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-      <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-4">
-        {t('projects.constructionPlans.title')}
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+          {t('projects.constructionPlans.title')}
+        </h3>
+        {!hasPlans && (
+          <Button size="sm" variant="ghost" onClick={() => initMutation.mutate()} loading={initMutation.isPending}>
+            <Plus size={14} className="mr-1" /> {t('common.create')}
+          </Button>
+        )}
+      </div>
 
       <div className="space-y-2">
         {PLAN_TYPES.map(type => {

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+@Repository("procurementExtPurchaseOrderRepository")
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, UUID>,
         JpaSpecificationExecutor<PurchaseOrder> {
 

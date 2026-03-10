@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("settings2SystemSettingController")
 @RequestMapping("/api/admin/settings")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")

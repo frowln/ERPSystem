@@ -22,6 +22,8 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { cn } from '@/lib/cn';
+import { formatDateTime } from '@/lib/format';
+import { monitoringApi } from '@/api/monitoring';
 import { t } from '@/i18n';
 
 // ---------------------------------------------------------------------------
@@ -35,6 +37,18 @@ interface SystemEvent {
   level: 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
   message: string;
   details?: string;
+}
+
+/** Map ErrorLogEntry from API to local SystemEvent */
+function toSystemEvent(e: import('@/api/monitoring').ErrorLogEntry): SystemEvent {
+  return {
+    id: e.id,
+    timestamp: e.timestamp,
+    service: e.service,
+    level: e.level as SystemEvent['level'],
+    message: e.message,
+    details: e.stackTrace,
+  };
 }
 
 interface HealthCheck {
@@ -76,15 +90,12 @@ const getHealthStatusLabels = (): Record<string, string> => ({
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 
-const healthChecks: HealthCheck[] = [
-  { id: '1', service: 'PostgreSQL', icon: Database, status: 'healthy', responseTime: 12, uptime: '99.98%', lastCheck: '11:20' },
-  { id: '2', service: 'Redis', icon: Zap, status: 'healthy', responseTime: 2, uptime: '99.99%', lastCheck: '11:20' },
-  { id: '3', service: 'MinIO (S3)', icon: HardDrive, status: 'degraded', responseTime: 250, uptime: '99.85%', lastCheck: '11:20' },
-  { id: '4', service: 'API Gateway', icon: Globe, status: 'healthy', responseTime: 45, uptime: '99.95%', lastCheck: '11:20' },
-  { id: '5', service: 'Auth Service', icon: Server, status: 'healthy', responseTime: 28, uptime: '99.97%', lastCheck: '11:20' },
-  { id: '6', service: 'Notification Service', icon: Server, status: 'healthy', responseTime: 35, uptime: '99.92%', lastCheck: '11:20' },
-  { id: '7', service: 'File Processor', icon: Server, status: 'healthy', responseTime: 120, uptime: '99.90%', lastCheck: '11:20' },
-  { id: '8', service: 'Elasticsearch', icon: Database, status: 'healthy', responseTime: 18, uptime: '99.96%', lastCheck: '11:20' },
+const FALLBACK_SERVICES: HealthCheck[] = [
+  { id: '1', service: 'PostgreSQL', icon: Database, status: 'healthy', responseTime: 12, uptime: '99.98%', lastCheck: '—' },
+  { id: '2', service: 'Redis', icon: Zap, status: 'healthy', responseTime: 2, uptime: '99.99%', lastCheck: '—' },
+  { id: '3', service: 'MinIO (S3)', icon: HardDrive, status: 'healthy', responseTime: 45, uptime: '99.95%', lastCheck: '—' },
+  { id: '4', service: 'API Gateway', icon: Globe, status: 'healthy', responseTime: 35, uptime: '99.95%', lastCheck: '—' },
+  { id: '5', service: 'Auth Service', icon: Server, status: 'healthy', responseTime: 28, uptime: '99.97%', lastCheck: '—' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -94,12 +105,38 @@ const healthChecks: HealthCheck[] = [
 const MonitoringDashboardPage: React.FC = () => {
   const [eventFilter, setEventFilter] = useState<string>('all');
 
-  const { data: evtData, isLoading } = useQuery({
-    queryKey: ['monitoring-events'],
-    queryFn: () => Promise.resolve({ content: [] as SystemEvent[], totalElements: 0, totalPages: 0, page: 0, size: 20 }),
+  const { data: dashboardData } = useQuery({
+    queryKey: ['monitoring-dashboard'],
+    queryFn: () => monitoringApi.getDashboardData().catch(() => null),
+    staleTime: 30_000,
   });
 
-  const events = evtData?.content ?? [];
+  const { data: errorLogs, isLoading } = useQuery({
+    queryKey: ['monitoring-errors'],
+    queryFn: async () => {
+      const logs = await monitoringApi.getErrorLogs().catch(() => []);
+      return logs.map(toSystemEvent);
+    },
+    staleTime: 30_000,
+  });
+
+  const healthChecks: HealthCheck[] = useMemo(() => {
+    if (!dashboardData?.services?.length) return FALLBACK_SERVICES;
+    const iconMap: Record<string, React.ElementType> = {
+      PostgreSQL: Database, Redis: Zap, MinIO: HardDrive, 'API Gateway': Globe, Elasticsearch: Database,
+    };
+    return dashboardData.services.map((s, i) => ({
+      id: String(i + 1),
+      service: s.name,
+      icon: iconMap[s.name] ?? Server,
+      status: s.status === 'up' ? 'healthy' as const : s.status === 'degraded' ? 'degraded' as const : 'down' as const,
+      responseTime: s.responseTime,
+      uptime: `${(100 - (s.errorCount * 0.01)).toFixed(2)}%`,
+      lastCheck: s.lastCheck ? formatDateTime(s.lastCheck) : '—',
+    }));
+  }, [dashboardData]);
+
+  const events = errorLogs ?? [];
 
   const filteredEvents = useMemo(() => {
     if (eventFilter === 'all') return events;
@@ -108,8 +145,10 @@ const MonitoringDashboardPage: React.FC = () => {
 
   const errorsCount = events.filter((e) => e.level === 'ERROR' || e.level === 'CRITICAL').length;
   const warningsCount = events.filter((e) => e.level === 'WARNING').length;
-  const avgResponseTime = Math.round(healthChecks.reduce((s, h) => s + h.responseTime, 0) / healthChecks.length);
-  const activeUsers = 23; // mock
+  const avgResponseTime = healthChecks.length > 0
+    ? Math.round(healthChecks.reduce((s, h) => s + h.responseTime, 0) / healthChecks.length)
+    : 0;
+  const activeUsers = dashboardData ? (dashboardData as any).activeUsers ?? 0 : 0;
 
   const eventLevelLabels = getEventLevelLabels();
 
@@ -126,7 +165,7 @@ const MonitoringDashboardPage: React.FC = () => {
       size: 130,
       cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={eventLevelColorMap} label={eventLevelLabels[getValue<string>()] ?? getValue<string>()} />,
     },
-    { accessorKey: 'SERVICE', header: t('monitoring.colService'), size: 140, cell: ({ getValue }) => <span className="font-medium text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
+    { accessorKey: 'service', header: t('monitoring.colService'), size: 140, cell: ({ getValue }) => <span className="font-medium text-neutral-700 dark:text-neutral-300">{getValue<string>()}</span> },
     {
       accessorKey: 'message',
       header: t('monitoring.colMessage'),
@@ -147,7 +186,7 @@ const MonitoringDashboardPage: React.FC = () => {
         subtitle={t('monitoring.subtitle')}
         breadcrumbs={[{ label: t('monitoring.breadcrumbHome'), href: '/' }, { label: t('monitoring.breadcrumbAnalytics'), href: '/analytics' }, { label: t('monitoring.breadcrumbMonitoring') }]}
         actions={
-          <Button variant="secondary" iconLeft={<RefreshCw size={16} />}>
+          <Button variant="secondary" iconLeft={<RefreshCw size={16} />} onClick={() => window.location.reload()}>
             {t('monitoring.refresh')}
           </Button>
         }
@@ -155,7 +194,7 @@ const MonitoringDashboardPage: React.FC = () => {
 
       {/* Metric cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<Activity size={18} />} label="Uptime" value="99.95%" trend={{ direction: 'up', value: '+0.02%' }} subtitle={t('monitoring.metricUptimeSubtitle')} />
+        <MetricCard icon={<Activity size={18} />} label={t('monitoring.metricUptime')} value={dashboardData?.systemHealth?.uptimeFormatted ?? '—'} trend={{ direction: 'up', value: dashboardData?.systemHealth?.version ?? '' }} subtitle={t('monitoring.metricUptimeSubtitle')} />
         <MetricCard icon={<Clock size={18} />} label={t('monitoring.metricAvgResponse')} value={`${avgResponseTime} ${t('monitoring.msUnit')}`} trend={{ direction: avgResponseTime < 100 ? 'down' : 'up', value: avgResponseTime < 100 ? `-5 ${t('monitoring.msUnit')}` : `+15 ${t('monitoring.msUnit')}` }} />
         <MetricCard icon={<Users size={18} />} label={t('monitoring.metricActiveUsers')} value={activeUsers} subtitle={t('monitoring.metricActiveUsersSubtitle')} />
         <MetricCard icon={<AlertTriangle size={18} />} label={t('monitoring.metricErrorsPerHour')} value={errorsCount} trend={errorsCount > 2 ? { direction: 'up', value: `${errorsCount}` } : { direction: 'neutral', value: '0' }} />
@@ -184,7 +223,7 @@ const MonitoringDashboardPage: React.FC = () => {
                   <p className={cn('font-medium tabular-nums', hc.responseTime > 200 ? 'text-warning-600' : 'text-neutral-900 dark:text-neutral-100')}>{hc.responseTime} {t('monitoring.msUnit')}</p>
                 </div>
                 <div>
-                  <p className="text-neutral-500 dark:text-neutral-400">Uptime</p>
+                  <p className="text-neutral-500 dark:text-neutral-400">{t('monitoring.hcUptime')}</p>
                   <p className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">{hc.uptime}</p>
                 </div>
                 <div>
@@ -244,7 +283,7 @@ const MonitoringDashboardPage: React.FC = () => {
               onClick={() => setEventFilter(level)}
               className={cn(
                 'px-2.5 py-1 text-xs font-medium rounded-md transition-colors',
-                eventFilter === level ? 'bg-primary-50 text-primary-700' : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                eventFilter === level ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800',
               )}
             >
               {level === 'all' ? t('monitoring.filterAll') : eventLevelLabels[level]}

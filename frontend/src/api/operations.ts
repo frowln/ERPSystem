@@ -99,6 +99,10 @@ export const operationsApi = {
     return response.data;
   },
 
+  deleteWorkOrder: async (id: string): Promise<void> => {
+    await apiClient.delete(`/ops/work-orders/${id}`);
+  },
+
   // Resource Schedules
   getResourceSchedules: async (params?: ResourceScheduleFilters): Promise<PaginatedResponse<ResourceSchedule>> => {
     const response = await apiClient.get<PaginatedResponse<ResourceSchedule>>('/resource-allocations', { params });

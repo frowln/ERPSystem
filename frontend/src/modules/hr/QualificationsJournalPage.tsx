@@ -20,6 +20,7 @@ import { hrApi } from '@/api/hr';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 import type {
   QualificationRecord,
   QualificationStatus,
@@ -89,6 +90,9 @@ const QualificationsJournalPage: React.FC = () => {
         issueDate: '',
         expiryDate: '',
       });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

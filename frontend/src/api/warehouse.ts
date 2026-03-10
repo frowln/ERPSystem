@@ -18,6 +18,9 @@ import type {
   StorageLayout,
   StorageCell,
   MaterialDemand,
+  PendingConfirmation,
+  InterProjectTransfer,
+  InterProjectTransferStatus,
 } from '@/modules/warehouse/types';
 
 export interface MaterialFilters extends PaginationParams {
@@ -315,6 +318,40 @@ export const warehouseApi = {
     const response = await apiClient.get<MaterialDemand[]>('/warehouse/demand/calculate', {
       params: { projectId },
     });
+    return response.data;
+  },
+
+  // --- Pending Confirmations ---
+  getPendingConfirmations: async (): Promise<PendingConfirmation[]> => {
+    const response = await apiClient.get<PendingConfirmation[]>('/warehouse/movements/pending-confirmations');
+    return response.data;
+  },
+
+  confirmMovement: async (id: string): Promise<void> => {
+    await apiClient.post(`/warehouse/movements/${id}/confirm`);
+  },
+
+  rejectMovement: async (id: string, reason?: string): Promise<void> => {
+    await apiClient.post(`/warehouse/movements/${id}/reject`, { reason });
+  },
+
+  batchConfirmMovements: async (ids: string[]): Promise<void> => {
+    await apiClient.post('/warehouse/movements/batch-confirm', { ids });
+  },
+
+  // --- Inter-Project Transfers ---
+  getInterProjectTransfers: async (params?: PaginationParams): Promise<PaginatedResponse<InterProjectTransfer>> => {
+    const response = await apiClient.get<PaginatedResponse<InterProjectTransfer>>('/warehouse/inter-project-transfers', { params });
+    return response.data;
+  },
+
+  createInterProjectTransfer: async (data: Partial<InterProjectTransfer>): Promise<InterProjectTransfer> => {
+    const response = await apiClient.post<InterProjectTransfer>('/warehouse/inter-project-transfers', data);
+    return response.data;
+  },
+
+  updateInterProjectTransferStatus: async (id: string, status: InterProjectTransferStatus): Promise<InterProjectTransfer> => {
+    const response = await apiClient.patch<InterProjectTransfer>(`/warehouse/inter-project-transfers/${id}/status`, { status });
     return response.data;
   },
 };

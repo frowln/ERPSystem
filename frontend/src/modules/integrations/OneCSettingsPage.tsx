@@ -322,7 +322,7 @@ const OneCSettingsPage: React.FC = () => {
       {/* Summary */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 flex items-center justify-center">
             <Building2 size={20} className="text-yellow-600" />
           </div>
           <div>
@@ -354,11 +354,11 @@ const OneCSettingsPage: React.FC = () => {
       {testResult && (
         <div className={cn(
           'p-4 rounded-lg mb-6 flex items-center gap-3',
-          testResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200',
+          testResult.success ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800',
         )}>
-          {testResult.success ? <Wifi size={18} className="text-green-600" /> : <WifiOff size={18} className="text-red-600" />}
+          {testResult.success ? <Wifi size={18} className="text-green-600 dark:text-green-400" /> : <WifiOff size={18} className="text-red-600 dark:text-red-400" />}
           <div>
-            <p className={cn('text-sm font-medium', testResult.success ? 'text-green-700' : 'text-red-700')}>
+            <p className={cn('text-sm font-medium', testResult.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300')}>
               {testResult.success ? t('integrations.oneC.connectionEstablished') : t('integrations.oneC.connectionError')}
             </p>
             <p className="text-xs text-neutral-600 mt-0.5">

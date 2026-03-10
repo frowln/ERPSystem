@@ -13,7 +13,7 @@ import FmItemsTable from './budgetDetail/FmItemsTable';
 import SnapshotPanel from './budgetDetail/SnapshotPanel';
 import SnapshotCompareTable from './budgetDetail/SnapshotCompareTable';
 import BudgetSectionConfig from './components/BudgetSectionConfig';
-import AddBudgetItemModal from './budgetDetail/AddBudgetItemModal';
+const AddBudgetItemModal = React.lazy(() => import('./budgetDetail/AddBudgetItemModal'));
 import CvrView from './budgetDetail/CvrView';
 import ValueEngineeringPanel from './ValueEngineeringPanel';
 import { Camera, Download, Settings, Plus, ShieldCheck, ShieldAlert, FileSpreadsheet, Upload, AlertCircle, X, FileSignature, Wallet, SlidersHorizontal } from 'lucide-react';
@@ -620,12 +620,16 @@ export default function FmPage() {
         />
       )}
 
-      <AddBudgetItemModal
-        budgetId={budgetId}
-        sections={sectionItems}
-        open={addItemOpen}
-        onClose={() => setAddItemOpen(false)}
-      />
+      {addItemOpen && (
+        <React.Suspense fallback={null}>
+          <AddBudgetItemModal
+            budgetId={budgetId}
+            sections={sectionItems}
+            open={addItemOpen}
+            onClose={() => setAddItemOpen(false)}
+          />
+        </React.Suspense>
+      )}
 
       {/* ─── ЛСР Import Modal ─────────────────────────────────────────────── */}
       {lsrImportOpen && (

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Clock, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
@@ -236,7 +237,7 @@ const TimeSheetPage: React.FC = () => {
           { label: t('hrRussian.timesheet.breadcrumbHr') },
           { label: t('hrRussian.timesheet.breadcrumbTimesheet') },
         ]}
-        actions={<Button>{t('hrRussian.timesheet.generateTimesheet')}</Button>}
+        actions={<Button onClick={() => toast(t('common.operationStarted'))}>{t('hrRussian.timesheet.generateTimesheet')}</Button>}
         tabs={[
           { id: 'all', label: t('hrRussian.timesheet.tabAll'), count: tabCounts.all },
           { id: 'DRAFT', label: t('hrRussian.timesheet.tabDrafts'), count: tabCounts.draft },

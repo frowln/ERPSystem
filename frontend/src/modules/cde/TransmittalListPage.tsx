@@ -156,7 +156,7 @@ const TransmittalListPage: React.FC = () => {
           { label: t('cde.transmittals.breadcrumbTransmittals') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/cde/transmittals/new')}>
             {t('cde.transmittals.createTransmittal')}
           </Button>
         }

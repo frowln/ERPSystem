@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "PortfolioPrequalification")
 @Table(name = "prequalifications", indexes = {
         @Index(name = "idx_prequalification_org", columnList = "organization_id"),
         @Index(name = "idx_prequalification_status", columnList = "status"),

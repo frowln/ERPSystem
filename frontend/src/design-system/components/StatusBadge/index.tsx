@@ -556,6 +556,7 @@ export const budgetCategoryLabels: Record<string, string> = i18nLabels(
 export const rfiStatusColorMap: Record<string, BadgeColor> = {
   DRAFT: 'gray',
   OPEN: 'blue',
+  ASSIGNED: 'yellow',
   ANSWERED: 'green',
   CLOSED: 'purple',
   OVERDUE: 'red',
@@ -564,19 +565,19 @@ export const rfiStatusColorMap: Record<string, BadgeColor> = {
 
 export const rfiStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.rfiStatus',
-  ['DRAFT', 'OPEN', 'ANSWERED', 'CLOSED', 'OVERDUE', 'VOID'],
+  ['DRAFT', 'OPEN', 'ASSIGNED', 'ANSWERED', 'CLOSED', 'OVERDUE', 'VOID'],
 );
 
 export const rfiPriorityColorMap: Record<string, BadgeColor> = {
   LOW: 'gray',
-  MEDIUM: 'blue',
+  NORMAL: 'blue',
   HIGH: 'orange',
   CRITICAL: 'red',
 };
 
 export const rfiPriorityLabels: Record<string, string> = i18nLabels(
   'statusLabels.rfiPriority',
-  ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+  ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'],
 );
 
 // =============================================================================
@@ -586,32 +587,31 @@ export const rfiPriorityLabels: Record<string, string> = i18nLabels(
 export const submittalStatusColorMap: Record<string, BadgeColor> = {
   DRAFT: 'gray',
   SUBMITTED: 'blue',
-  UNDER_REVIEW: 'yellow',
   APPROVED: 'green',
-  APPROVED_AS_NOTED: 'cyan',
-  REVISE_RESUBMIT: 'orange',
   REJECTED: 'red',
-  CLOSED: 'purple',
+  REVISED: 'orange',
 };
 
 export const submittalStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.submittalStatus',
-  ['DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'APPROVED_AS_NOTED', 'REVISE_RESUBMIT', 'REJECTED', 'CLOSED'],
+  ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED', 'REVISED'],
 );
 
 export const submittalTypeColorMap: Record<string, BadgeColor> = {
   SHOP_DRAWING: 'blue',
   PRODUCT_DATA: 'green',
   SAMPLE: 'orange',
-  DESIGN_DATA: 'purple',
+  MOCK_UP: 'purple',
   TEST_REPORT: 'cyan',
   CERTIFICATE: 'yellow',
+  CALCULATION: 'purple',
+  DESIGN_MIX: 'cyan',
   OTHER: 'gray',
 };
 
 export const submittalTypeLabels: Record<string, string> = i18nLabels(
   'statusLabels.submittalType',
-  ['SHOP_DRAWING', 'PRODUCT_DATA', 'SAMPLE', 'DESIGN_DATA', 'TEST_REPORT', 'CERTIFICATE', 'OTHER'],
+  ['SHOP_DRAWING', 'PRODUCT_DATA', 'SAMPLE', 'MOCK_UP', 'TEST_REPORT', 'CERTIFICATE', 'CALCULATION', 'DESIGN_MIX', 'OTHER'],
 );
 
 // =============================================================================

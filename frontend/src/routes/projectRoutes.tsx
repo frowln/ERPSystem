@@ -9,8 +9,6 @@ const ProjectFormPage = lazy(() => import('@/modules/projects/ProjectFormPage'))
 
 // Tasks
 const TaskBoardPage = lazy(() => import('@/pages/TaskBoardPage'));
-const TaskListPage = lazy(() => import('@/pages/TaskListPage'));
-const GanttPage = lazy(() => import('@/pages/GanttPage'));
 
 // Calendar
 const CalendarPage = lazy(() => import('@/modules/calendar/CalendarPage'));
@@ -86,18 +84,10 @@ const RiskRegisterPage = lazy(() => import('@/modules/projects/RiskRegisterPage'
 const PreConstructionMeetingPage = lazy(() => import('@/modules/projects/PreConstructionMeetingPage'));
 
 // Planning
-const WbsTreePage = lazy(() => import('@/modules/planning/WbsTreePage'));
-const ScheduleBaselinePage = lazy(() => import('@/modules/planning/ScheduleBaselinePage'));
 const GanttChartPage = lazy(() => import('@/modules/planning/GanttChartPage'));
 const ResourceAllocationPage = lazy(() => import('@/modules/planning/ResourceAllocationPage'));
 const EvmDashboardPage = lazy(() => import('@/modules/planning/EvmDashboardPage'));
-const CriticalPathPage = lazy(() => import('@/modules/planning/CriticalPathPage'));
-const EvmIndicatorsPage = lazy(() => import('@/modules/planning/EvmIndicatorsPage'));
 const ResourcePlanningPage = lazy(() => import('@/modules/planning/ResourcePlanningPage'));
-const BaselinesPage = lazy(() => import('@/modules/planning/BaselinesPage'));
-const SCurvePage = lazy(() => import('@/modules/planning/SCurvePage'));
-const ProcurementSchedulePage = lazy(() => import('@/modules/planning/ProcurementSchedulePage'));
-const MobilizationSchedulePage = lazy(() => import('@/modules/planning/MobilizationSchedulePage'));
 
 // Workflow
 const WorkflowTemplateListPage = lazy(() => import('@/modules/workflow/WorkflowTemplateListPage'));
@@ -133,6 +123,45 @@ const DesignReviewPage = lazy(() => import('@/modules/design/DesignReviewPage'))
 const DesignSectionListPage = lazy(() => import('@/modules/design/DesignSectionListPage'));
 const DesignReviewBoardPage = lazy(() => import('@/modules/design/DesignReviewBoardPage'));
 
+// Constructability
+const ConstructabilityReviewPage = lazy(() => import('@/modules/projects/ConstructabilityReviewPage'));
+const ConstructabilityReviewDetailPage = lazy(() => import('@/modules/projects/ConstructabilityReviewDetailPage'));
+
+// Handoff & Portfolio
+const HandoffReportPage = lazy(() => import('@/modules/projects/HandoffReportPage'));
+const PortfolioHealthPage = lazy(() => import('@/modules/projects/PortfolioHealthPage'));
+const PreConstructionDashboardPage = lazy(() => import('@/modules/projects/PreConstructionDashboardPage'));
+
+// Planning (additional)
+const ResourceAllocationBoardPage = lazy(() => import('@/modules/planning/ResourceAllocationBoardPage'));
+const WorkVolumeTrackingPage = lazy(() => import('@/modules/planning/WorkVolumeTrackingPage'));
+
+// Change Management (additional)
+const ChangeManagementDashboardPage = lazy(() => import('@/modules/changeManagement/ChangeManagementDashboardPage'));
+
+// BIM (additional)
+const DrawingOverlayComparisonPage = lazy(() => import('@/modules/bim/DrawingOverlayComparisonPage'));
+const DrawingPinsPage = lazy(() => import('@/modules/bim/DrawingPinsPage'));
+
+// Specifications (additional)
+const CompetitiveListRegistryPage = lazy(() => import('@/modules/specifications/CompetitiveListRegistryPage'));
+
+// Bid Management
+const BidPackageListPage = lazy(() => import('@/modules/bidManagement/BidPackageListPage'));
+const BidPackageDetailPage = lazy(() => import('@/modules/bidManagement/BidPackageDetailPage'));
+
+// Workflow (additional)
+const ApprovalInboxPage = lazy(() => import('@/modules/workflow/ApprovalInboxPage'));
+
+// Estimates (additional)
+const OcrScannerPage = lazy(() => import('@/modules/estimates/OcrScannerPage'));
+
+// Counterparties (additional)
+const CounterpartyDetailPage = lazy(() => import('@/modules/counterparties/CounterpartyDetailPage'));
+
+// Documents (additional)
+const DrawingViewerPage = lazy(() => import('@/modules/documents/DrawingViewerPage'));
+
 export function projectRoutes() {
   const PRICING_ROLES = ['ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER'] as const;
   return (
@@ -147,8 +176,8 @@ export function projectRoutes() {
 
       {/* Tasks */}
       <Route path="tasks" element={<TaskBoardPage />} />
-      <Route path="tasks/list" element={<TaskListPage />} />
-      <Route path="tasks/gantt" element={<GanttPage />} />
+      <Route path="tasks/list" element={<Navigate to="/tasks" replace />} />
+      <Route path="tasks/gantt" element={<Navigate to="/tasks" replace />} />
 
       {/* Calendar */}
       <Route path="calendar" element={<CalendarPage />} />
@@ -240,18 +269,13 @@ export function projectRoutes() {
       <Route path="change-management/orders/:id/edit" element={<ChangeOrderFormPage />} />
 
       {/* Planning */}
-      <Route path="planning/wbs" element={<WbsTreePage />} />
       <Route path="planning/gantt" element={<GanttChartPage />} />
-      <Route path="planning/baseline" element={<ScheduleBaselinePage />} />
+      <Route path="planning/wbs" element={<Navigate to="/planning/gantt" replace />} />
+      <Route path="planning/baseline" element={<Navigate to="/planning/gantt" replace />} />
+      <Route path="planning/critical-path" element={<Navigate to="/planning/gantt" replace />} />
       <Route path="planning/resources" element={<ResourceAllocationPage />} />
       <Route path="planning/evm" element={<EvmDashboardPage />} />
-      <Route path="planning/critical-path" element={<CriticalPathPage />} />
-      <Route path="planning/evm-indicators" element={<EvmIndicatorsPage />} />
       <Route path="planning/resource-planning" element={<ResourcePlanningPage />} />
-      <Route path="planning/baselines-mgmt" element={<BaselinesPage />} />
-      <Route path="planning/s-curve" element={<SCurvePage />} />
-      <Route path="projects/:projectId/procurement-schedule" element={<ProcurementSchedulePage />} />
-      <Route path="projects/:projectId/mobilization" element={<MobilizationSchedulePage />} />
 
       {/* Workflow */}
       <Route path="workflow/templates" element={<WorkflowTemplateListPage />} />
@@ -259,16 +283,6 @@ export function projectRoutes() {
       <Route path="workflow/designer" element={<WorkflowDesignerPage />} />
       <Route path="workflow/designer/:id" element={<WorkflowDesignerPage />} />
       <Route path="workflows" element={<Navigate to="/workflow/templates" replace />} />
-
-      {/* Closeout */}
-      <Route path="closeout/commissioning" element={<CommissioningPage />} />
-      <Route path="closeout/commissioning/board" element={<CommissioningBoardPage />} />
-      <Route path="closeout/commissioning/:id" element={<CommissioningDetailPage />} />
-      <Route path="closeout/handover" element={<HandoverPage />} />
-      <Route path="closeout/handover/:id" element={<HandoverPackageDetailPage />} />
-      <Route path="closeout/warranty" element={<WarrantyPage />} />
-      <Route path="closeout/warranty/:id" element={<WarrantyClaimDetailPage />} />
-      <Route path="closeout/dashboard" element={<CloseoutDashboardPage />} />
 
       {/* BIM */}
       <Route path="bim/models" element={<BimModelListPage />} />
@@ -289,6 +303,26 @@ export function projectRoutes() {
       <Route path="design/reviews" element={<DesignReviewPage />} />
       <Route path="design/reviews/board" element={<DesignReviewBoardPage />} />
       <Route path="design/sections" element={<DesignSectionListPage />} />
+
+      {/* Additional pages */}
+      <Route path="projects/:id/constructability" element={<ConstructabilityReviewPage />} />
+      <Route path="projects/:id/constructability/:reviewId" element={<ConstructabilityReviewDetailPage />} />
+      <Route path="projects/:id/handoff-report" element={<HandoffReportPage />} />
+      <Route path="portfolio/health" element={<PortfolioHealthPage />} />
+      <Route path="projects/:id/pre-construction" element={<PreConstructionDashboardPage />} />
+      <Route path="planning/resource-board" element={<ResourceAllocationBoardPage />} />
+      <Route path="planning/work-volumes" element={<WorkVolumeTrackingPage />} />
+      <Route path="change-management/dashboard" element={<ChangeManagementDashboardPage />} />
+      <Route path="bim/drawing-overlay" element={<DrawingOverlayComparisonPage />} />
+      <Route path="bim/drawing-pins" element={<DrawingPinsPage />} />
+      <Route path="specifications/competitive-registry" element={<CompetitiveListRegistryPage />} />
+      <Route path="tasks/my" element={<Navigate to="/tasks" replace />} />
+      <Route path="bid-packages" element={<BidPackageListPage />} />
+      <Route path="bid-packages/:id" element={<BidPackageDetailPage />} />
+      <Route path="workflow/approval-inbox" element={<ApprovalInboxPage />} />
+      <Route path="estimates/ocr-scanner" element={<OcrScannerPage />} />
+      <Route path="counterparties/:id/detail" element={<CounterpartyDetailPage />} />
+      <Route path="documents/drawing-viewer" element={<DrawingViewerPage />} />
     </>
   );
 }

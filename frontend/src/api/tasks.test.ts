@@ -157,7 +157,7 @@ describe('tasksApi', () => {
       mockPost.mockResolvedValue({ data: backendComment } as never);
 
       const result = await tasksApi.addComment('t1', 'Good progress');
-      expect(mockPost).toHaveBeenCalledWith('/tasks/t1/comments', { content: 'Good progress' });
+      expect(mockPost).toHaveBeenCalledWith('/tasks/t1/comments', { content: 'Good progress', authorName: '' });
       expect(result.content).toBe('Good progress');
     });
   });

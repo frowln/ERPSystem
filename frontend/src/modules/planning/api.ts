@@ -14,6 +14,25 @@ import type {
   SCurveData,
 } from './types';
 
+/** Map backend LABOR/EQUIPMENT/MATERIAL to frontend crew/equipment/material */
+function mapResourceType(backend: string): 'crew' | 'equipment' | 'material' {
+  switch (backend) {
+    case 'LABOR': return 'crew';
+    case 'EQUIPMENT': return 'equipment';
+    case 'MATERIAL': return 'material';
+    default: return 'crew';
+  }
+}
+
+function reverseMapResourceType(frontend: string): string {
+  switch (frontend) {
+    case 'crew': return 'LABOR';
+    case 'equipment': return 'EQUIPMENT';
+    case 'material': return 'MATERIAL';
+    default: return 'LABOR';
+  }
+}
+
 export interface WbsNodeFilters extends PaginationParams {
   projectId: string;
 }
@@ -201,26 +220,59 @@ export const planningApi = {
   // ---- EVM Indicators (extended) ----
 
   getEvmIndicators: async (projectId: string): Promise<EvmIndicators> => {
-    const response = await apiClient.get<EvmIndicators>('/evm-snapshots/indicators', {
+    const response = await apiClient.get('/evm-snapshots/indicators', {
       params: { projectId },
     });
-    return response.data;
+    const raw = response.data?.data ?? response.data;
+    if (!raw) {
+      return { cpi: 1, spi: 1, eac: 0, etc: 0, vac: 0, bac: 0, pv: 0, ev: 0, ac: 0, svPercent: 0, cvPercent: 0, sCurve: [] };
+    }
+    const bac = Number(raw.budgetAtCompletion ?? raw.bac) || 0;
+    const pv = Number(raw.plannedValue ?? raw.pv) || 0;
+    const ev = Number(raw.earnedValue ?? raw.ev) || 0;
+    const ac = Number(raw.actualCost ?? raw.ac) || 0;
+    const cpi = Number(raw.cpi) || (ac > 0 ? ev / ac : 1);
+    const spi = Number(raw.spi) || (pv > 0 ? ev / pv : 1);
+    const eac = Number(raw.eac) || (cpi > 0 ? bac / cpi : bac);
+    const etc = Number(raw.etcValue ?? raw.etc) || Math.max(0, eac - ac);
+    const sv = ev - pv;
+    const cv = ev - ac;
+    const vac = bac - eac;
+    const svPercent = pv > 0 ? (sv / pv) * 100 : 0;
+    const cvPercent = ev > 0 ? (cv / ev) * 100 : 0;
+    return { cpi, spi, eac, etc, vac, bac, pv, ev, ac, svPercent, cvPercent, sCurve: [] };
   },
 
   // ---- Resource Planning ----
+  // Backend /resource-allocations only has WBS-node-level allocation.
+  // Plan/histogram endpoints are not yet on backend — fallback from resource-allocations list.
 
   getResourcePlan: async (projectId: string): Promise<ResourceAssignment[]> => {
-    const response = await apiClient.get<ResourceAssignment[]>('/resource-allocations/plan', {
-      params: { projectId },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.get('/resource-allocations', {
+        params: { page: 0, size: 500 },
+      });
+      const wrapper = response.data?.data ?? response.data;
+      const items: Record<string, unknown>[] = wrapper?.content ?? (Array.isArray(wrapper) ? wrapper : []);
+      return items.map((raw) => ({
+        id: String(raw.id ?? ''),
+        taskId: String(raw.wbsNodeId ?? ''),
+        taskName: String(raw.resourceName ?? ''),
+        resourceName: String(raw.resourceName ?? ''),
+        resourceType: mapResourceType(String(raw.resourceType ?? 'LABOR')),
+        startDate: String(raw.startDate ?? ''),
+        endDate: String(raw.endDate ?? ''),
+        utilization: Number(raw.utilization) || (Number(raw.plannedUnits) > 0 ? Math.round((Number(raw.actualUnits ?? 0) / Number(raw.plannedUnits)) * 100) : 0),
+        isOverAllocated: (Number(raw.utilization) || 0) > 100,
+      }));
+    } catch {
+      return [];
+    }
   },
 
-  getResourceHistogram: async (projectId: string): Promise<ResourceHistogramEntry[]> => {
-    const response = await apiClient.get<ResourceHistogramEntry[]>('/resource-allocations/histogram', {
-      params: { projectId },
-    });
-    return response.data;
+  getResourceHistogram: async (_projectId: string): Promise<ResourceHistogramEntry[]> => {
+    // Histogram is not available as a dedicated endpoint yet — return empty
+    return [];
   },
 
   assignResource: async (data: {
@@ -231,8 +283,26 @@ export const planningApi = {
     endDate: string;
     utilization: number;
   }): Promise<ResourceAssignment> => {
-    const response = await apiClient.post<ResourceAssignment>('/resource-allocations/assign', data);
-    return response.data;
+    const response = await apiClient.post<ResourceAssignment>('/resource-allocations', {
+      wbsNodeId: data.taskId,
+      resourceName: data.resourceName,
+      resourceType: reverseMapResourceType(data.resourceType),
+      plannedUnits: data.utilization,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    });
+    const raw = response.data as unknown as Record<string, unknown>;
+    return {
+      id: String(raw.id ?? ''),
+      taskId: String(raw.wbsNodeId ?? data.taskId),
+      taskName: String(raw.resourceName ?? ''),
+      resourceName: data.resourceName,
+      resourceType: data.resourceType,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      utilization: data.utilization,
+      isOverAllocated: data.utilization > 100,
+    };
   },
 
   // ---- Baselines Management (extended) ----

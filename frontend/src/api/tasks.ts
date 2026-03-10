@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { useAuthStore } from '@/stores/authStore';
 import type {
   ProjectTask,
   TaskStatus,
@@ -8,6 +9,75 @@ import type {
 } from '@/types';
 
 /* ─── Extended task types ─── */
+
+export interface TaskLabel {
+  id: string;
+  name: string;
+  color: string;
+  projectId?: string;
+}
+
+export interface TaskStage {
+  id: string;
+  name: string;
+  sequence: number;
+  projectId?: string;
+  color?: string;
+  icon?: string;
+  description?: string;
+  isDefault?: boolean;
+  isClosed?: boolean;
+  createdAt?: string;
+}
+
+export interface TaskTimeEntry {
+  id: string;
+  taskId: string;
+  userId: string;
+  userName: string;
+  startedAt: string;
+  stoppedAt?: string;
+  durationMinutes: number;
+  durationSeconds?: number;
+  description?: string;
+  isRunning?: boolean;
+}
+
+export interface TaskDependencyDto {
+  id: string;
+  taskId: string;
+  dependsOnTaskId: string;
+  dependencyType: 'FINISH_TO_START' | 'START_TO_START' | 'FINISH_TO_FINISH' | 'START_TO_FINISH';
+  lagDays: number;
+  predecessorTaskTitle?: string;
+  successorTaskTitle?: string;
+}
+
+export interface CreateTaskDependencyRequest {
+  taskId?: string;
+  dependsOnTaskId?: string;
+  predecessorTaskId?: string;
+  successorTaskId?: string;
+  dependencyType?: string;
+  lagDays?: number;
+}
+
+export interface CreateTaskStageRequest {
+  name: string;
+  order?: number;
+  projectId?: string;
+  color?: string;
+  isClosed?: boolean;
+}
+
+export interface MyTasksData {
+  assigned: ProjectTask[];
+  watching: ProjectTask[];
+  created: ProjectTask[];
+  overdue: ProjectTask[];
+  delegatedByMe?: ProjectTask[];
+  favorites?: ProjectTask[];
+}
 
 export interface TaskComment {
   id: string;
@@ -39,6 +109,21 @@ export interface TaskDependency {
   type: 'finish_to_start' | 'start_to_start' | 'finish_to_finish';
 }
 
+export type ParticipantRole = 'RESPONSIBLE' | 'CO_EXECUTOR' | 'OBSERVER';
+export type TaskVisibility = 'PARTICIPANTS_ONLY' | 'PROJECT' | 'ORGANIZATION';
+
+export interface TaskParticipant {
+  id: string;
+  taskId: string;
+  userId: string;
+  userName: string;
+  role: ParticipantRole;
+  roleDisplayName: string;
+  addedAt: string;
+  addedById?: string;
+  addedByName?: string;
+}
+
 export interface TaskDetail extends ProjectTask {
   description?: string;
   reporterName?: string;
@@ -56,7 +141,11 @@ export interface TaskDetail extends ProjectTask {
   comments: TaskComment[];
   activities: TaskActivity[];
   dependencies: TaskDependency[];
+  participants: TaskParticipant[];
   projectId?: string;
+  visibility?: TaskVisibility;
+  delegatedToId?: string;
+  delegatedToName?: string;
 }
 
 export interface CreateTaskRequest {
@@ -66,11 +155,13 @@ export interface CreateTaskRequest {
   status?: TaskStatus;
   priority?: TaskPriority;
   assigneeId?: string;
+  assigneeName?: string;
   plannedStartDate?: string;
   plannedEndDate?: string;
   estimatedHours?: number;
   parentTaskId?: string;
   tags?: string[];
+  visibility?: TaskVisibility;
 }
 
 export interface UpdateTaskRequest extends Partial<CreateTaskRequest> {
@@ -143,6 +234,20 @@ interface BackendTaskDependencyResponse {
   taskId: string;
   dependsOnTaskId: string;
   dependencyType?: string | null;
+  dependsOnTaskCode?: string | null;
+  dependsOnTaskTitle?: string | null;
+}
+
+interface BackendTaskParticipantResponse {
+  id: string;
+  taskId: string;
+  userId: string;
+  userName: string;
+  role: ParticipantRole;
+  roleDisplayName?: string | null;
+  addedAt: string;
+  addedById?: string | null;
+  addedByName?: string | null;
 }
 
 interface BackendTaskResponse {
@@ -168,8 +273,12 @@ interface BackendTaskResponse {
   progress?: number | null;
   wbsCode?: string | null;
   tags?: string | null;
+  visibility?: TaskVisibility | null;
+  delegatedToId?: string | null;
+  delegatedToName?: string | null;
   comments?: BackendTaskCommentResponse[] | null;
   dependencies?: BackendTaskDependencyResponse[] | null;
+  participants?: BackendTaskParticipantResponse[] | null;
   subtaskCount?: number | null;
 }
 
@@ -248,8 +357,8 @@ function mapTaskDependency(dep: BackendTaskDependencyResponse): TaskDependency {
     id: String(dep.id),
     taskId: String(dep.taskId),
     dependsOnTaskId: String(dep.dependsOnTaskId),
-    dependsOnTaskCode: String(dep.dependsOnTaskId),
-    dependsOnTaskTitle: String(dep.dependsOnTaskId),
+    dependsOnTaskCode: dep.dependsOnTaskCode ?? String(dep.dependsOnTaskId).slice(0, 8),
+    dependsOnTaskTitle: dep.dependsOnTaskTitle ?? '',
     type: normalizeDependencyType(dep.dependencyType),
   };
 }
@@ -259,15 +368,36 @@ function mapTask(task: BackendTaskResponse): ProjectTask {
     id: String(task.id),
     code: task.code ?? '',
     title: task.title ?? '',
+    projectId: task.projectId ?? undefined,
     projectName: task.projectName ?? undefined,
     status: task.status,
     priority: task.priority,
+    assigneeId: task.assigneeId ?? undefined,
     assigneeName: task.assigneeName ?? undefined,
     plannedStartDate: task.plannedStartDate ?? undefined,
     plannedEndDate: task.plannedEndDate ?? undefined,
     progress: clampProgress(task.progress),
     wbsCode: task.wbsCode ?? undefined,
     subtaskCount: task.subtaskCount ?? 0,
+  };
+}
+
+function mapParticipant(p: BackendTaskParticipantResponse): TaskParticipant {
+  const roleLabels: Record<ParticipantRole, string> = {
+    RESPONSIBLE: 'Ответственный',
+    CO_EXECUTOR: 'Соисполнитель',
+    OBSERVER: 'Наблюдатель',
+  };
+  return {
+    id: String(p.id),
+    taskId: String(p.taskId),
+    userId: String(p.userId),
+    userName: p.userName ?? '',
+    role: p.role,
+    roleDisplayName: p.roleDisplayName ?? roleLabels[p.role] ?? p.role,
+    addedAt: p.addedAt,
+    addedById: p.addedById ?? undefined,
+    addedByName: p.addedByName ?? undefined,
   };
 }
 
@@ -288,7 +418,11 @@ function mapTaskDetail(task: BackendTaskResponse): TaskDetail {
     comments: (task.comments ?? []).map(mapTaskComment),
     activities: [],
     dependencies: (task.dependencies ?? []).map(mapTaskDependency),
+    participants: (task.participants ?? []).map(mapParticipant),
     projectId: task.projectId ?? undefined,
+    visibility: task.visibility ?? undefined,
+    delegatedToId: task.delegatedToId ?? undefined,
+    delegatedToName: task.delegatedToName ?? undefined,
   };
 }
 
@@ -372,7 +506,9 @@ export const tasksApi = {
   },
 
   addComment: async (taskId: string, content: string): Promise<TaskComment> => {
-    const response = await apiClient.post<BackendTaskCommentResponse>(`/tasks/${taskId}/comments`, { content });
+    const user = useAuthStore.getState().user;
+    const authorName = user?.fullName || (user ? `${user.firstName} ${user.lastName}`.trim() : '');
+    const response = await apiClient.post<BackendTaskCommentResponse>(`/tasks/${taskId}/comments`, { content, authorName });
     return mapTaskComment(response.data);
   },
 
@@ -456,5 +592,172 @@ export const tasksApi = {
   completeMilestone: async (id: string): Promise<Milestone> => {
     const response = await apiClient.post<BackendMilestoneResponse>(`/milestones/${id}/complete`);
     return mapMilestone(response.data);
+  },
+
+  bulkDelete: async (ids: string[]): Promise<void> => {
+    await apiClient.post('/tasks/bulk-delete', { ids });
+  },
+
+  bulkChangeStatus: async (ids: string[], status: TaskStatus): Promise<void> => {
+    await apiClient.post('/tasks/bulk-status', { ids, status });
+  },
+
+  getMyTasks: async (_userId?: string): Promise<MyTasksData> => {
+    const response = await apiClient.get<{
+      assigned: BackendTaskResponse[];
+      delegatedByMe: BackendTaskResponse[];
+      favorites: BackendTaskResponse[];
+    }>('/tasks/my');
+    const raw = response.data;
+    return {
+      assigned: (raw.assigned ?? []).map(mapTask),
+      delegatedByMe: (raw.delegatedByMe ?? []).map(mapTask),
+      favorites: (raw.favorites ?? []).map(mapTask),
+      watching: [],
+      created: [],
+      overdue: [],
+    };
+  },
+
+  delegateTask: async (id: string, delegateToId: string, delegateToName?: string, comment?: string): Promise<TaskDetail> => {
+    const response = await apiClient.post<BackendTaskResponse>(`/tasks/${id}/delegate`, {
+      delegateToId,
+      delegateToName,
+      comment,
+    });
+    return mapTaskDetail(response.data);
+  },
+
+  // --- Participants ---
+  getParticipants: async (taskId: string): Promise<TaskParticipant[]> => {
+    const response = await apiClient.get<BackendTaskParticipantResponse[]>(`/tasks/${taskId}/participants`);
+    return response.data.map(mapParticipant);
+  },
+
+  addParticipant: async (taskId: string, data: { userId: string; userName: string; role: ParticipantRole }): Promise<TaskParticipant> => {
+    const response = await apiClient.post<BackendTaskParticipantResponse>(`/tasks/${taskId}/participants`, data);
+    return mapParticipant(response.data);
+  },
+
+  removeParticipant: async (taskId: string, userId: string, role: ParticipantRole): Promise<void> => {
+    await apiClient.delete(`/tasks/${taskId}/participants/${userId}`, { params: { role } });
+  },
+
+  getActivityFeed: async (taskId: string): Promise<TaskActivity[]> => {
+    const response = await apiClient.get<TaskActivity[]>(`/tasks/${taskId}/activity`);
+    return response.data;
+  },
+
+  // --- Labels ---
+  getLabels: async (projectId?: string): Promise<TaskLabel[]> => {
+    const response = await apiClient.get<TaskLabel[]>('/task-labels', { params: projectId ? { projectId } : undefined });
+    return response.data;
+  },
+
+  getTaskLabels: async (taskId: string): Promise<TaskLabel[]> => {
+    const response = await apiClient.get<TaskLabel[]>(`/tasks/${taskId}/labels`);
+    return response.data;
+  },
+
+  createLabel: async (data: { name: string; color: string; projectId?: string }): Promise<TaskLabel> => {
+    const response = await apiClient.post<TaskLabel>('/task-labels', data);
+    return response.data;
+  },
+
+  deleteLabel: async (id: string): Promise<void> => {
+    await apiClient.delete(`/task-labels/${id}`);
+  },
+
+  assignLabel: async (taskId: string, labelId: string): Promise<void> => {
+    await apiClient.post(`/task-labels/tasks/${taskId}/labels/${labelId}`);
+  },
+
+  removeLabel: async (taskId: string, labelId: string): Promise<void> => {
+    await apiClient.delete(`/task-labels/tasks/${taskId}/labels/${labelId}`);
+  },
+
+  // --- Stages ---
+  getStages: async (projectId?: string): Promise<TaskStage[]> => {
+    const response = await apiClient.get<TaskStage[]>('/task-stages', { params: projectId ? { projectId } : undefined });
+    return response.data;
+  },
+
+  createStage: async (data: CreateTaskStageRequest): Promise<TaskStage> => {
+    const response = await apiClient.post<TaskStage>('/task-stages', data);
+    return response.data;
+  },
+
+  updateStage: async (id: string, data: Partial<CreateTaskStageRequest>): Promise<TaskStage> => {
+    const response = await apiClient.put<TaskStage>(`/task-stages/${id}`, data);
+    return response.data;
+  },
+
+  deleteStage: async (id: string): Promise<void> => {
+    await apiClient.delete(`/task-stages/${id}`);
+  },
+
+  reorderStages: async (projectId: string, stageIds: string[]): Promise<void> => {
+    await apiClient.post('/task-stages/reorder', stageIds, { params: { projectId } });
+  },
+
+  // --- Time tracking ---
+  getTimeEntries: async (taskId: string): Promise<TaskTimeEntry[]> => {
+    const response = await apiClient.get<TaskTimeEntry[]>(`/tasks/${taskId}/time-entries`);
+    return response.data;
+  },
+
+  startTimer: async (taskId: string, _description?: string, _projectId?: string): Promise<TaskTimeEntry> => {
+    const response = await apiClient.post<TaskTimeEntry>(`/tasks/${taskId}/timer/start`);
+    return response.data;
+  },
+
+  stopTimer: async (taskId: string, _notes?: string): Promise<TaskTimeEntry> => {
+    const response = await apiClient.post<TaskTimeEntry>(`/tasks/${taskId}/timer/stop`);
+    return response.data;
+  },
+};
+
+/* ─── Favorites (localStorage-backed, no backend needed) ─── */
+
+const FAVORITES_KEY = 'privod-favorite-tasks';
+
+function readFavoriteIds(): Set<string> {
+  try {
+    const stored = localStorage.getItem(FAVORITES_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function writeFavoriteIds(ids: Set<string>) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify([...ids]));
+}
+
+export const taskFavoritesApi = {
+  getIds: (): Set<string> => readFavoriteIds(),
+
+  isFavorite: (taskId: string): boolean => readFavoriteIds().has(taskId),
+
+  toggle: (taskId: string): boolean => {
+    const ids = readFavoriteIds();
+    const added = !ids.has(taskId);
+    if (added) ids.add(taskId); else ids.delete(taskId);
+    writeFavoriteIds(ids);
+    return added;
+  },
+};
+
+export const taskDependenciesApi = {
+  getForTask: async (taskId: string): Promise<TaskDependencyDto[]> => {
+    const response = await apiClient.get<TaskDependencyDto[]>(`/tasks/${taskId}/dependencies`);
+    return response.data;
+  },
+  create: async (data: CreateTaskDependencyRequest): Promise<TaskDependencyDto> => {
+    const response = await apiClient.post<TaskDependencyDto>('/task-dependencies', data);
+    return response.data;
+  },
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/tasks/dependencies/${id}`);
   },
 };

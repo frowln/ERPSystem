@@ -13,6 +13,7 @@ import {
   budgetStatusLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { financeApi } from '@/api/finance';
 import { formatMoney, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
@@ -192,6 +193,10 @@ const BudgetListPage: React.FC = () => {
     (budget: Budget) => navigate(`/budgets/${budget.id}`),
     [navigate],
   );
+
+  if (isLoading && budgets.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
 
   return (
     <div className="animate-fade-in">

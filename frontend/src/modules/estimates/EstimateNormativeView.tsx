@@ -46,6 +46,9 @@ const EstimateNormativeView: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['local-estimate', id] });
       toast.success(t('estimates.normative.toastCalculated'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const estimate = data?.estimate;

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${reportTitle} ?: 'Аналитический отчёт'">Аналитический отчёт</title>
+    <style>
+        @page { size: A4 landscape; margin: 12mm 10mm 12mm 10mm; }
+        body { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; font-size: 8pt; color: #1a1a1a; }
+        .report-header { text-align: center; margin-bottom: 14pt; border-bottom: 2px solid #2563eb; padding-bottom: 8pt; }
+        .org-name { font-size: 9pt; color: #666; }
+        .report-title { font-size: 14pt; font-weight: bold; margin-top: 4pt; color: #111827; }
+        .report-subtitle { font-size: 8pt; color: #6b7280; margin-top: 2pt; }
+        table { width: 100%; border-collapse: collapse; margin-top: 8pt; }
+        th { background-color: #2563eb; color: #fff; padding: 5pt 6pt; text-align: left; font-size: 7.5pt; font-weight: 600; }
+        td { padding: 4pt 6pt; border-bottom: 1px solid #e5e7eb; font-size: 7.5pt; }
+        tr:nth-child(even) td { background-color: #f9fafb; }
+        .footer { margin-top: 12pt; text-align: center; font-size: 7pt; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 6pt; }
+        .stats { margin-top: 6pt; font-size: 7pt; color: #6b7280; }
+    </style>
+</head>
+<body>
+<div class="report-header">
+    <div class="org-name">ПРИВОД — Управление строительством</div>
+    <div class="report-title" th:text="${reportTitle}">Аналитический отчёт</div>
+    <div class="report-subtitle">
+        Период: <span th:text="${dateFrom} ?: '—'">01.01.2026</span> — <span th:text="${dateTo} ?: '—'">01.03.2026</span>
+        &nbsp;|&nbsp; Сформирован: <span th:text="${generatedAt}">10.03.2026</span>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th th:each="h : ${headers}" th:text="${h}">Колонка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="row : ${rows}">
+            <td th:each="cell : ${row}" th:text="${cell}">—</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rows)}">
+            <td th:colspan="${#lists.size(headers)}" style="text-align:center;color:#9ca3af;padding:20pt;">Нет данных за выбранный период</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="stats">
+    Всего записей: <span th:text="${#lists.size(rows)}">0</span>
+</div>
+
+<div class="footer">
+    Отчёт сгенерирован автоматически системой ПРИВОД &copy; 2026
+</div>
+</body>
+</html>

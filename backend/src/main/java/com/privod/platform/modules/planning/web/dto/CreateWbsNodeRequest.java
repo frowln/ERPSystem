@@ -30,6 +30,8 @@ public record CreateWbsNodeRequest(
         LocalDate plannedEndDate,
         Integer duration,
         BigDecimal percentComplete,
+        BigDecimal plannedVolume,
+        String volumeUnitOfMeasure,
         UUID costCodeId,
         UUID responsibleId
 ) {

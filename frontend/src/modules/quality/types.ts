@@ -301,3 +301,50 @@ export interface CreateSupervisionEntryRequest {
   directives: string;
   projectId: string;
 }
+
+// --- Checklist Execution ---
+
+export type ChecklistExecutionStatusType = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'DRAFT';
+
+export type ChecklistItemResultType = 'PASS' | 'FAIL' | 'NA' | 'PENDING';
+
+export interface QualityChecklistEntry {
+  id: string;
+  code?: string;
+  name: string;
+  templateId?: string;
+  projectId: string;
+  projectName: string;
+  status: ChecklistExecutionStatusType;
+  inspectorName: string;
+  scheduledDate: string;
+  completedDate?: string;
+  itemCount: number;
+  passedCount: number;
+  failedCount: number;
+  totalItems?: number;
+  passedItems?: number;
+  failedItems?: number;
+  naItems?: number;
+  workType?: string;
+  workTypeDisplayName?: string;
+  wbsStage?: string;
+  location?: string;
+  notes?: string;
+  photoUrls?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChecklistExecutionItem {
+  id: string;
+  checklistId: string;
+  order: number;
+  description: string;
+  required: boolean;
+  result: ChecklistItemResultType;
+  category?: string;
+  photoRequired?: boolean;
+  notes?: string;
+  photoUrls?: string[];
+}

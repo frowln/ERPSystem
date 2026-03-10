@@ -17,12 +17,13 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
-import { FormField, Input, Select } from '@/design-system/components/FormField';
+import { FormField, Input, Select, Textarea } from '@/design-system/components/FormField';
 import { portalApi } from '@/api/portal';
 import { projectsApi } from '@/api/projects';
 import { formatDate, formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
+import type { ColumnDef } from '@tanstack/react-table';
 import type { PortalKs2Draft, PortalKs2DraftStatus, CreatePortalKs2DraftRequest } from './types';
 
 const tp = (k: string) => t(`portal.ks2Drafts.${k}`);
@@ -36,13 +37,16 @@ const statusColorMap: Record<PortalKs2DraftStatus, string> = {
   CONVERTED: 'purple',
 };
 
-const statusLabelMap: Record<PortalKs2DraftStatus, string> = {
-  DRAFT: 'draft',
-  SUBMITTED: 'submitted',
-  UNDER_REVIEW: 'underReview',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
-  CONVERTED: 'converted',
+const getStatusLabel = (status: PortalKs2DraftStatus): string => {
+  const map: Record<PortalKs2DraftStatus, string> = {
+    DRAFT: 'statusDraft',
+    SUBMITTED: 'statusSubmitted',
+    UNDER_REVIEW: 'statusUnderReview',
+    APPROVED: 'statusApproved',
+    REJECTED: 'statusRejected',
+    CONVERTED: 'statusConverted',
+  };
+  return tp(map[status]);
 };
 
 const PortalKs2DraftsPage: React.FC = () => {
@@ -95,14 +99,14 @@ const PortalKs2DraftsPage: React.FC = () => {
   }));
 
   const createMutation = useMutation({
-    mutationFn: (data: CreatePortalKs2DraftRequest) => portalApi.createKs2Draft(data),
+    mutationFn: (req: CreatePortalKs2DraftRequest) => portalApi.createKs2Draft(req),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portal-ks2-drafts'] });
       toast.success(tp('createSuccess'));
       setShowCreate(false);
       resetForm();
     },
-    onError: () => toast.error(tp('createError')),
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const submitMutation = useMutation({
@@ -111,7 +115,7 @@ const PortalKs2DraftsPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['portal-ks2-drafts'] });
       toast.success(tp('submitSuccess'));
     },
-    onError: () => toast.error(tp('submitError')),
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const reviewMutation = useMutation({
@@ -123,7 +127,7 @@ const PortalKs2DraftsPage: React.FC = () => {
       setReviewDraft(null);
       setReviewComment('');
     },
-    onError: () => toast.error(tp('reviewError')),
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const deleteMutation = useMutation({
@@ -132,6 +136,7 @@ const PortalKs2DraftsPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['portal-ks2-drafts'] });
       toast.success(tp('deleteSuccess'));
     },
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const resetForm = () => {
@@ -154,11 +159,11 @@ const PortalKs2DraftsPage: React.FC = () => {
     });
   }, [formProjectId, formDraftNumber, formPeriodStart, formPeriodEnd, formTotalAmount, formWorkDescription]);
 
-  const columns = [
+  const columns: ColumnDef<PortalKs2Draft, unknown>[] = [
     {
       accessorKey: 'draftNumber',
       header: tp('colNumber'),
-      cell: ({ row }: { row: { original: PortalKs2Draft } }) => (
+      cell: ({ row }) => (
         <span className="font-medium text-primary-600 dark:text-primary-400">
           {row.original.draftNumber || `#${row.original.id.slice(0, 8)}`}
         </span>
@@ -171,34 +176,38 @@ const PortalKs2DraftsPage: React.FC = () => {
     {
       accessorKey: 'reportingPeriodStart',
       header: tp('colPeriod'),
-      cell: ({ row }: { row: { original: PortalKs2Draft } }) => {
+      cell: ({ row }) => {
         const d = row.original;
-        if (!d.reportingPeriodStart) return '—';
-        return `${formatDate(d.reportingPeriodStart)} — ${d.reportingPeriodEnd ? formatDate(d.reportingPeriodEnd) : '...'}`;
+        if (!d.reportingPeriodStart) return '\u2014';
+        return `${formatDate(d.reportingPeriodStart)} \u2014 ${d.reportingPeriodEnd ? formatDate(d.reportingPeriodEnd) : '...'}`;
       },
     },
     {
       accessorKey: 'totalAmount',
       header: tp('colAmount'),
-      cell: ({ row }: { row: { original: PortalKs2Draft } }) =>
-        row.original.totalAmount != null ? formatMoney(row.original.totalAmount) : '—',
+      cell: ({ row }) =>
+        row.original.totalAmount != null ? formatMoney(row.original.totalAmount) : '\u2014',
     },
     {
       accessorKey: 'status',
       header: tp('colStatus'),
-      cell: ({ row }: { row: { original: PortalKs2Draft } }) => (
-        <StatusBadge status={tp(`status${statusLabelMap[row.original.status]}`)} colorMap={{ [tp(`status${statusLabelMap[row.original.status]}`)]: statusColorMap[row.original.status] }} />
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.status}
+          colorMap={statusColorMap}
+          label={getStatusLabel(row.original.status)}
+        />
       ),
     },
     {
       accessorKey: 'createdAt',
       header: tp('colCreated'),
-      cell: ({ row }: { row: { original: PortalKs2Draft } }) => formatDate(row.original.createdAt),
+      cell: ({ row }) => formatDate(row.original.createdAt),
     },
     {
       id: 'actions',
       header: '',
-      cell: ({ row }: { row: { original: PortalKs2Draft } }) => {
+      cell: ({ row }) => {
         const d = row.original;
         return (
           <div className="flex items-center gap-1">
@@ -277,8 +286,7 @@ const PortalKs2DraftsPage: React.FC = () => {
             <Input type="number" value={formTotalAmount} onChange={(e) => setFormTotalAmount(e.target.value)} placeholder="0.00" />
           </FormField>
           <FormField label={tp('fieldWorkDescription')}>
-            <textarea
-              className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            <Textarea
               rows={4}
               value={formWorkDescription}
               onChange={(e) => setFormWorkDescription(e.target.value)}
@@ -296,11 +304,11 @@ const PortalKs2DraftsPage: React.FC = () => {
       <Modal open={!!reviewDraft} onClose={() => { setReviewDraft(null); setReviewComment(''); }} title={tp('reviewModalTitle')}>
         {reviewDraft && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4 space-y-2">
+            <div className="rounded-lg bg-neutral-50 dark:bg-neutral-800 p-4 space-y-2">
               <p><strong>{tp('colNumber')}:</strong> {reviewDraft.draftNumber || `#${reviewDraft.id.slice(0, 8)}`}</p>
               <p><strong>{tp('colProject')}:</strong> {reviewDraft.projectName}</p>
               {reviewDraft.reportingPeriodStart && (
-                <p><strong>{tp('colPeriod')}:</strong> {formatDate(reviewDraft.reportingPeriodStart)} — {reviewDraft.reportingPeriodEnd ? formatDate(reviewDraft.reportingPeriodEnd) : '...'}</p>
+                <p><strong>{tp('colPeriod')}:</strong> {formatDate(reviewDraft.reportingPeriodStart)} {'\u2014'} {reviewDraft.reportingPeriodEnd ? formatDate(reviewDraft.reportingPeriodEnd) : '...'}</p>
               )}
               {reviewDraft.totalAmount != null && (
                 <p><strong>{tp('colAmount')}:</strong> {formatMoney(reviewDraft.totalAmount)}</p>
@@ -308,13 +316,12 @@ const PortalKs2DraftsPage: React.FC = () => {
               {reviewDraft.workDescription && (
                 <div>
                   <strong>{tp('fieldWorkDescription')}:</strong>
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{reviewDraft.workDescription}</p>
+                  <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400 whitespace-pre-wrap">{reviewDraft.workDescription}</p>
                 </div>
               )}
             </div>
             <FormField label={tp('reviewCommentLabel')}>
-              <textarea
-                className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+              <Textarea
                 rows={3}
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}

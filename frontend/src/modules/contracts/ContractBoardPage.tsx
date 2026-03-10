@@ -1,11 +1,15 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Search, Filter, X, Plus, ChevronDown, ChevronRight } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { contractsApi } from '@/api/contracts';
+import { formatMoney } from '@/lib/format';
+import toast from 'react-hot-toast';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -39,10 +43,10 @@ interface BoardColumn {
 // ---------------------------------------------------------------------------
 const defaultColumns: BoardColumn[] = [
   { id: 'DRAFT', title: t('contracts.board.colDraft'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
-  { id: 'APPROVED', title: t('contracts.board.colApproved'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'ACTIVE', title: t('contracts.board.colActive'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
-  { id: 'COMPLETED', title: t('contracts.board.colCompleted'), color: 'bg-purple-500', headerBg: 'bg-purple-50', collapsed: false },
-  { id: 'TERMINATED', title: t('contracts.board.colTerminated'), color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
+  { id: 'APPROVED', title: t('contracts.board.colApproved'), color: 'bg-blue-500', headerBg: 'bg-blue-50 dark:bg-blue-900/20', collapsed: false },
+  { id: 'ACTIVE', title: t('contracts.board.colActive'), color: 'bg-green-500', headerBg: 'bg-green-50 dark:bg-green-900/20', collapsed: false },
+  { id: 'COMPLETED', title: t('contracts.board.colCompleted'), color: 'bg-purple-500', headerBg: 'bg-purple-50 dark:bg-purple-900/20', collapsed: false },
+  { id: 'TERMINATED', title: t('contracts.board.colTerminated'), color: 'bg-red-500', headerBg: 'bg-red-50 dark:bg-red-900/20', collapsed: false },
 ];
 
 // ---------------------------------------------------------------------------
@@ -52,7 +56,7 @@ const priorityLabels: Record<string, string> = { low: t('contracts.board.priorit
 const priorityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600', normal: 'bg-blue-100 text-blue-700', high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700' };
 
 function formatCurrency(v: number) {
-  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(v);
+  return formatMoney(v);
 }
 
 // ---------------------------------------------------------------------------
@@ -60,7 +64,29 @@ function formatCurrency(v: number) {
 // ---------------------------------------------------------------------------
 const ContractBoardPage: React.FC = () => {
   const navigate = useNavigate();
-  const [items, setItems] = useState<ContractCard[]>([]);
+  const queryClient = useQueryClient();
+
+  const { data: contractData } = useQuery({
+    queryKey: ['contracts-board'],
+    queryFn: () => contractsApi.getContracts({ size: 200 }),
+  });
+
+  const items: ContractCard[] = useMemo(() => {
+    return (contractData?.content ?? []).map((c: any) => ({
+      id: c.id,
+      code: c.number ?? '',
+      title: c.name ?? '',
+      status: c.status as ContractStatus,
+      contractorName: c.partnerName ?? '',
+      totalAmount: c.totalWithVat ?? c.amount ?? 0,
+      startDate: c.plannedStartDate ?? '',
+      endDate: c.plannedEndDate ?? '',
+      projectName: c.projectName ?? '',
+      assigneeName: c.responsibleName,
+      priority: 'NORMAL' as const,
+    }));
+  }, [contractData]);
+
   const [columns, setColumns] = useState<BoardColumn[]>(defaultColumns);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -92,13 +118,24 @@ const ContractBoardPage: React.FC = () => {
     setDraggedId(id);
   }, []);
 
+  const statusMutation = useMutation({
+    mutationFn: ({ contractId, status }: { contractId: string; status: string }) =>
+      contractsApi.changeContractStatus(contractId, status as any),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contracts-board'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
+  });
+
   const onDrop = useCallback((e: React.DragEvent, col: ContractStatus) => {
     e.preventDefault();
     if (!draggedId) return;
-    setItems((p) => p.map((i) => (i.id === draggedId ? { ...i, status: col } : i)));
+    statusMutation.mutate({ contractId: draggedId, status: col });
     setDraggedId(null);
     setDragOverCol(null);
-  }, [draggedId]);
+  }, [draggedId, statusMutation]);
 
   const onDragEnd = useCallback(() => { setDraggedId(null); setDragOverCol(null); }, []);
   const toggleCol = useCallback((id: ContractStatus) => { setColumns((p) => p.map((c) => (c.id === id ? { ...c, collapsed: !c.collapsed } : c))); }, []);

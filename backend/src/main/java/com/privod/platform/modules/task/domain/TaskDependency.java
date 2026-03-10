@@ -47,4 +47,8 @@ public class TaskDependency {
     @Column(name = "dependency_type", nullable = false, length = 30)
     @Builder.Default
     private DependencyType dependencyType = DependencyType.FINISH_TO_START;
+
+    @Column(name = "lag_days")
+    @Builder.Default
+    private int lagDays = 0;
 }

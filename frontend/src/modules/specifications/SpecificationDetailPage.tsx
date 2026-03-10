@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Package, Wrench, Cpu, Layers, FilePlus2, ArrowUpRight, FileUp, Tag, Pencil, Trash2, Plus, GitBranch, Upload, Calculator, CalendarClock, Clock } from 'lucide-react';
+import { Package, Wrench, Cpu, Layers, FilePlus2, ArrowUpRight, FileUp, Tag, Pencil, Trash2, Plus, GitBranch, Upload, Calculator, Clock } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -658,14 +658,6 @@ const SpecificationDetailPage: React.FC = () => {
               onClick={() => navigate(`/estimates/new?specificationId=${id}&projectId=${s?.projectId ?? ''}`)}
             >
               {t('specifications.createEstimate')}
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              iconLeft={<CalendarClock size={14} />}
-              onClick={() => navigate(`/projects/${s?.projectId}/procurement-schedule`)}
-            >
-              {t('specifications.procurementSchedule')}
             </Button>
             <Button
               variant="secondary"

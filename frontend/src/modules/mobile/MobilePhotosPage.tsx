@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Camera, Search, MapPin, Calendar, User, Download } from 'lucide-react';
@@ -87,7 +88,7 @@ const PhotoCapturePage: React.FC = () => {
           { label: t('mobileModule.photos.breadcrumbPhotos') },
         ]}
         actions={
-          <Button iconLeft={<Download size={16} />}>
+          <Button iconLeft={<Download size={16} />} onClick={() => toast(t('common.exportStarted'))}>
             {t('mobileModule.photos.downloadSelected')}
           </Button>
         }

@@ -12,6 +12,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { stockLimitsApi } from '@/api/stockLimits';
 import { formatDate, formatNumber } from '@/lib/format';
 import type { StockLimitAlert } from './types';
+import toast from 'react-hot-toast';
 
 const alertSeverityColorMap: Record<string, 'blue' | 'yellow' | 'red'> = {
   info: 'blue',
@@ -75,11 +76,17 @@ const StockAlertsPage: React.FC = () => {
   const acknowledgeMutation = useMutation({
     mutationFn: (id: string) => stockLimitsApi.acknowledgeAlert(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stock-alerts'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const resolveMutation = useMutation({
     mutationFn: (id: string) => stockLimitsApi.resolveAlert(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stock-alerts'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const alerts = alertsData?.content ?? [];

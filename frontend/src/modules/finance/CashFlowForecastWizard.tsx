@@ -264,3 +264,5 @@ export const CashFlowForecastWizard: React.FC<CashFlowForecastWizardProps> = ({ 
     </Modal>
   );
 };
+
+export default CashFlowForecastWizard;

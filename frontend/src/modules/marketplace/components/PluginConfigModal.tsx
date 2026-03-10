@@ -6,7 +6,7 @@ import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
-import { marketplaceApi, type MarketplacePlugin, type PluginConfig } from '@/api/marketplace';
+import { marketplaceApi, type MarketplacePlugin, type ConnectorInstallation, type PluginConfig } from '@/api/marketplace';
 
 // ---------------------------------------------------------------------------
 // Types for dynamic config schema
@@ -32,7 +32,7 @@ interface ConfigSchema {
 interface PluginConfigModalProps {
   open: boolean;
   onClose: () => void;
-  plugin: MarketplacePlugin;
+  plugin: MarketplacePlugin | ConnectorInstallation;
 }
 
 // ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ const PluginConfigModal: React.FC<PluginConfigModalProps> = ({ open, onClose, pl
     }
   }, [config]);
 
-  const schema = plugin.configSchema as ConfigSchema | undefined;
+  const schema = ('configSchema' in plugin ? plugin.configSchema : undefined) as ConfigSchema | undefined;
 
   const updateMutation = useMutation({
     mutationFn: (data: PluginConfig) => marketplaceApi.updatePluginConfig(plugin.id, data),
@@ -89,7 +89,7 @@ const PluginConfigModal: React.FC<PluginConfigModalProps> = ({ open, onClose, pl
       open={open}
       onClose={onClose}
       title={t('marketplace.pluginConfiguration')}
-      description={plugin.name}
+      description={'name' in plugin ? plugin.name : plugin.statusDisplayName}
       size="lg"
       footer={
         <>

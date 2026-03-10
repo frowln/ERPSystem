@@ -14,6 +14,7 @@ import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/format';
 import toast from 'react-hot-toast';
 import { dailyLogApi } from '@/api/dailylog';
+import { useProjectOptions } from '@/hooks/useSelectOptions';
 import { t } from '@/i18n';
 import type { DailyLog, DailyLogEntry, WeatherInfo } from '@/api/dailylog';
 const logStatusColorMap: Record<string, 'gray' | 'yellow' | 'green' | 'red'> = { draft: 'gray', submitted: 'yellow', approved: 'green', rejected: 'red' };
@@ -96,7 +97,8 @@ const DailyLogPage: React.FC = () => {
   const confirm = useConfirmDialog();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
-  const [selectedProject, setSelectedProject] = useState('1');
+  const { options: projectSelectOptions } = useProjectOptions();
+  const [selectedProject, setSelectedProject] = useState('');
 
   const { data: log } = useQuery({
     queryKey: ['daily-log', selectedDate, selectedProject],
@@ -171,12 +173,12 @@ const DailyLogPage: React.FC = () => {
           <div className="flex gap-2">
             {log.status === 'DRAFT' && (
               <>
-                <Button variant="secondary" iconLeft={<Plus size={16} />}>{t('dailyLogPage.addEntry')}</Button>
-                <Button variant="success" iconLeft={<Send size={16} />}>{t('dailyLogPage.submit')}</Button>
+                <Button variant="secondary" iconLeft={<Plus size={16} />} onClick={() => toast(t('common.operationStarted'))}>{t('dailyLogPage.addEntry')}</Button>
+                <Button variant="success" iconLeft={<Send size={16} />} onClick={() => toast.success(t('common.operationStarted'))}>{t('dailyLogPage.submit')}</Button>
               </>
             )}
             {log.status === 'SUBMITTED' && (
-              <Button variant="success" iconLeft={<CheckCircle2 size={16} />}>{t('dailyLogPage.approve')}</Button>
+              <Button variant="success" iconLeft={<CheckCircle2 size={16} />} onClick={() => toast.success(t('common.operationStarted'))}>{t('dailyLogPage.approve')}</Button>
             )}
             <Button variant="danger" iconLeft={<Trash2 size={16} />} onClick={handleDeleteLog}>
               {t('dailyLogPage.delete')}
@@ -206,13 +208,10 @@ const DailyLogPage: React.FC = () => {
         </div>
 
         <Select
-          options={[
-            { value: '1', label: t('dailyLogPage.projectSolnechny') },
-            { value: '3', label: t('dailyLogPage.projectBridge') },
-            { value: '6', label: t('dailyLogPage.projectCentral') },
-          ]}
+          options={projectSelectOptions}
           value={selectedProject}
           onChange={(e) => setSelectedProject(e.target.value)}
+          placeholder={t('dailyLogPage.selectProject')}
           className="w-56"
         />
 

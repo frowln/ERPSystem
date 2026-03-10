@@ -17,6 +17,7 @@ import { punchlistApi } from '@/api/punchlist';
 import { formatDate, formatDateTime } from '@/lib/format';
 import type { PunchItem } from './types';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 interface HistoryEntry {
   id: string;
   action: string;
@@ -56,6 +57,9 @@ const PunchlistItemDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['punch-item', id] });
       queryClient.invalidateQueries({ queryKey: ['punch-items'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

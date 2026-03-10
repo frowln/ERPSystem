@@ -8,6 +8,7 @@ import com.privod.platform.modules.messaging.domain.AvailabilityStatus;
 import com.privod.platform.modules.messaging.domain.Channel;
 import com.privod.platform.modules.messaging.domain.ChannelMember;
 import com.privod.platform.modules.messaging.domain.ChannelMemberRole;
+import com.privod.platform.modules.messaging.domain.ChannelType;
 import com.privod.platform.modules.messaging.domain.Message;
 import com.privod.platform.modules.messaging.domain.MessageFavorite;
 import com.privod.platform.modules.messaging.domain.MessageReaction;
@@ -19,11 +20,14 @@ import com.privod.platform.modules.messaging.repository.MessageFavoriteRepositor
 import com.privod.platform.modules.messaging.repository.MessageReactionRepository;
 import com.privod.platform.modules.messaging.repository.MessageRepository;
 import com.privod.platform.modules.messaging.repository.UserStatusRepository;
+import com.privod.platform.modules.messaging.web.dto.ChannelMemberResponse;
 import com.privod.platform.modules.messaging.web.dto.ChannelResponse;
 import com.privod.platform.modules.messaging.web.dto.CreateChannelRequest;
 import com.privod.platform.modules.messaging.web.dto.EditMessageRequest;
 import com.privod.platform.modules.messaging.web.dto.FavoriteResponse;
+import com.privod.platform.modules.messaging.web.dto.MessageReactionInfo;
 import com.privod.platform.modules.messaging.web.dto.MessageResponse;
+import com.privod.platform.modules.messaging.web.dto.OrgUserResponse;
 import com.privod.platform.modules.messaging.web.dto.ReactionResponse;
 import com.privod.platform.modules.messaging.web.dto.SendMessageRequest;
 import com.privod.platform.modules.messaging.web.dto.SetUserStatusRequest;
@@ -41,7 +45,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,12 +66,36 @@ public class MessagingService {
     @Transactional(readOnly = true)
     public List<ChannelResponse> getMyChannels() {
         User current = getCurrentUserEntity();
-        return channelRepository.findMyChannels(
-                        current.getId(),
+        UUID currentUserId = current.getId();
+        List<Channel> channels = channelRepository.findMyChannels(
+                        currentUserId,
                         PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "lastMessageAt"))
                 )
-                .map(ChannelResponse::fromEntity)
                 .getContent();
+
+        return channels.stream().map(channel -> {
+            if (channel.getChannelType() == ChannelType.DIRECT) {
+                return enrichDmChannel(channel, currentUserId);
+            }
+            return ChannelResponse.fromEntity(channel);
+        }).toList();
+    }
+
+    private ChannelResponse enrichDmChannel(Channel channel, UUID currentUserId) {
+        List<ChannelMember> members = channelMemberRepository.findByChannelId(channel.getId());
+        ChannelMember other = members.stream()
+                .filter(m -> !m.getUserId().equals(currentUserId))
+                .findFirst()
+                .orElse(null);
+        if (other != null) {
+            User otherUser = userRepository.findById(other.getUserId())
+                    .filter(u -> !u.isDeleted())
+                    .orElse(null);
+            String otherName = otherUser != null ? otherUser.getFullName() : other.getUserName();
+            String otherAvatar = otherUser != null ? otherUser.getAvatarUrl() : null;
+            return ChannelResponse.fromEntityWithDm(channel, other.getUserId(), otherName, otherAvatar);
+        }
+        return ChannelResponse.fromEntity(channel);
     }
 
     @Transactional
@@ -76,13 +106,21 @@ public class MessagingService {
             throw new IllegalStateException("Организация пользователя не определена");
         }
 
+        // For DIRECT channels, check if DM already exists
+        if (request.channelType() == ChannelType.DIRECT && request.memberIds() != null && !request.memberIds().isEmpty()) {
+            UUID targetId = request.memberIds().get(0);
+            List<Channel> existing = channelRepository.findDirectChannelBetween(current.getId(), targetId);
+            if (!existing.isEmpty()) {
+                return enrichDmChannel(existing.get(0), current.getId());
+            }
+        }
+
         if (request.projectId() != null) {
             UUID projectId = request.projectId();
             Project project = projectRepository.findById(projectId)
                     .filter(p -> !p.isDeleted())
                     .orElseThrow(() -> new EntityNotFoundException("Проект не найден: " + projectId));
             if (project.getOrganizationId() == null || !organizationId.equals(project.getOrganizationId())) {
-                // Do not leak existence of other-tenant projects
                 throw new EntityNotFoundException("Проект не найден: " + projectId);
             }
         }
@@ -132,8 +170,12 @@ public class MessagingService {
                 channel.incrementMemberCount();
             }
         }
-        channelRepository.save(channel);
+        channel = channelRepository.save(channel);
         auditService.logCreate("Channel", channel.getId());
+
+        if (channel.getChannelType() == ChannelType.DIRECT) {
+            return enrichDmChannel(channel, current.getId());
+        }
         return ChannelResponse.fromEntity(channel);
     }
 
@@ -143,12 +185,55 @@ public class MessagingService {
         if (!channelMemberRepository.existsByChannelIdAndUserId(channelId, current.getId())) {
             throw new IllegalStateException("Доступ к каналу запрещен");
         }
-        return messageRepository.findByChannelId(
+        List<Message> messages = messageRepository.findByChannelId(
                         channelId,
                         PageRequest.of(0, 200, Sort.by(Sort.Direction.DESC, "createdAt"))
                 )
-                .map(MessageResponse::fromEntity)
                 .getContent();
+
+        List<UUID> messageIds = messages.stream().map(Message::getId).toList();
+        Map<UUID, List<MessageReaction>> reactionsByMessage = messageIds.isEmpty()
+                ? Map.of()
+                : messageReactionRepository.findByMessageIdIn(messageIds).stream()
+                        .collect(Collectors.groupingBy(MessageReaction::getMessageId));
+
+        UUID currentUserId = current.getId();
+        return messages.stream()
+                .map(msg -> {
+                    List<MessageReaction> msgReactions = reactionsByMessage.getOrDefault(msg.getId(), List.of());
+                    List<MessageReactionInfo> reactionInfos = buildReactionInfos(msgReactions, currentUserId);
+                    return MessageResponse.fromEntity(msg, reactionInfos);
+                })
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MessageResponse> getThreadReplies(UUID parentMessageId) {
+        User current = getCurrentUserEntity();
+        Message parent = messageRepository.findById(parentMessageId)
+                .orElseThrow(() -> new EntityNotFoundException("Сообщение не найдено: " + parentMessageId));
+        if (!channelMemberRepository.existsByChannelIdAndUserId(parent.getChannelId(), current.getId())) {
+            throw new IllegalStateException("Доступ к каналу запрещен");
+        }
+        List<Message> replies = messageRepository.findByParentMessageId(
+                parentMessageId,
+                PageRequest.of(0, 200, Sort.by(Sort.Direction.ASC, "createdAt"))
+        ).getContent();
+
+        List<UUID> replyIds = replies.stream().map(Message::getId).toList();
+        Map<UUID, List<MessageReaction>> reactionsByMessage = replyIds.isEmpty()
+                ? Map.of()
+                : messageReactionRepository.findByMessageIdIn(replyIds).stream()
+                        .collect(Collectors.groupingBy(MessageReaction::getMessageId));
+
+        UUID currentUserId = current.getId();
+        return replies.stream()
+                .map(msg -> {
+                    List<MessageReaction> msgReactions = reactionsByMessage.getOrDefault(msg.getId(), List.of());
+                    List<MessageReactionInfo> reactionInfos = buildReactionInfos(msgReactions, currentUserId);
+                    return MessageResponse.fromEntity(msg, reactionInfos);
+                })
+                .toList();
     }
 
     @Transactional
@@ -171,6 +256,15 @@ public class MessagingService {
                 .attachmentType(request.attachmentType())
                 .build();
         message = messageRepository.save(message);
+
+        // Increment parent replyCount for thread replies
+        if (request.parentMessageId() != null) {
+            Message parent = messageRepository.findById(request.parentMessageId()).orElse(null);
+            if (parent != null) {
+                parent.incrementReplyCount();
+                messageRepository.save(parent);
+            }
+        }
 
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new EntityNotFoundException("Канал не найден: " + channelId));
@@ -246,6 +340,129 @@ public class MessagingService {
         message.setPinnedBy(current.getId());
         message.setPinnedAt(Instant.now());
         messageRepository.save(message);
+    }
+
+    @Transactional
+    public void deleteMessage(UUID messageId) {
+        User current = getCurrentUserEntity();
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new EntityNotFoundException("Сообщение не найдено: " + messageId));
+        if (!current.getId().equals(message.getAuthorId())) {
+            throw new IllegalStateException("Удалять можно только свои сообщения");
+        }
+        message.softDelete();
+        messageRepository.save(message);
+        auditService.logDelete("Message", messageId);
+    }
+
+    @Transactional
+    public void unpinMessage(UUID messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new EntityNotFoundException("Сообщение не найдено: " + messageId));
+        message.setIsPinned(false);
+        message.setPinnedBy(null);
+        message.setPinnedAt(null);
+        messageRepository.save(message);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChannelMemberResponse> getChannelMembers(UUID channelId) {
+        User current = getCurrentUserEntity();
+        if (!channelMemberRepository.existsByChannelIdAndUserId(channelId, current.getId())) {
+            throw new IllegalStateException("Доступ к каналу запрещен");
+        }
+        List<ChannelMember> members = channelMemberRepository.findByChannelId(channelId);
+
+        // Enrich with online status
+        List<UUID> userIds = members.stream().map(ChannelMember::getUserId).toList();
+        Map<UUID, UserStatus> statusMap = userIds.isEmpty()
+                ? Map.of()
+                : userStatusRepository.findByUserIdIn(userIds).stream()
+                        .collect(Collectors.toMap(UserStatus::getUserId, s -> s));
+
+        return members.stream()
+                .map(m -> {
+                    UserStatus status = statusMap.get(m.getUserId());
+                    String availabilityStr = "OFFLINE";
+                    if (status != null && status.getAvailabilityStatus() != null) {
+                        availabilityStr = status.getAvailabilityStatus().name();
+                    }
+                    return ChannelMemberResponse.fromEntityWithStatus(m, availabilityStr);
+                })
+                .toList();
+    }
+
+    @Transactional
+    public ChannelMemberResponse addMember(UUID channelId, UUID userId) {
+        User current = getCurrentUserEntity();
+        UUID organizationId = current.getOrganizationId();
+        if (organizationId == null) {
+            throw new IllegalStateException("Организация пользователя не определена");
+        }
+
+        Channel channel = channelRepository.findById(channelId)
+                .filter(c -> !c.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Канал не найден: " + channelId));
+
+        if (!channelMemberRepository.existsByChannelIdAndUserId(channelId, current.getId())) {
+            throw new IllegalStateException("Доступ к каналу запрещен");
+        }
+        if (channelMemberRepository.existsByChannelIdAndUserId(channelId, userId)) {
+            throw new IllegalStateException("Пользователь уже является участником канала");
+        }
+
+        User user = userRepository.findById(userId)
+                .filter(u -> !u.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
+        if (user.getOrganizationId() == null || !organizationId.equals(user.getOrganizationId())) {
+            throw new IllegalStateException("Нельзя добавить пользователя из другой организации");
+        }
+
+        ChannelMember cm = ChannelMember.builder()
+                .channelId(channelId)
+                .userId(userId)
+                .userName(user.getFullName())
+                .role(ChannelMemberRole.MEMBER)
+                .joinedAt(Instant.now())
+                .build();
+        cm = channelMemberRepository.save(cm);
+        channel.incrementMemberCount();
+        channelRepository.save(channel);
+
+        return ChannelMemberResponse.fromEntity(cm);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MessageResponse> getPinnedMessages(UUID channelId) {
+        User current = getCurrentUserEntity();
+        if (!channelMemberRepository.existsByChannelIdAndUserId(channelId, current.getId())) {
+            throw new IllegalStateException("Доступ к каналу запрещен");
+        }
+        List<Message> messages = messageRepository.findPinnedByChannelId(channelId);
+        List<UUID> messageIds = messages.stream().map(Message::getId).toList();
+        Map<UUID, List<MessageReaction>> reactionsByMessage = messageIds.isEmpty()
+                ? Map.of()
+                : messageReactionRepository.findByMessageIdIn(messageIds).stream()
+                        .collect(Collectors.groupingBy(MessageReaction::getMessageId));
+
+        UUID currentUserId = current.getId();
+        return messages.stream()
+                .map(msg -> {
+                    List<MessageReaction> msgReactions = reactionsByMessage.getOrDefault(msg.getId(), List.of());
+                    List<MessageReactionInfo> reactionInfos = buildReactionInfos(msgReactions, currentUserId);
+                    return MessageResponse.fromEntity(msg, reactionInfos);
+                })
+                .toList();
+    }
+
+    @Transactional
+    public void updateFavoriteNote(UUID messageId, String note) {
+        User current = getCurrentUserEntity();
+        MessageFavorite favorite = messageFavoriteRepository
+                .findByMessageIdAndUserId(messageId, current.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Избранное не найдено"));
+        favorite.setNote(note);
+        messageFavoriteRepository.save(favorite);
     }
 
     @Transactional
@@ -334,7 +551,6 @@ public class MessagingService {
                 .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден: " + userId));
         if (target.getOrganizationId() == null || !organizationId.equals(target.getOrganizationId())) {
-            // Do not leak existence of users from other tenants
             throw new EntityNotFoundException("Пользователь не найден: " + userId);
         }
 
@@ -366,6 +582,59 @@ public class MessagingService {
         status.setLastSeenAt(Instant.now());
         status = userStatusRepository.save(status);
         return UserStatusResponse.fromEntity(status);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrgUserResponse> getOrganizationUsers(String search) {
+        User current = getCurrentUserEntity();
+        UUID orgId = current.getOrganizationId();
+        if (orgId == null) return List.of();
+
+        List<User> users = userRepository.findByOrganizationId(orgId, PageRequest.of(0, 100, Sort.by("firstName", "lastName"))).getContent();
+
+        if (search != null && !search.isBlank()) {
+            String lower = search.toLowerCase();
+            users = users.stream()
+                    .filter(u -> (u.getFullName() != null && u.getFullName().toLowerCase().contains(lower))
+                            || (u.getEmail() != null && u.getEmail().toLowerCase().contains(lower)))
+                    .toList();
+        }
+
+        // Batch fetch online statuses
+        List<UUID> userIds = users.stream().map(User::getId).toList();
+        Map<UUID, UserStatus> statusMap = userIds.isEmpty()
+                ? Map.of()
+                : userStatusRepository.findByUserIdIn(userIds).stream()
+                        .collect(Collectors.toMap(UserStatus::getUserId, s -> s));
+
+        return users.stream()
+                .filter(u -> !u.isDeleted())
+                .map(u -> {
+                    UserStatus status = statusMap.get(u.getId());
+                    boolean isOnline = status != null && Boolean.TRUE.equals(status.getIsOnline());
+                    return new OrgUserResponse(u.getId(), u.getFullName(), u.getEmail(), u.getAvatarUrl(), isOnline);
+                })
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MessageReactionInfo> getMessageReactions(UUID messageId) {
+        User current = getCurrentUserEntity();
+        List<MessageReaction> reactions = messageReactionRepository.findByMessageId(messageId);
+        return buildReactionInfos(reactions, current.getId());
+    }
+
+    private List<MessageReactionInfo> buildReactionInfos(List<MessageReaction> reactions, UUID currentUserId) {
+        Map<String, List<MessageReaction>> grouped = reactions.stream()
+                .collect(Collectors.groupingBy(MessageReaction::getEmoji));
+        return grouped.entrySet().stream()
+                .map(entry -> new MessageReactionInfo(
+                        entry.getKey(),
+                        entry.getValue().size(),
+                        entry.getValue().stream().map(MessageReaction::getUserName).toList(),
+                        entry.getValue().stream().anyMatch(r -> r.getUserId().equals(currentUserId))
+                ))
+                .toList();
     }
 
     private User getCurrentUserEntity() {

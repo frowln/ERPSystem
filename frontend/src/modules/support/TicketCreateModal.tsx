@@ -21,16 +21,6 @@ const getPriorityOptions = () => [
   { value: 'CRITICAL', label: t('support.priorityCritical') },
 ];
 
-const getHardcodedCategoryOptions = () => [
-  { value: 'TECHNICAL', label: t('support.catTechnical') },
-  { value: 'ACCESS', label: t('support.catAccess') },
-  { value: 'DOCUMENTS', label: t('support.catDocuments') },
-  { value: 'EQUIPMENT', label: t('support.catEquipment') },
-  { value: 'SAFETY', label: t('support.catSafety') },
-  { value: 'SCHEDULE', label: t('support.catSchedule') },
-  { value: 'OTHER', label: t('support.catOther') },
-];
-
 const getFallbackCategoryOptions = () => [
   { value: 'TECHNICAL', label: t('support.catTechnical') },
   { value: 'ACCESS', label: t('support.catAccess') },
@@ -192,3 +182,5 @@ export const TicketCreateModal: React.FC<TicketCreateModalProps> = ({ open, onCl
     </Modal>
   );
 };
+
+export default TicketCreateModal;

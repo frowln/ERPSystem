@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum BriefingType {
 
     INITIAL("Вводный"),
+    PRIMARY("Первичный"),
     REPEAT("Повторный"),
     UNSCHEDULED("Внеплановый"),
     TARGET("Целевой");

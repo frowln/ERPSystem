@@ -8,6 +8,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { changeManagementApi } from '@/api/changeManagement';
+import { useProjectOptions } from '@/hooks/useSelectOptions';
 import { t } from '@/i18n';
 
 const changeEventSchema = z.object({
@@ -34,13 +35,6 @@ interface ChangeEventCreateModalProps {
   onClose: () => void;
 }
 
-const getProjectOptions = () => [
-  { value: '1', label: t('changeManagement.eventCreate.projectSolnechny') },
-  { value: '2', label: t('changeManagement.eventCreate.projectGorizont') },
-  { value: '3', label: t('changeManagement.eventCreate.projectBridge') },
-  { value: '6', label: t('changeManagement.eventCreate.projectCentralny') },
-];
-
 const getSourceOptions = () => [
   { value: 'RFI', label: t('changeManagement.eventCreate.sourceRfi') },
   { value: 'ISSUE', label: t('changeManagement.eventCreate.sourceIssue') },
@@ -53,6 +47,7 @@ const getSourceOptions = () => [
 
 export const ChangeEventCreateModal: React.FC<ChangeEventCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+  const { options: projectOptions } = useProjectOptions();
 
   const {
     register,
@@ -130,7 +125,7 @@ export const ChangeEventCreateModal: React.FC<ChangeEventCreateModalProps> = ({ 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('changeManagement.eventCreate.labelProject')} error={errors.projectId?.message} required>
             <Select
-              options={getProjectOptions()}
+              options={projectOptions}
               placeholder={t('changeManagement.eventCreate.placeholderProject')}
               hasError={!!errors.projectId}
               {...register('projectId')}

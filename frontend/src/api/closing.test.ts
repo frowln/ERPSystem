@@ -18,12 +18,12 @@ describe('closingApi', () => {
   });
 
   describe('KS-2', () => {
-    it('getKs2Documents calls GET /closing/ks2 without params', async () => {
+    it('getKs2Documents calls GET /ks2 without params', async () => {
       const mockData = { content: [], totalElements: 0 };
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await closingApi.getKs2Documents();
-      expect(mockGet).toHaveBeenCalledWith('/closing/ks2', { params: undefined });
+      expect(mockGet).toHaveBeenCalledWith('/ks2', { params: undefined });
       expect(result).toEqual(mockData);
     });
 
@@ -32,34 +32,34 @@ describe('closingApi', () => {
       mockGet.mockResolvedValue({ data: { content: [], totalElements: 0 } } as never);
 
       await closingApi.getKs2Documents(params);
-      expect(mockGet).toHaveBeenCalledWith('/closing/ks2', { params });
+      expect(mockGet).toHaveBeenCalledWith('/ks2', { params });
     });
 
-    it('getKs2 calls GET /closing/ks2/:id', async () => {
+    it('getKs2 calls GET /ks2/:id', async () => {
       const doc = { id: 'k1', number: 'KS2-001', name: 'Works Act' };
       mockGet.mockResolvedValue({ data: doc } as never);
 
       const result = await closingApi.getKs2('k1');
-      expect(mockGet).toHaveBeenCalledWith('/closing/ks2/k1');
+      expect(mockGet).toHaveBeenCalledWith('/ks2/k1');
       expect(result).toEqual(doc);
     });
   });
 
   describe('KS-3', () => {
-    it('getKs3Documents calls GET /closing/ks3', async () => {
+    it('getKs3Documents calls GET /ks3', async () => {
       mockGet.mockResolvedValue({ data: { content: [], totalElements: 0 } } as never);
 
       const result = await closingApi.getKs3Documents();
-      expect(mockGet).toHaveBeenCalledWith('/closing/ks3', { params: undefined });
+      expect(mockGet).toHaveBeenCalledWith('/ks3', { params: undefined });
       expect(result.content).toEqual([]);
     });
 
-    it('getKs3 calls GET /closing/ks3/:id', async () => {
+    it('getKs3 calls GET /ks3/:id', async () => {
       const doc = { id: 'ks3-1', number: 'KS3-001', name: 'Summary Act' };
       mockGet.mockResolvedValue({ data: doc } as never);
 
       const result = await closingApi.getKs3('ks3-1');
-      expect(mockGet).toHaveBeenCalledWith('/closing/ks3/ks3-1');
+      expect(mockGet).toHaveBeenCalledWith('/ks3/ks3-1');
       expect(result).toEqual(doc);
     });
   });

@@ -439,7 +439,7 @@ const WebDavSettingsPage: React.FC = () => {
                   onClick={() => setForm({ ...form, autoSync: !form.autoSync })}
                   className={cn(
                     'relative w-11 h-6 rounded-full transition-colors',
-                    form.autoSync ? 'bg-blue-500' : 'bg-neutral-300 dark:bg-neutral-600',
+                    form.autoSync ? 'bg-primary-500' : 'bg-neutral-300 dark:bg-neutral-600',
                   )}
                 >
                   <span
@@ -477,7 +477,7 @@ const WebDavSettingsPage: React.FC = () => {
                 onClick={() => setForm({ ...form, enabled: !form.enabled })}
                 className={cn(
                   'relative w-11 h-6 rounded-full transition-colors',
-                  form.enabled ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600',
+                  form.enabled ? 'bg-success-500' : 'bg-neutral-300 dark:bg-neutral-600',
                 )}
               >
                 <span

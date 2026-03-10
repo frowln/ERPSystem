@@ -17,6 +17,18 @@ const LimitFenceCardsPage = lazy(() => import('@/modules/warehouse/LimitFenceCar
 const WarehouseOrdersPage = lazy(() => import('@/modules/warehouse/WarehouseOrdersPage'));
 const AddressStoragePage = lazy(() => import('@/modules/warehouse/AddressStoragePage'));
 const MaterialDemandPage = lazy(() => import('@/modules/warehouse/MaterialDemandPage'));
+const BarcodeScannerPage = lazy(() => import('@/modules/warehouse/BarcodeScannerPage'));
+const InterProjectTransferPage = lazy(() => import('@/modules/warehouse/InterProjectTransferPage'));
+const InterSiteTransferPage = lazy(() => import('@/modules/warehouse/InterSiteTransferPage'));
+const LimitFenceSheetListPage = lazy(() => import('@/modules/warehouse/LimitFenceSheetListPage'));
+const LimitFenceSheetDetailPage = lazy(() => import('@/modules/warehouse/LimitFenceSheetDetailPage'));
+const LimitFenceSheetFormPage = lazy(() => import('@/modules/warehouse/LimitFenceSheetFormPage'));
+const MovementDetailPage = lazy(() => import('@/modules/warehouse/MovementDetailPage'));
+const QuickConfirmPage = lazy(() => import('@/modules/warehouse/QuickConfirmPage'));
+const QuickReceiptPage = lazy(() => import('@/modules/warehouse/QuickReceiptPage'));
+const WarehouseOrderListPage = lazy(() => import('@/modules/warehouse/WarehouseOrderListPage'));
+const WarehouseOrderDetailPage = lazy(() => import('@/modules/warehouse/WarehouseOrderDetailPage'));
+const WarehouseOrderFormPage = lazy(() => import('@/modules/warehouse/WarehouseOrderFormPage'));
 
 export function warehouseRoutes() {
   return (
@@ -39,6 +51,20 @@ export function warehouseRoutes() {
       <Route path="warehouse/warehouse-orders" element={<WarehouseOrdersPage />} />
       <Route path="warehouse/address-storage" element={<AddressStoragePage />} />
       <Route path="warehouse/material-demand" element={<MaterialDemandPage />} />
+      <Route path="warehouse/barcode-scanner" element={<BarcodeScannerPage />} />
+      <Route path="warehouse/inter-project-transfer" element={<InterProjectTransferPage />} />
+      <Route path="warehouse/inter-site-transfer" element={<InterSiteTransferPage />} />
+      <Route path="warehouse/limit-fence-sheets" element={<LimitFenceSheetListPage />} />
+      <Route path="warehouse/limit-fence-sheets/new" element={<LimitFenceSheetFormPage />} />
+      <Route path="warehouse/limit-fence-sheets/:id" element={<LimitFenceSheetDetailPage />} />
+      <Route path="warehouse/limit-fence-sheets/:id/edit" element={<LimitFenceSheetFormPage />} />
+      <Route path="warehouse/movements/:id" element={<MovementDetailPage />} />
+      <Route path="warehouse/quick-confirm" element={<QuickConfirmPage />} />
+      <Route path="warehouse/quick-receipt" element={<QuickReceiptPage />} />
+      <Route path="warehouse/orders" element={<WarehouseOrderListPage />} />
+      <Route path="warehouse/orders/new" element={<WarehouseOrderFormPage />} />
+      <Route path="warehouse/orders/:id" element={<WarehouseOrderDetailPage />} />
+      <Route path="warehouse/orders/:id/edit" element={<WarehouseOrderFormPage />} />
     </>
   );
 }

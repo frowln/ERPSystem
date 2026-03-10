@@ -80,6 +80,9 @@ export default function MchDListPage() {
       setShowRevoke(null);
       toast.success(tp('revokeSuccess'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -87,6 +90,9 @@ export default function MchDListPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mchd-list'] });
       toast.success(tp('deleteSuccess'));
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

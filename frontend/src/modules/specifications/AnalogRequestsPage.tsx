@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Plus, FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
@@ -37,6 +38,7 @@ const AnalogRequestsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['analog-requests'],
     queryFn: () => materialAnalogsApi.getRequests(),
@@ -163,7 +165,7 @@ const AnalogRequestsPage: React.FC = () => {
           { label: t('specifications.analogRequestsBreadcrumb') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('specifications.analogNewRequest')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/specifications/analog-requests/new')}>{t('specifications.analogNewRequest')}</Button>
         }
         tabs={[
           { id: 'all', label: t('specifications.analogTabAll'), count: tabCounts.all },

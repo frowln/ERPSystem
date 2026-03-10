@@ -34,7 +34,7 @@ interface QualityCheckCreateModalProps {
 const getTypeOptions = () => [
   { value: 'INCOMING', label: t('quality.checkCreate.typeIncoming') },
   { value: 'IN_PROCESS', label: t('quality.checkCreate.typeHiddenWorks') },
-  { value: 'final', label: t('quality.checkCreate.typeLaboratory') },
+  { value: 'FINAL', label: t('quality.checkCreate.typeLaboratory') },
   { value: 'AUDIT', label: t('quality.checkCreate.typeAudit') },
 ];
 
@@ -80,13 +80,11 @@ export const QualityCheckCreateModal: React.FC<QualityCheckCreateModalProps> = (
     mutationFn: (data: QualityCheckFormData) => {
       return qualityApi.createCheck({
         projectId: data.projectId,
-        type: data.type,
+        checkType: data.type,
         inspectorName: data.inspectorName,
-        scheduledDate: data.scheduledDate,
+        plannedDate: data.scheduledDate,
         name: `${t('quality.checkCreate.checkNamePrefix')}: ${data.area}`,
         description: data.description || '',
-        status: 'PLANNED',
-        result: 'PENDING',
       });
     },
     onSuccess: () => {

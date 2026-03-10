@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Download, Send, CheckCircle, FileText, Printer } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import {
@@ -28,6 +29,9 @@ const DocumentDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['russian-doc', id] });
       queryClient.invalidateQueries({ queryKey: ['russian-docs'] });
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const exportMutation = useMutation({
@@ -40,6 +44,9 @@ const DocumentDetailPage: React.FC = () => {
       a.download = `document.${format}`;
       a.click();
       URL.revokeObjectURL(url);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

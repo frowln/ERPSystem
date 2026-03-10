@@ -38,6 +38,9 @@ const UsageLogDetailPage: React.FC = () => {
       toast.success(t('fleet.usageLogs.toastDeleted'));
       navigate('/fleet/usage-logs');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   if (isLoading || !logEntry) {

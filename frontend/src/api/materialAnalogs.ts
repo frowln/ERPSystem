@@ -59,4 +59,9 @@ export const materialAnalogsApi = {
     const response = await apiClient.patch<AnalogRequest>(`/specifications/analog-requests/${id}/reject`, { reason });
     return response.data;
   },
+
+  createVeProposal: async (data: Record<string, unknown>): Promise<{ id: string }> => {
+    const response = await apiClient.post<{ id: string }>('/specifications/ve-proposals', data);
+    return response.data;
+  },
 };

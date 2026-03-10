@@ -226,8 +226,10 @@ public class SupportTicketService {
     public List<TicketCommentResponse> getTicketComments(UUID ticketId) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         getTicketOrThrow(ticketId, organizationId);
+        boolean canSeeInternal = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("SUPPORT_MANAGER");
         return commentRepository.findByTicketIdAndDeletedFalseOrderByCreatedAtDesc(ticketId)
                 .stream()
+                .filter(c -> canSeeInternal || !c.isInternal())
                 .map(TicketCommentResponse::fromEntity)
                 .toList();
     }

@@ -76,6 +76,9 @@ const BcfIssuesPage: React.FC = () => {
       resetForm();
       setShowCreateModal(false);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const addCommentMutation = useMutation({
@@ -85,6 +88,9 @@ const BcfIssuesPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['bcf-topics'] });
       toast.success(t('bim.bcfCommentAdded'));
       setCommentText('');
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

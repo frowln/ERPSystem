@@ -13,6 +13,7 @@ import { monteCarloApi } from './api';
 import { formatNumber } from '@/lib/format';
 import { t } from '@/i18n';
 import type { MonteCarloSimulation, SimulationStatus } from './types';
+import toast from 'react-hot-toast';
 
 const statusColorMap: Record<string, BadgeColor> = {
   DRAFT: 'gray',
@@ -53,6 +54,9 @@ const SimulationListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monte-carlo'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

@@ -99,6 +99,9 @@ const BimModelDetailPage: React.FC = () => {
       toast.success(t('bim.toastModelDeleted'));
       navigate('/bim/models');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const defaultModel: BimModelDetail = {

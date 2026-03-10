@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { RefreshCw, Trash2, RotateCcw, WifiOff, CheckCircle } from 'lucide-react';
 import { t } from '@/i18n';
+import { formatDateTime } from '@/lib/format';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -17,7 +18,7 @@ import { useOfflineStatus } from '@/hooks/useOfflineStatus';
 // ---------------------------------------------------------------------------
 
 function formatTimestamp(ts: number): string {
-  return new Date(ts).toLocaleString();
+  return formatDateTime(new Date(ts).toISOString());
 }
 
 function formatAge(ts: number): string {

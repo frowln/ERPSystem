@@ -19,6 +19,7 @@ import { Input } from '@/design-system/components/FormField';
 import { priceCoefficientApi } from './api';
 import { formatDate, formatDateLong, formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 import type { PriceCoefficient, PriceCoefficientType, PriceCoefficientCalculation } from './types';
 
 const statusColorMap: Record<string, BadgeColor> = {
@@ -62,6 +63,9 @@ const PriceCoefficientDetailPage: React.FC = () => {
   const calculateMutation = useMutation({
     mutationFn: () => priceCoefficientApi.calculatePrice(Number(basePrice.replace(/\s/g, '')), [id!]),
     onSuccess: (data) => setCalcResult(data),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   if (!coefficient) {

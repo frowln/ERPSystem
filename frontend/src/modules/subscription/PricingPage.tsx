@@ -1,10 +1,13 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Check, X, Crown, Sparkles, Building2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { Check, X, Crown, Sparkles, Building2, Loader2 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
+import { Button } from '@/design-system/components/Button';
 import { cn } from '@/lib/cn';
+import { formatMoneyWhole } from '@/lib/format';
 import { t } from '@/i18n';
 import { subscriptionApi, type SubscriptionPlan } from '@/api/subscription';
+import toast from 'react-hot-toast';
 
 const PLAN_ICONS: Record<string, React.ReactNode> = {
   FREE: <Sparkles size={24} className="text-neutral-500" />,
@@ -48,17 +51,14 @@ function formatQuota(value: number): string {
   return String(value);
 }
 
-function formatPrice(price: number, currency: string): string {
+function formatPrice(price: number): string {
   if (price === 0) return t('subscription.pricing.free');
-  const formatted = new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(price / 100);
-  return formatted;
+  return formatMoneyWhole(price / 100);
 }
 
 const PricingPage: React.FC = () => {
+  const [payingPlanId, setPayingPlanId] = useState<string | null>(null);
+
   const { data: plans, isLoading } = useQuery({
     queryKey: ['subscription-plans'],
     queryFn: subscriptionApi.getPlans,
@@ -68,6 +68,35 @@ const PricingPage: React.FC = () => {
     queryKey: ['subscription-current'],
     queryFn: subscriptionApi.getCurrentSubscription,
   });
+
+  const paymentMutation = useMutation({
+    mutationFn: (planId: string) => subscriptionApi.createPayment(planId),
+    onSuccess: (data) => {
+      if (data.confirmationUrl) {
+        window.location.href = data.confirmationUrl;
+      } else {
+        toast.error(t('subscription.payment.noRedirectUrl'));
+        setPayingPlanId(null);
+      }
+    },
+    onError: () => {
+      toast.error(t('subscription.payment.error'));
+      setPayingPlanId(null);
+    },
+  });
+
+  const handleUpgrade = (plan: SubscriptionPlan) => {
+    if (plan.name === 'ENTERPRISE') {
+      toast(t('subscription.dashboard.contactSalesHint'));
+      return;
+    }
+    if (plan.price === 0) {
+      toast(t('subscription.payment.freeNoPay'));
+      return;
+    }
+    setPayingPlanId(plan.id);
+    paymentMutation.mutate(plan.id);
+  };
 
   return (
     <div className="animate-fade-in">
@@ -120,7 +149,7 @@ const PricingPage: React.FC = () => {
 
                   <div className="mb-6">
                     <span className="text-3xl font-bold text-neutral-900 dark:text-neutral-100 tabular-nums">
-                      {formatPrice(plan.price, plan.currency)}
+                      {formatPrice(plan.price)}
                     </span>
                     {plan.price > 0 && (
                       <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
@@ -152,22 +181,31 @@ const PricingPage: React.FC = () => {
                   {/* CTA button */}
                   <div className="mt-auto">
                     {isCurrent ? (
-                      <button
-                        disabled
-                        className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed"
-                      >
+                      <Button variant="secondary" size="sm" fullWidth disabled>
                         {t('subscription.pricing.currentPlan')}
-                      </button>
+                      </Button>
                     ) : plan.name === 'ENTERPRISE' ? (
-                      <button className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-warning-500 text-white hover:bg-warning-600 transition-colors">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        fullWidth
+                        onClick={() => handleUpgrade(plan)}
+                      >
                         {t('subscription.pricing.contactSales')}
-                      </button>
+                      </Button>
                     ) : (
-                      <button className="w-full py-2.5 px-4 rounded-lg text-sm font-medium bg-primary-500 text-white hover:bg-primary-600 transition-colors">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        fullWidth
+                        onClick={() => handleUpgrade(plan)}
+                        disabled={payingPlanId === plan.id}
+                        iconLeft={payingPlanId === plan.id ? <Loader2 size={16} className="animate-spin" /> : undefined}
+                      >
                         {plan.name === 'FREE'
                           ? t('subscription.pricing.startFree')
                           : t('subscription.pricing.upgrade')}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>

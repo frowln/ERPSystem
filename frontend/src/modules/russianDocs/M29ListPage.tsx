@@ -143,7 +143,7 @@ const M29ListPage: React.FC = () => {
         title={t('russianDocs.m29Title')}
         subtitle={t('russianDocs.m29Subtitle')}
         breadcrumbs={[{ label: t('russianDocs.breadcrumbHome'), href: '/' }, { label: t('russianDocs.breadcrumbSiteDocs') }, { label: t('russianDocs.breadcrumbM29') }]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('russianDocs.newReport')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/russian-docs/new')}>{t('russianDocs.newReport')}</Button>}
         tabs={[
           { id: 'all', label: t('russianDocs.tabAll'), count: tabCounts.all },
           { id: 'DRAFT', label: t('russianDocs.tabDraft'), count: tabCounts.draft },

@@ -6,6 +6,7 @@ import { Button } from '@/design-system/components/Button';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { apiClient } from '@/api/client';
+import { t } from '@/i18n';
 import { MapPin, Plus, CheckCircle, AlertTriangle, XCircle, ClipboardCheck } from 'lucide-react';
 
 interface SiteAssessment {
@@ -20,11 +21,13 @@ interface SiteAssessment {
   createdAt: string;
 }
 
-const recommendationConfig: Record<string, { color: string; label: string; icon: React.ReactNode }> = {
-  GO: { color: 'green', label: 'Площадка подходит', icon: <CheckCircle size={14} /> },
-  CONDITIONAL: { color: 'yellow', label: 'Условно подходит', icon: <AlertTriangle size={14} /> },
-  NO_GO: { color: 'red', label: 'Не подходит', icon: <XCircle size={14} /> },
-};
+function getRecConfig() {
+  return {
+    GO: { color: 'green', label: t('siteAssessment.recGoShort'), icon: <CheckCircle size={14} /> },
+    CONDITIONAL: { color: 'yellow', label: t('siteAssessment.recConditionalShort'), icon: <AlertTriangle size={14} /> },
+    NO_GO: { color: 'red', label: t('siteAssessment.recNoGoShort'), icon: <XCircle size={14} /> },
+  } as Record<string, { color: string; label: string; icon: React.ReactNode }>;
+}
 
 const SiteAssessmentListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -42,29 +45,30 @@ const SiteAssessmentListPage: React.FC = () => {
   const goCount = assessments.filter(a => a.recommendation === 'GO').length;
   const condCount = assessments.filter(a => a.recommendation === 'CONDITIONAL').length;
   const noGoCount = assessments.filter(a => a.recommendation === 'NO_GO').length;
+  const recommendationConfig = getRecConfig();
 
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title="Обследование площадок"
-        subtitle={`${assessments.length} обследований в системе`}
+        title={t('siteAssessment.listTitle')}
+        subtitle={t('siteAssessment.listSubtitle', { count: String(assessments.length) })}
         breadcrumbs={[
-          { label: 'Главная', href: '/' },
-          { label: 'Предварительный этап' },
-          { label: 'Обследование площадок' },
+          { label: t('siteAssessment.breadcrumbHome'), href: '/' },
+          { label: t('siteAssessment.breadcrumbPreConstruction') },
+          { label: t('siteAssessment.breadcrumbList') },
         ]}
         actions={
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/site-assessments/new')}>
-            Новое обследование
+            {t('siteAssessment.newAssessment')}
           </Button>
         }
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<ClipboardCheck size={18} />} label="Всего обследований" value={assessments.length} />
-        <MetricCard icon={<CheckCircle size={18} />} label="Подходит (GO)" value={goCount} />
-        <MetricCard icon={<AlertTriangle size={18} />} label="Условно" value={condCount} />
-        <MetricCard icon={<XCircle size={18} />} label="Не подходит" value={noGoCount} />
+        <MetricCard icon={<ClipboardCheck size={18} />} label={t('siteAssessment.kpiTotal')} value={assessments.length} />
+        <MetricCard icon={<CheckCircle size={18} />} label={t('siteAssessment.kpiGo')} value={goCount} />
+        <MetricCard icon={<AlertTriangle size={18} />} label={t('siteAssessment.kpiConditional')} value={condCount} />
+        <MetricCard icon={<XCircle size={18} />} label={t('siteAssessment.kpiNoGo')} value={noGoCount} />
       </div>
 
       {isLoading ? (
@@ -75,14 +79,13 @@ const SiteAssessmentListPage: React.FC = () => {
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-12 text-center">
           <MapPin size={48} className="mx-auto text-neutral-300 mb-4" />
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-            Нет обследований площадок
+            {t('siteAssessment.emptyTitle')}
           </h3>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6 max-w-md mx-auto">
-            Обследование площадки — первый шаг перед началом проекта. Оцените доступность коммуникаций,
-            состояние грунта, подъездные пути и другие критические параметры.
+            {t('siteAssessment.emptyDescription')}
           </p>
           <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/site-assessments/new')}>
-            Провести обследование
+            {t('siteAssessment.emptyAction')}
           </Button>
         </div>
       ) : (
@@ -90,12 +93,12 @@ const SiteAssessmentListPage: React.FC = () => {
           <table className="w-full">
             <thead className="sticky top-0 bg-neutral-50 dark:bg-neutral-800">
               <tr className="text-left text-sm text-neutral-500 dark:text-neutral-400">
-                <th className="px-4 py-3 font-medium">Дата</th>
-                <th className="px-4 py-3 font-medium">Адрес площадки</th>
-                <th className="px-4 py-3 font-medium">Инспектор</th>
-                <th className="px-4 py-3 font-medium text-center">Скоринг</th>
-                <th className="px-4 py-3 font-medium">Рекомендация</th>
-                <th className="px-4 py-3 font-medium">Статус</th>
+                <th className="px-4 py-3 font-medium">{t('siteAssessment.colDate')}</th>
+                <th className="px-4 py-3 font-medium">{t('siteAssessment.colAddress')}</th>
+                <th className="px-4 py-3 font-medium">{t('siteAssessment.colInspector')}</th>
+                <th className="px-4 py-3 font-medium text-center">{t('siteAssessment.colScoring')}</th>
+                <th className="px-4 py-3 font-medium">{t('siteAssessment.colRecommendation')}</th>
+                <th className="px-4 py-3 font-medium">{t('siteAssessment.colStatus')}</th>
               </tr>
             </thead>
             <tbody>
@@ -139,7 +142,7 @@ const SiteAssessmentListPage: React.FC = () => {
                       <StatusBadge
                         status={a.status}
                         colorMap={{ DRAFT: 'gray', COMPLETED: 'blue', APPROVED: 'green' }}
-                        label={a.status === 'DRAFT' ? 'Черновик' : a.status === 'COMPLETED' ? 'Завершено' : 'Утверждено'}
+                        label={a.status === 'DRAFT' ? t('siteAssessment.statusDraft') : a.status === 'COMPLETED' ? t('siteAssessment.statusCompleted') : t('siteAssessment.statusApproved')}
                       />
                     </td>
                   </tr>

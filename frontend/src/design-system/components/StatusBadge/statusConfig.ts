@@ -546,6 +546,7 @@ export const budgetCategoryLabels: Record<string, string> = i18nLabels(
 export const rfiStatusColorMap: Record<string, BadgeColor> = {
   DRAFT: 'gray',
   OPEN: 'blue',
+  ASSIGNED: 'yellow',
   ANSWERED: 'green',
   CLOSED: 'purple',
   OVERDUE: 'red',
@@ -554,19 +555,19 @@ export const rfiStatusColorMap: Record<string, BadgeColor> = {
 
 export const rfiStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.rfiStatus',
-  ['DRAFT', 'OPEN', 'ANSWERED', 'CLOSED', 'OVERDUE', 'VOID'],
+  ['DRAFT', 'OPEN', 'ASSIGNED', 'ANSWERED', 'CLOSED', 'OVERDUE', 'VOID'],
 );
 
 export const rfiPriorityColorMap: Record<string, BadgeColor> = {
   LOW: 'gray',
-  MEDIUM: 'blue',
+  NORMAL: 'blue',
   HIGH: 'orange',
   CRITICAL: 'red',
 };
 
 export const rfiPriorityLabels: Record<string, string> = i18nLabels(
   'statusLabels.rfiPriority',
-  ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+  ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'],
 );
 
 // =============================================================================
@@ -576,32 +577,31 @@ export const rfiPriorityLabels: Record<string, string> = i18nLabels(
 export const submittalStatusColorMap: Record<string, BadgeColor> = {
   DRAFT: 'gray',
   SUBMITTED: 'blue',
-  UNDER_REVIEW: 'yellow',
   APPROVED: 'green',
-  APPROVED_AS_NOTED: 'cyan',
-  REVISE_RESUBMIT: 'orange',
   REJECTED: 'red',
-  CLOSED: 'purple',
+  REVISED: 'orange',
 };
 
 export const submittalStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.submittalStatus',
-  ['DRAFT', 'SUBMITTED', 'UNDER_REVIEW', 'APPROVED', 'APPROVED_AS_NOTED', 'REVISE_RESUBMIT', 'REJECTED', 'CLOSED'],
+  ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED', 'REVISED'],
 );
 
 export const submittalTypeColorMap: Record<string, BadgeColor> = {
   SHOP_DRAWING: 'blue',
   PRODUCT_DATA: 'green',
   SAMPLE: 'orange',
-  DESIGN_DATA: 'purple',
+  MOCK_UP: 'purple',
   TEST_REPORT: 'cyan',
   CERTIFICATE: 'yellow',
+  CALCULATION: 'purple',
+  DESIGN_MIX: 'cyan',
   OTHER: 'gray',
 };
 
 export const submittalTypeLabels: Record<string, string> = i18nLabels(
   'statusLabels.submittalType',
-  ['SHOP_DRAWING', 'PRODUCT_DATA', 'SAMPLE', 'DESIGN_DATA', 'TEST_REPORT', 'CERTIFICATE', 'OTHER'],
+  ['SHOP_DRAWING', 'PRODUCT_DATA', 'SAMPLE', 'MOCK_UP', 'TEST_REPORT', 'CERTIFICATE', 'CALCULATION', 'DESIGN_MIX', 'OTHER'],
 );
 
 // =============================================================================
@@ -611,40 +611,40 @@ export const submittalTypeLabels: Record<string, string> = i18nLabels(
 export const issueStatusColorMap: Record<string, BadgeColor> = {
   OPEN: 'blue',
   IN_PROGRESS: 'yellow',
-  ON_HOLD: 'orange',
   RESOLVED: 'green',
   CLOSED: 'purple',
+  REOPENED: 'orange',
 };
 
 export const issueStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.issueStatus',
-  ['OPEN', 'IN_PROGRESS', 'ON_HOLD', 'RESOLVED', 'CLOSED'],
+  ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REOPENED'],
 );
 
 export const issueTypeColorMap: Record<string, BadgeColor> = {
-  DEFECT: 'red',
-  SAFETY: 'orange',
   DESIGN: 'blue',
+  CONSTRUCTION: 'orange',
   COORDINATION: 'purple',
-  SCHEDULE: 'yellow',
+  SAFETY: 'red',
+  QUALITY: 'yellow',
   OTHER: 'gray',
 };
 
 export const issueTypeLabels: Record<string, string> = i18nLabels(
   'statusLabels.issueType',
-  ['DEFECT', 'SAFETY', 'DESIGN', 'COORDINATION', 'SCHEDULE', 'OTHER'],
+  ['DESIGN', 'CONSTRUCTION', 'COORDINATION', 'SAFETY', 'QUALITY', 'OTHER'],
 );
 
 export const issuePriorityColorMap: Record<string, BadgeColor> = {
   LOW: 'gray',
-  MEDIUM: 'blue',
+  NORMAL: 'blue',
   HIGH: 'orange',
   CRITICAL: 'red',
 };
 
 export const issuePriorityLabels: Record<string, string> = i18nLabels(
   'statusLabels.issuePriority',
-  ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+  ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'],
 );
 
 // =============================================================================
@@ -1371,14 +1371,13 @@ export const crmLeadStatusLabels: Record<string, string> = i18nLabels(
 
 export const crmLeadPriorityColorMap: Record<string, BadgeColor> = {
   LOW: 'gray',
-  MEDIUM: 'blue',
+  NORMAL: 'blue',
   HIGH: 'orange',
-  CRITICAL: 'red',
 };
 
 export const crmLeadPriorityLabels: Record<string, string> = i18nLabels(
   'statusLabels.crmLeadPriority',
-  ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+  ['LOW', 'NORMAL', 'HIGH'],
 );
 
 export const prescriptionStatusColorMap: Record<string, BadgeColor> = {
@@ -1428,3 +1427,145 @@ export const waybillStatusLabels: Record<string, string> = i18nLabels(
   'statusLabels.waybillStatus',
   ['DRAFT', 'ISSUED', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'],
 );
+
+// =============================================================================
+// BID PACKAGE
+// =============================================================================
+
+export const bidPackageStatusColorMap: Record<string, BadgeColor> = {
+  DRAFT: 'gray',
+  PUBLISHED: 'blue',
+  COLLECTING: 'cyan',
+  EVALUATING: 'yellow',
+  AWARDED: 'green',
+  CANCELLED: 'red',
+  CLOSED: 'purple',
+};
+
+export const bidPackageStatusLabels: Record<string, string> = {
+  DRAFT: 'Черновик',
+  PUBLISHED: 'Опубликован',
+  COLLECTING: 'Сбор предложений',
+  EVALUATING: 'Оценка',
+  AWARDED: 'Победитель выбран',
+  CANCELLED: 'Отменён',
+  CLOSED: 'Закрыт',
+};
+
+export const bidInvitationStatusColorMap: Record<string, BadgeColor> = {
+  INVITED: 'blue',
+  ACCEPTED: 'green',
+  DECLINED: 'red',
+  BID_SUBMITTED: 'cyan',
+  SHORTLISTED: 'yellow',
+  AWARDED: 'green',
+  DISQUALIFIED: 'red',
+};
+
+export const bidInvitationStatusLabels: Record<string, string> = {
+  INVITED: 'Приглашён',
+  ACCEPTED: 'Принял',
+  DECLINED: 'Отклонил',
+  BID_SUBMITTED: 'Предложение подано',
+  SHORTLISTED: 'В шорт-листе',
+  AWARDED: 'Победитель',
+  DISQUALIFIED: 'Дисквалифицирован',
+};
+
+// =============================================================================
+// INSURANCE CERTIFICATE
+// =============================================================================
+
+export const insuranceCertificateStatusColorMap: Record<string, BadgeColor> = {
+  ACTIVE: 'green',
+  EXPIRING_SOON: 'yellow',
+  EXPIRED: 'red',
+  PENDING: 'gray',
+};
+
+export const insuranceCertificateStatusLabels: Record<string, string> = {
+  ACTIVE: 'Действующий',
+  EXPIRING_SOON: 'Скоро истекает',
+  EXPIRED: 'Истёк',
+  PENDING: 'Ожидание',
+};
+
+// =============================================================================
+// CONSTRUCTABILITY REVIEW
+// =============================================================================
+
+export const constructabilityReviewStatusColorMap: Record<string, BadgeColor> = {
+  DRAFT: 'gray',
+  IN_PROGRESS: 'blue',
+  COMPLETED: 'green',
+  APPROVED: 'purple',
+};
+
+export const constructabilityReviewStatusLabels: Record<string, string> = {
+  DRAFT: 'Черновик',
+  IN_PROGRESS: 'В работе',
+  COMPLETED: 'Завершён',
+  APPROVED: 'Утверждён',
+};
+
+export const constructabilityRatingColorMap: Record<string, BadgeColor> = {
+  GOOD: 'green',
+  SATISFACTORY: 'yellow',
+  POOR: 'red',
+  CRITICAL: 'red',
+};
+
+export const constructabilityRatingLabels: Record<string, string> = {
+  GOOD: 'Хорошо',
+  SATISFACTORY: 'Удовлетворительно',
+  POOR: 'Плохо',
+  CRITICAL: 'Критично',
+};
+
+export const constructabilitySeverityColorMap: Record<string, BadgeColor> = {
+  LOW: 'gray',
+  MEDIUM: 'yellow',
+  HIGH: 'orange',
+  CRITICAL: 'red',
+};
+
+export const constructabilitySeverityLabels: Record<string, string> = {
+  LOW: 'Низкая',
+  MEDIUM: 'Средняя',
+  HIGH: 'Высокая',
+  CRITICAL: 'Критическая',
+};
+
+export const constructabilityItemStatusColorMap: Record<string, BadgeColor> = {
+  OPEN: 'blue',
+  IN_PROGRESS: 'yellow',
+  RESOLVED: 'green',
+  CLOSED: 'gray',
+};
+
+export const constructabilityItemStatusLabels: Record<string, string> = {
+  OPEN: 'Открыт',
+  IN_PROGRESS: 'В работе',
+  RESOLVED: 'Решён',
+  CLOSED: 'Закрыт',
+};
+
+export const constructabilityCategoryColorMap: Record<string, BadgeColor> = {
+  STRUCTURAL: 'blue',
+  MEP: 'cyan',
+  SITE_LOGISTICS: 'orange',
+  SAFETY: 'red',
+  SCHEDULE: 'yellow',
+  COST: 'purple',
+  OTHER: 'gray',
+};
+
+export const constructabilityCategoryLabels: Record<string, string> = {
+  STRUCTURAL: 'Конструктив',
+  MEP: 'Инженерные сети',
+  SITE_LOGISTICS: 'Логистика площадки',
+  SAFETY: 'Безопасность',
+  SCHEDULE: 'Сроки',
+  COST: 'Стоимость',
+  OTHER: 'Прочее',
+};

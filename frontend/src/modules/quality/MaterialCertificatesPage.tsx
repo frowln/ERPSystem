@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Plus, ShieldCheck, FileCheck, AlertTriangle, Clock } from 'lucide-react';
@@ -77,6 +78,7 @@ const MaterialCertificatesPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['material-certificates'],
     queryFn: () => certificatesApi.getCertificates(),
@@ -210,7 +212,7 @@ const MaterialCertificatesPage: React.FC = () => {
           { label: t('quality.materialCerts.breadcrumbCertificates') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('quality.materialCerts.btnNewCertificate')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/quality/material-certificates/new')}>{t('quality.materialCerts.btnNewCertificate')}</Button>
         }
         tabs={[
           { id: 'all', label: t('quality.materialCerts.tabAll'), count: tabCounts.all },

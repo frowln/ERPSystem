@@ -28,4 +28,14 @@ public interface UserSessionRepository extends JpaRepository<UserSession, UUID> 
     @Query("UPDATE UserSession s SET s.isActive = false " +
             "WHERE s.isActive = true AND s.expiresAt < :now AND s.deleted = false")
     int deactivateExpired(@Param("now") Instant now);
+
+    long countByIsActiveTrue();
+
+    List<UserSession> findByIsActiveTrueOrderByLastActivityAtDesc();
+
+    List<UserSession> findByUserIdAndIsActiveTrueOrderByLastActivityAtDesc(UUID userId);
+
+    @Modifying
+    @Query("UPDATE UserSession s SET s.isActive = false WHERE s.userId = :userId AND s.isActive = true")
+    int deactivateAllByUserId(@Param("userId") UUID userId);
 }

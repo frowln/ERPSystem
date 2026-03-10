@@ -19,6 +19,7 @@ import { monteCarloApi } from './api';
 import { formatDate, formatDateLong, formatNumber } from '@/lib/format';
 import { t } from '@/i18n';
 import type { MonteCarloSimulation, SimulationStatus, SimulationTask } from './types';
+import toast from 'react-hot-toast';
 
 type BadgeColor = 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan';
 
@@ -55,6 +56,9 @@ const SimulationDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['monte-carlo', id] });
       queryClient.invalidateQueries({ queryKey: ['monte-carlo'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

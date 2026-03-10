@@ -32,6 +32,9 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, UUID>,
     @Query("SELECT t.status, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId IN :projectIds GROUP BY t.status")
     List<Object[]> countByStatusAndProjectIdIn(@Param("projectIds") List<UUID> projectIds);
 
+    @Query("SELECT t.projectId, t.status, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId IN :projectIds GROUP BY t.projectId, t.status")
+    List<Object[]> countByProjectIdAndStatusGrouped(@Param("projectIds") List<UUID> projectIds);
+
     @Query("SELECT t.priority, COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND " +
             "(:projectId IS NULL OR t.projectId = :projectId) GROUP BY t.priority")
     List<Object[]> countByPriorityAndProjectId(@Param("projectId") UUID projectId);
@@ -68,6 +71,23 @@ public interface ProjectTaskRepository extends JpaRepository<ProjectTask, UUID>,
 
     @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId IN :projectIds")
     long countActiveTasksByProjectIds(@Param("projectIds") List<UUID> projectIds);
+
+    @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId = :projectId")
+    long countByProjectIdAndDeletedFalse(@Param("projectId") UUID projectId);
+
+    @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId = :projectId AND t.status = :status")
+    long countByProjectIdAndStatusAndDeletedFalse(@Param("projectId") UUID projectId, @Param("status") TaskStatus status);
+
+    @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.projectId = :projectId " +
+            "AND t.plannedEndDate < CURRENT_DATE AND t.status NOT IN ('DONE', 'CANCELLED')")
+    long countOverdueByProjectId(@Param("projectId") UUID projectId);
+
+    @Query("SELECT COUNT(t) FROM ProjectTask t WHERE t.deleted = false AND t.parentTaskId = :parentTaskId")
+    int countByParentTaskIdAndDeletedFalse(@Param("parentTaskId") UUID parentTaskId);
+
+    List<ProjectTask> findByAssigneeIdAndDeletedFalseOrderByUpdatedAtDesc(UUID assigneeId);
+
+    List<ProjectTask> findByReporterIdAndDeletedFalseAndAssigneeIdNotOrderByUpdatedAtDesc(UUID reporterId, UUID assigneeId);
 
     @Query(value = "SELECT nextval('task_code_seq')", nativeQuery = true)
     long getNextCodeSequence();

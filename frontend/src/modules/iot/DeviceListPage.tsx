@@ -226,7 +226,7 @@ const DeviceListPage: React.FC = () => {
           { label: t('iot.devices.breadcrumbDevices') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/iot/devices/new')}>
             {t('iot.devices.addDevice')}
           </Button>
         }

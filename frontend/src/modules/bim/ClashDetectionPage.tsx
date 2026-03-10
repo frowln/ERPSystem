@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
@@ -140,7 +141,7 @@ const ClashDetectionPage: React.FC = () => {
           { label: t('bim.breadcrumbClashes') },
         ]}
         actions={
-          <Button variant="secondary" iconLeft={<AlertTriangle size={16} />}>{t('bim.runCheck')}</Button>
+          <Button variant="secondary" iconLeft={<AlertTriangle size={16} />} onClick={() => toast(t('common.operationStarted'))}>{t('bim.runCheck')}</Button>
         }
         tabs={[
           { id: 'all', label: t('bim.tabAll'), count: clashes.length },

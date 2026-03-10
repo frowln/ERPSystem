@@ -84,7 +84,7 @@ export const changeManagementApi = {
     totalApproved: number;
     totalPending: number;
   }> => {
-    const response = await apiClient.get(`/change-management/budget-impact`, {
+    const response = await apiClient.get(`/change-management/analytics/budget-impact`, {
       params: { projectId },
     });
     return response.data;
@@ -105,7 +105,7 @@ export const changeManagementApi = {
     cumulativeCost: number;
     monthlyTrends: MonthlyTrendPoint[];
   }> => {
-    const response = await apiClient.get(`/change-management/trends`, {
+    const response = await apiClient.get(`/change-management/analytics/trends`, {
       params: { projectId },
     });
     return response.data;

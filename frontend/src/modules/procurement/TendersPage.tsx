@@ -12,7 +12,7 @@ import { projectsApi } from '@/api/projects';
 import { formatDate, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
-import { TenderEvaluateWizard } from './TenderEvaluateWizard';
+const TenderEvaluateWizard = React.lazy(() => import('./TenderEvaluateWizard'));
 import type { PurchaseRequest } from '@/types';
 
 // ─── Category mapping ────────────────────────────────────────────────────────
@@ -428,10 +428,14 @@ const TendersPage: React.FC = () => {
       </div>
 
       {/* Tender Evaluate Wizard */}
-      <TenderEvaluateWizard
-        open={!!evaluateRequest}
-        onClose={() => setEvaluateRequest(null)}
-      />
+      {evaluateRequest && (
+        <React.Suspense fallback={null}>
+          <TenderEvaluateWizard
+            open={!!evaluateRequest}
+            onClose={() => setEvaluateRequest(null)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

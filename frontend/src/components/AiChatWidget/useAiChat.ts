@@ -21,39 +21,109 @@ async function fetchLiveData(pathname: string, token: string | null): Promise<Li
     return r.json() as Promise<unknown>;
   };
 
+  /** Helper: extract UUID from path segment (skip "new") */
+  const idFrom = (match: RegExpMatchArray | null): string | null => {
+    if (!match) return null;
+    const id = match[1];
+    return id === 'new' ? null : id;
+  };
+
+  // --- Projects ---
   const projectMatch = pathname.match(/^\/projects\/([^/]+)(?:\/|$)/);
-  if (projectMatch) {
-    const id = projectMatch[1];
-    if (id === 'new') return null;
+  const projectId = idFrom(projectMatch);
+  if (projectId) {
     const [project, financials] = await Promise.all([
-      get(`/api/projects/${id}`),
-      get(`/api/projects/${id}/financials`),
+      get(`/api/projects/${projectId}`),
+      get(`/api/projects/${projectId}/financials`),
     ]);
     return { project, financials };
   }
 
-  const budgetMatch = pathname.match(/^\/budgets\/([^/]+)(?:\/|$)/);
-  if (budgetMatch && budgetMatch[1] !== 'new') {
-    const budget = await get(`/api/budgets/${budgetMatch[1]}`);
+  // --- Budgets ---
+  const budgetId = idFrom(pathname.match(/^\/budgets\/([^/]+)(?:\/|$)/));
+  if (budgetId) {
+    const budget = await get(`/api/budgets/${budgetId}`);
     return { budget };
   }
 
-  const contractMatch = pathname.match(/^\/contracts\/([^/]+)(?:\/|$)/);
-  if (contractMatch && contractMatch[1] !== 'new') {
-    const contract = await get(`/api/contracts/${contractMatch[1]}`);
+  // --- Contracts ---
+  const contractId = idFrom(pathname.match(/^\/contracts\/([^/]+)(?:\/|$)/));
+  if (contractId) {
+    const contract = await get(`/api/contracts/${contractId}`);
     return { contract };
   }
 
-  const invoiceMatch = pathname.match(/^\/invoices\/([^/]+)(?:\/|$)/);
-  if (invoiceMatch && invoiceMatch[1] !== 'new') {
-    const invoice = await get(`/api/invoices/${invoiceMatch[1]}`);
+  // --- Invoices ---
+  const invoiceId = idFrom(pathname.match(/^\/invoices\/([^/]+)(?:\/|$)/));
+  if (invoiceId) {
+    const invoice = await get(`/api/invoices/${invoiceId}`);
     return { invoice };
   }
 
-  const estimateMatch = pathname.match(/^\/estimates\/([^/]+)(?:\/|$)/);
-  if (estimateMatch && estimateMatch[1] !== 'new') {
-    const estimate = await get(`/api/estimates/${estimateMatch[1]}`);
-    return { estimate };
+  // --- Estimates ---
+  const estimateId = idFrom(pathname.match(/^\/estimates\/([^/]+)(?:\/|$)/));
+  if (estimateId) {
+    const [estimate, summary] = await Promise.all([
+      get(`/api/estimates/${estimateId}`),
+      get(`/api/estimates/${estimateId}/financial-summary`),
+    ]);
+    return { estimate, financialSummary: summary };
+  }
+
+  // --- Specifications ---
+  const specId = idFrom(pathname.match(/^\/specifications\/([^/]+)(?:\/|$)/));
+  if (specId) {
+    const specification = await get(`/api/specifications/${specId}`);
+    return { specification };
+  }
+
+  // --- CRM Leads ---
+  const crmLeadId = idFrom(pathname.match(/^\/crm\/leads\/([^/]+)(?:\/|$)/));
+  if (crmLeadId) {
+    const lead = await get(`/api/v1/crm/leads/${crmLeadId}`);
+    return { lead };
+  }
+
+  // --- Submittals ---
+  const submittalId = idFrom(pathname.match(/^\/submittals\/([^/]+)(?:\/|$)/));
+  if (submittalId) {
+    const submittal = await get(`/api/pto/submittals/${submittalId}`);
+    return { submittal };
+  }
+
+  // --- KS-2 ---
+  const ks2Id = idFrom(pathname.match(/^\/closing\/ks2\/([^/]+)(?:\/|$)/));
+  if (ks2Id) {
+    const ks2 = await get(`/api/ks2/${ks2Id}/detail`);
+    return { ks2 };
+  }
+
+  // --- Site Assessment ---
+  const saId = idFrom(pathname.match(/^\/site-assessments\/([^/]+)(?:\/|$)/));
+  if (saId) {
+    const assessment = await get(`/api/site-assessments/${saId}`);
+    return { assessment };
+  }
+
+  // --- Commercial Proposal ---
+  const cpId = idFrom(pathname.match(/^\/commercial-proposals\/([^/]+)(?:\/|$)/));
+  if (cpId) {
+    const proposal = await get(`/api/commercial-proposals/${cpId}`);
+    return { proposal };
+  }
+
+  // --- Support Ticket ---
+  const ticketId = idFrom(pathname.match(/^\/support\/([^/]+)(?:\/|$)/));
+  if (ticketId) {
+    const ticket = await get(`/api/support/tickets/${ticketId}`);
+    return { ticket };
+  }
+
+  // --- Employee ---
+  const empId = idFrom(pathname.match(/^\/hr\/employees\/([^/]+)(?:\/|$)/));
+  if (empId) {
+    const employee = await get(`/api/hr/employees/${empId}`);
+    return { employee };
   }
 
   return null;

@@ -21,4 +21,6 @@ public interface CallSessionRepository extends JpaRepository<CallSession, UUID> 
     List<CallSession> findTop100ByChannelIdAndDeletedFalseOrderByCreatedAtDesc(UUID channelId);
 
     List<CallSession> findByStatusAndDeletedFalse(CallStatus status);
+
+    Optional<CallSession> findByInviteTokenAndDeletedFalse(String inviteToken);
 }

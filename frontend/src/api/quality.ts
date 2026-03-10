@@ -1,5 +1,9 @@
 import { apiClient } from './client';
 import type { PaginatedResponse, PaginationParams } from '@/types';
+import type { DefectStatistics } from '@/modules/quality/types';
+
+const EMPTY_PAGE: PaginatedResponse<any> = { content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 };
+const EMPTY_DEFECT_STATISTICS: DefectStatistics = { byType: [], bySeverity: [], total: 0 };
 
 export type QualityCheckType = 'INCOMING' | 'IN_PROCESS' | 'FINAL' | 'AUDIT';
 export type QualityCheckStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
@@ -36,6 +40,22 @@ export interface NonConformance {
   createdAt: string;
 }
 
+export interface CreateQualityCheckRequest {
+  projectId: string;
+  checkType?: QualityCheckType;
+  type?: QualityCheckType;
+  name: string;
+  description?: string;
+  plannedDate?: string;
+  scheduledDate?: string;
+  status?: string;
+  inspectorId?: string;
+  inspectorName?: string;
+  taskId?: string;
+  specItemId?: string;
+  attachmentUrls?: string[];
+}
+
 export interface QualityFilters extends PaginationParams {
   type?: QualityCheckType;
   status?: QualityCheckStatus;
@@ -55,7 +75,7 @@ export const qualityApi = {
     return response.data;
   },
 
-  createCheck: async (data: Partial<QualityCheck>): Promise<QualityCheck> => {
+  createCheck: async (data: CreateQualityCheckRequest): Promise<QualityCheck> => {
     const response = await apiClient.post<QualityCheck>('/quality/checks', data);
     return response.data;
   },
@@ -81,8 +101,15 @@ export const qualityApi = {
 
   // --- Material Inspections ---
   getMaterialInspections: async (params?: PaginationParams): Promise<PaginatedResponse<import('@/modules/quality/types').MaterialInspection>> => {
-    const response = await apiClient.get('/quality/material-inspections', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get('/quality/material-inspections', { params, _silentErrors: true } as any);
+      const data = response.data;
+      if (data?.content) return data;
+      if (Array.isArray(data)) return { content: data, totalElements: data.length, totalPages: 1, page: 0, size: 20 };
+      return EMPTY_PAGE;
+    } catch {
+      return EMPTY_PAGE;
+    }
   },
 
   createMaterialInspection: async (data: import('@/modules/quality/types').CreateMaterialInspectionRequest): Promise<import('@/modules/quality/types').MaterialInspection> => {
@@ -92,8 +119,15 @@ export const qualityApi = {
 
   // --- Checklist Templates ---
   getChecklistTemplates: async (params?: PaginationParams): Promise<PaginatedResponse<import('@/modules/quality/types').ChecklistTemplate>> => {
-    const response = await apiClient.get('/quality/checklist-templates', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get('/quality/checklist-templates', { params, _silentErrors: true } as any);
+      const data = response.data;
+      if (data?.content) return data;
+      if (Array.isArray(data)) return { content: data, totalElements: data.length, totalPages: 1, page: 0, size: 20 };
+      return EMPTY_PAGE;
+    } catch {
+      return EMPTY_PAGE;
+    }
   },
 
   createChecklistTemplate: async (data: import('@/modules/quality/types').CreateChecklistTemplateRequest): Promise<import('@/modules/quality/types').ChecklistTemplate> => {
@@ -108,24 +142,72 @@ export const qualityApi = {
 
   // --- Defect Register ---
   getDefectRegister: async (params?: PaginationParams): Promise<PaginatedResponse<import('@/modules/quality/types').DefectRegisterEntry>> => {
-    const response = await apiClient.get('/quality/defect-register', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get('/quality/defect-register', { params, _silentErrors: true } as any);
+      const data = response.data;
+      if (data?.content) return data;
+      if (Array.isArray(data)) return { content: data, totalElements: data.length, totalPages: 1, page: 0, size: 20 };
+      return EMPTY_PAGE;
+    } catch {
+      return EMPTY_PAGE;
+    }
   },
 
   // --- Defect Statistics ---
   getDefectStatistics: async (params?: { projectId?: string; dateFrom?: string; dateTo?: string; severity?: string }): Promise<import('@/modules/quality/types').DefectStatistics> => {
-    const response = await apiClient.get('/quality/defect-statistics', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get('/quality/defect-statistics', { params, _silentErrors: true } as any);
+      return response.data ?? EMPTY_DEFECT_STATISTICS;
+    } catch {
+      return EMPTY_DEFECT_STATISTICS;
+    }
   },
 
   // --- Author Supervision Journal ---
   getSupervisionEntries: async (params?: PaginationParams): Promise<PaginatedResponse<import('@/modules/quality/types').SupervisionEntry>> => {
-    const response = await apiClient.get('/quality/supervision-entries', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get('/quality/supervision-entries', { params, _silentErrors: true } as any);
+      const data = response.data;
+      if (data?.content) return data;
+      if (Array.isArray(data)) return { content: data, totalElements: data.length, totalPages: 1, page: 0, size: 20 };
+      return EMPTY_PAGE;
+    } catch {
+      return EMPTY_PAGE;
+    }
   },
 
   createSupervisionEntry: async (data: import('@/modules/quality/types').CreateSupervisionEntryRequest): Promise<import('@/modules/quality/types').SupervisionEntry> => {
     const response = await apiClient.post('/quality/supervision-entries', data);
     return response.data;
+  },
+
+  // --- Checklist Execution ---
+  getChecklists: async (params?: PaginationParams): Promise<PaginatedResponse<import('@/modules/quality/types').QualityChecklistEntry>> => {
+    const response = await apiClient.get('/quality/checklists', { params });
+    return response.data;
+  },
+
+  getChecklist: async (id: string): Promise<import('@/modules/quality/types').QualityChecklistEntry> => {
+    const response = await apiClient.get(`/quality/checklists/${id}`);
+    return response.data;
+  },
+
+  getChecklistItems: async (checklistId: string): Promise<import('@/modules/quality/types').ChecklistExecutionItem[]> => {
+    const response = await apiClient.get(`/quality/checklists/${checklistId}/items`);
+    return response.data;
+  },
+
+  updateChecklistItem: async (checklistId: string, itemId: string, data: Partial<import('@/modules/quality/types').ChecklistExecutionItem>): Promise<import('@/modules/quality/types').ChecklistExecutionItem> => {
+    const response = await apiClient.put(`/quality/checklists/${checklistId}/items/${itemId}`, data);
+    return response.data;
+  },
+
+  completeChecklist: async (id: string): Promise<import('@/modules/quality/types').QualityChecklistEntry> => {
+    const response = await apiClient.post(`/quality/checklists/${id}/complete`);
+    return response.data;
+  },
+
+  deleteChecklist: async (id: string): Promise<void> => {
+    await apiClient.delete(`/quality/checklists/${id}`);
   },
 };

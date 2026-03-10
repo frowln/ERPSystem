@@ -1,6 +1,7 @@
 package com.privod.platform.modules.hrRussian.web;
 
 import com.privod.platform.infrastructure.web.ApiResponse;
+import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.hrRussian.service.SickLeaveService;
 import com.privod.platform.modules.hrRussian.web.dto.CreateSickLeaveRequest;
 import com.privod.platform.modules.hrRussian.web.dto.SickLeaveResponse;
@@ -8,6 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +34,14 @@ import java.util.UUID;
 public class SickLeaveController {
 
     private final SickLeaveService sickLeaveService;
+
+    @GetMapping
+    @Operation(summary = "List all sick leaves with pagination")
+    public ResponseEntity<ApiResponse<PageResponse<SickLeaveResponse>>> list(
+            @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SickLeaveResponse> page = sickLeaveService.listSickLeaves(pageable);
+        return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
+    }
 
     @GetMapping("/employee/{employeeId}")
     @Operation(summary = "Get sick leaves by employee")

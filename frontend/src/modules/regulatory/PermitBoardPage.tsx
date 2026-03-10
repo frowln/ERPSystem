@@ -27,14 +27,14 @@ interface BoardColumn { id: PermitStatus; title: string; color: string; headerBg
 
 const getDefaultColumns = (): BoardColumn[] => [
   { id: 'DRAFT', title: t('regulatory.colDraft'), color: 'bg-neutral-400', headerBg: 'bg-neutral-50 dark:bg-neutral-800', collapsed: false },
-  { id: 'SUBMITTED', title: t('regulatory.colSubmitted'), color: 'bg-blue-500', headerBg: 'bg-blue-50', collapsed: false },
-  { id: 'UNDER_REVIEW', title: t('regulatory.colUnderReview'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50', collapsed: false },
-  { id: 'APPROVED', title: t('regulatory.colApproved'), color: 'bg-green-500', headerBg: 'bg-green-50', collapsed: false },
-  { id: 'EXPIRED', title: t('regulatory.colExpired'), color: 'bg-red-500', headerBg: 'bg-red-50', collapsed: false },
+  { id: 'SUBMITTED', title: t('regulatory.colSubmitted'), color: 'bg-blue-500', headerBg: 'bg-blue-50 dark:bg-blue-900/20', collapsed: false },
+  { id: 'UNDER_REVIEW', title: t('regulatory.colUnderReview'), color: 'bg-yellow-500', headerBg: 'bg-yellow-50 dark:bg-yellow-900/20', collapsed: false },
+  { id: 'APPROVED', title: t('regulatory.colApproved'), color: 'bg-green-500', headerBg: 'bg-green-50 dark:bg-green-900/20', collapsed: false },
+  { id: 'EXPIRED', title: t('regulatory.colExpired'), color: 'bg-red-500', headerBg: 'bg-red-50 dark:bg-red-900/20', collapsed: false },
 ];
 
 const getPriorityLabels = (): Record<string, string> => ({ low: t('regulatory.priorityLow'), normal: t('regulatory.priorityNormal'), high: t('regulatory.priorityHigh'), critical: t('regulatory.priorityCritical') });
-const priorityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600', normal: 'bg-blue-100 text-blue-700', high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700' };
+const priorityColors: Record<string, string> = { low: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400', normal: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400', high: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400', critical: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' };
 
 const PermitBoardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const PermitBoardPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in" onDragEnd={onDragEnd}>
-      <PageHeader title={t('regulatory.permitBoardTitle')} subtitle={t('regulatory.permitBoardSubtitle', { count: String(items.length) })} breadcrumbs={[{ label: t('regulatory.breadcrumbHome'), href: '/' }, { label: t('regulatory.permitBoardBreadcrumbRegulation'), href: '/regulatory/permits' }, { label: t('regulatory.permitBoardBreadcrumbBoard') }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>{t('regulatory.btnFilters')}</Button><Button iconLeft={<Plus size={16} />}>{t('regulatory.btnNewPermit')}</Button></div>} />
+      <PageHeader title={t('regulatory.permitBoardTitle')} subtitle={t('regulatory.permitBoardSubtitle', { count: String(items.length) })} breadcrumbs={[{ label: t('regulatory.breadcrumbHome'), href: '/' }, { label: t('regulatory.permitBoardBreadcrumbRegulation'), href: '/regulatory/permits' }, { label: t('regulatory.permitBoardBreadcrumbBoard') }]} actions={<div className="flex items-center gap-2"><Button variant="secondary" size="sm" iconLeft={<Filter size={14} />} onClick={() => setShowFilters(!showFilters)} className={hasFilters ? 'border-primary-300 text-primary-600' : ''}>{t('regulatory.btnFilters')}</Button><Button iconLeft={<Plus size={16} />} onClick={() => navigate('/regulatory/permits/new')}>{t('regulatory.btnNewPermit')}</Button></div>} />
       {showFilters && (
         <div className="flex items-center gap-3 mb-4 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 animate-fade-in">
           <div className="relative flex-1 max-w-xs"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" /><Input placeholder={t('regulatory.searchPlaceholder')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" /></div>

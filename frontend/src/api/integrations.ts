@@ -220,18 +220,18 @@ export interface WebDavFileData {
 export const integrationsApi = {
   // Unified settings
   getSettings: async (): Promise<IntegrationSettingsResponse> => {
-    const response = await apiClient.get<IntegrationSettingsResponse>('/integrations/settings');
+    const response = await apiClient.get<IntegrationSettingsResponse>('/integrations/settings', { _silentErrors: true } as any);
     return response.data;
   },
 
   // 1C endpoints
   oneC: {
     getConfigs: async (): Promise<{ content: OneCConfigData[] }> => {
-      const response = await apiClient.get('/integrations/1c/configs');
+      const response = await apiClient.get('/integrations/1c/configs', { _silentErrors: true } as any);
       return response.data;
     },
     getConfig: async (id: string): Promise<OneCConfigData> => {
-      const response = await apiClient.get(`/integrations/1c/configs/${id}`);
+      const response = await apiClient.get(`/integrations/1c/configs/${id}`, { _silentErrors: true } as any);
       return response.data;
     },
     createConfig: async (data: OneCConfigForm): Promise<OneCConfigData> => {
@@ -258,13 +258,14 @@ export const integrationsApi = {
       return response.data;
     },
     getStatus: async (): Promise<OneCConfigData | null> => {
-      const response = await apiClient.get('/integrations/1c/status');
+      const response = await apiClient.get('/integrations/1c/status', { _silentErrors: true } as any);
       return response.data;
     },
     getExchangeLogs: async (configId?: string): Promise<{ content: unknown[] }> => {
       const response = await apiClient.get('/integrations/1c/exchange-logs', {
         params: configId ? { configId } : {},
-      });
+        _silentErrors: true,
+      } as any);
       return response.data;
     },
   },
@@ -274,7 +275,8 @@ export const integrationsApi = {
     getConfig: async (organizationId: string): Promise<unknown> => {
       const response = await apiClient.get('/integrations/telegram/config', {
         params: { organizationId },
-      });
+        _silentErrors: true,
+      } as any);
       return response.data;
     },
     updateConfig: async (data: TelegramConfigForm): Promise<unknown> => {
@@ -282,7 +284,7 @@ export const integrationsApi = {
       return response.data;
     },
     getStatus: async (): Promise<TelegramStatusData> => {
-      const response = await apiClient.get<TelegramStatusData>('/integrations/telegram/status');
+      const response = await apiClient.get<TelegramStatusData>('/integrations/telegram/status', { _silentErrors: true } as any);
       return response.data;
     },
     generateLinkCode: async (userId: string): Promise<TelegramLinkCodeResponse> => {
@@ -298,11 +300,11 @@ export const integrationsApi = {
       return response.data;
     },
     getSubscriptions: async (): Promise<{ content: unknown[] }> => {
-      const response = await apiClient.get('/integrations/telegram/subscriptions');
+      const response = await apiClient.get('/integrations/telegram/subscriptions', { _silentErrors: true } as any);
       return response.data;
     },
     getMessages: async (): Promise<{ content: unknown[] }> => {
-      const response = await apiClient.get('/integrations/telegram/messages');
+      const response = await apiClient.get('/integrations/telegram/messages', { _silentErrors: true } as any);
       return response.data;
     },
   },
@@ -310,11 +312,11 @@ export const integrationsApi = {
   // SBIS endpoints
   sbis: {
     getConfigs: async (): Promise<{ content: SbisConfigData[] }> => {
-      const response = await apiClient.get('/integrations/sbis/configs');
+      const response = await apiClient.get('/integrations/sbis/configs', { _silentErrors: true } as any);
       return response.data;
     },
     getConfig: async (id: string): Promise<SbisConfigData> => {
-      const response = await apiClient.get(`/integrations/sbis/configs/${id}`);
+      const response = await apiClient.get(`/integrations/sbis/configs/${id}`, { _silentErrors: true } as any);
       return response.data;
     },
     createConfig: async (data: SbisConfigForm): Promise<SbisConfigData> => {
@@ -340,7 +342,7 @@ export const integrationsApi = {
       await apiClient.post('/integrations/sbis/sync');
     },
     getDocuments: async (): Promise<{ content: unknown[] }> => {
-      const response = await apiClient.get('/integrations/sbis/documents');
+      const response = await apiClient.get('/integrations/sbis/documents', { _silentErrors: true } as any);
       return response.data;
     },
   },
@@ -348,13 +350,14 @@ export const integrationsApi = {
   // EDO endpoints
   edo: {
     getStatus: async (): Promise<EdoStatusData> => {
-      const response = await apiClient.get<EdoStatusData>('/integrations/edo/status');
+      const response = await apiClient.get<EdoStatusData>('/integrations/edo/status', { _silentErrors: true } as any);
       return response.data;
     },
     getInbox: async (provider?: string): Promise<{ content: unknown[] }> => {
       const response = await apiClient.get('/integrations/edo/inbox', {
         params: provider ? { provider } : {},
-      });
+        _silentErrors: true,
+      } as any);
       return response.data;
     },
     sendDocument: async (data: unknown): Promise<unknown> => {
@@ -370,7 +373,7 @@ export const integrationsApi = {
       return response.data;
     },
     getDocumentStatus: async (id: string): Promise<unknown> => {
-      const response = await apiClient.get(`/integrations/edo/${id}/status`);
+      const response = await apiClient.get(`/integrations/edo/${id}/status`, { _silentErrors: true } as any);
       return response.data;
     },
   },
@@ -378,11 +381,11 @@ export const integrationsApi = {
   // Gov Registries endpoints
   govRegistries: {
     getConfigs: async (): Promise<{ content: RegistryConfigData[] }> => {
-      const response = await apiClient.get('/integrations/gov-registries/configs');
+      const response = await apiClient.get('/integrations/gov-registries/config', { _silentErrors: true } as any);
       return response.data;
     },
     updateConfig: async (id: number, data: Partial<RegistryConfigData>): Promise<RegistryConfigData> => {
-      const response = await apiClient.put(`/integrations/gov-registries/configs/${id}`, data);
+      const response = await apiClient.put(`/integrations/gov-registries/config/${id}`, data);
       return response.data;
     },
     checkCounterparty: async (inn: string): Promise<CounterpartyCheckSummaryData> => {
@@ -390,11 +393,11 @@ export const integrationsApi = {
       return response.data;
     },
     getCheckHistory: async (params?: Record<string, unknown>): Promise<{ content: CheckResultData[]; totalElements: number }> => {
-      const response = await apiClient.get('/integrations/gov-registries/history', { params });
+      const response = await apiClient.get('/integrations/gov-registries/results', { params, _silentErrors: true } as any);
       return response.data;
     },
     getCheckResult: async (id: number): Promise<CheckResultData> => {
-      const response = await apiClient.get(`/integrations/gov-registries/results/${id}`);
+      const response = await apiClient.get(`/integrations/gov-registries/results/${id}`, { _silentErrors: true } as any);
       return response.data;
     },
   },
@@ -402,7 +405,7 @@ export const integrationsApi = {
   // SMS endpoints
   sms: {
     getConfig: async (): Promise<SmsConfigData> => {
-      const response = await apiClient.get('/integrations/sms/config');
+      const response = await apiClient.get('/integrations/sms/config', { _silentErrors: true } as any);
       return response.data;
     },
     updateConfig: async (data: Partial<SmsConfigData>): Promise<SmsConfigData> => {
@@ -410,7 +413,7 @@ export const integrationsApi = {
       return response.data;
     },
     getMessages: async (params?: Record<string, unknown>): Promise<{ content: SmsMessageData[]; totalElements: number }> => {
-      const response = await apiClient.get('/integrations/sms/messages', { params });
+      const response = await apiClient.get('/integrations/sms/messages', { params, _silentErrors: true } as any);
       return response.data;
     },
     sendMessage: async (data: SendSmsForm): Promise<SmsMessageData> => {
@@ -418,15 +421,19 @@ export const integrationsApi = {
       return response.data;
     },
     getBalance: async (): Promise<{ balance: number; currency: string }> => {
-      const response = await apiClient.get('/integrations/sms/balance');
-      return response.data;
+      try {
+        const config = await apiClient.get<SmsConfigData>('/integrations/sms/config', { _silentErrors: true } as any);
+        return { balance: config.data?.balance ?? 0, currency: 'RUB' };
+      } catch {
+        return { balance: 0, currency: 'RUB' };
+      }
     },
   },
 
   // WebDAV endpoints
   webdav: {
     getConfig: async (): Promise<WebDavConfigData> => {
-      const response = await apiClient.get('/integrations/webdav/config');
+      const response = await apiClient.get('/integrations/webdav/config', { _silentErrors: true } as any);
       return response.data;
     },
     updateConfig: async (data: Partial<WebDavConfigData>): Promise<WebDavConfigData> => {
@@ -434,15 +441,16 @@ export const integrationsApi = {
       return response.data;
     },
     getFiles: async (params?: Record<string, unknown>): Promise<{ content: WebDavFileData[]; totalElements: number }> => {
-      const response = await apiClient.get('/integrations/webdav/files', { params });
+      const response = await apiClient.get('/integrations/webdav/files', { params, _silentErrors: true } as any);
       return response.data;
     },
-    syncAll: async (): Promise<{ totalFiles: number; synced: number; failed: number; conflicts: number; duration: number }> => {
-      const response = await apiClient.post('/integrations/webdav/sync');
+    syncAll: async (documentId?: string): Promise<{ totalFiles: number; synced: number; failed: number; conflicts: number; duration: number }> => {
+      const docId = documentId ?? 'all';
+      const response = await apiClient.post(`/integrations/webdav/sync/${docId}`);
       return response.data;
     },
     syncFile: async (id: number): Promise<WebDavFileData> => {
-      const response = await apiClient.post(`/integrations/webdav/files/${id}/sync`);
+      const response = await apiClient.post(`/integrations/webdav/sync/${id}`);
       return response.data;
     },
     testConnection: async (): Promise<ConnectionTestResult> => {

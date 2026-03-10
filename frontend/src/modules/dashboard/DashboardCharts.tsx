@@ -64,7 +64,7 @@ const DashboardCharts: React.FC<DashboardChartsProps> = ({ projectsByStatus, bud
               <Tooltip
                 contentStyle={{
                   background: '#0f172a',
-                  border: 'NONE',
+                  border: 'none',
                   borderRadius: '8px',
                   fontSize: '13px',
                   color: '#f8fafc',
@@ -109,7 +109,7 @@ const DashboardCharts: React.FC<DashboardChartsProps> = ({ projectsByStatus, bud
               <Tooltip
                 contentStyle={{
                   background: '#0f172a',
-                  border: 'NONE',
+                  border: 'none',
                   borderRadius: '8px',
                   fontSize: '13px',
                   color: '#f8fafc',

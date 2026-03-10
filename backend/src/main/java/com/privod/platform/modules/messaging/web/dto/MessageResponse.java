@@ -4,6 +4,7 @@ import com.privod.platform.modules.messaging.domain.Message;
 import com.privod.platform.modules.messaging.domain.MessageType;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record MessageResponse(
@@ -28,9 +29,10 @@ public record MessageResponse(
         Long attachmentSize,
         String attachmentType,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        List<MessageReactionInfo> reactions
 ) {
-    public static MessageResponse fromEntity(Message message) {
+    public static MessageResponse fromEntity(Message message, List<MessageReactionInfo> reactions) {
         return new MessageResponse(
                 message.getId(),
                 message.getChannelId(),
@@ -53,7 +55,12 @@ public record MessageResponse(
                 message.getAttachmentSize(),
                 message.getAttachmentType(),
                 message.getCreatedAt(),
-                message.getUpdatedAt()
+                message.getUpdatedAt(),
+                reactions
         );
+    }
+
+    public static MessageResponse fromEntity(Message message) {
+        return fromEntity(message, List.of());
     }
 }

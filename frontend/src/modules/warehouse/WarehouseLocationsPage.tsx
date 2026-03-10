@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, Warehouse, MapPin, Package, BarChart3 } from 'lucide-react';
@@ -50,6 +51,7 @@ const WarehouseLocationsPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data: locData, isLoading } = useQuery({
     queryKey: ['warehouse-locations'],
     queryFn: () => warehouseApi.getLocations(),
@@ -124,7 +126,7 @@ const WarehouseLocationsPage: React.FC = () => {
         title={t('warehouse.locations.title')}
         subtitle={t('warehouse.locations.subtitle')}
         breadcrumbs={[{ label: t('warehouse.locations.breadcrumbHome'), href: '/' }, { label: t('warehouse.breadcrumbWarehouse'), href: '/warehouse/materials' }, { label: t('warehouse.locations.breadcrumbLocations') }]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('warehouse.locations.createLocation')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/warehouse/locations/new')}>{t('warehouse.locations.createLocation')}</Button>}
       />
 
       {/* Metrics */}

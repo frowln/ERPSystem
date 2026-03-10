@@ -51,9 +51,14 @@ public class SecurityConfig {
                     auth
                             .requestMatchers("/api/auth/**").permitAll()
                             .requestMatchers("/api/portal/auth/**").permitAll()
+                            .requestMatchers("/api/health/**").permitAll()
+                            .requestMatchers("/api/health").permitAll()
                             .requestMatchers("/actuator/health").permitAll()
                             .requestMatchers("/ws/**").permitAll()
-                            .requestMatchers("/api/integrations/telegram/webhook").permitAll();
+                            .requestMatchers("/api/integrations/telegram/webhook").permitAll()
+                            .requestMatchers("/api/payments/webhook/**").permitAll()
+                            .requestMatchers("/api/communication/calls/by-token/**").permitAll()
+                            .requestMatchers("/api/communication/calls/join-by-link/**").permitAll();
 
                     // Swagger: only accessible in non-production profiles
                     if (isNonProduction()) {

@@ -16,7 +16,9 @@ export interface Channel {
   createdAt: string;
   avatarUrl?: string;
   /** For DMs: the other user */
+  otherUserId?: string;
   otherUserName?: string;
+  otherUserAvatarUrl?: string;
   otherUserStatus?: UserStatus;
 }
 
@@ -59,6 +61,8 @@ export interface MessageAttachment {
   fileSize: number;
   mimeType: string;
   url: string;
+  /** If present, the attachment can be downloaded via getAttachmentDownloadUrl(attachmentId) */
+  attachmentId?: string;
 }
 
 interface BackendMessage {
@@ -78,6 +82,12 @@ interface BackendMessage {
   attachmentName?: string;
   attachmentSize?: number;
   attachmentType?: string;
+  reactions?: Array<{
+    emoji: string;
+    count: number;
+    userNames: string[];
+    includesMe: boolean;
+  }>;
   createdAt: string;
   updatedAt?: string;
 }
@@ -99,6 +109,10 @@ interface BackendChannel {
   memberCount?: number;
   createdAt: string;
   avatarUrl?: string;
+  // DM-specific
+  otherUserId?: string;
+  otherUserName?: string;
+  otherUserAvatarUrl?: string;
 }
 
 const mapBackendMessage = (message: BackendMessage): Message => ({
@@ -113,17 +127,28 @@ const mapBackendMessage = (message: BackendMessage): Message => ({
   isEdited: Boolean(message.isEdited),
   isPinned: Boolean(message.isPinned),
   isFavorite: false,
-  reactions: [],
+  reactions: (message.reactions ?? []).map(r => ({
+    emoji: r.emoji,
+    count: r.count,
+    userNames: r.userNames,
+    includesMe: r.includesMe,
+  })),
   threadReplyCount: message.replyCount ?? 0,
   parentMessageId: message.parentMessageId,
   attachments: message.attachmentUrl
-    ? [{
-        id: `${message.id}-att`,
-        fileName: message.attachmentName ?? 'attachment',
-        fileSize: message.attachmentSize ?? 0,
-        mimeType: message.attachmentType ?? 'application/octet-stream',
-        url: message.attachmentUrl,
-      }]
+    ? [(() => {
+        const raw = message.attachmentUrl!;
+        const isAttRef = raw.startsWith('att:');
+        const attId = isAttRef ? raw.slice(4) : undefined;
+        return {
+          id: attId ?? `${message.id}-att`,
+          fileName: message.attachmentName ?? 'attachment',
+          fileSize: message.attachmentSize ?? 0,
+          mimeType: message.attachmentType ?? 'application/octet-stream',
+          url: isAttRef ? '' : raw,
+          attachmentId: attId,
+        };
+      })()]
     : [],
   isSystem: (message.messageType ?? '').toUpperCase() === 'SYSTEM',
 });
@@ -140,6 +165,20 @@ const mapChannelType = (channelType: BackendChannel['channelType']): ChannelType
   }
 };
 
+const mapBackendChannel = (channel: BackendChannel): Channel => ({
+  id: channel.id,
+  name: channel.name,
+  type: mapChannelType(channel.channelType),
+  description: channel.description,
+  memberCount: channel.memberCount ?? 0,
+  unreadCount: 0,
+  createdAt: channel.createdAt,
+  avatarUrl: channel.avatarUrl,
+  otherUserId: channel.otherUserId,
+  otherUserName: channel.otherUserName,
+  otherUserAvatarUrl: channel.otherUserAvatarUrl,
+});
+
 export interface FavoriteMessage {
   id: string;
   messageId: string;
@@ -147,6 +186,36 @@ export interface FavoriteMessage {
   channelName: string;
   note?: string;
   createdAt: string;
+}
+
+export interface ChannelMember {
+  id: string;
+  userId: string;
+  name: string;
+  role: string;
+  status: UserStatus;
+}
+
+interface BackendChannelMember {
+  id: string;
+  channelId: string;
+  userId: string;
+  userName: string;
+  role: string;
+  roleDisplayName?: string;
+  isMuted?: boolean;
+  lastReadAt?: string;
+  unreadCount?: number;
+  joinedAt?: string;
+  availabilityStatus?: string;
+}
+
+export interface OrgUser {
+  id: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  isOnline: boolean;
 }
 
 export interface CreateChannelRequest {
@@ -166,6 +235,24 @@ export interface SendMessageRequest {
   attachmentName?: string;
   attachmentSize?: number;
   attachmentType?: string;
+  /** Frontend-only: not sent to backend, used to construct att: reference */
+  _attachmentId?: string;
+}
+
+/* ─── File attachment helpers ─── */
+
+export interface FileAttachmentResponse {
+  id: string;
+  entityType: string;
+  entityId: string;
+  fileName: string;
+  fileSize: number;
+  contentType: string;
+  storagePath: string;
+  description?: string;
+  uploadedBy?: string;
+  createdAt: string;
+  downloadUrl?: string;
 }
 
 /* ─── API ─── */
@@ -173,16 +260,7 @@ export interface SendMessageRequest {
 export const messagingApi = {
   getChannels: async (): Promise<Channel[]> => {
     const response = await apiClient.get<BackendChannel[]>('/messaging/channels');
-    return response.data.map((channel) => ({
-      id: channel.id,
-      name: channel.name,
-      type: mapChannelType(channel.channelType),
-      description: channel.description,
-      memberCount: channel.memberCount ?? 0,
-      unreadCount: 0,
-      createdAt: channel.createdAt,
-      avatarUrl: channel.avatarUrl,
-    }));
+    return response.data.map(mapBackendChannel);
   },
 
   createChannel: async (data: CreateChannelRequest): Promise<Channel> => {
@@ -192,16 +270,7 @@ export const messagingApi = {
       channelType: data.channelType.toUpperCase(),
       memberIds: data.memberIds,
     });
-    return {
-      id: response.data.id,
-      name: response.data.name,
-      type: mapChannelType(response.data.channelType),
-      description: response.data.description,
-      memberCount: response.data.memberCount ?? 0,
-      unreadCount: 0,
-      createdAt: response.data.createdAt,
-      avatarUrl: response.data.avatarUrl,
-    };
+    return mapBackendChannel(response.data);
   },
 
   getChannelMessages: async (
@@ -211,6 +280,13 @@ export const messagingApi = {
     const response = await apiClient.get<BackendMessage[]>(
       `/messaging/channels/${channelId}/messages`,
       { params },
+    );
+    return response.data.map(mapBackendMessage);
+  },
+
+  getThreadReplies: async (parentMessageId: string): Promise<Message[]> => {
+    const response = await apiClient.get<BackendMessage[]>(
+      `/messaging/messages/${parentMessageId}/replies`,
     );
     return response.data.map(mapBackendMessage);
   },
@@ -252,7 +328,7 @@ export const messagingApi = {
     return {
       id: fav.id,
       messageId: fav.messageId,
-      channelName: fav.channelName ?? '# неизвестный-канал',
+      channelName: fav.channelName ?? '',
       note: fav.note,
       createdAt: fav.createdAt,
       message: mapBackendMessage(fav.message),
@@ -263,12 +339,16 @@ export const messagingApi = {
     await apiClient.delete(`/messaging/messages/${messageId}/favorite`);
   },
 
+  updateFavoriteNote: async (messageId: string, note: string): Promise<void> => {
+    await apiClient.patch(`/messaging/favorites/${messageId}/note`, { note });
+  },
+
   getMyFavorites: async (): Promise<FavoriteMessage[]> => {
     const response = await apiClient.get<BackendFavoriteMessage[]>('/messaging/favorites');
     return response.data.map((fav) => ({
       id: fav.id,
       messageId: fav.messageId,
-      channelName: fav.channelName ?? '# неизвестный-канал',
+      channelName: fav.channelName ?? '',
       note: fav.note,
       createdAt: fav.createdAt,
       message: mapBackendMessage(fav.message),
@@ -289,7 +369,82 @@ export const messagingApi = {
     return response.data;
   },
 
-  setUserStatus: async (status: UserStatus): Promise<void> => {
-    await apiClient.patch('/messaging/me/status', { status });
+  setUserStatus: async (status: string): Promise<void> => {
+    await apiClient.patch('/messaging/me/status', { status }, { _silentErrors: true } as never);
+  },
+
+  deleteMessage: async (messageId: string): Promise<void> => {
+    await apiClient.delete(`/messaging/messages/${messageId}`);
+  },
+
+  unpinMessage: async (messageId: string): Promise<void> => {
+    await apiClient.delete(`/messaging/messages/${messageId}/pin`);
+  },
+
+  getChannelMembers: async (channelId: string): Promise<ChannelMember[]> => {
+    const response = await apiClient.get<BackendChannelMember[]>(
+      `/messaging/channels/${channelId}/members`,
+    );
+    return response.data.map((m) => ({
+      id: m.id,
+      userId: m.userId,
+      name: m.userName,
+      role: m.roleDisplayName ?? m.role,
+      status: (m.availabilityStatus as UserStatus) ?? 'OFFLINE',
+    }));
+  },
+
+  addChannelMember: async (channelId: string, userId: string): Promise<ChannelMember> => {
+    const response = await apiClient.post<BackendChannelMember>(
+      `/messaging/channels/${channelId}/members`,
+      { userId },
+    );
+    const m = response.data;
+    return {
+      id: m.id,
+      userId: m.userId,
+      name: m.userName,
+      role: m.roleDisplayName ?? m.role,
+      status: (m.availabilityStatus as UserStatus) ?? 'OFFLINE',
+    };
+  },
+
+  getPinnedMessages: async (channelId: string): Promise<Message[]> => {
+    const response = await apiClient.get<BackendMessage[]>(
+      `/messaging/channels/${channelId}/pinned`,
+    );
+    return response.data.map(mapBackendMessage);
+  },
+
+  getOrganizationUsers: async (search?: string): Promise<OrgUser[]> => {
+    const response = await apiClient.get<OrgUser[]>('/messaging/users', {
+      params: search ? { search } : undefined,
+    });
+    return response.data;
+  },
+
+  createDirectChannel: async (userId: string): Promise<Channel> => {
+    const response = await apiClient.post<BackendChannel>('/messaging/channels', {
+      name: 'DM',
+      channelType: 'DIRECT',
+      memberIds: [userId],
+    });
+    return mapBackendChannel(response.data);
+  },
+
+  uploadAttachment: async (file: File, channelId: string): Promise<FileAttachmentResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('entityType', 'channel_message');
+    formData.append('entityId', channelId);
+    const response = await apiClient.post<FileAttachmentResponse>('/attachments/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  getAttachmentDownloadUrl: async (attachmentId: string): Promise<string> => {
+    const response = await apiClient.get<string>(`/attachments/${attachmentId}/download-url`);
+    return response.data;
   },
 };

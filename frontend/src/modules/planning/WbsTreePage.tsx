@@ -1,14 +1,16 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronRight, ChevronDown, Search, GitBranch, AlertTriangle } from 'lucide-react';
+import { ChevronRight, ChevronDown, Search, GitBranch, AlertTriangle, FolderTree } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
-import { Input } from '@/design-system/components/FormField';
+import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/format';
 import { planningApi } from '@/api/planning';
+import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
 import type { WbsNode } from './types';
+import type { Project, PaginatedResponse } from '@/types';
 
 const getNodeTypeLabels = (): Record<string, string> => ({
   PROJECT: t('planning.wbs.nodeTypeProject'),
@@ -38,12 +40,28 @@ function flattenTree(nodes: WbsNode[]): WbsNode[] {
 }
 
 const WbsTreePage: React.FC = () => {
+  const [projectId, setProjectId] = useState('');
   const [search, setSearch] = useState('');
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(['1', '1.1', '1.2', '1.3']));
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  const { data } = useQuery({
-    queryKey: ['wbs-tree'],
-    queryFn: () => planningApi.getWbsTree(),
+  // Load projects for selector
+  const { data: projectsData } = useQuery<PaginatedResponse<Project>>({
+    queryKey: ['projects'],
+    queryFn: () => projectsApi.getProjects({ page: 0, size: 100 }),
+  });
+
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({
+    value: p.id,
+    label: p.name,
+  }));
+
+  const selectedProjectId = projectId || projectOptions[0]?.value || '';
+
+  // Fetch WBS tree only when a valid project is selected
+  const { data, isLoading } = useQuery({
+    queryKey: ['wbs-tree', selectedProjectId],
+    queryFn: () => planningApi.getWbsTree(selectedProjectId),
+    enabled: !!selectedProjectId,
   });
 
   const tree = data ?? [];
@@ -51,6 +69,13 @@ const WbsTreePage: React.FC = () => {
 
   const criticalCount = allNodes.filter((n) => n.isCriticalPath).length;
   const avgProgress = allNodes.length > 0 ? Math.round(allNodes.reduce((s, n) => s + n.percentComplete, 0) / allNodes.length) : 0;
+
+  // Auto-expand root nodes on first load
+  React.useEffect(() => {
+    if (tree.length > 0 && expandedIds.size === 0) {
+      setExpandedIds(new Set(tree.map((n) => n.id)));
+    }
+  }, [tree]);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) => {
@@ -78,7 +103,7 @@ const WbsTreePage: React.FC = () => {
     return (
       <React.Fragment key={node.id}>
         <tr className={cn(
-          'border-b border-neutral-100 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800',
+          'border-b border-neutral-100 dark:border-neutral-800 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800',
           node.isCriticalPath && 'bg-danger-50/30',
         )}>
           <td className="px-4 py-2.5 whitespace-nowrap" style={{ paddingLeft: `${depth * 24 + 16}px` }}>
@@ -86,7 +111,7 @@ const WbsTreePage: React.FC = () => {
               {hasChildren ? (
                 <button
                   onClick={() => toggleExpand(node.id)}
-                  className="p-0.5 text-neutral-400 hover:text-neutral-600 rounded"
+                  className="p-0.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 rounded"
                 >
                   {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </button>
@@ -106,10 +131,10 @@ const WbsTreePage: React.FC = () => {
               {nodeTypeLabels[node.nodeType]}
             </span>
           </td>
-          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600">{formatDate(node.plannedStartDate)}</td>
-          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600">{formatDate(node.plannedEndDate)}</td>
-          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600">{node.actualStartDate ? formatDate(node.actualStartDate) : '---'}</td>
-          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600">{node.actualEndDate ? formatDate(node.actualEndDate) : '---'}</td>
+          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600 dark:text-neutral-400">{formatDate(node.plannedStartDate)}</td>
+          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600 dark:text-neutral-400">{formatDate(node.plannedEndDate)}</td>
+          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600 dark:text-neutral-400">{node.actualStartDate ? formatDate(node.actualStartDate) : '---'}</td>
+          <td className="px-4 py-2.5 text-xs tabular-nums text-neutral-600 dark:text-neutral-400">{node.actualEndDate ? formatDate(node.actualEndDate) : '---'}</td>
           <td className="px-4 py-2.5">
             <div className="flex items-center gap-2">
               <div className="w-16 h-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
@@ -121,7 +146,7 @@ const WbsTreePage: React.FC = () => {
                   style={{ width: `${node.percentComplete}%` }}
                 />
               </div>
-              <span className="text-xs font-medium text-neutral-600 tabular-nums w-8 text-right">{node.percentComplete}%</span>
+              <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400 tabular-nums w-8 text-right">{node.percentComplete}%</span>
             </div>
           </td>
           <td className="px-4 py-2.5">
@@ -129,7 +154,7 @@ const WbsTreePage: React.FC = () => {
               'text-xs font-medium tabular-nums',
               node.totalFloat < 0 ? 'text-danger-600' : node.totalFloat === 0 ? 'text-warning-600' : 'text-success-600',
             )}>
-              {node.totalFloat > 0 ? `+${node.totalFloat}` : node.totalFloat} {t('planning.wbs.daysSuffix')}
+              {node.totalFloat > 0 ? `+${node.totalFloat}` : node.totalFloat} {t('planning.wbs.daysUnit')}
             </span>
           </td>
         </tr>
@@ -150,14 +175,18 @@ const WbsTreePage: React.FC = () => {
         ]}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <MetricCard icon={<GitBranch size={18} />} label={t('planning.wbs.totalElements')} value={allNodes.length} />
-        <MetricCard label={t('planning.wbs.avgProgress')} value={`${avgProgress}%`} />
-        <MetricCard icon={<AlertTriangle size={18} />} label={t('planning.wbs.criticalPath')} value={criticalCount} subtitle={t('planning.wbs.elementsSuffix')} />
-        <MetricCard label={t('planning.wbs.phases')} value={allNodes.filter((n) => n.nodeType === 'PHASE').length} />
-      </div>
-
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-72">
+          <Select
+            value={selectedProjectId}
+            onChange={(e) => {
+              setProjectId(e.target.value);
+              setExpandedIds(new Set());
+            }}
+            options={projectOptions}
+            placeholder={t('planning.wbs.selectProject')}
+          />
+        </div>
         <div className="relative flex-1 max-w-xs">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
           <Input
@@ -169,28 +198,58 @@ const WbsTreePage: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-40">{t('planning.wbs.colCode')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('planning.wbs.colName')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-32">{t('planning.wbs.colType')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colPlannedStart')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colPlannedEnd')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colActualStart')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colActualEnd')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-36">{t('planning.wbs.colProgress')}</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-20">{t('planning.wbs.colFloat')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tree.map((node) => renderNode(node, 0))}
-            </tbody>
-          </table>
+      {!selectedProjectId ? (
+        <div className="text-center py-20">
+          <FolderTree size={48} className="mx-auto mb-4 text-neutral-300 dark:text-neutral-600" />
+          <h3 className="text-lg font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('planning.wbs.selectProjectPrompt')}</h3>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('planning.wbs.selectProjectHint')}</p>
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <MetricCard icon={<GitBranch size={18} />} label={t('planning.wbs.metricTotalNodes')} value={allNodes.length} />
+            <MetricCard label={t('planning.wbs.metricProgress')} value={`${avgProgress}%`} />
+            <MetricCard icon={<AlertTriangle size={18} />} label={t('planning.wbs.criticalPath')} value={criticalCount} subtitle={t('planning.wbs.elementsSuffix')} />
+            <MetricCard label={t('planning.wbs.phases')} value={allNodes.filter((n) => n.nodeType === 'PHASE').length} />
+          </div>
+
+          {isLoading ? (
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-12 text-center">
+              <div className="animate-spin w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full mx-auto mb-3" />
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('planning.wbs.loading')}</p>
+            </div>
+          ) : tree.length === 0 ? (
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 py-20 text-center">
+              <FolderTree size={48} className="mx-auto mb-4 text-neutral-300 dark:text-neutral-600" />
+              <h3 className="text-lg font-medium text-neutral-700 dark:text-neutral-300 mb-1">{t('planning.wbs.emptyTitle')}</h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('planning.wbs.emptyDescription')}</p>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-40">{t('planning.wbs.colCode')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">{t('planning.wbs.colName')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-32">{t('planning.wbs.colType')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colPlannedStart')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colPlannedEnd')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colActualStart')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-28">{t('planning.wbs.colActualEnd')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-36">{t('planning.wbs.colProgress')}</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider w-20">{t('planning.wbs.colFloat')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tree.map((node) => renderNode(node, 0))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

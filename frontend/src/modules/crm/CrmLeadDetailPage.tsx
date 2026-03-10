@@ -65,6 +65,9 @@ const CrmLeadDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['crm-lead', id] });
       queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const convertMutation = useMutation({
@@ -99,21 +102,9 @@ const CrmLeadDetailPage: React.FC = () => {
 
   const activityList = activities ?? [];
 
-  if (isLeadLoading || !lead) {
-    return (
-      <div className="animate-fade-in flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('crm.detail.loading')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  const l = lead;
-
   const statusActions = useMemo(() => {
-    switch (l.status) {
+    if (!lead) return [];
+    switch (lead.status) {
       case 'NEW': return [{ label: t('crm.detail.actionQualify'), targetStatus: 'QUALIFIED' }];
       case 'QUALIFIED': return [
         { label: t('crm.detail.actionPrepareProposal'), targetStatus: 'PROPOSITION' },
@@ -129,14 +120,26 @@ const CrmLeadDetailPage: React.FC = () => {
       ];
       default: return [];
     }
-  }, [l.status]);
+  }, [lead?.status]);
 
-  const stageFlow = getStageFlow();
-  const activityTypeLabels = getActivityTypeLabels();
-  const currentStepIndex = stageFlow.findIndex((s) => s.status === l.status);
+  const stageFlow = useMemo(() => getStageFlow(), []);
+  const activityTypeLabels = useMemo(() => getActivityTypeLabels(), []);
+  const currentStepIndex = stageFlow.findIndex((s) => s.status === (lead?.status ?? ''));
+  const pendingActivities = useMemo(() => activityList.filter((a) => !a.isDone), [activityList]);
+  const completedActivities = useMemo(() => activityList.filter((a) => a.isDone), [activityList]);
 
-  const pendingActivities = activityList.filter((a) => !a.isDone);
-  const completedActivities = activityList.filter((a) => a.isDone);
+  if (isLeadLoading || !lead) {
+    return (
+      <div className="animate-fade-in flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('crm.detail.loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const l = lead;
 
   return (
     <div className="animate-fade-in">
@@ -154,13 +157,13 @@ const CrmLeadDetailPage: React.FC = () => {
             <StatusBadge
               status={l.status}
               colorMap={crmLeadStatusColorMap}
-              label={crmLeadStatusLabels[l.status] ?? l.status}
+              label={l.statusDisplayName ?? crmLeadStatusLabels[l.status] ?? l.status}
               size="md"
             />
             <StatusBadge
               status={l.priority}
               colorMap={crmLeadPriorityColorMap}
-              label={crmLeadPriorityLabels[l.priority] ?? l.priority}
+              label={l.priorityDisplayName ?? crmLeadPriorityLabels[l.priority] ?? l.priority}
               size="md"
             />
             {statusActions.map((action) => (

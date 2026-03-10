@@ -14,6 +14,14 @@ import type {
   PortalTask,
   PortalTaskStatus,
   CreatePortalTaskRequest,
+  PortalProposal,
+  PortalProposalDecisionRequest,
+  PortalInvoice,
+  PortalInvoiceStatus,
+  CreatePortalInvoiceRequest,
+  PortalContract,
+  PortalContractStatus,
+  PortalScheduleItem,
 } from '@/modules/portal/types';
 
 export interface PortalFilters extends PaginationParams {
@@ -40,7 +48,7 @@ export const portalApi = {
   },
 
   downloadDocument: async (id: string): Promise<Blob> => {
-    const response = await apiClient.get(`/portal/documents/${id}/download`, { responseType: 'blob' });
+    const response = await apiClient.post(`/portal/documents/${id}/download`, null, { responseType: 'blob' });
     return response.data;
   },
 
@@ -75,8 +83,8 @@ export const portalApi = {
     return response.data;
   },
 
-  deactivateUser: async (id: string): Promise<void> => {
-    await apiClient.patch(`/portal/admin/users/${id}/deactivate`);
+  deactivateUser: async (id: string, active = false): Promise<void> => {
+    await apiClient.patch(`/portal/admin/users/${id}/status`, { active });
   },
 
   getAccessList: async (params?: PortalFilters): Promise<PaginatedResponse<PortalAccess>> => {
@@ -89,8 +97,8 @@ export const portalApi = {
     return response.data;
   },
 
-  revokeAccess: async (id: string): Promise<void> => {
-    await apiClient.delete(`/portal/admin/access/${id}`);
+  revokeAccess: async (portalUserId: string, projectId: string): Promise<void> => {
+    await apiClient.delete(`/portal/admin/access/${portalUserId}/${projectId}`);
   },
 
   getDashboardStats: async (): Promise<{
@@ -100,7 +108,7 @@ export const portalApi = {
     unreadMessages: number;
     recentActivity: { description: string; date: string }[];
   }> => {
-    const response = await apiClient.get('/portal/dashboard/stats');
+    const response = await apiClient.get('/portal/client/dashboard');
     return response.data;
   },
 
@@ -142,6 +150,49 @@ export const portalApi = {
 
   updateTaskStatus: async (id: string, status: PortalTaskStatus, note?: string): Promise<PortalTask> => {
     const response = await apiClient.patch<PortalTask>(`/portal/tasks/${id}/status`, { status, completionNote: note });
+    return response.data;
+  },
+
+  // Portal Proposals (CP Approval)
+  getProposal: async (id: string): Promise<PortalProposal> => {
+    const response = await apiClient.get<PortalProposal>(`/portal/proposals/${id}`);
+    return response.data;
+  },
+
+  submitProposalDecision: async (id: string, data: PortalProposalDecisionRequest): Promise<PortalProposal> => {
+    const response = await apiClient.post<PortalProposal>(`/portal/proposals/${id}/decision`, data);
+    return response.data;
+  },
+
+  // Portal Invoices
+  getInvoices: async (params?: { status?: PortalInvoiceStatus; size?: number }): Promise<PaginatedResponse<PortalInvoice>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalInvoice>>('/portal/invoices', { params });
+    return response.data;
+  },
+
+  createInvoice: async (data: CreatePortalInvoiceRequest): Promise<PortalInvoice> => {
+    const response = await apiClient.post<PortalInvoice>('/portal/invoices', data);
+    return response.data;
+  },
+
+  submitInvoice: async (id: string): Promise<PortalInvoice> => {
+    const response = await apiClient.post<PortalInvoice>(`/portal/invoices/${id}/submit`);
+    return response.data;
+  },
+
+  deleteInvoice: async (id: string): Promise<void> => {
+    await apiClient.delete(`/portal/invoices/${id}`);
+  },
+
+  // Portal Contracts
+  getContracts: async (params?: { status?: PortalContractStatus; size?: number }): Promise<PaginatedResponse<PortalContract>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalContract>>('/portal/contracts', { params });
+    return response.data;
+  },
+
+  // Portal Schedule
+  getSchedule: async (params?: { size?: number }): Promise<PaginatedResponse<PortalScheduleItem>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalScheduleItem>>('/portal/schedule', { params });
     return response.data;
   },
 };

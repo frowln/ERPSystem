@@ -75,4 +75,13 @@ public class BillingRecord extends BaseEntity {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "yookassa_idempotency", length = 64)
+    private String yookassaIdempotency;
+
+    @Column(name = "yookassa_payment_id", length = 64)
+    private String yookassaPaymentId;
+
+    @Column(name = "confirmation_url", length = 500)
+    private String confirmationUrl;
 }

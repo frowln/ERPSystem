@@ -21,7 +21,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { supportApi } from '@/api/support';
 import { formatDate, formatRelativeTime } from '@/lib/format';
 import type { SupportTicket } from './types';
-import { TicketCreateModal } from './TicketCreateModal';
+const TicketCreateModal = React.lazy(() => import('./TicketCreateModal'));
 import { t } from '@/i18n';
 
 const ticketStatusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'cyan'> = {
@@ -64,6 +64,9 @@ const getCategoryLabels = (): Record<string, string> => ({
   SAFETY: t('support.catSafety'),
   SCHEDULE: t('support.catSchedule'),
   OTHER: t('support.catOther'),
+  BUG: t('support.catBug'),
+  QUESTION: t('support.catQuestion'),
+  FEATURE_REQUEST: t('support.catFeatureRequest'),
 });
 
 type TabId = 'all' | 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
@@ -372,10 +375,14 @@ const TicketListPage: React.FC = () => {
         </>
       )}
 
-      <TicketCreateModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {createModalOpen && (
+        <React.Suspense fallback={null}>
+          <TicketCreateModal
+            open={createModalOpen}
+            onClose={() => setCreateModalOpen(false)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

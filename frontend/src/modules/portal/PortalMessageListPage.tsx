@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Search,
   MessageSquare,
@@ -8,7 +8,6 @@ import {
   MailOpen,
   Paperclip,
   Clock,
-  ChevronRight,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
@@ -20,25 +19,57 @@ import { portalApi } from '@/api/portal';
 import { formatRelativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
-import type { PortalMessage } from './types';
+import type { PortalMessage, SendPortalMessageRequest } from './types';
 import toast from 'react-hot-toast';
 
 type TabId = 'all' | 'UNREAD' | 'SENT' | 'ARCHIVED';
 
 const PortalMessageListPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<PortalMessage | null>(null);
   const [composeOpen, setComposeOpen] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [newContent, setNewContent] = useState('');
+  const [recipientId, setRecipientId] = useState('');
+  const [replyContent, setReplyContent] = useState('');
 
   const { data: msgData } = useQuery({
     queryKey: ['portal-messages'],
     queryFn: () => portalApi.getMessages(),
   });
 
+  const { data: portalUsers } = useQuery({
+    queryKey: ['portal-users'],
+    queryFn: () => portalApi.getUsers({ size: 200 }),
+  });
+
   const messages = msgData?.content ?? [];
+  const userOptions = (portalUsers?.content ?? []).map((u) => ({ value: u.id, label: `${u.fullName} (${u.companyName})` }));
+
+  const sendMutation = useMutation({
+    mutationFn: (data: SendPortalMessageRequest) => portalApi.sendMessage(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portal-messages'] });
+      toast.success(t('portal.messages.messageSent'));
+      setComposeOpen(false);
+      setNewSubject('');
+      setNewContent('');
+      setRecipientId('');
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
+
+  const replyMutation = useMutation({
+    mutationFn: (data: SendPortalMessageRequest) => portalApi.sendMessage(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portal-messages'] });
+      toast.success(t('portal.messages.replySent'));
+      setReplyContent('');
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
 
   const filteredMessages = useMemo(() => {
     let filtered = messages;
@@ -63,10 +94,21 @@ const PortalMessageListPage: React.FC = () => {
   }), [messages]);
 
   const handleSend = () => {
-    toast.success(t('portal.messages.messageSent'));
-    setComposeOpen(false);
-    setNewSubject('');
-    setNewContent('');
+    sendMutation.mutate({
+      recipientId,
+      subject: newSubject,
+      content: newContent,
+    });
+  };
+
+  const handleReply = () => {
+    if (!selectedMessage || !replyContent.trim()) return;
+    replyMutation.mutate({
+      recipientId: selectedMessage.senderId,
+      subject: `Re: ${selectedMessage.subject}`,
+      content: replyContent,
+      projectId: selectedMessage.projectId,
+    });
   };
 
   return (
@@ -111,7 +153,7 @@ const PortalMessageListPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Message list */}
         <div className="lg:col-span-1 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-          <div className="divide-y divide-neutral-100 max-h-[600px] overflow-y-auto">
+          <div className="divide-y divide-neutral-100 dark:divide-neutral-800 max-h-[600px] overflow-y-auto">
             {filteredMessages.length === 0 ? (
               <div className="p-8 text-center">
                 <MessageSquare size={32} className="mx-auto text-neutral-300 mb-2" />
@@ -123,8 +165,8 @@ const PortalMessageListPage: React.FC = () => {
                   key={msg.id}
                   className={cn(
                     'p-4 cursor-pointer transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800',
-                    selectedMessage?.id === msg.id && 'bg-primary-50 border-l-2 border-l-primary-500',
-                    msg.status === 'SENT' && 'bg-primary-25',
+                    selectedMessage?.id === msg.id && 'bg-primary-50 dark:bg-primary-900/30 border-l-2 border-l-primary-500',
+                    msg.status === 'SENT' && selectedMessage?.id !== msg.id && 'bg-primary-50/50 dark:bg-primary-900/20',
                   )}
                   onClick={() => setSelectedMessage(msg)}
                 >
@@ -180,12 +222,19 @@ const PortalMessageListPage: React.FC = () => {
                 <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">{selectedMessage.content}</p>
               </div>
               <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4 mt-6">
-                <Textarea placeholder={t('portal.messages.replyPlaceholder')} rows={3} />
+                <Textarea
+                  placeholder={t('portal.messages.replyPlaceholder')}
+                  rows={3}
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                />
                 <div className="flex justify-end mt-3">
                   <Button
                     size="sm"
                     iconLeft={<Send size={14} />}
-                    onClick={() => toast.success(t('portal.messages.replySent'))}
+                    onClick={handleReply}
+                    disabled={!replyContent.trim()}
+                    loading={replyMutation.isPending}
                   >
                     {t('portal.messages.reply')}
                   </Button>
@@ -211,11 +260,19 @@ const PortalMessageListPage: React.FC = () => {
         footer={
           <>
             <Button variant="secondary" onClick={() => setComposeOpen(false)}>{t('portal.messages.composeCancel')}</Button>
-            <Button onClick={handleSend} disabled={!newSubject || !newContent}>{t('portal.messages.composeSend')}</Button>
+            <Button onClick={handleSend} disabled={!newSubject || !newContent || !recipientId} loading={sendMutation.isPending}>{t('portal.messages.composeSend')}</Button>
           </>
         }
       >
         <div className="space-y-4">
+          <FormField label={t('portal.messages.composeRecipientLabel')} required>
+            <Select
+              options={userOptions}
+              value={recipientId}
+              onChange={(e) => setRecipientId(e.target.value)}
+              placeholder={t('portal.messages.composeRecipientPlaceholder')}
+            />
+          </FormField>
           <FormField label={t('portal.messages.composeSubjectLabel')} required>
             <Input placeholder={t('portal.messages.composeSubjectPlaceholder')} value={newSubject} onChange={(e) => setNewSubject(e.target.value)} />
           </FormField>

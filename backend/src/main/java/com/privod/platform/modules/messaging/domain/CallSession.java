@@ -69,4 +69,7 @@ public class CallSession extends BaseEntity {
 
     @Column(name = "metadata_json", columnDefinition = "TEXT")
     private String metadataJson;
+
+    @Column(name = "invite_token", unique = true, length = 128)
+    private String inviteToken;
 }

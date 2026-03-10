@@ -69,11 +69,17 @@ const RiskRegisterPage: React.FC = () => {
       setEditing(null);
       toast.success(t('common.saved'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (riskId: string) => risksApi.deleteRisk(projectId!, riskId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['risks', projectId] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const openAdd = () => {

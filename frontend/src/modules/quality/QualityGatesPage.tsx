@@ -7,6 +7,7 @@ import { qualityGatesApi } from '@/api/qualityGates';
 import type { QualityGate, CreateQualityGateRequest, QualityGateStatus } from '@/api/qualityGates';
 import { projectsApi } from '@/api/projects';
 import type { ColumnDef } from '@tanstack/react-table';
+import toast from 'react-hot-toast';
 
 const STATUS_COLORS: Record<string, string> = {
   NOT_STARTED: 'gray',
@@ -49,11 +50,17 @@ export default function QualityGatesPage() {
   const evaluateAllMut = useMutation({
     mutationFn: (projectId: string) => qualityGatesApi.evaluateProject(projectId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['quality-gates'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const evaluateMut = useMutation({
     mutationFn: (id: string) => qualityGatesApi.evaluate(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['quality-gates'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const createMut = useMutation({
@@ -61,6 +68,9 @@ export default function QualityGatesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quality-gates'] });
       setShowCreateModal(false);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

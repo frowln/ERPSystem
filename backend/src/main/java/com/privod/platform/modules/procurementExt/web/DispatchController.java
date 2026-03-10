@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("procExtDispatchController")
 @RequestMapping("/api/procurement-ext")
 @RequiredArgsConstructor
 @Tag(name = "Расширенные закупки", description = "Диспетчеризация и оценка поставщиков")

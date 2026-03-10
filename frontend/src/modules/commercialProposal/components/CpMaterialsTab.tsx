@@ -9,7 +9,7 @@ import { Button } from '@/design-system/components/Button';
 import { FileSearch, CheckCircle, XCircle, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { CommercialProposalItem } from '@/types';
-import InvoiceMatchModal from './InvoiceMatchModal';
+const InvoiceMatchModal = React.lazy(() => import('./InvoiceMatchModal'));
 
 const cpItemStatusColorMap: Record<string, string> = {
   UNPROCESSED: 'gray',
@@ -266,13 +266,15 @@ const CpMaterialsTab: React.FC<CpMaterialsTabProps> = ({ proposalId, items, proj
 
       {/* Invoice Match Modal */}
       {invoiceModalItem && (
-        <InvoiceMatchModal
-          open={!!invoiceModalItem}
-          onClose={() => setInvoiceModalItem(null)}
-          proposalId={proposalId}
-          item={invoiceModalItem}
-          onSelected={handleInvoiceSelected}
-        />
+        <React.Suspense fallback={null}>
+          <InvoiceMatchModal
+            open={!!invoiceModalItem}
+            onClose={() => setInvoiceModalItem(null)}
+            proposalId={proposalId}
+            item={invoiceModalItem}
+            onSelected={handleInvoiceSelected}
+          />
+        </React.Suspense>
       )}
     </div>
   );

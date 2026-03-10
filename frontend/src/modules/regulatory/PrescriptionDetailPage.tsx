@@ -77,6 +77,9 @@ const PrescriptionDetailPage: React.FC = () => {
       toast.success(t('regulatory.toastStatusChanged'));
       setStatusToChange('');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const appealMutation = useMutation({
@@ -97,6 +100,9 @@ const PrescriptionDetailPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['prescriptions'] });
       toast.success(t('regulatory.toastPrescriptionDeleted'));
       navigate('/regulatory/prescriptions');
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

@@ -19,7 +19,9 @@ public record UserResponse(
         boolean enabled,
         UUID organizationId,
         Set<String> roles,
-        Instant createdAt
+        Instant createdAt,
+        Instant lastLoginAt,
+        boolean twoFactorEnabled
 ) {
     public static UserResponse fromUser(User user) {
         return new UserResponse(
@@ -36,7 +38,9 @@ public record UserResponse(
                 user.getRoles().stream()
                         .map(role -> role.getCode())
                         .collect(Collectors.toSet()),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getLastLoginAt(),
+                user.isTwoFactorEnabled()
         );
     }
 }

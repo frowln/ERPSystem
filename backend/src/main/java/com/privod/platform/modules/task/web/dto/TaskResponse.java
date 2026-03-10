@@ -3,6 +3,7 @@ package com.privod.platform.modules.task.web.dto;
 import com.privod.platform.modules.task.domain.ProjectTask;
 import com.privod.platform.modules.task.domain.TaskPriority;
 import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.domain.TaskVisibility;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,6 +17,7 @@ public record TaskResponse(
         String title,
         String description,
         UUID projectId,
+        String projectName,
         UUID parentTaskId,
         TaskStatus status,
         String statusDisplayName,
@@ -38,22 +40,39 @@ public record TaskResponse(
         String tags,
         String notes,
         boolean overdue,
+        TaskVisibility visibility,
+        UUID delegatedToId,
+        String delegatedToName,
         List<TaskCommentResponse> comments,
+        List<TaskParticipantResponse> participants,
+        Integer subtaskCount,
         Instant createdAt,
         Instant updatedAt,
         String createdBy
 ) {
     public static TaskResponse fromEntity(ProjectTask task) {
-        return fromEntity(task, null);
+        return fromEntity(task, null, null, null, null);
     }
 
     public static TaskResponse fromEntity(ProjectTask task, List<TaskCommentResponse> comments) {
+        return fromEntity(task, comments, null, null, null);
+    }
+
+    public static TaskResponse fromEntity(ProjectTask task, List<TaskCommentResponse> comments,
+                                           List<TaskParticipantResponse> participants) {
+        return fromEntity(task, comments, participants, null, null);
+    }
+
+    public static TaskResponse fromEntity(ProjectTask task, List<TaskCommentResponse> comments,
+                                           List<TaskParticipantResponse> participants,
+                                           String projectName, Integer subtaskCount) {
         return new TaskResponse(
                 task.getId(),
                 task.getCode(),
                 task.getTitle(),
                 task.getDescription(),
                 task.getProjectId(),
+                projectName,
                 task.getParentTaskId(),
                 task.getStatus(),
                 task.getStatus().getDisplayName(),
@@ -76,7 +95,12 @@ public record TaskResponse(
                 task.getTags(),
                 task.getNotes(),
                 task.isOverdue(),
+                task.getVisibility(),
+                task.getDelegatedToId(),
+                task.getDelegatedToName(),
                 comments,
+                participants,
+                subtaskCount,
                 task.getCreatedAt(),
                 task.getUpdatedAt(),
                 task.getCreatedBy()

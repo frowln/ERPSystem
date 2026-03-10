@@ -193,7 +193,7 @@ const StockLimitsPage: React.FC = () => {
             <Button variant="secondary" iconLeft={<AlertTriangle size={16} />} onClick={() => navigate('/warehouse/stock-alerts')}>
               {t('warehouse.stockLimits.btnAlerts')}
             </Button>
-            <Button iconLeft={<Plus size={16} />}>
+            <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/warehouse/stock-limits/new')}>
               {t('warehouse.stockLimits.newLimit')}
             </Button>
           </div>

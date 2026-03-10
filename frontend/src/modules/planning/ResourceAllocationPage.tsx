@@ -13,7 +13,7 @@ import { t } from '@/i18n';
 import type { ResourceAllocation } from './types';
 
 const getResourceTypeLabels = (): Record<string, string> => ({
-  LABOR: t('planning.resources.typeLAbor'),
+  LABOR: t('planning.resources.typeLabor'),
   EQUIPMENT: t('planning.resources.typeEquipment'),
   MATERIAL: t('planning.resources.typeMaterial'),
 });

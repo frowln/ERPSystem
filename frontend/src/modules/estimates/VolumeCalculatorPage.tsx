@@ -12,6 +12,7 @@ import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { VolumeWorkType, VolumeCalculation } from './types';
+import toast from 'react-hot-toast';
 
 type TabId = 'earthwork' | 'concrete' | 'masonry' | 'roofing' | 'finishing';
 
@@ -124,6 +125,9 @@ const VolumeCalculatorPage: React.FC = () => {
     mutationFn: (calc: VolumeCalculation) => estimatesApi.saveCalculation(calc),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['volume-calculations'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

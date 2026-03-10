@@ -7,13 +7,14 @@ import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
-import { Input, Select } from '@/design-system/components/FormField';
+import { Input, Select, Textarea } from '@/design-system/components/FormField';
 import { closeoutApi } from '@/api/closeout';
 import { projectsApi } from '@/api/projects';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { ZosDocument, ZosStatus } from './types';
 import type { PaginatedResponse } from '@/types';
+import toast from 'react-hot-toast';
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'red'> = {
   DRAFT: 'gray',
@@ -82,6 +83,9 @@ const ZosDocumentListPage: React.FC = () => {
       setShowModal(false);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const updateMutation = useMutation({
@@ -93,12 +97,18 @@ const ZosDocumentListPage: React.FC = () => {
       setEditingId(null);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => closeoutApi.deleteZosDocument(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['zos-documents'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -328,8 +338,8 @@ const ZosDocumentListPage: React.FC = () => {
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {t('closeout.zosFieldConclusion')}
             </label>
-            <textarea
-              className="w-full h-24 px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-sm text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            <Textarea
+              rows={3}
               value={form.conclusionText}
               onChange={(e) => setForm((prev) => ({ ...prev, conclusionText: e.target.value }))}
             />

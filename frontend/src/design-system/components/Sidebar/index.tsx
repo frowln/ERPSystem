@@ -1,10 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, ChevronLeft, ChevronDown, ChevronRight, Building2, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useMediaQuery';
+import { usePermissions } from '@/hooks/usePermissions';
 import { navigation, type NavItem, type NavGroup } from '@/config/navigation';
 import { tw } from '@/design-system/tokens';
 import { t } from '@/i18n';
@@ -158,12 +159,25 @@ export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { canAccess } = usePermissions();
+
+  // Filter navigation items based on user permissions
+  const filteredNavigation = useMemo(
+    () =>
+      navigation
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => canAccess(item.href)),
+        }))
+        .filter((group) => group.items.length > 0),
+    [canAccess],
+  );
 
   // Track which groups are expanded
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
     // Initially expand the group that contains the active route
     const initial: Record<string, boolean> = {};
-    for (const group of navigation) {
+    for (const group of filteredNavigation) {
       const isGroupActive = group.items.some((item) =>
         item.href === '/'
           ? location.pathname === '/'
@@ -178,7 +192,7 @@ export const Sidebar: React.FC = () => {
   useEffect(() => {
     setExpandedGroups((prev) => {
       const next = { ...prev };
-      for (const group of navigation) {
+      for (const group of filteredNavigation) {
         const isGroupActive = group.items.some((item) =>
           item.href === '/'
             ? location.pathname === '/'
@@ -190,7 +204,7 @@ export const Sidebar: React.FC = () => {
       }
       return next;
     });
-  }, [location.pathname]);
+  }, [location.pathname, filteredNavigation]);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -229,7 +243,7 @@ export const Sidebar: React.FC = () => {
   const sidebarContent = (
     <aside
       className={cn(
-        'fixed left-0 top-0 bottom-0 z-30 flex flex-col bg-neutral-900 transition-all duration-200 ease-in-out',
+        'fixed left-0 top-0 bottom-0 z-fixed flex flex-col bg-neutral-900 transition-all duration-200 ease-in-out',
         // Desktop sizing
         !isMobile && (collapsed ? tw.sidebarCollapsedWidth : tw.sidebarWidth),
         // Mobile: always full-width sidebar when open
@@ -266,7 +280,7 @@ export const Sidebar: React.FC = () => {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-thin">
-        {navigation.map((group) => (
+        {filteredNavigation.map((group) => (
           <NavGroupComponent
             key={group.id}
             group={group}
@@ -345,7 +359,7 @@ export const Sidebar: React.FC = () => {
       {/* Mobile overlay */}
       {isMobile && mobileOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/50 transition-opacity"
+          className="fixed inset-0 z-overlay bg-black/50 transition-opacity"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -355,7 +369,7 @@ export const Sidebar: React.FC = () => {
         <button
           onClick={() => setMobileOpen(true)}
           aria-label={t('sidebar.openSidebar')}
-          className="fixed top-4 left-4 z-30 w-10 h-10 bg-neutral-900 text-white rounded-lg flex items-center justify-center shadow-lg hover:bg-neutral-800 transition-colors"
+          className="fixed top-4 left-4 z-fixed w-10 h-10 bg-neutral-900 text-white rounded-lg flex items-center justify-center shadow-lg hover:bg-neutral-800 transition-colors"
         >
           <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
             <path d="M1 1H17M1 7H17M1 13H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

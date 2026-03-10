@@ -16,6 +16,15 @@ import type {
   PaymentOrder,
   SyncConflict,
   ActivityRecord,
+  NomenclatureMapping,
+  SyncDirection,
+  ConflictResolution,
+  SyncProgress,
+  SyncErrorLog,
+  PricingDatabase,
+  PriceRate,
+  PriceIndex,
+  CsvImportResult,
 } from '@/modules/integration1c/types';
 
 export const integration1cApi = {
@@ -130,6 +139,76 @@ export const integration1cApi = {
   getRecentActivity: async (limit: number = 10): Promise<ActivityRecord[]> => {
     const response = await apiClient.get('/integration-1c/activity/recent', {
       params: { limit },
+    });
+    return response.data;
+  },
+
+  // --- Nomenclature Sync (extended) ---
+  getNomenclatureGroups: async (): Promise<{ id: string; name: string; code?: string }[]> => {
+    const response = await apiClient.get('/integration-1c/nomenclature/groups');
+    return response.data;
+  },
+
+  getNomenclatureMappings: async (params?: { groupId?: string; status?: string }): Promise<NomenclatureMapping[]> => {
+    const response = await apiClient.get<NomenclatureMapping[]>('/integration-1c/nomenclature/mappings', { params });
+    return response.data;
+  },
+
+  autoMatchNomenclature: async (): Promise<{ matched: number; unmatched: number; total?: number }> => {
+    const response = await apiClient.post('/integration-1c/nomenclature/auto-match');
+    return response.data;
+  },
+
+  syncNomenclatureWithDirection: async (direction: SyncDirection, options?: { group?: string }): Promise<SyncResult> => {
+    const response = await apiClient.post<SyncResult>('/integration-1c/sync/nomenclature', { direction, ...options });
+    return response.data;
+  },
+
+  getSyncProgress: async (type?: string): Promise<SyncProgress> => {
+    const response = await apiClient.get<SyncProgress>('/integration-1c/sync/progress', { params: type ? { type } : undefined });
+    return response.data;
+  },
+
+  getSyncErrors: async (type?: string): Promise<SyncErrorLog[]> => {
+    const response = await apiClient.get<SyncErrorLog[]>('/integration-1c/sync/errors', { params: type ? { type } : undefined });
+    return response.data;
+  },
+
+  resolveConflict: async (conflictId: string, resolution: ConflictResolution): Promise<void> => {
+    await apiClient.post(`/integration-1c/sync/conflicts/${conflictId}/resolve`, { resolution });
+  },
+
+  retrySyncError: async (errorId: string): Promise<void> => {
+    await apiClient.post(`/integration-1c/sync/errors/${errorId}/retry`);
+  },
+
+  // --- Pricing Database ---
+  getPricingDatabases: async (): Promise<PricingDatabase[]> => {
+    const response = await apiClient.get<PricingDatabase[]>('/integration-1c/pricing/databases');
+    return response.data;
+  },
+
+  getAvailableRegions: async (): Promise<{ code: string; name: string }[]> => {
+    const response = await apiClient.get('/integration-1c/pricing/regions');
+    return response.data;
+  },
+
+  getMinstroyIndices: async (params?: { region?: string; year?: number; quarter?: number }): Promise<PriceIndex[]> => {
+    const response = await apiClient.get<PriceIndex[]>('/integration-1c/pricing/minstroy-indices', { params });
+    return response.data;
+  },
+
+  searchRates: async (params: { query?: string; databaseId?: string; source?: string; category?: string; page?: number; size?: number }): Promise<PriceRate[]> => {
+    const response = await apiClient.get<PriceRate[]>('/integration-1c/pricing/rates/search', { params });
+    return response.data;
+  },
+
+  importCsvCoefficients: async (file: File, databaseId?: string): Promise<CsvImportResult> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (databaseId) formData.append('databaseId', databaseId);
+    const response = await apiClient.post<CsvImportResult>('/integration-1c/pricing/import-csv', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },

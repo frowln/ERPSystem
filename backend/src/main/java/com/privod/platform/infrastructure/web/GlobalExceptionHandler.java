@@ -99,6 +99,23 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(400, message));
     }
 
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(
+            org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        String requestId = UUID.randomUUID().toString();
+        log.warn("Message not readable [requestId={}]: {}", requestId, ex.getMessage());
+        String message = "Некорректный формат запроса";
+        if (ex.getMessage() != null) {
+            if (ex.getMessage().contains("UUID")) {
+                message = "Некорректный формат ID. Ожидается UUID.";
+            } else if (ex.getMessage().contains("Cannot deserialize")) {
+                message = "Ошибка формата данных. Проверьте корректность полей.";
+            }
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(400, message));
+    }
+
     @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingParam(
             org.springframework.web.bind.MissingServletRequestParameterException ex) {
@@ -106,6 +123,15 @@ public class GlobalExceptionHandler {
         log.warn("Missing parameter [requestId={}]: {}", requestId, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(400, ex.getMessage()));
+    }
+
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodNotAllowed(
+            org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+        String requestId = UUID.randomUUID().toString();
+        log.warn("Method not allowed [requestId={}]: {}", requestId, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(ApiResponse.error(405, ex.getMessage()));
     }
 
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
@@ -125,11 +151,29 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(409, ex.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResponseStatus(org.springframework.web.server.ResponseStatusException ex) {
+        String requestId = UUID.randomUUID().toString();
+        log.warn("ResponseStatus [requestId={}]: {} {}", requestId, ex.getStatusCode(), ex.getReason());
+        int code = ex.getStatusCode().value();
+        String reason = ex.getReason() != null ? ex.getReason() : ex.getMessage();
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ApiResponse.error(code, reason));
+    }
+
+    @ExceptionHandler(com.privod.platform.infrastructure.storage.StorageException.class)
+    public ResponseEntity<ApiResponse<Void>> handleStorageException(com.privod.platform.infrastructure.storage.StorageException ex) {
+        String requestId = UUID.randomUUID().toString();
+        log.error("Storage error [requestId={}]: {}", requestId, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ApiResponse.error(503, "Ошибка хранилища файлов. Попробуйте позже."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         String requestId = UUID.randomUUID().toString();
         log.error("Unhandled exception [requestId={}]: ", requestId, ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(500, "An unexpected error occurred. Request ID: " + requestId));
+                .body(ApiResponse.error(500, "Internal server error [Request ID: " + requestId + "]"));
     }
 }

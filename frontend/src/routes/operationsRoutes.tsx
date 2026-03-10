@@ -10,6 +10,8 @@ const WorkOrderDetailPage = lazy(() => import('@/modules/operations/WorkOrderDet
 const OperationsDashboardPage = lazy(() => import('@/modules/operations/OperationsDashboardPage'));
 const DispatchCalendarPage = lazy(() => import('@/modules/operations/DispatchCalendarPage'));
 const WorkOrderBoardPage = lazy(() => import('@/modules/operations/WorkOrderBoardPage'));
+const DailyLogListPage = lazy(() => import('@/modules/operations/DailyLogListPage'));
+const WorkOrderListPage = lazy(() => import('@/modules/operations/WorkOrderListPage'));
 
 // Fleet
 const FleetListPage = lazy(() => import('@/modules/fleet/FleetListPage'));
@@ -23,12 +25,20 @@ const FuelAccountingPage = lazy(() => import('@/modules/fleet/FuelAccountingPage
 const MaintenanceToRepairPage = lazy(() => import('@/modules/fleet/MaintenanceToRepairPage'));
 const GpsTrackingPage = lazy(() => import('@/modules/fleet/GpsTrackingPage'));
 const DriverRatingPage = lazy(() => import('@/modules/fleet/DriverRatingPage'));
+const MaintenanceSchedulePage = lazy(() => import('@/modules/fleet/MaintenanceSchedulePage'));
+const UsageLogListPage = lazy(() => import('@/modules/fleet/UsageLogListPage'));
+const UsageLogDetailPage = lazy(() => import('@/modules/fleet/UsageLogDetailPage'));
+const UsageLogFormPage = lazy(() => import('@/modules/fleet/UsageLogFormPage'));
+const WaybillListPage = lazy(() => import('@/modules/fleet/WaybillListPage'));
+const WaybillDetailPage = lazy(() => import('@/modules/fleet/WaybillDetailPage'));
+const WaybillFormPage = lazy(() => import('@/modules/fleet/WaybillFormPage'));
 
 // IoT
 const DevicesPage = lazy(() => import('@/modules/iot/DevicesPage'));
 const DeviceDetailPage = lazy(() => import('@/modules/iot/DeviceDetailPage'));
 const SensorsPage = lazy(() => import('@/modules/iot/SensorsPage'));
 const AlertsPage = lazy(() => import('@/modules/iot/AlertsPage'));
+const DeviceListPage = lazy(() => import('@/modules/iot/DeviceListPage'));
 
 // Maintenance
 const MaintenanceRequestListPage = lazy(() => import('@/modules/maintenance/MaintenanceRequestListPage'));
@@ -41,6 +51,7 @@ const MaintenanceBoardPage = lazy(() => import('@/modules/maintenance/Maintenanc
 const DispatchOrderListPage = lazy(() => import('@/modules/dispatch/DispatchOrderListPage'));
 const DispatchOrderFormPage = lazy(() => import('@/modules/dispatch/DispatchOrderFormPage'));
 const DispatchRouteListPage = lazy(() => import('@/modules/dispatch/DispatchRouteListPage'));
+const DispatchRouteFormPage = lazy(() => import('@/modules/dispatch/DispatchRouteFormPage'));
 
 // Mobile
 const MobileReportsPage = lazy(() => import('@/modules/mobile/MobileReportsPage'));
@@ -67,6 +78,8 @@ export function operationsRoutes() {
       <Route path="operations/work-orders/:id" element={<WorkOrderDetailPage />} />
       <Route path="operations/dashboard" element={<OperationsDashboardPage />} />
       <Route path="operations/dispatch-calendar" element={<DispatchCalendarPage />} />
+      <Route path="operations/daily-log-list" element={<DailyLogListPage />} />
+      <Route path="operations/work-order-list" element={<WorkOrderListPage />} />
 
       {/* Fleet */}
       <Route path="fleet" element={<FleetListPage />} />
@@ -81,12 +94,22 @@ export function operationsRoutes() {
       <Route path="fleet/maint-repair" element={<MaintenanceToRepairPage />} />
       <Route path="fleet/gps-tracking" element={<GpsTrackingPage />} />
       <Route path="fleet/driver-rating" element={<DriverRatingPage />} />
+      <Route path="fleet/maintenance-schedule" element={<MaintenanceSchedulePage />} />
+      <Route path="fleet/usage-logs" element={<UsageLogListPage />} />
+      <Route path="fleet/usage-logs/new" element={<UsageLogFormPage />} />
+      <Route path="fleet/usage-logs/:id/edit" element={<UsageLogFormPage />} />
+      <Route path="fleet/usage-logs/:id" element={<UsageLogDetailPage />} />
+      <Route path="fleet/waybills" element={<WaybillListPage />} />
+      <Route path="fleet/waybills/new" element={<WaybillFormPage />} />
+      <Route path="fleet/waybills/:id/edit" element={<WaybillFormPage />} />
+      <Route path="fleet/waybills/:id" element={<WaybillDetailPage />} />
 
       {/* IoT */}
       <Route path="iot/devices" element={<DevicesPage />} />
       <Route path="iot/devices/:id" element={<DeviceDetailPage />} />
       <Route path="iot/sensors" element={<SensorsPage />} />
       <Route path="iot/alerts" element={<AlertsPage />} />
+      <Route path="iot/device-list" element={<DeviceListPage />} />
 
       {/* Maintenance */}
       <Route path="maintenance/requests" element={<MaintenanceRequestListPage />} />
@@ -101,6 +124,8 @@ export function operationsRoutes() {
       <Route path="dispatch/orders/new" element={<DispatchOrderFormPage />} />
       <Route path="dispatch/orders/:id/edit" element={<DispatchOrderFormPage />} />
       <Route path="dispatch/routes" element={<DispatchRouteListPage />} />
+      <Route path="dispatch/routes/new" element={<DispatchRouteFormPage />} />
+      <Route path="dispatch/routes/:id/edit" element={<DispatchRouteFormPage />} />
 
       {/* Mobile */}
       <Route path="mobile/reports" element={<MobileReportsPage />} />

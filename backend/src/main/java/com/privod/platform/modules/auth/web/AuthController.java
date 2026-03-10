@@ -7,9 +7,11 @@ import com.privod.platform.modules.auth.web.dto.LoginRequest;
 import com.privod.platform.modules.auth.web.dto.LoginResponse;
 import com.privod.platform.modules.auth.web.dto.RefreshTokenRequest;
 import com.privod.platform.modules.auth.web.dto.RegisterRequest;
+import com.privod.platform.modules.auth.web.dto.TwoFactorLoginRequest;
 import com.privod.platform.modules.auth.web.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,8 +32,19 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Authenticate user and get JWT tokens")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
-        LoginResponse response = authService.login(request);
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest) {
+        LoginResponse response = authService.login(request, httpRequest);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/login/2fa")
+    @Operation(summary = "Complete login with 2FA code")
+    public ResponseEntity<ApiResponse<LoginResponse>> verifyTwoFactor(
+            @Valid @RequestBody TwoFactorLoginRequest request,
+            HttpServletRequest httpRequest) {
+        LoginResponse response = authService.verifyTwoFactorLogin(request, httpRequest);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 

@@ -11,6 +11,7 @@ import { useIsMobile } from '@/hooks/useMediaQuery';
 import { tw } from '@/design-system/tokens';
 import { isDemoMode } from '@/lib/demoMode';
 import { useThemeStore } from '@/hooks/useTheme';
+import { NotificationDropdown } from '@/components/NotificationDropdown';
 import { t } from '@/i18n';
 
 const ThemeToggle: React.FC = () => {
@@ -33,9 +34,11 @@ export const TopBar: React.FC = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const { data: unreadData } = useQuery<{ count: number }>({
     queryKey: ['notifications-unread-count'],
@@ -74,7 +77,7 @@ export const TopBar: React.FC = () => {
   return (
     <header
       className={cn(
-        'fixed top-0 right-0 z-20 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 flex items-center gap-4 px-6 transition-all duration-200',
+        'fixed top-0 right-0 z-fixed bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 flex items-center gap-4 px-6 transition-all duration-200',
         tw.topBarHeight,
         isMobile
           ? 'left-0 pl-16'
@@ -128,18 +131,27 @@ export const TopBar: React.FC = () => {
         <ThemeToggle />
 
         {/* Notifications */}
-        <button
-          onClick={() => navigate('/notifications')}
-          aria-label={unreadCount > 0 ? t('topbar.openNotificationsUnread', { count: String(unreadCount) }) : t('topbar.openNotifications')}
-          className="relative p-2 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-        >
-          <Bell size={18} />
-          {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-danger-500 text-white text-[10px] font-semibold leading-4 text-center rounded-full ring-2 ring-white dark:ring-neutral-900">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-        </button>
+        <div className="relative" ref={notifRef}>
+          <button
+            onClick={() => setNotifDropdownOpen((prev) => !prev)}
+            aria-label={unreadCount > 0 ? t('topbar.openNotificationsUnread', { count: String(unreadCount) }) : t('topbar.openNotifications')}
+            aria-haspopup="dialog"
+            aria-expanded={notifDropdownOpen}
+            className="relative p-2 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+          >
+            <Bell size={18} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-danger-500 text-white text-[10px] font-semibold leading-4 text-center rounded-full ring-2 ring-white dark:ring-neutral-900">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </button>
+          <NotificationDropdown
+            open={notifDropdownOpen}
+            onClose={() => setNotifDropdownOpen(false)}
+            unreadCount={unreadCount}
+          />
+        </div>
 
         {/* Separator */}
         <div className="w-px h-6 bg-neutral-200 dark:bg-neutral-700 mx-1" />

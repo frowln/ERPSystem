@@ -16,6 +16,7 @@ import {
   Download,
   ExternalLink,
   CreditCard,
+  Printer,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -28,11 +29,13 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { closingApi, type Ks2DetailWithLines } from '@/api/closing';
 import { estimatesApi } from '@/api/estimates';
-import { formatMoney, formatDate } from '@/lib/format';
+import { formatMoney, formatDate, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { ClosingDocStatus } from '@/types';
 import type { Ks2VolumeCheck, Ks2PaymentInfo, EstimateItemForImport } from '@/modules/closing/types';
+import { printKs2 } from '@/components/PrintTemplates/Ks2PrintTemplate';
+import type { Ks2PrintData } from '@/components/PrintTemplates/Ks2PrintTemplate';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -69,7 +72,7 @@ interface LineForm {
 
 const DEFAULT_LINE: LineForm = {
   name: '',
-  unitOfMeasure: 'шт',
+  unitOfMeasure: '',
   quantity: '1',
   unitPrice: '0',
   vatRate: '22',
@@ -284,11 +287,11 @@ const VolumeCheckBadge: React.FC<{
   >
     {volumeStatusIcon(check.status)}
     <span className="text-neutral-600 dark:text-neutral-300">
-      {t('closing.ks2Detail.volumeEstimate')}: {check.estimateQty.toLocaleString('ru-RU')} {check.unit}
+      {t('closing.ks2Detail.volumeEstimate')}: {formatNumber(check.estimateQty)} {check.unit}
     </span>
     <span className="text-neutral-400 dark:text-neutral-500">|</span>
     <span className="text-neutral-600 dark:text-neutral-300">
-      {t('closing.ks2Detail.volumeSubmitted')}: {check.totalSubmitted.toLocaleString('ru-RU')}
+      {t('closing.ks2Detail.volumeSubmitted')}: {formatNumber(check.totalSubmitted)}
     </span>
     <span className="text-neutral-400 dark:text-neutral-500">|</span>
     <span
@@ -299,7 +302,7 @@ const VolumeCheckBadge: React.FC<{
         check.status === 'exceeds' && 'text-danger-700 dark:text-danger-400',
       )}
     >
-      {t('closing.ks2Detail.volumeRemaining')}: {check.remaining.toLocaleString('ru-RU')}
+      {t('closing.ks2Detail.volumeRemaining')}: {formatNumber(check.remaining)}
     </span>
   </div>
 );
@@ -346,6 +349,9 @@ const ImportFromEstimateModal: React.FC<{
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ks2', ks2Id] });
       queryClient.invalidateQueries({ queryKey: ['estimateItemsForKs2', selectedEstimateId, ks2Id] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -514,10 +520,10 @@ const ImportFromEstimateModal: React.FC<{
                         {item.unitOfMeasure}
                       </td>
                       <td className="px-3 py-2.5 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                        {item.quantity.toLocaleString('ru-RU')}
+                        {formatNumber(item.quantity)}
                       </td>
                       <td className="px-3 py-2.5 text-right tabular-nums text-neutral-500 dark:text-neutral-400">
-                        {item.alreadySubmitted.toLocaleString('ru-RU')}
+                        {formatNumber(item.alreadySubmitted)}
                       </td>
                       <td
                         className={cn(
@@ -527,7 +533,7 @@ const ImportFromEstimateModal: React.FC<{
                             : 'text-neutral-400 dark:text-neutral-500',
                         )}
                       >
-                        {maxQty.toLocaleString('ru-RU')}
+                        {formatNumber(maxQty)}
                       </td>
                       <td className="px-3 py-2.5 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
                         {formatMoney(item.unitPrice)}
@@ -753,6 +759,33 @@ const Ks2DetailPage: React.FC = () => {
                   size="md"
                 />
               )}
+              <Button
+                size="sm"
+                variant="secondary"
+                iconLeft={<Printer size={14} />}
+                onClick={() => {
+                  const printData: Ks2PrintData = {
+                    documentNumber: ks2.number,
+                    documentDate: ks2.documentDate ?? '',
+                    projectName: ks2.projectName ?? '',
+                    contractNumber: ks2.contractName,
+                    objectName: ks2.projectName,
+                    items: (ks2.lines ?? []).map((line: Ks2Line, idx: number) => ({
+                      rowNumber: idx + 1,
+                      name: line.name,
+                      unitOfMeasure: line.unitOfMeasure,
+                      quantity: line.quantity,
+                      unitPrice: line.unitPrice,
+                      amount: line.amount,
+                    })),
+                    totalAmount: ks2.totalAmount ?? 0,
+                    notes: ks2.notes,
+                  };
+                  printKs2(printData);
+                }}
+              >
+                {t('export.common.print')}
+              </Button>
               {isDraft && (
                 <Button
                   size="sm"
@@ -927,7 +960,7 @@ const Ks2DetailPage: React.FC = () => {
                         {line.unitOfMeasure}
                       </td>
                       <td className="px-3 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300 align-top">
-                        {line.quantity.toLocaleString('ru-RU')}
+                        {formatNumber(line.quantity)}
                       </td>
                       <td className="px-3 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300 align-top">
                         {formatMoney(line.unitPrice)}

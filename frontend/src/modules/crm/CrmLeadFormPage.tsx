@@ -46,10 +46,10 @@ const crmLeadSchema = z.object({
 
 type CrmLeadFormData = z.input<typeof crmLeadSchema>;
 
-const priorityOptions = [
-  { value: 'LOW', label: 'Низкий' },
-  { value: 'NORMAL', label: 'Обычный' },
-  { value: 'HIGH', label: 'Высокий' },
+const getPriorityOptions = () => [
+  { value: 'LOW', label: t('forms.crmLead.priorityLow') },
+  { value: 'NORMAL', label: t('forms.crmLead.priorityNormal') },
+  { value: 'HIGH', label: t('forms.crmLead.priorityHigh') },
 ];
 
 const sourceOptions = [
@@ -185,11 +185,11 @@ const CrmLeadFormPage: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl">
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">Основная информация</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.crmLead.sectionMain')}</h2>
           <div className="grid grid-cols-1 gap-5 mb-5">
-            <FormField label="Название лида" error={errors.name?.message} required>
+            <FormField label={t('forms.crmLead.labelName')} error={errors.name?.message} required>
               <Input
-                placeholder="Например: ЖК Олимп Парк - Корпус 3, Генподряд"
+                placeholder={t('forms.crmLead.placeholderName')}
                 hasError={!!errors.name}
                 {...register('name')}
               />
@@ -232,9 +232,9 @@ const CrmLeadFormPage: React.FC = () => {
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
           <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.crmLead.sectionDeal')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <FormField label="Приоритет" error={errors.priority?.message}>
+            <FormField label={t('forms.crmLead.labelPriority')} error={errors.priority?.message}>
               <Select
-                options={priorityOptions}
+                options={getPriorityOptions()}
                 hasError={!!errors.priority}
                 {...register('priority')}
               />

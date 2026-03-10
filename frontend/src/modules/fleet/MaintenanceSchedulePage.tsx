@@ -120,6 +120,9 @@ const MaintenanceSchedulePage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fleet-schedule-rules'] });
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   // --- Helpers ---

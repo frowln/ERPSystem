@@ -1,7 +1,8 @@
 /// <reference lib="webworker" />
 
-const CACHE_NAME = 'privod-app-shell-v5';
-const API_CACHE_NAME = 'privod-api-cache-v2';
+const CACHE_NAME = 'privod-app-shell-v6';
+const API_CACHE_NAME = 'privod-api-cache-v3';
+const IMG_CACHE_NAME = 'privod-images-v1';
 const OFFLINE_URL = '/offline.html';
 
 // App-shell assets to pre-cache on install
@@ -13,6 +14,12 @@ const APP_SHELL = [
 
 // API base path for network-first caching
 const API_PATH_PREFIX = '/api/';
+
+// Max number of entries in the image cache to prevent unbounded growth
+const IMG_CACHE_MAX_ENTRIES = 200;
+
+// Max age for API cache entries (1 hour — tighter than the 24h cleanup)
+const API_CACHE_MAX_AGE = 60 * 60 * 1000;
 
 // ---------------------------------------------------------------------------
 // Install
@@ -30,7 +37,7 @@ self.addEventListener('install', (event) => {
 // ---------------------------------------------------------------------------
 
 self.addEventListener('activate', (event) => {
-  const currentCaches = new Set([CACHE_NAME, API_CACHE_NAME]);
+  const currentCaches = new Set([CACHE_NAME, API_CACHE_NAME, IMG_CACHE_NAME]);
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -101,16 +108,38 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets (JS, CSS, images, fonts) -> cache-first with network fallback
+  // Images -> cache-first with dedicated image cache and LRU eviction
   if (
-    url.pathname.startsWith('/assets/') ||
-    url.pathname.endsWith('.js') ||
-    url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.svg') ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.jpg') ||
     url.pathname.endsWith('.jpeg') ||
     url.pathname.endsWith('.webp') ||
+    url.pathname.endsWith('.gif') ||
+    url.pathname.endsWith('.svg') ||
+    url.pathname.startsWith('/api/') && url.pathname.includes('/content') && request.headers.get('Accept')?.includes('image')
+  ) {
+    event.respondWith(
+      caches.open(IMG_CACHE_NAME).then((cache) =>
+        cache.match(request).then((cached) => {
+          if (cached) return cached;
+          return fetch(request).then((response) => {
+            if (response.ok) {
+              const clone = response.clone();
+              cache.put(request, clone).then(() => trimCache(IMG_CACHE_NAME, IMG_CACHE_MAX_ENTRIES));
+            }
+            return response;
+          });
+        }),
+      ),
+    );
+    return;
+  }
+
+  // Static assets (JS, CSS, fonts) -> cache-first with network fallback
+  if (
+    url.pathname.startsWith('/assets/') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css') ||
     url.pathname.endsWith('.woff2') ||
     url.pathname.endsWith('.woff')
   ) {
@@ -194,6 +223,7 @@ self.addEventListener('message', (event) => {
   // Clear API cache on demand (e.g., after logout)
   if (event.data.type === 'CLEAR_API_CACHE') {
     caches.delete(API_CACHE_NAME);
+    caches.delete(IMG_CACHE_NAME);
   }
 });
 
@@ -317,13 +347,30 @@ self.addEventListener('notificationclose', (_event) => {
 // ---------------------------------------------------------------------------
 
 /**
- * Clean up stale API cache entries older than 24 hours.
+ * Trim a named cache to a maximum number of entries (LRU eviction).
+ */
+async function trimCache(cacheName, maxEntries) {
+  try {
+    const cache = await caches.open(cacheName);
+    const keys = await cache.keys();
+    if (keys.length <= maxEntries) return;
+    // Delete oldest entries (keys are in insertion order)
+    const excess = keys.length - maxEntries;
+    for (let i = 0; i < excess; i++) {
+      await cache.delete(keys[i]);
+    }
+  } catch {
+    // Best-effort
+  }
+}
+
+/**
+ * Clean up stale API cache entries older than API_CACHE_MAX_AGE.
  */
 async function cleanupApiCache() {
   try {
     const cache = await caches.open(API_CACHE_NAME);
     const requests = await cache.keys();
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
     const now = Date.now();
 
     for (const request of requests) {
@@ -333,11 +380,14 @@ async function cleanupApiCache() {
       const dateHeader = response.headers.get('date');
       if (dateHeader) {
         const cachedAt = new Date(dateHeader).getTime();
-        if (now - cachedAt > maxAge) {
+        if (now - cachedAt > API_CACHE_MAX_AGE) {
           await cache.delete(request);
         }
       }
     }
+
+    // Also trim image cache during cleanup
+    await trimCache(IMG_CACHE_NAME, IMG_CACHE_MAX_ENTRIES);
   } catch {
     // Cache cleanup is best-effort
   }

@@ -8,6 +8,8 @@ import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import { hrApi } from '@/api/hr';
+import { useProjectOptions } from '@/hooks/useSelectOptions';
+import toast from 'react-hot-toast';
 import type {
   TimesheetT13Row,
   TimesheetT13Cell,
@@ -54,12 +56,6 @@ const monthOptions = [
   { value: '12', label: t('hr.crewTimeCalendar.months.december') },
 ];
 
-const projectOptions = [
-  { value: '', label: t('hr.timesheetT13.projectPlaceholder') },
-  { value: 'p1', label: t('mockData.projectSolnechny') },
-  { value: 'p2', label: t('mockData.projectGorizont') },
-  { value: 'p3', label: t('mockData.projectBridgeVyatka') },
-];
 
 const codeOptions = [
   { value: '\u042F', label: t('hr.timesheetT13.codes.work') },
@@ -77,6 +73,8 @@ const codeOptions = [
 
 const TimesheetT13Page: React.FC = () => {
   const queryClient = useQueryClient();
+  const { options: projectOpts } = useProjectOptions();
+  const projectOptions = [{ value: '', label: t('hr.timesheetT13.projectPlaceholder') }, ...projectOpts];
   const [projectId, setProjectId] = useState('');
   const [month, setMonth] = useState(String(currentMonth));
   const [year] = useState(currentYear);
@@ -108,6 +106,9 @@ const TimesheetT13Page: React.FC = () => {
         queryKey: ['timesheet-t13', projectId, numMonth, year],
       });
       setEditCell(null);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

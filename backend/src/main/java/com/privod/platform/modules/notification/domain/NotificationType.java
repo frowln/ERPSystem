@@ -13,7 +13,14 @@ public enum NotificationType {
     SUCCESS("Успех"),
     TASK("Задача"),
     APPROVAL("Согласование"),
-    SYSTEM("Системное");
+    SYSTEM("Системное"),
+    TASK_ASSIGNED("Задача назначена"),
+    TASK_STATUS_CHANGED("Статус задачи изменён"),
+    COMMENT_ADDED("Комментарий добавлен"),
+    DOCUMENT_UPLOADED("Документ загружен"),
+    APPROVAL_REQUIRED("Требуется согласование"),
+    BUDGET_THRESHOLD("Порог бюджета"),
+    SAFETY_ALERT("Предупреждение безопасности");
 
     private final String displayName;
 }

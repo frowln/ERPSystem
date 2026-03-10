@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   ArrowUpCircle,
   Loader2,
+  Construction,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
@@ -18,6 +19,7 @@ import { EmptyState } from '@/design-system/components/EmptyState';
 import { Skeleton } from '@/design-system/components/Skeleton';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatNumber } from '@/lib/format';
 import {
   marketplaceApi,
   type PluginCategory,
@@ -31,13 +33,12 @@ import {
 
 const CATEGORIES: Array<{ id: PluginCategory | 'ALL'; labelKey: string }> = [
   { id: 'ALL', labelKey: 'marketplace.categoryAll' },
-  { id: 'ANALYTICS', labelKey: 'marketplace.categoryAnalytics' },
-  { id: 'INTEGRATION', labelKey: 'marketplace.categoryIntegration' },
-  { id: 'AUTOMATION', labelKey: 'marketplace.categoryAutomation' },
-  { id: 'REPORTING', labelKey: 'marketplace.categoryReporting' },
-  { id: 'COMMUNICATION', labelKey: 'marketplace.categoryCommunication' },
-  { id: 'SAFETY', labelKey: 'marketplace.categorySafety' },
-  { id: 'FINANCE', labelKey: 'marketplace.categoryFinance' },
+  { id: 'ACCOUNTING', labelKey: 'marketplace.categoryAccounting' },
+  { id: 'BIM', labelKey: 'marketplace.categoryBim' },
+  { id: 'COST_ESTIMATION', labelKey: 'marketplace.categoryCostEstimation' },
+  { id: 'MESSAGING', labelKey: 'marketplace.categoryMessaging' },
+  { id: 'BANKING', labelKey: 'marketplace.categoryBanking' },
+  { id: 'GOVERNMENT', labelKey: 'marketplace.categoryGovernment' },
 ];
 
 const PRICES: Array<{ id: PluginPrice | 'ALL'; labelKey: string }> = [
@@ -153,7 +154,7 @@ const PluginCard: React.FC<PluginCardProps> = React.memo(({ plugin, onInstall, i
         <StarRating rating={plugin.rating} />
         <span className="text-xs text-neutral-500 dark:text-neutral-400">
           <Download size={11} className="inline mr-0.5 -mt-0.5" />
-          {plugin.installCount.toLocaleString()} {t('marketplace.installs')}
+          {formatNumber(plugin.installCount)} {t('marketplace.installs')}
         </span>
       </div>
 
@@ -271,6 +272,14 @@ const MarketplaceListPage: React.FC = () => {
           </Button>
         }
       />
+
+      {/* Under development banner */}
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-warning-200 dark:border-warning-800 bg-warning-50 dark:bg-warning-900/20 px-4 py-3">
+        <Construction size={20} className="text-warning-600 dark:text-warning-400 flex-shrink-0" />
+        <p className="text-sm text-warning-800 dark:text-warning-300">
+          {t('marketplace.underDevelopment')}
+        </p>
+      </div>
 
       {/* Search bar */}
       <div className="mb-6">

@@ -188,7 +188,7 @@ const CommissioningListPage: React.FC = () => {
             >
               {t('closeout.commListBoardButton')}
             </Button>
-            <Button iconLeft={<Plus size={16} />}>
+            <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/closeout/commissioning/new')}>
               {t('closeout.commListNewChecklist')}
             </Button>
           </div>

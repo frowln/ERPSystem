@@ -48,4 +48,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u.id, u.firstName, u.lastName FROM User u WHERE u.id IN :ids AND u.deleted = false AND u.organizationId = :organizationId")
     List<Object[]> findNamesByIdsAndOrganizationId(@Param("ids") List<UUID> ids,
                                                    @Param("organizationId") UUID organizationId);
+
+    long countByOrganizationIdAndDeletedFalse(UUID organizationId);
 }

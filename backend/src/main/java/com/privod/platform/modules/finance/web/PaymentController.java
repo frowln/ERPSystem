@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RestController
+@RestController("financePaymentController")
 @RequestMapping({"/api/payments", "/api/transactions"})
 @RequiredArgsConstructor
 @Tag(name = "Payments", description = "Payment management endpoints")

@@ -43,15 +43,15 @@ interface IntegrationCard {
 }
 
 const statusColorMap: Record<string, 'green' | 'gray' | 'red'> = {
-  connected: 'green',
-  disconnected: 'gray',
-  error: 'red',
+  CONNECTED: 'green',
+  DISCONNECTED: 'gray',
+  ERROR: 'red',
 };
 
 const getStatusLabels = (): Record<string, string> => ({
-  connected: t('integrations.main.statusConnected'),
-  disconnected: t('integrations.main.statusDisconnected'),
-  error: t('integrations.main.statusError'),
+  CONNECTED: t('integrations.main.statusConnected'),
+  DISCONNECTED: t('integrations.main.statusDisconnected'),
+  ERROR: t('integrations.main.statusError'),
 });
 
 // ---------------------------------------------------------------------------
@@ -65,7 +65,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.oneCDescription'),
     icon: Calculator,
     iconColor: 'text-yellow-600',
-    iconBg: 'bg-yellow-50',
+    iconBg: 'bg-yellow-50 dark:bg-yellow-900/20',
     status: 'DISCONNECTED',
     route: '/integrations/1c',
   },
@@ -75,7 +75,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.telegramDescription'),
     icon: Send,
     iconColor: 'text-cyan-600',
-    iconBg: 'bg-cyan-50',
+    iconBg: 'bg-cyan-50 dark:bg-cyan-900/20',
     status: 'CONNECTED',
     lastSync: '15.02.2026, 10:30',
     route: '/integrations/telegram',
@@ -86,7 +86,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.sbisDescription'),
     icon: Landmark,
     iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-50',
+    iconBg: 'bg-blue-50 dark:bg-blue-900/20',
     status: 'DISCONNECTED',
     route: '/integrations/sbis',
   },
@@ -96,7 +96,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.edoDescription'),
     icon: HardDrive,
     iconColor: 'text-green-600',
-    iconBg: 'bg-green-50',
+    iconBg: 'bg-green-50 dark:bg-green-900/20',
     status: 'DISCONNECTED',
     route: '/integrations/edo',
   },
@@ -106,7 +106,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.smsDescription'),
     icon: MessageSquare,
     iconColor: 'text-green-600',
-    iconBg: 'bg-green-50',
+    iconBg: 'bg-green-50 dark:bg-green-900/20',
     status: 'DISCONNECTED',
     route: '/integrations/sms',
   },
@@ -116,7 +116,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.weatherDescription'),
     icon: Cloud,
     iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-50',
+    iconBg: 'bg-blue-50 dark:bg-blue-900/20',
     status: 'CONNECTED',
     lastSync: '15.02.2026, 09:00',
     route: '/integrations/weather',
@@ -127,7 +127,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.bimDescription'),
     icon: Box,
     iconColor: 'text-purple-600',
-    iconBg: 'bg-purple-50',
+    iconBg: 'bg-purple-50 dark:bg-purple-900/20',
     status: 'CONNECTED',
     lastSync: '14.02.2026, 18:45',
     route: '/integrations/bim',
@@ -138,7 +138,7 @@ const getIntegrationCards = (): IntegrationCard[] => [
     description: t('integrations.main.govRegistriesDescription'),
     icon: Landmark,
     iconColor: 'text-red-600',
-    iconBg: 'bg-red-50',
+    iconBg: 'bg-red-50 dark:bg-red-900/20',
     status: 'CONNECTED',
     lastSync: '15.02.2026, 08:15',
     route: '/integrations/gov-registries',
@@ -167,7 +167,7 @@ const IntegrationsPage: React.FC = () => {
     queryKey: ['integrations-status'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/integrations/status');
+        const res = await apiClient.get('/integrations/status', { _silentErrors: true } as any);
         return res.data as Record<string, { status: string; lastSync?: string }>;
       } catch {
         return null;
@@ -190,10 +190,16 @@ const IntegrationsPage: React.FC = () => {
 
   const connectedCount = cards.filter((c) => c.status === 'CONNECTED').length;
 
+  const latestSync = cards
+    .filter(c => c.status === 'CONNECTED' && c.lastSync)
+    .map(c => c.lastSync!)
+    .sort()
+    .pop() ?? '--';
+
   const handleSync = useCallback(async (id: string) => {
     setSyncing(id);
     try {
-      await apiClient.post(`/integrations/${id}/sync`);
+      await apiClient.post(`/integrations/${id}/sync`, null, { _silentErrors: true } as any);
       toast.success(t('integrations.main.syncStarted'));
     } catch {
       toast.error(t('integrations.main.syncFailed'));
@@ -231,7 +237,7 @@ const IntegrationsPage: React.FC = () => {
         <MetricCard
           icon={<Clock size={18} />}
           label={t('integrations.main.metricLastSync')}
-          value="15.02.2026, 10:30"
+          value={latestSync}
         />
       </div>
 
@@ -283,7 +289,7 @@ const IntegrationsPage: React.FC = () => {
 
               {/* Actions */}
               <div
-                className="mt-auto pt-3 border-t border-neutral-100 flex items-center gap-2"
+                className="mt-auto pt-3 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-2"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Button

@@ -1,19 +1,26 @@
 package com.privod.platform.modules.task.web;
 
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.task.domain.DependencyType;
+import com.privod.platform.modules.task.domain.ParticipantRole;
 import com.privod.platform.modules.task.domain.TaskPriority;
 import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.service.TaskParticipantService;
 import com.privod.platform.modules.task.service.TaskService;
 import com.privod.platform.modules.task.web.dto.AddCommentRequest;
 import com.privod.platform.modules.task.web.dto.AddDependencyRequest;
+import com.privod.platform.modules.task.web.dto.AddParticipantRequest;
 import com.privod.platform.modules.task.web.dto.AssignTaskRequest;
 import com.privod.platform.modules.task.web.dto.ChangeTaskStatusRequest;
 import com.privod.platform.modules.task.web.dto.CreateTaskRequest;
+import com.privod.platform.modules.task.web.dto.DelegateTaskRequest;
 import com.privod.platform.modules.task.web.dto.GanttTaskResponse;
+import com.privod.platform.modules.task.web.dto.MyTasksResponse;
 import com.privod.platform.modules.task.web.dto.TaskCommentResponse;
 import com.privod.platform.modules.task.web.dto.TaskDependencyResponse;
+import com.privod.platform.modules.task.web.dto.TaskParticipantResponse;
 import com.privod.platform.modules.task.web.dto.TaskResponse;
 import com.privod.platform.modules.task.web.dto.TaskSummaryResponse;
 import com.privod.platform.modules.task.web.dto.UpdateProgressRequest;
@@ -46,13 +53,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/tasks")
 @RequiredArgsConstructor
-@Tag(name = "Tasks", description = "Task management endpoints")
+@Tag(name = "Tasks", description = "Управление задачами")
 public class TaskController {
 
     private final TaskService taskService;
+    private final TaskParticipantService participantService;
 
     @GetMapping
-    @Operation(summary = "List tasks with filtering, pagination, and sorting")
+    @Operation(summary = "Список задач",
+               description = "Возвращает постраничный список задач с фильтрацией по проекту, статусу, приоритету и исполнителю")
     public ResponseEntity<ApiResponse<PageResponse<TaskResponse>>> list(
             @RequestParam(required = false) UUID projectId,
             @RequestParam(required = false) TaskStatus status,
@@ -65,6 +74,15 @@ public class TaskController {
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
     }
 
+    @GetMapping("/my")
+    @Operation(summary = "Мои задачи",
+               description = "Возвращает задачи, назначенные текущему пользователю, делегированные им и избранные")
+    public ResponseEntity<ApiResponse<MyTasksResponse>> getMyTasks() {
+        UUID userId = SecurityUtils.requireCurrentUserId();
+        MyTasksResponse response = taskService.getMyTasks(userId);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get task by ID with comments")
     public ResponseEntity<ApiResponse<TaskResponse>> getById(@PathVariable UUID id) {
@@ -74,7 +92,8 @@ public class TaskController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
-    @Operation(summary = "Create a new task")
+    @Operation(summary = "Создать задачу",
+               description = "Создаёт новую задачу в проекте. Поддерживает подзадачи через parentTaskId")
     public ResponseEntity<ApiResponse<TaskResponse>> create(
             @Valid @RequestBody CreateTaskRequest request) {
         TaskResponse response = taskService.createTask(request);
@@ -191,5 +210,57 @@ public class TaskController {
             @PathVariable UUID projectId) {
         List<TaskResponse> overdue = taskService.getOverdueTasks(projectId);
         return ResponseEntity.ok(ApiResponse.ok(overdue));
+    }
+
+    // ─── Participants ───
+
+    @GetMapping("/{id}/participants")
+    @Operation(summary = "Получить участников задачи")
+    public ResponseEntity<ApiResponse<List<TaskParticipantResponse>>> getParticipants(
+            @PathVariable UUID id) {
+        List<TaskParticipantResponse> participants = participantService.getParticipants(id);
+        return ResponseEntity.ok(ApiResponse.ok(participants));
+    }
+
+    @PostMapping("/{id}/participants")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Добавить участника в задачу",
+               description = "Роли: RESPONSIBLE (ответственный), CO_EXECUTOR (соисполнитель), OBSERVER (наблюдатель)")
+    public ResponseEntity<ApiResponse<TaskParticipantResponse>> addParticipant(
+            @PathVariable UUID id,
+            @Valid @RequestBody AddParticipantRequest request) {
+        var userDetails = SecurityUtils.getCurrentUserDetails().orElse(null);
+        UUID addedById = userDetails != null ? userDetails.getId() : null;
+        String addedByName = userDetails != null ? userDetails.getFullName() : null;
+        TaskParticipantResponse response = participantService.addParticipant(id, request, addedById, addedByName);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(response));
+    }
+
+    @DeleteMapping("/{id}/participants/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Удалить участника из задачи")
+    public ResponseEntity<ApiResponse<Void>> removeParticipant(
+            @PathVariable UUID id,
+            @PathVariable UUID userId,
+            @RequestParam ParticipantRole role) {
+        participantService.removeParticipant(id, userId, role);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    // ─── Delegation ───
+
+    @PostMapping("/{id}/delegate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "Делегировать задачу другому пользователю",
+               description = "Текущий ответственный становится наблюдателем, новый — ответственным")
+    public ResponseEntity<ApiResponse<TaskResponse>> delegateTask(
+            @PathVariable UUID id,
+            @Valid @RequestBody DelegateTaskRequest request) {
+        UUID currentUserId = SecurityUtils.requireCurrentUserId();
+        participantService.delegateTask(id, currentUserId, request.delegateToId(),
+                request.delegateToName(), request.comment());
+        TaskResponse response = taskService.getTask(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

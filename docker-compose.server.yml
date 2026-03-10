@@ -1,0 +1,434 @@
+# =============================================================================
+# PRIVOD NEXT -- Lightweight server deploy (2 GB RAM VPS)
+# Usage: docker compose -f docker-compose.server.yml up -d --build
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: privod2_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: privod2
+      POSTGRES_USER: privod
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Pr1v0d_Pr0d_2025}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - privod2_pgdata:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/01-init-extensions.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U privod -d privod2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=64MB"
+      - "-c"
+      - "effective_cache_size=256MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=32MB"
+      - "-c"
+      - "max_connections=50"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - privod2
+
+  redis:
+    image: redis:7-alpine
+    container_name: privod2_redis
+    restart: always
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD:-r3d1s_pr1v0d}
+      --maxmemory 32mb
+      --maxmemory-policy allkeys-lru
+      --appendonly no
+      --save ""
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 48M
+    networks:
+      - privod2
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: privod2_backend
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/privod2
+      SPRING_DATASOURCE_USERNAME: privod
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-Pr1v0d_Pr0d_2025}
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 10
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 2
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-r3d1s_pr1v0d}
+      APP_JWT_SECRET: ${JWT_SECRET:-xR9pL2mK7vQ4tY0wA3cF6hJ8nBsE5gD1iO4zU7mX2qP9rT6yW3aD0fH5jLkN8}
+      APP_JWT_EXPIRATION_MS: 86400000
+      APP_STORAGE_ENDPOINT: http://minio:9000
+      APP_STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER:-privod_minio}
+      APP_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-m1n10_pr1v0d_2025}
+      APP_STORAGE_BUCKET: privod-files
+      CORS_ALLOWED_ORIGINS: ${CORS_ORIGINS:-http://localhost:3002,http://192.168.31.2:3002}
+      SPRING_MAIL_HOST: localhost
+      SPRING_MAIL_PORT: 25
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      JAVA_OPTS: >-
+        -Xms128m -Xmx384m
+        -XX:+UseG1GC
+        -XX:+UseStringDeduplication
+        -XX:MaxMetaspaceSize=128m
+        -XX:+UseContainerSupport
+        -Djava.security.egd=file:/dev/./urandom
+        -Dspring.jmx.enabled=false
+    ports:
+      - "127.0.0.1:8082:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - privod2
+
+  minio:
+    image: minio/minio:latest
+    container_name: privod2_minio
+    restart: always
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-privod_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-m1n10_pr1v0d_2025}
+    command: server /data --console-address ":9001"
+    volumes:
+      - privod2_minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+    networks:
+      - privod2
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: privod2_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set privod http://minio:9000 $${MINIO_ROOT_USER:-privod_minio} $${MINIO_ROOT_PASSWORD:-m1n10_pr1v0d_2025};
+      mc mb --ignore-existing privod/privod-files;
+      echo 'MinIO bucket ready';
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-privod_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-m1n10_pr1v0d_2025}
+    networks:
+      - privod2
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: privod2_frontend
+    restart: always
+    ports:
+      - "3002:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    networks:
+      - privod2
+
+  # Daily database backup (runs at 3:00 AM)
+  db-backup:
+    image: postgres:16-alpine
+    container_name: privod2_backup
+    restart: "no"
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD:-Pr1v0d_Pr0d_2025}
+    volumes:
+      - privod2_backups:/backups
+      - ./scripts/backup-db.sh:/backup.sh:ro
+    entrypoint: ["/bin/sh", "-c", "DB_HOST=postgres DB_PORT=5432 DB_USER=privod DB_NAME=privod2 BACKUP_DIR=/backups /backup.sh 30"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - privod2
+    profiles:
+      - backup
+
+  # ===========================================================================
+  # Monitoring stack (start with: --profile monitoring)
+  # ===========================================================================
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: privod2_prometheus
+    restart: always
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - privod2_prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    depends_on:
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - privod2
+    profiles:
+      - monitoring
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: privod2_alertmanager
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - privod2_alertmanager_data:/alertmanager
+    ports:
+      - "127.0.0.1:9093:9093"
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    networks:
+      - privod2
+    profiles:
+      - monitoring
+
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: privod2_node_exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - '/:/host:ro,rslave'
+    ports:
+      - "127.0.0.1:9100:9100"
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    networks:
+      - privod2
+    profiles:
+      - monitoring
+
+  # ===========================================================================
+  # PostgreSQL Replication (start with: --profile replication)
+  # For testing streaming replication locally.
+  # See docs/DATABASE_REPLICATION.md for full documentation.
+  # ===========================================================================
+  postgres-primary:
+    image: postgres:16-alpine
+    container_name: privod2_pg_primary
+    restart: always
+    environment:
+      POSTGRES_DB: privod2
+      POSTGRES_USER: privod
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Pr1v0d_Pr0d_2025}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      REPLICATION_USER: replicator
+      REPLICATION_PASSWORD: ${REPLICATION_PASSWORD:-repl_s3cure_2025}
+    volumes:
+      - privod2_pg_primary_data:/var/lib/postgresql/data
+      - privod2_wal_archive:/var/lib/postgresql/wal_archive
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/01-init-extensions.sh:ro
+      - ./monitoring/postgres/init-replication.sh:/docker-entrypoint-initdb.d/02-init-replication.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U privod -d privod2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "max_wal_senders=5"
+      - "-c"
+      - "wal_keep_size=256MB"
+      - "-c"
+      - "synchronous_standby_names=standby1"
+      - "-c"
+      - "archive_mode=on"
+      - "-c"
+      - "archive_command=cp %p /var/lib/postgresql/wal_archive/%f"
+      - "-c"
+      - "archive_timeout=60"
+      - "-c"
+      - "log_replication_commands=on"
+      - "-c"
+      - "shared_buffers=64MB"
+      - "-c"
+      - "effective_cache_size=256MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "max_connections=50"
+    ports:
+      - "127.0.0.1:5433:5432"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - privod2
+    profiles:
+      - replication
+
+  postgres-standby:
+    image: postgres:16-alpine
+    container_name: privod2_pg_standby
+    restart: always
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      PGUSER: privod
+      PGDATABASE: privod2
+    volumes:
+      - privod2_pg_standby_data:/var/lib/postgresql/data
+      - privod2_wal_archive:/var/lib/postgresql/wal_archive:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U privod -d privod2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        # Wait for primary to be ready
+        echo "Waiting for primary to be ready..."
+        until pg_isready -h postgres-primary -p 5432 -U privod; do
+          sleep 2
+        done
+
+        # If data directory is empty, do a base backup from primary
+        if [ ! -f "$${PGDATA}/PG_VERSION" ]; then
+          echo "Performing base backup from primary..."
+          rm -rf $${PGDATA}/*
+          PGPASSWORD=$${REPLICATION_PASSWORD:-repl_s3cure_2025} pg_basebackup \
+            -h postgres-primary \
+            -p 5432 \
+            -U replicator \
+            -D $${PGDATA} \
+            -Fp -Xs -R -P
+
+          # Ensure standby.signal exists (pg_basebackup -R creates it)
+          touch $${PGDATA}/standby.signal
+
+          # Configure standby
+          cat >> $${PGDATA}/postgresql.auto.conf <<-EOF
+        primary_conninfo = 'host=postgres-primary port=5432 user=replicator password=$${REPLICATION_PASSWORD:-repl_s3cure_2025} application_name=standby1'
+        hot_standby = on
+        hot_standby_feedback = on
+        restore_command = 'cp /var/lib/postgresql/wal_archive/%f %p || true'
+        EOF
+
+          echo "Base backup complete. Starting standby..."
+        fi
+
+        exec postgres \
+          -c hot_standby=on \
+          -c shared_buffers=64MB \
+          -c effective_cache_size=256MB \
+          -c max_connections=50
+    ports:
+      - "127.0.0.1:5434:5432"
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - privod2
+    profiles:
+      - replication
+
+volumes:
+  privod2_pgdata:
+    name: privod2_pgdata
+  privod2_minio:
+    name: privod2_minio
+  privod2_backups:
+    name: privod2_backups
+  privod2_prometheus_data:
+    name: privod2_prometheus_data
+  privod2_alertmanager_data:
+    name: privod2_alertmanager_data
+  privod2_pg_primary_data:
+    name: privod2_pg_primary_data
+  privod2_pg_standby_data:
+    name: privod2_pg_standby_data
+  privod2_wal_archive:
+    name: privod2_wal_archive
+
+networks:
+  privod2:
+    name: privod2
+    driver: bridge

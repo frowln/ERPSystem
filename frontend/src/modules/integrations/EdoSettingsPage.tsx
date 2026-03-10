@@ -95,6 +95,35 @@ const EdoSettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
   const [showSendModal, setShowSendModal] = useState(false);
+  const [sendForm, setSendForm] = useState({
+    provider: 'DIADOC',
+    docType: 'UPD',
+    recipientInn: '',
+    docNumber: '',
+    docName: '',
+    amount: '',
+  });
+
+  const sendDocumentMutation = useMutation({
+    mutationFn: (data: typeof sendForm) => integrationsApi.edo.sendDocument({
+      provider: data.provider,
+      docType: data.docType,
+      recipientInn: data.recipientInn,
+      number: data.docNumber,
+      name: data.docName,
+      amount: data.amount ? parseFloat(data.amount) : undefined,
+    }),
+    onSuccess: () => {
+      toast.success(t('integrations.edo.documentSent'));
+      setShowSendModal(false);
+      setSendForm({ provider: 'DIADOC', docType: 'UPD', recipientInn: '', docNumber: '', docName: '', amount: '' });
+      queryClient.invalidateQueries({ queryKey: ['edo-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['edo-status'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
+  });
 
   const { data: edoStatus } = useQuery<EdoStatusData>({
     queryKey: ['edo-status'],
@@ -279,7 +308,7 @@ const EdoSettingsPage: React.FC = () => {
       {/* Status card */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
             <FileText size={20} className="text-green-600" />
           </div>
           <div>
@@ -340,10 +369,12 @@ const EdoSettingsPage: React.FC = () => {
         footer={
           <>
             <Button variant="secondary" onClick={() => setShowSendModal(false)}>{t('integrations.edo.cancel')}</Button>
-            <Button iconLeft={<Send size={14} />} onClick={() => {
-              toast.success(t('integrations.edo.documentSent'));
-              setShowSendModal(false);
-            }}>
+            <Button
+              iconLeft={<Send size={14} />}
+              loading={sendDocumentMutation.isPending}
+              disabled={!sendForm.recipientInn.trim() || !sendForm.docNumber.trim() || !sendForm.docName.trim()}
+              onClick={() => sendDocumentMutation.mutate(sendForm)}
+            >
               {t('integrations.edo.sendBtn')}
             </Button>
           </>
@@ -357,7 +388,8 @@ const EdoSettingsPage: React.FC = () => {
                 { value: 'SBIS', label: t('integrations.edo.providerSbis') },
                 { value: 'KONTUR', label: t('integrations.edo.providerKontur') },
               ]}
-              defaultValue="DIADOC"
+              value={sendForm.provider}
+              onChange={(e) => setSendForm((p) => ({ ...p, provider: e.target.value }))}
             />
           </FormField>
           <FormField label={t('integrations.edo.fieldDocType')} required>
@@ -369,20 +401,38 @@ const EdoSettingsPage: React.FC = () => {
                 { value: 'WAYBILL', label: t('integrations.edo.docTypeWaybill') },
                 { value: 'CONTRACT', label: t('integrations.edo.docTypeContract') },
               ]}
-              defaultValue="UPD"
+              value={sendForm.docType}
+              onChange={(e) => setSendForm((p) => ({ ...p, docType: e.target.value }))}
             />
           </FormField>
           <FormField label={t('integrations.edo.fieldRecipientInn')} required>
-            <Input placeholder="7712345678" />
+            <Input
+              placeholder="7712345678"
+              value={sendForm.recipientInn}
+              onChange={(e) => setSendForm((p) => ({ ...p, recipientInn: e.target.value }))}
+            />
           </FormField>
           <FormField label={t('integrations.edo.fieldDocNumber')} required>
-            <Input placeholder={t('integrations.edo.placeholderDocNumber')} />
+            <Input
+              placeholder={t('integrations.edo.placeholderDocNumber')}
+              value={sendForm.docNumber}
+              onChange={(e) => setSendForm((p) => ({ ...p, docNumber: e.target.value }))}
+            />
           </FormField>
           <FormField label={t('integrations.edo.fieldDocName')} required>
-            <Input placeholder={t('integrations.edo.placeholderDocName')} />
+            <Input
+              placeholder={t('integrations.edo.placeholderDocName')}
+              value={sendForm.docName}
+              onChange={(e) => setSendForm((p) => ({ ...p, docName: e.target.value }))}
+            />
           </FormField>
           <FormField label={t('integrations.edo.fieldAmount')}>
-            <Input type="number" placeholder="0.00" />
+            <Input
+              type="number"
+              placeholder="0.00"
+              value={sendForm.amount}
+              onChange={(e) => setSendForm((p) => ({ ...p, amount: e.target.value }))}
+            />
           </FormField>
         </div>
       </Modal>

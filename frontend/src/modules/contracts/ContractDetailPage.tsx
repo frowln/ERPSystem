@@ -36,8 +36,9 @@ import { cn } from '@/lib/cn';
 import type { Contract, ContractStatus, ContractApproval } from '@/types';
 import ContractBudgetItemsTab from './ContractBudgetItemsTab';
 import ProcurementCompliancePanel from './components/ProcurementCompliancePanel';
+import toast from 'react-hot-toast';
 
-type DetailTab = 'overview' | 'approval' | 'documents' | 'FINANCE' | 'fmItems';
+type DetailTab = 'overview' | 'approval' | 'documents' | 'finance' | 'fmItems';
 
 type ContractDocument = {
   id: string;
@@ -60,6 +61,9 @@ const ContractDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [ 'CONTRACT', id] });
       queryClient.invalidateQueries({ queryKey: ['CONTRACTS'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -165,7 +169,7 @@ const ContractDetailPage: React.FC = () => {
           { id: 'overview', label: t('contracts.detail.tabOverview') },
           { id: 'approval', label: t('contracts.detail.tabApproval') },
           { id: 'documents', label: t('contracts.detail.tabDocuments') },
-          { id: 'FINANCE', label: t('contracts.detail.tabFinance') },
+          { id: 'finance', label: t('contracts.detail.tabFinance') },
           { id: 'fmItems', label: t('contracts.detail.tabFmItems') },
         ]}
         activeTab={activeTab}
@@ -211,7 +215,7 @@ const ContractDetailPage: React.FC = () => {
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-4">{t('contracts.detail.contractInfo')}</h3>
 
               {c?.notes && (
-                <p className="text-sm text-neutral-600 leading-relaxed mb-6 pb-6 border-b border-neutral-100">
+                <p className="text-sm text-neutral-600 leading-relaxed mb-6 pb-6 border-b border-neutral-100 dark:border-neutral-700">
                   {c.notes}
                 </p>
               )}
@@ -263,7 +267,7 @@ const ContractDetailPage: React.FC = () => {
                   <p className="text-lg font-semibold text-primary-700 tabular-nums">{formatMoney(c?.totalWithVat ?? 0)}</p>
                 </div>
                 {(c?.retentionPercent ?? 0) > 0 && (
-                  <div className="pt-4 border-t border-neutral-100">
+                  <div className="pt-4 border-t border-neutral-100 dark:border-neutral-700">
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">{t('contracts.detail.retentionGuarantee')}</p>
                     <p className="text-sm font-medium text-warning-600 tabular-nums">
                       {c?.retentionPercent}% ({formatMoney((c?.totalWithVat ?? 0) * (c?.retentionPercent ?? 0) / 100)})
@@ -291,7 +295,7 @@ const ContractDetailPage: React.FC = () => {
                   <InfoItem icon={<FileText size={15} />} label={t('contracts.insurance.policyNumber')} value={c.insurancePolicyNumber} />
                 )}
                 {c.insuranceAmount != null && c.insuranceAmount > 0 && (
-                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.amount')} value={`${c.insuranceAmount.toLocaleString('ru-RU')} ₽`} />
+                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.amount')} value={formatMoney(c.insuranceAmount)} />
                 )}
                 {c.insuranceExpiryDate && (
                   <InfoItem icon={<CalendarDays size={15} />} label={t('contracts.insurance.expiryDate')} value={c.insuranceExpiryDate} />
@@ -300,13 +304,13 @@ const ContractDetailPage: React.FC = () => {
                   <InfoItem icon={<Shield size={15} />} label={t('contracts.insurance.performanceBondNumber')} value={c.performanceBondNumber} />
                 )}
                 {c.performanceBondAmount != null && c.performanceBondAmount > 0 && (
-                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.performanceBondAmount')} value={`${c.performanceBondAmount.toLocaleString('ru-RU')} ₽`} />
+                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.performanceBondAmount')} value={formatMoney(c.performanceBondAmount)} />
                 )}
                 {c.paymentBondNumber && (
                   <InfoItem icon={<Shield size={15} />} label={t('contracts.insurance.paymentBondNumber')} value={c.paymentBondNumber} />
                 )}
                 {c.paymentBondAmount != null && c.paymentBondAmount > 0 && (
-                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.paymentBondAmount')} value={`${c.paymentBondAmount.toLocaleString('ru-RU')} ₽`} />
+                  <InfoItem icon={<DollarSign size={15} />} label={t('contracts.insurance.paymentBondAmount')} value={formatMoney(c.paymentBondAmount)} />
                 )}
               </div>
             </div>
@@ -319,7 +323,7 @@ const ContractDetailPage: React.FC = () => {
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-6">{t('contracts.detail.approvalStages')}</h3>
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-4 top-8 bottom-8 w-px bg-neutral-200" />
+            <div className="absolute left-4 top-8 bottom-8 w-px bg-neutral-200 dark:bg-neutral-700" />
 
             <div className="space-y-6">
               {(approvals ?? []).map((approval, idx) => (
@@ -358,7 +362,7 @@ const ContractDetailPage: React.FC = () => {
                         }
                       />
                     </div>
-                    <p className="text-sm text-neutral-600">{approval.approverName}</p>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">{approval.approverName}</p>
                     {approval.comment && (
                       <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1 italic">"{approval.comment}"</p>
                     )}
@@ -380,13 +384,13 @@ const ContractDetailPage: React.FC = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard icon={<FileText size={18} />} label={t('contracts.detail.documentsCount')} value={String(0)} />
-            <MetricCard icon={<Receipt size={18} />} label="КС-2" value="1" />
-            <MetricCard icon={<Receipt size={18} />} label="КС-3" value="1" />
+            <MetricCard icon={<Receipt size={18} />} label={t('contracts.detail.ks2Label')} value="1" />
+            <MetricCard icon={<Receipt size={18} />} label={t('contracts.detail.ks3Label')} value="1" />
             <MetricCard icon={<Clock size={18} />} label={t('contracts.detail.lastChange')} value={formatDate(c?.updatedAt ?? '')} />
           </div>
 
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-            <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
+            <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('contracts.detail.documentPackage')}</h3>
               <div className="flex items-center gap-2">
                 <Button variant="secondary" size="sm" onClick={() => navigate('/russian-docs/list')}>
@@ -410,8 +414,8 @@ const ContractDetailPage: React.FC = () => {
                 {([] as any[]).map((doc) => (
                   <tr key={doc.id} className="border-b border-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-800">
                     <td className="px-5 py-3 text-sm text-neutral-700 dark:text-neutral-300">{doc.docType}</td>
-                    <td className="px-5 py-3 text-sm font-mono text-neutral-600">{doc.number}</td>
-                    <td className="px-5 py-3 text-sm tabular-nums text-neutral-600">{formatDate(doc.date)}</td>
+                    <td className="px-5 py-3 text-sm font-mono text-neutral-600 dark:text-neutral-400">{doc.number}</td>
+                    <td className="px-5 py-3 text-sm tabular-nums text-neutral-600 dark:text-neutral-400">{formatDate(doc.date)}</td>
                     <td className="px-5 py-3 text-sm text-neutral-700 dark:text-neutral-300">{doc.status}</td>
                   </tr>
                 ))}
@@ -421,7 +425,7 @@ const ContractDetailPage: React.FC = () => {
         </div>
       )}
 
-      {activeTab === 'FINANCE' && (
+      {activeTab === 'finance' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard
@@ -457,7 +461,7 @@ const ContractDetailPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contracts.detail.invoicedProgress')}</p>
-                  <p className="text-xs font-medium text-neutral-600 tabular-nums">
+                  <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400 tabular-nums">
                     {formatMoney(c?.totalInvoiced ?? 0)} / {formatMoney(c?.totalWithVat ?? 0)}
                   </p>
                 </div>
@@ -473,7 +477,7 @@ const ContractDetailPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contracts.detail.paidProgress')}</p>
-                  <p className="text-xs font-medium text-neutral-600 tabular-nums">
+                  <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400 tabular-nums">
                     {formatMoney(c?.totalPaid ?? 0)} / {formatMoney(c?.totalWithVat ?? 0)}
                   </p>
                 </div>
@@ -490,7 +494,7 @@ const ContractDetailPage: React.FC = () => {
 
               {/* Retention info */}
               {(c?.retentionPercent ?? 0) > 0 && (
-                <div className="pt-4 border-t border-neutral-100">
+                <div className="pt-4 border-t border-neutral-100 dark:border-neutral-700">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('contracts.detail.retentionGuarantee')} ({c?.retentionPercent}%)</p>
@@ -540,7 +544,7 @@ const ContractDetailPage: React.FC = () => {
               className={cn(
                 'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors',
                 status === c?.status
-                  ? 'bg-primary-50 border border-primary-200 cursor-default'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 cursor-default'
                   : 'hover:bg-neutral-50 dark:hover:bg-neutral-800 border border-transparent',
               )}
             >

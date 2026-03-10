@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { Save, Settings, ArrowRight, Plus, Trash2, RefreshCw, Database, Table2 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
@@ -112,7 +113,7 @@ const MappingConfigPage: React.FC = () => {
             <Button variant="outline" iconLeft={<RefreshCw size={16} />} onClick={() => setEditedMappings(null)}>
               {t('dataExchange.resetButton')}
             </Button>
-            <Button iconLeft={<Save size={16} />}>
+            <Button iconLeft={<Save size={16} />} onClick={() => toast(t('common.operationStarted'))}>
               {t('dataExchange.saveButton')}
             </Button>
           </div>

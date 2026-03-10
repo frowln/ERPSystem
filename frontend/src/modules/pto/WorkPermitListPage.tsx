@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, ShieldCheck } from 'lucide-react';
@@ -58,6 +59,7 @@ const WorkPermitListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data: paginatedData, isLoading } = useQuery({
     queryKey: ['work-permits'],
     queryFn: () => ptoApi.getWorkPermits(),
@@ -157,7 +159,7 @@ const WorkPermitListPage: React.FC = () => {
           { label: t('pto.breadcrumbPto') },
           { label: t('pto.breadcrumbWorkPermits') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('pto.wpListNewPermit')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/pto/work-permits/new')}>{t('pto.wpListNewPermit')}</Button>}
         tabs={[
           { id: 'all', label: t('pto.wpListTabAll'), count: permits.length },
           { id: 'ACTIVE', label: t('pto.wpListTabActive'), count: activeCount },

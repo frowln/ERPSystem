@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Search, FileText, Download, File, Image, FileSpreadsheet, Clock } from 'lucide-react';
+import { Search, FileText, Download, File, Image, FileSpreadsheet, Clock, Archive } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { DataTable } from '@/design-system/components/DataTable';
 import { MetricCard } from '@/design-system/components/MetricCard';
@@ -26,7 +26,8 @@ const getCategoryFilterOptions = () => [
 const getFileIcon = (fileName: string) => {
   if (fileName.endsWith('.pdf')) return <File size={16} className="text-danger-500" />;
   if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) return <FileSpreadsheet size={16} className="text-success-500" />;
-  if (fileName.endsWith('.jpg') || fileName.endsWith('.png') || fileName.endsWith('.zip')) return <Image size={16} className="text-primary-500" />;
+  if (fileName.endsWith('.zip') || fileName.endsWith('.rar') || fileName.endsWith('.7z')) return <Archive size={16} className="text-amber-500" />;
+  if (fileName.endsWith('.jpg') || fileName.endsWith('.png') || fileName.endsWith('.jpeg') || fileName.endsWith('.gif')) return <Image size={16} className="text-primary-500" />;
   return <FileText size={16} className="text-neutral-400" />;
 };
 
@@ -65,8 +66,21 @@ const PortalDocumentListPage: React.FC = () => {
     projectCount: new Set(documents.map((d) => d.projectId)).size,
   }), [documents]);
 
-  const handleDownload = useCallback((doc: PortalDocument) => {
-    toast.success(t('portal.documents.downloadStarted', { fileName: doc.fileName }));
+  const handleDownload = useCallback(async (doc: PortalDocument) => {
+    try {
+      toast.success(t('portal.documents.downloadStarted', { fileName: doc.fileName }));
+      const blob = await portalApi.downloadDocument(doc.id);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = doc.fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t('common.operationError'));
+    }
   }, []);
 
   const columns = useMemo<ColumnDef<PortalDocument, unknown>[]>(() => {
@@ -107,7 +121,7 @@ const PortalDocumentListPage: React.FC = () => {
     },
     {
       accessorKey: 'sharedAt', header: t('portal.documents.colDate'), size: 110,
-      cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span>,
+      cell: ({ getValue }) => <span className="text-neutral-600 dark:text-neutral-400 tabular-nums">{formatDate(getValue<string>())}</span>,
     },
     {
       id: 'actions', header: '', size: 90,

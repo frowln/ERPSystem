@@ -174,6 +174,9 @@ const DailyLogDetailPage: React.FC = () => {
       toast.success(t('operations.dailyLogDetail.deleteSuccess'));
       navigate('/operations/daily-logs');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const handleDelete = async () => {

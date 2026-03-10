@@ -96,6 +96,9 @@ const BimLinkedClashesPanel: React.FC<BimLinkedClashesPanelProps> = ({
       setClashSearch('');
       setSelectedClashId(null);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const unlinkMutation = useMutation({
@@ -104,6 +107,9 @@ const BimLinkedClashesPanel: React.FC<BimLinkedClashesPanelProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bim-linked-clashes', entityType, entityId] });
       toast.success(t('bim.linking.toastUnlinked'));
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

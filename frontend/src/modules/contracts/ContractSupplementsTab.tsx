@@ -4,7 +4,7 @@ import { Plus, Check, PenLine, ChevronDown, ChevronRight, FileText } from 'lucid
 import toast from 'react-hot-toast';
 import { Button } from '@/design-system/components/Button';
 import { Modal } from '@/design-system/components/Modal';
-import { FormField } from '@/design-system/components/FormField';
+import { FormField, Input, Textarea } from '@/design-system/components/FormField';
 import { formatMoney, formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import {
@@ -137,8 +137,6 @@ const ContractSupplementsTab: React.FC<Props> = ({ contractId, contractAmount, r
     .filter((s) => s.status === 'SIGNED')
     .reduce((sum, s) => sum + (s.amountChange ?? 0), 0);
 
-  const inputCls = 'w-full px-3 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500';
-
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -266,36 +264,30 @@ const ContractSupplementsTab: React.FC<Props> = ({ contractId, contractAmount, r
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <FormField label={t("contracts.supplements.fieldNumber")} required>
-              <input value={form.number} onChange={(e) => setF('number', e.target.value)}
-                placeholder={t("contracts.supplements.fieldNumberPlaceholder")} className={inputCls} />
+              <Input value={form.number} onChange={(e) => setF('number', e.target.value)} placeholder={t("contracts.supplements.fieldNumberPlaceholder")} />
             </FormField>
             <FormField label={t("contracts.supplements.fieldDate")} required>
-              <input type="date" value={form.supplementDate} onChange={(e) => setF('supplementDate', e.target.value)} className={inputCls} />
+              <Input type="date" value={form.supplementDate} onChange={(e) => setF('supplementDate', e.target.value)} />
             </FormField>
           </div>
 
           <FormField label={t("contracts.supplements.fieldReason")}>
-            <input value={form.reason} onChange={(e) => setF('reason', e.target.value)}
-              placeholder={t("contracts.supplements.fieldReasonPlaceholder")} className={inputCls} />
+            <Input value={form.reason} onChange={(e) => setF('reason', e.target.value)} placeholder={t("contracts.supplements.fieldReasonPlaceholder")} />
           </FormField>
 
           <FormField label={t("contracts.supplements.fieldDescription")}>
-            <textarea value={form.description} onChange={(e) => setF('description', e.target.value)}
-              rows={3} className={`${inputCls} resize-none`}
-              placeholder={t("contracts.supplements.fieldDescriptionPlaceholder")} />
+            <Textarea value={form.description} onChange={(e) => setF('description', e.target.value)} rows={3} placeholder={t("contracts.supplements.fieldDescriptionPlaceholder")} />
           </FormField>
 
           <div className="grid grid-cols-3 gap-3">
             <FormField label={t("contracts.supplements.fieldAmountChange")} hint={t("contracts.supplements.fieldAmountChangeHint")}>
-              <input type="number" value={form.amountChange} onChange={(e) => setF('amountChange', e.target.value)}
-                step="0.01" className={inputCls} />
+              <Input type="number" value={form.amountChange} onChange={(e) => setF('amountChange', e.target.value)} />
             </FormField>
             <FormField label={t("contracts.supplements.fieldDeadlineChange")} hint={t("contracts.supplements.fieldDeadlineChangeHint")}>
-              <input type="number" value={form.deadlineChange} onChange={(e) => setF('deadlineChange', e.target.value)}
-                step="1" className={inputCls} />
+              <Input type="number" value={form.deadlineChange} onChange={(e) => setF('deadlineChange', e.target.value)} />
             </FormField>
             <FormField label={t("contracts.supplements.fieldNewDeadline")}>
-              <input type="date" value={form.newDeadline} onChange={(e) => setF('newDeadline', e.target.value)} className={inputCls} />
+              <Input type="date" value={form.newDeadline} onChange={(e) => setF('newDeadline', e.target.value)} />
             </FormField>
           </div>
 

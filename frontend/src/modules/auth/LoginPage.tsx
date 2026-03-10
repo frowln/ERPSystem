@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Building2, Eye, EyeOff } from 'lucide-react';
+import { Building2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input } from '@/design-system/components/FormField';
 import { useAuthStore } from '@/stores/authStore';
-import { authApi } from '@/api/auth';
+import { authApi, type TwoFactorRequired } from '@/api/auth';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
 
@@ -30,6 +30,8 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [twoFactorState, setTwoFactorState] = useState<TwoFactorRequired | null>(null);
+  const [otpCode, setOtpCode] = useState('');
 
   const {
     register,
@@ -43,24 +45,51 @@ const LoginPage: React.FC = () => {
     },
   });
 
+  const completeLogin = (response: { user: any; token: string }) => {
+    setAuth(response.user, response.token);
+    toast.success(t('auth.welcomeMessage'));
+    const redirectTo = redirectAfterLogin ?? '/';
+    setRedirectAfterLogin(null);
+    navigate(redirectTo, { replace: true });
+  };
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setServerError(null);
 
     try {
       const response = await authApi.login(data);
-      setAuth(response.user, response.token);
-      toast.success(t('auth.welcomeMessage'));
-      const redirectTo = redirectAfterLogin ?? '/';
-      setRedirectAfterLogin(null);
-      navigate(redirectTo, { replace: true });
+      if ('requiresTwoFactor' in response && response.requiresTwoFactor) {
+        setTwoFactorState(response);
+        setIsLoading(false);
+        return;
+      }
+      completeLogin(response as { user: any; token: string });
     } catch (err: unknown) {
       const error = err as { response?: { status?: number; data?: { message?: string } } };
       if (error.response?.status === 401) {
         setServerError(t('auth.invalidCredentials'));
+      } else if (error.response?.status === 423) {
+        setServerError(error.response?.data?.message ?? t('auth.accountLocked'));
       } else {
         setServerError(error.response?.data?.message ?? t('auth.loginError'));
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmit2fa = async () => {
+    if (!twoFactorState || !otpCode.trim()) return;
+    setIsLoading(true);
+    setServerError(null);
+
+    try {
+      const response = await authApi.verify2fa(twoFactorState.tempToken, otpCode.trim());
+      completeLogin(response);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setServerError(error.response?.data?.message ?? t('auth.invalid2faCode'));
     } finally {
       setIsLoading(false);
     }
@@ -137,6 +166,45 @@ const LoginPage: React.FC = () => {
             </div>
           )}
 
+          {/* 2FA Code Entry */}
+          {twoFactorState ? (
+            <div className="space-y-5">
+              <div className="flex items-center gap-3 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                <ShieldCheck className="h-6 w-6 text-primary-600 dark:text-primary-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-primary-800 dark:text-primary-300">{t('auth.twoFactorRequired')}</p>
+                  <p className="text-xs text-primary-600 dark:text-primary-400 mt-0.5">{t('auth.twoFactorHint')}</p>
+                </div>
+              </div>
+
+              <FormField label={t('auth.twoFactorCode')} htmlFor="otp-code">
+                <Input
+                  id="otp-code"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={8}
+                  placeholder="000000"
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                  autoFocus
+                  className="text-center text-lg tracking-[0.3em] font-mono"
+                />
+              </FormField>
+
+              <Button type="button" fullWidth loading={isLoading} size="lg" onClick={onSubmit2fa} disabled={otpCode.length < 6}>
+                {t('auth.verifyCode')}
+              </Button>
+
+              <button
+                type="button"
+                onClick={() => { setTwoFactorState(null); setOtpCode(''); setServerError(null); }}
+                className="w-full text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              >
+                {t('auth.backToLogin')}
+              </button>
+            </div>
+          ) : (
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <FormField label={t('auth.email')} htmlFor="login-email" error={errors.email?.message} required>
               <Input
@@ -179,21 +247,22 @@ const LoginPage: React.FC = () => {
                 />
                 <span className="text-sm text-neutral-600 dark:text-neutral-400">{t('auth.rememberMe')}</span>
               </label>
-              <button type="button" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+              <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                 {t('auth.forgotPassword')}
-              </button>
+              </Link>
             </div>
 
             <Button type="submit" fullWidth loading={isLoading} size="lg">
               {t('auth.login')}
             </Button>
           </form>
+          )}
 
           <p className="mt-8 text-center text-sm text-neutral-500 dark:text-neutral-400">
             {t('auth.noAccount')}{' '}
-            <button className="text-primary-600 hover:text-primary-700 font-medium">
-              {t('auth.contactAdmin')}
-            </button>
+            <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
+              {t('auth.register')}
+            </Link>
           </p>
 
           {import.meta.env.DEV && (

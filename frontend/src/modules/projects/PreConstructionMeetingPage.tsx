@@ -38,27 +38,39 @@ const PreConstructionMeetingPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['meeting', projectId] });
       toast.success(t('common.saved'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const updateMutation = useMutation({
     mutationFn: (data: Partial<PreConstructionMeeting>) => meetingsApi.updateMeeting(projectId!, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['meeting', projectId] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const toggleDecision = useMutation({
     mutationFn: (decisionId: string) => meetingsApi.toggleDecision(projectId!, decisionId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['meeting', projectId] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const toggleAction = useMutation({
     mutationFn: (actionId: string) => meetingsApi.toggleActionItem(projectId!, actionId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['meeting', projectId] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   if (!meeting) {
     return (
       <div className="space-y-6">
-        <PageHeader title={t('projects.meeting.title')} subtitle={t('projects.meeting.subtitle')} />
+        <PageHeader title={t('projects.meeting.title')} subtitle={t('projects.meeting.subtitle')} backTo={`/projects/${projectId}?tab=preConstruction`} />
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-12 text-center">
           <ClipboardList size={48} className="mx-auto text-neutral-300 dark:text-neutral-600 mb-4" />
           <p className="text-neutral-500 dark:text-neutral-400 mb-4">{t('projects.meeting.empty')}</p>
@@ -109,7 +121,11 @@ const PreConstructionMeetingPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t('projects.meeting.title')} subtitle={t('projects.meeting.subtitle')} />
+      <PageHeader
+        title={t('projects.meeting.title')}
+        subtitle={t('projects.meeting.subtitle')}
+        backTo={`/projects/${projectId}?tab=preConstruction`}
+      />
 
       {/* Meeting Info */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
@@ -118,10 +134,22 @@ const PreConstructionMeetingPage: React.FC = () => {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-            <Calendar size={15} /> {meeting.date}
+            <Calendar size={15} />
+            <Input
+              type="date"
+              value={meeting.date}
+              onChange={e => updateMutation.mutate({ date: e.target.value })}
+              className="h-8 text-sm"
+            />
           </div>
           <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-            <MapPin size={15} /> {meeting.location ?? t('projects.meeting.noLocation')}
+            <MapPin size={15} />
+            <Input
+              value={meeting.location ?? ''}
+              onChange={e => updateMutation.mutate({ location: e.target.value })}
+              placeholder={t('projects.meeting.noLocation')}
+              className="h-8 text-sm"
+            />
           </div>
           <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
             <Users size={15} /> {meeting.attendees.length} {t('projects.meeting.attendeesCount')}

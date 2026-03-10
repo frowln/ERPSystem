@@ -9,7 +9,7 @@ import { cn } from '@/lib/cn';
 import { planningApi } from '@/api/planning';
 import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
-import type { EvmMetrics } from './types';
+import type { EvmMetrics, EvmTrendPoint } from './types';
 import type { Project, PaginatedResponse } from '@/types';
 
 const defaultEvmMetrics: EvmMetrics = {
@@ -23,12 +23,12 @@ const defaultEvmMetrics: EvmMetrics = {
   sCurveData: [],
 };
 
-function GaugeIndicator({ value, label, thresholds }: { value: number; label: string; thresholds: { good: number; warning: number } }) {
-  const isGood = value >= thresholds.good;
-  const isWarning = value >= thresholds.warning && value < thresholds.good;
-  const color = isGood ? 'text-success-600' : isWarning ? 'text-warning-600' : 'text-danger-600';
-  const bgColor = isGood ? 'bg-success-100' : isWarning ? 'bg-warning-100' : 'bg-danger-100';
-  const ringColor = isGood ? 'ring-success-200' : isWarning ? 'ring-warning-200' : 'ring-danger-200';
+function GaugeIndicator({ value, label, thresholds, inverted }: { value: number; label: string; thresholds: { good: number; warning: number }; inverted?: boolean }) {
+  const isGood = inverted ? value <= thresholds.good : value >= thresholds.good;
+  const isWarning = inverted ? (value > thresholds.good && value <= thresholds.warning) : (value >= thresholds.warning && value < thresholds.good);
+  const color = isGood ? 'text-success-600 dark:text-success-400' : isWarning ? 'text-warning-600 dark:text-warning-400' : 'text-danger-600 dark:text-danger-400';
+  const bgColor = isGood ? 'bg-success-100 dark:bg-success-900/30' : isWarning ? 'bg-warning-100 dark:bg-warning-900/30' : 'bg-danger-100 dark:bg-danger-900/30';
+  const ringColor = isGood ? 'ring-success-200 dark:ring-success-800' : isWarning ? 'ring-warning-200 dark:ring-warning-800' : 'ring-danger-200 dark:ring-danger-800';
 
   return (
     <div className="flex flex-col items-center">
@@ -70,11 +70,26 @@ const EvmDashboardPage: React.FC = () => {
     throwOnError: false,
   });
 
+  const { data: trendData } = useQuery<EvmTrendPoint[]>({
+    queryKey: ['evm-trend', selectedProjectId],
+    queryFn: () => planningApi.getEvmTrend(selectedProjectId),
+    enabled: !!selectedProjectId,
+    retry: false,
+    throwOnError: false,
+  });
+
   const evm = data ?? defaultEvmMetrics;
   const scheduleStatus = evm.spi >= 0.95 ? 'green' : evm.spi >= 0.85 ? 'yellow' : 'red';
   const costStatus = evm.cpi >= 0.95 ? 'green' : evm.cpi >= 0.85 ? 'yellow' : 'red';
 
-  const sCurve = evm.sCurveData ?? [];
+  // Use trend data for S-curve, fallback to sCurveData from snapshot
+  const trendPoints = (trendData ?? []).map((pt) => ({
+    period: pt.snapshotDate,
+    pv: Number(pt.pv) || 0,
+    ev: Number(pt.ev) || 0,
+    ac: Number(pt.ac) || 0,
+  }));
+  const sCurve = trendPoints.length > 0 ? trendPoints : (evm.sCurveData ?? []);
   const maxVal = sCurve.length > 0 ? Math.max(...sCurve.map((d) => Math.max(d.pv, d.ev, d.ac))) : 1;
 
   return (
@@ -125,7 +140,7 @@ const EvmDashboardPage: React.FC = () => {
           <div className="flex items-center justify-around">
             <GaugeIndicator value={evm.spi} label={t('planning.evm.spiLabel')} thresholds={{ good: 0.95, warning: 0.85 }} />
             <GaugeIndicator value={evm.cpi} label={t('planning.evm.cpiLabel')} thresholds={{ good: 0.95, warning: 0.85 }} />
-            <GaugeIndicator value={evm.tcpiEac} label={t('planning.evm.tcpiLabel')} thresholds={{ good: 0.95, warning: 1.1 }} />
+            <GaugeIndicator value={evm.tcpiEac} label={t('planning.evm.tcpiLabel')} thresholds={{ good: 1.0, warning: 1.1 }} inverted />
           </div>
         </div>
 
@@ -175,46 +190,57 @@ const EvmDashboardPage: React.FC = () => {
         <div className="flex items-center gap-6 mb-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm bg-primary-400" />
-            <span className="text-xs text-neutral-600">{t('planning.evm.legendPv')}</span>
+            <span className="text-xs text-neutral-600 dark:text-neutral-400">{t('planning.evm.legendPv')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm bg-success-500" />
-            <span className="text-xs text-neutral-600">{t('planning.evm.legendEv')}</span>
+            <span className="text-xs text-neutral-600 dark:text-neutral-400">{t('planning.evm.legendEv')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm bg-danger-400" />
-            <span className="text-xs text-neutral-600">{t('planning.evm.legendAc')}</span>
+            <span className="text-xs text-neutral-600 dark:text-neutral-400">{t('planning.evm.legendAc')}</span>
           </div>
         </div>
 
-        {/* Simple bar chart */}
+        {/* S-curve bar chart */}
+        {sCurve.length > 0 ? (
         <div className="flex items-end gap-1 h-48">
           {sCurve.map((point, idx) => (
             <div key={idx} className="flex-1 flex items-end gap-px">
               <div
-                className="flex-1 bg-primary-200 rounded-t-sm"
+                className="flex-1 bg-primary-200 dark:bg-primary-800 rounded-t-sm"
                 style={{ height: `${(point.pv / maxVal) * 100}%` }}
                 title={`PV: ${formatMoneyCompact(point.pv)}`}
               />
               <div
-                className="flex-1 bg-success-400 rounded-t-sm"
+                className="flex-1 bg-success-400 dark:bg-success-600 rounded-t-sm"
                 style={{ height: `${(point.ev / maxVal) * 100}%` }}
                 title={`EV: ${formatMoneyCompact(point.ev)}`}
               />
               <div
-                className="flex-1 bg-danger-300 rounded-t-sm"
+                className="flex-1 bg-danger-300 dark:bg-danger-700 rounded-t-sm"
                 style={{ height: `${(point.ac / maxVal) * 100}%` }}
                 title={`AC: ${formatMoneyCompact(point.ac)}`}
               />
             </div>
           ))}
         </div>
+        ) : (
+          <div className="flex items-center justify-center h-48 text-neutral-400 dark:text-neutral-500">
+            {t('planning.evm.selectProject')}
+          </div>
+        )}
         <div className="flex gap-1 mt-1">
-          {sCurve.map((point, idx) => (
-            <div key={idx} className="flex-1 text-center">
-              <span className="text-[10px] text-neutral-400 leading-none">{point.period.slice(0, 3)}</span>
-            </div>
-          ))}
+          {sCurve.map((point, idx) => {
+            const label = point.period.length >= 7
+              ? new Date(point.period + 'T00:00:00').toLocaleDateString('ru-RU', { month: 'short' })
+              : point.period.slice(0, 3);
+            return (
+              <div key={idx} className="flex-1 text-center">
+                <span className="text-[10px] text-neutral-400 leading-none">{label}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -227,7 +253,7 @@ function VarianceRow({ label, value, isPositiveGood }: { label: string; value: n
 
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-neutral-600">{label}</span>
+      <span className="text-sm text-neutral-600 dark:text-neutral-400">{label}</span>
       <div className="flex items-center gap-2">
         {isGood ? (
           <TrendingUp size={14} className="text-success-500" />

@@ -71,6 +71,11 @@ export const contractsApi = {
     return response.data;
   },
 
+  getContractTypes: async (): Promise<{ id: string; code: string; name: string }[]> => {
+    const response = await apiClient.get<{ id: string; code: string; name: string }[]>('/contracts/types');
+    return response.data;
+  },
+
   getContractDashboard: async (projectId?: string): Promise<ContractDashboard> => {
     const response = await apiClient.get<ContractDashboard>('/contracts/dashboard', {
       params: projectId ? { projectId } : undefined,

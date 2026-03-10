@@ -14,12 +14,13 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
-import { FormField, Input, Select } from '@/design-system/components/FormField';
+import { FormField, Input, Select, Textarea } from '@/design-system/components/FormField';
 import { portalApi } from '@/api/portal';
 import { projectsApi } from '@/api/projects';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
+import type { ColumnDef } from '@tanstack/react-table';
 import type { PortalTask, PortalTaskStatus, PortalTaskPriority, CreatePortalTaskRequest } from './types';
 
 const tp = (k: string) => t(`portal.tasks.${k}`);
@@ -36,6 +37,26 @@ const priorityColorMap: Record<PortalTaskPriority, string> = {
   MEDIUM: 'blue',
   HIGH: 'yellow',
   URGENT: 'red',
+};
+
+const getPriorityLabel = (priority: PortalTaskPriority): string => {
+  const map: Record<PortalTaskPriority, string> = {
+    LOW: 'priorityLow',
+    MEDIUM: 'priorityMedium',
+    HIGH: 'priorityHigh',
+    URGENT: 'priorityUrgent',
+  };
+  return tp(map[priority]);
+};
+
+const getStatusLabel = (status: PortalTaskStatus): string => {
+  const map: Record<PortalTaskStatus, string> = {
+    PENDING: 'statusPending',
+    IN_PROGRESS: 'statusInProgress',
+    COMPLETED: 'statusCompleted',
+    CANCELLED: 'statusCancelled',
+  };
+  return tp(map[status]);
 };
 
 const PortalTaskListPage: React.FC = () => {
@@ -74,12 +95,12 @@ const PortalTaskListPage: React.FC = () => {
 
   const metrics = useMemo(() => ({
     total: tasks.length,
-    pending: tasks.filter((t) => t.status === 'PENDING').length,
-    inProgress: tasks.filter((t) => t.status === 'IN_PROGRESS').length,
-    completed: tasks.filter((t) => t.status === 'COMPLETED').length,
+    pending: tasks.filter((tk) => tk.status === 'PENDING').length,
+    inProgress: tasks.filter((tk) => tk.status === 'IN_PROGRESS').length,
+    completed: tasks.filter((tk) => tk.status === 'COMPLETED').length,
   }), [tasks]);
 
-  const overdue = tasks.filter((t) => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'COMPLETED' && t.status !== 'CANCELLED').length;
+  const overdue = tasks.filter((tk) => tk.dueDate && new Date(tk.dueDate) < new Date() && tk.status !== 'COMPLETED' && tk.status !== 'CANCELLED').length;
 
   const tabs = [
     { id: 'all', label: tp('tabAll'), count: metrics.total },
@@ -98,14 +119,14 @@ const PortalTaskListPage: React.FC = () => {
   ];
 
   const createMutation = useMutation({
-    mutationFn: (data: CreatePortalTaskRequest) => portalApi.createTask(data),
+    mutationFn: (req: CreatePortalTaskRequest) => portalApi.createTask(req),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portal-tasks'] });
       toast.success(tp('createSuccess'));
       setShowCreate(false);
       resetForm();
     },
-    onError: () => toast.error(tp('createError')),
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const statusMutation = useMutation({
@@ -117,7 +138,7 @@ const PortalTaskListPage: React.FC = () => {
       setCompletionTaskId(null);
       setCompletionNote('');
     },
-    onError: () => toast.error(tp('statusError')),
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const resetForm = () => {
@@ -140,11 +161,11 @@ const PortalTaskListPage: React.FC = () => {
     });
   }, [formPortalUserId, formProjectId, formTitle, formDescription, formPriority, formDueDate]);
 
-  const columns = [
+  const columns: ColumnDef<PortalTask, unknown>[] = [
     {
       accessorKey: 'title',
       header: tp('colTitle'),
-      cell: ({ row }: { row: { original: PortalTask } }) => (
+      cell: ({ row }) => (
         <div>
           <span className="font-medium text-neutral-900 dark:text-neutral-100">{row.original.title}</span>
           {row.original.description && (
@@ -160,29 +181,35 @@ const PortalTaskListPage: React.FC = () => {
     {
       accessorKey: 'projectName',
       header: tp('colProject'),
-      cell: ({ row }: { row: { original: PortalTask } }) => row.original.projectName || '—',
+      cell: ({ row }) => row.original.projectName || '\u2014',
     },
     {
       accessorKey: 'priority',
       header: tp('colPriority'),
-      cell: ({ row }: { row: { original: PortalTask } }) => (
-        <StatusBadge status={tp(`priority${row.original.priority.charAt(0) + row.original.priority.slice(1).toLowerCase()}`)} colorMap={{ [tp(`priority${row.original.priority.charAt(0) + row.original.priority.slice(1).toLowerCase()}`)]: priorityColorMap[row.original.priority] }} />
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.priority}
+          colorMap={priorityColorMap}
+          label={getPriorityLabel(row.original.priority)}
+        />
       ),
     },
     {
       accessorKey: 'status',
       header: tp('colStatus'),
-      cell: ({ row }: { row: { original: PortalTask } }) => {
-        const statusKey = row.original.status.toLowerCase().replace('_', '');
-        const label = tp(`status${statusKey.charAt(0).toUpperCase() + statusKey.slice(1)}`);
-        return <StatusBadge status={label} colorMap={{ [label]: statusColorMap[row.original.status] }} />;
-      },
+      cell: ({ row }) => (
+        <StatusBadge
+          status={row.original.status}
+          colorMap={statusColorMap}
+          label={getStatusLabel(row.original.status)}
+        />
+      ),
     },
     {
       accessorKey: 'dueDate',
       header: tp('colDueDate'),
-      cell: ({ row }: { row: { original: PortalTask } }) => {
-        if (!row.original.dueDate) return '—';
+      cell: ({ row }) => {
+        if (!row.original.dueDate) return '\u2014';
         const isOverdue = new Date(row.original.dueDate) < new Date() && row.original.status !== 'COMPLETED' && row.original.status !== 'CANCELLED';
         return (
           <span className={isOverdue ? 'text-red-600 dark:text-red-400 font-medium' : ''}>
@@ -194,7 +221,7 @@ const PortalTaskListPage: React.FC = () => {
     {
       id: 'actions',
       header: '',
-      cell: ({ row }: { row: { original: PortalTask } }) => {
+      cell: ({ row }) => {
         const task = row.original;
         return (
           <div className="flex items-center gap-1">
@@ -266,8 +293,7 @@ const PortalTaskListPage: React.FC = () => {
             <Select options={projectOptions} value={formProjectId} onChange={(e) => setFormProjectId(e.target.value)} placeholder={tp('projectPlaceholder')} />
           </FormField>
           <FormField label={tp('fieldDescription')}>
-            <textarea
-              className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            <Textarea
               rows={3}
               value={formDescription}
               onChange={(e) => setFormDescription(e.target.value)}
@@ -293,8 +319,7 @@ const PortalTaskListPage: React.FC = () => {
       <Modal open={!!completionTaskId} onClose={() => { setCompletionTaskId(null); setCompletionNote(''); }} title={tp('completeModalTitle')}>
         <div className="space-y-4">
           <FormField label={tp('completionNoteLabel')}>
-            <textarea
-              className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            <Textarea
               rows={3}
               value={completionNote}
               onChange={(e) => setCompletionNote(e.target.value)}

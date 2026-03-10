@@ -354,7 +354,7 @@ export const ProjectSetupWizard: React.FC<ProjectSetupWizardProps> = ({ open, on
                 ))}
               </ul>
             </div>
-            <p><strong>{t('projects.budget')}:</strong> {totalBudget.toLocaleString('ru-RU')} ₽</p>
+            <p><strong>{t('projects.budgetLabel')}:</strong> {totalBudget.toLocaleString('ru-RU')} ₽</p>
             <p><strong>{t('projects.wizard.docFolders')}:</strong> {selectedFolders.size} {t('projects.wizard.outOf')} {defaultFolders.length}</p>
           </div>
           <div className="bg-success-50 border border-success-200 rounded-lg p-3">

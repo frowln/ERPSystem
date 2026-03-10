@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, Users, UserCheck, Briefcase, HardHat } from 'lucide-react';
@@ -57,6 +58,7 @@ const CrewPage: React.FC = () => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedCrew, setSelectedCrew] = useState<Crew | null>(null);
 
+  const navigate = useNavigate();
   const { data: crewData, isLoading } = useQuery({
     queryKey: ['crews'],
     queryFn: () => hrApi.getCrews(),
@@ -168,7 +170,7 @@ const CrewPage: React.FC = () => {
         title={t('hr.crews.title')}
         subtitle={t('hr.crews.subtitle')}
         breadcrumbs={[{ label: t('hr.crews.breadcrumbHome'), href: '/' }, { label: t('hr.breadcrumbPersonnel'), href: '/employees' }, { label: t('hr.crews.title') }]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('hr.crews.createCrew')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/hr/crews/new')}>{t('hr.crews.createCrew')}</Button>}
       />
 
       {/* Metrics */}

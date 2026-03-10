@@ -50,6 +50,9 @@ const BankStatementMatchingPage: React.FC = () => {
       setTransactions(data);
       toast.success(t('finance.bankStatementMatching.toastUploaded', { count: String(data.length) }));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const confirmMutation = useMutation({
@@ -63,6 +66,9 @@ const BankStatementMatchingPage: React.FC = () => {
       );
       toast.success(t('finance.bankStatementMatching.toastConfirmed'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const rejectMutation = useMutation({
@@ -74,6 +80,9 @@ const BankStatementMatchingPage: React.FC = () => {
         ),
       );
       toast.success(t('finance.bankStatementMatching.toastRejected'));
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

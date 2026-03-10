@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import {
   Headphones,
   Clock,
@@ -60,6 +61,9 @@ const getCategoryLabels = (): Record<string, string> => ({
   SAFETY: t('support.catSafety'),
   SCHEDULE: t('support.catSchedule'),
   OTHER: t('support.catOther'),
+  BUG: t('support.catBug'),
+  QUESTION: t('support.catQuestion'),
+  FEATURE_REQUEST: t('support.catFeatureRequest'),
 });
 
 function categoryLabel(value?: string): string {
@@ -106,6 +110,12 @@ const SupportDashboardPage: React.FC = () => {
   });
 
   const tickets = ticketPage?.content ?? [];
+
+  useEffect(() => {
+    if (dashboardError && !ticketsError) {
+      toast.error(t('support.errorLoadDashboard'));
+    }
+  }, [dashboardError, ticketsError]);
 
   const metrics = useMemo(() => {
     const total = dashboardStats?.totalTickets ?? tickets.length;
@@ -234,7 +244,7 @@ const SupportDashboardPage: React.FC = () => {
                   <div
                     key={ticket.id}
                     onClick={() => navigate(`/support/tickets/${ticket.id}`)}
-                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors border border-neutral-100"
+                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors border border-neutral-100 dark:border-neutral-700"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">

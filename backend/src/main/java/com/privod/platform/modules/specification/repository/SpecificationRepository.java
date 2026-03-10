@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -24,4 +25,6 @@ public interface SpecificationRepository extends JpaRepository<Specification, UU
 
     @Query(value = "SELECT nextval('spec_name_seq')", nativeQuery = true)
     long getNextNameSequence();
+
+    Optional<Specification> findByIdAndDeletedFalse(UUID id);
 }

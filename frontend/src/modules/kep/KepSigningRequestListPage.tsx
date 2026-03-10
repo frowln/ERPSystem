@@ -13,6 +13,7 @@ import { kepApi } from '@/api/kep';
 import { formatDate } from '@/lib/format';
 import type { KepSigningRequest } from './types';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 
 const signingStatusColorMap: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange'> = {
   pending: 'yellow',
@@ -80,11 +81,17 @@ const KepSigningRequestListPage: React.FC = () => {
   const signMutation = useMutation({
     mutationFn: ({ id, certificateId }: { id: string; certificateId: string }) => kepApi.signRequest(id, certificateId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['kep-signing-requests'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const rejectMutation = useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) => kepApi.rejectRequest(id, reason),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['kep-signing-requests'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const requests = requestsData?.content ?? [];

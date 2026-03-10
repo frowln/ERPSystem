@@ -73,4 +73,8 @@ public interface SafetyViolationRepository extends JpaRepository<SafetyViolation
     @Query("SELECT COUNT(sv) FROM SafetyViolation sv WHERE sv.deleted = false AND sv.organizationId = :organizationId " +
             "AND sv.status <> 'RESOLVED' AND sv.dueDate IS NOT NULL AND sv.dueDate < CURRENT_DATE")
     long countOverdue(@Param("organizationId") UUID organizationId);
+
+    @Query("SELECT COUNT(sv) FROM SafetyViolation sv WHERE sv.deleted = false AND sv.organizationId = :organizationId " +
+            "AND sv.status NOT IN ('RESOLVED', 'CLOSED')")
+    long countOpenByOrganizationId(@Param("organizationId") UUID organizationId);
 }

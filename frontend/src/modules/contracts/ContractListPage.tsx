@@ -14,12 +14,14 @@ import {
   contractStatusLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { contractsApi } from '@/api/contracts';
 import { projectsApi } from '@/api/projects';
 import { formatMoney, formatDate } from '@/lib/format';
 import { guardDemoModeAction, isDemoMode } from '@/lib/demoMode';
 import ContractDirectionTabs, { type ContractDirectionFilter } from './ContractDirectionTabs';
 import type { Contract } from '@/types';
+import toast from 'react-hot-toast';
 
 type TabId = 'all' | 'DRAFT' | 'ON_APPROVAL' | 'SIGNED' | 'ACTIVE' | 'CLOSED';
 
@@ -49,6 +51,9 @@ const ContractListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['CONTRACTS'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -232,6 +237,10 @@ const ContractListPage: React.FC = () => {
       },
     });
   }, [deleteContractsMutation, pendingCancellation]);
+
+  if (isLoading && contracts.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
 
   return (
     <div className="animate-fade-in">

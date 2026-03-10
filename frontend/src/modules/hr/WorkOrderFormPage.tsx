@@ -16,6 +16,7 @@ import {
 import { hrApi } from '@/api/hr';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 import type {
   HrWorkOrder,
   HrWorkOrderType,
@@ -114,6 +115,9 @@ const WorkOrderFormPage: React.FC = () => {
         hazardousConditions: '',
         requiredPermits: [],
       });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

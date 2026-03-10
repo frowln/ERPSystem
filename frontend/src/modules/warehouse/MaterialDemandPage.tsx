@@ -18,6 +18,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { warehouseApi } from '@/api/warehouse';
+import { useProjectOptions } from '@/hooks/useSelectOptions';
 import { formatNumber } from '@/lib/format';
 import type { MaterialDemand } from './types';
 
@@ -33,16 +34,12 @@ const demandStatusLabels: Record<string, string> = {
   get deficit() { return t('warehouse.materialDemand.statusDeficit'); },
 };
 
-const projectOptions = [
-  { value: 'p1', label: 'ЖК Солнечный' },
-  { value: 'p2', label: 'БЦ Кристалл' },
-  { value: 'p3', label: 'ТЦ Метрополис' },
-];
 
 type TabId = 'all' | 'deficit' | 'low' | 'sufficient';
 
 const MaterialDemandPage: React.FC = () => {
-  const [projectId, setProjectId] = useState('p1');
+  const { options: projectOptions } = useProjectOptions();
+  const [projectId, setProjectId] = useState('');
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
 

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, FileSignature, UserPlus, UserMinus, ArrowRightLeft } from 'lucide-react';
@@ -64,6 +65,7 @@ const PersonnelOrderListPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['personnel-orders'],
     queryFn: () => hrRussianApi.getOrders({ size: 1000 }),
@@ -195,7 +197,7 @@ const PersonnelOrderListPage: React.FC = () => {
           { label: t('hrRussian.orders.breadcrumbHr') },
           { label: t('hrRussian.orders.breadcrumbOrders') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('hrRussian.orders.newOrder')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/hr-russian/orders/new')}>{t('hrRussian.orders.newOrder')}</Button>}
         tabs={[
           { id: 'all', label: t('hrRussian.orders.tabAll'), count: tabCounts.all },
           { id: 'DRAFT', label: t('hrRussian.orders.tabDrafts'), count: tabCounts.draft },

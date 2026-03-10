@@ -195,7 +195,7 @@ const RevenueContractListPage: React.FC = () => {
           { label: t('revenueRecognition.contracts') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/revenue/contracts/new')}>
             {t('revenueRecognition.newContract')}
           </Button>
         }

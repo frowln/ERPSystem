@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, Box, Upload, Eye } from 'lucide-react';
@@ -31,6 +32,7 @@ const BimModelListPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<string>('all');
 
+  const navigate = useNavigate();
   const { data: modelsData, isLoading } = useQuery({
     queryKey: ['bim-models'],
     queryFn: () => bimApi.getModels(),
@@ -133,7 +135,7 @@ const BimModelListPage: React.FC = () => {
           { label: t('bim.breadcrumbModels') },
         ]}
         actions={
-          <Button iconLeft={<Upload size={16} />}>
+          <Button iconLeft={<Upload size={16} />} onClick={() => navigate('/bim/models/upload')}>
             {t('bim.uploadModel')}
           </Button>
         }

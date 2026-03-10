@@ -2,6 +2,8 @@ package com.privod.platform.modules.hrRussian.repository;
 
 import com.privod.platform.modules.hrRussian.domain.TimesheetPeriod;
 import com.privod.platform.modules.hrRussian.domain.TimesheetPeriodStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,10 @@ import java.util.UUID;
 
 @Repository
 public interface TimesheetPeriodRepository extends JpaRepository<TimesheetPeriod, UUID> {
+
+    Page<TimesheetPeriod> findByDeletedFalse(Pageable pageable);
+
+    Optional<TimesheetPeriod> findByIdAndDeletedFalse(UUID id);
 
     Optional<TimesheetPeriod> findByEmployeeIdAndMonthAndYearAndDeletedFalse(
             UUID employeeId, int month, int year);

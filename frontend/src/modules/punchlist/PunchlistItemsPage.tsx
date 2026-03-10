@@ -20,7 +20,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { punchlistApi } from '@/api/punchlist';
 import { formatDate } from '@/lib/format';
 import type { PunchItem } from './types';
-import { PunchItemCreateModal } from './PunchItemCreateModal';
+const PunchItemCreateModal = React.lazy(() => import('./PunchItemCreateModal'));
 import { t } from '@/i18n';
 
 type TabId = 'all' | 'OPEN' | 'IN_PROGRESS' | 'REVIEW' | 'CLOSED';
@@ -247,10 +247,14 @@ const PunchlistItemsPage: React.FC = () => {
         emptyDescription={t('punchlist.emptyItemsDesc')}
       />
 
-      <PunchItemCreateModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {createModalOpen && (
+        <React.Suspense fallback={null}>
+          <PunchItemCreateModal
+            open={createModalOpen}
+            onClose={() => setCreateModalOpen(false)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

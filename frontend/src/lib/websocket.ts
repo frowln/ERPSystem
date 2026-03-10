@@ -66,7 +66,7 @@ class WebSocketClient {
         const baseUrl =
           import.meta.env.VITE_WS_URL ??
           import.meta.env.VITE_API_URL?.replace(/\/api$/, '') ??
-          'http://localhost:8080';
+          window.location.origin;
 
         this.client = new Client({
           webSocketFactory: () => new SockJS(`${baseUrl}/ws`),
@@ -138,6 +138,83 @@ class WebSocketClient {
     return this._sub('/topic/broadcast', callback);
   }
 
+  /**
+   * Subscribe to a specific channel's typing events.
+   */
+  subscribeToChannelTyping(
+    channelId: string,
+    callback: (msg: { userId: string; userName: string }) => void,
+  ): Subscription {
+    return this.subscribeRaw(`/topic/channel.${channelId}.typing`, callback);
+  }
+
+  /**
+   * Subscribe to a specific channel's new messages (real-time push).
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  subscribeToChannelMessages(channelId: string, callback: (msg: any) => void): Subscription {
+    return this.subscribeRaw(`/topic/channel.${channelId}.messages`, callback);
+  }
+
+  /**
+   * Subscribe to read receipts for a channel.
+   */
+  subscribeToChannelReadReceipts(
+    channelId: string,
+    callback: (msg: { userId: string; messageId: string; status: string }) => void,
+  ): Subscription {
+    return this.subscribeRaw(`/topic/channel.${channelId}.read`, callback);
+  }
+
+  /**
+   * Subscribe to a raw STOMP destination with a generic message handler.
+   * Unlike the typed helpers above, this one does NOT parse the body as
+   * `WebSocketMessage` — it passes the raw parsed JSON to the callback.
+   */
+  subscribeRaw<T = unknown>(dest: string, callback: (msg: T) => void): Subscription {
+    if (this.client && this._connected) {
+      return this._doSubscribeRaw(dest, callback);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let liveSub: any = null;
+    const entry = {
+      dest,
+      cb: callback as (msg: WebSocketMessage) => void,
+      resolve: (sub: Subscription) => { liveSub = sub; },
+    };
+    this._pendingSubscriptions.push(entry);
+
+    return {
+      unsubscribe: () => {
+        this._pendingSubscriptions = this._pendingSubscriptions.filter((e) => e !== entry);
+        if (liveSub) { try { liveSub.unsubscribe(); } catch { /* ignore */ } }
+      },
+    };
+  }
+
+  /**
+   * Publish (send) a STOMP message to a destination.
+   * Used for WebRTC signaling via `/app/signal`.
+   */
+  publish(dest: string, body: unknown): void {
+    if (!this.client || !this._connected) {
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.warn('[WS] Cannot publish — not connected', dest);
+      }
+      return;
+    }
+    try {
+      this.client.publish({
+        destination: dest,
+        body: JSON.stringify(body),
+      });
+    } catch {
+      // ignore
+    }
+  }
+
   isConnected(): boolean {
     return this._connected;
   }
@@ -190,6 +267,21 @@ class WebSocketClient {
         if (liveSub) {
           try { liveSub.unsubscribe(); } catch { /* ignore */ }
         }
+      },
+    };
+  }
+
+  /** Subscribe with raw JSON parsing (no WebSocketMessage typing). */
+  private _doSubscribeRaw<T>(dest: string, cb: (msg: T) => void): Subscription {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stomp = this.client.subscribe(dest, (frame: any) => {
+      try { cb(JSON.parse(frame.body)); } catch { /* ignore */ }
+    });
+    this._activeSubscriptions.push(stomp);
+    return {
+      unsubscribe: () => {
+        try { stomp?.unsubscribe(); } catch { /* ignore */ }
+        this._activeSubscriptions = this._activeSubscriptions.filter((s: unknown) => s !== stomp);
       },
     };
   }

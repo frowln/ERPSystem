@@ -41,6 +41,7 @@ const KpiAchievementsPage = lazy(() => import('@/modules/analytics/KpiAchievemen
 const BonusCalculationsPage = lazy(() => import('@/modules/analytics/BonusCalculationsPage'));
 const AuditPivotPage = lazy(() => import('@/modules/analytics/AuditPivotPage'));
 const ProjectAnalyticsChartPage = lazy(() => import('@/modules/analytics/ProjectAnalyticsChartPage'));
+const PredictiveAnalyticsPage = lazy(() => import('@/modules/analytics/PredictiveAnalyticsPage'));
 
 // Monitoring
 const MonitoringDashboardPage = lazy(() => import('@/modules/monitoring/MonitoringDashboardPage'));
@@ -60,6 +61,37 @@ const PortalAdminPage = lazy(() => import('@/modules/portal/PortalAdminPage'));
 // Search & AI
 const GlobalSearchPage = lazy(() => import('@/modules/search/GlobalSearchPage'));
 const AiAssistantPage = lazy(() => import('@/modules/ai/AiAssistantPage'));
+
+// Portal — additional
+const PortalContractsPage = lazy(() => import('@/modules/portal/PortalContractsPage'));
+const PortalCpApprovalPage = lazy(() => import('@/modules/portal/PortalCpApprovalPage'));
+const PortalInvoicesPage = lazy(() => import('@/modules/portal/PortalInvoicesPage'));
+const PortalKs2DraftsPage = lazy(() => import('@/modules/portal/PortalKs2DraftsPage'));
+const PortalSchedulePage = lazy(() => import('@/modules/portal/PortalSchedulePage'));
+const PortalSettingsPage = lazy(() => import('@/modules/portal/PortalSettingsPage'));
+const PortalTaskListPage = lazy(() => import('@/modules/portal/PortalTaskListPage'));
+
+// AI — additional
+const AiPhotoAnalysisPage = lazy(() => import('@/modules/ai/AiPhotoAnalysisPage'));
+const AiRiskDashboardPage = lazy(() => import('@/modules/ai/AiRiskDashboardPage'));
+
+// Analytics — additional
+const ExecutiveKpiDashboardPage = lazy(() => import('@/modules/analytics/ExecutiveKpiDashboardPage'));
+const ReportBuilderPage = lazy(() => import('@/modules/analytics/ReportBuilderPage'));
+
+// Approval
+const ApprovalConfigPage = lazy(() => import('@/modules/approval/ApprovalConfigPage'));
+
+// Prequalification — additional
+const PrequalificationDetailPage = lazy(() => import('@/modules/prequalification/PrequalificationDetailPage'));
+const PrequalificationFormPage = lazy(() => import('@/modules/prequalification/PrequalificationFormPage'));
+
+// Site Assessment — additional
+const SiteAssessmentDetailPage = lazy(() => import('@/modules/siteAssessment/SiteAssessmentDetailPage'));
+const SiteAssessmentFormPage = lazy(() => import('@/modules/siteAssessment/SiteAssessmentFormPage'));
+
+// Notifications
+const InboxPage = lazy(() => import('@/modules/notifications/InboxPage'));
 
 export function portfolioRoutes() {
   return (
@@ -106,6 +138,7 @@ export function portfolioRoutes() {
       <Route path="analytics/bonus-calculations" element={<BonusCalculationsPage />} />
       <Route path="analytics/audit-pivot" element={<AuditPivotPage />} />
       <Route path="analytics/project-charts" element={<ProjectAnalyticsChartPage />} />
+      <Route path="analytics/predictive" element={<PredictiveAnalyticsPage />} />
       <Route path="monitoring" element={<MonitoringDashboardPage />} />
 
       {/* Messaging */}
@@ -123,6 +156,39 @@ export function portfolioRoutes() {
       {/* Search & AI */}
       <Route path="search" element={<GlobalSearchPage />} />
       <Route path="ai-assistant" element={<AiAssistantPage />} />
+
+      {/* Portal — additional */}
+      <Route path="portal/contracts" element={<PortalContractsPage />} />
+      <Route path="portal/cp-approval" element={<PortalCpApprovalPage />} />
+      <Route path="portal/invoices" element={<PortalInvoicesPage />} />
+      <Route path="portal/ks2-drafts" element={<PortalKs2DraftsPage />} />
+      <Route path="portal/schedule" element={<PortalSchedulePage />} />
+      <Route path="portal/settings" element={<PortalSettingsPage />} />
+      <Route path="portal/tasks" element={<PortalTaskListPage />} />
+
+      {/* AI — additional */}
+      <Route path="ai/photo-analysis" element={<AiPhotoAnalysisPage />} />
+      <Route path="ai/risk-dashboard" element={<AiRiskDashboardPage />} />
+
+      {/* Analytics — additional */}
+      <Route path="analytics/executive-kpi" element={<ExecutiveKpiDashboardPage />} />
+      <Route path="analytics/report-builder" element={<ReportBuilderPage />} />
+
+      {/* Approvals */}
+      <Route path="approvals/config" element={<ApprovalConfigPage />} />
+
+      {/* Prequalification — additional */}
+      <Route path="prequalifications/new" element={<PrequalificationFormPage />} />
+      <Route path="prequalifications/:id" element={<PrequalificationDetailPage />} />
+      <Route path="prequalifications/:id/edit" element={<PrequalificationFormPage />} />
+
+      {/* Site Assessment — additional */}
+      <Route path="site-assessments/new" element={<SiteAssessmentFormPage />} />
+      <Route path="site-assessments/:id" element={<SiteAssessmentDetailPage />} />
+      <Route path="site-assessments/:id/edit" element={<SiteAssessmentFormPage />} />
+
+      {/* Notifications */}
+      <Route path="notifications/inbox" element={<InboxPage />} />
     </>
   );
 }

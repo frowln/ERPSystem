@@ -152,3 +152,92 @@ export interface CreatePortalTaskRequest {
   priority: PortalTaskPriority;
   dueDate?: string;
 }
+
+// Portal CP (Commercial Proposal) Approval
+export type PortalCpStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CHANGES_REQUESTED';
+
+export interface PortalProposalItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit?: string;
+  unitPrice: number;
+  total: number;
+}
+
+export interface PortalProposal {
+  id: string;
+  name: string;
+  projectId?: string;
+  projectName?: string;
+  status: PortalCpStatus;
+  totalAmount: number;
+  customerComment?: string;
+  items: PortalProposalItem[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface PortalProposalDecisionRequest {
+  decision: 'APPROVED' | 'REJECTED' | 'CHANGES_REQUESTED';
+  comment?: string;
+}
+
+// Portal Invoices
+export type PortalInvoiceStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'PAID' | 'REJECTED' | 'PARTIALLY_PAID';
+
+export interface PortalInvoice {
+  id: string;
+  invoiceNumber: string;
+  contractId: string;
+  contractNumber: string;
+  projectId: string;
+  projectName: string;
+  status: PortalInvoiceStatus;
+  amount: number;
+  periodStart: string;
+  periodEnd: string;
+  description?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreatePortalInvoiceRequest {
+  contractId: string;
+  periodStart: string;
+  periodEnd: string;
+  amount: number;
+  description?: string;
+}
+
+// Portal Contracts
+export type PortalContractStatus = 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'SUSPENDED' | 'TERMINATED';
+
+export interface PortalContract {
+  id: string;
+  contractNumber: string;
+  title: string;
+  projectId: string;
+  projectName: string;
+  status: PortalContractStatus;
+  totalAmount: number;
+  paidAmount: number;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Portal Schedule
+export interface PortalScheduleItem {
+  id: string;
+  projectId: string;
+  projectName: string;
+  title: string;
+  milestoneName?: string;
+  status: string;
+  progress: number;
+  startDate: string;
+  endDate: string;
+  assignedTeam?: string;
+}

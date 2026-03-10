@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, FolderOpen } from 'lucide-react';
@@ -43,6 +44,7 @@ const DesignPackagePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [sectionFilter, setSectionFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data: packagesData, isLoading } = useQuery({
     queryKey: ['design-packages'],
     queryFn: () => bimApi.getDesignPackages(),
@@ -141,7 +143,7 @@ const DesignPackagePage: React.FC = () => {
           { label: t('bim.breadcrumbPackages') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('bim.newPackage')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/bim/packages/new')}>{t('bim.newPackage')}</Button>
         }
         tabs={[
           { id: 'all', label: t('bim.tabAll'), count: tabCounts.all },

@@ -30,21 +30,21 @@ const CashFlowPage: React.FC = () => {
     queryFn: () => financeApi.getCashFlow(),
   });
 
-  const cashFlow = Array.isArray(cashFlowData)
+  const cashFlow: CashFlowEntry[] = Array.isArray(cashFlowData)
     ? cashFlowData
-    : Array.isArray((cashFlowData as any)?.content)
-      ? (cashFlowData as any).content
+    : Array.isArray((cashFlowData as unknown as Record<string, unknown>)?.content)
+      ? ((cashFlowData as unknown as Record<string, unknown>).content as CashFlowEntry[])
       : [];
 
   const totals = useMemo(() => {
-    const totalIncoming = cashFlow.reduce((s, e) => s + e.incoming, 0);
-    const totalOutgoing = cashFlow.reduce((s, e) => s + e.outgoing, 0);
+    const totalIncoming = cashFlow.reduce((s: number, e: CashFlowEntry) => s + e.incoming, 0);
+    const totalOutgoing = cashFlow.reduce((s: number, e: CashFlowEntry) => s + e.outgoing, 0);
     const totalNet = totalIncoming - totalOutgoing;
     return { totalIncoming, totalOutgoing, totalNet };
   }, [cashFlow]);
 
   const chartData = useMemo(() =>
-    cashFlow.map((e) => ({
+    cashFlow.map((e: CashFlowEntry) => ({
       name: e.month,
       [t('finance.cashFlowPage.chartIncoming')]: e.incoming / 1_000_000,
       [t('finance.cashFlowPage.chartOutgoing')]: e.outgoing / 1_000_000,

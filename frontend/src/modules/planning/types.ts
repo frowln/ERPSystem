@@ -1,7 +1,7 @@
 // Planning / WBS types
 
 export type WbsNodeType = 'PROJECT' | 'PHASE' | 'WORK_PACKAGE' | 'ACTIVITY' | 'MILESTONE';
-export type BaselineStatus = 'DRAFT' | 'APPROVED' | 'ACTIVE' | 'SUPERSEDED';
+export type BaselineStatus = 'ORIGINAL' | 'CURRENT' | 'REVISED' | 'DRAFT' | 'APPROVED' | 'ACTIVE' | 'SUPERSEDED';
 
 export interface WbsNode {
   id: string;
@@ -30,7 +30,9 @@ export interface ScheduleBaseline {
   name: string;
   projectId: string;
   projectName?: string;
+  /** Backend returns baselineType (ORIGINAL/CURRENT/REVISED); mapped to status for display */
   status: BaselineStatus;
+  baselineType?: BaselineStatus;
   baselineDate: string;
   totalActivities: number;
   plannedStartDate: string;

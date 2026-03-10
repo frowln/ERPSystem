@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, FileText, ClipboardList, CheckCircle } from 'lucide-react';
@@ -57,6 +58,7 @@ const PtoDocumentListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data: paginatedData, isLoading } = useQuery({
     queryKey: ['pto-documents'],
     queryFn: () => ptoApi.getDocuments(),
@@ -159,7 +161,7 @@ const PtoDocumentListPage: React.FC = () => {
           { label: t('pto.breadcrumbPto') },
           { label: t('pto.breadcrumbDocuments') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('pto.docListNewDocument')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/pto/documents/new')}>{t('pto.docListNewDocument')}</Button>}
         tabs={[
           { id: 'all', label: t('pto.docListTabAll'), count: tabCounts.all },
           { id: 'DRAFT', label: t('pto.docListTabDrafts'), count: tabCounts.draft },

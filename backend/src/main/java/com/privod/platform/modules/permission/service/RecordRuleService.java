@@ -72,11 +72,11 @@ public class RecordRuleService {
             validateDomainFilter(request.domainFilter());
             rule.setDomainFilter(request.domainFilter());
         }
-        rule.setPermRead(request.permRead());
-        rule.setPermWrite(request.permWrite());
-        rule.setPermCreate(request.permCreate());
-        rule.setPermUnlink(request.permUnlink());
-        rule.setGlobal(request.isGlobal());
+        if (request.permRead() != null) rule.setPermRead(request.permRead());
+        if (request.permWrite() != null) rule.setPermWrite(request.permWrite());
+        if (request.permCreate() != null) rule.setPermCreate(request.permCreate());
+        if (request.permUnlink() != null) rule.setPermUnlink(request.permUnlink());
+        if (request.isGlobal() != null) rule.setGlobal(request.isGlobal());
 
         rule = recordRuleRepository.save(rule);
         auditService.logAction(

@@ -54,6 +54,9 @@ const getCategoryLabels = (): Record<string, string> => ({
   SAFETY: t('support.catSafety'),
   SCHEDULE: t('support.catSchedule'),
   OTHER: t('support.catOther'),
+  BUG: t('support.catBug'),
+  QUESTION: t('support.catQuestion'),
+  FEATURE_REQUEST: t('support.catFeatureRequest'),
 });
 
 const getStatusOptions = () => [
@@ -228,9 +231,9 @@ const TicketDetailPage: React.FC = () => {
             </div>
 
             {currentTicket.resolvedDate && (
-              <div className="bg-success-50 rounded-xl border border-success-200 p-6">
-                <h3 className="text-sm font-semibold text-success-800 mb-2">{t('support.ticketResolved')}</h3>
-                <p className="text-sm text-success-700">
+              <div className="bg-success-50 dark:bg-success-900/20 rounded-xl border border-success-200 dark:border-success-800 p-6">
+                <h3 className="text-sm font-semibold text-success-800 dark:text-success-300 mb-2">{t('support.ticketResolved')}</h3>
+                <p className="text-sm text-success-700 dark:text-success-400">
                   {t('support.resolvedDateLabel', { date: formatDateTime(currentTicket.resolvedDate) })}
                 </p>
               </div>
@@ -242,15 +245,15 @@ const TicketDetailPage: React.FC = () => {
               </h3>
 
               {commentsError && (
-                <div className="mb-4 text-sm text-danger-600">
+                <div className="mb-4 flex items-center gap-2 text-sm text-danger-600 dark:text-danger-400">
                   {t('support.errorLoadComments')}
-                  <button
-                    type="button"
-                    className="ml-2 underline"
+                  <Button
+                    variant="ghost"
+                    size="xs"
                     onClick={() => { void refetchComments(); }}
                   >
                     {t('support.btnRetry')}
-                  </button>
+                  </Button>
                 </div>
               )}
 
@@ -299,7 +302,7 @@ const TicketDetailPage: React.FC = () => {
                   />
                 </FormField>
                 <div className="flex items-center justify-between mt-3">
-                  <label className="flex items-center gap-2 text-sm text-neutral-600 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={isInternal}

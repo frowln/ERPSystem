@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+@Repository("costMgmtCostCodeRepository")
 public interface CostCodeRepository extends JpaRepository<CostCode, UUID>, JpaSpecificationExecutor<CostCode> {
 
     Page<CostCode> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);

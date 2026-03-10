@@ -13,6 +13,7 @@ import { taxRiskApi } from './api';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { TaxRiskAssessment, RiskLevel, TaxRiskStatus } from './types';
+import toast from 'react-hot-toast';
 
 const riskLevelColorMap: Record<string, string> = {
   LOW: 'green',
@@ -74,6 +75,9 @@ const TaxRiskListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tax-risks'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

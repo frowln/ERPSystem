@@ -24,7 +24,7 @@ import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import { marketplaceApi, type MarketplacePlugin, type MarketplaceReview } from '@/api/marketplace';
-import PluginConfigModal from './components/PluginConfigModal';
+const PluginConfigModal = React.lazy(() => import('./components/PluginConfigModal'));
 
 // ---------------------------------------------------------------------------
 // Star rating component
@@ -461,12 +461,14 @@ const MarketplaceDetailPage: React.FC = () => {
       </div>
 
       {/* Config modal */}
-      {isInstalled && (
-        <PluginConfigModal
-          open={configOpen}
-          onClose={() => setConfigOpen(false)}
-          plugin={plugin}
-        />
+      {isInstalled && configOpen && (
+        <React.Suspense fallback={null}>
+          <PluginConfigModal
+            open={configOpen}
+            onClose={() => setConfigOpen(false)}
+            plugin={plugin}
+          />
+        </React.Suspense>
       )}
 
       {/* Confirm uninstall modal */}

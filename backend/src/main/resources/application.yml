@@ -31,6 +31,7 @@ spring:
     baseline-on-migrate: true
     out-of-order: true
     ignore-migration-patterns: '*:missing'
+    validate-on-migrate: false
 
   mail:
     host: localhost
@@ -61,6 +62,8 @@ spring:
   jackson:
     serialization:
       write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
     default-property-inclusion: non_null
 
   thymeleaf:
@@ -70,6 +73,8 @@ spring:
     encoding: UTF-8
 
 app:
+  api:
+    version: ${API_VERSION:1.0.0}
   rate-limit:
     requests-per-minute: 600
     auth-requests-per-minute: 10
@@ -88,13 +93,20 @@ app:
     from-name: "Привод - Строительная ERP"
     base-url: http://localhost:3000
   storage:
-    endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
-    access-key: ${STORAGE_ACCESS_KEY:minioadmin}
-    secret-key: ${STORAGE_SECRET_KEY:minioadmin}
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:19000}
+    access-key: ${STORAGE_ACCESS_KEY:minio}
+    secret-key: ${STORAGE_SECRET_KEY:minio_dev}
+    bucket: ${STORAGE_BUCKET:privod-uploads}
+  encryption:
+    field-key: ${FIELD_ENCRYPTION_KEY:0123456789abcdef0123456789abcdef}
   jwt:
     secret: ${JWT_SECRET:CHANGE_ME_IN_PRODUCTION_256_BIT_SECRET_KEY_HERE}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+  yookassa:
+    shop-id: ${YOOKASSA_SHOP_ID:}
+    secret-key: ${YOOKASSA_SECRET_KEY:}
+    return-url: ${YOOKASSA_RETURN_URL:http://localhost:4000/settings/subscription/result?payment=success}
   ai:
     provider: openai
     api-key: ${AI_API_KEY:}
@@ -132,6 +144,8 @@ app.cors:
 logging:
   level:
     com.privod: ${LOG_LEVEL:DEBUG}
+    com.privod.platform: INFO
+    com.privod.platform.infrastructure.web.RequestLoggingFilter: ${REQUEST_LOG_LEVEL:DEBUG}
     org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer: ERROR
     com.privod.platform.modules.kep.service.BouncyCastleCryptoProvider: ERROR
     org.hibernate.tool.schema.internal.ExceptionHandlerLoggedImpl: ERROR

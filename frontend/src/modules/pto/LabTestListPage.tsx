@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, FlaskConical, CheckCircle, XCircle } from 'lucide-react';
@@ -71,6 +72,7 @@ const LabTestListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data: paginatedData, isLoading } = useQuery({
     queryKey: ['lab-tests'],
     queryFn: () => ptoApi.getLabTests(),
@@ -180,7 +182,7 @@ const LabTestListPage: React.FC = () => {
           { label: t('pto.breadcrumbPto') },
           { label: t('pto.breadcrumbLabTests') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('pto.labTestNewTest')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/pto/lab-tests/new')}>{t('pto.labTestNewTest')}</Button>}
         tabs={[
           { id: 'all', label: t('pto.labTestTabAll'), count: tests.length },
           { id: 'PENDING', label: t('pto.labTestTabPending') },

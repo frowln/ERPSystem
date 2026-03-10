@@ -147,7 +147,7 @@ const RevenueContractDetailPage: React.FC = () => {
             <Button variant="outline" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/revenue/contracts')}>
               {t('common.back')}
             </Button>
-            <Button variant="outline" iconLeft={<Edit size={16} />}>
+            <Button variant="outline" iconLeft={<Edit size={16} />} onClick={() => navigate(`/revenue/contracts/${c.id}/edit`)}>
               {t('common.edit')}
             </Button>
           </div>

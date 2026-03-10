@@ -22,6 +22,7 @@ public record CallSessionResponse(
         Instant endedAt,
         Integer durationSeconds,
         String metadataJson,
+        String inviteToken,
         List<CallParticipantResponse> participants,
         Instant createdAt
 ) {
@@ -40,6 +41,7 @@ public record CallSessionResponse(
                 session.getEndedAt(),
                 session.getDurationSeconds(),
                 session.getMetadataJson(),
+                session.getInviteToken(),
                 participants,
                 session.getCreatedAt()
         );

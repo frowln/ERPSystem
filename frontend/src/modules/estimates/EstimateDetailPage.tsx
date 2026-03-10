@@ -2,7 +2,7 @@ import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Wallet, CreditCard, Receipt, TrendingUp, Pencil, Check, X } from 'lucide-react';
+import { Wallet, CreditCard, Receipt, TrendingUp, Pencil, Check, X, Printer } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -16,6 +16,9 @@ import { formatMoney, formatMoneyCompact, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import type { Estimate, EstimateItem } from '@/types';
 import { t } from '@/i18n';
+import { Button } from '@/design-system/components/Button';
+import { printEstimate } from '@/components/PrintTemplates/EstimatePrintTemplate';
+import toast from 'react-hot-toast';
 
 /* ─── Inline editable price cell ─── */
 const EditablePriceCell: React.FC<{
@@ -116,6 +119,9 @@ const EstimateDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['estimate-items', id] });
       queryClient.invalidateQueries({ queryKey: ['ESTIMATE', id] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -246,12 +252,48 @@ const EstimateDetailPage: React.FC = () => {
           { label: e?.name ?? '' },
         ]}
         actions={
-          <StatusBadge
-            status={e?.status ?? ''}
-            colorMap={estimateStatusColorMap}
-            label={estimateStatusLabels[e?.status ?? ''] ?? e?.status ?? ''}
-            size="md"
-          />
+          <div className="flex items-center gap-2">
+            <StatusBadge
+              status={e?.status ?? ''}
+              colorMap={estimateStatusColorMap}
+              label={estimateStatusLabels[e?.status ?? ''] ?? e?.status ?? ''}
+              size="md"
+            />
+            {e && (
+              <Button
+                size="sm"
+                variant="secondary"
+                iconLeft={<Printer size={14} />}
+                onClick={() => {
+                  printEstimate({
+                    name: e.name,
+                    projectName: e.projectName ?? '',
+                    status: e.status,
+                    statusDisplayName: estimateStatusLabels[e.status] ?? e.status,
+                    totalAmount: e.totalAmount,
+                    orderedAmount: e.orderedAmount,
+                    invoicedAmount: e.invoicedAmount,
+                    totalSpent: e.totalSpent,
+                    balance: e.balance,
+                    createdAt: e.createdAt,
+                    notes: e.notes,
+                    items: (estimateItems ?? []).map((item, idx) => ({
+                      rowNumber: idx + 1,
+                      name: item.name,
+                      unitOfMeasure: item.unitOfMeasure,
+                      quantity: item.quantity,
+                      unitPrice: item.unitPrice,
+                      amount: item.amount,
+                      unitPriceCustomer: item.unitPriceCustomer,
+                      amountCustomer: item.amountCustomer,
+                    })),
+                  });
+                }}
+              >
+                {t('export.common.print')}
+              </Button>
+            )}
+          </div>
         }
       />
 

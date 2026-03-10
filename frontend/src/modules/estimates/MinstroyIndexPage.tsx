@@ -14,6 +14,7 @@ import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { Estimate } from '@/types';
 import type { MinstroyIndex, MinstroyApplyResult } from './types';
+import toast from 'react-hot-toast';
 
 const REGIONS = [
   { value: 'moscow', label: 'estimates.minstroy.regionMoscow' },
@@ -70,6 +71,9 @@ const MinstroyIndexPage: React.FC = () => {
     onSuccess: (result) => {
       setApplyResult(result);
       setShowApplyResult(true);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

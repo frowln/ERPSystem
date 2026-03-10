@@ -93,6 +93,9 @@ public class Project extends BaseEntity {
     @Column(name = "type", length = 20)
     private ProjectType type;
 
+    @Column(name = "customer_name", length = 500)
+    private String customerName;
+
     @Column(name = "category", length = 100)
     private String category;
 

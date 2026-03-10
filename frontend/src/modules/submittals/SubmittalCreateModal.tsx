@@ -19,9 +19,11 @@ const getTypeOptions = () => [
   { value: 'SHOP_DRAWING', label: t('submittals.modalTypeShopDrawing') },
   { value: 'PRODUCT_DATA', label: t('submittals.modalTypeProductData') },
   { value: 'SAMPLE', label: t('submittals.modalTypeSample') },
-  { value: 'DESIGN_DATA', label: t('submittals.modalTypeDesignData') },
+  { value: 'MOCK_UP', label: t('submittals.modalTypeMockUp') },
   { value: 'TEST_REPORT', label: t('submittals.modalTypeTestReport') },
   { value: 'CERTIFICATE', label: t('submittals.modalTypeCertificate') },
+  { value: 'CALCULATION', label: t('submittals.modalTypeCalculation') },
+  { value: 'DESIGN_MIX', label: t('submittals.modalTypeDesignMix') },
   { value: 'OTHER', label: t('submittals.modalTypeOther') },
 ];
 
@@ -46,7 +48,7 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
   const [dueDate, setDueDate] = useState('');
   const [requiredDate, setRequiredDate] = useState('');
   const [reviewerId, setReviewerId] = useState('');
-  const [projectId, setProjectId] = useState('1');
+  const [projectId, setProjectId] = useState('');
 
   const createMutation = useMutation({
     mutationFn: (payload: CreateSubmittalRequest) => submittalsApi.createSubmittal(payload),
@@ -60,7 +62,7 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
       setDueDate('');
       setRequiredDate('');
       setReviewerId('');
-      setProjectId('1');
+      setProjectId('');
       onClose();
     },
     onError: () => {
@@ -72,11 +74,10 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
     const payload: CreateSubmittalRequest = {
       title: title.trim(),
       description: description.trim() || undefined,
-      type: type as CreateSubmittalRequest['type'],
+      submittalType: type as CreateSubmittalRequest['submittalType'],
       specSection: specSection.trim() || undefined,
       dueDate: dueDate || undefined,
-      requiredDate: requiredDate || undefined,
-      reviewerId: reviewerId || undefined,
+      submittedById: reviewerId || undefined,
       projectId,
     };
     createMutation.mutate(payload);
@@ -166,3 +167,5 @@ export const SubmittalCreateModal: React.FC<SubmittalCreateModalProps> = ({ open
     </Modal>
   );
 };
+
+export default SubmittalCreateModal;

@@ -25,4 +25,6 @@ public interface SafetyInspectionRepository extends JpaRepository<SafetyInspecti
 
     @Query(value = "SELECT nextval('inspection_number_seq')", nativeQuery = true)
     long getNextNumberSequence();
+
+    long countByOrganizationIdAndDeletedFalse(UUID organizationId);
 }

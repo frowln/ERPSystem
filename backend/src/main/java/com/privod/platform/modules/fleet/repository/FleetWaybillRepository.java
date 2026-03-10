@@ -23,8 +23,8 @@ public interface FleetWaybillRepository extends JpaRepository<FleetWaybill, UUID
             SELECT w FROM FleetWaybill w WHERE w.organizationId = :orgId AND w.deleted = false
             AND (:vehicleId IS NULL OR w.vehicleId = :vehicleId)
             AND (:status IS NULL OR w.status = :status)
-            AND (:search IS NULL OR LOWER(w.number) LIKE LOWER(CONCAT('%', :search, '%'))
-                 OR LOWER(w.driverName) LIKE LOWER(CONCAT('%', :search, '%')))
+            AND (:search IS NULL OR LOWER(w.number) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))
+                 OR LOWER(w.driverName) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))
             ORDER BY w.waybillDate DESC
             """)
     Page<FleetWaybill> findAllFiltered(

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
@@ -29,6 +29,7 @@ type TabId = 'assignments' | 'maintenance' | 'fuel' | 'inspections';
 
 const FleetDetailPage: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: vehicleData, isLoading } = useQuery<Vehicle>({
     queryKey: ['fleet-vehicle', id],
     queryFn: () => fleetApi.getVehicle(id!),
@@ -99,7 +100,7 @@ const FleetDetailPage: React.FC = () => {
           { label: vehicle.name },
         ]}
         actions={
-          <Button variant="secondary">{t('fleet.detail.edit')}</Button>
+          <Button variant="secondary" onClick={() => navigate(`/fleet/${vehicle.id}/edit`)}>{t('fleet.detail.edit')}</Button>
         }
       />
 

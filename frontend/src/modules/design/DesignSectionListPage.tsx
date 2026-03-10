@@ -147,7 +147,7 @@ const DesignSectionListPage: React.FC = () => {
           { label: t('design.breadcrumbSections') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/design/sections/new')}>
             {t('design.newSection')}
           </Button>
         }

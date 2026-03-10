@@ -12,6 +12,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { priceCoefficientApi } from './api';
 import { formatDate, formatNumber } from '@/lib/format';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 import type { PriceCoefficient, PriceCoefficientType, PriceCoefficientStatus } from './types';
 
 const statusColorMap: Record<string, string> = {
@@ -73,6 +74,9 @@ const PriceCoefficientListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['price-coefficients'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

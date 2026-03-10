@@ -3,7 +3,7 @@ import { Hash, Lock, Star, Plus } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import { AssigneeAvatar } from './AssigneeAvatar';
-import type { Channel, UserStatus } from '@/api/messaging';
+import type { Channel, UserStatus, OrgUser } from '@/api/messaging';
 
 interface ChannelListProps {
   channels: Channel[];
@@ -13,6 +13,8 @@ interface ChannelListProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onOpenFavorites?: () => void;
+  searchUsers?: OrgUser[];
+  onStartDm?: (userId: string) => void;
   className?: string;
 }
 
@@ -24,6 +26,8 @@ export const ChannelList: React.FC<ChannelListProps> = ({
   searchQuery,
   onSearchChange,
   onOpenFavorites,
+  searchUsers,
+  onStartDm,
   className,
 }) => {
   const filtered = searchQuery
@@ -166,6 +170,31 @@ export const ChannelList: React.FC<ChannelListProps> = ({
             </button>
           ))}
         </div>
+
+        {/* Users for DM */}
+        {searchQuery && searchUsers && searchUsers.length > 0 && (
+          <div className="mb-3">
+            <div className="px-3 py-1.5">
+              <span className="text-[11px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                {t('messaging.users')}
+              </span>
+            </div>
+            {searchUsers.map((u) => (
+              <button
+                key={u.id}
+                onClick={() => onStartDm?.(u.id)}
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-sm rounded-md mx-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300"
+                style={{ width: 'calc(100% - 8px)' }}
+              >
+                <AssigneeAvatar name={u.fullName} size="xs" />
+                <div className="flex-1 min-w-0 text-left">
+                  <span className="block truncate">{u.fullName}</span>
+                  <span className="block text-[11px] text-neutral-400 truncate">{u.email}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

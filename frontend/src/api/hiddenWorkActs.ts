@@ -163,6 +163,6 @@ export const hiddenWorkActApi = {
   },
 
   removeAttachment: async (attachmentId: string): Promise<void> => {
-    await apiClient.delete(`/hidden-work-acts/attachments/${attachmentId}`);
+    await apiClient.delete(`/attachments/${attachmentId}`);
   },
 };

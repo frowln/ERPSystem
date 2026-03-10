@@ -25,7 +25,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { cn } from '@/lib/cn';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatMoney } from '@/lib/format';
 import {
   integrationsApi,
   type SbisConfigData,
@@ -238,7 +238,7 @@ const SbisSettingsPage: React.FC = () => {
       size: 120,
       cell: ({ getValue }) => (
         <span className="tabular-nums text-neutral-700 dark:text-neutral-300">
-          {getValue<number>().toLocaleString('ru-RU')} P
+          {formatMoney(getValue<number>())}
         </span>
       ),
     },
@@ -288,7 +288,7 @@ const SbisSettingsPage: React.FC = () => {
       {/* Status */}
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
             <Landmark size={20} className="text-blue-600" />
           </div>
           <div>
@@ -317,11 +317,11 @@ const SbisSettingsPage: React.FC = () => {
       {testResult && (
         <div className={cn(
           'p-4 rounded-lg mb-6 flex items-center gap-3',
-          testResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200',
+          testResult.success ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800',
         )}>
-          {testResult.success ? <Wifi size={18} className="text-green-600" /> : <WifiOff size={18} className="text-red-600" />}
+          {testResult.success ? <Wifi size={18} className="text-green-600 dark:text-green-400" /> : <WifiOff size={18} className="text-red-600 dark:text-red-400" />}
           <div>
-            <p className={cn('text-sm font-medium', testResult.success ? 'text-green-700' : 'text-red-700')}>
+            <p className={cn('text-sm font-medium', testResult.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300')}>
               {testResult.success ? t('integrations.sbis.connectionEstablished') : t('integrations.sbis.connectionError')}
             </p>
             <p className="text-xs text-neutral-600 mt-0.5">{testResult.message} ({testResult.responseTimeMs}{t('integrations.sbis.ms')})</p>

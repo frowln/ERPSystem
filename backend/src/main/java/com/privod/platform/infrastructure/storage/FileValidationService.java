@@ -32,22 +32,33 @@ public class FileValidationService {
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     "application/vnd.ms-excel",
                     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                    "application/vnd.ms-powerpoint",
+                    // Text
+                    "text/plain",
+                    "text/csv",
+                    "text/xml",
+                    "application/xml",
+                    "application/json",
                     // Archives (проектная документация часто упакована в ZIP/RAR/7z)
                     "application/zip",
                     "application/x-zip-compressed",
                     "application/x-rar-compressed",
                     "application/vnd.rar",
                     "application/x-7z-compressed",
-                    // AutoCAD DWG
+                    // AutoCAD DWG / IFC (BIM)
                     "image/x-dwg",
                     "image/vnd.dwg",
                     "application/acad",
                     "application/x-acad",
-                    "application/octet-stream", // generic fallback — Tika не всегда распознаёт DWG
+                    "application/octet-stream", // generic fallback — Tika не всегда распознаёт DWG/IFC
                     // Images
                     "image/jpeg",
                     "image/png",
-                    "image/svg+xml"
+                    "image/gif",
+                    "image/webp",
+                    "image/svg+xml",
+                    "image/bmp",
+                    "image/tiff"
             ),
             "csv", Set.of("text/plain", "text/csv", "application/csv"),
             "bim", Set.of("application/octet-stream"), // IFC files are detected as octet-stream

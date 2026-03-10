@@ -20,7 +20,7 @@ const rfiSchema = z.object({
   question: z.string().min(1, t('forms.rfi.validation.questionRequired')).max(2000, t('forms.common.maxChars', { count: '2000' })),
   projectId: z.string().min(1, t('forms.rfi.validation.projectRequired')),
   assignedToId: z.string().optional(),
-  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'], {
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'CRITICAL'], {
     required_error: t('forms.rfi.validation.priorityRequired'),
   }),
   dueDate: z.string().optional(),
@@ -34,7 +34,7 @@ type RfiFormData = z.infer<typeof rfiSchema>;
 
 const priorityOptions = [
   { value: 'LOW', label: t('forms.rfi.priorities.low') },
-  { value: 'MEDIUM', label: t('forms.rfi.priorities.medium') },
+  { value: 'NORMAL', label: t('forms.rfi.priorities.normal') },
   { value: 'HIGH', label: t('forms.rfi.priorities.high') },
   { value: 'CRITICAL', label: t('forms.rfi.priorities.critical') },
 ];
@@ -98,7 +98,7 @@ const RfiFormPage: React.FC = () => {
           question: '',
           projectId: '',
           assignedToId: '',
-          priority: 'MEDIUM',
+          priority: 'NORMAL',
           dueDate: '',
           category: 'OTHER',
           attachmentNote: '',

@@ -1,7 +1,9 @@
 package com.privod.platform.modules.pmWorkflow.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.pto.domain.Submittal;
+import com.privod.platform.modules.pto.service.PtoCodeGenerator;
 import com.privod.platform.modules.pmWorkflow.domain.SubmittalPackage;
 import com.privod.platform.modules.pmWorkflow.domain.SubmittalReview;
 import com.privod.platform.modules.pto.domain.SubmittalStatus;
@@ -41,6 +43,7 @@ public class PmSubmittalService {
     private final SubmittalPackageRepository packageRepository;
     private final SubmittalReviewRepository reviewRepository;
     private final AuditService auditService;
+    private final PtoCodeGenerator codeGenerator;
 
     // ======================== Submittal CRUD ========================
 
@@ -69,9 +72,11 @@ public class PmSubmittalService {
     @Transactional
     public SubmittalResponseDto createSubmittal(CreateSubmittalRequest request) {
         String number = generateSubmittalNumber(request.projectId());
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
 
         Submittal submittal = Submittal.builder()
                 .projectId(request.projectId())
+                .organizationId(organizationId)
                 .code(number)
                 .title(request.title())
                 .description(request.description())
@@ -270,9 +275,6 @@ public class PmSubmittalService {
     }
 
     private String generateSubmittalNumber(UUID projectId) {
-        String prefix = "SUB-";
-        Integer maxNum = submittalRepository.findMaxNumberByProject(projectId, prefix);
-        int next = (maxNum != null ? maxNum : 0) + 1;
-        return prefix + String.format("%05d", next);
+        return codeGenerator.generateSubmittalCode();
     }
 }

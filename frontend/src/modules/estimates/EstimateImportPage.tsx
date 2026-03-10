@@ -14,6 +14,7 @@ import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { ImportFormat, ImportHistory } from './types';
+import toast from 'react-hot-toast';
 
 const importFormatOptions = [
   { value: 'arps', label: 'ARPS (.arp)' },
@@ -66,6 +67,9 @@ const EstimateImportPage: React.FC = () => {
         setImportProgress(0);
         setFiles([]);
       }, 2000);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

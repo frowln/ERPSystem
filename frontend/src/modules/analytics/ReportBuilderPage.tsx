@@ -137,6 +137,9 @@ const ReportBuilderPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['report-templates'] });
       toast.success(tp('duplicateSuccess'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -144,6 +147,9 @@ const ReportBuilderPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['report-templates'] });
       toast.success(tp('deleteSuccess'));
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -166,11 +172,12 @@ const ReportBuilderPage: React.FC = () => {
             {row.original.isPublic ? (
               <Globe size={12} className="text-green-500" />
             ) : (
-              <Lock size={12} className="text-gray-400" />
+              <Lock size={12} className="text-neutral-400 dark:text-neutral-500" />
+
             )}
           </div>
           {row.original.description && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">{row.original.description}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate max-w-xs">{row.original.description}</p>
           )}
         </div>
       ),
@@ -265,7 +272,7 @@ const ReportBuilderPage: React.FC = () => {
             <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder={tp('namePlaceholder')} />
           </FormField>
           <FormField label={tp('fieldDescription')}>
-            <textarea className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200" rows={2} value={formDescription} onChange={(e) => setFormDescription(e.target.value)} placeholder={tp('descriptionPlaceholder')} />
+            <textarea className="w-full rounded-md border border-neutral-300 p-2 text-sm dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-200" rows={2} value={formDescription} onChange={(e) => setFormDescription(e.target.value)} placeholder={tp('descriptionPlaceholder')} />
           </FormField>
           <FormField label={tp('fieldDataSource')} required>
             <Select options={dataSourceOptions} value={formDataSource} onChange={(e) => setFormDataSource(e.target.value as ReportDataSource)} />
@@ -288,21 +295,21 @@ const ReportBuilderPage: React.FC = () => {
       <Modal open={!!showHistory} onClose={() => setShowHistory(null)} title={tp('historyModalTitle')}>
         <div className="space-y-3">
           {executions.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">{tp('noHistory')}</p>
+            <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">{tp('noHistory')}</p>
           ) : (
             executions.map((exec) => (
-              <div key={exec.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div key={exec.id} className="flex items-center justify-between p-3 rounded-lg border border-neutral-200 dark:border-neutral-700">
                 <div>
                   <StatusBadge
                     status={exec.status}
                     colorMap={{ RUNNING: 'blue', COMPLETED: 'green', FAILED: 'red' }}
                   />
-                  <span className="text-xs text-gray-500 ml-2">
-                    {exec.rowCount != null && `${exec.rowCount} rows`}
-                    {exec.executionTimeMs != null && ` / ${exec.executionTimeMs}ms`}
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400 ml-2">
+                    {exec.rowCount != null && `${exec.rowCount} ${tp('rows')}`}
+                    {exec.executionTimeMs != null && ` / ${exec.executionTimeMs}${tp('ms')}`}
                   </span>
                 </div>
-                <span className="text-xs text-gray-400">{formatRelativeTime(exec.createdAt)}</span>
+                <span className="text-xs text-neutral-400 dark:text-neutral-500">{formatRelativeTime(exec.createdAt)}</span>
               </div>
             ))
           )}

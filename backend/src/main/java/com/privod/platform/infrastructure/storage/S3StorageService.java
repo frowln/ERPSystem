@@ -55,17 +55,22 @@ public class S3StorageService implements StorageService {
 
     @Override
     public String upload(byte[] data, String key, String contentType) {
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(properties.getBucket())
-                .key(key)
-                .contentType(contentType != null ? contentType : "application/octet-stream")
-                .contentLength((long) data.length)
-                .build();
+        try {
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(properties.getBucket())
+                    .key(key)
+                    .contentType(contentType != null ? contentType : "application/octet-stream")
+                    .contentLength((long) data.length)
+                    .build();
 
-        s3Client.putObject(request, RequestBody.fromBytes(data));
-        log.debug("Uploaded object: bucket={}, key={}, size={}B",
-                properties.getBucket(), key, data.length);
-        return key;
+            s3Client.putObject(request, RequestBody.fromBytes(data));
+            log.debug("Uploaded object: bucket={}, key={}, size={}B",
+                    properties.getBucket(), key, data.length);
+            return key;
+        } catch (Exception e) {
+            log.error("S3 upload failed: bucket={}, key={}, error={}", properties.getBucket(), key, e.getMessage());
+            throw new StorageException("Failed to upload file to storage: " + e.getMessage(), e);
+        }
     }
 
     @Override

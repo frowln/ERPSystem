@@ -34,46 +34,46 @@ export const apiManagementApi = {
   },
 
   revokeApiKey: async (id: string): Promise<ApiKey> => {
-    const response = await apiClient.patch<ApiKey>(`/api-keys/${id}/revoke`);
+    const response = await apiClient.patch<ApiKey>(`/api-keys/${id}/deactivate`);
     return response.data;
   },
 
   getWebhooks: async (params?: WebhookFilters): Promise<PaginatedResponse<WebhookConfig>> => {
-    const response = await apiClient.get<PaginatedResponse<WebhookConfig>>('/api-keys/webhooks', { params });
+    const response = await apiClient.get<PaginatedResponse<WebhookConfig>>('/admin/webhooks', { params });
     return response.data;
   },
 
   getWebhook: async (id: string): Promise<WebhookConfig> => {
-    const response = await apiClient.get<WebhookConfig>(`/api-keys/webhooks/${id}`);
+    const response = await apiClient.get<WebhookConfig>(`/admin/webhooks/${id}`);
     return response.data;
   },
 
   createWebhook: async (data: Partial<WebhookConfig>): Promise<WebhookConfig> => {
-    const response = await apiClient.post<WebhookConfig>('/api-keys/webhooks', data);
+    const response = await apiClient.post<WebhookConfig>('/admin/webhooks', data);
     return response.data;
   },
 
   updateWebhook: async (id: string, data: Partial<WebhookConfig>): Promise<WebhookConfig> => {
-    const response = await apiClient.put<WebhookConfig>(`/api-keys/webhooks/${id}`, data);
+    const response = await apiClient.put<WebhookConfig>(`/admin/webhooks/${id}`, data);
     return response.data;
   },
 
   deleteWebhook: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api-keys/webhooks/${id}`);
+    await apiClient.delete(`/admin/webhooks/${id}`);
   },
 
   testWebhook: async (id: string): Promise<WebhookDelivery> => {
-    const response = await apiClient.post<WebhookDelivery>(`/api-keys/webhooks/${id}/test`);
+    const response = await apiClient.post<WebhookDelivery>(`/admin/webhooks/${id}/test`);
     return response.data;
   },
 
   getDeliveries: async (params?: WebhookDeliveryFilters): Promise<PaginatedResponse<WebhookDelivery>> => {
-    const response = await apiClient.get<PaginatedResponse<WebhookDelivery>>('/api-keys/deliveries', { params });
+    const response = await apiClient.get<PaginatedResponse<WebhookDelivery>>('/admin/webhooks/deliveries', { params });
     return response.data;
   },
 
   retryDelivery: async (id: string): Promise<WebhookDelivery> => {
-    const response = await apiClient.post<WebhookDelivery>(`/api-keys/deliveries/${id}/retry`);
+    const response = await apiClient.post<WebhookDelivery>(`/admin/webhooks/deliveries/${id}/retry`);
     return response.data;
   },
 };

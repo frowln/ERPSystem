@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
   Search,
@@ -21,7 +21,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { portalApi } from '@/api/portal';
 import { formatDate, formatRelativeTime } from '@/lib/format';
 import { t } from '@/i18n';
-import type { PortalUser, PortalAccess } from './types';
+import type { PortalUser, PortalAccess, PortalRole, PortalAccessLevel } from './types';
 import toast from 'react-hot-toast';
 
 const userStatusColorMap: Record<string, 'green' | 'blue' | 'yellow' | 'gray' | 'red'> = {
@@ -40,6 +40,7 @@ const getAccessLabels = (): Record<string, string> => ({
 type TabId = 'users' | 'ACCESS';
 
 const PortalAdminPage: React.FC = () => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabId>('users');
   const [search, setSearch] = useState('');
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -57,6 +58,34 @@ const PortalAdminPage: React.FC = () => {
   const { data: accessData, isLoading: accessLoading } = useQuery({
     queryKey: ['portal-admin-access'],
     queryFn: () => portalApi.getAccessList(),
+  });
+
+  const createUserMutation = useMutation({
+    mutationFn: () => portalApi.createUser({
+      fullName: newName,
+      email: newEmail,
+      companyName: newCompany,
+      role: newRole as PortalRole,
+      accessLevel: newAccessLevel as PortalAccessLevel,
+      projectIds: [],
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portal-admin-users'] });
+      toast.success(t('portal.admin.userCreated', { name: newName }));
+      setCreateModalOpen(false);
+      setNewName(''); setNewEmail(''); setNewCompany(''); setNewRole('client'); setNewAccessLevel('VIEW');
+    },
+    onError: () => toast.error(t('common.operationError')),
+  });
+
+  const revokeAccessMutation = useMutation({
+    mutationFn: ({ userId, projectId }: { userId: string; projectId: string }) =>
+      portalApi.revokeAccess(userId, projectId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portal-admin-access'] });
+      toast.success(t('portal.admin.accessRevoked'));
+    },
+    onError: () => toast.error(t('common.operationError')),
   });
 
   const users = userData?.content ?? [];
@@ -142,15 +171,25 @@ const PortalAdminPage: React.FC = () => {
     { accessorKey: 'grantedAt', header: t('portal.admin.colDate'), size: 110, cell: ({ getValue }) => <span className="text-neutral-600 tabular-nums">{formatDate(getValue<string>())}</span> },
     {
       id: 'actions', header: '', size: 90,
-      cell: () => <Button variant="ghost" size="xs">{t('portal.admin.revokeAccess')}</Button>,
+      cell: ({ row }) => (
+        <Button
+          variant="ghost"
+          size="xs"
+          onClick={() => revokeAccessMutation.mutate({
+            userId: row.original.userId,
+            projectId: row.original.projectId,
+          })}
+          disabled={revokeAccessMutation.isPending}
+        >
+          {t('portal.admin.revokeAccess')}
+        </Button>
+      ),
     },
   ];
-  }, []);
+  }, [revokeAccessMutation]);
 
   const handleCreateUser = () => {
-    toast.success(t('portal.admin.userCreated', { name: newName }));
-    setCreateModalOpen(false);
-    setNewName(''); setNewEmail(''); setNewCompany(''); setNewRole('client'); setNewAccessLevel('VIEW');
+    createUserMutation.mutate();
   };
 
   return (
@@ -228,7 +267,7 @@ const PortalAdminPage: React.FC = () => {
         footer={
           <>
             <Button variant="secondary" onClick={() => setCreateModalOpen(false)}>{t('portal.admin.cancelBtn')}</Button>
-            <Button onClick={handleCreateUser} disabled={!newName || !newEmail || !newCompany}>{t('portal.admin.createBtn')}</Button>
+            <Button onClick={handleCreateUser} disabled={!newName || !newEmail || !newCompany || createUserMutation.isPending} loading={createUserMutation.isPending}>{t('portal.admin.createBtn')}</Button>
           </>
         }
       >

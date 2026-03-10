@@ -7,10 +7,8 @@ import {
   Trash2,
   RefreshCw,
   Store,
-  Loader2,
   CheckCircle2,
   XCircle,
-  ArrowUpCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
@@ -20,8 +18,8 @@ import { Modal } from '@/design-system/components/Modal';
 import { Skeleton } from '@/design-system/components/Skeleton';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
-import { marketplaceApi, type MarketplacePlugin } from '@/api/marketplace';
-import PluginConfigModal from './components/PluginConfigModal';
+import { marketplaceApi, type ConnectorInstallation } from '@/api/marketplace';
+const PluginConfigModal = React.lazy(() => import('./components/PluginConfigModal'));
 
 // ---------------------------------------------------------------------------
 // Card skeleton
@@ -49,8 +47,8 @@ const MarketplaceInstalledPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [configPlugin, setConfigPlugin] = useState<MarketplacePlugin | null>(null);
-  const [uninstallPlugin, setUninstallPlugin] = useState<MarketplacePlugin | null>(null);
+  const [configPlugin, setConfigPlugin] = useState<ConnectorInstallation | null>(null);
+  const [uninstallPlugin, setUninstallPlugin] = useState<ConnectorInstallation | null>(null);
 
   const { data: plugins, isLoading } = useQuery({
     queryKey: ['marketplace', 'installed'],
@@ -124,50 +122,39 @@ const MarketplaceInstalledPage: React.FC = () => {
         />
       ) : (
         <div className="space-y-3">
-          {plugins.map((plugin) => {
-            const hasUpdate = plugin.status === 'UPDATE_AVAILABLE';
+          {plugins.map((installation) => {
+            const isActive = installation.status === 'ACTIVE';
 
             return (
               <div
-                key={plugin.id}
+                key={installation.id}
                 className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 hover:shadow-sm transition-shadow"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                   {/* Icon + info */}
-                  <div
-                    className="flex items-start gap-4 flex-1 min-w-0 cursor-pointer"
-                    onClick={() => navigate(`/marketplace/${plugin.id}`)}
-                  >
+                  <div className="flex items-start gap-4 flex-1 min-w-0">
                     <div className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {plugin.iconUrl ? (
-                        <img src={plugin.iconUrl} alt="" className="w-12 h-12 rounded-xl object-cover" />
-                      ) : (
-                        <Package size={24} className="text-neutral-400 dark:text-neutral-500" />
-                      )}
+                      <Package size={24} className="text-neutral-400 dark:text-neutral-500" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-sm text-neutral-900 dark:text-neutral-100 truncate">
-                          {plugin.name}
+                          {installation.statusDisplayName}
                         </h3>
-                        {hasUpdate && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400">
-                            <ArrowUpCircle size={11} />
-                            {t('marketplace.statusUpdateAvailable')}
-                          </span>
-                        )}
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                        {t('marketplace.version')}: {plugin.installedVersion ?? plugin.version}
-                        {plugin.installedAt && (
+                        {t('marketplace.installedAt')}: {new Date(installation.createdAt).toLocaleDateString()}
+                        {installation.lastSyncAt && (
                           <span className="ml-3">
-                            {t('marketplace.installedAt')}: {new Date(plugin.installedAt).toLocaleDateString()}
+                            {t('marketplace.lastSync')}: {new Date(installation.lastSyncAt).toLocaleDateString()}
                           </span>
                         )}
                       </p>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-1">
-                        {plugin.description}
-                      </p>
+                      {installation.errorMessage && (
+                        <p className="text-xs text-danger-600 dark:text-danger-400 mt-1 line-clamp-1">
+                          {installation.errorMessage}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -176,23 +163,23 @@ const MarketplaceInstalledPage: React.FC = () => {
                     <div
                       className={cn(
                         'flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full',
-                        plugin.status !== 'DEPRECATED'
+                        isActive
                           ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400'
                           : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400',
                       )}
                     >
-                      {plugin.status !== 'DEPRECATED' ? (
+                      {isActive ? (
                         <CheckCircle2 size={12} />
                       ) : (
                         <XCircle size={12} />
                       )}
-                      {plugin.status !== 'DEPRECATED' ? t('marketplace.enabled') : t('marketplace.disabled')}
+                      {isActive ? t('marketplace.enabled') : t('marketplace.disabled')}
                     </div>
                     <Button
                       variant="secondary"
                       size="xs"
                       iconLeft={<Settings size={13} />}
-                      onClick={() => setConfigPlugin(plugin)}
+                      onClick={() => setConfigPlugin(installation)}
                     >
                       {t('marketplace.configure')}
                     </Button>
@@ -200,7 +187,7 @@ const MarketplaceInstalledPage: React.FC = () => {
                       variant="ghost"
                       size="xs"
                       iconLeft={<Trash2 size={13} />}
-                      onClick={() => setUninstallPlugin(plugin)}
+                      onClick={() => setUninstallPlugin(installation)}
                       className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                     >
                       {t('marketplace.uninstall')}
@@ -215,11 +202,13 @@ const MarketplaceInstalledPage: React.FC = () => {
 
       {/* Config modal */}
       {configPlugin && (
-        <PluginConfigModal
-          open={!!configPlugin}
-          onClose={() => setConfigPlugin(null)}
-          plugin={configPlugin}
-        />
+        <React.Suspense fallback={null}>
+          <PluginConfigModal
+            open={!!configPlugin}
+            onClose={() => setConfigPlugin(null)}
+            plugin={configPlugin}
+          />
+        </React.Suspense>
       )}
 
       {/* Confirm uninstall modal */}

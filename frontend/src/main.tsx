@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { initSentry } from './lib/sentry';
+import { queryClientDefaults } from './lib/queryDefaults';
 import { App } from './App';
 import './styles/globals.css';
 
@@ -11,13 +12,7 @@ import './styles/globals.css';
 initSentry();
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
+  defaultOptions: queryClientDefaults,
 });
 
 const root = document.getElementById('root');

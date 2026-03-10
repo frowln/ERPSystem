@@ -61,6 +61,9 @@ const EngineeringSurveysPanel: React.FC<{ projectId: string }> = ({ projectId })
       setEditing(null);
       toast.success(t('common.saved'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const openAdd = () => {

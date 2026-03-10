@@ -104,7 +104,7 @@ const CrmDashboardPage: React.FC = () => {
                 {t('crm.dashboard.salesFunnel')}
               </h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/crm/leads')}>
-                Pipeline
+                {t('crm.dashboard.quickPipeline')}
               </Button>
             </div>
             <div className="space-y-3">
@@ -155,7 +155,7 @@ const CrmDashboardPage: React.FC = () => {
                       <StatusBadge
                         status={lead.priority}
                         colorMap={crmLeadPriorityColorMap}
-                        label={crmLeadPriorityLabels[lead.priority] ?? lead.priority}
+                        label={lead.priorityDisplayName ?? crmLeadPriorityLabels[lead.priority] ?? lead.priority}
                       />
                     </div>
                     <span className="tabular-nums text-sm font-bold text-primary-600">

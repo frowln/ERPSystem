@@ -29,4 +29,7 @@ public interface MessageReactionRepository extends JpaRepository<MessageReaction
             @Param("messageId") UUID messageId,
             @Param("userId") UUID userId,
             @Param("emoji") String emoji);
+
+    @Query("SELECT r FROM MessageReaction r WHERE r.messageId IN :messageIds AND r.deleted = false ORDER BY r.createdAt ASC")
+    List<MessageReaction> findByMessageIdIn(@Param("messageIds") List<UUID> messageIds);
 }

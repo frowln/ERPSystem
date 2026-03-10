@@ -18,9 +18,9 @@ import { submittalsApi } from '@/api/submittals';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { Submittal } from './types';
-import { SubmittalCreateModal } from './SubmittalCreateModal';
+const SubmittalCreateModal = React.lazy(() => import('./SubmittalCreateModal'));
 
-type TabId = 'all' | 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'revise';
+type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'rejected';
 
 const getTypeFilterOptions = () => [
   { value: '', label: t('submittals.filterAllTypes') },
@@ -29,7 +29,9 @@ const getTypeFilterOptions = () => [
   { value: 'SAMPLE', label: t('submittals.filterTypeSample') },
   { value: 'TEST_REPORT', label: t('submittals.filterTypeTestReport') },
   { value: 'CERTIFICATE', label: t('submittals.filterTypeCertificate') },
-  { value: 'DESIGN_DATA', label: t('submittals.filterTypeDesignData') },
+  { value: 'MOCK_UP', label: t('submittals.filterTypeMockUp') },
+  { value: 'CALCULATION', label: t('submittals.filterTypeCalculation') },
+  { value: 'DESIGN_MIX', label: t('submittals.filterTypeDesignMix') },
 ];
 
 const SubmittalListPage: React.FC = () => {
@@ -49,18 +51,18 @@ const SubmittalListPage: React.FC = () => {
   const filteredSubmittals = useMemo(() => {
     let filtered = submittals;
 
-    if (activeTab === 'SUBMITTED') {
+    if (activeTab === 'DRAFT') {
+      filtered = filtered.filter((s) => s.status === 'DRAFT');
+    } else if (activeTab === 'SUBMITTED') {
       filtered = filtered.filter((s) => s.status === 'SUBMITTED');
-    } else if (activeTab === 'UNDER_REVIEW') {
-      filtered = filtered.filter((s) => s.status === 'UNDER_REVIEW');
     } else if (activeTab === 'APPROVED') {
-      filtered = filtered.filter((s) => ['APPROVED', 'APPROVED_AS_NOTED'].includes(s.status));
-    } else if (activeTab === 'revise') {
-      filtered = filtered.filter((s) => ['REVISE_RESUBMIT', 'REJECTED'].includes(s.status));
+      filtered = filtered.filter((s) => s.status === 'APPROVED');
+    } else if (activeTab === 'rejected') {
+      filtered = filtered.filter((s) => ['REJECTED', 'REVISED'].includes(s.status));
     }
 
     if (typeFilter) {
-      filtered = filtered.filter((s) => s.type === typeFilter);
+      filtered = filtered.filter((s) => s.submittalType === typeFilter);
     }
 
     if (search) {
@@ -78,10 +80,10 @@ const SubmittalListPage: React.FC = () => {
 
   const tabCounts = useMemo(() => ({
     all: submittals.length,
+    draft: submittals.filter((s) => s.status === 'DRAFT').length,
     submitted: submittals.filter((s) => s.status === 'SUBMITTED').length,
-    under_review: submittals.filter((s) => s.status === 'UNDER_REVIEW').length,
-    approved: submittals.filter((s) => ['APPROVED', 'APPROVED_AS_NOTED'].includes(s.status)).length,
-    revise: submittals.filter((s) => ['REVISE_RESUBMIT', 'REJECTED'].includes(s.status)).length,
+    approved: submittals.filter((s) => s.status === 'APPROVED').length,
+    rejected: submittals.filter((s) => ['REJECTED', 'REVISED'].includes(s.status)).length,
   }), [submittals]);
 
   const columns = useMemo<ColumnDef<Submittal, unknown>[]>(
@@ -106,7 +108,7 @@ const SubmittalListPage: React.FC = () => {
         ),
       },
       {
-        accessorKey: 'type',
+        accessorKey: 'submittalType',
         header: t('submittals.colType'),
         size: 150,
         cell: ({ getValue }) => (
@@ -147,12 +149,12 @@ const SubmittalListPage: React.FC = () => {
       },
       {
         accessorKey: 'leadTimeDays',
-        header: 'Lead Time',
+        header: t('submittals.colLeadTime'),
         size: 100,
         cell: ({ getValue }) => {
           const days = getValue<number>();
           return days != null ? (
-            <span className="text-sm text-neutral-600">{days} {t('submittals.days')}</span>
+            <span className="text-sm text-neutral-600 dark:text-neutral-400">{days} {t('submittals.days')}</span>
           ) : (
             <span className="text-neutral-400">---</span>
           );
@@ -163,7 +165,7 @@ const SubmittalListPage: React.FC = () => {
   );
 
   const handleRowClick = useCallback(
-    (submittal: Submittal) => navigate(`/submittals/${submittal.id}`),
+    (submittal: Submittal) => navigate(`/pm/submittals/${submittal.id}`),
     [navigate],
   );
 
@@ -183,10 +185,10 @@ const SubmittalListPage: React.FC = () => {
         }
         tabs={[
           { id: 'all', label: t('submittals.tabAll'), count: tabCounts.all },
+          { id: 'DRAFT', label: t('submittals.tabDraft'), count: tabCounts.draft },
           { id: 'SUBMITTED', label: t('submittals.tabSubmitted'), count: tabCounts.submitted },
-          { id: 'UNDER_REVIEW', label: t('submittals.tabUnderReview'), count: tabCounts.under_review },
           { id: 'APPROVED', label: t('submittals.tabApproved'), count: tabCounts.approved },
-          { id: 'revise', label: t('submittals.tabRevise'), count: tabCounts.revise },
+          { id: 'rejected', label: t('submittals.tabRejected'), count: tabCounts.rejected },
         ]}
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
@@ -226,10 +228,14 @@ const SubmittalListPage: React.FC = () => {
         emptyDescription={t('submittals.emptyDescription')}
       />
 
-      <SubmittalCreateModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {createModalOpen && (
+        <React.Suspense fallback={null}>
+          <SubmittalCreateModal
+            open={createModalOpen}
+            onClose={() => setCreateModalOpen(false)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

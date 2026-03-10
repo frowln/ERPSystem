@@ -155,10 +155,7 @@ const PermitDetailPage: React.FC = () => {
               variant="secondary"
               size="sm"
               iconLeft={<Edit size={14} />}
-              onClick={() => {
-                toast(t('regulatory.editToast'));
-                navigate('/regulatory/permits');
-              }}
+              onClick={() => navigate(`/regulatory/permits/${id}/edit`)}
             >
               {t('regulatory.btnEdit')}
             </Button>

@@ -32,6 +32,7 @@ describe('navigation config', () => {
   it('all item ids are unique', () => {
     const allIds = navigation.flatMap((g) => g.items.map((i) => i.id));
     const unique = new Set(allIds);
+    // If this fails, a nav item id was duplicated — check for duplicate entries
     expect(unique.size).toBe(allIds.length);
   });
 
@@ -45,6 +46,8 @@ describe('navigation config', () => {
     const groupIds = navigation.map((g) => g.id);
     expect(groupIds).toContain('home');
     expect(groupIds).toContain('projects');
+    expect(groupIds).toContain('tasks');
+    expect(groupIds).toContain('finance');
   });
 
   it('dashboard links to /', () => {
@@ -56,9 +59,9 @@ describe('navigation config', () => {
   });
 
   it('projects link to /projects', () => {
-    const projectGroup = navigation.find((g) => g.id === 'projects');
-    expect(projectGroup).toBeDefined();
-    const projectsList = projectGroup!.items.find((i) => i.id === 'projects-list');
+    const projectsGroup = navigation.find((g) => g.id === 'projects');
+    expect(projectsGroup).toBeDefined();
+    const projectsList = projectsGroup!.items.find((i) => i.id === 'projects-list');
     expect(projectsList).toBeDefined();
     expect(projectsList!.href).toBe('/projects');
   });

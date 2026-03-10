@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 public enum LeadStatus {
 
     NEW("Новый"),
-    QUALIFIED("Квалифицирован"),
+    QUALIFIED("Квалификация"),
     PROPOSITION("Предложение"),
-    WON("Выигран"),
-    LOST("Проигран");
+    NEGOTIATION("Переговоры"),
+    WON("Выиграно"),
+    LOST("Потеряно");
 
     private final String displayName;
 }

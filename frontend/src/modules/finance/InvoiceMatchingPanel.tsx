@@ -16,6 +16,7 @@ import { formatMoney } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { ThreeWayMatchResult, InvoiceMatchCandidate } from '@/types';
+import toast from 'react-hot-toast';
 
 // ---------------------------------------------------------------------------
 // 3-Way Match Status Card
@@ -176,6 +177,9 @@ const FuzzyMatchPanel: React.FC<{ invoiceId: string }> = ({ invoiceId }) => {
       queryClient.invalidateQueries({ queryKey: ['INVOICE', invoiceId] });
       // maybe also invalidate three-way-match
       queryClient.invalidateQueries({ queryKey: ['three-way-match', invoiceId] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

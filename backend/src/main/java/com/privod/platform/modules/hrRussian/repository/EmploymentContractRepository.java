@@ -20,6 +20,8 @@ public interface EmploymentContractRepository extends JpaRepository<EmploymentCo
 
     Page<EmploymentContract> findByStatusAndDeletedFalse(ContractStatus status, Pageable pageable);
 
+    Page<EmploymentContract> findByDeletedFalse(Pageable pageable);
+
     Optional<EmploymentContract> findByContractNumberAndDeletedFalse(String contractNumber);
 
     List<EmploymentContract> findByEmployeeIdAndDeletedFalse(UUID employeeId);

@@ -746,3 +746,5 @@ export const TenderEvaluateWizard: React.FC<TenderEvaluateWizardProps> = ({ open
     </Modal>
   );
 };
+
+export default TenderEvaluateWizard;

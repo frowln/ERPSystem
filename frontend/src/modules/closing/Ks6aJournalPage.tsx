@@ -8,6 +8,7 @@ import { Button } from '@/design-system/components/Button';
 import { Select } from '@/design-system/components/FormField';
 import { closingApi } from '@/api/closing';
 import { projectsApi } from '@/api/projects';
+import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
@@ -99,7 +100,7 @@ const Ks6aJournalPage: React.FC = () => {
         size: 120,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block">
-            {getValue<number>().toLocaleString('ru-RU')}
+            {formatNumber(getValue<number>())}
           </span>
         ),
       },
@@ -109,7 +110,7 @@ const Ks6aJournalPage: React.FC = () => {
         size: 140,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block font-medium">
-            {getValue<number>().toLocaleString('ru-RU')}
+            {formatNumber(getValue<number>())}
           </span>
         ),
       },
@@ -119,7 +120,7 @@ const Ks6aJournalPage: React.FC = () => {
         size: 140,
         cell: ({ getValue }) => (
           <span className="tabular-nums text-right block text-primary-700 dark:text-primary-400 font-medium">
-            {getValue<number>().toLocaleString('ru-RU')}
+            {formatNumber(getValue<number>())}
           </span>
         ),
       },

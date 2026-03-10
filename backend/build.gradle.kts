@@ -61,6 +61,9 @@ dependencies {
     // PDF Generation (Flying Saucer + OpenPDF)
     implementation("org.xhtmlrenderer:flying-saucer-pdf-openpdf:9.3.0")
 
+    // XLSX Generation (Apache POI)
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
+
     // Database
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")

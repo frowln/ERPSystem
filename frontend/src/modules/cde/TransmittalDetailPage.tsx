@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Send, Clock, Building2, FileText, MessageSquare } from 'lucide-react';
@@ -101,7 +102,7 @@ const TransmittalDetailPage: React.FC = () => {
               size="md"
             />
             {tr.status === 'ISSUED' && (
-              <Button size="sm" iconLeft={<MessageSquare size={14} />}>
+              <Button size="sm" iconLeft={<MessageSquare size={14} />} onClick={() => toast(t('common.operationStarted'))}>
                 {t('cde.transmittalDetail.buttonReply')}
               </Button>
             )}

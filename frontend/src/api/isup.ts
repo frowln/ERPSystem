@@ -97,8 +97,8 @@ export const isupApi = {
     return response.data;
   },
 
-  deleteProjectMapping: async (configId: string, mappingId: string): Promise<void> => {
-    await apiClient.delete(`/isup/configurations/${configId}/mappings/${mappingId}`);
+  deleteProjectMapping: async (_configId: string, mappingId: string): Promise<void> => {
+    await apiClient.delete(`/integrations/isup/mappings/${mappingId}`);
   },
 
   getTransmissions: async (params?: PaginationParams & { status?: string; configId?: string }): Promise<PaginatedResponse<IsupTransmission>> => {

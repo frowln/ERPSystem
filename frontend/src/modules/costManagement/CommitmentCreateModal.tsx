@@ -8,6 +8,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { costManagementApi } from '@/api/costManagement';
+import { useContractOptions } from '@/hooks/useSelectOptions';
 import { t } from '@/i18n';
 
 const getCommitmentSchema = () => z.object({
@@ -53,16 +54,11 @@ const getVendorOptions = () => [
   { value: t('common.mockVendors.metallTrade'), label: t('common.mockVendors.metallTrade') },
 ];
 
-const getContractOptions = () => [
-  { value: '', label: t('costManagement.commitmentCreate.noContract') },
-  { value: 'c1', label: t('common.mockContracts.dg001Short') },
-  { value: 'c2', label: t('common.mockContracts.dg002Short') },
-  { value: 'c3', label: t('common.mockContracts.dg003Short') },
-  { value: 'c4', label: t('common.mockContracts.dg004Short') },
-];
 
 export const CommitmentCreateModal: React.FC<CommitmentCreateModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
+  const { options: contractOpts } = useContractOptions();
+  const contractOptions = [{ value: '', label: t('costManagement.commitmentCreate.noContract') }, ...contractOpts];
 
   const {
     register,
@@ -162,7 +158,7 @@ export const CommitmentCreateModal: React.FC<CommitmentCreateModalProps> = ({ op
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField label={t('costManagement.commitmentCreate.labelContract')} error={errors.contractId?.message}>
             <Select
-              options={getContractOptions()}
+              options={contractOptions}
               placeholder={t('costManagement.commitmentCreate.placeholderContract')}
               hasError={!!errors.contractId}
               {...register('contractId')}

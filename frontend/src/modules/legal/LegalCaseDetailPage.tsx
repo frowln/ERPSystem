@@ -28,6 +28,7 @@ import { formatDateLong, formatMoney, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { LegalCase, LegalDecision, LegalRemark } from './types';
+import toast from 'react-hot-toast';
 
 const getStatusFlow = () => [
   { status: 'OPEN', label: t('legal.caseStatusOpen') },
@@ -53,6 +54,9 @@ const LegalCaseDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['legal-case', id] });
       queryClient.invalidateQueries({ queryKey: ['legal-cases'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -214,7 +218,7 @@ const LegalCaseDetailPage: React.FC = () => {
             ) : (
               <div className="space-y-3">
                 {decisionList.map((decision) => (
-                  <div key={decision.id} className="p-4 rounded-lg border border-neutral-100">
+                  <div key={decision.id} className="p-4 rounded-lg border border-neutral-100 dark:border-neutral-700">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{decision.title}</span>
                       <div className="flex items-center gap-2">
@@ -233,7 +237,7 @@ const LegalCaseDetailPage: React.FC = () => {
                       {decisionTypeLabels[decision.decisionType] ?? decision.decisionType} | {formatDateLong(decision.decisionDate)}
                     </p>
                     {decision.description && (
-                      <p className="text-sm text-neutral-600 mt-2">{decision.description}</p>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2">{decision.description}</p>
                     )}
                     {decision.amount && (
                       <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mt-2">{t('legal.amountLabel')}: {formatMoneyCompact(decision.amount)}</p>
@@ -257,7 +261,7 @@ const LegalCaseDetailPage: React.FC = () => {
                 {remarkList.map((remark) => (
                   <div key={remark.id} className={cn(
                     'p-4 rounded-lg border',
-                    remark.isInternal ? 'border-warning-100 bg-warning-50/30' : 'border-neutral-100',
+                    remark.isInternal ? 'border-warning-100 bg-warning-50/30' : 'border-neutral-100 dark:border-neutral-700',
                   )}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{remark.authorName}</span>

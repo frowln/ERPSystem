@@ -13,6 +13,7 @@ import { payrollApi } from './api';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 import type { PayrollTemplate, PayrollTemplateType } from './types';
+import toast from 'react-hot-toast';
 
 const getTypeLabels = (): Record<PayrollTemplateType, string> => ({
   SALARY: t('payroll.templateList.typeSalary'),
@@ -49,6 +50,9 @@ const PayrollTemplateListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payroll-templates'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

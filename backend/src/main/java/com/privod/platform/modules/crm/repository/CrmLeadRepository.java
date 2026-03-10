@@ -90,4 +90,9 @@ public interface CrmLeadRepository extends JpaRepository<CrmLead, UUID>,
     BigDecimal sumWonRevenueByOrganizationId(@Param("organizationId") UUID organizationId);
 
     long countByAssignedToIdAndStatusAndDeletedFalse(UUID assignedToId, LeadStatus status);
+
+    @Query("SELECT l.stageId, COUNT(l), COALESCE(SUM(l.expectedRevenue), 0) " +
+            "FROM CrmLead l WHERE l.deleted = false AND l.organizationId = :organizationId " +
+            "GROUP BY l.stageId")
+    List<Object[]> countAndSumByStageAndOrganizationId(@Param("organizationId") UUID organizationId);
 }

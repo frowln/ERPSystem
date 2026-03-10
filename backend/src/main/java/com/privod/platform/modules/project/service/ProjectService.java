@@ -2,8 +2,11 @@ package com.privod.platform.modules.project.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.notification.service.WebSocketNotificationService;
 import com.privod.platform.modules.project.domain.Project;
+import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.repository.ProjectTaskRepository;
 import com.privod.platform.modules.project.domain.ProjectMember;
 import com.privod.platform.modules.project.domain.ProjectPriority;
 import com.privod.platform.modules.project.domain.ProjectStatus;
@@ -45,6 +48,8 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMemberRepository projectMemberRepository;
+    private final ProjectTaskRepository taskRepository;
+    private final UserRepository userRepository;
     private final AuditService auditService;
     private final WebSocketNotificationService wsNotificationService;
     private final ProjectFinancialService financialService;
@@ -67,14 +72,46 @@ public class ProjectService {
                 .and(ProjectSpecification.searchByNameOrCode(search))
                 .and(ProjectSpecification.inCity(city));
 
-        return projectRepository.findAll(spec, pageable).map(ProjectResponse::fromEntity);
+        Page<Project> page = projectRepository.findAll(spec, pageable);
+        List<UUID> projectIds = page.getContent().stream().map(Project::getId).toList();
+        Map<UUID, String> managerNames = resolveManagerNames(page.getContent());
+        Map<UUID, Integer> progressMap = computeProjectProgress(projectIds);
+        Map<UUID, Integer> memberCountMap = computeMemberCounts(projectIds);
+        return page.map(p -> ProjectResponse.fromEntity(p,
+                p.getManagerId() != null ? managerNames.get(p.getManagerId()) : null, null,
+                progressMap.getOrDefault(p.getId(), 0),
+                memberCountMap.getOrDefault(p.getId(), 0)));
+    }
+
+    private Map<UUID, String> resolveManagerNames(List<Project> projects) {
+        List<UUID> managerIds = projects.stream()
+                .map(Project::getManagerId)
+                .filter(id -> id != null)
+                .distinct()
+                .toList();
+        if (managerIds.isEmpty()) return new HashMap<>();
+        Map<UUID, String> names = new HashMap<>();
+        for (Object[] row : userRepository.findNamesByIds(managerIds)) {
+            String firstName = row[1] != null ? row[1].toString() : "";
+            String lastName = row[2] != null ? row[2].toString() : "";
+            names.put((UUID) row[0], (firstName + " " + lastName).trim());
+        }
+        return names;
     }
 
     @Transactional(readOnly = true)
     public ProjectResponse findById(UUID id) {
         Project project = getProjectOrThrow(id);
         ProjectFinancialSummary financials = financialService.getFinancials(id);
-        return ProjectResponse.fromEntityWithFinancials(project, financials);
+        String managerName = null;
+        if (project.getManagerId() != null) {
+            Map<UUID, String> names = resolveManagerNames(List.of(project));
+            managerName = names.get(project.getManagerId());
+        }
+        Map<UUID, Integer> progressMap = computeProjectProgress(List.of(id));
+        int membersCount = (int) projectMemberRepository.countByProjectIdAndLeftAtIsNull(id);
+        return ProjectResponse.fromEntityWithFinancials(project, financials, managerName, null,
+                progressMap.getOrDefault(id, 0), membersCount);
     }
 
     @Transactional
@@ -206,9 +243,15 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<ProjectMemberResponse> getMembers(UUID projectId) {
         getProjectOrThrow(projectId);
-        return projectMemberRepository.findByProjectIdAndLeftAtIsNull(projectId)
-                .stream()
-                .map(ProjectMemberResponse::fromEntity)
+        var members = projectMemberRepository.findByProjectIdAndLeftAtIsNull(projectId);
+        var userIds = members.stream().map(ProjectMember::getUserId).distinct().toList();
+        var usersMap = userRepository.findAllById(userIds).stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        com.privod.platform.modules.auth.domain.User::getId,
+                        u -> u
+                ));
+        return members.stream()
+                .map(m -> ProjectMemberResponse.fromEntity(m, usersMap.get(m.getUserId())))
                 .toList();
     }
 
@@ -235,7 +278,8 @@ public class ProjectService {
         auditService.logCreate("ProjectMember", member.getId());
 
         log.info("Member added to project {}: user={}, role={}", projectId, request.userId(), request.role());
-        return ProjectMemberResponse.fromEntity(member);
+        var user = userRepository.findById(request.userId()).orElse(null);
+        return ProjectMemberResponse.fromEntity(member, user);
     }
 
     @Transactional
@@ -388,6 +432,39 @@ public class ProjectService {
             }
         }
         throw new IllegalStateException("Could not generate unique project code after retries");
+    }
+
+    private Map<UUID, Integer> computeProjectProgress(List<UUID> projectIds) {
+        if (projectIds.isEmpty()) return Map.of();
+        Map<UUID, Integer> result = new HashMap<>();
+        List<Object[]> rows = taskRepository.countByProjectIdAndStatusGrouped(projectIds);
+        // Group: projectId → { status → count }
+        Map<UUID, Map<TaskStatus, Long>> grouped = new HashMap<>();
+        for (Object[] row : rows) {
+            UUID pid = (UUID) row[0];
+            TaskStatus status = (TaskStatus) row[1];
+            Long count = (Long) row[2];
+            grouped.computeIfAbsent(pid, k -> new HashMap<>()).put(status, count);
+        }
+        for (Map.Entry<UUID, Map<TaskStatus, Long>> entry : grouped.entrySet()) {
+            Map<TaskStatus, Long> counts = entry.getValue();
+            long total = counts.values().stream().mapToLong(Long::longValue).sum();
+            long cancelled = counts.getOrDefault(TaskStatus.CANCELLED, 0L);
+            long done = counts.getOrDefault(TaskStatus.DONE, 0L);
+            long effective = total - cancelled;
+            int progress = effective > 0 ? (int) (done * 100 / effective) : 0;
+            result.put(entry.getKey(), progress);
+        }
+        return result;
+    }
+
+    private Map<UUID, Integer> computeMemberCounts(List<UUID> projectIds) {
+        if (projectIds.isEmpty()) return Map.of();
+        Map<UUID, Integer> result = new HashMap<>();
+        for (Object[] row : projectMemberRepository.countByProjectIdGrouped(projectIds)) {
+            result.put((UUID) row[0], ((Long) row[1]).intValue());
+        }
+        return result;
     }
 
     private void validateDates(LocalDate start, LocalDate end) {

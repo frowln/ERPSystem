@@ -20,7 +20,9 @@ public record ProjectResponse(
         String statusDisplayName,
         UUID organizationId,
         UUID customerId,
+        String customerName,
         UUID managerId,
+        String managerName,
         LocalDate plannedStartDate,
         LocalDate plannedEndDate,
         LocalDate actualStartDate,
@@ -32,12 +34,17 @@ public record ProjectResponse(
         BigDecimal longitude,
         /** Manual (preliminary) budget amount from project entity */
         BigDecimal budgetAmount,
+        /** Alias for budgetAmount – used by frontend as "budget" */
+        BigDecimal budget,
         /** Manual (preliminary) contract amount from project entity */
         BigDecimal contractAmount,
         ProjectType type,
         String category,
         String constructionKind,
         ProjectPriority priority,
+        /** Completion progress 0-100 (computed from tasks or manual) */
+        int progress,
+        int membersCount,
         Instant createdAt,
         Instant updatedAt,
         String createdBy,
@@ -50,6 +57,11 @@ public record ProjectResponse(
      * Used in list endpoints where per-project financial calculation would be too expensive.
      */
     public static ProjectResponse fromEntity(Project project) {
+        return fromEntity(project, null, null, 0, 0);
+    }
+
+    public static ProjectResponse fromEntity(Project project, String managerName, String customerName, int progress, int membersCount) {
+        var resolvedCustomerName = customerName != null ? customerName : project.getCustomerName();
         return new ProjectResponse(
                 project.getId(),
                 project.getCode(),
@@ -59,7 +71,9 @@ public record ProjectResponse(
                 project.getStatus().getDisplayName(),
                 project.getOrganizationId(),
                 project.getCustomerId(),
+                resolvedCustomerName,
                 project.getManagerId(),
+                managerName,
                 project.getPlannedStartDate(),
                 project.getPlannedEndDate(),
                 project.getActualStartDate(),
@@ -70,11 +84,14 @@ public record ProjectResponse(
                 project.getLatitude(),
                 project.getLongitude(),
                 project.getBudgetAmount(),
+                project.getBudgetAmount(),
                 project.getContractAmount(),
                 project.getType(),
                 project.getCategory(),
                 project.getConstructionKind(),
                 project.getPriority(),
+                progress,
+                membersCount,
                 project.getCreatedAt(),
                 project.getUpdatedAt(),
                 project.getCreatedBy(),
@@ -87,6 +104,11 @@ public record ProjectResponse(
      * Used in single-project GET endpoint.
      */
     public static ProjectResponse fromEntityWithFinancials(Project project, ProjectFinancialSummary financials) {
+        return fromEntityWithFinancials(project, financials, null, null, 0, 0);
+    }
+
+    public static ProjectResponse fromEntityWithFinancials(Project project, ProjectFinancialSummary financials, String managerName, String customerName, int progress, int membersCount) {
+        var resolvedCustomerName = customerName != null ? customerName : project.getCustomerName();
         return new ProjectResponse(
                 project.getId(),
                 project.getCode(),
@@ -96,7 +118,9 @@ public record ProjectResponse(
                 project.getStatus().getDisplayName(),
                 project.getOrganizationId(),
                 project.getCustomerId(),
+                resolvedCustomerName,
                 project.getManagerId(),
+                managerName,
                 project.getPlannedStartDate(),
                 project.getPlannedEndDate(),
                 project.getActualStartDate(),
@@ -107,11 +131,14 @@ public record ProjectResponse(
                 project.getLatitude(),
                 project.getLongitude(),
                 project.getBudgetAmount(),
+                project.getBudgetAmount(),
                 project.getContractAmount(),
                 project.getType(),
                 project.getCategory(),
                 project.getConstructionKind(),
                 project.getPriority(),
+                progress,
+                membersCount,
                 project.getCreatedAt(),
                 project.getUpdatedAt(),
                 project.getCreatedBy(),

@@ -25,7 +25,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   <div
     aria-hidden
     className={cn(
-      'animate-pulse bg-neutral-100 dark:bg-neutral-800',
+      'animate-pulse bg-neutral-200 dark:bg-neutral-700',
       variant === 'circular' && 'rounded-full',
       variant === 'rectangular' && 'rounded-lg',
       variant === 'text' && 'rounded h-4',
@@ -37,6 +37,80 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       ...style,
     }}
   />
+);
+
+/* ---------- Standalone TableSkeleton ---------- */
+
+interface TableSkeletonProps {
+  rows?: number;
+  columns?: number;
+  hasActions?: boolean;
+  className?: string;
+}
+
+export const TableSkeleton: React.FC<TableSkeletonProps> = ({
+  rows = 8,
+  columns = 5,
+  hasActions = false,
+  className,
+}) => {
+  const totalCols = hasActions ? columns + 1 : columns;
+  return (
+    <div className={cn('bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden', className)}>
+      {/* Toolbar */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
+        <Skeleton className="h-8 w-56" />
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-8" variant="rectangular" />
+          <Skeleton className="h-8 w-8" variant="rectangular" />
+        </div>
+      </div>
+      {/* Header row */}
+      <div className="flex gap-4 px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
+        {Array.from({ length: totalCols }).map((_, i) => (
+          <Skeleton key={i} className="h-3" style={{ width: `${100 / totalCols}%` }} />
+        ))}
+      </div>
+      {/* Data rows */}
+      {Array.from({ length: rows }).map((_, rIdx) => (
+        <div key={rIdx} className="flex gap-4 px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
+          {Array.from({ length: totalCols }).map((_, cIdx) => (
+            <Skeleton
+              key={cIdx}
+              className="h-4"
+              style={{ width: `${50 + ((rIdx * 13 + cIdx * 7) % 40)}%`, maxWidth: `${100 / totalCols}%` }}
+            />
+          ))}
+        </div>
+      ))}
+      {/* Pagination */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <Skeleton className="h-4 w-32" />
+        <div className="flex gap-1">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-8" variant="rectangular" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ---------- Standalone MetricCardSkeleton ---------- */
+
+interface MetricCardSkeletonProps {
+  className?: string;
+}
+
+export const MetricCardSkeleton: React.FC<MetricCardSkeletonProps> = ({ className }) => (
+  <div className={cn('bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5', className)}>
+    <div className="flex items-start justify-between mb-3">
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-8 w-8" variant="circular" />
+    </div>
+    <Skeleton className="h-7 w-20 mb-2" />
+    <Skeleton className="h-3 w-16" />
+  </div>
 );
 
 /* ---------- Page Skeleton Variants ---------- */
@@ -60,11 +134,7 @@ const SkeletonHeader: React.FC = () => (
 const SkeletonMetrics: React.FC<{ count?: number }> = ({ count = 4 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     {Array.from({ length: count }).map((_, i) => (
-      <div key={i} className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5 space-y-3">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-7 w-20" />
-        <Skeleton className="h-3 w-16" />
-      </div>
+      <MetricCardSkeleton key={i} />
     ))}
   </div>
 );
@@ -179,7 +249,7 @@ const SkeletonDashboard: React.FC = () => (
         <Skeleton className="h-48 w-full" />
       </div>
     </div>
-    <SkeletonTable rows={5} cols={4} />
+    <TableSkeleton rows={5} columns={4} />
   </div>
 );
 
@@ -187,7 +257,8 @@ const variants: Record<PageSkeletonVariant, React.FC> = {
   list: () => (
     <>
       <SkeletonHeader />
-      <SkeletonTable />
+      <SkeletonMetrics count={4} />
+      <TableSkeleton />
     </>
   ),
   detail: () => (

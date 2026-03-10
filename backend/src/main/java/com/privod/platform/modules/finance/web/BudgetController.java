@@ -38,13 +38,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/budgets")
 @RequiredArgsConstructor
-@Tag(name = "Budgets", description = "Budget management endpoints")
+@Tag(name = "Budgets", description = "Финансовый модуль — бюджеты и позиции")
 public class BudgetController {
 
     private final BudgetService budgetService;
 
     @GetMapping
-    @Operation(summary = "List budgets with filtering and pagination")
+    @Operation(summary = "Список бюджетов",
+               description = "Возвращает постраничный список бюджетов с фильтрацией по проекту и статусу")
     public ResponseEntity<ApiResponse<PageResponse<BudgetResponse>>> list(
             @RequestParam(required = false) UUID projectId,
             @RequestParam(required = false) BudgetStatus status,
@@ -63,7 +64,8 @@ public class BudgetController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
-    @Operation(summary = "Create a new budget")
+    @Operation(summary = "Создать бюджет",
+               description = "Создаёт новый бюджет для проекта. Доступно ролям ADMIN, PROJECT_MANAGER и FINANCE_MANAGER")
     public ResponseEntity<ApiResponse<BudgetResponse>> create(
             @Valid @RequestBody CreateBudgetRequest request) {
         BudgetResponse response = budgetService.createBudget(request);

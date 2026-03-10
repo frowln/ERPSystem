@@ -116,7 +116,7 @@ const WeatherPage: React.FC = () => {
     queryKey: ['weather-sites'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/integrations/weather/sites');
+        const res = await apiClient.get('/integrations/weather/sites', { _silentErrors: true } as any);
         return res.data as WeatherSite[];
       } catch {
         return [];
@@ -131,7 +131,7 @@ const WeatherPage: React.FC = () => {
     queryKey: ['weather-config'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/integrations/weather/config');
+        const res = await apiClient.get('/integrations/weather/config', { _silentErrors: true } as any);
         return res.data as WeatherConfig;
       } catch {
         return defaultWeatherConfig;

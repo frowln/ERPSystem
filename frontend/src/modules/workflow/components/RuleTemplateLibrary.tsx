@@ -53,14 +53,20 @@ const iconMap: Record<string, React.ReactNode> = {
 // Built-in templates
 // ---------------------------------------------------------------------------
 
+let _tplIdCounter = 0;
+function tplId(prefix: string): string {
+  _tplIdCounter += 1;
+  return `${prefix}_${_tplIdCounter}`;
+}
+
 function getBuiltInTemplates(): RuleTemplate[] {
   const emptyConditions: ConditionConfig = {
     logic: 'AND',
     groups: [
       {
-        id: 'g1',
+        id: tplId('grp'),
         logic: 'AND',
-        conditions: [{ id: 'c1', field: 'amount', operator: 'less_than', value: '50000' }],
+        conditions: [{ id: tplId('cond'), field: 'amount', operator: 'less_than', value: '50000' }],
       },
     ],
   };
@@ -89,9 +95,9 @@ function getBuiltInTemplates(): RuleTemplate[] {
         logic: 'AND',
         groups: [
           {
-            id: 'g1',
+            id: tplId('grp'),
             logic: 'AND',
-            conditions: [{ id: 'c1', field: 'status', operator: 'equals', value: 'IN_PROGRESS' }],
+            conditions: [{ id: tplId('cond'), field: 'status', operator: 'equals', value: 'IN_PROGRESS' }],
           },
         ],
       },
@@ -109,9 +115,9 @@ function getBuiltInTemplates(): RuleTemplate[] {
         logic: 'AND',
         groups: [
           {
-            id: 'g1',
+            id: tplId('grp'),
             logic: 'AND',
-            conditions: [{ id: 'c1', field: 'entityType', operator: 'equals', value: 'SAFETY_INCIDENT' }],
+            conditions: [{ id: tplId('cond'), field: 'entityType', operator: 'equals', value: 'SAFETY_INCIDENT' }],
           },
         ],
       },
@@ -129,9 +135,9 @@ function getBuiltInTemplates(): RuleTemplate[] {
         logic: 'AND',
         groups: [
           {
-            id: 'g1',
+            id: tplId('grp'),
             logic: 'AND',
-            conditions: [{ id: 'c1', field: 'department', operator: 'equals', value: '' }],
+            conditions: [{ id: tplId('cond'), field: 'department', operator: 'equals', value: '' }],
           },
         ],
       },
@@ -149,9 +155,9 @@ function getBuiltInTemplates(): RuleTemplate[] {
         logic: 'AND',
         groups: [
           {
-            id: 'g1',
+            id: tplId('grp'),
             logic: 'AND',
-            conditions: [{ id: 'c1', field: 'amount', operator: 'greater_than', value: '1000000' }],
+            conditions: [{ id: tplId('cond'), field: 'amount', operator: 'greater_than', value: '1000000' }],
           },
         ],
       },

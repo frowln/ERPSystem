@@ -20,9 +20,19 @@ public record CrmActivityResponse(
         String result,
         boolean completed,
         boolean overdue,
-        Instant createdAt
+        Instant createdAt,
+        // --- alias fields ---
+        String type,
+        String title,
+        String description,
+        String assignedToName,
+        boolean isDone
 ) {
     public static CrmActivityResponse fromEntity(CrmActivity a) {
+        return fromEntity(a, null);
+    }
+
+    public static CrmActivityResponse fromEntity(CrmActivity a, String assignedToName) {
         return new CrmActivityResponse(
                 a.getId(),
                 a.getLeadId(),
@@ -36,7 +46,13 @@ public record CrmActivityResponse(
                 a.getResult(),
                 a.isCompleted(),
                 a.isOverdue(),
-                a.getCreatedAt()
+                a.getCreatedAt(),
+                // alias fields
+                a.getActivityType().name().toLowerCase(),  // type
+                a.getSummary(),                            // title
+                a.getNotes(),                              // description
+                assignedToName,                            // assignedToName
+                a.isCompleted()                            // isDone
         );
     }
 }

@@ -112,6 +112,9 @@ const WarehouseOrdersPage: React.FC = () => {
       setCreateOpen(false);
       resetForm();
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const resetForm = () => {

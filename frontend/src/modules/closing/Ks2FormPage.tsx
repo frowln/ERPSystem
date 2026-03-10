@@ -173,7 +173,7 @@ const Ks2FormPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('closing.ks2Form.labelNumber')} error={errors.number?.message} required>
               <Input
-                placeholder="КС-2-001"
+                placeholder={t('closing.ks2Form.placeholderNumber')}
                 hasError={!!errors.number}
                 {...register('number')}
               />

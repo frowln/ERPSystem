@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, FileSignature } from 'lucide-react';
@@ -55,6 +56,7 @@ const EmploymentContractListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['employment-contracts'],
     queryFn: () => hrRussianApi.getContracts({ size: 1000 }),
@@ -140,7 +142,7 @@ const EmploymentContractListPage: React.FC = () => {
           { label: t('hrRussian.contracts.breadcrumbHr') },
           { label: t('hrRussian.contracts.breadcrumbContracts') },
         ]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('hrRussian.contracts.newContract')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/hr-russian/contracts/new')}>{t('hrRussian.contracts.newContract')}</Button>}
         tabs={[
           { id: 'all', label: t('hrRussian.contracts.tabAll'), count: contracts.length },
           { id: 'ACTIVE', label: t('hrRussian.contracts.tabActive'), count: contracts.filter((c) => c.status === 'ACTIVE').length },

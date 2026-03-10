@@ -24,6 +24,7 @@ import { formatDateLong, formatMoney, formatMoneyCompact } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { ChangeEvent } from './types';
+import toast from 'react-hot-toast';
 
 const getStatusFlow = () => [
   { status: 'IDENTIFIED', label: t('changeManagement.eventDetail.statusIdentified') },
@@ -43,6 +44,9 @@ const ChangeEventDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['change-event', id] });
       queryClient.invalidateQueries({ queryKey: ['change-events'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

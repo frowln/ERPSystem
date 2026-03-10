@@ -20,6 +20,7 @@ import { hrApi } from '@/api/hr';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 import type { StaffingPosition, CreateVacancyRequest } from './types';
+import toast from 'react-hot-toast';
 
 // ---------------------------------------------------------------------------
 // Status maps
@@ -83,6 +84,9 @@ const StaffingSchedulePage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['staffing-schedule'] });
       setShowCreateModal(false);
       setForm({ department: '', position: '', grade: '', salaryMin: 0, salaryMax: 0 });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

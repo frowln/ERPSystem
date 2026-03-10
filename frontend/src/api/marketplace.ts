@@ -4,19 +4,20 @@ import { apiClient } from './client';
 // Types
 // ---------------------------------------------------------------------------
 
+/** Backend ConnectorCategory enum values */
 export type PluginCategory =
-  | 'ANALYTICS'
-  | 'INTEGRATION'
-  | 'AUTOMATION'
-  | 'REPORTING'
-  | 'COMMUNICATION'
-  | 'SAFETY'
-  | 'FINANCE';
+  | 'ACCOUNTING'
+  | 'BIM'
+  | 'COST_ESTIMATION'
+  | 'MESSAGING'
+  | 'BANKING'
+  | 'GOVERNMENT';
 
 export type PluginPrice = 'FREE' | 'PREMIUM' | 'ENTERPRISE';
 
 export type PluginStatus = 'AVAILABLE' | 'INSTALLED' | 'UPDATE_AVAILABLE' | 'DEPRECATED';
 
+/** Maps to backend ConnectorResponse */
 export interface MarketplacePlugin {
   id: string;
   name: string;
@@ -24,6 +25,7 @@ export interface MarketplacePlugin {
   description: string;
   longDescription: string;
   category: PluginCategory;
+  categoryDisplayName: string;
   developer: string;
   developerUrl: string;
   version: string;
@@ -39,6 +41,28 @@ export interface MarketplacePlugin {
   installedAt?: string;
   permissions: string[];
   configSchema?: Record<string, unknown>;
+  /** Backend fields from ConnectorResponse */
+  documentationUrl?: string;
+  apiBaseUrl?: string;
+  authType?: string;
+  authTypeDisplayName?: string;
+  isFirstParty?: boolean;
+  isActive?: boolean;
+  configSchemaJson?: string;
+}
+
+/** Maps to backend ConnectorInstallationResponse */
+export interface ConnectorInstallation {
+  id: string;
+  organizationId: string;
+  connectorId: string;
+  configJson: string | null;
+  status: string;
+  statusDisplayName: string;
+  lastSyncAt: string | null;
+  errorMessage: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface MarketplaceReview {
@@ -71,45 +95,170 @@ export interface PaginatedPlugins {
 }
 
 // ---------------------------------------------------------------------------
-// API
+// Normalize backend ConnectorResponse → frontend MarketplacePlugin
+// Backend does not return: price, rating, installCount, status, developer,
+// reviewCount, longDescription, screenshotUrls, tags, permissions.
+// ---------------------------------------------------------------------------
+
+function normalizeConnector(raw: Record<string, unknown>): MarketplacePlugin {
+  return {
+    id: String(raw.id ?? ''),
+    name: String(raw.name ?? ''),
+    slug: String(raw.slug ?? ''),
+    description: String(raw.description ?? ''),
+    longDescription: String(raw.longDescription ?? raw.description ?? ''),
+    category: (raw.category as PluginCategory) ?? 'ACCOUNTING',
+    categoryDisplayName: String(raw.categoryDisplayName ?? ''),
+    developer: String(raw.developer ?? 'PRIVOD'),
+    developerUrl: String(raw.developerUrl ?? ''),
+    version: String(raw.version ?? '1.0.0'),
+    rating: Number(raw.rating ?? 0),
+    reviewCount: Number(raw.reviewCount ?? 0),
+    installCount: Number(raw.installCount ?? 0),
+    price: (raw.price as PluginPrice) ?? (raw.isFirstParty ? 'FREE' : 'PREMIUM'),
+    iconUrl: String(raw.iconUrl ?? ''),
+    screenshotUrls: Array.isArray(raw.screenshotUrls) ? raw.screenshotUrls : [],
+    tags: Array.isArray(raw.tags) ? raw.tags : [],
+    status: (raw.status as PluginStatus) ?? 'AVAILABLE',
+    permissions: Array.isArray(raw.permissions) ? raw.permissions : [],
+    documentationUrl: raw.documentationUrl as string | undefined,
+    apiBaseUrl: raw.apiBaseUrl as string | undefined,
+    authType: raw.authType as string | undefined,
+    authTypeDisplayName: raw.authTypeDisplayName as string | undefined,
+    isFirstParty: Boolean(raw.isFirstParty),
+    isActive: Boolean(raw.isActive),
+    configSchemaJson: raw.configSchemaJson as string | undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// API — aligned with IntegrationMarketplaceController endpoints
 // ---------------------------------------------------------------------------
 
 export const marketplaceApi = {
+  /**
+   * GET /api/marketplace/connectors?category=...
+   * Backend returns ApiResponse<List<ConnectorResponse>>
+   */
   getPlugins: async (params?: MarketplaceFilters): Promise<PaginatedPlugins> => {
-    const response = await apiClient.get<PaginatedPlugins>('/marketplace/plugins', { params });
+    try {
+      const response = await apiClient.get('/marketplace/connectors', {
+        params: params?.category ? { category: params.category } : undefined,
+        _silentErrors: true,
+      } as never);
+      const raw = response.data;
+      // Backend may wrap in ApiResponse { data: [...] } or return array directly
+      const list: unknown[] = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+      const connectors: MarketplacePlugin[] = list.map((item) => normalizeConnector(item as Record<string, unknown>));
+
+      // Client-side filtering (backend only supports category filter)
+      let filtered = connectors;
+      if (params?.search) {
+        const q = params.search.toLowerCase();
+        filtered = filtered.filter(
+          (c) => c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q),
+        );
+      }
+      if (params?.price) {
+        filtered = filtered.filter((c) => c.price === params.price);
+      }
+      return { content: filtered, totalElements: filtered.length };
+    } catch {
+      return { content: [], totalElements: 0 };
+    }
+  },
+
+  /**
+   * GET /api/marketplace/connectors/{slug}
+   * Backend returns ApiResponse<ConnectorResponse>
+   */
+  getPlugin: async (slugOrId: string): Promise<MarketplacePlugin> => {
+    const response = await apiClient.get(`/marketplace/connectors/${slugOrId}`);
+    const raw = response.data?.data ?? response.data ?? {};
+    return normalizeConnector(raw as Record<string, unknown>);
+  },
+
+  /**
+   * POST /api/marketplace/connectors/{connectorId}/install
+   * Backend returns ApiResponse<ConnectorInstallationResponse>
+   */
+  installPlugin: async (connectorId: string): Promise<ConnectorInstallation> => {
+    const response = await apiClient.post<ConnectorInstallation>(
+      `/marketplace/connectors/${connectorId}/install`,
+    );
     return response.data;
   },
 
-  getPlugin: async (id: string): Promise<MarketplacePlugin> => {
-    const response = await apiClient.get<MarketplacePlugin>(`/marketplace/plugins/${id}`);
-    return response.data;
+  /** DELETE /api/marketplace/installations/{installationId} → ApiResponse<Void> */
+  uninstallPlugin: async (installationId: string): Promise<void> => {
+    await apiClient.delete(`/marketplace/installations/${installationId}`);
   },
 
-  installPlugin: async (id: string): Promise<void> => {
-    await apiClient.post(`/marketplace/plugins/${id}/install`);
+  /** Reviews — not yet implemented on backend, returns empty array */
+  getPluginReviews: async (_id: string): Promise<MarketplaceReview[]> => {
+    return [];
   },
 
-  uninstallPlugin: async (id: string): Promise<void> => {
-    await apiClient.delete(`/marketplace/plugins/${id}/uninstall`);
+  /**
+   * GET /api/marketplace/installations
+   * Backend returns ApiResponse<List<ConnectorInstallationResponse>>
+   */
+  getInstalledPlugins: async (): Promise<ConnectorInstallation[]> => {
+    try {
+      const response = await apiClient.get<ConnectorInstallation[]>('/marketplace/installations');
+      return Array.isArray(response.data) ? response.data : [];
+    } catch {
+      return [];
+    }
   },
 
-  getPluginReviews: async (id: string): Promise<MarketplaceReview[]> => {
-    const response = await apiClient.get<MarketplaceReview[]>(`/marketplace/plugins/${id}/reviews`);
-    return response.data;
+  /**
+   * GET /api/marketplace/installations/{installationId}
+   * Backend returns ApiResponse<ConnectorInstallationResponse>
+   */
+  getPluginConfig: async (installationId: string): Promise<PluginConfig> => {
+    try {
+      const response = await apiClient.get<ConnectorInstallation>(
+        `/marketplace/installations/${installationId}`,
+      );
+      const installation = response.data;
+      if (!installation) {
+        return { pluginId: '', settings: {}, enabled: false };
+      }
+      let settings: Record<string, unknown> = {};
+      if (installation.configJson) {
+        try { settings = JSON.parse(installation.configJson); } catch { /* empty */ }
+      }
+      return {
+        pluginId: installation.connectorId,
+        settings,
+        enabled: installation.status === 'ACTIVE',
+      };
+    } catch {
+      return { pluginId: '', settings: {}, enabled: false };
+    }
   },
 
-  getInstalledPlugins: async (): Promise<MarketplacePlugin[]> => {
-    const response = await apiClient.get<MarketplacePlugin[]>('/marketplace/installed');
-    return response.data;
-  },
-
-  getPluginConfig: async (id: string): Promise<PluginConfig> => {
-    const response = await apiClient.get<PluginConfig>(`/marketplace/plugins/${id}/config`);
-    return response.data;
-  },
-
-  updatePluginConfig: async (id: string, config: PluginConfig): Promise<PluginConfig> => {
-    const response = await apiClient.put<PluginConfig>(`/marketplace/plugins/${id}/config`, config);
-    return response.data;
+  /**
+   * PUT /api/marketplace/installations/{installationId}/configure
+   * Backend expects ConfigureConnectorRequest: { configJson }
+   * Returns ApiResponse<ConnectorInstallationResponse>
+   */
+  updatePluginConfig: async (installationId: string, config: PluginConfig): Promise<PluginConfig> => {
+    const configJson = JSON.stringify(config.settings);
+    const response = await apiClient.put<ConnectorInstallation>(
+      `/marketplace/installations/${installationId}/configure`,
+      { configJson },
+    );
+    const installation = response.data;
+    let settings: Record<string, unknown> = {};
+    if (installation?.configJson) {
+      try { settings = JSON.parse(installation.configJson); } catch { /* empty */ }
+    }
+    return {
+      pluginId: installation?.connectorId ?? '',
+      settings,
+      enabled: installation?.status === 'ACTIVE',
+    };
   },
 };

@@ -3,6 +3,8 @@ package com.privod.platform.modules.project.repository;
 import com.privod.platform.modules.project.domain.ProjectMember;
 import com.privod.platform.modules.project.domain.ProjectMemberRole;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +26,7 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, UU
     boolean existsByProjectIdAndUserIdAndLeftAtIsNull(UUID projectId, UUID userId);
 
     long countByProjectIdAndLeftAtIsNull(UUID projectId);
+
+    @Query("SELECT m.projectId, COUNT(m) FROM ProjectMember m WHERE m.leftAt IS NULL AND m.projectId IN :projectIds GROUP BY m.projectId")
+    List<Object[]> countByProjectIdGrouped(@Param("projectIds") List<UUID> projectIds);
 }

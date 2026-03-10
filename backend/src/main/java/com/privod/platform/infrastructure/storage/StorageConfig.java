@@ -10,6 +10,9 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.net.URI;
@@ -63,6 +66,21 @@ public class StorageConfig {
                                          FileValidationService fileValidationService) {
         log.info("Initializing S3/MinIO storage adapter: endpoint={}, bucket={}",
                 properties.getEndpoint(), properties.getBucket());
+        ensureBucketExists(s3Client);
         return new S3StorageService(s3Client, presigner, properties, fileValidationService);
+    }
+
+    private void ensureBucketExists(S3Client client) {
+        String bucket = properties.getBucket();
+        try {
+            client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+            log.info("Storage bucket '{}' exists", bucket);
+        } catch (NoSuchBucketException e) {
+            log.info("Bucket '{}' does not exist — creating...", bucket);
+            client.createBucket(CreateBucketRequest.builder().bucket(bucket).build());
+            log.info("Bucket '{}' created successfully", bucket);
+        } catch (Exception e) {
+            log.warn("Could not verify bucket '{}': {}. Upload may fail.", bucket, e.getMessage());
+        }
     }
 }

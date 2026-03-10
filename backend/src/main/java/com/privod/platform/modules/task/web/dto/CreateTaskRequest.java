@@ -1,6 +1,8 @@
 package com.privod.platform.modules.task.web.dto;
 
 import com.privod.platform.modules.task.domain.TaskPriority;
+import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.domain.TaskVisibility;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -23,6 +25,8 @@ public record CreateTaskRequest(
         UUID parentTaskId,
 
         TaskPriority priority,
+
+        TaskStatus status,
 
         UUID assigneeId,
 
@@ -55,6 +59,8 @@ public record CreateTaskRequest(
         @Size(max = 500)
         String tags,
 
-        String notes
+        String notes,
+
+        TaskVisibility visibility
 ) {
 }

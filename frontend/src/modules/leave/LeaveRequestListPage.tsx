@@ -18,6 +18,7 @@ import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import type { LeaveRequest } from './types';
 import type { PaginatedResponse } from '@/types';
+import toast from 'react-hot-toast';
 
 type TabId = 'all' | 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REFUSED';
 
@@ -46,11 +47,17 @@ const LeaveRequestListPage: React.FC = () => {
   const approveMutation = useMutation({
     mutationFn: (id: string) => leaveApi.approveLeaveRequest(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leave-requests'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const refuseMutation = useMutation({
     mutationFn: (id: string) => leaveApi.refuseLeaveRequest(id, t('leave.requests.refuseReason')),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['leave-requests'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const requests = requestData?.content ?? [];

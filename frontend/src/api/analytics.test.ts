@@ -17,16 +17,21 @@ describe('analyticsApi', () => {
     vi.clearAllMocks();
   });
 
-  it('getDashboardData calls GET /analytics/dashboard with params', async () => {
-    const dashboardData = {
-      projectStatusSummary: [{ status: 'IN_PROGRESS', label: 'In Progress', count: 3, color: '#3b82f6' }],
-      financialBars: [{ month: '2026-01', revenue: 100, cost: 40, profit: 60 }],
-      safetyMetrics: [],
-      taskBurndown: [],
-      procurementSpend: [],
-      warehouseStockLevels: [],
-    };
-    mockGet.mockResolvedValue({ data: dashboardData });
+  it('getDashboardData aggregates multiple analytics endpoints', async () => {
+    const statusData = { byStatus: { IN_PROGRESS: 3, PLANNING: 2 }, totalProjects: 5 };
+    const financialData = [{ month: '2026-01', revenue: 100, cost: 40, profit: 60 }];
+    const safetyData: unknown[] = [];
+    const taskData = { totalTasks: 10, byStatus: { DONE: 5, IN_PROGRESS: 3, TODO: 2 }, completionPercent: 50, overdueTasks: 1 };
+    const procurementData: unknown[] = [];
+    const warehouseData: unknown[] = [];
+
+    mockGet
+      .mockResolvedValueOnce({ data: statusData })        // /analytics/project-status
+      .mockResolvedValueOnce({ data: financialData })      // /analytics/financial
+      .mockResolvedValueOnce({ data: safetyData })         // /analytics/safety
+      .mockResolvedValueOnce({ data: taskData })           // /analytics/task-progress
+      .mockResolvedValueOnce({ data: procurementData })    // /analytics/procurement-spend
+      .mockResolvedValueOnce({ data: warehouseData });     // /analytics/warehouse-stock
 
     const result = await analyticsApi.getDashboardData({
       projectId: 'p1',
@@ -34,40 +39,36 @@ describe('analyticsApi', () => {
       dateTo: '2026-01-31',
     });
 
-    expect(mockGet).toHaveBeenCalledWith('/analytics/dashboard', {
-      params: { projectId: 'p1', dateFrom: '2026-01-01', dateTo: '2026-01-31' },
-    });
-    expect(result).toEqual(dashboardData);
+    expect(mockGet).toHaveBeenCalledTimes(6);
+    expect(result.projectStatusSummary).toHaveLength(2);
+    expect(result.projectStatusSummary[0]).toMatchObject({ status: 'IN_PROGRESS', count: 3 });
+    expect(result.financialBars).toEqual(financialData);
+    expect(result.safetyMetrics).toEqual([]);
+    expect(result.taskBurndown.length).toBeGreaterThan(0);
   });
 
-  it('getDashboardData calls GET /analytics/dashboard without params', async () => {
-    const dashboardData = {
-      projectStatusSummary: [],
-      financialBars: [],
-      safetyMetrics: [],
-      taskBurndown: [],
-      procurementSpend: [],
-      warehouseStockLevels: [],
-    };
-    mockGet.mockResolvedValue({ data: dashboardData });
+  it('getDashboardData returns empty data on failure', async () => {
+    mockGet.mockRejectedValue(new Error('Network error'));
 
     const result = await analyticsApi.getDashboardData();
 
-    expect(mockGet).toHaveBeenCalledWith('/analytics/dashboard', { params: undefined });
-    expect(result).toEqual(dashboardData);
+    expect(result.projectStatusSummary).toEqual([]);
+    expect(result.financialBars).toEqual([]);
+    expect(result.safetyMetrics).toEqual([]);
+    expect(result.taskBurndown).toEqual([]);
+    expect(result.procurementSpend).toEqual([]);
+    expect(result.warehouseStockLevels).toEqual([]);
   });
 
   it('getProjectStatusSummary calls GET /analytics/project-status', async () => {
-    const statuses = [
-      { status: 'IN_PROGRESS', label: 'In Progress', count: 3, color: '#3b82f6' },
-      { status: 'COMPLETED', label: 'Completed', count: 2, color: '#22c55e' },
-    ];
-    mockGet.mockResolvedValue({ data: statuses });
+    const status = { status: 'IN_PROGRESS', label: 'In Progress', count: 3, color: '#3b82f6' };
+    mockGet.mockResolvedValue({ data: status });
 
     const result = await analyticsApi.getProjectStatusSummary();
 
     expect(mockGet).toHaveBeenCalledWith('/analytics/project-status');
-    expect(result).toEqual(statuses);
+    // Backend returns single object, frontend wraps as array
+    expect(result).toEqual([status]);
   });
 
   it('getFinancialBars calls GET /analytics/financial with params', async () => {
@@ -92,14 +93,17 @@ describe('analyticsApi', () => {
     expect(result).toEqual(metrics);
   });
 
-  it('getTaskBurndown calls GET /analytics/task-burndown/:projectId', async () => {
-    const burndown = [{ date: '2026-01-01', planned: 100, actual: 85, ideal: 100 }];
-    mockGet.mockResolvedValue({ data: burndown });
+  it('getTaskBurndown calls GET /analytics/task-progress with projectId param', async () => {
+    const taskProgress = { totalTasks: 100, completedTasks: 85 };
+    mockGet.mockResolvedValue({ data: taskProgress });
 
     const result = await analyticsApi.getTaskBurndown('p1');
 
-    expect(mockGet).toHaveBeenCalledWith('/analytics/task-burndown/p1');
-    expect(result).toEqual(burndown);
+    expect(mockGet).toHaveBeenCalledWith('/analytics/task-progress', { params: { projectId: 'p1' } });
+    // Backend returns TaskProgressSummary, frontend maps to burndown format
+    expect(result).toHaveLength(1);
+    expect(result[0].planned).toBe(100);
+    expect(result[0].actual).toBe(85);
   });
 
   it('getProcurementSpend calls GET /analytics/procurement-spend with params', async () => {

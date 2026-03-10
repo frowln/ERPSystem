@@ -14,6 +14,7 @@ import {
   stockMovementTypeLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { warehouseApi } from '@/api/warehouse';
 import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
@@ -136,6 +137,10 @@ const MovementListPage: React.FC = () => {
     (movement: StockMovement) => navigate(`/warehouse/movements/${movement.id}`),
     [navigate],
   );
+
+  if (isLoading && movements.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
 
   return (
     <div className="animate-fade-in">

@@ -35,9 +35,28 @@ public record CrmLeadResponse(
         boolean open,
         Instant createdAt,
         Instant updatedAt,
-        String createdBy
+        String createdBy,
+        // --- derived / alias fields ---
+        String number,
+        String stageName,
+        String assignedToName,
+        String contactName,
+        String contactEmail,
+        String contactPhone,
+        String teamName,
+        UUID teamId,
+        LocalDate expectedCloseDate,
+        Integer activityCount
 ) {
     public static CrmLeadResponse fromEntity(CrmLead lead) {
+        return fromEntity(lead, null, null);
+    }
+
+    public static CrmLeadResponse fromEntity(CrmLead lead, String stageName, String assignedToName) {
+        return fromEntity(lead, stageName, assignedToName, 0);
+    }
+
+    public static CrmLeadResponse fromEntity(CrmLead lead, String stageName, String assignedToName, int activityCount) {
         return new CrmLeadResponse(
                 lead.getId(),
                 lead.getName(),
@@ -64,7 +83,18 @@ public record CrmLeadResponse(
                 lead.isOpen(),
                 lead.getCreatedAt(),
                 lead.getUpdatedAt(),
-                lead.getCreatedBy()
+                lead.getCreatedBy(),
+                // derived fields
+                "L-" + lead.getId().toString().substring(0, 4).toUpperCase(),
+                stageName,
+                assignedToName,
+                lead.getPartnerName(),   // contactName = partnerName
+                lead.getEmail(),         // contactEmail = email
+                lead.getPhone(),         // contactPhone = phone
+                null,                    // teamName
+                null,                    // teamId
+                lead.getNextActivityDate(), // expectedCloseDate = nextActivityDate
+                activityCount
         );
     }
 }

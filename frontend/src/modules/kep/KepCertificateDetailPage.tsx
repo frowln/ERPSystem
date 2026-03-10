@@ -63,6 +63,9 @@ export default function KepCertificateDetailPage() {
       setShowRevoke(false);
       toast.success(tp('revokeSuccess'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -70,6 +73,9 @@ export default function KepCertificateDetailPage() {
     onSuccess: () => {
       toast.success(tp('deleteSuccess'));
       navigate('/kep/certificates');
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

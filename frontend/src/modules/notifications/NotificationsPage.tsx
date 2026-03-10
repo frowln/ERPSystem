@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import {
   Bell, Check, CheckCheck, Info, AlertTriangle, AlertCircle, CheckCircle2,
   ClipboardList, FileText, CreditCard, FolderKanban, Search, Loader2,
+  ShieldAlert, UserCheck, RefreshCw, Upload, Stamp, TrendingDown, Settings,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -26,6 +27,15 @@ const typeIcons: Record<NotificationType, React.ElementType> = {
   DOCUMENT: FileText,
   PAYMENT: CreditCard,
   PROJECT: FolderKanban,
+  APPROVAL: Stamp,
+  SYSTEM: Settings,
+  TASK_ASSIGNED: UserCheck,
+  TASK_STATUS_CHANGED: RefreshCw,
+  COMMENT_ADDED: ClipboardList,
+  DOCUMENT_UPLOADED: Upload,
+  APPROVAL_REQUIRED: Stamp,
+  BUDGET_THRESHOLD: TrendingDown,
+  SAFETY_ALERT: ShieldAlert,
 };
 const typeColors: Record<NotificationType, string> = {
   INFO: 'bg-primary-50 text-primary-600',
@@ -36,6 +46,15 @@ const typeColors: Record<NotificationType, string> = {
   DOCUMENT: 'bg-cyan-50 text-cyan-600',
   PAYMENT: 'bg-orange-50 text-orange-600',
   PROJECT: 'bg-primary-50 text-primary-600',
+  APPROVAL: 'bg-violet-50 text-violet-600',
+  SYSTEM: 'bg-neutral-50 text-neutral-600',
+  TASK_ASSIGNED: 'bg-purple-50 text-purple-600',
+  TASK_STATUS_CHANGED: 'bg-cyan-50 text-cyan-600',
+  COMMENT_ADDED: 'bg-primary-50 text-primary-600',
+  DOCUMENT_UPLOADED: 'bg-teal-50 text-teal-600',
+  APPROVAL_REQUIRED: 'bg-violet-50 text-violet-600',
+  BUDGET_THRESHOLD: 'bg-warning-50 text-warning-600',
+  SAFETY_ALERT: 'bg-danger-50 text-danger-600',
 };
 const getTypeLabels = (): Record<NotificationType, string> => ({
   INFO: t('notificationsPage.typeInfo'),
@@ -46,6 +65,15 @@ const getTypeLabels = (): Record<NotificationType, string> => ({
   DOCUMENT: t('notificationsPage.typeDocument'),
   PAYMENT: t('notificationsPage.typePayment'),
   PROJECT: t('notificationsPage.typeProject'),
+  APPROVAL: t('notificationsPage.typeApproval'),
+  SYSTEM: t('notificationsPage.typeSystem'),
+  TASK_ASSIGNED: t('notificationsPage.typeTaskAssigned'),
+  TASK_STATUS_CHANGED: t('notificationsPage.typeTaskStatusChanged'),
+  COMMENT_ADDED: t('notificationsPage.typeCommentAdded'),
+  DOCUMENT_UPLOADED: t('notificationsPage.typeDocumentUploaded'),
+  APPROVAL_REQUIRED: t('notificationsPage.typeApprovalRequired'),
+  BUDGET_THRESHOLD: t('notificationsPage.typeBudgetThreshold'),
+  SAFETY_ALERT: t('notificationsPage.typeSafetyAlert'),
 });
 
 type TabId = 'all' | 'UNREAD' | 'READ';

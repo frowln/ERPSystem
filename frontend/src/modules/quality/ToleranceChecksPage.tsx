@@ -201,7 +201,7 @@ const ToleranceChecksPage: React.FC = () => {
           { label: t('quality.toleranceChecks.breadcrumbChecks') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/quality/tolerance-checks/new')}>
             {t('quality.toleranceChecks.btnNewCheck')}
           </Button>
         }

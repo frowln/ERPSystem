@@ -586,4 +586,20 @@ public class ClosingDocumentService {
                 .filter(r -> r != null)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<com.privod.platform.modules.closing.web.dto.Ks6aEntryResponse> getKs6aEntries(java.util.UUID projectId, Integer year) {
+        return java.util.Collections.emptyList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<com.privod.platform.modules.closing.web.dto.CorrectionActResponse> getCorrectionActs() {
+        return java.util.Collections.emptyList();
+    }
+
+    @Transactional
+    public com.privod.platform.modules.closing.web.dto.CorrectionActResponse createCorrectionAct(
+            com.privod.platform.modules.closing.web.dto.CreateCorrectionActRequest request) {
+        throw new UnsupportedOperationException("Корректировочные акты: функционал в разработке");
+    }
 }

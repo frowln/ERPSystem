@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, memo } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,6 +11,7 @@ import {
   type ColumnFiltersState,
   type VisibilityState,
   type RowSelectionState,
+  type Row,
 } from '@tanstack/react-table';
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { cn } from '@/lib/cn';
@@ -79,6 +80,52 @@ function SkeletonRows({ cols, rows }: { cols: number; rows: number }) {
     </>
   );
 }
+
+/**
+ * Memoized table row component to avoid re-rendering all rows
+ * when only one row changes (e.g., selection toggle).
+ */
+const MemoizedRow = memo(function MemoizedRow<T>({
+  row,
+  idx,
+  density,
+  onRowClick,
+}: {
+  row: Row<T>;
+  idx: number;
+  density: Density;
+  onRowClick?: (row: T) => void;
+}) {
+  return (
+    <tr
+      onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+      onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
+      role={onRowClick ? 'button' : undefined}
+      tabIndex={onRowClick ? 0 : undefined}
+      className={cn(
+        'border-b border-neutral-100 dark:border-neutral-800 transition-colors',
+        onRowClick && 'cursor-pointer',
+        row.getIsSelected() ? 'bg-primary-50/50 dark:bg-primary-900/20' : idx % 2 === 1 ? 'bg-neutral-25 dark:bg-neutral-800/30' : 'bg-white dark:bg-neutral-900',
+        !row.getIsSelected() && 'hover:bg-neutral-50 dark:hover:bg-neutral-800',
+      )}
+    >
+      {row.getVisibleCells().map((cell) => (
+        <td key={cell.id} className={cn(
+          'text-neutral-700 dark:text-neutral-300 whitespace-nowrap',
+          densityPadding[density],
+          Boolean((cell.column.columnDef.meta as Record<string, unknown> | undefined)?.numeric) && 'tabular-nums text-right',
+        )}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
+      ))}
+    </tr>
+  );
+}) as <T>(props: {
+  row: Row<T>;
+  idx: number;
+  density: Density;
+  onRowClick?: (row: T) => void;
+}) => React.ReactElement;
 
 export function DataTable<T>({
   data,
@@ -344,29 +391,13 @@ export function DataTable<T>({
                 <SkeletonRows cols={allColumns.length} rows={5} />
               ) : table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row, idx) => (
-                  <tr
+                  <MemoizedRow
                     key={row.id}
-                    onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                    onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row.original); } } : undefined}
-                    role={onRowClick ? 'button' : undefined}
-                    tabIndex={onRowClick ? 0 : undefined}
-                    className={cn(
-                      'border-b border-neutral-100 dark:border-neutral-800 transition-colors',
-                      onRowClick && 'cursor-pointer',
-                      row.getIsSelected() ? 'bg-primary-50/50 dark:bg-primary-900/20' : idx % 2 === 1 ? 'bg-neutral-25 dark:bg-neutral-800/30' : 'bg-white dark:bg-neutral-900',
-                      !row.getIsSelected() && 'hover:bg-neutral-50 dark:hover:bg-neutral-800',
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className={cn(
-                        'text-neutral-700 dark:text-neutral-300 whitespace-nowrap',
-                        densityPadding[density],
-                        Boolean((cell.column.columnDef.meta as Record<string, unknown> | undefined)?.numeric) && 'tabular-nums text-right',
-                      )}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
+                    row={row}
+                    idx={idx}
+                    density={density}
+                    onRowClick={onRowClick}
+                  />
                 ))
               ) : (
                 <tr>

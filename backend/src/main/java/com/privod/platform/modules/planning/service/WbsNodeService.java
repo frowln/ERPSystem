@@ -101,6 +101,8 @@ public class WbsNodeService {
                 .plannedEndDate(request.plannedEndDate())
                 .duration(request.duration())
                 .percentComplete(request.percentComplete() != null ? request.percentComplete() : BigDecimal.ZERO)
+                .plannedVolume(request.plannedVolume())
+                .volumeUnitOfMeasure(request.volumeUnitOfMeasure())
                 .costCodeId(request.costCodeId())
                 .responsibleId(request.responsibleId())
                 .build();
@@ -155,6 +157,12 @@ public class WbsNodeService {
         }
         if (request.percentComplete() != null) {
             node.setPercentComplete(request.percentComplete());
+        }
+        if (request.plannedVolume() != null) {
+            node.setPlannedVolume(request.plannedVolume());
+        }
+        if (request.volumeUnitOfMeasure() != null) {
+            node.setVolumeUnitOfMeasure(request.volumeUnitOfMeasure());
         }
         if (request.costCodeId() != null) {
             node.setCostCodeId(request.costCodeId());

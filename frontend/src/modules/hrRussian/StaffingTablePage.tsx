@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Users, UserPlus, Building2, Briefcase } from 'lucide-react';
@@ -47,6 +48,7 @@ const StaffingTablePage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['staffing-table'],
     queryFn: () => hrRussianApi.getStaffingTable({ size: 1000 }),
@@ -186,7 +188,7 @@ const StaffingTablePage: React.FC = () => {
           { label: t('hrRussian.staffing.breadcrumbHr') },
           { label: t('hrRussian.staffing.breadcrumbStaffing') },
         ]}
-        actions={<Button iconLeft={<UserPlus size={16} />}>{t('hrRussian.staffing.addPosition')}</Button>}
+        actions={<Button iconLeft={<UserPlus size={16} />} onClick={() => navigate('/hr-russian/staffing/new')}>{t('hrRussian.staffing.addPosition')}</Button>}
         tabs={[
           { id: 'all', label: t('hrRussian.staffing.tabAll'), count: tabCounts.all },
           { id: 'ACTIVE', label: t('hrRussian.staffing.tabFilled'), count: tabCounts.active },

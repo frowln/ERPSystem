@@ -70,15 +70,38 @@ export interface PaginatedBillingRecords {
   size: number;
 }
 
+export interface CreatePaymentResponse {
+  billingRecordId: string;
+  confirmationUrl: string | null;
+  yookassaPaymentId: string | null;
+  status: string;
+}
+
+const EMPTY_BILLING: PaginatedBillingRecords = {
+  content: [],
+  totalElements: 0,
+  totalPages: 0,
+  number: 0,
+  size: 20,
+};
+
 export const subscriptionApi = {
   getPlans: async (): Promise<SubscriptionPlan[]> => {
-    const response = await apiClient.get<SubscriptionPlan[]>('/subscriptions/plans');
-    return response.data;
+    try {
+      const response = await apiClient.get<SubscriptionPlan[]>('/subscriptions/plans', { _silentErrors: true } as never);
+      return Array.isArray(response.data) ? response.data : [];
+    } catch {
+      return [];
+    }
   },
 
-  getCurrentSubscription: async (): Promise<TenantSubscription> => {
-    const response = await apiClient.get<TenantSubscription>('/subscriptions/current');
-    return response.data;
+  getCurrentSubscription: async (): Promise<TenantSubscription | null> => {
+    try {
+      const response = await apiClient.get<TenantSubscription>('/subscriptions/current', { _silentErrors: true } as never);
+      return response.data ?? null;
+    } catch {
+      return null;
+    }
   },
 
   changePlan: async (planId: string): Promise<TenantSubscription> => {
@@ -87,28 +110,52 @@ export const subscriptionApi = {
   },
 
   getUsage: async (): Promise<UsageInfo> => {
-    const response = await apiClient.get<UsageInfo>('/subscriptions/usage');
-    return response.data;
+    try {
+      const response = await apiClient.get<UsageInfo>('/subscriptions/usage', { _silentErrors: true } as never);
+      return response.data ?? { planName: '', planDisplayName: '', quotas: [] };
+    } catch {
+      return { planName: '', planDisplayName: '', quotas: [] };
+    }
   },
 
   checkFeature: async (featureKey: string): Promise<boolean> => {
-    const response = await apiClient.get<boolean>('/subscriptions/check-feature', {
-      params: { featureKey },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.get<boolean>('/subscriptions/check-feature', {
+        params: { featureKey },
+        _silentErrors: true,
+      } as never);
+      return response.data ?? false;
+    } catch {
+      return false;
+    }
   },
 
   checkQuota: async (quotaType: string): Promise<QuotaInfo> => {
-    const response = await apiClient.get<QuotaInfo>('/subscriptions/check-quota', {
-      params: { quotaType },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.get<QuotaInfo>('/subscriptions/check-quota', {
+        params: { quotaType },
+        _silentErrors: true,
+      } as never);
+      return response.data ?? { quotaType, current: 0, max: 0, exceeded: false };
+    } catch {
+      return { quotaType, current: 0, max: 0, exceeded: false };
+    }
   },
 
   getBillingHistory: async (page = 0, size = 20): Promise<PaginatedBillingRecords> => {
-    const response = await apiClient.get<PaginatedBillingRecords>('/subscriptions/billing-history', {
-      params: { page, size },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.get<PaginatedBillingRecords>('/subscriptions/billing-history', {
+        params: { page, size },
+        _silentErrors: true,
+      } as never);
+      return response.data ?? EMPTY_BILLING;
+    } catch {
+      return EMPTY_BILLING;
+    }
+  },
+
+  createPayment: async (planId: string): Promise<CreatePaymentResponse> => {
+    const response = await apiClient.post<{ data: CreatePaymentResponse }>('/payments/create', { planId });
+    return response.data.data;
   },
 };

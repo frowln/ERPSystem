@@ -201,7 +201,7 @@ const DesignVersionListPage: React.FC = () => {
           { label: t('design.breadcrumbVersions') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/design/versions/new')}>
             {t('design.newVersion')}
           </Button>
         }

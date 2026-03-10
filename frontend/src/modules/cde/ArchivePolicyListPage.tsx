@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Play, Shield, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -81,6 +82,9 @@ const ArchivePolicyListPage: React.FC = () => {
       setShowModal(false);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const updateMut = useMutation({
@@ -98,12 +102,18 @@ const ArchivePolicyListPage: React.FC = () => {
       setEditingPolicy(null);
       setForm(emptyForm);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteMut = useMutation({
     mutationFn: (id: string) => cdeApi.deleteArchivePolicy(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cde-archive-policies'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -113,6 +123,9 @@ const ArchivePolicyListPage: React.FC = () => {
       setRunResult(t('cde.archivePolicies.runNowSuccess').replace('{count}', String(data.archivedCount)));
       queryClient.invalidateQueries({ queryKey: ['cde-archive-policies'] });
       setTimeout(() => setRunResult(null), 5000);
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

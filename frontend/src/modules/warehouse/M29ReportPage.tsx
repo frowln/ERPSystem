@@ -18,16 +18,12 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { warehouseApi } from '@/api/warehouse';
+import { useProjectOptions } from '@/hooks/useSelectOptions';
 import { formatNumber, formatPercent } from '@/lib/format';
 import type { M29ReportEntry } from './types';
 
 const currentYear = new Date().getFullYear();
 
-const projectOptions = [
-  { value: 'p1', label: 'ЖК Солнечный' },
-  { value: 'p2', label: 'БЦ Кристалл' },
-  { value: 'p3', label: 'ТЦ Метрополис' },
-];
 
 const monthOptions = Array.from({ length: 12 }, (_, i) => ({
   value: String(i + 1),
@@ -40,7 +36,8 @@ const yearOptions = Array.from({ length: 5 }, (_, i) => ({
 }));
 
 const M29ReportPage: React.FC = () => {
-  const [projectId, setProjectId] = useState('p1');
+  const { options: projectOptions } = useProjectOptions();
+  const [projectId, setProjectId] = useState('');
   const [month, setMonth] = useState(String(new Date().getMonth() + 1));
   const [year, setYear] = useState(String(currentYear));
 

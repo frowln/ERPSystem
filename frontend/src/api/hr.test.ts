@@ -95,30 +95,31 @@ describe('hrApi', () => {
   });
 
   describe('getCrews', () => {
-    it('calls GET /crews without params', async () => {
+    it('calls GET /crew without params', async () => {
       const mockData = { content: [], totalElements: 0 };
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await hrApi.getCrews();
-      expect(mockGet).toHaveBeenCalledWith('/crews', { params: undefined });
+      expect(mockGet).toHaveBeenCalledWith('/crew', { params: undefined });
       expect(result).toEqual(mockData);
     });
 
-    it('passes pagination params to GET /crews', async () => {
+    it('passes pagination params to GET /crew', async () => {
       const params = { page: 0, size: 50 };
       mockGet.mockResolvedValue({ data: { content: [], totalElements: 0 } } as never);
 
       await hrApi.getCrews(params);
-      expect(mockGet).toHaveBeenCalledWith('/crews', { params });
+      expect(mockGet).toHaveBeenCalledWith('/crew', { params });
     });
   });
 
-  describe('error propagation', () => {
-    it('propagates API errors from get requests', async () => {
+  describe('error handling', () => {
+    it('returns empty page on getEmployees API error (localStorage fallback)', async () => {
       const error = new Error('Server Error');
       mockGet.mockRejectedValue(error);
 
-      await expect(hrApi.getEmployees()).rejects.toThrow('Server Error');
+      const result = await hrApi.getEmployees();
+      expect(result).toEqual({ content: [], totalElements: 0, totalPages: 0, page: 0, size: 20 });
     });
 
     it('propagates API errors from post requests', async () => {

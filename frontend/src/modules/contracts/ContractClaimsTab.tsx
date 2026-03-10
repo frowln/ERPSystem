@@ -4,7 +4,7 @@ import { Plus, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Button } from '@/design-system/components/Button';
 import { Modal } from '@/design-system/components/Modal';
-import { FormField } from '@/design-system/components/FormField';
+import { FormField, Input, Select, Textarea } from '@/design-system/components/FormField';
 import { formatMoney, formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import {
@@ -112,8 +112,6 @@ const ContractClaimsTab: React.FC<Props> = ({ contractId, readOnly }) => {
       amount: parseFloat(form.amount) || undefined,
     });
   };
-
-  const inputCls = 'w-full px-3 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500';
 
   // Totals
   const openAmount = claims
@@ -240,28 +238,23 @@ const ContractClaimsTab: React.FC<Props> = ({ contractId, readOnly }) => {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <FormField label={t("contracts.claims.fieldType")} required>
-              <select value={form.claimType} onChange={(e) => setF('claimType', e.target.value as ClaimType)}
-                className={inputCls}>
-                {(Object.entries(CLAIM_TYPE_LABELS) as [ClaimType, string][]).map(([v, l]) => (
-                  <option key={v} value={v}>{l}</option>
-                ))}
-              </select>
+              <Select
+                value={form.claimType}
+                onChange={(e) => setF('claimType', e.target.value as ClaimType)}
+                options={(Object.entries(CLAIM_TYPE_LABELS) as [ClaimType, string][]).map(([v, l]) => ({ value: v, label: l }))}
+              />
             </FormField>
             <FormField label={t("contracts.claims.fieldAmount")}>
-              <input type="number" value={form.amount} onChange={(e) => setF('amount', e.target.value)}
-                placeholder="0" step="0.01" min="0" className={inputCls} />
+              <Input type="number" value={form.amount} onChange={(e) => setF('amount', e.target.value)} placeholder="0" />
             </FormField>
           </div>
 
           <FormField label={t("contracts.claims.fieldSubject")} required>
-            <input value={form.subject} onChange={(e) => setF('subject', e.target.value)}
-              placeholder={t("contracts.claims.fieldSubjectPlaceholder")} className={inputCls} />
+            <Input value={form.subject} onChange={(e) => setF('subject', e.target.value)} placeholder={t("contracts.claims.fieldSubjectPlaceholder")} />
           </FormField>
 
           <FormField label={t("contracts.claims.fieldDescription")}>
-            <textarea value={form.description} onChange={(e) => setF('description', e.target.value)}
-              rows={4} className={`${inputCls} resize-none`}
-              placeholder={t("contracts.claims.fieldDescriptionPlaceholder")} />
+            <Textarea value={form.description} onChange={(e) => setF('description', e.target.value)} rows={4} placeholder={t("contracts.claims.fieldDescriptionPlaceholder")} />
           </FormField>
 
           <div className="flex justify-end gap-2 pt-2">

@@ -6,6 +6,7 @@ import { cn } from '@/lib/cn';
 import { analyticsApi } from '@/api/analytics';
 import type { ProjectBudgetSummary, ProgressPoint, BudgetCategory } from '@/api/analytics';
 import { t } from '@/i18n';
+import { useThemeStore } from '@/hooks/useTheme';
 
 // Types are imported from @/api/analytics
 
@@ -25,7 +26,7 @@ const CHART_COLORS = {
 // Bar Chart Component
 // ---------------------------------------------------------------------------
 
-const BarChart: React.FC<{ data: ProjectBudgetSummary[] }> = ({ data }) => {
+const BarChart: React.FC<{ data: ProjectBudgetSummary[]; isDark?: boolean }> = ({ data, isDark }) => {
   const [hovered, setHovered] = useState<number | null>(null);
   const maxVal = Math.max(...data.flatMap((d) => [d.budget, d.actual]));
   const chartH = 280;
@@ -42,8 +43,8 @@ const BarChart: React.FC<{ data: ProjectBudgetSummary[] }> = ({ data }) => {
           const y = chartH - frac * chartH + 20;
           return (
             <g key={frac}>
-              <line x1={60} y1={y} x2={chartW + 60} y2={y} stroke="#e5e7eb" strokeWidth={1} />
-              <text x={55} y={y + 4} textAnchor="end" className="fill-neutral-400 text-[10px]">
+              <line x1={60} y1={y} x2={chartW + 60} y2={y} stroke={isDark ? '#334155' : '#e5e7eb'} strokeWidth={1} />
+              <text x={55} y={y + 4} textAnchor="end" className="fill-neutral-400 dark:fill-neutral-500 text-[10px]">
                 {formatMoneyCompact(maxVal * frac)}
               </text>
             </g>
@@ -89,7 +90,7 @@ const BarChart: React.FC<{ data: ProjectBudgetSummary[] }> = ({ data }) => {
                 x={x + barW + gap / 2}
                 y={chartH + 38}
                 textAnchor="middle"
-                className="fill-neutral-600 text-[10px] font-medium"
+                className="fill-neutral-600 dark:fill-neutral-400 text-[10px] font-medium"
               >
                 {item.name}
               </text>
@@ -102,11 +103,11 @@ const BarChart: React.FC<{ data: ProjectBudgetSummary[] }> = ({ data }) => {
                     y={chartH - Math.max(budgetH, actualH) + 20 - 40}
                     width={barW * 2 + gap + 20}
                     height={34}
-                    fill="white"
-                    stroke="#e5e7eb"
+                    fill={isDark ? '#1e293b' : 'white'}
+                    stroke={isDark ? '#334155' : '#e5e7eb'}
                     rx={4}
                   />
-                  <text x={x + barW} y={chartH - Math.max(budgetH, actualH) + 20 - 24} textAnchor="middle" className="fill-neutral-600 text-[9px]">
+                  <text x={x + barW} y={chartH - Math.max(budgetH, actualH) + 20 - 24} textAnchor="middle" className="fill-neutral-600 dark:fill-neutral-400 text-[9px]">
                     {t('analytics.projectChart.budget')}: {formatMoneyCompact(item.budget)}
                   </text>
                   <text x={x + barW} y={chartH - Math.max(budgetH, actualH) + 20 - 12} textAnchor="middle" className={cn('text-[9px]', isOver ? 'fill-red-600' : 'fill-blue-600')}>
@@ -126,7 +127,7 @@ const BarChart: React.FC<{ data: ProjectBudgetSummary[] }> = ({ data }) => {
 // Line Chart Component
 // ---------------------------------------------------------------------------
 
-const LineChart: React.FC<{ data: ProgressPoint[] }> = ({ data }) => {
+const LineChart: React.FC<{ data: ProgressPoint[]; isDark?: boolean }> = ({ data, isDark }) => {
   const [hovered, setHovered] = useState<number | null>(null);
   const chartW = 600;
   const chartH = 240;
@@ -151,8 +152,8 @@ const LineChart: React.FC<{ data: ProgressPoint[] }> = ({ data }) => {
           const y = padT + innerH - (val / maxY) * innerH;
           return (
             <g key={val}>
-              <line x1={padL} y1={y} x2={chartW - padR} y2={y} stroke="#f3f4f6" strokeWidth={1} />
-              <text x={padL - 6} y={y + 4} textAnchor="end" className="fill-neutral-400 text-[10px]">
+              <line x1={padL} y1={y} x2={chartW - padR} y2={y} stroke={isDark ? '#334155' : '#f3f4f6'} strokeWidth={1} />
+              <text x={padL - 6} y={y + 4} textAnchor="end" className="fill-neutral-400 dark:fill-neutral-500 text-[10px]">
                 {val}%
               </text>
             </g>
@@ -188,14 +189,14 @@ const LineChart: React.FC<{ data: ProgressPoint[] }> = ({ data }) => {
                 <circle cx={cx} cy={padT + innerH - (p.actual / maxY) * innerH} r={4} fill={CHART_COLORS.actualLine} stroke="white" strokeWidth={1.5} />
               )}
               {/* X label */}
-              <text x={cx} y={chartH - 4} textAnchor="middle" className="fill-neutral-500 text-[10px]">
+              <text x={cx} y={chartH - 4} textAnchor="middle" className="fill-neutral-500 dark:fill-neutral-400 text-[10px]">
                 {p.month}
               </text>
               {/* Tooltip */}
               {hovered === i && (
                 <g>
-                  <rect x={cx - 45} y={padT + innerH - (p.planned / maxY) * innerH - 36} width={90} height={30} fill="white" stroke="#e5e7eb" rx={4} />
-                  <text x={cx} y={padT + innerH - (p.planned / maxY) * innerH - 22} textAnchor="middle" className="fill-neutral-500 text-[9px]">
+                  <rect x={cx - 45} y={padT + innerH - (p.planned / maxY) * innerH - 36} width={90} height={30} fill={isDark ? '#1e293b' : 'white'} stroke={isDark ? '#334155' : '#e5e7eb'} rx={4} />
+                  <text x={cx} y={padT + innerH - (p.planned / maxY) * innerH - 22} textAnchor="middle" className="fill-neutral-500 dark:fill-neutral-400 text-[9px]">
                     {t('analytics.projectChart.plan')}: {p.planned}%
                   </text>
                   <text x={cx} y={padT + innerH - (p.planned / maxY) * innerH - 10} textAnchor="middle" className="fill-blue-600 text-[9px] font-medium">
@@ -277,8 +278,8 @@ const PieChart: React.FC<{ data: BudgetCategory[] }> = ({ data }) => {
         ))}
 
         {/* Center text */}
-        <text x={cx} y={cy - 6} textAnchor="middle" className="fill-neutral-500 text-[10px]">{t('analytics.projectChart.total')}</text>
-        <text x={cx} y={cy + 10} textAnchor="middle" className="fill-neutral-900 text-[13px] font-bold">{formatMoneyCompact(total)}</text>
+        <text x={cx} y={cy - 6} textAnchor="middle" className="fill-neutral-500 dark:fill-neutral-400 text-[10px]">{t('analytics.projectChart.total')}</text>
+        <text x={cx} y={cy + 10} textAnchor="middle" className="fill-neutral-900 dark:fill-neutral-100 text-[13px] font-bold">{formatMoneyCompact(total)}</text>
       </svg>
 
       {/* Legend */}
@@ -291,8 +292,8 @@ const PieChart: React.FC<{ data: BudgetCategory[] }> = ({ data }) => {
             onMouseLeave={() => setHovered(null)}
           >
             <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: cat.color }} />
-            <span className="text-neutral-600">{cat.name}</span>
-            <span className="text-neutral-400">({((cat.amount / total) * 100).toFixed(0)}%)</span>
+            <span className="text-neutral-600 dark:text-neutral-400">{cat.name}</span>
+            <span className="text-neutral-400 dark:text-neutral-500">({((cat.amount / total) * 100).toFixed(0)}%)</span>
           </div>
         ))}
       </div>
@@ -305,6 +306,7 @@ const PieChart: React.FC<{ data: BudgetCategory[] }> = ({ data }) => {
 // ---------------------------------------------------------------------------
 
 const ProjectAnalyticsChartPage: React.FC = () => {
+  const isDark = useThemeStore((s) => s.resolved === 'dark');
   const { data: projectBudgets = [] } = useQuery({
     queryKey: ['analytics-project-budgets'],
     queryFn: () => analyticsApi.getProjectBudgets(),
@@ -347,9 +349,9 @@ const ProjectAnalyticsChartPage: React.FC = () => {
           <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100">{formatMoneyCompact(totalActual)}</p>
           <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-0.5">{t('analytics.projectChart.utilized')}</p>
         </div>
-        <div className="rounded-lg border bg-blue-50 border-blue-200 px-4 py-3">
-          <p className="text-2xl font-bold text-blue-700">{utilization}%</p>
-          <p className="text-xs font-medium text-blue-600 mt-0.5">{t('analytics.projectChart.utilization')}</p>
+        <div className="rounded-lg border bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 px-4 py-3">
+          <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{utilization}%</p>
+          <p className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-0.5">{t('analytics.projectChart.utilization')}</p>
         </div>
       </div>
 
@@ -361,7 +363,7 @@ const ProjectAnalyticsChartPage: React.FC = () => {
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('analytics.projectChart.budgetVsActualDesc')}</p>
           </div>
           <div className="p-5">
-            <BarChart data={projectBudgets} />
+            <BarChart data={projectBudgets} isDark={isDark} />
             <div className="flex items-center justify-center gap-6 mt-4 text-xs">
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded" style={{ backgroundColor: CHART_COLORS.budget }} />
@@ -397,7 +399,7 @@ const ProjectAnalyticsChartPage: React.FC = () => {
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{t('analytics.projectChart.cumulativeProgressDesc')}</p>
           </div>
           <div className="p-5">
-            <LineChart data={progressData} />
+            <LineChart data={progressData} isDark={isDark} />
             <div className="flex items-center justify-center gap-6 mt-4 text-xs">
               <span className="flex items-center gap-1.5">
                 <span className="w-6 border-t-2 border-dashed border-gray-300" />
@@ -442,7 +444,7 @@ const ProjectAnalyticsChartPage: React.FC = () => {
                       {isOver ? '+' : ''}{formatMoney(diff)}
                     </td>
                     <td className="px-4 py-2.5 text-right tabular-nums">
-                      <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', isOver ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700')}>
+                      <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', isOver ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400')}>
                         {pct}%
                       </span>
                     </td>

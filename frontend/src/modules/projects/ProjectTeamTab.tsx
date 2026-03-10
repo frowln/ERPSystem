@@ -111,12 +111,14 @@ export const ProjectTeamTab: React.FC<Props> = ({ members, projectId }) => {
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-semibold flex-shrink-0">
-                      {member.userName.split(' ').slice(0, 2).map((n) => n[0]).join('')}
+                      {(member.userName ?? '').split(' ').slice(0, 2).map((n) => n?.[0] ?? '').join('')}
                     </div>
-                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{member.userName}</span>
+                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{member.userName ?? t('common.unknown')}</span>
                   </div>
                 </td>
-                <td className="px-5 py-3 text-sm text-neutral-600">{member.role}</td>
+                <td className="px-5 py-3 text-sm text-neutral-600 dark:text-neutral-400">
+                  {TEAM_ROLES.find(r => r.value === member.role)?.label() ?? member.role}
+                </td>
                 <td className="px-5 py-3 text-sm text-neutral-500 dark:text-neutral-400">{member.userEmail}</td>
                 <td className="px-5 py-3 text-sm text-neutral-500 dark:text-neutral-400 tabular-nums">{formatDate(member.joinedAt)}</td>
                 <td className="px-5 py-3 text-right">

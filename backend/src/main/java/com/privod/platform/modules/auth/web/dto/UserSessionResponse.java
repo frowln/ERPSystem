@@ -13,9 +13,15 @@ public record UserSessionResponse(
         boolean isActive,
         Instant lastActivityAt,
         Instant expiresAt,
-        Instant createdAt
+        Instant createdAt,
+        Instant startedAt,
+        boolean isCurrent
 ) {
     public static UserSessionResponse fromEntity(UserSession entity) {
+        return fromEntity(entity, false);
+    }
+
+    public static UserSessionResponse fromEntity(UserSession entity, boolean isCurrent) {
         return new UserSessionResponse(
                 entity.getId(),
                 entity.getUserId(),
@@ -24,7 +30,9 @@ public record UserSessionResponse(
                 entity.isActive(),
                 entity.getLastActivityAt(),
                 entity.getExpiresAt(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getCreatedAt(),
+                isCurrent
         );
     }
 }

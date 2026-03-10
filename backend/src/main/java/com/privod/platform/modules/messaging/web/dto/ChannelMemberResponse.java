@@ -16,7 +16,8 @@ public record ChannelMemberResponse(
         Boolean isMuted,
         Instant lastReadAt,
         Integer unreadCount,
-        Instant joinedAt
+        Instant joinedAt,
+        String availabilityStatus
 ) {
     public static ChannelMemberResponse fromEntity(ChannelMember member) {
         return new ChannelMemberResponse(
@@ -29,7 +30,24 @@ public record ChannelMemberResponse(
                 member.getIsMuted(),
                 member.getLastReadAt(),
                 member.getUnreadCount(),
-                member.getJoinedAt()
+                member.getJoinedAt(),
+                "OFFLINE"
+        );
+    }
+
+    public static ChannelMemberResponse fromEntityWithStatus(ChannelMember member, String availabilityStatus) {
+        return new ChannelMemberResponse(
+                member.getId(),
+                member.getChannelId(),
+                member.getUserId(),
+                member.getUserName(),
+                member.getRole(),
+                member.getRole().getDisplayName(),
+                member.getIsMuted(),
+                member.getLastReadAt(),
+                member.getUnreadCount(),
+                member.getJoinedAt(),
+                availabilityStatus != null ? availabilityStatus : "OFFLINE"
         );
     }
 }

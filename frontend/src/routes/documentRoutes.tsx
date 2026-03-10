@@ -32,6 +32,9 @@ const LabTestListPage = lazy(() => import('@/modules/pto/LabTestListPage'));
 const Ks6CalendarPage = lazy(() => import('@/modules/pto/Ks6CalendarPage'));
 const PtoDocumentBoardPage = lazy(() => import('@/modules/pto/PtoDocumentBoardPage'));
 
+// Smart Document Recognition
+const SmartDocRecognitionPage = lazy(() => import('@/modules/documents/SmartDocRecognitionPage'));
+
 // Closing documents / Site
 const Ks2ListPage = lazy(() => import('@/modules/closing/Ks2ListPage'));
 const Ks2DetailPage = lazy(() => import('@/modules/closing/Ks2DetailPage'));
@@ -46,9 +49,35 @@ const DailyLogPage = lazy(() => import('@/modules/dailylog/DailyLogPage'));
 const DailyLogFormPage = lazy(() => import('@/modules/dailylog/DailyLogFormPage'));
 const DailyLogBoardPage = lazy(() => import('@/modules/dailylog/DailyLogBoardPage'));
 
+// CDE — additional
+const ArchivePolicyListPage = lazy(() => import('@/modules/cde/ArchivePolicyListPage'));
+const RevisionSetListPage = lazy(() => import('@/modules/cde/RevisionSetListPage'));
+const RevisionSetDetailPage = lazy(() => import('@/modules/cde/RevisionSetDetailPage'));
+
+// PTO — additional
+const HiddenWorkActListPage = lazy(() => import('@/modules/pto/HiddenWorkActListPage'));
+const HiddenWorkActDetailPage = lazy(() => import('@/modules/pto/HiddenWorkActDetailPage'));
+const HiddenWorkActFormPage = lazy(() => import('@/modules/pto/HiddenWorkActFormPage'));
+const ItdValidationPage = lazy(() => import('@/modules/pto/ItdValidationPage'));
+const WorkPermitDetailPage = lazy(() => import('@/modules/pto/WorkPermitDetailPage'));
+
+// Closing — additional
+const Ks2FormPage = lazy(() => import('@/modules/closing/Ks2FormPage'));
+const Ks2PipelinePage = lazy(() => import('@/modules/closing/Ks2PipelinePage'));
+const Ks3DetailPage = lazy(() => import('@/modules/closing/Ks3DetailPage'));
+const Ks3FormPage = lazy(() => import('@/modules/closing/Ks3FormPage'));
+
+// Russian Docs — additional
+const RussianDocDocumentListPage = lazy(() => import('@/modules/russianDocs/DocumentListPage'));
+const FormKs2Page = lazy(() => import('@/modules/russianDocs/FormKs2Page'));
+const FormKs3Page = lazy(() => import('@/modules/russianDocs/FormKs3Page'));
+
 export function documentRoutes() {
   return (
     <>
+      {/* Smart Document Recognition */}
+      <Route path="documents/smart-recognition" element={<SmartDocRecognitionPage />} />
+
       {/* CDE */}
       <Route path="cde/documents" element={<DocumentContainerListPage />} />
       <Route path="cde/documents/:id" element={<DocumentContainerDetailPage />} />
@@ -95,6 +124,30 @@ export function documentRoutes() {
       <Route path="correction-acts" element={<CorrectionActsPage />} />
       <Route path="ks-print" element={<KsPrintFormsPage />} />
       <Route path="m29" element={<M29ListPage />} />
+
+      {/* CDE — additional */}
+      <Route path="cde/archive-policies" element={<ArchivePolicyListPage />} />
+      <Route path="cde/revision-sets" element={<RevisionSetListPage />} />
+      <Route path="cde/revision-sets/:id" element={<RevisionSetDetailPage />} />
+
+      {/* PTO — additional */}
+      <Route path="pto/hidden-work-acts" element={<HiddenWorkActListPage />} />
+      <Route path="pto/hidden-work-acts/new" element={<HiddenWorkActFormPage />} />
+      <Route path="pto/hidden-work-acts/:id" element={<HiddenWorkActDetailPage />} />
+      <Route path="pto/hidden-work-acts/:id/edit" element={<HiddenWorkActFormPage />} />
+      <Route path="pto/itd-validation" element={<ItdValidationPage />} />
+      <Route path="pto/work-permits/:id" element={<WorkPermitDetailPage />} />
+
+      {/* Closing — additional */}
+      <Route path="ks2/new" element={<Ks2FormPage />} />
+      <Route path="ks2/pipeline" element={<Ks2PipelinePage />} />
+      <Route path="ks3/:id" element={<Ks3DetailPage />} />
+      <Route path="ks3/new" element={<Ks3FormPage />} />
+
+      {/* Russian Docs — additional */}
+      <Route path="russian-docs/all" element={<RussianDocDocumentListPage />} />
+      <Route path="russian-docs/form-ks2" element={<FormKs2Page />} />
+      <Route path="russian-docs/form-ks3" element={<FormKs3Page />} />
     </>
   );
 }

@@ -15,7 +15,7 @@ import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import type { SafetyIncident } from './types';
-import { SafetyIncidentCreateModal } from './SafetyIncidentCreateModal';
+const SafetyIncidentCreateModal = React.lazy(() => import('./SafetyIncidentCreateModal'));
 
 const statusColorMap: Record<string, 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'orange' | 'purple'> = {
   reported: 'blue', under_investigation: 'yellow', corrective_action: 'orange', resolved: 'green', closed: 'gray',
@@ -81,7 +81,7 @@ const SafetyIncidentListPage: React.FC = () => {
     if (search) {
       const lower = search.toLowerCase();
       filtered = filtered.filter(
-        (i) => i.number.toLowerCase().includes(lower) || i.projectName.toLowerCase().includes(lower) || i.description.toLowerCase().includes(lower) || i.location.toLowerCase().includes(lower),
+        (i) => i.number.toLowerCase().includes(lower) || (i.projectName ?? '').toLowerCase().includes(lower) || i.description.toLowerCase().includes(lower) || i.locationDescription.toLowerCase().includes(lower),
       );
     }
     return filtered;
@@ -97,8 +97,8 @@ const SafetyIncidentListPage: React.FC = () => {
   const metrics = useMemo(() => ({
     total: incidents.length,
     active: tabCounts.active,
-    totalInjured: incidents.reduce((s, i) => s + i.injuredPersons, 0),
-    totalDaysLost: incidents.reduce((s, i) => s + i.workDaysLost, 0),
+    totalInjured: incidents.filter((i) => i.injuredEmployeeName).length,
+    totalDaysLost: incidents.reduce((s, i) => s + (i.workDaysLost ?? 0), 0),
   }), [incidents, tabCounts]);
 
   const columns = useMemo<ColumnDef<SafetyIncident, unknown>[]>(() => [
@@ -214,7 +214,11 @@ const SafetyIncidentListPage: React.FC = () => {
         emptyDescription={t('safety.incidentList.emptyDescription')}
       />
 
-      <SafetyIncidentCreateModal open={createModalOpen} onClose={() => setCreateModalOpen(false)} />
+      {createModalOpen && (
+        <React.Suspense fallback={null}>
+          <SafetyIncidentCreateModal open={createModalOpen} onClose={() => setCreateModalOpen(false)} />
+        </React.Suspense>
+      )}
     </div>
   );
 };

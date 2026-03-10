@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Plus, CalendarDays, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
@@ -76,6 +77,7 @@ const ReportingCalendarPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [frequencyFilter, setFrequencyFilter] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery<PaginatedResponse<ReportingDeadline>>({
     queryKey: ['reporting-deadlines'],
     queryFn: () => reportingCalendarApi.getDeadlines(),
@@ -215,7 +217,7 @@ const ReportingCalendarPage: React.FC = () => {
           { label: t('regulatory.breadcrumbCalendar') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('regulatory.btnAddDeadline')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/regulatory/reporting/new')}>{t('regulatory.btnAddDeadline')}</Button>
         }
         tabs={[
           { id: 'all', label: t('regulatory.tabAll'), count: tabCounts.all },

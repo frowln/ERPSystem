@@ -54,7 +54,7 @@ const CATEGORY_ICON_MAP: Record<string, { icon: React.ElementType; color: string
 
 function enrichWithIcons(items: KpiItemType[]): KpiItemDisplay[] {
   return items.map((kpi) => {
-    const mapping = CATEGORY_ICON_MAP[kpi.category] ?? { icon: BarChart3, color: 'text-neutral-600' };
+    const mapping = CATEGORY_ICON_MAP[kpi.category] ?? { icon: BarChart3, color: 'text-neutral-600 dark:text-neutral-400' };
     return { ...kpi, icon: mapping.icon, iconColor: mapping.color };
   });
 }
@@ -165,7 +165,7 @@ const KpiPage: React.FC = () => {
               onClick={() => setCategory(key)}
               className={cn(
                 'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-                category === key ? 'bg-primary-50 text-primary-700' : 'text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                category === key ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400' : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800',
               )}
             >
               {label}
@@ -223,7 +223,7 @@ const KpiPage: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('analytics.kpi.target')}</p>
-                  <p className="text-sm font-medium text-neutral-600 tabular-nums">
+                  <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400 tabular-nums">
                     {kpi.target}{kpi.unit}
                   </p>
                 </div>

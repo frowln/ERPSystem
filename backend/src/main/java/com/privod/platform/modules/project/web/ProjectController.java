@@ -43,14 +43,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
-@Tag(name = "Projects", description = "Project management endpoints")
+@Tag(name = "Projects", description = "Управление проектами")
 public class ProjectController {
 
     private final ProjectService projectService;
     private final ProjectFinancialService financialService;
 
     @GetMapping
-    @Operation(summary = "List projects with filtering, pagination, and sorting")
+    @Operation(summary = "Список проектов",
+               description = "Возвращает постраничный список проектов с фильтрацией по статусу, типу, приоритету, организации и городу")
     public ResponseEntity<ApiResponse<PageResponse<ProjectResponse>>> list(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) ProjectStatus status,
@@ -75,7 +76,8 @@ public class ProjectController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
-    @Operation(summary = "Create a new project")
+    @Operation(summary = "Создать проект",
+               description = "Создаёт новый строительный проект. Доступно ролям ADMIN и PROJECT_MANAGER")
     public ResponseEntity<ApiResponse<ProjectResponse>> create(
             @Valid @RequestBody CreateProjectRequest request) {
         ProjectResponse response = projectService.create(request);

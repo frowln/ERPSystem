@@ -33,3 +33,4 @@ export { Modal } from './Modal';
 export { EmptyState } from './EmptyState';
 export { PivotTable } from './PivotTable';
 export type { PivotTableProps, AggregationType } from './PivotTable';
+export { Skeleton, TableSkeleton, MetricCardSkeleton, PageSkeleton } from './Skeleton';

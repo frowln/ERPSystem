@@ -59,6 +59,9 @@ const MaintenanceRequestListPage: React.FC = () => {
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       maintenanceApi.updateRequestStatus(id, status as any),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const deleteRequestMutation = useMutation({

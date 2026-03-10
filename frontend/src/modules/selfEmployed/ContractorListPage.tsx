@@ -12,6 +12,7 @@ import { Input, Select } from '@/design-system/components/FormField';
 import { selfEmployedApi } from './api';
 import type { SelfEmployedContractor, ContractorStatus, TaxStatus } from './types';
 import { t } from '@/i18n';
+import toast from 'react-hot-toast';
 
 const statusColorMap: Record<string, string> = {
   ACTIVE: 'green',
@@ -64,6 +65,9 @@ const ContractorListPage: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['self-employed-contractors'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

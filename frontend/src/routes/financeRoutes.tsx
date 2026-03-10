@@ -94,6 +94,26 @@ const TaxRiskListPage = lazy(() => import('@/modules/taxRisk/TaxRiskListPage'));
 const TaxRiskDetailPage = lazy(() => import('@/modules/taxRisk/TaxRiskDetailPage'));
 const TaxRiskFormPage = lazy(() => import('@/modules/taxRisk/TaxRiskFormPage'));
 
+// Additional Finance pages
+const BddsPage = lazy(() => import('@/modules/finance/BddsPage'));
+const CostCodeBrowserPage = lazy(() => import('@/modules/finance/CostCodeBrowserPage'));
+const FinanceExpensesPage = lazy(() => import('@/modules/finance/FinanceExpensesPage'));
+const SCurveCashFlowPage = lazy(() => import('@/modules/finance/SCurveCashFlowPage'));
+
+// Additional Cost Management pages
+const CashFlowForecastPage = lazy(() => import('@/modules/costManagement/CashFlowForecastPage'));
+const CostCodeDetailPage = lazy(() => import('@/modules/costManagement/CostCodeDetailPage'));
+const ForecastingHubPage = lazy(() => import('@/modules/costManagement/ForecastingHubPage'));
+const ProfitabilityDashboardPage = lazy(() => import('@/modules/costManagement/ProfitabilityDashboardPage'));
+
+// Additional Revenue Recognition pages
+const RecognitionPeriodPage = lazy(() => import('@/modules/revenueRecognition/RecognitionPeriodPage'));
+const RevenueAllContractsPage = lazy(() => import('@/modules/revenueRecognition/RevenueContractsPage'));
+
+// Additional Procurement pages
+const BidComparisonPage = lazy(() => import('@/modules/procurement/BidComparisonPage'));
+const TendersPage = lazy(() => import('@/modules/procurement/TendersPage'));
+
 // Monte Carlo
 const SimulationListPage = lazy(() => import('@/modules/monteCarlo/SimulationListPage'));
 const SimulationDetailPage = lazy(() => import('@/modules/monteCarlo/SimulationDetailPage'));
@@ -232,6 +252,26 @@ export function financeRoutes() {
       <Route path="monte-carlo/new" element={<SimulationFormPage />} />
       <Route path="monte-carlo/:id" element={<SimulationDetailPage />} />
       <Route path="monte-carlo/:id/edit" element={<SimulationFormPage />} />
+
+      {/* BDDS / Cost Codes / Expenses / S-Curve */}
+      <Route path="bdds" element={<BddsPage />} />
+      <Route path="cost-codes" element={<CostCodeBrowserPage />} />
+      <Route path="finance/expenses" element={<FinanceExpensesPage />} />
+      <Route path="finance/s-curve-cashflow" element={<SCurveCashFlowPage />} />
+
+      {/* Additional Cost Management */}
+      <Route path="cost-management/cashflow-forecast" element={<CashFlowForecastPage />} />
+      <Route path="cost-management/codes/:id" element={<CostCodeDetailPage />} />
+      <Route path="cost-management/forecasting-hub" element={<ForecastingHubPage />} />
+      <Route path="cost-management/profitability" element={<ProfitabilityDashboardPage />} />
+
+      {/* Additional Revenue Recognition */}
+      <Route path="revenue/recognition-periods" element={<RecognitionPeriodPage />} />
+      <Route path="revenue/all-contracts" element={<RevenueAllContractsPage />} />
+
+      {/* Additional Procurement */}
+      <Route path="procurement/bid-comparison" element={<BidComparisonPage />} />
+      <Route path="procurement/tenders" element={<TendersPage />} />
 
       {/* Legacy deep-link aliases from old /finance/* URLs */}
       <Route path="finance/budgets" element={<Navigate to="/budgets" replace />} />

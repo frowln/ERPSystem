@@ -63,6 +63,59 @@ export async function exportToExcel(
 }
 
 /**
+ * Export data to Excel with multiple sheets.
+ * Dynamically imports xlsx to avoid increasing initial bundle size.
+ */
+export async function exportToExcelMultiSheet(
+  sheets: { name: string; data: Record<string, unknown>[]; columns?: ExportColumn[] }[],
+  filename: string,
+): Promise<void> {
+  try {
+    const XLSX = await import('xlsx');
+    const wb = XLSX.utils.book_new();
+
+    for (const sheet of sheets) {
+      let wsData: unknown[][];
+
+      if (sheet.columns) {
+        const headers = sheet.columns.map((c) => c.header);
+        const rows = sheet.data.map((row) =>
+          sheet.columns!.map((c) => {
+            const value = row[c.key];
+            return c.format ? c.format(value) : (value ?? '');
+          }),
+        );
+        wsData = [headers, ...rows];
+      } else {
+        if (sheet.data.length === 0) {
+          wsData = [[]];
+        } else {
+          const headers = Object.keys(sheet.data[0]);
+          const rows = sheet.data.map((row) => headers.map((h) => row[h] ?? ''));
+          wsData = [headers, ...rows];
+        }
+      }
+
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      if (sheet.columns) {
+        ws['!cols'] = sheet.columns.map((c) => ({ wch: c.width ?? 20 }));
+      }
+
+      XLSX.utils.book_append_sheet(wb, ws, sheet.name.slice(0, 31));
+    }
+
+    XLSX.writeFile(wb, filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`);
+  } catch (err) {
+    console.error('Multi-sheet Excel export failed, falling back to CSV:', err);
+    // Fall back: export first sheet as CSV
+    if (sheets.length > 0) {
+      exportToCsv(sheets[0].data, filename, sheets[0].columns);
+    }
+  }
+}
+
+/**
  * Export data to CSV file (fallback or when xlsx not available).
  */
 export function exportToCsv(

@@ -73,7 +73,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             {icon && (
               <span className="text-neutral-400 flex-shrink-0">{icon}</span>
             )}
-            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider truncate">
+            <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider leading-tight">
               {label}
             </p>
           </div>

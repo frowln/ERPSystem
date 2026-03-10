@@ -189,7 +189,7 @@ const WarrantyClaimListPage: React.FC = () => {
           { label: t('closeout.breadcrumbWarranty') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/closeout/warranty/new')}>
             {t('closeout.warrantyListNewClaim')}
           </Button>
         }

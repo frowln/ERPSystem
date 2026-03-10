@@ -73,6 +73,9 @@ const VendorPrequalificationPage: React.FC = () => {
       setEditing(null);
       toast.success(t('common.saved'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const openAdd = () => {

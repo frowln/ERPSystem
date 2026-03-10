@@ -17,10 +17,10 @@ import { Button } from '@/design-system/components/Button';
 import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { MetricCard } from '@/design-system/components/MetricCard';
-import { FormField, Input, Select } from '@/design-system/components/FormField';
+import { FormField, Input, Select, Textarea } from '@/design-system/components/FormField';
 import { Modal } from '@/design-system/components/Modal';
 import { cn } from '@/lib/cn';
-import { formatDateTime } from '@/lib/format';
+import { formatDateTime, formatMoney } from '@/lib/format';
 import {
   integrationsApi,
   type SmsConfigData,
@@ -215,7 +215,7 @@ const SmsSettingsPage: React.FC = () => {
         const cost = getValue<number>();
         return (
           <span className="tabular-nums text-sm text-neutral-700 dark:text-neutral-300">
-            {cost != null ? `${cost.toFixed(2)} ${t('integrations.sms.currency')}` : '--'}
+            {cost != null ? formatMoney(cost) : '--'}
           </span>
         );
       },
@@ -280,7 +280,7 @@ const SmsSettingsPage: React.FC = () => {
           <MetricCard
             icon={<Wallet size={16} />}
             label={t('integrations.sms.metricBalance')}
-            value={balanceData ? `${balanceData.balance.toFixed(2)} ${balanceData.currency}` : '--'}
+            value={balanceData ? formatMoney(balanceData.balance) : '--'}
           />
           <MetricCard
             icon={<Send size={16} />}
@@ -342,7 +342,7 @@ const SmsSettingsPage: React.FC = () => {
                 onClick={() => setForm({ ...form, enabled: !form.enabled })}
                 className={cn(
                   'relative w-11 h-6 rounded-full transition-colors',
-                  form.enabled ? 'bg-green-500' : 'bg-neutral-300 dark:bg-neutral-600',
+                  form.enabled ? 'bg-success-500' : 'bg-neutral-300 dark:bg-neutral-600',
                 )}
               >
                 <span
@@ -364,7 +364,7 @@ const SmsSettingsPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Wallet size={16} className="text-blue-600 dark:text-blue-400" />
                   <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                    {t('integrations.sms.balanceLabel')}: {balanceData.balance.toFixed(2)} {balanceData.currency}
+                    {t('integrations.sms.balanceLabel')}: {formatMoney(balanceData.balance)}
                   </span>
                 </div>
               </div>
@@ -427,18 +427,11 @@ const SmsSettingsPage: React.FC = () => {
             />
           </FormField>
           <FormField label={t('integrations.sms.fieldText')} required>
-            <textarea
-              className={cn(
-                'w-full rounded-lg border border-neutral-300 dark:border-neutral-600 px-3 py-2 text-sm',
-                'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100',
-                'placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'resize-none',
-              )}
-              rows={4}
+            <Textarea
               placeholder={t('integrations.sms.placeholderText')}
               value={sendForm.text}
               onChange={(e) => setSendForm({ ...sendForm, text: e.target.value })}
+              rows={4}
             />
           </FormField>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">

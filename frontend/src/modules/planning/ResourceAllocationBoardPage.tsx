@@ -137,6 +137,9 @@ const ResourceAllocationBoardPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['allocation-conflicts'] });
       toast.success(tp('deleteSuccess'));
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const resetForm = () => {
@@ -163,8 +166,15 @@ const ResourceAllocationBoardPage: React.FC = () => {
     });
   }, [formResourceType, formResourceId, formProjectId, formStartDate, formEndDate, formPercent, formRole, formNotes]);
 
-  const handleShowSuggestions = () => {
-    if (suggestProjectId && suggestStartDate && suggestEndDate) {
+  const handleShowSuggestions = (pId?: string, sDate?: string, eDate?: string) => {
+    const pid = pId ?? suggestProjectId;
+    const sd = sDate ?? suggestStartDate;
+    const ed = eDate ?? suggestEndDate;
+    if (sd && ed) {
+      // Update state for the query key
+      if (pId !== undefined) setSuggestProjectId(pId);
+      if (sDate !== undefined) setSuggestStartDate(sDate);
+      if (eDate !== undefined) setSuggestEndDate(eDate);
       fetchSuggestions();
       setShowSuggestions(true);
     }
@@ -201,8 +211,8 @@ const ResourceAllocationBoardPage: React.FC = () => {
       header: tp('colPercent'),
       cell: ({ row }: { row: { original: ResourceAllocation } }) => {
         const pct = row.original.allocationPercent;
-        const color = pct > 100 ? 'text-red-600' : pct === 100 ? 'text-green-600' : 'text-blue-600';
-        return <span className={`font-semibold ${color}`}>{pct}%</span>;
+        const color = pct > 100 ? 'text-danger-600 dark:text-danger-400' : pct === 100 ? 'text-success-600 dark:text-success-400' : 'text-primary-600 dark:text-primary-400';
+        return <span className={`font-semibold tabular-nums ${color}`}>{pct}%</span>;
       },
     },
     {
@@ -259,7 +269,7 @@ const ResourceAllocationBoardPage: React.FC = () => {
           <Select options={[{ value: '', label: tp('allProjects') }, ...projectOptions]} value={filterProjectId} onChange={(e) => setFilterProjectId(e.target.value)} />
         </FormField>
         <div className="flex items-end">
-          <Button variant="outline" size="sm" onClick={() => { setSuggestProjectId(filterProjectId); setSuggestStartDate(filterStartDate); setSuggestEndDate(filterEndDate); handleShowSuggestions(); }}>
+          <Button variant="outline" size="sm" onClick={() => handleShowSuggestions(filterProjectId, filterStartDate, filterEndDate)}>
             <Lightbulb size={14} className="mr-1" /> {tp('suggestionsBtn')}
           </Button>
         </div>
@@ -310,7 +320,7 @@ const ResourceAllocationBoardPage: React.FC = () => {
             </FormField>
           </div>
           <FormField label={tp('fieldNotes')}>
-            <textarea className="w-full rounded-md border border-gray-300 p-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200" rows={2} value={formNotes} onChange={(e) => setFormNotes(e.target.value)} />
+            <textarea className="w-full rounded-md border border-neutral-300 p-2 text-sm dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200" rows={2} value={formNotes} onChange={(e) => setFormNotes(e.target.value)} />
           </FormField>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => { setShowCreate(false); resetForm(); }}>{t('common.cancel')}</Button>
@@ -323,7 +333,7 @@ const ResourceAllocationBoardPage: React.FC = () => {
       <Modal open={showConflicts} onClose={() => setShowConflicts(false)} title={tp('conflictsModalTitle')}>
         <div className="space-y-3">
           {conflictList.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">{tp('noConflicts')}</p>
+            <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">{tp('noConflicts')}</p>
           ) : (
             conflictList.map((c, i) => (
               <div key={i} className="rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800 p-4">
@@ -332,12 +342,12 @@ const ResourceAllocationBoardPage: React.FC = () => {
                   <span className="font-medium text-red-700 dark:text-red-400">{c.resourceName}</span>
                   <span className="text-xs text-red-500">{c.totalPercent}% {tp('conflictAllocated')}</span>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
                   {formatDate(c.overlapStart)} — {formatDate(c.overlapEnd)}
                 </p>
                 <div className="mt-1 space-y-1">
                   {c.projects.map((p, j) => (
-                    <p key={j} className="text-xs text-gray-500">{p.projectName}: {p.percent}%</p>
+                    <p key={j} className="text-xs text-neutral-500 dark:text-neutral-400">{p.projectName}: {p.percent}%</p>
                   ))}
                 </div>
               </div>
@@ -350,10 +360,10 @@ const ResourceAllocationBoardPage: React.FC = () => {
       <Modal open={showSuggestions} onClose={() => setShowSuggestions(false)} title={tp('suggestionsModalTitle')}>
         <div className="space-y-3">
           {suggestionList.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">{tp('noSuggestions')}</p>
+            <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">{tp('noSuggestions')}</p>
           ) : (
             suggestionList.map((s, i) => (
-              <div key={i} className="rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div key={i} className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">{s.resourceName}</span>
                   <span className="text-sm text-green-600 font-semibold">{s.availabilityPercent}% {tp('available')}</span>

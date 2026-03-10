@@ -7,6 +7,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +62,7 @@ public class Defect extends BaseEntity {
     private DefectSeverity severity = DefectSeverity.MEDIUM;
 
     @Column(name = "photo_urls", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String photoUrls;
 
     @Column(name = "detected_by_id")

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Plus, Search, Wrench, AlertCircle, Calendar, DollarSign } from 'lucide-react';
@@ -35,17 +36,17 @@ interface Maintenance {
 type TabId = 'all' | 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED';
 
 const statusColorMap: Record<string, 'blue' | 'yellow' | 'green' | 'red' | 'gray'> = {
-  planned: 'blue',
-  in_progress: 'yellow',
-  completed: 'green',
-  overdue: 'red',
+  PLANNED: 'blue',
+  IN_PROGRESS: 'yellow',
+  COMPLETED: 'green',
+  OVERDUE: 'red',
 };
 
 const getStatusLabels = (): Record<string, string> => ({
-  planned: t('fleet.maintenance.statusPlanned'),
-  in_progress: t('fleet.maintenance.statusInProgress'),
-  completed: t('fleet.maintenance.statusCompleted'),
-  overdue: t('fleet.maintenance.statusOverdue'),
+  PLANNED: t('fleet.maintenance.statusPlanned'),
+  IN_PROGRESS: t('fleet.maintenance.statusInProgress'),
+  COMPLETED: t('fleet.maintenance.statusCompleted'),
+  OVERDUE: t('fleet.maintenance.statusOverdue'),
 });
 
 
@@ -60,9 +61,13 @@ const MaintenancePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
   const { data: maintData, isLoading } = useQuery<PaginatedResponse<Maintenance>>({
     queryKey: ['fleet-maintenance'],
-    queryFn: () => fleetApi.getMaintenanceRecords('all') as any,
+    queryFn: async () => {
+      const records = await fleetApi.getMaintenanceScheduleRecords();
+      return { content: records, totalElements: records.length, totalPages: 1, size: records.length, page: 0 } as unknown as PaginatedResponse<Maintenance>;
+    },
   });
 
   const maintenance = maintData?.content ?? [];
@@ -120,12 +125,12 @@ const MaintenancePage: React.FC = () => {
       },
       { accessorKey: 'mechanic', header: t('fleet.maintenance.colMechanic'), size: 150 },
       {
-        accessorKey: 'COST',
+        accessorKey: 'cost',
         header: t('fleet.maintenance.colCost'),
         size: 130,
         cell: ({ getValue }) => <span className="tabular-nums font-medium">{formatMoney(getValue<number>())}</span>,
       },
-      { accessorKey: 'projectName', header: t('fleet.maintenance.colProject'), size: 160, cell: ({ getValue }) => <span className="text-neutral-600">{getValue<string>() ?? '---'}</span> },
+      { accessorKey: 'projectName', header: t('fleet.maintenance.colProject'), size: 160, cell: ({ getValue }) => <span className="text-neutral-600 dark:text-neutral-400">{getValue<string>() ?? '---'}</span> },
     ];
   }, []);
 
@@ -142,7 +147,7 @@ const MaintenancePage: React.FC = () => {
         title={t('fleet.maintenance.title')}
         subtitle={t('fleet.maintenance.subtitle')}
         breadcrumbs={[{ label: t('fleet.maintenance.breadcrumbHome'), href: '/' }, { label: t('fleet.maintenance.breadcrumbFleet'), href: '/fleet' }, { label: t('fleet.maintenance.breadcrumbMaintenance') }]}
-        actions={<Button iconLeft={<Plus size={16} />}>{t('fleet.maintenance.newMaintenance')}</Button>}
+        actions={<Button iconLeft={<Plus size={16} />} onClick={() => navigate('/fleet/maintenance/new')}>{t('fleet.maintenance.newMaintenance')}</Button>}
         tabs={[
           { id: 'all', label: t('fleet.maintenance.tabAll'), count: tabCounts.all },
           { id: 'PLANNED', label: t('fleet.maintenance.tabPlanned'), count: tabCounts.planned },

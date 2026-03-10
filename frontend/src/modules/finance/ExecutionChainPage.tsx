@@ -11,6 +11,7 @@ import {
   FolderSearch,
 } from 'lucide-react';
 import { financeApi } from '@/api/finance';
+import { useProjectOptions as useProjectSelectOptions } from '@/hooks/useSelectOptions';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Select } from '@/design-system/components/FormField';
 import { Skeleton } from '@/design-system/components/Skeleton';
@@ -80,12 +81,8 @@ const STAGES: StageConfig[] = [
 // ---------------------------------------------------------------------------
 
 function useProjectOptions() {
-  return [
-    { value: '1', label: t('common.mockProjects.solnechny') },
-    { value: '2', label: t('common.mockProjects.gorizont') },
-    { value: '3', label: t('common.mockProjects.mostVyatka') },
-    { value: '6', label: t('common.mockProjects.tsentralny') },
-  ];
+  const { options } = useProjectSelectOptions();
+  return options;
 }
 
 // ---------------------------------------------------------------------------

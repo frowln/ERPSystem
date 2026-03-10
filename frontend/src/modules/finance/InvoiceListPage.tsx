@@ -14,6 +14,7 @@ import {
   invoiceTypeLabels,
 } from '@/design-system/components/StatusBadge';
 import { Input } from '@/design-system/components/FormField';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { financeApi } from '@/api/finance';
 import { formatMoney, formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
@@ -159,6 +160,10 @@ const InvoiceListPage: React.FC = () => {
     (invoice: Invoice) => navigate(`/invoices/${invoice.id}`),
     [navigate],
   );
+
+  if (isLoading && invoices.length === 0) {
+    return <PageSkeleton variant="list" />;
+  }
 
   return (
     <div className="animate-fade-in">

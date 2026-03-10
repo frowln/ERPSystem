@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { formatMoney } from '@/lib/format';
 import { russianDocsApi } from '@/api/russianDocs';
+import { useProjectOptions, useContractOptions } from '@/hooks/useSelectOptions';
 import { t } from '@/i18n';
 
 interface Ks2LineForm {
@@ -15,17 +17,6 @@ interface Ks2LineForm {
   quantity: string;
   unitPrice: string;
 }
-
-const getProjectOptions = () => [
-  { value: '1', label: t('russianDocs.projectSolnechny') },
-  { value: '3', label: t('russianDocs.projectBridge') },
-  { value: '6', label: t('russianDocs.projectMall') },
-];
-
-const getContractOptions = () => [
-  { value: 'c1', label: t('russianDocs.contractGP') },
-  { value: 'c2', label: t('russianDocs.contractSubcontract') },
-];
 
 const unitOptions = [
   { value: 'м3', label: 'м3' },
@@ -42,12 +33,17 @@ const emptyLine: Ks2LineForm = { workName: '', unitOfMeasure: 'м3', quantity: '
 const FormKs2Page: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { options: projectOptions } = useProjectOptions();
+  const { options: contractOptions } = useContractOptions();
 
   const createKs2Mutation = useMutation({
     mutationFn: russianDocsApi.createKs2,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['russian-docs'] });
       navigate('/russian-docs');
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 
@@ -128,10 +124,10 @@ const FormKs2Page: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField label={t('russianDocs.project')} required>
-              <Select options={getProjectOptions()} value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder={t('russianDocs.ks2SelectProject')} />
+              <Select options={projectOptions} value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder={t('russianDocs.ks2SelectProject')} />
             </FormField>
             <FormField label={t('russianDocs.contract')} required>
-              <Select options={getContractOptions()} value={contractId} onChange={(e) => setContractId(e.target.value)} placeholder={t('russianDocs.ks2SelectContract')} />
+              <Select options={contractOptions} value={contractId} onChange={(e) => setContractId(e.target.value)} placeholder={t('russianDocs.ks2SelectContract')} />
             </FormField>
           </div>
 

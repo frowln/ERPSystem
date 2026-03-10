@@ -9,14 +9,32 @@ public record TaskDependencyResponse(
         UUID id,
         UUID taskId,
         UUID dependsOnTaskId,
-        DependencyType dependencyType
+        DependencyType dependencyType,
+        int lagDays,
+        String dependsOnTaskCode,
+        String dependsOnTaskTitle
 ) {
     public static TaskDependencyResponse fromEntity(TaskDependency dependency) {
         return new TaskDependencyResponse(
                 dependency.getId(),
                 dependency.getTaskId(),
                 dependency.getDependsOnTaskId(),
-                dependency.getDependencyType()
+                dependency.getDependencyType(),
+                dependency.getLagDays(),
+                null,
+                null
+        );
+    }
+
+    public static TaskDependencyResponse fromEntity(TaskDependency dependency, String dependsOnTaskCode, String dependsOnTaskTitle) {
+        return new TaskDependencyResponse(
+                dependency.getId(),
+                dependency.getTaskId(),
+                dependency.getDependsOnTaskId(),
+                dependency.getDependencyType(),
+                dependency.getLagDays(),
+                dependsOnTaskCode,
+                dependsOnTaskTitle
         );
     }
 }

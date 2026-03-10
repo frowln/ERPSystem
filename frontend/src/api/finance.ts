@@ -52,6 +52,16 @@ export interface ExpenseFilters extends PaginationParams {
   docStatus?: string;
 }
 
+export interface MonthlyDistribution {
+  month: string;
+  planned: number;
+  actual: number;
+  forecast: number;
+  cumPlanned: number;
+  cumActual: number;
+  cumForecast: number;
+}
+
 export interface CreateCommercialProposalRequest {
   budgetId: string;
   name: string;
@@ -690,6 +700,18 @@ export const financeApi = {
 
   updateValueEngineering: async (projectId: string, itemId: string, data: Partial<ValueEngineeringItem>): Promise<ValueEngineeringItem> => {
     const response = await apiClient.put<ValueEngineeringItem>(`/projects/${projectId}/value-engineering/${itemId}`, data);
+    return response.data;
+  },
+
+  // Monthly Distribution (S-Curve)
+  getMonthlyDistribution: async (budgetId: string): Promise<MonthlyDistribution[]> => {
+    const response = await apiClient.get<MonthlyDistribution[]>(`/budgets/${budgetId}/monthly-distribution`);
+    return response.data;
+  },
+
+  // Competitive List Registry
+  getAllCompetitiveLists: async (params?: { projectId?: string; status?: string }): Promise<CompetitiveList[]> => {
+    const response = await apiClient.get<CompetitiveList[]>('/competitive-lists', { params });
     return response.data;
   },
 };

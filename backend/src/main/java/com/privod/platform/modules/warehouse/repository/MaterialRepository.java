@@ -33,4 +33,10 @@ public interface MaterialRepository extends JpaRepository<Material, UUID>,
     boolean existsByCodeAndDeletedFalse(String code);
 
     boolean existsByOrganizationIdAndCodeAndDeletedFalse(UUID organizationId, String code);
+
+    long countByOrganizationIdAndDeletedFalse(UUID organizationId);
+
+    @Query("SELECT m.category, COUNT(m) FROM Material m " +
+            "WHERE m.organizationId = :orgId AND m.deleted = false GROUP BY m.category")
+    java.util.List<Object[]> countByCategoryAndOrganizationId(@Param("orgId") UUID organizationId);
 }

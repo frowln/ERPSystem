@@ -9,6 +9,8 @@ import com.privod.platform.modules.hrRussian.web.dto.VacationResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,12 @@ public class VacationService {
 
     private final VacationRepository vacationRepository;
     private final AuditService auditService;
+
+    @Transactional(readOnly = true)
+    public Page<VacationResponse> listVacations(Pageable pageable) {
+        return vacationRepository.findByDeletedFalse(pageable)
+                .map(VacationResponse::fromEntity);
+    }
 
     @Transactional(readOnly = true)
     public List<VacationResponse> getByEmployee(UUID employeeId) {

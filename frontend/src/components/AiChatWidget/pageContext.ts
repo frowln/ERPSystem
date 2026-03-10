@@ -1,4 +1,3 @@
-import { t } from '@/i18n';
 import type { PageContext, LiveData } from './types';
 
 // ---------------------------------------------------------------------------
@@ -6,150 +5,440 @@ import type { PageContext, LiveData } from './types';
 // ---------------------------------------------------------------------------
 
 export const getPageContext = (pathname: string): PageContext => {
+  // Patterns ordered from most specific to least specific
   const patterns: [RegExp, string, string, string][] = [
+    // === Projects ===
     [
       /^\/projects\/[^/]+\/edit/,
-      t('aiChat.context.projectEdit.title'),
-      t('aiChat.context.projectEdit.hint'),
-      t('aiChat.context.projectEdit.description'),
+      'Редактирование проекта',
+      'Помоги мне настроить параметры проекта',
+      'Пользователь редактирует проект. Может обновлять название, статус, сроки, бюджет.',
+    ],
+    [
+      /^\/projects\/[^/]+\/pre-construction/,
+      'Предстроительная подготовка',
+      'Покажи статус подготовки к строительству',
+      'Пользователь на странице предстроительной подготовки: ПИР, ИГИ, ТУ, разрешения, обследования площадки, ГПЗУ.',
+    ],
+    [
+      /^\/projects\/[^/]+\/risks/,
+      'Реестр рисков проекта',
+      'Какие риски есть у проекта?',
+      'Пользователь просматривает реестр рисков проекта. Может создавать новые риски, оценивать вероятность и воздействие.',
+    ],
+    [
+      /^\/projects\/[^/]+\/documents/,
+      'Документы проекта',
+      'Какие документы есть в проекте?',
+      'Пользователь на вкладке документов проекта.',
+    ],
+    [
+      /^\/projects\/[^/]+\/team/,
+      'Команда проекта',
+      'Кто в команде проекта?',
+      'Пользователь на вкладке команды проекта.',
+    ],
+    [
+      /^\/projects\/[^/]+\/finance/,
+      'Финансы проекта',
+      'Покажи финансовый обзор проекта',
+      'Пользователь на вкладке финансов проекта (бюджет, затраты, контракты).',
     ],
     [
       /^\/projects\/[^/]+/,
-      t('aiChat.context.projectCard.title'),
-      t('aiChat.context.projectCard.hint'),
-      t('aiChat.context.projectCard.description'),
+      'Карточка проекта',
+      'Расскажи о текущем состоянии проекта',
+      'Пользователь на карточке проекта. Видит обзор, финансы, задачи, документы, команду.',
     ],
     [
       /^\/projects$/,
-      t('aiChat.context.projectList.title'),
-      t('aiChat.context.projectList.hint'),
-      t('aiChat.context.projectList.description'),
+      'Список проектов',
+      'Какие проекты сейчас активны?',
+      'Пользователь на списке проектов. Может фильтровать, искать, создавать новые.',
     ],
+
+    // === Contracts ===
     [
       /^\/contracts\/[^/]+\/edit/,
-      t('aiChat.context.contractEdit.title'),
-      t('aiChat.context.contractEdit.hint'),
-      t('aiChat.context.contractEdit.description'),
+      'Редактирование договора',
+      'Помоги настроить параметры договора',
+      'Пользователь редактирует договор.',
     ],
     [
       /^\/contracts\/[^/]+/,
-      t('aiChat.context.contractCard.title'),
-      t('aiChat.context.contractCard.hint'),
-      t('aiChat.context.contractCard.description'),
+      'Карточка договора',
+      'Покажи детали договора',
+      'Пользователь просматривает карточку договора.',
     ],
     [
       /^\/contracts$/,
-      t('aiChat.context.contractList.title'),
-      t('aiChat.context.contractList.hint'),
-      t('aiChat.context.contractList.description'),
+      'Список договоров',
+      'Какие есть активные договоры?',
+      'Пользователь на реестре договоров.',
     ],
+
+    // === Budgets / FM ===
     [
       /^\/budgets\/[^/]+\/edit/,
-      t('aiChat.context.budgetEdit.title'),
-      t('aiChat.context.budgetEdit.hint'),
-      t('aiChat.context.budgetEdit.description'),
+      'Редактирование бюджета',
+      'Помоги настроить позиции бюджета',
+      'Пользователь редактирует бюджет / финансовую модель.',
     ],
     [
       /^\/budgets\/[^/]+/,
-      t('aiChat.context.budgetCard.title'),
-      t('aiChat.context.budgetCard.hint'),
-      t('aiChat.context.budgetCard.description'),
+      'Карточка бюджета (ФМ)',
+      'Покажи обзор бюджета',
+      'Пользователь просматривает финансовую модель (бюджет) с позициями.',
     ],
     [
       /^\/budgets$/,
-      t('aiChat.context.budgetList.title'),
-      t('aiChat.context.budgetList.hint'),
-      t('aiChat.context.budgetList.description'),
+      'Список бюджетов',
+      'Какие бюджеты есть?',
+      'Пользователь на реестре бюджетов / финансовых моделей.',
     ],
+
+    // === Estimates ===
     [
       /^\/estimates\/[^/]+\/edit/,
-      t('aiChat.context.estimateEdit.title'),
-      t('aiChat.context.estimateEdit.hint'),
-      t('aiChat.context.estimateEdit.description'),
+      'Редактирование сметы',
+      'Помоги настроить смету',
+      'Пользователь редактирует смету.',
     ],
     [
       /^\/estimates\/[^/]+/,
-      t('aiChat.context.estimateCard.title'),
-      t('aiChat.context.estimateCard.hint'),
-      t('aiChat.context.estimateCard.description'),
+      'Карточка сметы',
+      'Покажи состав сметы',
+      'Пользователь просматривает смету с позициями и итогами.',
     ],
     [
       /^\/estimates$/,
-      t('aiChat.context.estimateList.title'),
-      t('aiChat.context.estimateList.hint'),
-      t('aiChat.context.estimateList.description'),
+      'Список смет',
+      'Какие сметы есть?',
+      'Пользователь на реестре смет.',
+    ],
+
+    // === Specifications ===
+    [
+      /^\/specifications\/[^/]+\/edit/,
+      'Редактирование спецификации',
+      'Помоги настроить спецификацию',
+      'Пользователь редактирует спецификацию оборудования/материалов.',
     ],
     [
       /^\/specifications\/[^/]+/,
-      t('aiChat.context.specificationCard.title'),
-      t('aiChat.context.specificationCard.hint'),
-      t('aiChat.context.specificationCard.description'),
+      'Карточка спецификации',
+      'Покажи позиции спецификации',
+      'Пользователь просматривает спецификацию с позициями оборудования/материалов.',
     ],
     [
       /^\/specifications$/,
-      t('aiChat.context.specificationList.title'),
-      t('aiChat.context.specificationList.hint'),
-      t('aiChat.context.specificationList.description'),
+      'Список спецификаций',
+      'Какие спецификации есть?',
+      'Пользователь на реестре спецификаций.',
     ],
+
+    // === Invoices ===
     [
       /^\/invoices\/[^/]+/,
-      t('aiChat.context.invoiceCard.title'),
-      t('aiChat.context.invoiceCard.hint'),
-      t('aiChat.context.invoiceCard.description'),
+      'Карточка счёта',
+      'Покажи детали счёта',
+      'Пользователь просматривает конкретный счёт.',
     ],
     [
       /^\/invoices$/,
-      t('aiChat.context.invoiceList.title'),
-      t('aiChat.context.invoiceList.hint'),
-      t('aiChat.context.invoiceList.description'),
+      'Список счетов',
+      'Какие есть неоплаченные счета?',
+      'Пользователь на реестре счетов.',
     ],
+
+    // === Payments ===
     [
       /^\/payments\/[^/]+/,
-      t('aiChat.context.paymentCard.title'),
-      t('aiChat.context.paymentCard.hint'),
-      t('aiChat.context.paymentCard.description'),
+      'Карточка платежа',
+      'Покажи детали платежа',
+      'Пользователь просматривает конкретный платёж.',
     ],
     [
       /^\/payments$/,
-      t('aiChat.context.paymentList.title'),
-      t('aiChat.context.paymentList.hint'),
-      t('aiChat.context.paymentList.description'),
+      'Список платежей',
+      'Покажи историю платежей',
+      'Пользователь на реестре платежей.',
     ],
+
+    // === CRM ===
+    [
+      /^\/crm\/leads\/[^/]+\/edit/,
+      'Редактирование лида CRM',
+      'Помоги обновить информацию о лиде',
+      'Пользователь редактирует CRM-лид (потенциальный проект).',
+    ],
+    [
+      /^\/crm\/leads\/[^/]+/,
+      'Карточка лида CRM',
+      'Расскажи о лиде',
+      'Пользователь просматривает детали CRM-лида.',
+    ],
+    [
+      /^\/crm/,
+      'CRM — управление лидами',
+      'Какие лиды сейчас в работе?',
+      'Пользователь в модуле CRM. Может просматривать, создавать и конвертировать лиды в проекты.',
+    ],
+
+    // === Quality / Defects ===
+    [
+      /^\/quality\/defects\/[^/]+/,
+      'Карточка дефекта',
+      'Покажи детали дефекта',
+      'Пользователь просматривает конкретный дефект/замечание.',
+    ],
+    [
+      /^\/quality/,
+      'Управление качеством',
+      'Сколько открытых дефектов?',
+      'Пользователь в модуле качества: дефекты, инспекции, чек-листы.',
+    ],
+
+    // === Safety ===
+    [
+      /^\/safety/,
+      'Охрана труда (ОТ и ТБ)',
+      'Какая статистика по безопасности?',
+      'Пользователь в модуле охраны труда: инциденты, инструктажи, проверки.',
+    ],
+
+    // === Submittals / PTO ===
+    [
+      /^\/submittals\/[^/]+/,
+      'Карточка сабмитала',
+      'Покажи статус согласования',
+      'Пользователь просматривает конкретный сабмитал (ИРД/ПТО).',
+    ],
+    [
+      /^\/submittals$/,
+      'Список сабмиталов',
+      'Какие сабмиталы ожидают согласования?',
+      'Пользователь на реестре сабмиталов.',
+    ],
+
+    // === Closing Documents (KS-2/KS-3) ===
+    [
+      /^\/closing\/ks2\/[^/]+/,
+      'Карточка акта КС-2',
+      'Покажи детали акта КС-2',
+      'Пользователь просматривает акт выполненных работ КС-2 с позициями.',
+    ],
+    [
+      /^\/closing/,
+      'Закрывающие документы',
+      'Какие акты КС-2 есть?',
+      'Пользователь в модуле закрывающих документов: КС-2, КС-3, КС-6а.',
+    ],
+
+    // === Site Assessment ===
+    [
+      /^\/site-assessments\/[^/]+/,
+      'Карточка обследования площадки',
+      'Покажи результаты обследования',
+      'Пользователь просматривает результаты обследования площадки.',
+    ],
+    [
+      /^\/site-assessments$/,
+      'Список обследований площадки',
+      'Какие обследования проведены?',
+      'Пользователь на реестре обследований площадки.',
+    ],
+
+    // === Prequalification ===
+    [
+      /^\/prequalifications/,
+      'Преквалификация подрядчиков',
+      'Какие подрядчики прошли преквалификацию?',
+      'Пользователь в модуле преквалификации подрядчиков.',
+    ],
+
+    // === Commercial Proposals ===
+    [
+      /^\/commercial-proposals\/[^/]+/,
+      'Карточка КП',
+      'Покажи позиции коммерческого предложения',
+      'Пользователь просматривает коммерческое предложение (КП) с позициями и ценами.',
+    ],
+    [
+      /^\/commercial-proposals$/,
+      'Список КП',
+      'Какие КП есть?',
+      'Пользователь на реестре коммерческих предложений.',
+    ],
+
+    // === Fleet ===
+    [
+      /^\/fleet\/[^/]+/,
+      'Карточка техники',
+      'Покажи информацию о единице техники',
+      'Пользователь просматривает карточку транспортного средства/техники.',
+    ],
+    [
+      /^\/fleet/,
+      'Управление техникой',
+      'Какая техника доступна?',
+      'Пользователь в модуле управления автопарком и спецтехникой.',
+    ],
+
+    // === Procurement ===
     [
       /^\/procurement/,
-      t('aiChat.context.procurement.title'),
-      t('aiChat.context.procurement.hint'),
-      t('aiChat.context.procurement.description'),
+      'Закупки',
+      'Какие заявки на закупку ожидают одобрения?',
+      'Пользователь в модуле закупок: заявки на закупку, заказы поставщикам, тендеры.',
     ],
+
+    // === Warehouse ===
     [
-      /^\/russian-docs/,
-      t('aiChat.context.russianDocs.title'),
-      t('aiChat.context.russianDocs.hint'),
-      t('aiChat.context.russianDocs.description'),
+      /^\/warehouse\/orders/,
+      'Складские ордера',
+      'Какие складские ордера на ожидании?',
+      'Пользователь просматривает складские ордера (приход, расход, перемещение).',
     ],
     [
       /^\/warehouse/,
-      t('aiChat.context.warehouse.title'),
-      t('aiChat.context.warehouse.hint'),
-      t('aiChat.context.warehouse.description'),
+      'Склад',
+      'Какие материалы на складе?',
+      'Пользователь в модуле склада: остатки, движения, инвентаризация.',
+    ],
+
+    // === HR ===
+    [
+      /^\/hr\/employees\/[^/]+/,
+      'Карточка сотрудника',
+      'Покажи информацию о сотруднике',
+      'Пользователь просматривает карточку сотрудника.',
     ],
     [
       /^\/hr/,
-      t('aiChat.context.hr.title'),
-      t('aiChat.context.hr.hint'),
-      t('aiChat.context.hr.description'),
+      'Управление персоналом (HR)',
+      'Сколько сотрудников в штате?',
+      'Пользователь в модуле HR: сотрудники, табели, сертификаты, штатное расписание.',
     ],
+
+    // === Documents / CDE ===
+    [
+      /^\/documents/,
+      'Управление документами',
+      'Какие документы загружены?',
+      'Пользователь в модуле документооборота / CDE.',
+    ],
+
+    // === Messaging ===
+    [
+      /^\/messaging/,
+      'Мессенджер',
+      'Какие каналы есть?',
+      'Пользователь в корпоративном мессенджере: каналы, личные сообщения.',
+    ],
+
+    // === Analytics ===
     [
       /^\/analytics/,
-      t('aiChat.context.analytics.title'),
-      t('aiChat.context.analytics.hint'),
-      t('aiChat.context.analytics.description'),
+      'Аналитика и дашборды',
+      'Покажи ключевые показатели',
+      'Пользователь на странице аналитики: сводки, графики, KPI.',
+    ],
+
+    // === Planning / Gantt ===
+    [
+      /^\/gantt/,
+      'Диаграмма Ганта',
+      'Покажи расписание проекта',
+      'Пользователь на диаграмме Ганта: задачи, зависимости, критический путь.',
     ],
     [
+      /^\/planning/,
+      'Планирование',
+      'Покажи план проекта',
+      'Пользователь в модуле планирования: календарь, вехи, расписание.',
+    ],
+
+    // === Tasks ===
+    [
+      /^\/tasks\/board/,
+      'Канбан-доска задач',
+      'Какие задачи в работе?',
+      'Пользователь на канбан-доске задач.',
+    ],
+    [
+      /^\/tasks/,
+      'Задачи',
+      'Какие задачи требуют внимания?',
+      'Пользователь в модуле задач: список, фильтры, создание.',
+    ],
+
+    // === Notifications ===
+    [
+      /^\/notifications/,
+      'Уведомления',
+      'Есть ли непрочитанные уведомления?',
+      'Пользователь просматривает уведомления системы.',
+    ],
+
+    // === Support ===
+    [
+      /^\/support/,
+      'Техническая поддержка',
+      'Какие обращения открыты?',
+      'Пользователь в модуле техподдержки: тикеты, обращения, база знаний.',
+    ],
+
+    // === Settings ===
+    [
+      /^\/settings\/permissions/,
+      'Права доступа',
+      'Какие группы прав настроены?',
+      'Пользователь настраивает права доступа: группы, роли, правила.',
+    ],
+    [
+      /^\/settings\/users/,
+      'Управление пользователями',
+      'Сколько пользователей в системе?',
+      'Пользователь управляет учётными записями пользователей.',
+    ],
+    [
+      /^\/settings/,
+      'Настройки системы',
+      'Какие настройки доступны?',
+      'Пользователь в разделе настроек.',
+    ],
+
+    // === Portal ===
+    [
+      /^\/portal/,
+      'Портал подрядчика/клиента',
+      'Покажи активность на портале',
+      'Пользователь в портале для подрядчиков/клиентов.',
+    ],
+
+    // === Russian Docs ===
+    [
+      /^\/russian-docs/,
+      'Российская документация',
+      'Какие формы КС/МС есть?',
+      'Пользователь работает с российскими формами документов (КС-2, КС-3, М-29 и др.).',
+    ],
+
+    // === Cash Flow ===
+    [
+      /^\/cash-flow/,
+      'Движение денежных средств',
+      'Покажи прогноз денежных потоков',
+      'Пользователь на странице движения денежных средств (Cash Flow).',
+    ],
+
+    // === Dashboard ===
+    [
       /^\/$/,
-      t('aiChat.context.dashboard.title'),
-      t('aiChat.context.dashboard.hint'),
-      t('aiChat.context.dashboard.description'),
+      'Главная панель',
+      'Что происходит на проектах?',
+      'Пользователь на главной панели (дашборде). Видит сводку по всем модулям.',
     ],
   ];
 
@@ -160,9 +449,9 @@ export const getPageContext = (pathname: string): PageContext => {
   }
 
   return {
-    section: t('aiChat.context.fallback.title'),
-    hint: t('aiChat.context.fallback.hint'),
-    systemContext: t('aiChat.context.fallback.description'),
+    section: 'PRIVOD ERP',
+    hint: 'Чем могу помочь?',
+    systemContext: 'Пользователь на странице системы. Помоги ему с задачами, проектами, финансами.',
   };
 };
 
@@ -173,35 +462,51 @@ export const getPageContext = (pathname: string): PageContext => {
 export function serializeLiveData(data: LiveData): string {
   if (!data) return '';
   const json = JSON.stringify(data, null, 2);
-  if (json.length > 3000) return json.slice(0, 3000) + '\n' + t('aiChat.context.dataTruncated');
+  if (json.length > 3000) return json.slice(0, 3000) + '\n... (данные обрезаны)';
   return json;
 }
 
-export const buildSystemPrompt = (pageContext: PageContext, pathname: string, liveData?: LiveData): string => `${t('aiChat.context.systemPrompt')}
+export const buildSystemPrompt = (pageContext: PageContext, pathname: string, liveData?: LiveData): string => `Ты — AI-ассистент ПРИВОД (PRIVOD), умная ERP-система для строительной отрасли. Отвечай на русском языке, но можешь на английском если спрашивают по-английски.
 
-${t('aiChat.context.financialCycle')}
+Цикл строительного проекта:
+Lead (CRM) → Pre-Construction → Spec/FM/Budget → Contracts → Procurement → Construction → Closing (КС-2/КС-3) → Closeout
 
-${t('aiChat.context.currentContextLabel')}
-${t('aiChat.context.userOnPage', { section: pageContext.section })}
+Текущий контекст:
+Пользователь на странице: ${pageContext.section}
 ${pageContext.systemContext}
-${liveData ? `\n${t('aiChat.context.liveDataLabel')}\n\`\`\`json\n${serializeLiveData(liveData)}\n\`\`\`\n${t('aiChat.context.liveDataInstruction')}` : ''}
+${liveData ? `\nДанные текущей страницы:\n\`\`\`json\n${serializeLiveData(liveData)}\n\`\`\`\nИспользуй эти данные для точных ответов.` : ''}
 
-${t('aiChat.context.capabilitiesLabel')}
-- ${t('aiChat.context.capTasks')}
-- ${t('aiChat.context.capContracts')}
-- ${t('aiChat.context.capBudgets')}
-- ${t('aiChat.context.capInvoices')}
-- ${t('aiChat.context.capPayments')}
-- ${t('aiChat.context.capProcurement')}
-- ${t('aiChat.context.capEmployees')}
-- ${t('aiChat.context.capWarehouse')}
-- ${t('aiChat.context.capTransport')}
-- ${t('aiChat.context.capProjects')}
+Что ты умеешь:
+- Управление задачами (создание, обновление статуса, списки, поиск)
+- Управление проектами (поиск, статусы, аналитика, портфель)
+- Сотрудники (поиск, список, создание, детали)
+- Договоры (создание, статусы, списки)
+- Финансы (счета, платежи, бюджеты/ФМ, позиции)
+- Закупки (заявки, заказы)
+- Склад (движения, остатки)
+- Сметы и спецификации (списки, детали, передача в ФМ)
+- CRM (лиды, конвертация в проекты)
+- Качество (дефекты, создание, статусы)
+- Безопасность (дашборд)
+- Сабмиталы ИРД/ПТО (списки, создание, статусы)
+- Закрывающие документы (КС-2, КС-3)
+- Обследования площадки
+- Преквалификация подрядчиков
+- Коммерческие предложения (КП)
+- Техника и автопарк
+- Документы (списки, создание)
+- Мессенджер (каналы, сообщения)
+- Риски (реестр, создание)
+- Уведомления (список, отметка прочитанным)
+- Техподдержка (тикеты)
+- Разрешения на строительство
+- Вехи (milestones)
+- Навигация по страницам системы
 
-${t('aiChat.context.rulesLabel')}
-- ${t('aiChat.context.ruleFriendly')}
-- ${t('aiChat.context.ruleLists')}
-- ${t('aiChat.context.ruleNoTech')}
-- ${t('aiChat.context.ruleNoLocation')}
-- ${t('aiChat.context.ruleNoIntro')}
-- ${t('aiChat.context.ruleDefaults')}`;
+Правила:
+- Будь дружелюбным и кратким
+- Используй списки и структуру в ответах
+- Не показывай технические UUID — используй названия
+- Не выдумывай данные — используй только API
+- Не начинай с приветствий — сразу по делу
+- Если данные не заданы, используй разумные значения по умолчанию`;

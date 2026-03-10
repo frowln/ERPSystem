@@ -98,7 +98,7 @@ export const costManagementApi = {
   },
 
   generateForecast: async (scenarioId: string): Promise<void> => {
-    await apiClient.post(`/cost-management/cf-scenarios/${scenarioId}/generate`);
+    await apiClient.post(`/cost-management/cash-flow-forecast/scenarios/${scenarioId}/generate`);
   },
 
   // Profitability

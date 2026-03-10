@@ -326,3 +326,64 @@ export interface MaterialDemand {
   deficit: number;
   status: MaterialDemandStatus;
 }
+
+// --- Pending Confirmations ---
+
+export interface PendingConfirmation {
+  id: string;
+  movementId: string;
+  movementNumber: string;
+  materialName: string;
+  quantity: number;
+  unit: string;
+  fromLocation: string;
+  toLocation: string;
+  requestedBy: string;
+  requestedAt: string;
+  status: 'PENDING' | 'CONFIRMED' | 'REJECTED';
+  movementType?: string;
+  supplierOrSource?: string;
+  destinationLocation?: string;
+  date?: string;
+  projectName?: string;
+  number?: string;
+  responsibleName?: string;
+}
+
+// --- Inter-Project Transfers ---
+
+export type InterProjectTransferStatus = 'REQUESTED' | 'APPROVED' | 'IN_TRANSIT' | 'DELIVERED' | 'CANCELLED' | 'DRAFT' | 'PENDING_APPROVAL' | 'RECEIVED';
+
+export interface InterProjectTransfer {
+  id: string;
+  number: string;
+  fromProjectId: string;
+  fromProjectName: string;
+  sourceProjectId?: string;
+  sourceProjectName?: string;
+  toProjectId: string;
+  toProjectName: string;
+  destinationProjectId?: string;
+  destinationProjectName?: string;
+  status: InterProjectTransferStatus;
+  requestedBy: string;
+  requestedAt: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  items: InterProjectTransferItem[];
+  totalAmount: number;
+  vehicleNumber?: string;
+  driverName?: string;
+  expectedArrival?: string;
+  notes?: string;
+  createdAt?: string;
+}
+
+export interface InterProjectTransferItem {
+  materialId?: string;
+  materialName: string;
+  quantity: number;
+  unit: string;
+  unitPrice?: number;
+  amount?: number;
+}

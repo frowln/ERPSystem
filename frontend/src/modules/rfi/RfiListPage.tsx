@@ -21,23 +21,14 @@ import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 import type { Rfi } from './types';
-import { RfiCreateModal } from './RfiCreateModal';
+const RfiCreateModal = React.lazy(() => import('./RfiCreateModal'));
 
 type TabId = 'all' | 'OPEN' | 'ANSWERED' | 'OVERDUE' | 'CLOSED';
-
-const getStatusFilterOptions = () => [
-  { value: '', label: t('rfi.filterAllStatuses') },
-  { value: 'DRAFT', label: t('rfi.filterStatusDraft') },
-  { value: 'OPEN', label: t('rfi.filterStatusOpen') },
-  { value: 'ANSWERED', label: t('rfi.filterStatusAnswered') },
-  { value: 'CLOSED', label: t('rfi.filterStatusClosed') },
-  { value: 'OVERDUE', label: t('rfi.filterStatusOverdue') },
-];
 
 const getPriorityFilterOptions = () => [
   { value: '', label: t('rfi.filterAllPriorities') },
   { value: 'LOW', label: t('rfi.filterPriorityLow') },
-  { value: 'MEDIUM', label: t('rfi.filterPriorityMedium') },
+  { value: 'NORMAL', label: t('rfi.filterPriorityNormal') },
   { value: 'HIGH', label: t('rfi.filterPriorityHigh') },
   { value: 'CRITICAL', label: t('rfi.filterPriorityCritical') },
 ];
@@ -77,11 +68,11 @@ const RfiListPage: React.FC = () => {
     let filtered = rfis;
 
     if (activeTab === 'OPEN') {
-      filtered = filtered.filter((r) => r.status === 'OPEN');
+      filtered = filtered.filter((r) => r.status === 'OPEN' || r.status === 'ASSIGNED');
     } else if (activeTab === 'ANSWERED') {
       filtered = filtered.filter((r) => r.status === 'ANSWERED');
     } else if (activeTab === 'OVERDUE') {
-      filtered = filtered.filter((r) => r.status === 'OVERDUE');
+      filtered = filtered.filter((r) => r.isOverdue);
     } else if (activeTab === 'CLOSED') {
       filtered = filtered.filter((r) => r.status === 'CLOSED');
     }
@@ -105,15 +96,15 @@ const RfiListPage: React.FC = () => {
 
   const tabCounts = useMemo(() => ({
     all: rfis.length,
-    open: rfis.filter((r) => r.status === 'OPEN').length,
+    open: rfis.filter((r) => r.status === 'OPEN' || r.status === 'ASSIGNED').length,
     answered: rfis.filter((r) => r.status === 'ANSWERED').length,
-    overdue: rfis.filter((r) => r.status === 'OVERDUE').length,
+    overdue: rfis.filter((r) => r.isOverdue).length,
     closed: rfis.filter((r) => r.status === 'CLOSED').length,
   }), [rfis]);
 
   const metrics = useMemo(() => {
-    const openCount = rfis.filter((r) => r.status === 'OPEN' || r.status === 'OVERDUE').length;
-    const overdueCount = rfis.filter((r) => r.status === 'OVERDUE').length;
+    const openCount = rfis.filter((r) => r.status === 'OPEN' || r.status === 'ASSIGNED').length;
+    const overdueCount = rfis.filter((r) => r.isOverdue).length;
     const answeredRfis = rfis.filter((r) => r.answeredDate && r.createdAt);
     const avgResponseDays = answeredRfis.length > 0
       ? answeredRfis.reduce((sum, r) => {
@@ -151,13 +142,16 @@ const RfiListPage: React.FC = () => {
         accessorKey: 'status',
         header: t('rfi.colStatus'),
         size: 130,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={rfiStatusColorMap}
-            label={rfiStatusLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
+        cell: ({ row }) => {
+          const displayStatus = row.original.isOverdue ? 'OVERDUE' : row.original.status;
+          return (
+            <StatusBadge
+              status={displayStatus}
+              colorMap={rfiStatusColorMap}
+              label={rfiStatusLabels[displayStatus] ?? displayStatus}
+            />
+          );
+        },
       },
       {
         accessorKey: 'priority',
@@ -184,10 +178,9 @@ const RfiListPage: React.FC = () => {
         header: t('rfi.colDueDate'),
         size: 120,
         cell: ({ row }) => {
-          const dueDate = row.original.dueDate;
-          const isOverdue = dueDate && new Date(dueDate) < new Date() && !['CLOSED', 'ANSWERED'].includes(row.original.status);
+          const { dueDate, isOverdue: overdue } = row.original;
           return (
-            <span className={isOverdue ? 'text-danger-600 font-medium tabular-nums' : 'tabular-nums text-neutral-700 dark:text-neutral-300'}>
+            <span className={overdue ? 'text-danger-600 font-medium tabular-nums' : 'tabular-nums text-neutral-700 dark:text-neutral-300'}>
               {formatDate(dueDate)}
             </span>
           );
@@ -203,7 +196,7 @@ const RfiListPage: React.FC = () => {
             size="xs"
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/rfis/${row.original.id}`);
+              navigate(`/pm/rfis/${row.original.id}`);
             }}
           >
             {t('rfi.openAction')}
@@ -215,7 +208,7 @@ const RfiListPage: React.FC = () => {
   );
 
   const handleRowClick = useCallback(
-    (rfi: Rfi) => navigate(`/rfis/${rfi.id}`),
+    (rfi: Rfi) => navigate(`/pm/rfis/${rfi.id}`),
     [navigate],
   );
 
@@ -255,7 +248,6 @@ const RfiListPage: React.FC = () => {
           icon={<Clock size={18} />}
           label={t('rfi.metricOpen')}
           value={metrics.open}
-          trend={{ direction: metrics.open > 3 ? 'up' : 'neutral', value: `${metrics.open} ${t('specifications.materialsDays')}` }}
         />
         <MetricCard
           icon={<AlertTriangle size={18} />}
@@ -266,7 +258,7 @@ const RfiListPage: React.FC = () => {
         <MetricCard
           icon={<Timer size={18} />}
           label={t('rfi.metricAvgResponse')}
-          value={`${metrics.avgResponse.toFixed(1)} ${t('specifications.materialsDays')}`}
+          value={`${metrics.avgResponse.toFixed(1)} ${t('rfi.metricDays')}`}
         />
       </div>
 
@@ -322,10 +314,14 @@ const RfiListPage: React.FC = () => {
         emptyDescription={t('rfi.emptyDescription')}
       />
 
-      <RfiCreateModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {createModalOpen && (
+        <React.Suspense fallback={null}>
+          <RfiCreateModal
+            open={createModalOpen}
+            onClose={() => setCreateModalOpen(false)}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

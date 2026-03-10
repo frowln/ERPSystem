@@ -7,6 +7,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,6 +57,7 @@ public class SafetyTraining extends BaseEntity {
     private String instructorName;
 
     @Column(name = "participants", columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String participants;
 
     @Column(name = "topics", columnDefinition = "TEXT")

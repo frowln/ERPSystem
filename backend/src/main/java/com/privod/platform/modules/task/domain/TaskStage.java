@@ -48,4 +48,10 @@ public class TaskStage extends BaseEntity {
     @Column(name = "is_closed", nullable = false)
     @Builder.Default
     private boolean isClosed = false;
+
+    @Column(name = "color", length = 20)
+    private String color;
+
+    @Column(name = "icon", length = 50)
+    private String icon;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
+import { getRequiredRoles } from '@/config/routePermissions';
 import { t } from '@/i18n';
 import type { UserRole } from '@/types';
 
@@ -34,11 +35,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (requiredRoles && requiredRoles.length > 0 && user) {
+  // Determine effective required roles: explicit prop takes priority,
+  // otherwise look up from routePermissions config based on current path.
+  const effectiveRoles = requiredRoles ?? getRequiredRoles(location.pathname);
+
+  if (effectiveRoles && effectiveRoles.length > 0 && user) {
     const userRole = user.role;
     const userRoles = user.roles ?? [];
 
-    const hasRequiredRole = requiredRoles.some(
+    const hasRequiredRole = effectiveRoles.some(
       (role) => userRole === role || userRoles.includes(role),
     );
 

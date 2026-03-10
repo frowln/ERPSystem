@@ -1,6 +1,7 @@
 package com.privod.platform.modules.hr.web;
 
 import com.privod.platform.infrastructure.web.ApiResponse;
+import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.hr.service.CrewService;
 import com.privod.platform.modules.hr.web.dto.CrewAssignmentResponse;
 import com.privod.platform.modules.hr.web.dto.CreateCrewAssignmentRequest;
@@ -8,6 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +33,14 @@ import java.util.UUID;
 public class CrewController {
 
     private final CrewService crewService;
+
+    @GetMapping
+    @Operation(summary = "List all active crew assignments with pagination")
+    public ResponseEntity<ApiResponse<PageResponse<CrewAssignmentResponse>>> listAll(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        PageResponse<CrewAssignmentResponse> page = crewService.listAll(pageable);
+        return ResponseEntity.ok(ApiResponse.ok(page));
+    }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER', 'PROJECT_MANAGER')")

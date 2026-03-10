@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { changeManagementApi } from '@/api/changeManagement';
+import { useProjectOptions, useContractOptions } from '@/hooks/useSelectOptions';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
 import type { ChangeOrder, ChangeOrderType } from './types';
@@ -69,24 +70,13 @@ const getPriorityOptions = () => [
   { value: 'CRITICAL', label: t('forms.changeOrder.priorities.critical') },
 ];
 
-const getProjectOptions = () => [
-  { value: '1', label: t('forms.changeOrder.projectSolnechny') },
-  { value: '2', label: t('forms.changeOrder.projectGorizont') },
-  { value: '3', label: t('forms.changeOrder.projectBridge') },
-  { value: '6', label: t('forms.changeOrder.projectCentralny') },
-];
-
-const getContractOptions = () => [
-  { value: 'con1', label: t('forms.changeOrder.contractSmr') },
-  { value: 'con2', label: t('forms.changeOrder.contractPir') },
-  { value: 'con3', label: t('forms.changeOrder.contractEmr') },
-];
-
 const ChangeOrderFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+  const { options: projectOptions } = useProjectOptions();
+  const { options: contractOptions } = useContractOptions();
 
   const { data: existingOrder } = useQuery<ChangeOrder>({
     queryKey: ['changeOrder', id],
@@ -225,7 +215,7 @@ const ChangeOrderFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.changeOrder.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 placeholder={t('forms.changeOrder.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}
@@ -233,7 +223,7 @@ const ChangeOrderFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.changeOrder.labelContract')} error={errors.contractId?.message} required>
               <Select
-                options={getContractOptions()}
+                options={contractOptions}
                 placeholder={t('forms.changeOrder.placeholderContract')}
                 hasError={!!errors.contractId}
                 {...register('contractId')}

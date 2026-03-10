@@ -9,6 +9,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { designApi } from '@/api/design';
+import { useProjectOptions } from '@/hooks/useSelectOptions';
 import { t } from '@/i18n';
 
 const designVersionSchema = z.object({
@@ -42,18 +43,12 @@ const statusOptions = [
   { value: 'SUPERSEDED', label: t('forms.designVersion.statuses.superseded') },
 ];
 
-const getProjectOptions = () => [
-  { value: '1', label: t('design.projectOptionSolnechny') },
-  { value: '2', label: t('design.projectOptionHorizont') },
-  { value: '3', label: t('design.projectOptionBridge') },
-  { value: '6', label: t('design.projectOptionCentral') },
-];
-
 const DesignVersionFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+  const { options: projectOptions } = useProjectOptions();
 
   const { data: existingVersion } = useQuery({
     queryKey: ['design-version', id],
@@ -176,7 +171,7 @@ const DesignVersionFormPage: React.FC = () => {
             </FormField>
             <FormField label={t('forms.designVersion.labelProject')} error={errors.projectId?.message} required>
               <Select
-                options={getProjectOptions()}
+                options={projectOptions}
                 placeholder={t('forms.designVersion.placeholderProject')}
                 hasError={!!errors.projectId}
                 {...register('projectId')}

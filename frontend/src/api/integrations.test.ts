@@ -29,7 +29,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await integrationsApi.getSettings();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/settings');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/settings', { _silentErrors: true });
       expect(result).toEqual(mockData);
     });
   });
@@ -40,7 +40,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await integrationsApi.oneC.getConfigs();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/configs');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/configs', { _silentErrors: true });
       expect(result).toEqual(mockData);
     });
 
@@ -49,7 +49,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockConfig } as never);
 
       const result = await integrationsApi.oneC.getConfig('c1');
-      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/configs/c1');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/configs/c1', { _silentErrors: true });
       expect(result).toEqual(mockConfig);
     });
 
@@ -118,7 +118,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: null } as never);
 
       const result = await integrationsApi.oneC.getStatus();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/status');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/status', { _silentErrors: true });
       expect(result).toBeNull();
     });
 
@@ -127,14 +127,14 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       await integrationsApi.oneC.getExchangeLogs('c1');
-      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/exchange-logs', { params: { configId: 'c1' } });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/exchange-logs', { params: { configId: 'c1' }, _silentErrors: true });
     });
 
     it('getExchangeLogs passes empty params when no configId', async () => {
       mockGet.mockResolvedValue({ data: { content: [] } } as never);
 
       await integrationsApi.oneC.getExchangeLogs();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/exchange-logs', { params: {} });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/1c/exchange-logs', { params: {}, _silentErrors: true });
     });
   });
 
@@ -144,7 +144,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: status } as never);
 
       const result = await integrationsApi.telegram.getStatus();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/telegram/status');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/telegram/status', { _silentErrors: true });
       expect(result.botUsername).toBe('test_bot');
     });
 
@@ -170,7 +170,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: { content: [] } } as never);
 
       const result = await integrationsApi.sbis.getConfigs();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/sbis/configs');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/sbis/configs', { _silentErrors: true });
       expect(result.content).toEqual([]);
     });
 
@@ -197,7 +197,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: status } as never);
 
       const result = await integrationsApi.edo.getStatus();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/edo/status');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/edo/status', { _silentErrors: true });
       expect(result.provider).toBe('DIADOC');
     });
 
@@ -205,14 +205,14 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: { content: [] } } as never);
 
       await integrationsApi.edo.getInbox('DIADOC');
-      expect(mockGet).toHaveBeenCalledWith('/integrations/edo/inbox', { params: { provider: 'DIADOC' } });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/edo/inbox', { params: { provider: 'DIADOC' }, _silentErrors: true });
     });
 
     it('getInbox passes empty params when no provider', async () => {
       mockGet.mockResolvedValue({ data: { content: [] } } as never);
 
       await integrationsApi.edo.getInbox();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/edo/inbox', { params: {} });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/edo/inbox', { params: {}, _silentErrors: true });
     });
 
     it('signDocument calls POST /integrations/edo/:id/sign', async () => {
@@ -231,22 +231,22 @@ describe('integrationsApi', () => {
   });
 
   describe('govRegistries', () => {
-    it('getConfigs calls GET /integrations/gov-registries/configs', async () => {
+    it('getConfigs calls GET /integrations/gov-registries/config', async () => {
       const mockData = { content: [{ id: 1, registryType: 'FNS', enabled: true }] };
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await integrationsApi.govRegistries.getConfigs();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/configs');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/config', { _silentErrors: true });
       expect(result).toEqual(mockData);
     });
 
-    it('updateConfig calls PUT /integrations/gov-registries/configs/:id', async () => {
+    it('updateConfig calls PUT /integrations/gov-registries/config/:id', async () => {
       const data = { enabled: true, apiUrl: 'https://api.fns.ru' };
       const updated = { id: 1, registryType: 'FNS', ...data, apiKey: 'key', description: 'FNS registry', lastCheckAt: null, status: 'ACTIVE' as const };
       mockPut.mockResolvedValue({ data: updated } as never);
 
       const result = await integrationsApi.govRegistries.updateConfig(1, data);
-      expect(mockPut).toHaveBeenCalledWith('/integrations/gov-registries/configs/1', data);
+      expect(mockPut).toHaveBeenCalledWith('/integrations/gov-registries/config/1', data);
       expect(result).toEqual(updated);
     });
 
@@ -260,13 +260,13 @@ describe('integrationsApi', () => {
       expect(result.overallRisk).toBe('LOW');
     });
 
-    it('getCheckHistory calls GET /integrations/gov-registries/history with params', async () => {
+    it('getCheckHistory calls GET /integrations/gov-registries/results with params', async () => {
       const mockData = { content: [], totalElements: 0 };
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const params = { inn: '7712345678', page: 0, size: 20 };
       const result = await integrationsApi.govRegistries.getCheckHistory(params);
-      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/history', { params });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/results', { params, _silentErrors: true });
       expect(result).toEqual(mockData);
     });
 
@@ -275,7 +275,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await integrationsApi.govRegistries.getCheckHistory();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/history', { params: undefined });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/results', { params: undefined, _silentErrors: true });
       expect(result).toEqual(mockData);
     });
 
@@ -284,7 +284,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockResult } as never);
 
       const result = await integrationsApi.govRegistries.getCheckResult(42);
-      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/results/42');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/gov-registries/results/42', { _silentErrors: true });
       expect(result.id).toBe(42);
       expect(result.status).toBe('OK');
     });
@@ -296,7 +296,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockConfig } as never);
 
       const result = await integrationsApi.sms.getConfig();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/config');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/config', { _silentErrors: true });
       expect(result.provider).toBe('SMSC');
       expect(result.balance).toBe(500);
     });
@@ -317,7 +317,7 @@ describe('integrationsApi', () => {
 
       const params = { page: 0, size: 20, status: 'DELIVERED' };
       const result = await integrationsApi.sms.getMessages(params);
-      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/messages', { params });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/messages', { params, _silentErrors: true });
       expect(result.totalElements).toBe(1);
     });
 
@@ -326,7 +326,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await integrationsApi.sms.getMessages();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/messages', { params: undefined });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/messages', { params: undefined, _silentErrors: true });
       expect(result).toEqual(mockData);
     });
 
@@ -341,12 +341,12 @@ describe('integrationsApi', () => {
       expect(result.status).toBe('PENDING');
     });
 
-    it('getBalance calls GET /integrations/sms/balance', async () => {
-      const mockBalance = { balance: 1250.50, currency: 'RUB' };
-      mockGet.mockResolvedValue({ data: mockBalance } as never);
+    it('getBalance derives balance from SMS config', async () => {
+      const mockConfig = { id: 1, provider: 'smsru', enabled: true, apiUrl: '', apiKey: '', senderName: 'PRIVOD', balance: 1250.50, lastSyncAt: null };
+      mockGet.mockResolvedValue({ data: mockConfig } as never);
 
       const result = await integrationsApi.sms.getBalance();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/balance');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/sms/config', { _silentErrors: true });
       expect(result.balance).toBe(1250.50);
       expect(result.currency).toBe('RUB');
     });
@@ -358,7 +358,7 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockConfig } as never);
 
       const result = await integrationsApi.webdav.getConfig();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/webdav/config');
+      expect(mockGet).toHaveBeenCalledWith('/integrations/webdav/config', { _silentErrors: true });
       expect(result.serverUrl).toBe('https://cloud.example.com/dav');
       expect(result.status).toBe('CONNECTED');
     });
@@ -379,7 +379,7 @@ describe('integrationsApi', () => {
 
       const params = { page: 0, size: 50, status: 'SYNCED' };
       const result = await integrationsApi.webdav.getFiles(params);
-      expect(mockGet).toHaveBeenCalledWith('/integrations/webdav/files', { params });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/webdav/files', { params, _silentErrors: true });
       expect(result.totalElements).toBe(1);
     });
 
@@ -388,26 +388,26 @@ describe('integrationsApi', () => {
       mockGet.mockResolvedValue({ data: mockData } as never);
 
       const result = await integrationsApi.webdav.getFiles();
-      expect(mockGet).toHaveBeenCalledWith('/integrations/webdav/files', { params: undefined });
+      expect(mockGet).toHaveBeenCalledWith('/integrations/webdav/files', { params: undefined, _silentErrors: true });
       expect(result).toEqual(mockData);
     });
 
-    it('syncAll calls POST /integrations/webdav/sync', async () => {
+    it('syncAll calls POST /integrations/webdav/sync/all', async () => {
       const mockResult = { totalFiles: 10, synced: 8, failed: 1, conflicts: 1, duration: 5200 };
       mockPost.mockResolvedValue({ data: mockResult } as never);
 
       const result = await integrationsApi.webdav.syncAll();
-      expect(mockPost).toHaveBeenCalledWith('/integrations/webdav/sync');
+      expect(mockPost).toHaveBeenCalledWith('/integrations/webdav/sync/all');
       expect(result.synced).toBe(8);
       expect(result.failed).toBe(1);
     });
 
-    it('syncFile calls POST /integrations/webdav/files/:id/sync', async () => {
+    it('syncFile calls POST /integrations/webdav/sync/:id', async () => {
       const mockFile = { id: 5, remotePath: '/docs/report.pdf', localPath: '/tmp/report.pdf', fileName: 'report.pdf', fileSize: 1024, mimeType: 'application/pdf', syncStatus: 'SYNCED', lastModified: '2026-01-01', syncedAt: '2026-01-01' };
       mockPost.mockResolvedValue({ data: mockFile } as never);
 
       const result = await integrationsApi.webdav.syncFile(5);
-      expect(mockPost).toHaveBeenCalledWith('/integrations/webdav/files/5/sync');
+      expect(mockPost).toHaveBeenCalledWith('/integrations/webdav/sync/5');
       expect(result.fileName).toBe('report.pdf');
       expect(result.syncStatus).toBe('SYNCED');
     });

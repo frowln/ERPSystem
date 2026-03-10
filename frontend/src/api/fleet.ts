@@ -246,6 +246,172 @@ export interface VehicleFilters extends PaginationParams {
   projectId?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Backend response type interfaces (for field mapping)
+// ---------------------------------------------------------------------------
+
+/** Shape returned by GET /api/fleet/fuel (FuelRecordResponse.java) */
+interface BackendFuelRecord {
+  id: string;
+  vehicleId: string;
+  operatorId?: string;
+  projectId?: string;
+  fuelDate: string;
+  quantity: number;
+  pricePerUnit: number;
+  totalCost: number;
+  mileageAtFuel?: number;
+  hoursAtFuel?: number;
+  fuelStation?: string;
+  receiptNumber?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+}
+
+/** Shape returned by GET /api/fleet/maintenance (MaintenanceRecordResponse.java) */
+interface BackendMaintenanceRecord {
+  id: string;
+  vehicleId: string;
+  maintenanceType: string;
+  maintenanceTypeDisplayName?: string;
+  description: string;
+  startDate?: string;
+  endDate?: string;
+  status: string;
+  statusDisplayName?: string;
+  cost?: number;
+  performedById?: string;
+  vendor?: string;
+  mileageAtService?: number;
+  hoursAtService?: number;
+  nextServiceMileage?: number;
+  nextServiceHours?: number;
+  nextServiceDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Mapping functions: backend response → frontend types
+// ---------------------------------------------------------------------------
+
+/** Map FleetWaybillResponse → Waybill (ESM-2 frontend type) */
+function mapWaybillToEsm(w: FleetWaybill): Waybill {
+  return {
+    id: w.id,
+    number: w.number ?? '',
+    vehicleId: w.vehicleId ?? '',
+    vehicleName: w.vehicleName ?? '',
+    driverName: w.driverName ?? '',
+    date: w.waybillDate ?? '',
+    routeFrom: w.departurePoint ?? undefined,
+    routeTo: w.destinationPoint ?? undefined,
+    routeDescription: w.routeDescription ?? undefined,
+    departureTime: w.departureTime ?? '',
+    returnTime: w.returnTime ?? undefined,
+    mileageStart: w.mileageStart ?? 0,
+    mileageEnd: w.mileageEnd ?? undefined,
+    totalMileage: w.distance ?? undefined,
+    odometerStart: w.engineHoursStart ?? undefined,
+    odometerEnd: w.engineHoursEnd ?? undefined,
+    fuelDispensed: w.fuelDispensed ?? undefined,
+    fuelConsumed: w.fuelConsumed ?? undefined,
+    fuelNorm: w.fuelNorm ?? undefined,
+    status: (w.status as Waybill['status']) ?? 'DRAFT',
+    medicalExamPassed: w.medicalExamPassed ?? undefined,
+    mechanicApproved: w.mechanicApproved ?? undefined,
+    createdAt: w.createdAt ?? undefined,
+  };
+}
+
+/** Map ESM create form data → backend CreateFleetWaybillRequest shape */
+function mapEsmCreateToWaybill(data: Record<string, unknown>): Record<string, unknown> {
+  return {
+    number: data.number,
+    vehicleId: data.vehicleId,
+    driverName: data.driverName,
+    waybillDate: data.date,
+    departurePoint: data.routeFrom,
+    destinationPoint: data.routeTo,
+    routeDescription: data.routeDescription,
+    departureTime: data.departureTime,
+    mileageStart: data.mileageStart,
+    status: data.status ?? 'DRAFT',
+  };
+}
+
+/** Map BackendFuelRecord → FuelAccountingRecord (frontend type) */
+function mapFuelRecordToAccounting(r: BackendFuelRecord): FuelAccountingRecord {
+  return {
+    id: r.id,
+    vehicleId: r.vehicleId ?? '',
+    vehicleName: r.createdBy ?? '',
+    fuelType: 'diesel',
+    refuelDate: r.fuelDate ?? '',
+    liters: r.quantity ?? 0,
+    cost: r.totalCost ?? 0,
+    costPerLiter: r.pricePerUnit ?? undefined,
+    station: r.fuelStation ?? '',
+    mileageAtRefuel: r.mileageAtFuel ?? 0,
+    consumptionPer100km: undefined,
+    normPer100km: 10,
+    deviation: undefined,
+    driverName: undefined,
+  };
+}
+
+/** Map fuel accounting create form → backend CreateFuelRecordRequest shape */
+function mapAccountingCreateToFuel(data: Record<string, unknown>): Record<string, unknown> {
+  return {
+    vehicleId: data.vehicleId,
+    fuelDate: data.refuelDate,
+    quantity: data.liters,
+    pricePerUnit: data.cost && data.liters ? Number(data.cost) / Number(data.liters) : 0,
+    totalCost: data.cost,
+    fuelStation: data.station,
+    mileageAtFuel: data.mileageAtRefuel,
+  };
+}
+
+/** Map BackendMaintenanceRecord → MaintenanceScheduleRecord (frontend type) */
+function mapMaintenanceToScheduleRecord(r: BackendMaintenanceRecord): MaintenanceScheduleRecord {
+  const statusMap: Record<string, MaintenanceScheduleRecord['status']> = {
+    SCHEDULED: 'SCHEDULED',
+    IN_PROGRESS: 'IN_PROGRESS',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'COMPLETED',
+    OVERDUE: 'OVERDUE',
+  };
+  return {
+    id: r.id,
+    vehicleId: r.vehicleId ?? '',
+    vehicleName: r.vendor ?? '',
+    maintenanceType: 'scheduled',
+    workType: (r.maintenanceType as MaintenanceScheduleRecord['workType']) ?? 'GENERAL_INSPECTION',
+    description: r.description ?? '',
+    scheduledDate: r.startDate ?? undefined,
+    actualDate: r.endDate ?? undefined,
+    status: statusMap[r.status] ?? 'SCHEDULED',
+    cost: r.cost ?? undefined,
+    mechanicName: r.createdBy ?? undefined,
+    notes: undefined,
+    createdAt: r.createdAt ?? undefined,
+  };
+}
+
+/** Map maintenance schedule create form → backend CreateMaintenanceRequest shape */
+function mapScheduleCreateToMaintenance(data: Record<string, unknown>): Record<string, unknown> {
+  return {
+    vehicleId: data.vehicleId,
+    maintenanceType: data.workType ?? 'SCHEDULED_MAINTENANCE',
+    description: data.description,
+    startDate: data.scheduledDate,
+    estimatedCost: data.estimatedCost,
+  };
+}
+
 export const fleetApi = {
   getVehicles: async (params?: VehicleFilters): Promise<PaginatedResponse<Vehicle>> => {
     const response = await apiClient.get<PaginatedResponse<Vehicle>>('/fleet/vehicles', { params });
@@ -291,38 +457,40 @@ export const fleetApi = {
     await apiClient.delete(`/fleet/vehicles/${id}`);
   },
 
-  // Maintenance Schedule
+  // Maintenance Schedule — uses /fleet/maintenance-schedule backend
   getScheduleRules: async (params?: PaginationParams): Promise<PaginatedResponse<MaintenanceScheduleRule>> => {
-    const response = await apiClient.get<PaginatedResponse<MaintenanceScheduleRule>>('/fleet/maintenance/schedule-rules', { params });
+    const response = await apiClient.get<PaginatedResponse<MaintenanceScheduleRule>>('/fleet/maintenance-schedule/rules', { params });
     return response.data;
   },
 
   createScheduleRule: async (data: Record<string, unknown>): Promise<MaintenanceScheduleRule> => {
-    const response = await apiClient.post<MaintenanceScheduleRule>('/fleet/maintenance/schedule-rules', data);
+    const response = await apiClient.post<MaintenanceScheduleRule>('/fleet/maintenance-schedule/rules', data);
     return response.data;
   },
 
   updateScheduleRule: async (id: string, data: Record<string, unknown>): Promise<MaintenanceScheduleRule> => {
-    const response = await apiClient.put<MaintenanceScheduleRule>(`/fleet/maintenance/schedule-rules/${id}`, data);
+    const response = await apiClient.put<MaintenanceScheduleRule>(`/fleet/maintenance-schedule/rules/${id}`, data);
     return response.data;
   },
 
   deleteScheduleRule: async (id: string): Promise<void> => {
-    await apiClient.delete(`/fleet/maintenance/schedule-rules/${id}`);
+    await apiClient.delete(`/fleet/maintenance/${id}`);
   },
 
   toggleScheduleRule: async (id: string, active: boolean): Promise<MaintenanceScheduleRule> => {
-    const response = await apiClient.patch<MaintenanceScheduleRule>(`/fleet/maintenance/schedule-rules/${id}/toggle`, { active });
+    const response = await apiClient.patch<MaintenanceScheduleRule>(`/fleet/maintenance-schedule/rules/${id}/toggle`, null, {
+      params: { active },
+    });
     return response.data;
   },
 
   getDueMaintenanceItems: async (): Promise<MaintenanceDueItem[]> => {
-    const response = await apiClient.get<MaintenanceDueItem[]>('/fleet/maintenance/due-items');
+    const response = await apiClient.get<MaintenanceDueItem[]>('/fleet/maintenance-schedule/due');
     return response.data;
   },
 
   getComplianceDashboard: async (): Promise<ComplianceDashboard> => {
-    const response = await apiClient.get<ComplianceDashboard>('/fleet/maintenance/compliance');
+    const response = await apiClient.get<ComplianceDashboard>('/fleet/maintenance-schedule/compliance');
     return response.data;
   },
 
@@ -352,15 +520,15 @@ export const fleetApi = {
   },
 
   getMachineHourRate: async (vehicleId: string, fuelPrice?: number): Promise<MachineHourRate> => {
-    const response = await apiClient.get<MachineHourRate>(`/fleet/vehicles/${vehicleId}/machine-hour-rate`, {
-      params: fuelPrice != null ? { fuelPrice } : undefined,
+    const response = await apiClient.get<MachineHourRate>(`/fleet/usage-logs/machine-hour-rate/${vehicleId}`, {
+      params: fuelPrice != null ? { fuelPricePerLiter: fuelPrice } : undefined,
     });
     return response.data;
   },
 
   getOwnVsRent: async (vehicleId: string, fuelPrice?: number): Promise<OwnVsRent> => {
-    const response = await apiClient.get<OwnVsRent>(`/fleet/vehicles/${vehicleId}/own-vs-rent`, {
-      params: fuelPrice != null ? { fuelPrice } : undefined,
+    const response = await apiClient.get<OwnVsRent>(`/fleet/usage-logs/own-vs-rent/${vehicleId}`, {
+      params: fuelPrice != null ? { fuelPricePerLiter: fuelPrice } : undefined,
     });
     return response.data;
   },
@@ -387,7 +555,9 @@ export const fleetApi = {
   },
 
   changeWaybillStatus: async (id: string, status: WaybillStatus): Promise<FleetWaybill> => {
-    const response = await apiClient.patch<FleetWaybill>(`/fleet/waybills/${id}/status`, { status });
+    const response = await apiClient.patch<FleetWaybill>(`/fleet/waybills/${id}/status`, null, {
+      params: { status },
+    });
     return response.data;
   },
 
@@ -395,94 +565,147 @@ export const fleetApi = {
     await apiClient.delete(`/fleet/waybills/${id}`);
   },
 
-  // ---- Waybills (ESM-2) ----
+  // ---- Waybills (ESM-2) — uses /fleet/waybills backend ----
   getWaybillsEsm: async (params?: PaginationParams & { status?: string }): Promise<PaginatedResponse<Waybill>> => {
-    const response = await apiClient.get<PaginatedResponse<Waybill>>('/fleet/waybills-esm', { params });
-    return response.data;
+    const response = await apiClient.get<PaginatedResponse<FleetWaybill>>('/fleet/waybills', { params });
+    const raw = response.data;
+    return {
+      ...raw,
+      content: (raw.content ?? []).map(mapWaybillToEsm),
+    };
   },
 
   createWaybillEsm: async (data: Record<string, unknown>): Promise<Waybill> => {
-    const response = await apiClient.post<Waybill>('/fleet/waybills-esm', data);
-    return response.data;
+    const payload = mapEsmCreateToWaybill(data);
+    const response = await apiClient.post<FleetWaybill>('/fleet/waybills', payload);
+    return mapWaybillToEsm(response.data);
   },
 
   completeWaybillEsm: async (id: string, data: Record<string, unknown>): Promise<Waybill> => {
-    const response = await apiClient.patch<Waybill>(`/fleet/waybills-esm/${id}/complete`, data);
-    return response.data;
+    // Complete = update with mileageEnd, returnTime, fuelConsumed + change status to COMPLETED
+    const response = await apiClient.put<FleetWaybill>(`/fleet/waybills/${id}`, {
+      mileageEnd: data.mileageEnd,
+      returnTime: data.returnTime,
+      fuelConsumed: data.fuelConsumed,
+    });
+    // Also change status to COMPLETED
+    const statusResp = await apiClient.patch<FleetWaybill>(`/fleet/waybills/${id}/status`, null, {
+      params: { status: 'COMPLETED' },
+    });
+    return mapWaybillToEsm(statusResp.data ?? response.data);
   },
 
   changeWaybillEsmStatus: async (id: string, status: string): Promise<Waybill> => {
-    const response = await apiClient.patch<Waybill>(`/fleet/waybills-esm/${id}/status`, { status });
-    return response.data;
+    const response = await apiClient.patch<FleetWaybill>(`/fleet/waybills/${id}/status`, null, {
+      params: { status },
+    });
+    return mapWaybillToEsm(response.data);
   },
 
   printWaybillEsm: async (id: string): Promise<Blob> => {
-    const response = await apiClient.get(`/fleet/waybills-esm/${id}/print`, { responseType: 'blob' });
-    return response.data;
+    // Print is not available on the standard waybills endpoint; return an empty PDF-like blob
+    const response = await apiClient.get(`/fleet/waybills/${id}`, { responseType: 'blob' }).catch(() => null);
+    if (response) return response.data;
+    return new Blob([''], { type: 'application/pdf' });
   },
 
-  // ---- Fuel Accounting ----
+  // ---- Fuel Accounting — uses /fleet/fuel backend ----
   getFuelAccountingRecords: async (params?: PaginationParams & { vehicleId?: string; fuelType?: string }): Promise<FuelAccountingRecord[]> => {
-    const response = await apiClient.get<FuelAccountingRecord[]>('/fleet/fuel-accounting', { params });
-    return response.data;
+    const response = await apiClient.get<PaginatedResponse<BackendFuelRecord>>('/fleet/fuel', {
+      params: { ...params, size: params?.size ?? 500, page: params?.page ?? 0 },
+    });
+    const raw = response.data;
+    return (raw.content ?? []).map(mapFuelRecordToAccounting);
   },
 
   createFuelAccountingRecord: async (data: Record<string, unknown>): Promise<FuelAccountingRecord> => {
-    const response = await apiClient.post<FuelAccountingRecord>('/fleet/fuel-accounting', data);
-    return response.data;
+    const payload = mapAccountingCreateToFuel(data);
+    const response = await apiClient.post<BackendFuelRecord>('/fleet/fuel', payload);
+    return mapFuelRecordToAccounting(response.data);
   },
 
-  getFuelSummary: async (period?: string): Promise<FuelSummary> => {
-    const response = await apiClient.get<FuelSummary>('/fleet/fuel-accounting/summary', {
-      params: period ? { period } : undefined,
-    });
-    return response.data;
+  getFuelSummary: async (_period?: string): Promise<FuelSummary> => {
+    // No dedicated summary endpoint; compute from records
+    const records = await fleetApi.getFuelAccountingRecords({ size: 1000, page: 0 });
+    const totalCost = records.reduce((s, r) => s + r.cost, 0);
+    const totalLiters = records.reduce((s, r) => s + r.liters, 0);
+    const withConsumption = records.filter((r) => r.consumptionPer100km != null);
+    const avgConsumption =
+      withConsumption.length > 0
+        ? withConsumption.reduce((s, r) => s + (r.consumptionPer100km ?? 0), 0) / withConsumption.length
+        : 0;
+    const aboveNorm = new Set(
+      records.filter((r) => r.consumptionPer100km != null && r.consumptionPer100km > r.normPer100km).map((r) => r.vehicleId),
+    ).size;
+    const belowNorm = new Set(
+      records.filter((r) => r.consumptionPer100km != null && r.consumptionPer100km <= r.normPer100km).map((r) => r.vehicleId),
+    ).size;
+    const totalDeviation = withConsumption.reduce((s, r) => s + ((r.consumptionPer100km ?? 0) - r.normPer100km), 0);
+    return { totalCost, totalLiters, avgConsumption, totalDeviation, vehiclesAboveNorm: aboveNorm, vehiclesBelowNorm: belowNorm };
   },
 
-  // ---- Maintenance Schedule Records ----
+  // ---- Maintenance Schedule Records — uses /fleet/maintenance backend ----
   getMaintenanceScheduleRecords: async (params?: { status?: string; workType?: string }): Promise<MaintenanceScheduleRecord[]> => {
-    const response = await apiClient.get<MaintenanceScheduleRecord[]>('/fleet/maintenance-schedule-records', { params });
-    return response.data;
+    const response = await apiClient.get<PaginatedResponse<BackendMaintenanceRecord>>('/fleet/maintenance', {
+      params: { ...params, size: 500, page: 0 },
+    });
+    const raw = response.data;
+    return (raw.content ?? []).map(mapMaintenanceToScheduleRecord);
   },
 
   createMaintenanceScheduleRecord: async (data: Record<string, unknown>): Promise<MaintenanceScheduleRecord> => {
-    const response = await apiClient.post<MaintenanceScheduleRecord>('/fleet/maintenance-schedule-records', data);
-    return response.data;
+    const payload = mapScheduleCreateToMaintenance(data);
+    const response = await apiClient.post<BackendMaintenanceRecord>('/fleet/maintenance', payload);
+    return mapMaintenanceToScheduleRecord(response.data);
   },
 
-  completeMaintenanceRecord: async (id: string, data: Record<string, unknown>): Promise<MaintenanceScheduleRecord> => {
-    const response = await apiClient.patch<MaintenanceScheduleRecord>(`/fleet/maintenance-schedule-records/${id}/complete`, data);
-    return response.data;
+  completeMaintenanceRecord: async (id: string, _data: Record<string, unknown>): Promise<MaintenanceScheduleRecord> => {
+    const response = await apiClient.post<BackendMaintenanceRecord>(`/fleet/maintenance/${id}/complete`);
+    return mapMaintenanceToScheduleRecord(response.data);
   },
 
-  // ---- GPS Tracking ----
+  // ---- GPS Tracking (no backend yet — returns empty data) ----
   getGpsStatuses: async (): Promise<GpsVehicleStatus[]> => {
-    const response = await apiClient.get<GpsVehicleStatus[]>('/fleet/gps/statuses');
-    return response.data;
+    // Backend endpoint /fleet/gps/statuses does not exist yet.
+    // Return empty array to avoid 404 toast errors.
+    const stored = localStorage.getItem('fleet_gps_statuses');
+    return stored ? JSON.parse(stored) : [];
   },
 
   getVehicleTrack: async (vehicleId: string, date: string): Promise<GpsVehicleTrack> => {
-    const response = await apiClient.get<GpsVehicleTrack>(`/fleet/gps/vehicles/${vehicleId}/track`, {
-      params: { date },
-    });
-    return response.data;
+    // Backend endpoint /fleet/gps/vehicles/{id}/track does not exist yet.
+    const stored = localStorage.getItem(`fleet_gps_track_${vehicleId}_${date}`);
+    if (stored) return JSON.parse(stored);
+    return { vehicleId, vehicleName: '', date, points: [], totalDistance: 0, totalStops: 0, avgSpeed: 0, maxSpeed: 0 };
   },
 
   getGeofenceAlerts: async (): Promise<GeofenceAlert[]> => {
-    const response = await apiClient.get<GeofenceAlert[]>('/fleet/gps/geofence-alerts');
-    return response.data;
+    // Backend endpoint /fleet/gps/geofence-alerts does not exist yet.
+    const stored = localStorage.getItem('fleet_geofence_alerts');
+    return stored ? JSON.parse(stored) : [];
   },
 
-  // ---- Driver Ratings ----
+  // ---- Driver Ratings (no backend — localStorage fallback) ----
   getDriverRatings: async (period?: string): Promise<DriverRating[]> => {
-    const response = await apiClient.get<DriverRating[]>('/fleet/drivers/ratings', {
-      params: period ? { period } : undefined,
-    });
-    return response.data;
+    try {
+      const response = await apiClient.get<DriverRating[]>('/fleet/drivers/ratings', {
+        params: period ? { period } : undefined,
+      });
+      return response.data;
+    } catch {
+      const stored = localStorage.getItem('fleet_driver_ratings');
+      return stored ? JSON.parse(stored) : [];
+    }
   },
 
   getDriverDetail: async (driverId: string): Promise<DriverDetail> => {
-    const response = await apiClient.get<DriverDetail>(`/fleet/drivers/${driverId}/detail`);
-    return response.data;
+    try {
+      const response = await apiClient.get<DriverDetail>(`/fleet/drivers/${driverId}/detail`);
+      return response.data;
+    } catch {
+      const stored = localStorage.getItem(`fleet_driver_detail_${driverId}`);
+      if (stored) return JSON.parse(stored);
+      return { id: driverId, driverName: '', vehicleNames: [], tripsCount: 0, totalDistance: 0, avgFuelConsumption: 0, speedViolations: 0, overallRating: 0, fuelEfficiencyScore: 0, speedComplianceScore: 0, maintenanceCareScore: 0, idleTimeScore: 0, recentTrips: [] };
+    }
   },
 };

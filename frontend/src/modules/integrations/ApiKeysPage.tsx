@@ -91,7 +91,7 @@ const ApiKeysPage: React.FC = () => {
     queryKey: ['integration-api-keys'],
     queryFn: async () => {
       try {
-        const res = await apiClient.get('/api-keys');
+        const res = await apiClient.get('/api-keys', { _silentErrors: true } as any);
         return res.data as ApiKeyItem[];
       } catch {
         return undefined;

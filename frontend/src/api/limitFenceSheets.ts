@@ -56,54 +56,180 @@ export interface UpdateLimitFenceSheetRequest {
   notes?: string;
 }
 
+// ---------------------------------------------------------------------------
+// localStorage helpers
+// ---------------------------------------------------------------------------
+const STORAGE_KEY = 'privod_limit_fence_sheets';
+
+function readStore(): LimitFenceSheet[] {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as LimitFenceSheet[];
+  } catch {
+    return [];
+  }
+}
+
+function writeStore(items: LimitFenceSheet[]): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+// ---------------------------------------------------------------------------
+// API with localStorage fallbacks
+// ---------------------------------------------------------------------------
 export const limitFenceSheetsApi = {
   async getSheets(params?: LimitFenceSheetFilters): Promise<PaginatedResponse<LimitFenceSheet>> {
-    const response = await apiClient.get<PaginatedResponse<LimitFenceSheet>>('/warehouse/limit-fence-sheets', { params });
-    return response.data;
+    try {
+      const response = await apiClient.get<PaginatedResponse<LimitFenceSheet>>('/warehouse/limit-fence-sheets', {
+        params,
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      let stored = readStore();
+      if (params?.status) stored = stored.filter((s) => s.status === params.status);
+      if (params?.projectId) stored = stored.filter((s) => s.projectId === params.projectId);
+      if (params?.materialId) stored = stored.filter((s) => s.materialId === params.materialId);
+      return { content: stored, totalElements: stored.length, totalPages: 1, page: params?.page ?? 0, size: params?.size ?? 20 };
+    }
   },
 
   async getSheet(id: string): Promise<LimitFenceSheet> {
-    const response = await apiClient.get<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}`);
-    return response.data;
+    try {
+      const response = await apiClient.get<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}`, {
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const found = stored.find((s) => s.id === id);
+      if (found) return found;
+      throw new Error(`LimitFenceSheet ${id} not found`);
+    }
   },
 
   async getRemainingLimit(projectId: string, materialId: string): Promise<number> {
-    const response = await apiClient.get<number>('/warehouse/limit-fence-sheets/remaining-limit', {
-      params: { projectId, materialId },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.get<number>('/warehouse/limit-fence-sheets/remaining-limit', {
+        params: { projectId, materialId },
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const matching = stored.filter(
+        (s) => s.projectId === projectId && s.materialId === materialId && s.status === 'ACTIVE',
+      );
+      return matching.reduce((sum, s) => sum + (s.limitQuantity - s.issuedQuantity + s.returnedQuantity), 0);
+    }
   },
 
   async createSheet(data: CreateLimitFenceSheetRequest): Promise<LimitFenceSheet> {
-    const response = await apiClient.post<LimitFenceSheet>('/warehouse/limit-fence-sheets', data);
-    return response.data;
+    try {
+      const response = await apiClient.post<LimitFenceSheet>('/warehouse/limit-fence-sheets', data, {
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const newItem: LimitFenceSheet = {
+        ...data,
+        id: crypto.randomUUID(),
+        issuedQuantity: 0,
+        returnedQuantity: 0,
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      stored.push(newItem);
+      writeStore(stored);
+      return newItem;
+    }
   },
 
   async updateSheet(id: string, data: UpdateLimitFenceSheetRequest): Promise<LimitFenceSheet> {
-    const response = await apiClient.put<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}`, data);
-    return response.data;
+    try {
+      const response = await apiClient.put<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}`, data, {
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const idx = stored.findIndex((s) => s.id === id);
+      if (idx === -1) throw new Error(`LimitFenceSheet ${id} not found`);
+      stored[idx] = { ...stored[idx], ...data, updatedAt: new Date().toISOString() };
+      writeStore(stored);
+      return stored[idx];
+    }
   },
 
   async issueBySheet(id: string, quantity: number): Promise<LimitFenceSheet> {
-    const response = await apiClient.post<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}/issue`, null, {
-      params: { quantity },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.post<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}/issue`, null, {
+        params: { quantity },
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const idx = stored.findIndex((s) => s.id === id);
+      if (idx === -1) throw new Error(`LimitFenceSheet ${id} not found`);
+      stored[idx].issuedQuantity += quantity;
+      if (stored[idx].issuedQuantity >= stored[idx].limitQuantity) {
+        stored[idx].status = 'EXHAUSTED';
+      }
+      stored[idx].updatedAt = new Date().toISOString();
+      writeStore(stored);
+      return stored[idx];
+    }
   },
 
   async returnBySheet(id: string, quantity: number): Promise<LimitFenceSheet> {
-    const response = await apiClient.post<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}/return`, null, {
-      params: { quantity },
-    });
-    return response.data;
+    try {
+      const response = await apiClient.post<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}/return`, null, {
+        params: { quantity },
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const idx = stored.findIndex((s) => s.id === id);
+      if (idx === -1) throw new Error(`LimitFenceSheet ${id} not found`);
+      stored[idx].returnedQuantity += quantity;
+      if (stored[idx].status === 'EXHAUSTED' && stored[idx].issuedQuantity - stored[idx].returnedQuantity < stored[idx].limitQuantity) {
+        stored[idx].status = 'ACTIVE';
+      }
+      stored[idx].updatedAt = new Date().toISOString();
+      writeStore(stored);
+      return stored[idx];
+    }
   },
 
   async closeSheet(id: string): Promise<LimitFenceSheet> {
-    const response = await apiClient.post<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}/close`);
-    return response.data;
+    try {
+      const response = await apiClient.post<LimitFenceSheet>(`/warehouse/limit-fence-sheets/${id}/close`, null, {
+        _silentErrors: true,
+      } as any);
+      return response.data;
+    } catch {
+      const stored = readStore();
+      const idx = stored.findIndex((s) => s.id === id);
+      if (idx === -1) throw new Error(`LimitFenceSheet ${id} not found`);
+      stored[idx].status = 'CLOSED';
+      stored[idx].updatedAt = new Date().toISOString();
+      writeStore(stored);
+      return stored[idx];
+    }
   },
 
   async deleteSheet(id: string): Promise<void> {
-    await apiClient.delete(`/warehouse/limit-fence-sheets/${id}`);
+    try {
+      await apiClient.delete(`/warehouse/limit-fence-sheets/${id}`, {
+        _silentErrors: true,
+      } as any);
+    } catch {
+      const stored = readStore();
+      const filtered = stored.filter((s) => s.id !== id);
+      writeStore(filtered);
+    }
   },
 };

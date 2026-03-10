@@ -163,6 +163,55 @@ public class CallSessionService {
                 .toList();
     }
 
+    @Transactional
+    public CallSessionResponse generateInviteLink(UUID callId) {
+        CallSession session = getSessionOrThrow(callId);
+        if (session.getInviteToken() == null) {
+            session.setInviteToken("inv-" + UUID.randomUUID());
+            callSessionRepository.save(session);
+        }
+        return toResponse(session);
+    }
+
+    @Transactional
+    public CallSessionResponse joinByInviteToken(String token, String guestName) {
+        CallSession session = callSessionRepository.findByInviteTokenAndDeletedFalse(token)
+                .orElseThrow(() -> new EntityNotFoundException("Ссылка на звонок недействительна или звонок завершён"));
+
+        if (session.getStatus() == CallStatus.ENDED || session.getStatus() == CallStatus.CANCELLED) {
+            throw new IllegalStateException("Звонок уже завершён");
+        }
+
+        if (session.getStatus() == CallStatus.RINGING) {
+            session.setStatus(CallStatus.ACTIVE);
+            if (session.getStartedAt() == null) {
+                session.setStartedAt(Instant.now());
+            }
+        }
+
+        // Create a guest participant with a random UUID (no real user account)
+        UUID guestId = UUID.randomUUID();
+        CallParticipant participant = CallParticipant.builder()
+                .callSessionId(session.getId())
+                .userId(guestId)
+                .userName(guestName + " (гость)")
+                .participantStatus(CallParticipantStatus.JOINED)
+                .joinedAt(Instant.now())
+                .build();
+
+        callParticipantRepository.save(participant);
+        callSessionRepository.save(session);
+        log.info("Гость '{}' присоединился к звонку {} по ссылке", guestName, session.getId());
+        return toResponse(session);
+    }
+
+    @Transactional(readOnly = true)
+    public CallSessionResponse getByInviteToken(String token) {
+        CallSession session = callSessionRepository.findByInviteTokenAndDeletedFalse(token)
+                .orElseThrow(() -> new EntityNotFoundException("Ссылка на звонок недействительна"));
+        return toResponse(session);
+    }
+
     private void finishSession(CallSession session, CallStatus targetStatus) {
         if (session.getStartedAt() == null) {
             session.setStartedAt(Instant.now());

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
@@ -153,6 +154,7 @@ const SafetyDashboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'inspections' | 'violations'>('inspections');
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
   const { data: inspData, isLoading: loadingInsp } = useQuery({
     queryKey: ['safety-inspections'],
     queryFn: () => safetyApi.getInspections(),
@@ -254,9 +256,9 @@ const SafetyDashboardPage: React.FC = () => {
         breadcrumbs={[{ label: t('safety.dashboard.breadcrumbHome'), href: '/' }, { label: t('safety.dashboard.breadcrumbSafety') }]}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="secondary" iconLeft={<ClipboardCheck size={16} />}>{t('safety.dashboard.actionBriefing')}</Button>
-            <Button variant="secondary" iconLeft={<AlertTriangle size={16} />}>{t('safety.dashboard.actionReportIncident')}</Button>
-            <Button iconLeft={<Plus size={16} />}>{t('safety.dashboard.actionNewInspection')}</Button>
+            <Button variant="secondary" iconLeft={<ClipboardCheck size={16} />} onClick={() => navigate('/safety/briefings')}>{t('safety.dashboard.actionBriefing')}</Button>
+            <Button variant="secondary" iconLeft={<AlertTriangle size={16} />} onClick={() => navigate('/safety/incidents/new')}>{t('safety.dashboard.actionReportIncident')}</Button>
+            <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/safety/inspections/new')}>{t('safety.dashboard.actionNewInspection')}</Button>
           </div>
         }
       />

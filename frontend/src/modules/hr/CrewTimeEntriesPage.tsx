@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Plus, Clock, HardHat, Calendar } from 'lucide-react';
@@ -17,6 +18,7 @@ import type { PaginatedResponse } from '@/types';
 const CrewTimeEntriesPage: React.FC = () => {
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery<PaginatedResponse<CrewTimeEntry>>({
     queryKey: ['crew-time-entries'],
     queryFn: () => crewTimeApi.getTimeEntries(),
@@ -111,7 +113,7 @@ const CrewTimeEntriesPage: React.FC = () => {
           { label: t('hr.crewTimeEntries.breadcrumbTimeEntries') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('hr.crewTimeEntries.newEntry')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/hr/crew-time/new')}>{t('hr.crewTimeEntries.newEntry')}</Button>
         }
       />
 

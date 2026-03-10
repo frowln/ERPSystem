@@ -18,6 +18,18 @@ export type WorkOrderStatus =
 
 export type WorkOrderPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
 
+export type WorkType =
+  | 'PREPARATION'
+  | 'EARTHWORK'
+  | 'FOUNDATION'
+  | 'WALLS'
+  | 'ROOFING'
+  | 'FINISHING'
+  | 'ELECTRICAL'
+  | 'PLUMBING'
+  | 'HVAC'
+  | 'OTHER';
+
 export type ResourceType = 'LABOR' | 'EQUIPMENT' | 'MATERIAL';
 
 export type ScheduleStatus = 'PLANNED' | 'CONFIRMED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
@@ -65,6 +77,7 @@ export interface WorkOrder {
   description: string;
   projectId: string;
   projectName?: string;
+  workType?: WorkType;
   status: WorkOrderStatus;
   priority: WorkOrderPriority;
   assignedToId: string;
@@ -119,10 +132,14 @@ export interface CreateWorkOrderRequest {
   title: string;
   description: string;
   projectId: string;
+  workType: WorkType;
   priority: WorkOrderPriority;
-  assignedToId: string;
-  plannedStartDate: string;
-  plannedEndDate: string;
-  workArea: string;
-  estimatedHours: number;
+  assignedToId?: string;
+  foremanId?: string;
+  assignedCrewId?: string;
+  plannedStartDate?: string;
+  plannedEndDate?: string;
+  workArea?: string;
+  location?: string;
+  estimatedHours?: number;
 }

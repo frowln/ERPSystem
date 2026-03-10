@@ -301,7 +301,21 @@ const GpsTrackingPage: React.FC = () => {
         )}
       </div>
 
+      {/* Empty state when no vehicles at all */}
+      {!isLoading && vehicles.length === 0 && (
+        <div className="rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 py-16 px-6 text-center">
+          <MapPin className="w-12 h-12 mx-auto mb-4 text-neutral-300 dark:text-neutral-600" />
+          <h3 className="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
+            {t('fleet.gps.emptyTitle')}
+          </h3>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
+            {t('fleet.gps.emptyDescription')}
+          </p>
+        </div>
+      )}
+
       {/* Main Content: Vehicle List + Detail */}
+      {(isLoading || vehicles.length > 0) && (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Vehicle List */}
         <div className="lg:col-span-1 space-y-2 max-h-[650px] overflow-y-auto pr-1">
@@ -552,6 +566,7 @@ const GpsTrackingPage: React.FC = () => {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 };

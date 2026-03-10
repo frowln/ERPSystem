@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, Plus, Key, Shield, Activity, Clock } from 'lucide-react';
@@ -33,6 +34,7 @@ const ApiKeysPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({
     queryKey: ['api-keys'],
     queryFn: () => apiManagementApi.getApiKeys(),
@@ -183,7 +185,7 @@ const ApiKeysPage: React.FC = () => {
           { label: t('apiManagement.keys.breadcrumbApiKeys') },
         ]}
         actions={
-          <Button iconLeft={<Plus size={16} />}>{t('apiManagement.keys.createKey')}</Button>
+          <Button iconLeft={<Plus size={16} />} onClick={() => navigate('/api-management/keys/new')}>{t('apiManagement.keys.createKey')}</Button>
         }
         tabs={[
           { id: 'all', label: t('apiManagement.keys.tabAll'), count: tabCounts.all },

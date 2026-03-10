@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Reply,
   Star,
@@ -7,12 +7,65 @@ import {
   SmilePlus,
   Edit2,
   Trash2,
+  Loader2,
+  Forward,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import { AssigneeAvatar } from './AssigneeAvatar';
 import { formatRelativeTime } from '@/lib/format';
-import type { Message } from '@/api/messaging';
+import type { Message, MessageAttachment } from '@/api/messaging';
+import { messagingApi } from '@/api/messaging';
+
+/* ─── Attachment link with lazy presigned URL fetch ─── */
+const AttachmentLink: React.FC<{ attachment: MessageAttachment }> = ({ attachment }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = useCallback(
+    async (e: React.MouseEvent) => {
+      // If attachment has an attachmentId, we need to fetch a fresh presigned URL
+      if (attachment.attachmentId) {
+        e.preventDefault();
+        if (loading) return;
+        setLoading(true);
+        try {
+          const freshUrl = await messagingApi.getAttachmentDownloadUrl(attachment.attachmentId);
+          window.open(freshUrl, '_blank', 'noopener,noreferrer');
+        } catch {
+          // Fallback: if the API call fails, try opening the stored URL anyway
+          if (attachment.url) {
+            window.open(attachment.url, '_blank', 'noopener,noreferrer');
+          }
+        } finally {
+          setLoading(false);
+        }
+      } else if (!attachment.url || !attachment.url.startsWith('http')) {
+        // URL is not a valid http URL (e.g. raw storage path) — prevent default
+        e.preventDefault();
+      }
+      // else: it's a regular http URL, let the <a> handle it
+    },
+    [attachment.attachmentId, attachment.url, loading],
+  );
+
+  return (
+    <a
+      href={attachment.url || '#'}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={handleClick}
+      className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
+    >
+      {loading && <Loader2 size={12} className="animate-spin text-neutral-400" />}
+      <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300 truncate max-w-[150px]">
+        {attachment.fileName}
+      </span>
+      <span className="text-[10px] text-neutral-400">
+        {t('messaging.fileSizeKb', { size: String(Math.round(attachment.fileSize / 1024)) })}
+      </span>
+    </a>
+  );
+};
 
 interface MessageBubbleProps {
   message: Message;
@@ -22,6 +75,7 @@ interface MessageBubbleProps {
   onFavorite?: (messageId: string) => void;
   onEdit?: (messageId: string) => void;
   onDelete?: (messageId: string) => void;
+  onForward?: (messageId: string) => void;
   className?: string;
 }
 
@@ -31,6 +85,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
   onReact,
   onPin,
   onFavorite,
+  onEdit,
+  onDelete,
+  onForward,
   className,
 }) => {
   const [showActions, setShowActions] = useState(false);
@@ -103,20 +160,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
         {message.attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {message.attachments.map((att) => (
-              <a
-                key={att.id}
-                href={att.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              >
-                <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300 truncate max-w-[150px]">
-                  {att.fileName}
-                </span>
-                <span className="text-[10px] text-neutral-400">
-                  {t('messaging.fileSizeKb', { size: Math.round(att.fileSize / 1024) })}
-                </span>
-              </a>
+              <AttachmentLink key={att.id} attachment={att} />
             ))}
           </div>
         )}
@@ -150,10 +194,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
           >
             <Reply size={12} />
             {message.threadReplyCount === 1
-              ? t('messaging.replyOne', { count: message.threadReplyCount })
+              ? t('messaging.replyOne', { count: String(message.threadReplyCount) })
               : message.threadReplyCount < 5
-                ? t('messaging.replyFew', { count: message.threadReplyCount })
-                : t('messaging.replyMany', { count: message.threadReplyCount })}
+                ? t('messaging.replyFew', { count: String(message.threadReplyCount) })
+                : t('messaging.replyMany', { count: String(message.threadReplyCount) })}
           </button>
         )}
       </div>
@@ -201,10 +245,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({
             </button>
             {showMore && (
               <div className="absolute right-0 top-full mt-1 w-36 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg py-1 z-20">
-                <button className="w-full text-left px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2">
+                <button
+                  onClick={() => { setShowMore(false); onEdit?.(message.id); }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 flex items-center gap-2"
+                >
                   <Edit2 size={11} /> {t('messaging.editMessage')}
                 </button>
-                <button className="w-full text-left px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2">
+                <button
+                  onClick={() => { setShowMore(false); onDelete?.(message.id); }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                >
                   <Trash2 size={11} /> {t('messaging.deleteMessage')}
                 </button>
               </div>

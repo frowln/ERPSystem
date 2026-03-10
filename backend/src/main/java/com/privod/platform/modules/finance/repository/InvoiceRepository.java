@@ -59,4 +59,16 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
     long getNextNumberSequence();
 
     long countByProjectIdAndDeletedFalse(UUID projectId);
+
+    @Query("SELECT COALESCE(SUM(i.totalAmount), 0) FROM Invoice i " +
+            "WHERE i.projectId IN :projectIds AND i.status NOT IN ('DRAFT', 'CANCELLED') AND i.deleted = false")
+    java.math.BigDecimal sumTotalByProjectIds(@Param("projectIds") List<UUID> projectIds);
+
+    @Query("SELECT COALESCE(SUM(i.paidAmount), 0) FROM Invoice i " +
+            "WHERE i.projectId IN :projectIds AND i.deleted = false")
+    java.math.BigDecimal sumPaidByProjectIds(@Param("projectIds") List<UUID> projectIds);
+
+    @Query("SELECT i.status, COUNT(i) FROM Invoice i " +
+            "WHERE i.projectId IN :projectIds AND i.deleted = false GROUP BY i.status")
+    List<Object[]> countByStatusAndProjectIds(@Param("projectIds") List<UUID> projectIds);
 }

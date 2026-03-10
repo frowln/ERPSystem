@@ -34,9 +34,42 @@ function normalizeUser(raw: Record<string, unknown>): User {
   return { ...(raw as unknown as User), roles, role };
 }
 
+export interface TwoFactorRequired {
+  requiresTwoFactor: true;
+  tempToken: string;
+  user: User;
+}
+
 export const authApi = {
-  login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<{ accessToken: string; refreshToken: string; user: Record<string, unknown> }>('/auth/login', data);
+  login: async (data: LoginRequest): Promise<AuthResponse | TwoFactorRequired> => {
+    const response = await apiClient.post<{
+      accessToken: string | null;
+      refreshToken: string | null;
+      user: Record<string, unknown>;
+      requiresTwoFactor?: boolean;
+      tempToken?: string;
+    }>('/auth/login', data);
+
+    if (response.data.requiresTwoFactor && response.data.tempToken) {
+      return {
+        requiresTwoFactor: true as const,
+        tempToken: response.data.tempToken,
+        user: normalizeUser(response.data.user),
+      };
+    }
+
+    return {
+      token: response.data.accessToken!,
+      refreshToken: response.data.refreshToken!,
+      user: normalizeUser(response.data.user),
+    };
+  },
+
+  verify2fa: async (tempToken: string, code: string): Promise<AuthResponse> => {
+    const response = await apiClient.post<{ accessToken: string; refreshToken: string; user: Record<string, unknown> }>('/auth/login/2fa', {
+      tempToken,
+      code,
+    });
     return {
       token: response.data.accessToken,
       refreshToken: response.data.refreshToken,
@@ -67,5 +100,13 @@ export const authApi = {
   getCurrentUser: async (): Promise<User> => {
     const response = await apiClient.get<Record<string, unknown>>('/auth/me');
     return normalizeUser(response.data);
+  },
+
+  forgotPassword: async (email: string): Promise<void> => {
+    await apiClient.post('/auth/forgot-password', { email });
+  },
+
+  resetPassword: async (token: string, newPassword: string): Promise<void> => {
+    await apiClient.post('/auth/reset-password', { token, newPassword });
   },
 };

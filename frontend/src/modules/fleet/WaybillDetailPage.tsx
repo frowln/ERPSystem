@@ -72,6 +72,9 @@ const WaybillDetailPage: React.FC = () => {
       toast.success(t('fleet.waybills.toastDeleted'));
       navigate('/fleet/waybills');
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   if (isLoading || !waybill) {

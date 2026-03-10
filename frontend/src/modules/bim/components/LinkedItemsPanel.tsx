@@ -113,6 +113,9 @@ const LinkedItemsPanel: React.FC<LinkedItemsPanelProps> = ({ clashId, className 
       setLinkSearch('');
       setSelectedEntityId(null);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const unlinkMutation = useMutation({
@@ -120,6 +123,9 @@ const LinkedItemsPanel: React.FC<LinkedItemsPanelProps> = ({ clashId, className 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bim-clash-linked-items', clashId] });
       toast.success(t('bim.linking.toastUnlinked'));
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

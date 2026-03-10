@@ -9,6 +9,8 @@ import com.privod.platform.modules.hrRussian.web.dto.EmploymentContractResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,16 @@ public class EmploymentContractService {
 
     private final EmploymentContractRepository contractRepository;
     private final AuditService auditService;
+
+    @Transactional(readOnly = true)
+    public Page<EmploymentContractResponse> listContracts(ContractStatus status, Pageable pageable) {
+        if (status != null) {
+            return contractRepository.findByStatusAndDeletedFalse(status, pageable)
+                    .map(EmploymentContractResponse::fromEntity);
+        }
+        return contractRepository.findByDeletedFalse(pageable)
+                .map(EmploymentContractResponse::fromEntity);
+    }
 
     @Transactional(readOnly = true)
     public List<EmploymentContractResponse> getByEmployee(UUID employeeId) {

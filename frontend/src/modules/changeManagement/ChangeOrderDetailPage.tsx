@@ -24,6 +24,7 @@ import { formatDateLong, formatMoney } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { ChangeOrder, ChangeOrderLineItem } from './types';
+import toast from 'react-hot-toast';
 
 const getStatusFlow = () => [
   { status: 'DRAFT', label: t('changeManagement.orderDetail.statusDraft') },
@@ -57,6 +58,9 @@ const ChangeOrderDetailPage: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['change-order', id] });
       queryClient.invalidateQueries({ queryKey: ['change-orders'] });
+    },
+    onError: () => {
+      toast.error(t('common.operationError'));
     },
   });
 

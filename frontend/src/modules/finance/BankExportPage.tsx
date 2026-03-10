@@ -62,6 +62,9 @@ const BankExportPage: React.FC = () => {
       toast.success(t('finance.bankExport.toastExported', { fileName }));
       setSelectedPaymentIds([]);
     },
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const handleTogglePayment = useCallback((paymentId: string) => {

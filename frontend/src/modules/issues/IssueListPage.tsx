@@ -16,7 +16,7 @@ import {
   issuePriorityColorMap,
   issuePriorityLabels,
 } from '@/design-system/components/StatusBadge';
-import { Input, Select } from '@/design-system/components/FormField';
+import { Input } from '@/design-system/components/FormField';
 import { issuesApi } from '@/api/issues';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/cn';
@@ -30,9 +30,9 @@ type ViewMode = 'table' | 'kanban';
 const getKanbanColumns = (): { status: IssueStatus; label: string; color: string }[] => [
   { status: 'OPEN', label: t('issues.list.kanbanOpen'), color: 'border-blue-400' },
   { status: 'IN_PROGRESS', label: t('issues.list.kanbanInProgress'), color: 'border-yellow-400' },
-  { status: 'ON_HOLD', label: t('issues.list.kanbanOnHold'), color: 'border-orange-400' },
   { status: 'RESOLVED', label: t('issues.list.kanbanResolved'), color: 'border-green-400' },
   { status: 'CLOSED', label: t('issues.list.kanbanClosed'), color: 'border-purple-400' },
+  { status: 'REOPENED', label: t('issues.list.kanbanReopened'), color: 'border-orange-400' },
 ];
 
 const IssueListPage: React.FC = () => {
@@ -69,9 +69,9 @@ const IssueListPage: React.FC = () => {
     let filtered = issues;
 
     if (activeTab === 'OPEN') {
-      filtered = filtered.filter((i) => i.status === 'OPEN');
+      filtered = filtered.filter((i) => i.status === 'OPEN' || i.status === 'REOPENED');
     } else if (activeTab === 'IN_PROGRESS') {
-      filtered = filtered.filter((i) => [ 'IN_PROGRESS', 'ON_HOLD'].includes(i.status));
+      filtered = filtered.filter((i) => i.status === 'IN_PROGRESS');
     } else if (activeTab === 'RESOLVED') {
       filtered = filtered.filter((i) => i.status === 'RESOLVED');
     } else if (activeTab === 'CLOSED') {
@@ -84,7 +84,7 @@ const IssueListPage: React.FC = () => {
         (i) =>
           i.number.toLowerCase().includes(lower) ||
           i.title.toLowerCase().includes(lower) ||
-          (i.assignedToName ?? '').toLowerCase().includes(lower),
+          (i.createdBy ?? '').toLowerCase().includes(lower),
       );
     }
 
@@ -93,8 +93,8 @@ const IssueListPage: React.FC = () => {
 
   const tabCounts = useMemo(() => ({
     all: issues.length,
-    open: issues.filter((i) => i.status === 'OPEN').length,
-    in_progress: issues.filter((i) => [ 'IN_PROGRESS', 'ON_HOLD'].includes(i.status)).length,
+    open: issues.filter((i) => i.status === 'OPEN' || i.status === 'REOPENED').length,
+    in_progress: issues.filter((i) => i.status === 'IN_PROGRESS').length,
     resolved: issues.filter((i) => i.status === 'RESOLVED').length,
     closed: issues.filter((i) => i.status === 'CLOSED').length,
   }), [issues]);
@@ -116,21 +116,23 @@ const IssueListPage: React.FC = () => {
         cell: ({ row }) => (
           <div>
             <p className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[260px]">{row.original.title}</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">{row.original.projectName}</p>
           </div>
         ),
       },
       {
-        accessorKey: 'type',
+        accessorKey: 'issueType',
         header: t('issues.list.colType'),
         size: 130,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={issueTypeColorMap}
-            label={issueTypeLabels[getValue<string>()] ?? getValue<string>()}
-          />
-        ),
+        cell: ({ getValue }) => {
+          const v = getValue<string>();
+          return v ? (
+            <StatusBadge
+              status={v}
+              colorMap={issueTypeColorMap}
+              label={issueTypeLabels[v] ?? v}
+            />
+          ) : <span className="text-neutral-400">---</span>;
+        },
       },
       {
         accessorKey: 'status',
@@ -157,7 +159,7 @@ const IssueListPage: React.FC = () => {
         ),
       },
       {
-        accessorKey: 'assignedToName',
+        accessorKey: 'createdBy',
         header: t('issues.list.colAssignee'),
         size: 150,
         cell: ({ getValue }) => (
@@ -170,7 +172,7 @@ const IssueListPage: React.FC = () => {
         size: 120,
         cell: ({ row }) => {
           const dueDate = row.original.dueDate;
-          const isOverdue = dueDate && new Date(dueDate) < new Date() && ![ 'RESOLVED', 'CLOSED'].includes(row.original.status);
+          const isOverdue = dueDate && new Date(dueDate) < new Date() && !['RESOLVED', 'CLOSED'].includes(row.original.status);
           return (
             <span className={isOverdue ? 'text-danger-600 font-medium tabular-nums' : 'tabular-nums text-neutral-700 dark:text-neutral-300'}>
               {formatDate(dueDate)}
@@ -183,7 +185,7 @@ const IssueListPage: React.FC = () => {
   );
 
   const handleRowClick = useCallback(
-    (issue: Issue) => navigate(`/issues/${issue.id}`),
+    (issue: Issue) => navigate(`/pm/issues/${issue.id}`),
     [navigate],
   );
 
@@ -220,10 +222,7 @@ const IssueListPage: React.FC = () => {
             </div>
             <Button
               iconLeft={<Plus size={16} />}
-              onClick={() => {
-                toast(t('issues.list.createHint'));
-                navigate('/pm/issues');
-              }}
+              onClick={() => navigate('/pm/issues/new')}
             >
               {t('issues.list.newIssue')}
             </Button>
@@ -294,7 +293,7 @@ const IssueListPage: React.FC = () => {
               <div key={col.status} className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-3">
                 <div className={cn('flex items-center justify-between mb-3 pb-2 border-b-2', col.color)}>
                   <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">{col.label}</h3>
-                  <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-200 px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-1.5 py-0.5 rounded-full">
                     {colIssues.length}
                   </span>
                 </div>
@@ -302,7 +301,7 @@ const IssueListPage: React.FC = () => {
                   {colIssues.map((issue) => (
                     <div
                       key={issue.id}
-                      onClick={() => navigate(`/issues/${issue.id}`)}
+                      onClick={() => navigate(`/pm/issues/${issue.id}`)}
                       className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700 p-3 hover:shadow-sm cursor-pointer transition-shadow"
                     >
                       <p className="text-xs font-mono text-neutral-400 mb-1">{issue.number}</p>
@@ -313,9 +312,9 @@ const IssueListPage: React.FC = () => {
                           colorMap={issuePriorityColorMap}
                           label={issuePriorityLabels[issue.priority]}
                         />
-                        {issue.assignedToName && (
-                          <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-semibold text-primary-700">
-                            {issue.assignedToName.split(' ').map((n) => n[0]).join('')}
+                        {issue.createdBy && (
+                          <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-[10px] font-semibold text-primary-700 dark:text-primary-300">
+                            {issue.createdBy.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
                           </div>
                         )}
                       </div>

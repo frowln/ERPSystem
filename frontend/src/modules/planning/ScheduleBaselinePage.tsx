@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Search, CalendarCheck, GitCompare } from 'lucide-react';
@@ -134,7 +135,7 @@ const ScheduleBaselinePage: React.FC = () => {
           { label: t('planning.baselines.breadcrumbBaselines') },
         ]}
         actions={
-          <Button variant="secondary" iconLeft={<GitCompare size={16} />}>
+          <Button variant="secondary" iconLeft={<GitCompare size={16} />} onClick={() => toast(t('common.operationStarted'))}>
             {t('planning.baselines.compareVersions')}
           </Button>
         }

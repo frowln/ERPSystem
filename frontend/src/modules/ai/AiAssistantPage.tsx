@@ -89,9 +89,7 @@ const AiAssistantPage: React.FC = () => {
 
   // Load messages for active conversation
   useEffect(() => {
-    if (activeConversationId === 'c1') {
-      setMessages([]);
-    } else if (activeConversationId) {
+    if (activeConversationId) {
       setMessages([]);
     }
   }, [activeConversationId]);

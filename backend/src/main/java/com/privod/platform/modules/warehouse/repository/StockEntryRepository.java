@@ -76,4 +76,17 @@ public interface StockEntryRepository extends JpaRepository<StockEntry, UUID> {
     Page<StockEntry> findByProjectIdAndOrganizationId(@Param("projectId") UUID projectId,
                                                       @Param("organizationId") UUID organizationId,
                                                       Pageable pageable);
+
+    @Query("SELECT COUNT(se) FROM StockEntry se WHERE se.organizationId = :orgId AND se.deleted = false")
+    long countByOrganizationIdAndDeletedFalse(@Param("orgId") UUID organizationId);
+
+    @Query("SELECT COALESCE(SUM(se.totalValue), 0) FROM StockEntry se " +
+            "WHERE se.organizationId = :orgId AND se.deleted = false")
+    java.math.BigDecimal sumTotalValueByOrganizationId(@Param("orgId") UUID organizationId);
+
+    @Query("SELECT m.category, COALESCE(SUM(se.quantity), 0), COALESCE(SUM(se.totalValue), 0) " +
+            "FROM StockEntry se JOIN Material m ON se.materialId = m.id " +
+            "WHERE se.organizationId = :orgId AND se.deleted = false AND m.deleted = false " +
+            "GROUP BY m.category")
+    List<Object[]> sumQuantityAndValueByCategoryAndOrganizationId(@Param("orgId") UUID organizationId);
 }

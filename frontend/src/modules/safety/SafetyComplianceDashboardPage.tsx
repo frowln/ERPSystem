@@ -6,6 +6,7 @@ import { t } from '@/i18n';
 import { safetyComplianceApi } from '@/api/safetyCompliance';
 import type { AccessBlock, PrescriptionTracker } from '@/api/safetyCompliance';
 import type { ColumnDef } from '@tanstack/react-table';
+import toast from 'react-hot-toast';
 
 const STATUS_COLORS: Record<string, string> = {
   ACTIVE: 'red',
@@ -42,11 +43,17 @@ export default function SafetyComplianceDashboardPage() {
   const scheduleMut = useMutation({
     mutationFn: safetyComplianceApi.autoSchedule,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['safety-compliance-dashboard'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const resolveMut = useMutation({
     mutationFn: (employeeId: string) => safetyComplianceApi.resolveAccessBlock(employeeId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['safety-access-blocks'] }),
+    onError: () => {
+      toast.error(t('common.operationError'));
+    },
   });
 
   const tabs = [
