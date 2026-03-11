@@ -52,7 +52,7 @@ async function getToken(role: Role): Promise<string> {
   }
 
   const data = await res.json();
-  const token: string = data.token ?? data.data?.token ?? data.accessToken;
+  const token: string = data.token ?? data.data?.token ?? data.accessToken ?? data.data?.accessToken;
   if (!token) {
     throw new Error(`No token in login response for role ${role}: ${JSON.stringify(data)}`);
   }
