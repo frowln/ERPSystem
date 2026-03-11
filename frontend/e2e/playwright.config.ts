@@ -23,6 +23,7 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never' }],
     ['list'],
+    ['./analysis/reporter/PrivodReporter.ts'],
   ],
   timeout: 90_000,
   expect: {
