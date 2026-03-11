@@ -11,6 +11,7 @@
 | 0.3 | RBAC Fixtures + Seed Data + Permission Matrix | PASS | ~300s | 0 |
 | 1.0 | Financial Chain E2E — Full Lifecycle | PASS (compiles) | ~600s | 0 (no server) |
 | 1.1 | Smoke Tests — Modules A–C (49 pages) | PASS (compiles) | ~180s | 0 (no server) |
+| 1.2 | Smoke Tests — Modules D–F (63 pages) | PASS (compiles) | ~120s | 0 (no server) |
 
 ---
 
@@ -175,3 +176,47 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - Need frontend dev server + backend running for live test execution
 - BIM pages likely show placeholder content ([MISSING] expected)
 - Change Management sub-routes (/events, /orders) may not exist as routes — verify at runtime
+| 1.1 | Smoke A-C | PASS | 603s | 0 |
+
+---
+
+## Session 1.2 — Smoke Tests: Modules D–F (2026-03-12)
+
+### What was built
+12 files: 11 smoke spec files + 1 report template
+
+**Smoke Tests (11 files — new):**
+- `daily-logs.smoke.spec.ts` — 4 pages: /operations/daily-logs, /operations/dashboard, /operations/work-orders, /operations/dispatch-calendar
+- `data-exchange.smoke.spec.ts` — 5 pages: /data-exchange/import, /export, /mapping, /1c-config, /1c-logs
+- `defects.smoke.spec.ts` — 3 pages + dark mode: /defects, /defects/dashboard, /defects/on-plan
+- `design.smoke.spec.ts` — 4 pages: /design/versions, /reviews, /reviews/board, /sections
+- `dispatch.smoke.spec.ts` — 2 pages: /dispatch/orders, /dispatch/routes
+- `documents.smoke.spec.ts` — 2 pages: /documents, /documents/smart-recognition
+- `email.smoke.spec.ts` — 1 page: /mail
+- `estimates.smoke.spec.ts` — 8 pages: /estimates, /minstroy, /pivot, /volume-calculator, /pricing/databases, /specifications, /competitive-registry, /price-coefficients
+- `exec-docs.smoke.spec.ts` — 5 pages: /exec-docs/aosr, /ks6, /incoming-control, /welding, /special-journals
+- `finance.smoke.spec.ts` — 19 pages + dark mode: /budgets, /financial-models, /invoices, /payments, /cash-flow, /cash-flow/charts, /bank-statement-matching, /bank-export, /treasury-calendar, /tax-calendar, /factoring-calculator, /bdds, /finance/expenses, /finance/s-curve-cashflow, /tax-risk, /revenue/dashboard, /revenue/recognition-periods, /revenue/all-contracts, /execution-chain
+- `fleet.smoke.spec.ts` — 10 pages + dark mode: /fleet, /fuel, /fuel-accounting, /maintenance, /maint-repair, /maintenance-schedule, /waybills-esm, /usage-logs, /gps-tracking, /driver-rating
+
+**Report (1 file — new):**
+- `reports/smoke-df-results.md` — Results template with per-module table, persona coverage, business rule checks
+
+### Coverage
+- **63 pages** across **11 modules** (D through F)
+- **66 test cases** (63 page smoke + 3 dark mode)
+- **5 personas**: прораб, бухгалтер, директор, инженер-сметчик, снабженец
+
+### Verification
+- TypeScript: 0 errors
+- Vitest: 656/656 tests pass (no regressions)
+- No live server testing (compilation-only validation)
+
+### Key issues found
+- **0 CRITICAL, 0 MAJOR, 0 MINOR** (compilation only)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- GPS tracking and driver rating pages may show localStorage fallback content
+- Data Exchange/1C pages may show placeholder content
+- Fleet fuel-accounting page may need seed data to show meaningful norms vs actual
+| 1.2 | Smoke D-F | PASS | ~120s | 0 |
