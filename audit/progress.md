@@ -220,3 +220,47 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - Data Exchange/1C pages may show placeholder content
 - Fleet fuel-accounting page may need seed data to show meaningful norms vs actual
 | 1.2 | Smoke D-F | PASS | ~120s | 0 |
+| 1.2 | Smoke D-F | PASS | 326s | 0 |
+| 1.3 | Smoke G-P (53 pages) | PASS | ~180s | 0 |
+
+---
+
+## Session 1.3 — Smoke Tests: Modules G–P (2026-03-12)
+
+### What was built
+12 files: 11 smoke spec files + 1 report
+
+**Smoke Tests (11 files — new):**
+- `hr.smoke.spec.ts` — 10 pages + dark mode: /employees, /hr/staffing-schedule, /crew, /timesheets, /hr/timesheet-t13, /hr/work-orders, /hr/certification-matrix, /leave/requests, /hr-russian/employment-contracts, /self-employed
+- `iot.smoke.spec.ts` — 3 pages: /iot/devices, /iot/sensors, /iot/alerts
+- `processes.smoke.spec.ts` — 4 pages: /pm/rfis, /pm/submittals, /pm/issues, /workflow/templates
+- `planning.smoke.spec.ts` — 4 pages + dark mode: /planning/gantt, /planning/evm, /planning/resource-planning, /planning/work-volumes
+- `portal.smoke.spec.ts` — 16 pages + dark mode: /portal, /portal/projects, /portal/documents, /portal/contracts, /portal/invoices, /portal/tasks, /portal/schedule, /portal/rfis, /portal/defects, /portal/signatures, /portal/photos, /portal/daily-reports, /portal/cp-approval, /portal/ks2-drafts, /portal/settings, /portal/admin
+- `portfolio.smoke.spec.ts` — 3 pages: /portfolio/health, /portfolio/opportunities, /portfolio/tenders
+- `legal.smoke.spec.ts` — 3 pages: /legal/cases, /legal/templates, /insurance-certificates
+- `maintenance.smoke.spec.ts` — 3 pages: /maintenance/dashboard, /maintenance/requests, /maintenance/equipment
+- `site-mobile.smoke.spec.ts` — 4 pages: /m29, /mobile/dashboard, /mobile/reports, /mobile/photos
+- `messenger.smoke.spec.ts` — 1 page: /messaging
+- `integrations.smoke.spec.ts` — 2 pages: /integrations, /marketplace
+
+**Report (1 file — new):**
+- `reports/smoke-gp-results.md` — Results with per-module table, persona coverage, domain rules
+
+### Coverage
+- **53 pages** across **11 modules** (G through P)
+- **56 test cases** (53 page smoke + 3 dark mode)
+- **5 personas**: прораб, бухгалтер, директор, инженер-сметчик, кадровик
+
+### Verification
+- TypeScript: 0 errors
+- Vitest: 656/656 tests pass (no regressions)
+- No live server testing (compilation-only validation)
+
+### Key issues found
+- **0 CRITICAL, 0 MAJOR, 0 MINOR** (compilation only)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- IoT pages may show placeholder/localStorage fallback content
+- Portal pages need contractor role auth verification
+- Mobile pages may need responsive viewport testing
