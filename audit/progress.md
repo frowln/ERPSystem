@@ -10,6 +10,7 @@
 | 0.2 | Custom Reporter + Analysis | PASS | 333s | 0 (completed, committed manually) |
 | 0.3 | RBAC Fixtures + Seed Data + Permission Matrix | PASS | ~300s | 0 |
 | 1.0 | Financial Chain E2E — Full Lifecycle | PASS (compiles) | ~600s | 0 (no server) |
+| 1.1 | Smoke Tests — Modules A–C (49 pages) | PASS (compiles) | ~180s | 0 (no server) |
 
 ---
 
@@ -123,3 +124,54 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - КП item IDs depend on auto-creation from budget — verify endpoint behavior
 - Work items costPrice mechanism not implemented (100% margin is misleading)
 - КП→Contract generation not yet built
+| FC | Financial Chain (165 assertions) | PASS | 1057s | 0 |
+
+---
+
+## Session 1.1 — Smoke Tests: Modules A–C (2026-03-12)
+
+### What was built
+19 files: 1 shared helper + 17 smoke spec files + 1 report template
+
+**Helper (1 file — new):**
+- `helpers/smoke.helper.ts` — Shared utilities: `smokeCheck()` (load time <5s, content >50 chars, no crash messages, console error collection), `expectTable()` (headers + rows or empty state), `expectDashboard()` (cards, charts, sections), `checkDarkMode()` (no white bg in dark mode).
+
+**Smoke Tests (17 files — new):**
+- `accounting.smoke.spec.ts` — 1 page: /accounting
+- `admin.smoke.spec.ts` — 7 pages + dark mode: /admin/dashboard, /users, /permissions, /departments, /security, /system-settings, /monitoring
+- `ai.smoke.spec.ts` — 2 pages: /ai/photo-analysis, /risk-dashboard
+- `analytics.smoke.spec.ts` — 2 pages: /analytics, /reports
+- `approval.smoke.spec.ts` — 1 page: /workflow/approval-inbox
+- `bid-management.smoke.spec.ts` — 1 page: /bid-packages
+- `bim.smoke.spec.ts` — 6 pages: /bim/models, clash-detection, drawing-overlay, drawing-pins, construction-progress, defect-heatmap
+- `calendar.smoke.spec.ts` — 1 page: /calendar (month name + navigation check)
+- `cde.smoke.spec.ts` — 2 pages: /cde/documents, /transmittals
+- `change-management.smoke.spec.ts` — 3 pages: /change-management/dashboard, /events, /orders
+- `closeout.smoke.spec.ts` — 11 pages + dark mode: /closeout/dashboard through /executive-schemas
+- `closing.smoke.spec.ts` — 2 pages: /russian-docs/ks2, /ks3
+- `commercial-proposals.smoke.spec.ts` — 1 page: /commercial-proposals
+- `contracts.smoke.spec.ts` — 1 page: /contracts
+- `cost-management.smoke.spec.ts` — 7 pages: /cost-management/codes, budget, commitments, forecast, cashflow-forecast, forecasting-hub, profitability
+- `counterparties.smoke.spec.ts` — 1 page: /counterparties
+- `crm.smoke.spec.ts` — 2 pages + dark mode: /crm/leads, /dashboard
+
+**Report (1 file — new):**
+- `reports/smoke-ac-results.md` — Results template with per-module table, persona coverage, dark mode checks
+
+### Coverage
+- **49 pages** across **17 modules** (A through C)
+- **52 test cases** (49 page smoke + 3 dark mode)
+- **5 personas**: прораб, бухгалтер, директор, инженер-сметчик, снабженец
+
+### Verification
+- TypeScript: 0 errors
+- Vitest: 656/656 tests pass (no regressions)
+- No live server testing (compilation-only validation)
+
+### Key issues found
+- **0 CRITICAL, 0 MAJOR, 0 MINOR** (compilation only)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- BIM pages likely show placeholder content ([MISSING] expected)
+- Change Management sub-routes (/events, /orders) may not exist as routes — verify at runtime
