@@ -20,6 +20,7 @@
 | 3.3 | Calculation Verification — Timesheets, T-13, Leave, Piece-Rate, Crew | PASS (compiles) | ~300s | 0 (no server) |
 | 3.4 | Calculation Verification — FM Margins/НДС, EVM CPI/SPI, Portfolio | PASS (compiles) | ~300s | 0 (no server) |
 | 4.0 | RBAC Verification — Admin + Manager Roles | PASS (compiles) | ~300s | 3 [MINOR] (no server) |
+| 4.1 | RBAC Verification — Engineer + Accountant Roles | PASS (compiles) | ~300s | 4 [MAJOR] 3 [MINOR] 1 [UX] (no server) |
 
 ---
 
@@ -1204,3 +1205,81 @@ EVM:
 - Need frontend dev server + backend running for live E2E execution
 - Auth setup (`e2e/.auth/*.json`) must be generated before RBAC tests run
 - Security findings (3 × MINOR) should be reviewed — decide if /monitoring and /support/* need ADMIN_ONLY restriction
+---
+
+## Session 4.1 — RBAC: Engineer + Accountant (2026-03-12)
+
+### What was tested
+237 E2E tests across 8 phases in `e2e/tests/rbac/engineer-accountant.rbac.spec.ts`:
+
+**Phase 1: Engineer — Allowed Access (72 tests)**
+- 67 route access tests across: unrestricted, ENGINEER_PLUS, SAFETY_PLUS, PROCUREMENT_PLUS, QUALITY_PLUS, fleet
+- 5 operational create-button tests (daily logs, defects, safety incidents, specs, work orders)
+
+**Phase 2: Engineer — DENIED Access (48 tests)**
+- 38 denied route tests: ADMIN_ONLY (7), MANAGER_PLUS (8), FINANCE_PLUS (19), HR_PLUS (9)
+- 3 sidebar visibility tests (finance hidden, HR hidden, admin hidden)
+- Each test verifies 403/redirect behavior
+
+**Phase 3: Engineer — API RBAC (10 tests)**
+- 6 denied API endpoints: invoices, budgets, payments, invoice creation, admin users
+- 4 allowed API endpoints: projects, auth/me, specifications, safety incidents
+
+**Phase 4: Accountant — Allowed Access (47 tests)**
+- 42 route access tests: FINANCE_PLUS (20) + unrestricted (22)
+- 5 specific feature tests: create invoice, create payment, cost management, КС-2, 1C config
+
+**Phase 5: Accountant — DENIED Access (40 tests)**
+- 35 denied route tests: ADMIN_ONLY (7), MANAGER_PLUS (5), ENGINEER_PLUS (9), SAFETY_PLUS (3), HR_PLUS (5), PROCUREMENT_PLUS (3), QUALITY_PLUS (4), Fleet (2)
+- 3 sidebar visibility tests (operations, planning/estimates, admin hidden)
+- 1 project create button test
+- 1 finding test (project create button visibility)
+
+**Phase 6: Accountant — API RBAC (7 tests)**
+- 4 allowed: invoices, payments, auth/me, projects
+- 3 denied: create project, admin users
+
+**Phase 7: Cross-Role UI Visibility (6 tests)**
+- Nav link count comparison (Engineer vs Accountant)
+- Mutual exclusion: Engineer→safety vs Accountant→invoices
+- Shared unrestricted: both→/projects
+- Employee salary isolation (Engineer denied /employees)
+
+**Phase 8: Business Rule Findings (7 tests)**
+- Documents permission gaps between routePermissions.ts and business expectations
+
+### Key Issues Found
+
+| # | Issue | Severity |
+|---|-------|----------|
+| 1 | Accountant CANNOT access /budgets (MANAGER_PLUS) — needs budget visibility for financial planning | [MAJOR] |
+| 2 | Accountant CANNOT access /financial-models (MANAGER_PLUS) — needs FM for cost verification & НДС | [MAJOR] |
+| 3 | Accountant CANNOT access /timesheets (HR_PLUS) — needs timesheet data for payroll (ТК РФ) | [MAJOR] |
+| 4 | Accountant CANNOT access /revenue/dashboard (MANAGER_PLUS) — revenue recognition is core accounting | [MAJOR] |
+| 5 | Engineer CANNOT access /timesheets (HR_PLUS) — прораб tracks own crew time | [MINOR] |
+| 6 | Engineer CANNOT access /crew (HR_PLUS) — прораб manages construction crews | [MINOR] |
+| 7 | Accountant CANNOT access /tax-risk (MANAGER_PLUS) — tax risk is accounting responsibility | [MINOR] |
+| 8 | Accountant may see "Create project" button on /projects (unrestricted page, button not role-filtered) | [UX] |
+
+**Summary by severity:**
+- 4 [MAJOR] — routePermissions gaps where business role needs access
+- 3 [MINOR] — nice-to-have access improvements
+- 1 [UX] — button visibility issue
+- 0 [CRITICAL]
+- 0 [MISSING]
+
+### Recommended Fixes
+1. Add `ACCOUNTANT` to `MANAGER_PLUS` → or create `BUDGET_VIEWERS` group including ACCOUNTANT
+2. Add `ACCOUNTANT` to `HR_PLUS` for timesheets (read-only payroll scope)
+3. Add `ENGINEER`/`FOREMAN` to crew/timesheet routes (own-crew scope)
+4. Filter create buttons by role on unrestricted pages
+
+### Verification Gate
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Playwright: 237 tests listed (compiles, no server for execution)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live E2E execution
+- Auth setup (`e2e/.auth/*.json`) must be generated before RBAC tests run
+- 4 [MAJOR] permission gaps should be reviewed with product owner before fixing routePermissions.ts
