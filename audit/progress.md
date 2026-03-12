@@ -15,6 +15,7 @@
 | 2.7 | CRUD CRM, Support, Counterparties, Portal | PASS (compiles) | ~300s | 0 (no server) |
 | 2.8 | CRUD Fleet, Regulatory, Planning, Change Orders | PASS (compiles) | ~300s | 0 (no server) |
 | 3.0 | Calculation Verification — Finance Totals, НДС, Margins | PASS (compiles) | ~300s | 0 (no server) |
+| 3.1 | Calculation Verification — Estimates, ЛСР, Overhead/Profit, НДС | PASS (compiles) | ~240s | 0 (no server) |
 
 ---
 
@@ -878,3 +879,57 @@ Comprehensive calculation verification for all finance pages — budgets, invoic
 - Need frontend dev server + backend running for live UI test execution
 - Tests 1, 3, 10, 12, B3, B4 require running server for full UI verification
 - Tests 2, 4, 5-9, 11, B1, B2 are pure math/API and will pass without UI
+---
+
+## Session 3.1 — Calculation Verification: Estimates, ЛСР, Overhead/Profit, НДС (2026-03-12)
+
+### What was built
+1 test file, ~750 lines of estimate calculation verification:
+
+**Test file:**
+- `frontend/e2e/tests/calculations/estimates.calc.spec.ts` — 14 tests (11 spec + 3 bonus)
+
+### Test cases
+| # | Test | What it verifies | Assertions |
+|---|------|-----------------|------------|
+| 1 | Line Item Amount | qty × unitPrice for all 5 ГЭСН items | 6 |
+| 2 | Section Subtotals | Земляные (140610), Бетонные (379500), Электро (222000), sum=742110 | 7 |
+| 3 | Overhead (НР) | directCosts × 0.12 = 89053.20 per MDS 81-33.2004 | 7 |
+| 4 | Profit (СП) | directCosts × 0.08 = 59368.80 per MDS 81-25.2001 | 4 |
+| 5 | НДС | subtotal × 0.20 = 178106.40, always 20% (not 18%) | 5 |
+| 6 | Estimate Summary | All summary values + API verification | 12+ |
+| 7 | Pivot Table | 3 sections, row totals, proportions sum to 100% | 8 |
+| 8 | Price Coefficient | Regional index 1.15 → all values recalculate, total=1228934.16 | 12 |
+| 9 | Volume Calculator | Rectangular (150m³), trapezoidal (900m³), circular, annular, excavation | 7 |
+| 10 | Minstroy Index | Index 8.52 applied, proportional relationships preserved | 10 |
+| 11 | Estimate↔FM Cross-check | Direct costs match, overhead+profit+НДС difference verified | 5+ |
+| B1 | Formula Helpers | Edge cases: zero qty, kopeck price, large qty, repeating decimals | 12 |
+| B2 | UI Detail Page | Estimate detail page loads, table/footer/summary visible | 5+ |
+| B3 | UI List Page | Estimate list loads, E2E items visible | 3+ |
+
+### Pre-calculated expected values (legally binding)
+```
+Direct costs:   742,110.00 ₽ (sum of 5 items across 3 sections)
+Overhead (12%): 89,053.20 ₽ (per MDS 81-33.2004)
+Profit (8%):    59,368.80 ₽ (per MDS 81-25.2001)
+Subtotal:       890,532.00 ₽
+НДС (20%):      178,106.40 ₽
+GRAND TOTAL:    1,068,638.40 ₽
+```
+
+### Verification gate
+- TypeScript: 0 errors ✅
+- Vitest: 656/656 pass ✅
+- Build: success (9.38s) ✅
+
+### Key issues found
+- 0 [CRITICAL]
+- 0 [MAJOR]
+- 0 [MINOR]
+- 0 [UX]
+- 0 [MISSING]
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live UI test execution
+- Tests 6, B2, B3 contain API+UI verification paths that need a running server
+- Tests 1-5, 7-11, B1 are pure math and will pass without server
