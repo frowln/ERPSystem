@@ -40,6 +40,51 @@
 | 10.2 | Element Crawler Part 3 — Detail + Create + Board + Advanced (230 pages) | PASS (compiles) | ~300s | 0 (no server) |
 | 11.0 | Form Completeness Crawler Part 1 — Projects → Finance (42 tests) | PASS (compiles) | ~300s | 0 (no server) |
 | 11.1 | Form Completeness Crawler Part 2 — HR → Admin + consolidated (91 tests) | PASS (compiles) | ~300s | 0 (no server) |
+| 12.0 | i18n Audit Crawler — Full System Localization (244 pages × 2 locales) | PASS (compiles) | ~300s | 0 (no server) |
+
+---
+
+## Session 12.0 — i18n Audit Crawler (2026-03-12)
+
+### What was tested
+Full system localization audit across 244 pages × 2 locales (Russian + English):
+
+**6 Phases:**
+1. **Russian locale scan** — Visit all 244 pages, collect all text nodes, check for raw i18n keys, English text in Russian UI, broken interpolation
+2. **English locale scan** — Visit all 244 pages, check for Russian text in English UI, raw keys, broken interpolation
+3. **Attribute scan** — Placeholders, titles, aria-labels on form-heavy pages (40 pages × 2 locales) for raw keys and wrong language
+4. **Number/date format check** — Finance, Pricing, Supply, HR pages for English number format (1,234.00) and US date format (MM/DD/YYYY) in Russian locale
+5. **Text truncation check** — First 100 pages × 2 locales for CSS overflow/ellipsis cutting translated strings
+6. **Translation key coverage** — ru.ts vs en.ts structural parity (enforced by TypeScript type constraint)
+
+**Issue detection patterns:**
+- Raw i18n keys: `word.word.word` (≥2 segments of camelCase/lowercase)
+- English in RU: Multi-word Latin phrases (≥2 words, ≥5 chars), excluding 200+ known abbreviations (PDF, CRM, ERP, BIM, IoT, etc.)
+- Russian in EN: ≥3 consecutive Cyrillic characters
+- Broken interpolation: `{param}` or `{{param}}` rendered literally
+- Number format: English-style `1,234,567.89` in Russian locale (should be `1 234 567,89`)
+- Date format: US-style `MM/DD/YYYY` in Russian locale (should be `DD.MM.YYYY`)
+- Truncation: `scrollWidth > clientWidth` with `overflow:hidden` or `text-overflow:ellipsis`
+
+### Results
+- **20 test cases** (10 RU batch scans + 10 EN batch scans + attribute scan + number format + 2 truncation + key coverage + report generation)
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.6s)
+- File: `frontend/e2e/tests/crawler/i18n-audit.crawler.spec.ts` (~1256 lines)
+
+### Reports generated
+- `e2e/reports/crawler-i18n-audit.json` — per-page JSON with all issues
+- `e2e/reports/crawler-i18n-summary.md` — severity breakdown, module table, top 20 raw keys, top 20 wrong-lang texts, top 20 most problematic pages, truncation details
+
+### Severity classification
+- **[CRITICAL]**: Raw keys shown to user + broken interpolation
+- **[MAJOR]**: Wrong language text + attribute issues (placeholder/tooltip in wrong language)
+- **[MINOR]**: Number/date format inconsistencies
+- **[UX]**: Text truncation + unlabeled buttons (a11y)
+
+### Blockers for next session
+None. All tests compile and are ready for execution against running server.
 
 ---
 
@@ -2632,3 +2677,4 @@ Comprehensive form completeness crawling for all create/edit forms from Projects
 - Budget/Invoice/Payment creation on separate /new routes (not inline modals) — Part 2 should cover these
 - Some list pages may not have visible create buttons (recorded as UX issues at runtime)
 | 8.4 | Crawler: Form Completeness Part 1 | PASS | 658s | 0 |
+| 8.5 | Crawler: Form Completeness Part 2 | PASS | 615s | 0 |
