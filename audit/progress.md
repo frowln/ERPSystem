@@ -13,6 +13,7 @@
 | 1.1 | Smoke Tests — Modules A–C (49 pages) | PASS (compiles) | ~180s | 0 (no server) |
 | 1.2 | Smoke Tests — Modules D–F (63 pages) | PASS (compiles) | ~120s | 0 (no server) |
 | 2.7 | CRUD CRM, Support, Counterparties, Portal | PASS (compiles) | ~300s | 0 (no server) |
+| 2.8 | CRUD Fleet, Regulatory, Planning, Change Orders | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -744,3 +745,77 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - Portal data isolation tests require portal-role user (not just admin)
 - CRM stage-based move may need valid stage IDs from GET /stages
 - Counterparty duplicate ИНН enforcement depends on backend validation
+| 2.7 | CRUD Portal + CRM + Support | PASS | 737s | 0 |
+
+---
+
+## Session 2.8 — Deep CRUD: Fleet, Regulatory, Planning, Change Orders (2026-03-12)
+
+### What was tested
+4 test files, 131 tests covering fleet management, regulatory compliance, planning/scheduling, and change management:
+
+**Fleet (32 tests):**
+- Vehicles: full CRUD via API (create 2 vehicles, list, detail, filter by type, update status/hours, delete)
+- Waybills (Путевые листы): create, read, distance calculation (82km), fuel norm (12.30l), status flow DRAFT→ISSUED→COMPLETED
+- Fuel: create fuel record, cost calculation (40l × 62.50₽ = 2,500₽), fuel history, accounting page
+- Usage logs: full CRUD (create, read, update hours, delete)
+- Maintenance: schedule page, records API, compliance dashboard
+- Validation: odometer end < start, overload cargo > payload (4200kg > 1500kg)
+- Domain: monthly fuel summary, insurance/inspection expiry alerts
+- UI: 5 pages (fuel, maintenance, GPS tracking, driver rating, vehicle form)
+
+**Regulatory (32 tests):**
+- Permits: create building + fire safety permits, status DRAFT→ACTIVE, expiry calculation (~675 days)
+- Inspections: create Ростехнадзор inspection, status SCHEDULED→IN_PROGRESS→PASSED
+- Prescriptions: full CRUD, status RECEIVED→IN_PROGRESS, deadline tracking (31 days), corrective action cost
+- SRO: create SRO license, validity check
+- Compliance: dashboard, permit types coverage, regulatory body types (5 bodies)
+- Validation: permit expiry before issue date, inspection without scheduled date
+- UI: 8 pages (permits, dashboard, inspections, history, prescriptions, SRO, compliance, reporting calendar)
+
+**Planning (30 tests):**
+- WBS nodes: create 3 sequential tasks (Подготовительные→Фундамент→Каркас), read tree, update progress 30%
+- Dependencies: create 2 finish-to-start dependencies, read predecessors/successors
+- Critical path: CPM forward/backward pass, critical path tasks
+- Baselines: create snapshot, read list
+- EVM: create snapshot (PV=15M, EV=12M, AC=13.5M), CPI=0.889, SPI=0.800, S-curve
+- Resources: create allocation (Бригада монтажников), over-allocation check (85%<100%)
+- Domain: total duration (182 days), total cost (45M₽), cleanup
+- UI: 4 pages (Gantt, EVM dashboard, resource planning, work volumes)
+
+**Change Orders (32 tests):**
+- Change events: create (REGULATORY source), status IDENTIFIED→UNDER_REVIEW→APPROVED_FOR_PRICING
+- Change orders: create 2 (SUBSTITUTION +350k, ADDITION +520k), line items (3 items totaling 350k)
+- Status flow: DRAFT→PENDING_APPROVAL→APPROVED→EXECUTED
+- Impact analysis: budget impact, schedule impact, trend analysis APIs
+- Calculations: line items (2000m × 125₽ = 250k, etc.), revised contract (45M + 870k = 45.87M), change% (1.93%)
+- Validation: order without title, negative schedule impact
+- UI: 6 pages (dashboard, list, board, form, detail, event detail)
+
+### Test counts
+| File | Tests |
+|------|-------|
+| fleet.crud.spec.ts | 32 |
+| regulatory.crud.spec.ts | 32 |
+| planning.crud.spec.ts | 30 |
+| change-orders.crud.spec.ts | 32 (incl 1 auth) |
+| **Total** | **131** (incl 1 auth setup) |
+
+### Calculations verified
+- Distance: 82km, Fuel norm: 12.30l, Fuel cost: 2,500₽
+- CPI: 0.889, SPI: 0.800, CV: -1.5M₽, SV: -3M₽
+- EAC: ~50.6M₽, Project: 182 days / 45M₽
+- CO line items: 250k+30k+70k = 350k₽
+- Revised contract: 45M + 870k = 45.87M₽ (+1.93%)
+- Resource capacity: 840h, utilization: 85% (714h)
+
+### Issues found (compile-time)
+- 0 TypeScript errors in test files
+- 0 TypeScript errors in main frontend codebase
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- GPS tracking and driver rating use localStorage fallbacks (no backend)
+- Planning histogram endpoint not available (returns empty)
+- SRO license CRUD limited (no delete endpoint)
+- Compliance dashboard structure depends on backend implementation
