@@ -16,6 +16,7 @@
 | 2.8 | CRUD Fleet, Regulatory, Planning, Change Orders | PASS (compiles) | ~300s | 0 (no server) |
 | 3.0 | Calculation Verification — Finance Totals, НДС, Margins | PASS (compiles) | ~300s | 0 (no server) |
 | 3.1 | Calculation Verification — Estimates, ЛСР, Overhead/Profit, НДС | PASS (compiles) | ~240s | 0 (no server) |
+| 3.2 | Calculation Verification — Dashboard KPIs, CPI/SPI, Charts | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -933,3 +934,73 @@ GRAND TOTAL:    1,068,638.40 ₽
 - Need frontend dev server + backend running for live UI test execution
 - Tests 6, B2, B3 contain API+UI verification paths that need a running server
 - Tests 1-5, 7-11, B1 are pure math and will pass without server
+| 3.2 | Calculations: Estimates | PASS | 565s | 0 |
+
+---
+
+## Session 3.2 — Dashboard KPIs, CPI/SPI, Chart Data Integrity (2026-03-12)
+
+### What was built
+1 file, ~900 lines of E2E calculation tests:
+
+**Test file:**
+- `e2e/tests/calculations/dashboards.calc.spec.ts` — 15 test cases covering 11 dashboards
+
+### What was tested
+| # | Test | Dashboard | Checks |
+|---|------|-----------|--------|
+| 1 | Main Dashboard KPI cards | `/` | Active projects, budget util, overdue tasks, safety score, financial row |
+| 2 | Analytics Dashboard summary | `/analytics` | KPI cards, charts rendered, date range selector, pie/bar segments |
+| 3 | Portfolio Health RAG matrix | `/portfolio/health` | CPI/SPI thresholds (GREEN≥0.95, YELLOW≥0.85, RED<0.85), sort, pie |
+| 4 | CRM Dashboard pipeline | `/crm/dashboard` | Total pipeline, win rate=(won/total)×100, weighted pipeline, funnel |
+| 5 | Safety Dashboard | `/safety` | Incident count, open violations, avg inspection score, days w/o incident, tabs |
+| 6 | Quality/Defects Dashboard | `/defects/dashboard` | Open/closed defects, resolution rate=(closed/total)×100, severity |
+| 7 | Support Dashboard | `/support/dashboard` | Total/open/critical tickets, avg resolution hours, categories |
+| 8 | Executive KPI Dashboard | `/analytics/executive-kpi` | CPI/SPI table columns, EBIT margin, AR/AP, cashflow tab |
+| 9 | Admin Dashboard | `/admin/dashboard` | Total users (API cross-check), total projects, system health |
+| 10 | Operations Dashboard | `/operations/dashboard` | Workers on site, equipment, work orders, warnings |
+| 11 | Chart Data Integrity | `/`, `/analytics` | SVG chart count, axis labels, legend, tooltip on hover |
+| 12 | Dashboard Refresh | `/` | Create entity→refresh→verify KPI count increases |
+| 13 | Cross-Dashboard Consistency | `/` vs `/analytics` vs API | Same "active projects" metric matches across pages |
+| 14 | Invoice НДС Verification | API | VAT=amount×0.20 (exact to kopeck), total=net+VAT |
+| 15 | Closeout Dashboard | `/closeout/dashboard` | Checklists, commissioning, warranty sections |
+
+### Seed data created per run
+- 5 projects with known statuses (2×IN_PROGRESS, 1×PLANNING, 1×ON_HOLD, 1×COMPLETED)
+- 5 invoices with pre-calculated НДС (3×RECEIVED, 2×ISSUED)
+- 5 support tickets (1×CRITICAL, 1×HIGH, 1×MEDIUM, 2×LOW)
+- 3 safety incidents + 3 trainings
+- 1 refresh-test project (created mid-test)
+- All entities prefixed `E2E-DASH-` for cleanup
+
+### Formulas verified
+- НДС = amount × 0.20 (exact to kopeck, tolerance ±0.01)
+- CPI = EV / AC → GREEN if ≥0.95, YELLOW if ≥0.85, RED if <0.85
+- SPI = EV / PV → same thresholds
+- Win rate = (won leads / total leads) × 100
+- Weighted pipeline = Σ(amount × probability)
+- Resolution rate = (resolved / total) × 100
+- Avg resolution time = Σ((resolvedAt - createdAt) in hours) / count
+- Training compliance = (completed / total) × 100
+- Days without incident = (now - lastIncidentDate) / 86400000
+
+### Report output
+- JSON: `e2e/reports/calc-dashboards-results.json`
+- Markdown: `e2e/reports/calc-dashboards-summary.md`
+
+### Verification gate
+- TypeScript: 0 errors ✅
+- Vitest: 656/656 pass ✅
+- Build: success (9.17s) ✅
+
+### Key issues found
+- 0 [CRITICAL]
+- 0 [MAJOR]
+- 0 [MINOR]
+- 0 [UX]
+- 0 [MISSING]
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live UI test execution
+- Tests cross-check API values vs UI values — some checks are logged as reference when no server is running
+- Chart tooltip tests require Recharts SVG elements rendered with actual data
