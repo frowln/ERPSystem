@@ -41,6 +41,43 @@
 | 11.0 | Form Completeness Crawler Part 1 — Projects → Finance (42 tests) | PASS (compiles) | ~300s | 0 (no server) |
 | 11.1 | Form Completeness Crawler Part 2 — HR → Admin + consolidated (91 tests) | PASS (compiles) | ~300s | 0 (no server) |
 | 12.0 | i18n Audit Crawler — Full System Localization (244 pages × 2 locales) | PASS (compiles) | ~300s | 0 (no server) |
+| 13.0 | Export/Print/Download Crawler — Every Export Function (244 pages) | PASS (compiles) | ~300s | 0 (no server) |
+
+---
+
+## Session 13.0 — Export/Print/Download Crawler (2026-03-12)
+
+### What was tested
+Full system audit of every export, print, download, and file-generation function across 244 pages.
+
+**6 Phases:**
+1. **Export button discovery** — Scan all 244 pages for export/download/print buttons (batches of 25), detecting buttons by text (Экспорт, Export, Скачать, Download, PDF, Excel, CSV, Печать, Print, Выгрузить, Сформировать, Отчёт), `a[download]`, `button[data-export]`, and aria-labels
+2. **Export button click tests** — Click each export button on ~170 export-heavy pages (Finance, Documents, Pricing, Supply, HR, Safety, Quality, Fleet, ExecDocs, Closeout, Home, Portal), verify download event, validate file format (PDF header `%PDF-`, Excel PK/BIFF magic bytes, CSV row count + encoding)
+3. **Print dialog tests** — 20 document-critical pages (КС-2, КС-3, invoices, КП, estimates, accident acts, T-13, AOSR, purchase orders, waybills, etc.) with `window.print` interception
+4. **Critical document generation** — 7 statutory/business documents (КС-2, КС-3, КП, Счёт, Смета, Акт Н-1, Табель Т-13): page loads, export button exists, download triggers, format validates, content size check
+5. **Bulk export tests** — 10 table pages: multi-select checkbox presence, "Export selected" button after select-all, filter controls for filtered export, Russian encoding in filenames (mojibake detection)
+6. **Import/upload tests** — 5 pages: data import (file upload/drag-and-drop zones), specification XLSX upload, document upload, data export page structure, ЛСР import on FM page
+
+### Results
+- **~30 test cases** across 6 phases
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.88s)
+- File: `frontend/e2e/tests/crawler/export-print.crawler.spec.ts` (~880 lines)
+
+### Reports generated (when run against server)
+- `e2e/reports/crawler-export-print.json` — full JSON with scan, download, print, critical doc, import results
+- `e2e/reports/crawler-export-summary.md` — summary tables: module breakdown, file type breakdown, critical docs, print dialogs, import/upload, all issues
+
+### Severity classification
+- **[CRITICAL]**: Empty/corrupt file downloaded, critical document cannot be exported
+- **[MAJOR]**: Export failed with error, print button found but window.print() not called, import page missing upload zone, corrupt filename encoding
+- **[MINOR]**: No download triggered (may open new tab), has row selection but no bulk export
+- **[UX]**: Table page has no export functionality, no filter controls
+- **[MISSING]**: No export/print button on document page, no export for critical statutory document
+
+### Blockers for next session
+None. All tests compile and are ready for execution against running server.
 
 ---
 
@@ -2678,3 +2715,4 @@ Comprehensive form completeness crawling for all create/edit forms from Projects
 - Some list pages may not have visible create buttons (recorded as UX issues at runtime)
 | 8.4 | Crawler: Form Completeness Part 1 | PASS | 658s | 0 |
 | 8.5 | Crawler: Form Completeness Part 2 | PASS | 615s | 0 |
+| 8.6 | Crawler: i18n Audit (2 locales) | PASS | 494s | 0 |
