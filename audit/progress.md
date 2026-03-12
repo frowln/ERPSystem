@@ -39,6 +39,49 @@
 | 10.1 | Element Crawler Part 2 — Safety → Admin (116 pages) | PASS (compiles) | ~180s | 0 (no server) |
 | 10.2 | Element Crawler Part 3 — Detail + Create + Board + Advanced (230 pages) | PASS (compiles) | ~300s | 0 (no server) |
 | 11.0 | Form Completeness Crawler Part 1 — Projects → Finance (42 tests) | PASS (compiles) | ~300s | 0 (no server) |
+| 11.1 | Form Completeness Crawler Part 2 — HR → Admin + consolidated (91 tests) | PASS (compiles) | ~300s | 0 (no server) |
+
+---
+
+## Session 11.1 — Form Completeness Crawler Part 2 (2026-03-12)
+
+### What was tested
+Form completeness crawling for the remaining 8 module groups:
+- **Group H (HR)**: 11 forms — Employee create, crew, timesheets, T-13, work orders, leave requests, employment contracts, self-employed, staffing schedule, certification matrix
+- **Group I (Safety)**: 10 forms — Incidents, inspections, briefings, training journal, PPE issue, accident acts (Н-1), dashboard, metrics, compliance, violations
+- **Group J (Quality)**: 12 forms — Defects, checklists, material inspection, checklist templates, tolerance rules, certificates, punch list, defect register, dashboards, supervision journal
+- **Group K (Warehouse)**: 11 forms — Procurement requests, purchase orders, material create, quick receipt, movements, inventory, limit-fence cards, dispatch orders, stock, locations, work orders
+- **Group L (Fleet)**: 9 forms — Vehicle create, waybills ESM, fuel records, maintenance requests, equipment, usage logs, maintenance schedule, fuel accounting
+- **Group M (Portal)**: 12 forms — RFI create, defect report, task create, daily report, photos, dashboard, projects, documents, contracts, invoices, KS-2 drafts, schedule
+- **Group N (Admin)**: 9 forms — User create, department create, system settings, support ticket, admin dashboard, permissions, security, support dashboard, monitoring
+- **Group O (Change Management)**: 2 forms — Change event create, change order create
+
+**Negative tests**: 15 tests covering empty submit (5), invalid data (5), XSS/SQL injection (3), overflow (2)
+
+### Results
+- **76 positive form tests + 15 negative tests = 91 total**
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.3s)
+- File: `frontend/e2e/tests/crawler/forms-part2.crawler.spec.ts` (~1550 lines)
+
+### Reports generated
+- `e2e/reports/crawler-forms-part2-results.json` — raw field-level data
+- `e2e/reports/crawler-forms-part2-summary.md` — Part 2 module summary
+- `e2e/reports/crawler-forms-consolidated.md` — merged Parts 1+2 with domain expert assessment
+
+### Key domain validations included
+- СНИЛС format (XXX-XXX-XXX XX), ИНН (12 digits for физлицо)
+- Safety briefing types (5 statutory per ТК РФ)
+- Акт Н-1 (mandatory accident form)
+- Tolerance rules from СНиП/СП standards
+- Fuel total calculation (liters * price)
+- Odometer direction validation (end > start)
+- Stock balance (no negative stock)
+- Change order impact quantification (budget + schedule)
+
+### Blockers for next session
+None. All tests compile and are ready for execution against running server.
 
 ---
 
@@ -2588,3 +2631,4 @@ Comprehensive form completeness crawling for all create/edit forms from Projects
 - Requires running dev server + backend for actual form submission verification
 - Budget/Invoice/Payment creation on separate /new routes (not inline modals) — Part 2 should cover these
 - Some list pages may not have visible create buttons (recorded as UX issues at runtime)
+| 8.4 | Crawler: Form Completeness Part 1 | PASS | 658s | 0 |
