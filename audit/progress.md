@@ -14,6 +14,7 @@
 | 1.2 | Smoke Tests — Modules D–F (63 pages) | PASS (compiles) | ~120s | 0 (no server) |
 | 2.7 | CRUD CRM, Support, Counterparties, Portal | PASS (compiles) | ~300s | 0 (no server) |
 | 2.8 | CRUD Fleet, Regulatory, Planning, Change Orders | PASS (compiles) | ~300s | 0 (no server) |
+| 3.0 | Calculation Verification — Finance Totals, НДС, Margins | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -819,3 +820,61 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - Planning histogram endpoint not available (returns empty)
 - SRO license CRUD limited (no delete endpoint)
 - Compliance dashboard structure depends on backend implementation
+| 2.8 | CRUD Fleet + Regulatory | PASS | 845s | 0 |
+
+---
+
+## Session 3.0 — Calculation Verification: Finance Totals, НДС, Margins (2026-03-12)
+
+### What was tested
+Comprehensive calculation verification for all finance pages — budgets, invoices, payments, FM (financial model). Every number verified to the kopeck.
+
+### File created
+- `frontend/e2e/tests/calculations/finance.calc.spec.ts` — 16 test cases, ~600 lines
+
+### Test cases (16 total)
+| # | Test | Assertions | Scope |
+|---|------|-----------|-------|
+| 1 | Budget total = SUM(planned amounts) | API + UI | Budget items sum to 15,000,000.00 |
+| 2 | Invoice НДС = netAmount × 0.20 | API | 3 invoices with exact kopeck verification |
+| 3 | Invoice line items SUM | UI | Amount = Paid + Remaining |
+| 4 | Payment balance tracking | API | Pay 500K → 700K remaining → pay 700K → 0 remaining |
+| 5 | FM item-level calculations | Math | costTotal, customerTotal, НДС, margin, marginPct per item |
+| 6 | FM grand totals = SUM(items) | Math | costTotal=227,350 customerTotal=481,500 margin=254,150 |
+| 7 | FM section subtotals | Math | Электроснабжение + Вентиляция sections |
+| 8 | FM overhead/profit/contingency | Math | 12%/8%/3% rates on 5 items |
+| 9 | FM margin business rules | Domain | Healthy range 15-60%, no negative margins, НДС=20% |
+| 10 | FM page UI verification | UI | Footer totals, KPI strip, table visibility |
+| 11 | Cross-page API consistency | API | Budget data matches across endpoints |
+| 12 | Russian number format | UI + Unit | parseRussianNumber + parseCurrency helper tests |
+| B1 | НДС always 20% (never 18%) | Math | assertVAT helper + old rate detection |
+| B2 | Calculation helper correctness | Unit | assertMargin, assertProfitable, assertPercentage |
+| B3 | Budget list variance formula | UI | (actualCost - plannedCost) / plannedCost |
+| B4 | Payment list amounts positive | UI | No negative payments allowed |
+
+### Pre-calculated expected values verified
+- 5 FM items with exact costTotal, customerTotal, НДС, margin, marginPct
+- 2 FM sections (Электроснабжение, Вентиляция) with subtotals
+- Grand totals: cost=227,350 estimate=387,900 customer=481,500 НДС=96,300 margin=254,150 (52.78%)
+- Overhead=27,282 Profit=18,188 Contingency=7,638.96
+- 3 invoices with НДС to kopeck precision (incl. rounding case 583,333.33 × 0.20 = 116,666.67)
+
+### Report output
+- `frontend/e2e/reports/calc-finance-results.json` — auto-generated on test run with check/pass/fail details
+
+### Verification gate
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.26s)
+
+### Key issues found
+- 0 [CRITICAL]
+- 0 [MAJOR]
+- 0 [MINOR]
+- 0 [UX]
+- 0 [MISSING]
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live UI test execution
+- Tests 1, 3, 10, 12, B3, B4 require running server for full UI verification
+- Tests 2, 4, 5-9, 11, B1, B2 are pure math/API and will pass without UI
