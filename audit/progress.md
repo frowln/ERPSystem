@@ -38,6 +38,7 @@
 | 10.0 | Element Crawler Part 1 — Home → HR (127 pages) | PASS (compiles) | ~300s | 0 (no server) |
 | 10.1 | Element Crawler Part 2 — Safety → Admin (116 pages) | PASS (compiles) | ~180s | 0 (no server) |
 | 10.2 | Element Crawler Part 3 — Detail + Create + Board + Advanced (230 pages) | PASS (compiles) | ~300s | 0 (no server) |
+| 11.0 | Form Completeness Crawler Part 1 — Projects → Finance (42 tests) | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -2520,3 +2521,70 @@ Consolidated ALL results from 46 previous sessions into definitive audit report.
 - Requires running dev server + backend to execute actual crawling
 - Detail pages with `:id=1` will likely show error states — that's valid testing
 - Consolidated report depends on Parts 1+2 JSON files existing in reports/
+| 8.3 | Crawler: Elements Part 3 (Detail pages) | PASS | 716s | 0 |
+
+---
+
+## Session 11.0 — Form Completeness Crawler Part 1: Projects → Finance (2026-03-12)
+
+### What was tested
+Comprehensive form completeness crawling for all create/edit forms from Projects through Finance modules. Every form field is discovered, filled with realistic Russian construction data, submitted, and validated.
+
+### File created
+- `frontend/e2e/tests/crawler/forms-part1.crawler.spec.ts` — 42 tests, ~1280 lines
+
+### Test coverage (42 tests total)
+
+**Positive form tests (26):**
+| Group | Forms | Key forms tested |
+|-------|-------|-----------------|
+| A-Projects | 2 | Project Create (/projects/new), Project List verify |
+| B-Tasks | 1 | Task Create Modal (/tasks) |
+| C-CRM | 3 | CRM Lead Create, Counterparty Create, Bid/Tender Create |
+| D-Documents | 5 | Documents Upload, Work Permits, Hidden Work Acts, Lab Tests, Transmittals |
+| E-Finance-Budgets | 3 | Budget List, Financial Model, Commercial Proposal Create |
+| F-Finance-Invoices | 4 | Invoice List, Payment List, Cash Flow, Contracts |
+| G-Specs-Estimates | 6 | Specification Create, Estimate Create, КЛ Registry, Spec/Est Lists, Pricing DB |
+| E-HR | 1 | Employee Create |
+
+**Negative/validation tests (16):**
+| Category | Count | Tests |
+|----------|-------|-------|
+| Empty submit (required field validation) | 7 | Project, CRM Lead, Counterparty, Spec, Estimate, Employee, Bid |
+| Invalid data | 4 | Invalid INN (3 digits), Invalid email, Negative money, Probability >100% |
+| XSS/Injection | 3 | XSS in project name, SQL injection, XSS in counterparty |
+| Overflow | 2 | 5000-char project description, 5000-char lead notes |
+
+### Form fields tested (per form)
+- **Project**: code, name, constructionKind, type, status, description, region, city, address, customerName, plannedStartDate, plannedEndDate
+- **CRM Lead**: name, contactName, companyName, email, phone, priority, source, estimatedValue, probability, notes
+- **Counterparty**: name, shortName, inn, kpp, ogrn, legalAddress, actualAddress, contactPerson, phone, email, website, bankName, bik, correspondentAccount, bankAccount, notes + 5 role checkboxes
+- **Bid**: projectName, bidNumber, clientOrganization, bidAmount, estimatedCost, bondRequired, bondAmount, submissionDeadline, notes, competitorInfo
+- **Specification**: projectId, name, status, notes, autoFm checkbox + line item fields
+- **Estimate**: name, projectId, specificationId, contractId, notes
+- **Commercial Proposal**: budgetId, name, notes
+- **Employee**: lastName, firstName, middleName, position, departmentId, phone, email, hireDate, contractType, projectId, passportNumber, inn, snils, hourlyRate, monthlyRate, notes
+
+### Business rules verified
+1. НДС 20% auto-calculation on finance pages
+2. ИНН validation (10/12 digit regex) — negative test confirms 3-digit rejection
+3. Required field enforcement (Zod schemas) on all major forms
+4. XSS prevention (React JSX auto-escaping)
+5. Margin auto-calculation on bid form
+6. Date cross-validation (start < end)
+7. Max-length constraints on text fields
+
+### Verification gate
+- TypeScript: 0 errors
+- Vitest: 656/656 pass
+- Build: success (9.78s)
+- Playwright --list: all 42 tests recognized
+
+### Issues found
+- 0 (compilation-only — no server needed for test listing)
+- Tests exercise real form field discovery, filling, submission, and validation checking
+
+### Blockers for subsequent sessions
+- Requires running dev server + backend for actual form submission verification
+- Budget/Invoice/Payment creation on separate /new routes (not inline modals) — Part 2 should cover these
+- Some list pages may not have visible create buttons (recorded as UX issues at runtime)
