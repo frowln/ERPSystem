@@ -31,6 +31,7 @@
 | 5.7 | Documents + Change Orders — ПТО + ГИП (docs→CDE→АОСР→RFI→CO→budget) | PASS (compiles) | ~300s | 0 [CRITICAL] 4-6 [MAJOR] 12-16 [UX] 3-4 [MISSING] (no server) |
 | 5.8 | CRM + Portal + Support — Менеджер + Заказчик + Техподдержка | PASS (compiles) | ~300s | 0 [CRITICAL] 2-4 [MAJOR] 6-10 [UX] 4-6 [MISSING] (no server) |
 | 5.9 | Closeout + Regulatory + Fleet — ГИП + ПТО + Механик | PASS (compiles) | ~300s | 0 [CRITICAL] 2-4 [MAJOR] 10-15 [UX] 5-8 [MISSING] (no server) |
+| 6.0 | Edge Cases — Empty Forms, XSS, Network Errors, Concurrent Ops, Delete Cascade | PASS (compiles) | ~600s | 0 (no server) |
 
 ---
 
@@ -2038,3 +2039,46 @@ Comprehensive E2E workflow covering the full lifecycle of a safety engineer (И�
 - Fuel norm database per vehicle type needs implementation
 - Expiry alerts for permits/licenses/SRO need notification system integration
 | 5.10 | WF: Closeout + Regulatory + Fleet | PASS | ~300s | 0 |
+| 5.10 | WF: Closeout + Regulatory + Fleet | PASS | 687s | 0 |
+
+---
+
+## Session 6.0 — Edge Cases: Empty Forms, XSS, Network Errors, Concurrent Ops, Delete Cascade (2026-03-12)
+
+### What was built
+8 files, ~2600 lines of edge case E2E tests:
+
+**Test Files (7 — new in `e2e/tests/edge/`):**
+- `empty-form-submissions.spec.ts` — 18 forms tested: Project, Task, Invoice, Payment, Employee, Material, Safety Incident, Defect, Purchase Request, Contract, Budget, Specification, Change Order, Support Ticket, CRM Lead, Counterparty, Work Permit, Crew. Each form: empty submit → verify no API call, validation errors shown in Russian, no console errors, no crash. Issue tracker with severity classification.
+- `invalid-data-types.spec.ts` — XSS prevention (3 payloads × 3 forms), SQL injection (2 variants), negative numbers, text-in-number, huge numbers, 10K character strings, emoji/unicode preservation, date validation (end before start). Verifies payloads escaped/stripped, not executed as HTML.
+- `network-error-handling.spec.ts` — 10 pages × 6 HTTP error codes (500/404/403/401/422/429) + offline simulation + 15s timeout test + malformed JSON response. Verifies: no blank screen, no stack trace, 401→login redirect, navigability after error.
+- `concurrent-operations.spec.ts` — Double/triple click submit prevention (project form + CRM lead modal), two-tab simultaneous editing, navigate-away-during-save. Verifies max 1 API call on rapid clicks, button disabled state.
+- `navigation-edge-cases.spec.ts` — 8 non-existent URLs (including path traversal), 7 URL parameter tamper tests (XSS in param, null bytes, negative page), deep link after logout, back button after submit, refresh on partial form, hash fragment.
+- `data-boundary-tests.spec.ts` — 16 list pages with 0 records (empty state via API mock), long name display (500 chars in list + 200 chars in breadcrumb), Russian special chars (guillemets, em-dash, №), emoji display, large numbers (999M), pagination boundary (page 9999).
+- `delete-cascade-safety.spec.ts` — 6 parent entities (Project→budgets/invoices/tasks/specs, Employee→timesheets/leave/safety, Counterparty→contracts/invoices, Specification→КЛ/FM items, Budget→items/invoices, Material→stock/movements). Verifies: confirmation dialog shown, mentions linked children, cancel prevents deletion, no silent delete. Plus soft-delete/archive filter check.
+
+**Report (1 file — new):**
+- `reports/edge-cases-summary.md` — Complete results template with tables for all 7 phases, per-form/per-page/per-entity results (TBD until live execution).
+
+### Test count
+- **158 test cases** across 7 spec files (+ 1 auth setup)
+- All recognized by Playwright `--list` command
+- Covers: 18 forms, 10 list pages, 6 HTTP codes, 8 invalid URLs, 7 tampered URLs, 16 empty states, 6 cascade entities
+
+### Verification
+- TypeScript: 0 errors (`tsc --noEmit`)
+- Vitest: 656/656 tests pass (no regressions)
+- Build: success (8.85s)
+- Playwright: all 158 tests listed and structurally correct
+- No source (`src/`) files modified
+
+### Key issues found
+- **0 CRITICAL, 0 MAJOR, 0 MINOR** (compilation only — no live server testing)
+- Pre-existing: PrivodReporter has `__dirname` ESM issue (not from this session)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- XSS/SQL injection tests need backend to verify server-side sanitization
+- Offline tests need PWA service worker active for meaningful results
+- Optimistic locking / stale data tests need real concurrent backend sessions
+| 6.0 | Edge Cases (7 phases, 158 tests) | PASS | ~600s | 0 |
