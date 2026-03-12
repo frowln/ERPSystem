@@ -34,6 +34,8 @@
 | 6.0 | Edge Cases — Empty Forms, XSS, Network Errors, Concurrent Ops, Delete Cascade | PASS (compiles) | ~600s | 0 (no server) |
 | 7.0 | UX Audit — Dark Mode (244 pages), Responsive (90 configs), A11y, Visual Consistency, Timing, Competitor | PASS (compiles) | ~300s | 0 (no server) |
 | 8.0 | Competitive Analysis — 12 Competitors Deep Scan | PASS (research) | ~600s | 8 [MISSING-HIGH] 12 [MISSING-MED] 5 [IMPROVE-HIGH] |
+| 9.0 | Final Comprehensive Report | PASS (analysis) | ~1800s | 12 CRITICAL, 28 MAJOR consolidated |
+| 10.0 | Element Crawler Part 1 — Home → HR (127 pages) | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -2295,3 +2297,116 @@ Comprehensive E2E workflow covering the full lifecycle of a safety engineer (И�
 ### Blockers for subsequent sessions
 - None — this was a research session, no code changes
 - Subsequent sessions can use competitive-matrix.json data for automated comparison testing
+| 7.1 | Competitive: Feature Scraping | PASS | 1007s | 0 |
+| 9.0 | Final Comprehensive Report | PASS | ~1800s | 12 CRITICAL, 28 MAJOR |
+
+---
+
+## Session 9.0 — Final Comprehensive Report (2026-03-12)
+
+### What was produced
+Consolidated ALL results from 46 previous sessions into definitive audit report.
+
+**Files created (3 files):**
+- `audit/final-report.md` — 14-section comprehensive report (~800 lines)
+  - Executive Summary with overall score 7.0/10
+  - Module-by-module scoring (35 modules, A-F grades)
+  - 12 Critical issues with full reproduce steps
+  - 28 Major issues with business impact
+  - Financial chain integrity (165 assertions analyzed)
+  - RBAC security audit (799 tests, 4 violations)
+  - UX assessment by 5 personas (Прораб 5/10, Бухгалтер 6/10, Директор 7/10, Сметчик 7/10, Снабженец 6/10)
+  - Competitive position among 12 competitors
+  - Performance framework (46 benchmarks defined)
+  - i18n & accessibility status
+  - Export & print assessment
+  - Architecture observations
+  - 4-phase prioritized roadmap
+  - Final verdict: MAYBE at 50K₽/month, YES after fixing 12 blockers
+
+- `audit/all-issues.json` — Structured JSON with 28 issues (12 CRITICAL + 16 MAJOR)
+  - Each issue: id, severity, module, title, description, reproduce, expected, actual, foundBy, fixEffort, businessImpact
+
+- `audit/roadmap.md` — Standalone 4-phase roadmap
+  - Phase 1 БЛОКЕРЫ: 8 tasks, 29h, 1 week
+  - Phase 2 КАЧЕСТВО: 13 tasks, 17 days, 2 weeks
+  - Phase 3 КОНКУРЕНЦИЯ: 8 features, 16-18 weeks, 2 months
+  - Phase 4 ЛИДЕРСТВО: 7 features, 28 weeks, 1 quarter
+
+### Key findings consolidated
+- **Overall score: 7.0/10** — Strong foundation, needs focused execution
+- **Verdict: NEEDS WORK** — MVP-ready for 4/9 workflows, production-ready after 12 blocker fixes
+- **Tests: 1,147 written, 656 executed (unit only), 0 E2E executed against live server**
+- **12 CRITICAL issues** (negative stock, overtime, backward transitions, no ЭДО/1C, work costing, portal security)
+- **28 MAJOR issues** (RBAC gaps, validation, photos, templates, approvals)
+- **Unique advantages: 20 features** no competitor has (Spec→КЛ→ФМ→КП chain, weighted КЛ scoring, 3-price FM, portal КС-2 drafts)
+- **Critical gaps: ЭДО, 1C export, photo defects, mobile UX, offline mode**
+- **Recommended price: 9,990-24,990₽/month** (current feature set), scaling to 14,990-34,990₽ after gap closure
+
+### Issues by severity
+- 12 CRITICAL (must fix before any customer demo)
+- 28 MAJOR (must fix before production launch)
+- 3-8 MINOR (RBAC routing gaps)
+- 35-50 UX (non-blocking but degraded experience)
+- 30+ MISSING features (competitive gaps)
+
+### Blockers for subsequent sessions
+- None — this is the final consolidation session
+- All subsequent work should follow roadmap.md phases
+- First priority: execute 1,147 E2E tests against live server to validate all anticipated issues
+| 7.2 | Analysis: Final Report | PASS | 744s | 0 |
+
+---
+
+## Session 10.0 — Element Crawler Part 1 (2026-03-12)
+
+### What was built
+1 comprehensive crawler test file (~500 lines):
+
+**Test file:**
+- `e2e/tests/crawler/elements-part1.crawler.spec.ts` — Element crawler covering 127 pages across 14 navigation groups (Home, Tasks, Calendar, Planning, Processes, Projects, CRM, Documents, Design, ExecDocs, Finance, Pricing, Supply, HR)
+
+**Algorithm per page:**
+1. Navigate to URL, wait for networkidle
+2. Take initial fullPage screenshot → `e2e/screenshots/crawler/`
+3. Find ALL visible interactive elements (buttons, tabs, selects, toggles, content links)
+4. Filter out: sidebar/nav elements, dangerous actions (logout, delete all)
+5. Click EACH element (up to 30 buttons, 15 links, 10 tabs, 10 selects, 10 toggles per page)
+6. After each click, observe: modal opened? navigation? dropdown? JS error? nothing?
+7. Recover state: close modals (Escape), navigate back if URL changed, un-toggle checkboxes
+8. Record every result as structured JSON
+
+**Output artifacts (generated at runtime):**
+- `e2e/reports/crawler-part1-results.json` — per-element JSON results
+- `e2e/reports/crawler-part1-summary.md` — human-readable summary with severity classification
+
+**Coverage:**
+- Group 1 (Home): 3 pages — `/`, `/analytics`, `/reports`
+- Group 2 (Tasks): 1 page — `/tasks`
+- Group 3 (Calendar): 1 page — `/calendar`
+- Group 4 (Planning): 4 pages — gantt, evm, resource-planning, work-volumes
+- Group 5 (Processes): 6 pages — rfis, submittals, issues, workflows, approval-inbox, change-management
+- Group 6 (Projects): 3 pages — projects, site-assessments, portfolio/health
+- Group 7 (CRM): 6 pages — leads, dashboard, counterparties, opportunities, tenders, bid-packages
+- Group 8 (Documents): 20 pages — documents, smart-recognition, CDE, PTO, Russian docs, data exchange, 1C
+- Group 9 (Design): 4 pages — versions, reviews, review board, sections
+- Group 10 (ExecDocs): 5 pages — AOSR, KS-6, incoming control, welding, special journals
+- Group 11 (Finance): 29 pages — budgets, FM, contracts, КП, invoices, payments, cash-flow, accounting, revenue, cost-management, bank, treasury, tax, БДДС, expenses
+- Group 12 (Pricing): 8 pages — specifications, competitive registry, estimates, minstroy, pivot, volume calculator, pricing databases, price coefficients
+- Group 13 (Supply): 27 pages — procurement, purchase orders, warehouse (13 pages), work orders, dispatch
+- Group 14 (HR): 10 pages — employees, staffing, crew, timesheets, T-13, work orders, certification, leave, employment contracts, self-employed
+
+**Total: 127 pages, ~30-75 elements per page = estimated 3,800-9,500 element interactions**
+
+### Verification
+- TypeScript check: 0 errors
+- Vitest: 656/656 tests pass
+- Build: success (9.05s)
+
+### Issues found
+- 0 (test compiles, no server needed to run)
+
+### Blockers for subsequent sessions
+- Part 2 should cover Groups 15-26: Safety, Quality, Fleet, Site/BIM, Closeout, Maintenance, Legal, Portal, Messenger, Mail, Admin
+- Requires running dev server + backend to execute actual crawling
+- Report generation happens automatically in test.afterAll()
