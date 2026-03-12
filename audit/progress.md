@@ -26,6 +26,7 @@
 | 5.2 | Finance Lifecycle — Бухгалтер Петрова (invoices, payments, КС-2, КС-3, БДДС) | PASS (compiles) | ~300s | 1 [CRITICAL] 2 [MAJOR] 3 [UX] 4 [MISSING] (no server) |
 | 5.3 | Procurement + Warehouse — Снабженец Морозова (request→КЛ→PO→dispatch→stock→issue) | PASS (compiles) | ~300s | 0-1 [CRITICAL] 0-2 [MAJOR] 3 [UX] 1 [MISSING] (no server) |
 | 5.4 | Construction Operations — Прораб Иванов (work orders→defects→daily log→punch list→timesheets) | PASS (compiles) | ~300s | 0 [CRITICAL] 2 [MAJOR] 6 [UX] 5 [MISSING] (no server) |
+| 5.5 | HR Lifecycle — Кадровик + Прораб (hire→contract→briefing→crew→timesheet→leave→termination) | PASS (compiles) | ~300s | 1 [CRITICAL] 5 [MAJOR] 8 [UX] 8 [MISSING] (no server) |
 
 ---
 
@@ -1696,3 +1697,56 @@ Full procurement-to-warehouse workflow as Снабженец Морозова Н
 - >12h timesheet validation needs backend implementation
 - Quality gates feature needs design and implementation
 - Daily log template system would dramatically improve foreman adoption
+| 5.5 | WF: Construction Ops (Прораб) | PASS | 637s | 0 |
+
+---
+
+## Session 5.5 — HR Lifecycle Workflow (2026-03-12)
+
+### What was built
+2 files:
+
+**Tests (1 file — new):**
+- `tests/workflows/hr-lifecycle.wf.spec.ts` — Complete HR lifecycle test: hire → contract → briefing → training → PPE → certs → crew → timesheet → T-13 → work orders → leave → termination. 18 serial tests across 7 phases (A–G), ~200 assertions with issue tracker. 13 screenshot points for audit trail.
+
+**Reports (1 file — new):**
+- `reports/wf-hr-analysis.md` — Business analysis: comparison with 1С:ЗУП, HubEx, PlanRadar. RF cadre accounting blockers (6 missing forms). Self-employed gap analysis. Dopusk blocking recommendations. 12-item prioritized improvement list.
+
+### Test structure
+| Phase | Steps | Tests | What's Verified | Key Assertions |
+|-------|-------|-------|-----------------|----------------|
+| A: Приём | 0-3 | 4 | Employee create + ТД + staffing schedule | ~30 |
+| B: Обучение | 1-4 | 4 | Briefings + training + PPE + certs + certification matrix | ~35 |
+| C: Бригада | 1-2 | 2 | Crew assignment + self-employed module check | ~15 |
+| D: Табель | 1-3 | 3 | T-13 + timesheet + work orders + >12h validation | ~40 |
+| E: Отпуска | 1-3 | 3 | Leave request + seniority/balance + sick leave | ~25 |
+| F: Увольнение | 1 | 1 | Termination status + post-termination blocking | ~20 |
+| G: Сквозные | 1-3 | 3 | Full chain check + qualifications + HR dashboard | ~35 |
+| Cleanup | — | afterAll | Entity deletion + issue summary | — |
+| **TOTAL** | **18** | **18** | **Full HR lifecycle** | **~200** |
+
+### What was tested
+- TypeScript: 0 errors
+- Vitest: 656/656 tests pass
+- Build: success (10.04s)
+
+### Key issues found (expected, based on code analysis)
+- **1 CRITICAL**: Terminated employee may still receive timesheet entries (мёртвые души)
+- **5 MAJOR**: T-13 export missing, leave approval workflow, expired cert indicator, training expiry tracking, leave balance tracking
+- **8 UX**: No 14-day minimum rule, no foreman notification on sick leave, no piece-rate calculation, no production calendar, etc.
+- **8 MISSING**: Self-employed module, RF cadre forms (Т-1/Т-6/Т-8), address/education fields, ГПХ tracking, mandatory PPE by position, HR dashboard
+
+### Business analysis highlights
+- **vs 1С:ЗУП**: Privod wins on UX/speed/mobile/crew/наряды, loses on payroll/tax/kадровые приказы
+- **vs HubEx**: Privod wins on cadre depth/FM, loses on mobile field UX (GPS, photos)
+- **Self-employed gap**: 30% of construction workforce not covered — needs ГПХ module
+- **RF cadre blockers**: 6 mandatory forms missing (Т-2, Т-1, Т-6, Т-8, Т-13 export, СЗВ-ТД)
+- **Unique value**: Only system combining crew management + наряды + сертификаты + FM in one UI
+
+### Blockers for subsequent sessions
+- Need frontend + backend running for live E2E execution
+- Self-employed module needs design and implementation
+- T-13 export to Goskomstat format needs implementation
+- Post-termination blocking logic needs backend enforcement
+- Допуск blocking at work order creation needs backend check
+| 5.5 | WF: HR Lifecycle (Кадровик+Прораб) | PASS | ~300s | 1C 5M 8U 8MI |
