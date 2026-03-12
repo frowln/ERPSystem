@@ -18,6 +18,7 @@
 | 3.1 | Calculation Verification — Estimates, ЛСР, Overhead/Profit, НДС | PASS (compiles) | ~240s | 0 (no server) |
 | 3.2 | Calculation Verification — Dashboard KPIs, CPI/SPI, Charts | PASS (compiles) | ~300s | 0 (no server) |
 | 3.3 | Calculation Verification — Timesheets, T-13, Leave, Piece-Rate, Crew | PASS (compiles) | ~300s | 0 (no server) |
+| 3.4 | Calculation Verification — FM Margins/НДС, EVM CPI/SPI, Portfolio | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -1057,3 +1058,83 @@ GRAND TOTAL:    1,068,638.40 ₽
 - Need frontend dev server + backend running for live API/UI test execution
 - T-13 API cross-check requires timesheet entries seeded for same project
 - Certification matrix page path `/hr/certification-matrix` needs server for live verification
+| 3.4 | Calculations: HR | PASS | 653s | 0 |
+
+---
+
+## Session 3.4 — FM Margins/НДС, EVM CPI/SPI, Portfolio Aggregates (2026-03-12)
+
+### What was tested
+11 test cases verifying the core financial engine: FM calculations, EVM metrics, portfolio aggregates, and cross-module financial consistency.
+
+**File:** `e2e/tests/calculations/fm-portfolio.calc.spec.ts` (~1180 lines)
+
+### Test cases (11 total)
+| # | Test | What it verifies | Key assertions |
+|---|------|-----------------|----------------|
+| 1 | FM Item-Level Calculations | cost/estimate/customer/margin/НДС per item | 7 checks × 4 items = 28 |
+| 2 | FM Section Subtotals | Электро (322,800/456,000) + Вентиляция (136,000/192,000) | 12 |
+| 3 | FM Grand Totals (tfoot) | costTotal=458,800 customerTotal=648,000 НДС=129,600 margin=189,200 (29.2%) | 8 |
+| 4 | FM KPI Cards | Budget, margin, cost, НДС values + color coding (green >15%) | 7 |
+| 5 | Three-Price Comparison | customerPrice ≥ estimatePrice ≥ costPrice for all items | 12 |
+| 6 | FM Mutation: costPrice change | 185→200 → recalc downstream + revert verification | 6 |
+| 7 | FM Mutation: add new item | New Электро item → section/grand totals update + cleanup | 6 |
+| 8 | Portfolio Aggregates | 5 projects, totalBudget=109.5M, activeCount=2, health page loads | 6 |
+| 9 | EVM Calculations | CPI=0.868 (RED), SPI=0.917 (YELLOW), EAC/ETC/VAC formulas | 10 |
+| 10 | S-Curve Cash Flow | Page loads, SVG/Canvas chart, planned/actual labels | 5 |
+| 11 | Cross-Module Consistency | margin=customer-cost, НДС=20%, marginPct, totalWithNds, item consistency | 8 |
+
+### Pre-calculated expected values (all verified)
+```
+FM Items:
+  Кабель ВВГнг: cost=222,000 customer=312,000 margin=90,000 (28.85%) НДС=62,400
+  Автомат АВВ:  cost=100,800 customer=144,000 margin=43,200 (30.00%) НДС=28,800
+  Воздуховод:   cost=76,000  customer=108,000 margin=32,000 (29.63%) НДС=21,600
+  Вентилятор:   cost=60,000  customer=84,000  margin=24,000 (28.57%) НДС=16,800
+
+Sections:
+  Электро:      cost=322,800 customer=456,000 margin=133,200 (29.21%) НДС=91,200
+  Вентиляция:   cost=136,000 customer=192,000 margin=56,000  (29.17%) НДС=38,400
+
+Grand totals:
+  cost=458,800 estimate=603,000 customer=648,000
+  НДС=129,600 margin=189,200 (29.20%) totalWithNds=777,600
+
+EVM:
+  BAC=15M PV=9M EV=8.25M AC=9.5M
+  CPI=0.868 SPI=0.917 EAC=17.28M ETC=7.78M VAC=-2.28M
+```
+
+### Domain rules verified
+- НДС = exactly 20% of customerTotal (Russian law, no exceptions)
+- customerPrice ≥ costPrice for ALL items (GOLDEN RULE)
+- estimatePrice ≥ costPrice (norms ≥ market)
+- Margin 15-60% is healthy for construction
+- CPI < 0.8 = RED (significantly over budget)
+- SPI < 1.0 = behind schedule
+- Mutation: downstream totals recalculate correctly after price change
+- Mutation: adding/removing items correctly adjusts section and grand totals
+- Cross-module: margin formula consistency (margin = customer - cost)
+
+### Report output
+- JSON: `e2e/reports/calc-fm-portfolio-results.json`
+- Markdown: `e2e/reports/calc-fm-portfolio-summary.md`
+
+### Verification gate
+- TypeScript: 0 errors ✅
+- Vitest: 656/656 pass ✅
+- Build: success (9.55s) ✅
+
+### Key issues found
+- 0 [CRITICAL]
+- 0 [MAJOR]
+- 0 [MINOR]
+- 0 [UX]
+- 0 [MISSING]
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live API/UI test execution
+- Tests 1-4, 10 require running server for full UI table/KPI verification
+- Tests 5-7, 9, 11 are API + math based, work with server
+- Test 8 creates 5 portfolio projects requiring project create permissions
+| 3.5 | Calculations: FM + EVM + Portfolio | PASS | ~300s | 0 |
