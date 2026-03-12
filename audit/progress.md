@@ -33,6 +33,7 @@
 | 5.9 | Closeout + Regulatory + Fleet — ГИП + ПТО + Механик | PASS (compiles) | ~300s | 0 [CRITICAL] 2-4 [MAJOR] 10-15 [UX] 5-8 [MISSING] (no server) |
 | 6.0 | Edge Cases — Empty Forms, XSS, Network Errors, Concurrent Ops, Delete Cascade | PASS (compiles) | ~600s | 0 (no server) |
 | 7.0 | UX Audit — Dark Mode (244 pages), Responsive (90 configs), A11y, Visual Consistency, Timing, Competitor | PASS (compiles) | ~300s | 0 (no server) |
+| 8.0 | Competitive Analysis — 12 Competitors Deep Scan | PASS (research) | ~600s | 8 [MISSING-HIGH] 12 [MISSING-MED] 5 [IMPROVE-HIGH] |
 
 ---
 
@@ -2230,3 +2231,67 @@ Comprehensive E2E workflow covering the full lifecycle of a safety engineer (И�
 - Bundle analysis requires Vite production build for accurate transfer sizes
 - API response times depend on backend load and database size
 - Stress tests create/delete 100+ entities via API — requires healthy backend
+| 6.3 | Performance + Large Data | PASS | 555s | 0 |
+
+---
+
+## Session 8.0 — Competitive Analysis: 12 Competitors Deep Scan (2026-03-12)
+
+### What was researched
+12 competitors analyzed across 30 feature categories, compared against our 244 navigation items:
+
+**Russian competitors (8):**
+1. 1С:УСО 2 — deepest estimates/accounting, terrible UX, 779K+ ₽ license
+2. Битрикс24 — best CRM, free tier, 1000+ marketplace, zero construction specifics
+3. PlanRadar — best defect management, mobile-first, full offline, BIM IFC viewer
+4. Мегаплан — simple PM + CRM, affordable (329 ₽/user), on-premise option
+5. Планфикс — flexible no-code platform, AI agents (2025), 400+ integrations
+6. HubEx — best field service mobile, GPS tracking, QR asset passports, 1C bidirectional
+7. СБИС/Saby — EDO market leader (50%+ of Russian companies), КС-2/КС-3 generation
+8. Контур/Diadoc — #1 EDO operator, tender search intelligence, NOT a construction platform
+
+**International competitors (4):**
+9. Procore — #1 global, unlimited users, AI Helix, 500+ integrations, $10-60K/yr
+10. Autodesk Build — best BIM, clash detection, ISO 19650 CDE, per-seat expensive
+11. Oracle Primavera P6 — gold standard scheduling, EVM, CPM, Monte Carlo, enterprise-only
+12. Buildertrend — best residential portal, flat pricing, CRM, warranty module
+
+### Output files
+- `frontend/e2e/reports/competitive-analysis.md` — full analysis report (~1100 lines)
+- `frontend/e2e/reports/competitive-matrix.json` — structured comparison data (350+ lines)
+
+### Key findings
+
+**PRIVOD unique features (20 USPs no competitor matches):**
+1. Full pre-construction chain: Спец → КЛ → ФМ ← ЛСР → КП → Договор
+2. КЛ with weighted scoring + auto-ranking
+3. ФМ with 3 prices (costPrice + estimatePrice + customerPrice)
+4. Trading coefficient (торговый коэффициент)
+5. M-29 + Limit-fence cards
+6. Prescriptions journal, SRO management, SOUT, Certification matrix
+7. Self-employed contractor management (422-ФЗ)
+8. Contractor portal with КС-2 and Russian acts
+9. Portfolio health 7-dim RAG matrix
+10. And 10 more (see competitive-analysis.md for full list)
+
+**Gaps found by severity:**
+- 8 [MISSING-HIGH]: ЭДО integration, 1C connector, AI agents, pin-on-plan defects, full offline, QR passports, BIM clash, tender search
+- 12 [MISSING-MEDIUM]: telephony, voice capture, schedule import, geofenced clock, auto-dispatcher, subcontractor network, etc.
+- 7 [MISSING-LOW]: email marketing, gamification, video surveillance, etc.
+- 5 [IMPROVE-HIGH]: defect management UX (vs PlanRadar), mobile experience, CRM depth (vs Б24), 1C integration, marketplace
+- 7 [IMPROVE-MEDIUM]: document management, daily logs, change orders, scheduling, portal UX, reporting, BIM viewer
+
+**Recommended roadmap:**
+- P0 (Critical): ЭДО + 1C integration (7 weeks)
+- P1 (High): Pin-on-plan defects, AI agents, full offline (8 weeks)
+- P2 (Medium): QR passports, geofenced clock, voice capture, schedule import, portal branding (6 weeks)
+- P3 (Nice-to-have): marketplace, BIM clash, tender search, CPM scheduling, video conferencing
+
+**Pricing recommendation:**
+- Starter: 4,990 ₽/month (10 users)
+- Professional: 14,990 ₽/month (50 users)
+- Enterprise: 29,990 ₽/month (unlimited users)
+
+### Blockers for subsequent sessions
+- None — this was a research session, no code changes
+- Subsequent sessions can use competitive-matrix.json data for automated comparison testing

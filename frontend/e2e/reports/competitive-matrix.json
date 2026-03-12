@@ -1,0 +1,341 @@
+{
+  "metadata": {
+    "date": "2026-03-12",
+    "method": "Web research (official sites, reviews, pricing pages, API docs)",
+    "competitors_count": 12,
+    "feature_categories_count": 30,
+    "privod_nav_items": 244
+  },
+  "competitors": [
+    {
+      "id": "1c_uso",
+      "name": "1С:Управление строительной организацией 2",
+      "shortName": "1С:УСО",
+      "website": "https://solutions.1c.ru/catalog/uso2",
+      "country": "Russia",
+      "targetMarket": ["medium", "enterprise"],
+      "pricing": {
+        "model": "perpetual_license",
+        "baseLicense": 779800,
+        "perSeat": 8500,
+        "annualMaintenance": 68400,
+        "currency": "RUB",
+        "implementation": "6-24 months, 3-15M RUB"
+      },
+      "strengths": ["deepest_estimates", "ks2_ks3_native", "bim_5d_renga", "full_accounting", "fleet", "hr_payroll", "partner_network"],
+      "weaknesses": ["terrible_ux", "slow_implementation", "no_mobile", "no_client_portal", "no_quality_module", "high_tco"]
+    },
+    {
+      "id": "bitrix24",
+      "name": "Битрикс24",
+      "shortName": "Б24",
+      "website": "https://www.bitrix24.ru",
+      "country": "Russia",
+      "targetMarket": ["small", "medium"],
+      "pricing": {
+        "model": "per_company_monthly",
+        "free": true,
+        "tiers": [
+          {"name": "Free", "price": 0, "users": "unlimited", "limits": "5GB, 100 tasks"},
+          {"name": "Базовый", "price": 2490, "users": 5},
+          {"name": "Стандартный", "price": 6990, "users": 50},
+          {"name": "Профессиональный", "price": 13990, "users": 100}
+        ],
+        "currency": "RUB"
+      },
+      "strengths": ["best_crm", "fast_deployment", "free_tier", "good_mobile", "marketplace_1000", "telephony", "ai_2025"],
+      "weaknesses": ["zero_construction", "weak_reporting", "cluttered_ui", "no_accounting", "no_bim", "no_safety"]
+    },
+    {
+      "id": "planradar",
+      "name": "PlanRadar",
+      "shortName": "PlanRadar",
+      "website": "https://www.planradar.com",
+      "country": "Austria",
+      "targetMarket": ["small", "medium", "enterprise"],
+      "pricing": {
+        "model": "per_user_monthly",
+        "tiers": [
+          {"name": "Basic", "price": 35, "currency": "USD"},
+          {"name": "Starter", "price": 119, "currency": "USD"},
+          {"name": "Pro", "price": 179, "currency": "USD"}
+        ],
+        "freeTrial": "30 days"
+      },
+      "strengths": ["best_defect_mgmt", "mobile_first", "full_offline", "bim_ifc", "easy_deployment", "200_integrations"],
+      "weaknesses": ["no_finance", "no_crm", "no_procurement", "no_hr", "no_russian_docs"]
+    },
+    {
+      "id": "megaplan",
+      "name": "Мегаплан",
+      "shortName": "Мегаплан",
+      "website": "https://megaplan.ru",
+      "country": "Russia",
+      "targetMarket": ["small", "medium"],
+      "pricing": {
+        "model": "per_user_monthly",
+        "startingPrice": 329,
+        "currency": "RUB",
+        "onPremise": true
+      },
+      "strengths": ["1c_integration", "russian_compliance", "on_premise", "affordable", "balanced_crm_pm"],
+      "weaknesses": ["zero_construction", "limited_mobile", "dated_ui", "slow_support", "few_integrations"]
+    },
+    {
+      "id": "planfix",
+      "name": "Планфикс",
+      "shortName": "Планфикс",
+      "website": "https://planfix.ru",
+      "country": "Russia",
+      "targetMarket": ["small", "medium"],
+      "pricing": {
+        "model": "per_user_monthly",
+        "tiers": [
+          {"name": "Free", "price": 0, "users": 5},
+          {"name": "Paid", "priceRange": "2-7 EUR/user/month"}
+        ],
+        "currency": "EUR"
+      },
+      "strengths": ["extreme_flexibility", "no_code_builder", "ai_agents", "400_integrations", "document_generation"],
+      "weaknesses": ["high_learning_curve", "no_construction_modules", "crm_less_polished", "mobile_maturing", "eur_pricing"]
+    },
+    {
+      "id": "hubex",
+      "name": "HubEx",
+      "shortName": "HubEx",
+      "website": "https://hubex.ru",
+      "country": "Russia",
+      "targetMarket": ["small", "medium", "enterprise"],
+      "pricing": {
+        "model": "per_company_monthly",
+        "tiers": [
+          {"name": "Minimum", "price": 6500, "licenses": 5},
+          {"name": "Professional", "price": 13000},
+          {"name": "Corporation", "price": 34000}
+        ],
+        "currency": "RUB",
+        "minLicenses": 10
+      },
+      "strengths": ["best_field_mobile", "gps_tracking", "qr_asset_passports", "auto_dispatcher", "1c_bidirectional", "offline_2000_items", "russian_software_registry"],
+      "weaknesses": ["not_full_erp", "min_10_licenses", "limited_analytics", "no_gantt", "no_crm"]
+    },
+    {
+      "id": "sbis",
+      "name": "СБИС / Saby (Тензор)",
+      "shortName": "СБИС",
+      "website": "https://saby.ru",
+      "country": "Russia",
+      "targetMarket": ["small", "medium", "enterprise"],
+      "pricing": {
+        "model": "modular",
+        "modules": {
+          "edo": 3000,
+          "accounting": "3000-6000",
+          "hr": 15000,
+          "crm": 10000,
+          "warehouse": 3500,
+          "procurement": 3500
+        },
+        "currency": "RUB",
+        "period": "year"
+      },
+      "strengths": ["edo_market_leader", "all_in_one", "regulatory_compliance", "competitive_pricing", "1c_integration", "ks2_ks3", "gosedo", "tender_search"],
+      "weaknesses": ["steep_learning_curve", "not_deep_construction", "no_bim", "no_defects", "no_safety", "no_portal"]
+    },
+    {
+      "id": "kontur",
+      "name": "Контур / Diadoc (SKB Kontur)",
+      "shortName": "Контур",
+      "website": "https://kontur.ru",
+      "country": "Russia",
+      "targetMarket": ["small", "medium", "enterprise"],
+      "pricing": {
+        "model": "modular",
+        "modules": {
+          "diadoc_edo": 2950,
+          "kep_signature": 6000,
+          "extern_reporting": 2400,
+          "zakupki_tenders": 10900
+        },
+        "currency": "RUB",
+        "period": "year"
+      },
+      "strengths": ["edo_number_one", "ks2_ks3_transmission", "gosedo", "procurement_intelligence", "deep_integrations", "free_incoming"],
+      "weaknesses": ["not_construction_platform", "only_transmits_not_generates", "fragmented_products", "no_pm", "no_field_tools"]
+    },
+    {
+      "id": "procore",
+      "name": "Procore",
+      "shortName": "Procore",
+      "website": "https://www.procore.com",
+      "country": "USA",
+      "targetMarket": ["medium", "enterprise"],
+      "pricing": {
+        "model": "acv_based",
+        "unlimitedUsers": true,
+        "annualRange": "$10,000-$60,000+",
+        "acvRate": "0.1-0.2%",
+        "currency": "USD"
+      },
+      "strengths": ["unlimited_users", "best_financials", "ai_helix", "500_integrations", "best_support", "best_docs", "change_orders", "resource_management"],
+      "weaknesses": ["opaque_expensive", "steep_learning", "no_estimating", "no_russian_compliance", "annual_increases"]
+    },
+    {
+      "id": "autodesk_build",
+      "name": "Autodesk Build (ACC)",
+      "shortName": "Autodesk",
+      "website": "https://construction.autodesk.com",
+      "country": "USA",
+      "targetMarket": ["medium", "enterprise"],
+      "pricing": {
+        "model": "per_seat_annual",
+        "perUser": "$500-800/year",
+        "currency": "USD"
+      },
+      "strengths": ["best_bim", "clash_detection", "iso_19650_cde", "400_integrations", "forma_generative", "design_to_build", "handover_tool"],
+      "weaknesses": ["expensive_at_scale", "weak_scheduling", "bim_performance", "no_hr", "no_warehouse", "steep_learning", "no_russian"]
+    },
+    {
+      "id": "primavera",
+      "name": "Oracle Primavera P6",
+      "shortName": "Primavera",
+      "website": "https://www.oracle.com/construction-engineering/primavera-p6/",
+      "country": "USA",
+      "targetMarket": ["enterprise"],
+      "pricing": {
+        "model": "per_seat",
+        "perpetual": "$3,500/user + 22% maintenance",
+        "cloud": "$1,300-2,000/user/year",
+        "currency": "USD"
+      },
+      "strengths": ["gold_standard_scheduling", "best_evm", "cpm_float", "resource_leveling", "monte_carlo", "s_curves", "government_compliance"],
+      "weaknesses": ["steep_learning", "dated_ui", "not_full_erp", "limited_mobile", "overkill_for_smb", "no_docs_mgmt", "no_russian"]
+    },
+    {
+      "id": "buildertrend",
+      "name": "Buildertrend",
+      "shortName": "Buildertrend",
+      "website": "https://buildertrend.com",
+      "country": "USA",
+      "targetMarket": ["small", "medium"],
+      "pricing": {
+        "model": "flat_monthly",
+        "unlimitedUsers": true,
+        "tiers": [
+          {"name": "Essential", "price": 499},
+          {"name": "Advanced", "price": 499},
+          {"name": "Complete", "price": 1099}
+        ],
+        "currency": "USD"
+      },
+      "strengths": ["all_in_one_residential", "unlimited_users", "best_client_portal_residential", "built_in_crm", "quickbooks_sync", "selections_workflow", "warranty_module", "ai_summary", "geofenced_clock"],
+      "weaknesses": ["residential_only", "no_cpm", "no_evm", "no_bim", "basic_estimating", "no_free_plan", "no_russian"]
+    }
+  ],
+  "missing": {
+    "high": [
+      {"id": "edo_integration", "name": "ЭДО integration (Диадок/СБИС)", "competitors": ["sbis", "kontur", "1c_uso"], "effort": "L", "impact": "CRITICAL"},
+      {"id": "1c_deep_integration", "name": "Deep 1C connector (bidirectional sync)", "competitors": ["1c_uso", "bitrix24", "megaplan", "sbis", "hubex"], "effort": "L", "impact": "CRITICAL"},
+      {"id": "ai_agents", "name": "AI agents for workflow automation", "competitors": ["procore", "planfix", "bitrix24", "buildertrend"], "effort": "M", "impact": "HIGH"},
+      {"id": "pin_on_plan_defects", "name": "Pin-on-plan defect placement", "competitors": ["planradar", "autodesk_build", "procore"], "effort": "M", "impact": "HIGH"},
+      {"id": "full_offline", "name": "Full offline mode for ALL features", "competitors": ["planradar", "hubex", "procore"], "effort": "L", "impact": "HIGH"},
+      {"id": "qr_asset_passports", "name": "QR-code asset/equipment passports", "competitors": ["hubex"], "effort": "S", "impact": "MEDIUM-HIGH"},
+      {"id": "bim_clash_detection", "name": "BIM clash detection", "competitors": ["autodesk_build"], "effort": "L", "impact": "MEDIUM"},
+      {"id": "tender_search", "name": "Tender/procurement search aggregation", "competitors": ["sbis", "kontur"], "effort": "M", "impact": "MEDIUM"}
+    ],
+    "medium": [
+      {"id": "ip_telephony", "name": "Built-in IP telephony + video conferencing", "competitors": ["bitrix24", "megaplan"]},
+      {"id": "voice_recording", "name": "Voice recording on tickets/defects", "competitors": ["planradar"]},
+      {"id": "schedule_import", "name": "Scheduling import from P6/MSP", "competitors": ["planradar"]},
+      {"id": "geofenced_clock", "name": "Geofenced time clock", "competitors": ["buildertrend", "hubex"]},
+      {"id": "auto_dispatcher", "name": "Auto-dispatcher (skills/location/load)", "competitors": ["hubex"]},
+      {"id": "subcontractor_network", "name": "Subcontractor discovery database", "competitors": ["procore"]},
+      {"id": "competitor_bid_analysis", "name": "Competitor bid analysis from tenders", "competitors": ["kontur"]},
+      {"id": "digital_handover_lifecycle", "name": "Digital handover with living asset log", "competitors": ["planradar"]},
+      {"id": "selections_workflow", "name": "Client selections workflow", "competitors": ["buildertrend"]},
+      {"id": "warranty_claims", "name": "Warranty/post-handover claim management", "competitors": ["buildertrend"]},
+      {"id": "counterparty_due_diligence", "name": "Counterparty due diligence", "competitors": ["kontur"]},
+      {"id": "on_premise", "name": "On-premise deployment option", "competitors": ["megaplan", "bitrix24", "1c_uso"]}
+    ],
+    "low": [
+      {"id": "email_marketing", "name": "Email marketing automation", "competitors": ["bitrix24", "buildertrend"]},
+      {"id": "gamification", "name": "Gamification in corporate social network", "competitors": ["sbis"]},
+      {"id": "video_surveillance", "name": "Video surveillance integration", "competitors": ["sbis"]},
+      {"id": "speech_analytics", "name": "Speech analytics on CRM calls", "competitors": ["planfix"]},
+      {"id": "lien_waivers", "name": "Lien waiver automation", "competitors": ["procore"]},
+      {"id": "generative_design", "name": "Generative site planning (AI)", "competitors": ["autodesk_build"]},
+      {"id": "real_estate_mgmt", "name": "Real estate management", "competitors": ["1c_uso"]}
+    ]
+  },
+  "improve": {
+    "high": [
+      {"id": "defect_mgmt_ux", "feature": "Defect management", "bestCompetitor": "planradar", "gap": "Add plan overlay, voice capture, auto-statistics"},
+      {"id": "mobile_ux", "feature": "Mobile experience", "bestCompetitor": "planradar", "gap": "Purpose-built mobile-first with large tap targets, full offline"},
+      {"id": "crm_depth", "feature": "CRM / lead management", "bestCompetitor": "bitrix24", "gap": "Visual funnels, telephony, AI predictions"},
+      {"id": "1c_integration_depth", "feature": "1C integration", "bestCompetitor": "1c_uso", "gap": "Bidirectional accounting, HR, materials sync"},
+      {"id": "marketplace", "feature": "Integration marketplace", "bestCompetitor": "procore", "gap": "No marketplace, no partner ecosystem"}
+    ],
+    "medium": [
+      {"id": "document_mgmt", "feature": "Document management", "bestCompetitor": "procore", "gap": "OCR drawing split, auto revision, ISO 19650"},
+      {"id": "daily_logs_ux", "feature": "Daily logs", "bestCompetitor": "procore", "gap": "One-click PDF, digital signature on mobile, weather auto-fill"},
+      {"id": "change_orders", "feature": "Change order management", "bestCompetitor": "procore", "gap": "Full CE→PCO→CO workflow with real-time financial impact"},
+      {"id": "scheduling_depth", "feature": "Scheduling / Gantt", "bestCompetitor": "primavera", "gap": "No critical path, no resource leveling, no float"},
+      {"id": "portal_ux", "feature": "Client portal UX", "bestCompetitor": "buildertrend", "gap": "Branded customization, online payments, photo timeline"},
+      {"id": "reporting", "feature": "Reporting", "bestCompetitor": "procore", "gap": "Custom report builder, scheduled email delivery"},
+      {"id": "bim_viewer_depth", "feature": "BIM viewer", "bestCompetitor": "autodesk_build", "gap": "No clash detection, no Navisworks native"}
+    ],
+    "low": [
+      {"id": "onboarding", "feature": "Onboarding flow", "bestCompetitor": "procore", "gap": "Role-specific onboarding, guided tours"},
+      {"id": "empty_states", "feature": "Empty states", "bestCompetitor": "buildertrend", "gap": "Contextual next-step guidance"},
+      {"id": "ai_assistant_ux", "feature": "AI assistant UX", "bestCompetitor": "procore", "gap": "Contextual AI, voice input, multilingual"}
+    ]
+  },
+  "roadmap": [
+    {"priority": "P0", "feature": "ЭДО integration (Диадок/СБИС API)", "effort": "L", "impact": "CRITICAL", "competitors": ["sbis", "kontur", "1c_uso"]},
+    {"priority": "P0", "feature": "Deep 1C connector (bidirectional sync)", "effort": "L", "impact": "CRITICAL", "competitors": ["1c_uso", "bitrix24", "megaplan", "sbis", "hubex"]},
+    {"priority": "P1", "feature": "Pin-on-plan defect placement", "effort": "M", "impact": "HIGH", "competitors": ["planradar", "autodesk_build", "procore"]},
+    {"priority": "P1", "feature": "AI agents (daily log, photo analysis)", "effort": "M", "impact": "HIGH", "competitors": ["procore", "planfix", "bitrix24"]},
+    {"priority": "P1", "feature": "Full offline mode for field features", "effort": "L", "impact": "HIGH", "competitors": ["planradar", "hubex", "procore"]},
+    {"priority": "P2", "feature": "QR-code equipment passports", "effort": "S", "impact": "MEDIUM", "competitors": ["hubex"]},
+    {"priority": "P2", "feature": "Geofenced time clock", "effort": "S", "impact": "MEDIUM", "competitors": ["buildertrend", "hubex"]},
+    {"priority": "P2", "feature": "Voice capture on defects/logs", "effort": "S", "impact": "MEDIUM", "competitors": ["planradar", "procore"]},
+    {"priority": "P2", "feature": "Scheduling import (P6/MSP)", "effort": "M", "impact": "MEDIUM", "competitors": ["planradar"]},
+    {"priority": "P2", "feature": "Client portal branding", "effort": "S", "impact": "MEDIUM", "competitors": ["buildertrend", "procore"]},
+    {"priority": "P3", "feature": "Integration marketplace", "effort": "L", "impact": "MEDIUM", "competitors": ["procore", "bitrix24"]},
+    {"priority": "P3", "feature": "BIM clash detection", "effort": "L", "impact": "MEDIUM", "competitors": ["autodesk_build"]},
+    {"priority": "P3", "feature": "Tender search aggregation", "effort": "M", "impact": "MEDIUM", "competitors": ["sbis", "kontur"]},
+    {"priority": "P3", "feature": "Resource leveling + CPM scheduling", "effort": "L", "impact": "LOW-MEDIUM", "competitors": ["primavera", "procore"]},
+    {"priority": "P3", "feature": "Built-in video conferencing", "effort": "L", "impact": "LOW", "competitors": ["bitrix24", "megaplan"]}
+  ],
+  "usps": [
+    "Full pre-construction chain: Spec → КЛ → ФМ ← ЛСР → КП → Contract",
+    "КЛ with weighted scoring + auto-ranking (no competitor has this)",
+    "ФМ with 3 prices: costPrice + estimatePrice + customerPrice (real-time margin)",
+    "Trading coefficient (торговый коэффициент) for works pricing",
+    "M-29 report + Limit-fence cards (лимитно-заборные карты)",
+    "Prescriptions journal (журнал предписаний)",
+    "SRO management module",
+    "SOUT (СОУТ) special assessment",
+    "Certification matrix for construction worker qualifications",
+    "Self-employed contractor management (422-ФЗ)",
+    "Factoring calculator",
+    "ЗОС (завершение объекта строительства)",
+    "PTO documents (АОСР, КС-6, ИТД, скрытые работы)",
+    "Contractor portal with КС-2 and Russian acts",
+    "Portfolio health 7-dim RAG matrix",
+    "T-13 timesheet format",
+    "Crew management as standalone module",
+    "Staffing schedule (штатное расписание)",
+    "НДС as violet KPI (domain-specific color coding)",
+    "Waybills (путевые листы) with ESM format"
+  ],
+  "pricing_recommendation": {
+    "position": "mid-range premium (best value per feature)",
+    "tiers": [
+      {"name": "Starter", "price": 4990, "currency": "RUB", "period": "month", "users": 10, "features": "Core modules"},
+      {"name": "Professional", "price": 14990, "currency": "RUB", "period": "month", "users": 50, "features": "All modules"},
+      {"name": "Enterprise", "price": 29990, "currency": "RUB", "period": "month", "users": "unlimited", "features": "Everything + AI + BIM + API + priority support"}
+    ],
+    "freeTrial": "30 days, full Professional tier"
+  }
+}
