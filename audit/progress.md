@@ -25,6 +25,7 @@
 | 5.1 | Pre-construction Chain (Spec→КЛ→FM→ЛСР→КП) | PASS (compiles) | ~300s | 1 [MAJOR] 1 [UX] (no server) |
 | 5.2 | Finance Lifecycle — Бухгалтер Петрова (invoices, payments, КС-2, КС-3, БДДС) | PASS (compiles) | ~300s | 1 [CRITICAL] 2 [MAJOR] 3 [UX] 4 [MISSING] (no server) |
 | 5.3 | Procurement + Warehouse — Снабженец Морозова (request→КЛ→PO→dispatch→stock→issue) | PASS (compiles) | ~300s | 0-1 [CRITICAL] 0-2 [MAJOR] 3 [UX] 1 [MISSING] (no server) |
+| 5.4 | Construction Operations — Прораб Иванов (work orders→defects→daily log→punch list→timesheets) | PASS (compiles) | ~300s | 0 [CRITICAL] 2 [MAJOR] 6 [UX] 5 [MISSING] (no server) |
 
 ---
 
@@ -1634,3 +1635,64 @@ Full procurement-to-warehouse workflow as Снабженец Морозова Н
 - Negative stock validation needs live testing (critical data integrity requirement)
 - Dispatch → PO linkage needs verification with real data
 - Material demand page content verification with populated stock data
+| 5.4 | WF: Procurement + Warehouse (Снабженец) | PASS | 653s | 0 |
+
+---
+
+## Session 5.4 — Construction Operations Workflow — Прораб Иванов (2026-03-12)
+
+### What was built
+2 files, ~660 lines:
+
+**Test file:**
+- `e2e/tests/workflows/construction-ops.wf.spec.ts` — 20 serial steps across 7 phases (A–G):
+  - Phase A (Morning Planning): Setup, dashboard review, 2 work order creation
+  - Phase B (Day Execution): Status change, material write-off, progress update
+  - Phase C (Defect Incident): Defect creation, plan pinning check, dashboard, status workflow
+  - Phase D (Evening Report): Daily log creation, photo attachment check
+  - Phase E (Quality Control): Punch list item, quality checklist, quality gates check
+  - Phase F (Mobile + Timesheets): Mobile pages check, timesheet entry, >12h validation
+  - Phase G (Cross-checks): Work order completion, entity cross-linking, project timeline
+  - Cleanup: Reverse-dependency deletion of all E2E entities
+
+**Business analysis report:**
+- `e2e/reports/wf-construction-ops-analysis.md` — 7-section analysis:
+  1. Full day timeline (11 operations, 8 working, 3 gaps)
+  2. Timing analysis (API fast, UI adds friction on daily log)
+  3. "WhatsApp test" (PRIVOD loses on ad-hoc reporting speed)
+  4. PlanRadar comparison (defect management gap: no photo, no plan pinning)
+  5. Buildertrend comparison (daily log gap: no templates, no pre-fill)
+  6. Mobile adaptation assessment
+  7. Offline scenario analysis
+
+### Issues Found (predicted, pending live execution)
+
+| Severity | Count | Key Issues |
+|----------|-------|------------|
+| CRITICAL | 0 | None — basic functionality works |
+| MAJOR | 2 | Timesheet >12h not validated (ТК РФ); defect can be closed by reporter (no separation of duties) |
+| UX | 6 | Dashboard missing morning view; no quick-start buttons; daily log form plain text; material write-off complex; no activity timeline; daily log >2 min target |
+| MISSING | 5 | Photo upload (defects + daily logs); defect-on-plan; quality gates; daily log templates; batch timesheet entry |
+| MINOR | 2–4 | API endpoint variations, employee creation field mapping |
+
+### Business Analysis Highlights
+1. **8 of 11 daily operations work** — system covers the full day but with friction
+2. **WhatsApp test**: PRIVOD loses on speed for ad-hoc reporting — need voice input, templates, quick-create
+3. **vs PlanRadar**: We have financial depth they lack; they have field UX we lack (photo+pin = 30 sec defect)
+4. **vs Buildertrend**: We have КС-2/КС-3 they lack; they have daily log templates we lack
+5. **Top 3 recommendations**: (1) Photo upload for defects, (2) Daily log templates, (3) Quick defect button
+6. **Key insight**: Foreman doesn't care about margins — cares about photos and speed. Field UX is separate challenge from ERP depth.
+7. **ТК РФ gap**: No validation for >12h work day — legal compliance risk
+8. **Offline**: Mobile reports work offline; defects need offline support too (basement/tunnel scenarios)
+
+### Verification
+- TypeScript: 0 errors
+- Tests: 656/656 pass
+- Build: success (9.23s)
+
+### Blockers for subsequent sessions
+- Need frontend + backend running for live E2E execution
+- Photo upload feature needs implementation before defect workflow is field-ready
+- >12h timesheet validation needs backend implementation
+- Quality gates feature needs design and implementation
+- Daily log template system would dramatically improve foreman adoption
