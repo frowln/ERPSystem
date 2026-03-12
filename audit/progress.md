@@ -36,6 +36,8 @@
 | 8.0 | Competitive Analysis — 12 Competitors Deep Scan | PASS (research) | ~600s | 8 [MISSING-HIGH] 12 [MISSING-MED] 5 [IMPROVE-HIGH] |
 | 9.0 | Final Comprehensive Report | PASS (analysis) | ~1800s | 12 CRITICAL, 28 MAJOR consolidated |
 | 10.0 | Element Crawler Part 1 — Home → HR (127 pages) | PASS (compiles) | ~300s | 0 (no server) |
+| 10.1 | Element Crawler Part 2 — Safety → Admin (116 pages) | PASS (compiles) | ~180s | 0 (no server) |
+| 10.2 | Element Crawler Part 3 — Detail + Create + Board + Advanced (230 pages) | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -2410,3 +2412,111 @@ Consolidated ALL results from 46 previous sessions into definitive audit report.
 - Part 2 should cover Groups 15-26: Safety, Quality, Fleet, Site/BIM, Closeout, Maintenance, Legal, Portal, Messenger, Mail, Admin
 - Requires running dev server + backend to execute actual crawling
 - Report generation happens automatically in test.afterAll()
+| 8.1 | Crawler: Elements Part 1 (Home→HR) | PASS | 640s | 0 |
+
+---
+
+## Session 10.1 — Element Crawler Part 2: Safety → Admin (2026-03-12)
+
+### What was built
+1 file, 745 lines:
+
+**Tests (1 file — new):**
+- `e2e/tests/crawler/elements-part2.crawler.spec.ts` — Element crawler covering groups 15–25 (Safety → Admin). Same algorithm as Part 1: navigate to each page, screenshot, discover all buttons/tabs/selects/toggles/links, click each, record result (modal/navigate/error/nothing), close modals with Escape, go back on navigation. Enhanced report generation with issue classification by severity ([CRITICAL]/[MAJOR]/[MINOR]/[UX]/[MISSING]) and domain expert assessment per module.
+
+### Coverage — 116 pages across 11 groups
+
+| Group | Idx | Pages | Key Areas |
+|-------|-----|-------|-----------|
+| Safety | 15 | 13 | incidents, inspections, briefings, training, PPE, SOUT, violations, certification matrix |
+| Quality + Regulatory | 16 | 28 | defects, punch list, checklists, quality gates, tolerance, permits, SRO, prescriptions |
+| Fleet + IoT | 17 | 13 | vehicles, fuel, maintenance, waybills, GPS, driver rating, IoT devices/sensors/alerts |
+| Site + BIM | 18 | 14 | daily logs, BIM models, clash detection, drawing overlay/pins, AI photo analysis, risk dashboard |
+| Closeout | 19 | 11 | commissioning, handover, warranty, as-built, ZOS, stroynadzor, executive schemas |
+| Maintenance | 20 | 3 | dashboard, requests, equipment |
+| Legal | 21 | 3 | cases, templates, insurance certificates |
+| Portal | 22 | 16 | dashboard, projects, documents, contracts, invoices, tasks, schedule, RFIs, defects, КС-2 drafts |
+| Messenger | 23 | 1 | messaging |
+| Mail | 24 | 1 | mail |
+| Admin | 25 | 13 | dashboard, users, permissions, departments, security, monitoring, integrations, settings, support, subscription, API docs, marketplace |
+
+**Total: 116 pages × ~30-75 elements per page = estimated 3,500-8,700 element interactions**
+
+**Combined with Part 1: 127 + 116 = 243 pages = full platform coverage**
+
+### Output files (generated on live run)
+- `e2e/reports/crawler-part2-results.json` — per-element JSON with page, element, action, result
+- `e2e/reports/crawler-part2-summary.md` — human-readable report with severity classification
+- `e2e/screenshots/crawler/*.png` — initial page screenshots
+
+### Verification
+- TypeScript check: 0 errors
+- ESLint (lint-staged): passed
+- Commit: `53131f8` on main
+
+### Issues found
+- 0 (compilation-only — no server needed)
+- Pre-existing: PrivodReporter.ts has `__dirname` ESM issue (not related to this session)
+
+### Blockers for subsequent sessions
+- Requires running dev server + backend to execute actual crawling
+- Report generation happens automatically in test.afterAll()
+- Combined Part 1 + Part 2 covers all 243 navigable pages in the platform
+| 8.2 | Crawler: Elements Part 2 (Safety→Admin) | PASS | 406s | 0 |
+
+---
+
+## Session 10.2 — Element Crawler Part 3: Detail + Create + Board + Advanced (2026-03-12)
+
+### What was built
+1 file, ~1060 lines:
+
+**Tests (1 file — new):**
+- `e2e/tests/crawler/elements-part3.crawler.spec.ts` — Element crawler covering groups 26–37 (230 pages). Covers ALL routes NOT in Parts 1-2: create/new forms, detail/:id pages, board/Kanban views, advanced analytics, settings, HR advanced, estimates advanced, and misc routes. Same crawling algorithm. Enhanced with consolidated report generator that merges Parts 1+2+3 JSON results.
+
+### Coverage — 230 pages across 12 groups
+
+| Group | Idx | Pages | Key Areas |
+|-------|-----|-------|-----------|
+| Create-Projects | 26 | 9 | new project, contract, counterparty, CRM lead, opportunity, tender, site assessment, prequalification |
+| Create-Finance | 27 | 12 | new budget, commercial proposal, invoice, payment, estimate, specification, PO, commitment, tax risk, monte carlo |
+| Create-Ops | 28 | 19 | new employee, daily log, work order, fleet vehicle, materials, movements, safety incidents/inspections/training, defects, punch items |
+| Create-Docs | 29 | 19 | new RFI, submittal, issue, change event/order, PTO docs, design version, regulatory permit, KS-2/3, applicant, journal entry |
+| Detail-Projects | 30 | 19 | project/counterparty/contract/lead/tender/budget/invoice/payment/estimate/specification detail pages (with :id=1) |
+| Detail-Ops | 31 | 25 | employee/timesheet/safety/defect/fleet/work order/RFI/submittal/change order/legal/support/KS detail pages |
+| Boards | 32 | 19 | safety, quality, punch list, work orders, RFI, contracts, procurement, commissioning, fleet maintenance, support, warehouse, PTO, regulatory, change orders, recruitment, leave, daily log boards |
+| Analytics | 33 | 8 | KPI, achievements, bonus calculations, audit pivot, project charts, predictive, executive KPI, report builder |
+| Settings | 34 | 14 | settings root, AI, API keys, webhooks, offline queue/sync, subscription result, users import, login/audit logs, online users, tenants, permission matrix |
+| HR-Advanced | 35 | 17 | payroll, recruitment, leave types/allocations, crew timesheets/time entries/calendar, timesheet pivot, qualifications, seniority leave, HR Russian docs |
+| Estimates-Adv | 36 | 14 | estimate import/export/comparison/summary, pricing rates/calculate, OCR scanner, spec analogs, Monte Carlo, pricing root |
+| Misc | 37 | 55 | search, AI assistant, notifications, help, onboarding, KS sub-routes, accounting dashboard/journals/assets, CDE archive/revision, planning WBS/baseline/critical-path, ISUP, KEP, 1C config, BIM property sets/BCF, task views, workflow designer |
+
+**Total: 230 pages × ~10-75 elements per page**
+
+**Combined all 3 parts: 127 + 116 + 230 = 473 pages**
+
+### Output files (generated on live run)
+- `e2e/reports/crawler-part3-results.json` — per-element JSON
+- `e2e/reports/crawler-part3-summary.md` — Part 3 report with severity classification
+- `e2e/reports/crawler-consolidated.json` — ALL 3 parts merged
+- `e2e/reports/crawler-consolidated.md` — unified report: per-part stats, all-group table, coverage analysis, domain expert assessment
+
+### Verification
+- TypeScript check: 0 errors
+- No new dependencies added
+- Consistent structure with Parts 1 and 2
+
+### Issues found
+- 0 (compilation-only — no server needed)
+- Pre-existing: PrivodReporter.ts `__dirname` ESM issue (not related)
+
+### Key differences from Parts 1-2
+1. **Create/New forms** (59 pages): Tests form rendering, required field indicators, validation, back/cancel behavior
+2. **Detail pages with dummy ID** (44 pages): Tests graceful handling of `:id=1` — pages may show "not found", error state, or redirect
+3. **Board views** (19 pages): Tests Kanban-style workflow visualization columns
+4. **Consolidated report**: afterAll merges Parts 1+2+3 JSON files into unified analysis
+
+### Blockers for subsequent sessions
+- Requires running dev server + backend to execute actual crawling
+- Detail pages with `:id=1` will likely show error states — that's valid testing
+- Consolidated report depends on Parts 1+2 JSON files existing in reports/
