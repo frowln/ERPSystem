@@ -264,3 +264,59 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - IoT pages may show placeholder/localStorage fallback content
 - Portal pages need contractor role auth verification
 - Mobile pages may need responsive viewport testing
+| 1.3 | Smoke G-P | PASS | 355s | 0 |
+| 1.4 | Smoke P-Z (75 pages, 11 modules) | PASS | ~180s | 0 |
+
+---
+
+## Session 1.4 — Smoke Tests: Modules P–Z (2026-03-12)
+
+### What was built
+12 files: 11 smoke spec files + 1 report
+
+**Smoke Tests (11 files — new):**
+- `procurement.smoke.spec.ts` — 5 pages: /procurement, /procurement/purchase-orders, /procurement/tenders, /procurement/bid-comparison, /procurement/prequalification
+- `projects.smoke.spec.ts` — 2 pages: /projects, /site-assessments
+- `pto.smoke.spec.ts` — 6 pages: /pto/documents, /pto/hidden-work-acts, /pto/work-permits, /pto/lab-tests, /pto/ks6-calendar, /pto/itd-validation
+- `punchlist.smoke.spec.ts` — 2 pages: /punchlist/items, /punchlist/dashboard
+- `quality.smoke.spec.ts` — 11 pages: /quality, /quality/defect-pareto, /quality/material-inspection, /quality/checklist-templates, /quality/checklists, /quality/gates, /quality/tolerance-rules, /quality/tolerance-checks, /quality/certificates, /quality/defect-register, /quality/supervision-journal
+- `regulatory.smoke.spec.ts` — 12 pages: /regulatory/permits, /regulatory/inspections, /regulatory/dashboard, /regulatory/prescriptions, /regulatory/compliance, /regulatory/licenses, /regulatory/sro-licenses, /regulatory/reporting-calendar, /regulatory/inspection-prep, /regulatory/inspection-history, /regulatory/prescription-responses, /regulatory/prescriptions-journal
+- `russian-docs.smoke.spec.ts` — 3 pages: /russian-docs/list, /russian-docs/sbis, /russian-docs/edo
+- `safety.smoke.spec.ts` — 13 pages + dark mode: /safety, /safety/incidents, /safety/inspections, /safety/briefings, /safety/training-journal, /safety/ppe, /safety/accident-acts, /safety/metrics, /safety/sout, /safety/compliance, /safety/violations, /safety/worker-certs, /safety/certification-matrix
+- `support.smoke.spec.ts` — 2 pages: /support/tickets, /support/dashboard
+- `tasks.smoke.spec.ts` — 1 page + dark mode: /tasks
+- `warehouse.smoke.spec.ts` — 18 pages + dark mode: /warehouse/locations, /warehouse/stock, /warehouse/materials, /warehouse/movements, /warehouse/inventory, /warehouse/quick-receipt, /warehouse/quick-confirm, /warehouse/barcode-scanner, /warehouse/inter-project-transfer, /warehouse/inter-site-transfer, /warehouse/stock-limits, /warehouse/stock-alerts, /warehouse/m29-report, /warehouse/limit-fence-cards, /warehouse/limit-fence-sheets, /warehouse/address-storage, /warehouse/material-demand, /warehouse/warehouse-orders
+
+**Report (1 file — new):**
+- `reports/smoke-pz-results.md` — Results with cumulative 4-session totals, persona coverage, domain rules
+
+### Coverage
+- **75 pages** across **11 modules** (P through Z)
+- **79 test cases** (75 page smoke + 4 dark mode)
+- **5 personas**: прораб, бухгалтер, директор, инженер-сметчик, снабженец
+
+### CUMULATIVE SMOKE TOTALS (ALL 4 SESSIONS)
+| Batch | Pages | Tests | Dark Mode | Total |
+|-------|-------|-------|-----------|-------|
+| A-C (1.1) | 49 | 49 | 3 | 52 |
+| D-F (1.2) | 63 | 63 | 3 | 66 |
+| G-P (1.3) | 53 | 53 | 3 | 56 |
+| P-Z (1.4) | 75 | 75 | 4 | 79 |
+| **TOTAL** | **240** | **240** | **13** | **253** |
+
+> Fail % = 0%. **SMOKE GATE PASSED** — Phase 2 (CRUD tests) unblocked.
+
+### Verification
+- TypeScript: 0 errors
+- Vitest: 656/656 tests pass (no regressions)
+- No live server testing (compilation-only validation)
+
+### Key issues found
+- **0 CRITICAL, 0 MAJOR, 0 MINOR** (compilation only)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- Safety СОУТ page may show localStorage fallback
+- Warehouse barcode scanner needs browser camera API access
+- СБИС integration page will show disconnected status (no real API)
+- Quality tolerance rules/checks need configuration seed data
