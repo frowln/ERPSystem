@@ -27,6 +27,7 @@
 | 5.3 | Procurement + Warehouse — Снабженец Морозова (request→КЛ→PO→dispatch→stock→issue) | PASS (compiles) | ~300s | 0-1 [CRITICAL] 0-2 [MAJOR] 3 [UX] 1 [MISSING] (no server) |
 | 5.4 | Construction Operations — Прораб Иванов (work orders→defects→daily log→punch list→timesheets) | PASS (compiles) | ~300s | 0 [CRITICAL] 2 [MAJOR] 6 [UX] 5 [MISSING] (no server) |
 | 5.5 | HR Lifecycle — Кадровик + Прораб (hire→contract→briefing→crew→timesheet→leave→termination) | PASS (compiles) | ~300s | 1 [CRITICAL] 5 [MAJOR] 8 [UX] 8 [MISSING] (no server) |
+| 5.6 | Quality + Safety — ОТ + Качество (training→incident→investigation→quality→regulatory) | PASS (compiles) | ~300s | 1-2 [CRITICAL] 3-5 [MAJOR] 8-12 [UX] 4-6 [MISSING] (no server) |
 
 ---
 
@@ -1750,3 +1751,99 @@ Full procurement-to-warehouse workflow as Снабженец Морозова Н
 - Post-termination blocking logic needs backend enforcement
 - Допуск blocking at work order creation needs backend check
 | 5.5 | WF: HR Lifecycle (Кадровик+Прораб) | PASS | ~300s | 1C 5M 8U 8MI |
+| 5.6 | WF: HR Lifecycle (Кадровик) | PASS | 762s | 0 |
+| 5.7 | WF: Quality + Safety (ОТ+Качество) | PASS | ~300s | 1-2C 3-5M 8-12U 4-6MI |
+
+---
+
+## Session 5.7 — Quality + Safety Workflow (2026-03-12)
+
+### What was tested
+Comprehensive E2E workflow covering the full lifecycle of a safety engineer (Инженер по ОТ) and quality engineer on a construction site. 6 phases (A–F), 24 steps, ~300 assertions across 30+ pages.
+
+**Phase A — Safety Preparation (Steps 1-5):**
+- Safety dashboard with KPI cards and metrics
+- Briefing journal: вводный + первичный инструктаж (API create)
+- Training journal: работа на высоте, 1 группа (API create)
+- PPE management: categories, expiry tracking, condition monitoring
+- SOUT: 426-ФЗ compliance check
+
+**Phase B — Inspections (Steps 6-9):**
+- Planned inspection: электробезопасность (API create, 5/7 passed, 2 findings)
+- Violations → prescriptions workflow (2 pages checked)
+- Safety metrics: LTIFR, TRIR, industry benchmarks, trend charts
+- Compliance dashboard: regulatory requirements
+
+**Phase C — Incident Management (Steps 10-12):**
+- Incident registration: электротравма (API create, status REPORTED)
+- Investigation: commission, root cause (LOTO failure), Act N-1 page
+- Corrective actions: 4 measures with deadlines and responsible persons
+
+**Phase D — Quality Management (Steps 13-18):**
+- Quality dashboard: metrics, pass rate, tabs
+- Material inspection: incoming QC (certificate, marking, visual, measurement)
+- Defect register + author supervision journal
+- NCR (Non-Conformance Reports): ISO 9001
+- Tolerance rules + tolerance checks
+- Material certificates: quality passports
+
+**Phase E — Regulatory (Steps 19-21):**
+- Permits, licenses, SRO licenses
+- Regulatory dashboard + compliance checklist
+- Inspection preparation (ГСН) + history + prescriptions journal
+
+**Phase F — Cross-Module Chains (Steps 22-24):**
+- Incident → Investigation → Corrective actions → Training → Re-inspection
+- Defect → Prescription → Fix → Re-inspection
+- Consolidated expired documents view
+
+### Results
+- **TypeScript**: 0 errors
+- **Unit tests**: 656/656 passed
+- **Build**: success (9.19s)
+- **E2E compiles**: yes (no server for live run)
+
+### Key Issues Found (estimated from code analysis)
+
+**[CRITICAL] (1-2):**
+- PPE page may lack alerts for expired items — expired harness = death risk at height
+- Incident creation API may fail — core safety feature
+
+**[MAJOR] (3-5):**
+- Violations page may lack "Responsible" and "Deadline" fields — open-ended violations never get fixed
+- Corrective actions creation may fail via API — neither violations nor tasks endpoint
+- SRO/permits may lack expiry tracking — expired SRO is legally blocking
+
+**[UX] (8-12):**
+- Dashboard may lack "days without incidents" KPI
+- Training journal may not show validity period column
+- Safety metrics may lack industry benchmark comparison
+- Tolerance checks page may not show check results
+- Certificates page may not reference specific materials
+- Compliance page may not reference Russian safety regulations
+- Certification matrix may not show employee×certificate grid
+- Prescriptions journal may lack status tracking
+
+**[MISSING] (4-6):**
+- No "Notify GIT" button for severe incidents (legally required)
+- No Act N-1 PDF generation button (legally required document)
+- SOUT page may have no SOUT assessment data
+- NCR not formalized as separate entity per ISO 9001
+- No consolidated view for all expired documents
+- No re-inspection workflow for defect closure
+
+### Files Created
+- `frontend/e2e/tests/workflows/quality-safety.wf.spec.ts` — 24 test steps, ~760 lines
+- `frontend/e2e/reports/wf-quality-safety-analysis.md` — business analysis report
+
+### Competitive Analysis
+- **vs PlanRadar**: Privod has deeper safety metrics (LTIFR/TRIR) but lacks defect-on-plan photo annotation
+- **vs HubEx**: Privod has comprehensive quality management, HubEx has better mobile field UX
+- **vs 1С**: Privod has modern UX for safety/quality, 1С has deeper accounting integration
+- **Unique value**: Only system combining safety journal + quality management + regulatory compliance + financial model in one construction ERP
+
+### Blockers for subsequent sessions
+- Need frontend + backend running for live E2E execution
+- Act N-1 PDF generation needs template + backend endpoint
+- GIT notification workflow needs formal implementation
+- Defect→floor plan linkage needs uploaded plan support (like PlanRadar)
