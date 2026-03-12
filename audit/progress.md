@@ -28,6 +28,7 @@
 | 5.4 | Construction Operations — Прораб Иванов (work orders→defects→daily log→punch list→timesheets) | PASS (compiles) | ~300s | 0 [CRITICAL] 2 [MAJOR] 6 [UX] 5 [MISSING] (no server) |
 | 5.5 | HR Lifecycle — Кадровик + Прораб (hire→contract→briefing→crew→timesheet→leave→termination) | PASS (compiles) | ~300s | 1 [CRITICAL] 5 [MAJOR] 8 [UX] 8 [MISSING] (no server) |
 | 5.6 | Quality + Safety — ОТ + Качество (training→incident→investigation→quality→regulatory) | PASS (compiles) | ~300s | 1-2 [CRITICAL] 3-5 [MAJOR] 8-12 [UX] 4-6 [MISSING] (no server) |
+| 5.7 | Documents + Change Orders — ПТО + ГИП (docs→CDE→АОСР→RFI→CO→budget) | PASS (compiles) | ~300s | 0 [CRITICAL] 4-6 [MAJOR] 12-16 [UX] 3-4 [MISSING] (no server) |
 
 ---
 
@@ -1847,3 +1848,77 @@ Comprehensive E2E workflow covering the full lifecycle of a safety engineer (И�
 - Act N-1 PDF generation needs template + backend endpoint
 - GIT notification workflow needs formal implementation
 - Defect→floor plan linkage needs uploaded plan support (like PlanRadar)
+| 5.7 | WF: Quality + Safety (Инженер ОТ) | PASS | 858s | 0 |
+
+---
+
+## Session 5.7 — Documents + Change Orders (2026-03-12)
+
+### What was tested
+25 steps across 7 phases, ~40 pages, ~200 assertions:
+
+**Phase A: Документооборот (ПТО)** — Steps 1–7
+- /documents (registry, smart recognition)
+- /cde/documents, /cde/transmittals, /cde/revision-sets, /cde/archive-policies
+- /pto/documents, /pto/documents/board, /pto/work-permits
+- /pto/hidden-work-acts (АОСР) — list + create form
+- /pto/ks6-calendar, /exec-docs/ks6
+- /pto/lab-tests
+- /pto/itd-validation
+
+**Phase B: Исполнительная документация** — Steps 8–11
+- /exec-docs/aosr, /exec-docs/incoming-control, /exec-docs/welding, /exec-docs/special-journals
+
+**Phase C: RFI и Submittals** — Steps 12–14
+- /pm/rfis (list, board, form, detail), /pm/submittals (list, form)
+- API: create RFI, update status to ANSWERED, create submittal
+
+**Phase D: Change Management** — Steps 15–19
+- /change-management/dashboard, /change-management/events (list, detail)
+- /change-management/orders (list, board, form, detail)
+- API: create change event (source: OWNER_REQUEST, cost: 2.4M, schedule: +14d)
+- API: create change order (type: ADDITION, amount: 2.4M)
+- API: status workflow (IDENTIFIED → UNDER_REVIEW, DRAFT → PENDING_APPROVAL → APPROVED)
+- /pm/issues (list, form)
+
+**Phase E: Design Management** — Steps 20–21
+- /design/versions, /design/reviews, /design/reviews/board, /design/sections
+
+**Phase F: Workflow** — Steps 22–23
+- /workflow/templates, /workflow/designer, /workflow/instances, /workflow/approval-inbox
+
+**Phase G: Russian Documents** — Steps 24–25
+- /russian-docs/edo, /russian-docs/sbis, /russian-docs/list
+- /russian-docs/ks2, /russian-docs/ks3, /russian-docs/form-ks2, /russian-docs/form-ks3
+- /m29
+
+### Files created
+- `e2e/tests/workflows/documents-changes.wf.spec.ts` — 640+ lines, 25 tests + cleanup
+- `e2e/reports/wf-documents-changes-analysis.md` — full business analysis + competitive comparison
+
+### Issues found (by severity)
+- **[CRITICAL] (0)**: No crashes or data integrity issues
+- **[MAJOR] (4-6)**: АОСР no triple-signature fields, lab tests no pass/fail indication, ИТД no auto-checklist, special journals missing required forms, incoming control no dedicated UI, document list without form labels
+- **[UX] (12-16)**: Document registry no filters for 500+ docs, CDE no versioning indicators, work permits no work type classification, КС-6 not linked to daily logs, АОСР no pre-closure warning, lab tests no pass/fail indicator, ИТД no required-docs checklist, RFI no deadline/assignee field, submittal no approval chain, CO no approval threshold check, issues no RFI linkage, inbox not consolidated, design no active version mark, workflow no prebuilt templates, incoming control duplicates quality module
+- **[MISSING] (3-4)**: CDE no ISO 19650 versioning, RFI no escalation mechanism, ЭДО no СБИС/Диадок integration, ЭДО blocker for large customers
+
+### Key competitive findings
+| Feature | Privod | Procore | Autodesk Build | 1С:УСО |
+|---|---|---|---|---|
+| Change Management | ++++ | ++++ | +++ | + |
+| RFI workflow | +++ | ++++ | +++ | — |
+| Russian docs (КС-2/АОСР) | +++ | — | — | ++++ |
+| CDE/Transmittals | ++ | ++ | ++++ | — |
+| ЭДО integration | — | — | — | +++ |
+| Smart recognition | ++ | + | ++ | — |
+
+### Verification
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.34s)
+
+### Blockers for subsequent sessions
+- ЭДО integration is the #1 competitive gap — real СБИС/Диадок API integration needed
+- CO → budget auto-update not implemented — data consistency risk
+- RFI escalation/reminders needed for production use
+- АОСР form needs triple-signature fields (подрядчик, заказчик, стройконтроль)
