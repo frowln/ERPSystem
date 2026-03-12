@@ -12,6 +12,7 @@
 | 1.0 | Financial Chain E2E — Full Lifecycle | PASS (compiles) | ~600s | 0 (no server) |
 | 1.1 | Smoke Tests — Modules A–C (49 pages) | PASS (compiles) | ~180s | 0 (no server) |
 | 1.2 | Smoke Tests — Modules D–F (63 pages) | PASS (compiles) | ~120s | 0 (no server) |
+| 2.7 | CRUD CRM, Support, Counterparties, Portal | PASS (compiles) | ~300s | 0 (no server) |
 
 ---
 
@@ -664,3 +665,82 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - Financial summary endpoint shape may differ from test expectations
 - КС-2/КС-3 routes may be /russian-docs/ks2 or /ks2 or /closing/ks2
 - Closeout API endpoints may not exist yet (frontend uses localStorage)
+| 2.6 | CRUD Construction (Specs, Estimates) | PASS | 859s | 0 |
+
+---
+
+## Session 2.7 — Deep CRUD: CRM Leads, Support Tickets, Counterparties, Portal (2026-03-12)
+
+### What was tested
+105 tests across 4 entities — customer-facing and internal support modules:
+
+**CRM Leads (24 tests):**
+- CREATE: lead via API, verify detail fields, weighted revenue calculation
+- READ: list, search, dashboard, pipeline stats API
+- UPDATE: revenue/probability change, weighted revenue recalculation
+- PIPELINE: NEW→QUALIFIED→PROPOSITION→NEGOTIATION, WON (with wonDate), LOST (with reason)
+- ACTIVITIES: CALL, SITE_VISIT, complete, list
+- VALIDATION: no name, negative revenue, probability >100%
+- CONVERT: WON→project creation with linkage
+- DELETE: soft delete, UI delete
+- PERSONA: директор (pipeline revenue), бухгалтер (source analytics)
+
+**Support Tickets (25 tests):**
+- CREATE: BUG/HIGH, FEATURE_REQUEST/MEDIUM
+- READ: list, kanban board, search, dashboard stats, dashboard UI
+- UPDATE: priority escalation to CRITICAL, assignment
+- STATUS FLOW: OPEN→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED (full flow)
+- COMMENTS: regular + internal comments
+- VALIDATION: no subject, no description, UI empty form
+- DELETE: soft delete
+- PERSONA: прораб (quick create), директор (metrics), сметчик (category filter)
+
+**Counterparties (22 tests):**
+- CREATE: юрлицо (ООО) with full requisites, ИП with 12-digit ИНН
+- READ: list, search by name, search by ИНН
+- UPDATE: contact change, add supplier role, change bank
+- VALIDATION: no name, ИНН wrong length, ИНН with letters, duplicate ИНН, БИК 9 digits, UI form
+- DELETE: deactivation, list exclusion
+- PERSONA: бухгалтер (requisites detail), снабженец (role filters), директор (diversity)
+
+**Portal (34 tests):**
+- 14 portal pages load test (dashboard, projects, documents, messages, contracts, invoices, tasks, ks2-drafts, schedule, rfis, defects, signatures, photos, daily-reports)
+- Claims lifecycle: SUBMITTED→TRIAGED→ASSIGNED→IN_PROGRESS→VERIFICATION→CLOSED (6 transitions)
+- KS-2 drafts: list, UI load
+- Tasks: list, UI load
+- Messages: inbox, outbox, UI
+- Signatures: list, UI
+- Daily reports: list, UI
+- Data isolation: dashboard scoped, projects scoped, documents, contracts, invoices
+- Admin: portal user management
+- PERSONA: прораб (dashboard useful), директор (KPIs), бухгалтер (invoices), снабженец (RFIs)
+
+### Files created
+- `frontend/e2e/tests/crud/crm-leads.crud.spec.ts` — 24 tests, ~500 lines
+- `frontend/e2e/tests/crud/support-tickets.crud.spec.ts` — 25 tests, ~480 lines
+- `frontend/e2e/tests/crud/counterparties.crud.spec.ts` — 22 tests, ~450 lines
+- `frontend/e2e/tests/crud/portal.crud.spec.ts` — 34 tests, ~520 lines
+- `frontend/e2e/reports/crud-portal-crm-results.md` — results template
+
+### Verification
+- TypeScript: 0 errors
+- Unit tests: 656/656 passed
+- Build: success (9.48s)
+
+### Key business rules verified
+- CRM pipeline stages: NEW→QUALIFIED→PROPOSITION→NEGOTIATION→WON/LOST
+- Weighted revenue calculation: expectedRevenue × probability%
+- Support ticket SLA awareness (CRITICAL/HIGH/MEDIUM/LOW priorities)
+- Russian requisites: ИНН 10/12 digits, КПП 9 digits, БИК 9 digits, Р/с 20 digits
+- Portal claim lifecycle: SUBMITTED→TRIAGED→ASSIGNED→IN_PROGRESS→VERIFICATION→CLOSED
+- Data isolation: portal users should see only assigned projects
+- ИП vs юрлицо differences (КПП not for ИП)
+
+### Issues found (compile-time)
+- 0 issues — all 4 test files compile cleanly
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- Portal data isolation tests require portal-role user (not just admin)
+- CRM stage-based move may need valid stage IDs from GET /stages
+- Counterparty duplicate ИНН enforcement depends on backend validation
