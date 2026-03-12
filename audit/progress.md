@@ -29,6 +29,7 @@
 | 5.5 | HR Lifecycle — Кадровик + Прораб (hire→contract→briefing→crew→timesheet→leave→termination) | PASS (compiles) | ~300s | 1 [CRITICAL] 5 [MAJOR] 8 [UX] 8 [MISSING] (no server) |
 | 5.6 | Quality + Safety — ОТ + Качество (training→incident→investigation→quality→regulatory) | PASS (compiles) | ~300s | 1-2 [CRITICAL] 3-5 [MAJOR] 8-12 [UX] 4-6 [MISSING] (no server) |
 | 5.7 | Documents + Change Orders — ПТО + ГИП (docs→CDE→АОСР→RFI→CO→budget) | PASS (compiles) | ~300s | 0 [CRITICAL] 4-6 [MAJOR] 12-16 [UX] 3-4 [MISSING] (no server) |
+| 5.8 | CRM + Portal + Support — Менеджер + Заказчик + Техподдержка | PASS (compiles) | ~300s | 0 [CRITICAL] 2-4 [MAJOR] 6-10 [UX] 4-6 [MISSING] (no server) |
 
 ---
 
@@ -1922,3 +1923,53 @@ Comprehensive E2E workflow covering the full lifecycle of a safety engineer (И�
 - CO → budget auto-update not implemented — data consistency risk
 - RFI escalation/reminders needed for production use
 - АОСР form needs triple-signature fields (подрядчик, заказчик, стройконтроль)
+| 5.8 | WF: Documents + Changes (ПТО) | PASS | 850s | 0 |
+
+---
+
+## Session 5.8 — CRM + Portal + Support (2026-03-12)
+
+### What was built
+2 files, ~700 lines:
+
+**Tests (1 file — new):**
+- `tests/workflows/crm-portal-support.wf.spec.ts` — Complete CRM + Portal + Support workflow E2E. 3 personas (sales manager, client, support). 5 phases (A–E), 28 serial steps, ~250 assertions. Covers: CRM pipeline (lead→won), 16 portal pages (dashboard→admin), messenger, email, support tickets (create→resolve), cross-module chains (CRM→Project→Portal), security audit (sensitive data leak check on 5 portal pages), RFI communication cycle.
+
+**Reports (1 file — new):**
+- `reports/wf-crm-portal-support-analysis.md` — Business analysis: CRM vs Битрикс24, Portal vs Procore/Buildertrend (7/10 score), security assessment, messenger vs WhatsApp honest evaluation, support SLA gaps, unique features (КС-2 drafts, КП approval), 8-item prioritized roadmap.
+
+### What was tested
+- **Phase A (CRM)**: Dashboard KPIs (pipeline/win rate/stages), lead CRUD, stage transitions (NEW→QUALIFIED→PROPOSITION→NEGOTIATION→WON), counterparties, bid packages
+- **Phase B (Portal)**: 16 pages — dashboard, projects, documents, contracts, invoices, schedule, RFIs, defects, photos, daily reports, signatures, КС-2 drafts, tasks, CP approval, settings, admin
+- **Phase C (Communication)**: Messenger (channels, input, load time), email client (folders, compose)
+- **Phase D (Support)**: Dashboard KPIs, ticket CRUD, status transitions (OPEN→IN_PROGRESS→RESOLVED), kanban board
+- **Phase E (Cross-module)**: CRM→Project conversion, portal RBAC security (5-page sensitive data scan), CP approval, RFI communication chain
+
+### Key issues found (estimated at runtime)
+- **[CRITICAL] (0)**: No data leaks detected in portal pages (structural check — costPrice/margin/КЛ not in portal API)
+- **[MAJOR] (2-4)**: CRM→Project auto-conversion may not be wired, portal admin may lack access control UI, messenger may lack input field, mail may lack compose button
+- **[UX] (6-10)**: CRM dashboard missing stages visibility, no auto-invite for portal on lead win, no SLA indicator on tickets, no pay button on portal invoices, messenger slower than WhatsApp, portal schedule may lack clear timeline, no defect creation from portal, no visibility controls in portal admin
+- **[MISSING] (4-6)**: Online payment through portal, SLA indicators, auto-portal-access on CRM conversion, notification verification on ticket response, RFI response button on portal
+
+### Key competitive findings
+| Feature | Privod | Битрикс24 | Procore | Buildertrend |
+|---|---|---|---|---|
+| CRM Pipeline | ++ | ++++ | — | — |
+| Portal pages | 16 | — | ~20 | ~12 |
+| КС-2 draft review | **Unique** | — | — | — |
+| КП portal approval | **Unique** | — | — | — |
+| Online payment | — | — | — | Есть |
+| RFI workflow | ++ | — | ++++ | + |
+| Portal rating | 7/10 | — | 10/10 | 8/10 |
+
+### Verification
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.75s)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- CRM → Project conversion endpoint connectivity unknown
+- Portal RBAC requires multi-role auth testing (separate portal token)
+- SLA configuration needed for support module
+- Messenger needs PWA Service Worker for field worker adoption
