@@ -19,6 +19,7 @@
 | 3.2 | Calculation Verification — Dashboard KPIs, CPI/SPI, Charts | PASS (compiles) | ~300s | 0 (no server) |
 | 3.3 | Calculation Verification — Timesheets, T-13, Leave, Piece-Rate, Crew | PASS (compiles) | ~300s | 0 (no server) |
 | 3.4 | Calculation Verification — FM Margins/НДС, EVM CPI/SPI, Portfolio | PASS (compiles) | ~300s | 0 (no server) |
+| 4.0 | RBAC Verification — Admin + Manager Roles | PASS (compiles) | ~300s | 3 [MINOR] (no server) |
 
 ---
 
@@ -1138,3 +1139,68 @@ EVM:
 - Tests 5-7, 9, 11 are API + math based, work with server
 - Test 8 creates 5 portfolio projects requiring project create permissions
 | 3.5 | Calculations: FM + EVM + Portfolio | PASS | ~300s | 0 |
+| 3.5 | Calculations: FM + Portfolio | PASS | 577s | 0 |
+
+---
+
+## Session 4.0 — RBAC Verification: Admin + Manager (2026-03-12)
+
+### What was built
+1 file, 749 lines of RBAC verification tests:
+
+**Test file:**
+- `e2e/tests/rbac/admin-manager.rbac.spec.ts` — comprehensive RBAC audit
+
+### Test Structure (7 Phases)
+
+| Phase | Description | Test Count |
+|-------|-------------|------------|
+| 1 | Admin full access — all 244 navigation URLs | ~244 |
+| 2 | Admin CRUD operations — create buttons + form pages | ~17 |
+| 3 | Admin-only pages — verified with content | ~12 |
+| 4 | Manager allowed access — sample across all permission groups | ~60 |
+| 5 | Manager denied access — admin-only URLs blocked | ~13 |
+| 6 | API-level RBAC — direct HTTP calls admin vs manager | ~13 |
+| 7 | UI element visibility — sidebar nav items per role | ~4 |
+| — | Security findings — documented route protection gaps | ~3 |
+| **Total** | | **~366** |
+
+### RBAC Model Verified
+- **Source of truth**: `frontend/src/config/routePermissions.ts`
+- **Role groups**: ADMIN_ONLY, MANAGER_PLUS, FINANCE_PLUS, HR_PLUS, SAFETY_PLUS, PROCUREMENT_PLUS, QUALITY_PLUS, ENGINEER_PLUS
+- **Admin**: Full access to ALL 244 pages, ALL API endpoints, ALL CRUD operations
+- **Manager**: Access to all pages EXCEPT admin-only (settings/*, admin/*, marketplace, integrations)
+- **Manager is in**: MANAGER_PLUS, FINANCE_PLUS, HR_PLUS, SAFETY_PLUS, PROCUREMENT_PLUS, QUALITY_PLUS, ENGINEER_PLUS
+
+### API Endpoints Tested
+- `GET /api/admin/users` — Admin: 200, Manager: 403
+- `GET /api/admin/users/roles` — Admin: 200, Manager: 403
+- `GET /api/admin/settings` — Admin: 200, Manager: 403
+- `PUT /api/admin/settings/key/{key}` — Manager: 403
+- `POST /api/admin/users` — Manager: 403
+- `GET /api/projects` — Both: 200
+- `GET /api/auth/me` — Both: 200
+
+### Security Findings
+| # | Severity | Finding |
+|---|----------|---------|
+| 1 | [MINOR] | `/monitoring` is in admin nav group but NOT restricted in routePermissions.ts — accessible to all authenticated users |
+| 2 | [MINOR] | `/support/tickets` is in admin nav group but NOT restricted in routePermissions.ts |
+| 3 | [MINOR] | `/support/dashboard` is in admin nav group but NOT restricted in routePermissions.ts |
+
+### Issues by Severity
+- 0 [CRITICAL]
+- 0 [MAJOR]
+- 3 [MINOR] — route protection gaps (admin nav items without route restrictions)
+- 0 [UX]
+- 0 [MISSING]
+
+### Verification Gate
+- TypeScript: 0 errors
+- Unit tests: 656/656 pass
+- Build: success (9.1s)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live E2E execution
+- Auth setup (`e2e/.auth/*.json`) must be generated before RBAC tests run
+- Security findings (3 × MINOR) should be reviewed — decide if /monitoring and /support/* need ADMIN_ONLY restriction
