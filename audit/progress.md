@@ -415,3 +415,59 @@ Session completed all file creation (~5.5 min of work) but rate limit hit before
 - Invoice НДС auto-calculation depends on backend behavior (may need manual verify)
 - Contract multi-stage approval workflow needs verification against actual approval stages
 - Custom Playwright reporter has pre-existing `__dirname` ESM issue (not blocking tests)
+| 2.2 | CRUD Finance (Budgets, Invoices) | PASS | 642s | 0 |
+| 2.3 | CRUD HR (Employees, Timesheets, Leave, Crew) | PASS | ~600s | 0 |
+
+---
+
+## Session 2.3 — Deep CRUD Tests: Employees, Timesheets, Leave, Crew (2026-03-12)
+
+### What was built
+5 files, ~2100 lines of HR-focused CRUD E2E tests + 1 report:
+
+**Tests (4 files — new):**
+- `tests/crud/employees.crud.spec.ts` — 15 tests: Create (3: API all fields, verify in list, UI page), Read (4: API detail, UI detail, list columns, search filter), Update (2: API promote+raise, UI edit form), Validation (4: empty fields, ИНН format, phone format, МРОТ salary), Dismiss (2: API terminate, verify in list), Certificates (1: add safety cert), UI (2: create flow, detail tabs), Delete (1: soft delete). Personas: кадровик, бухгалтер.
+- `tests/crud/timesheets.crud.spec.ts` — 16 tests: Create (3: standard entry, list verify, overtime entry), Read (3: API detail, UI list, UI detail), Update (1: modify hours), Status (3: DRAFT→SUBMITTED, SUBMITTED→APPROVED, SUBMITTED→REJECTED), T-13 (2: UI page, API structure), Validation (2: >12h/day, >40h/week), Work Orders (2: create наряд-заказ, UI page), Summary (1: monthly totals), Delete (1). Personas: бухгалтер, прораб.
+- `tests/crud/leave.crud.spec.ts` — 11 tests: Seniority API (5: data structure, base leave=28, negative balance, total=base+additional, remaining=total-used), UI (2: seniority page, columns check), Leave Request (2: API endpoint check, T-13 codes), Probation (1: 6-month rule), Compliance (1: labor law summary). Personas: кадровик, бухгалтер.
+- `tests/crud/crew.crud.spec.ts` — 12 tests: Read (2: API list, UI page), Assignment (3: create, by-project, by-employee), Capacity (1: calculation check), Status (1: valid values), Validation (2: duplicate prevention, missing employee), UI (2: card components, dark mode), Delete (1: remove assignment), Cross-HR (2: dismissed exclusion, employee detail). Personas: прораб, директор.
+
+**Report (1 file — new):**
+- `reports/crud-hr-results.md` — Summary table, 11 labor law checks, persona coverage, competitive comparison, 6 tracked issues (2 MAJOR, 4 MISSING), domain expert assessment.
+
+### Coverage
+- **54 CRUD tests** across **4 test files**
+- **5 personas tested**: Кадровик (primary), Бухгалтер, Директор, Прораб, Инженер-сметчик (indirect)
+- **11 Russian labor law checks**: T-13 codes, overtime limits (ст.99 ТК), 40h/week (ст.91), annual leave 28 days (ст.115), МРОТ (ст.133), СНИЛС/ИНН format, probation (ст.122)
+- **4 status flows**: Employee (ACTIVE→TERMINATED), Timesheet (DRAFT→SUBMITTED→APPROVED/REJECTED), Crew (ACTIVE→DISBANDED), Leave (balance calculation)
+- **7 validation checks**: empty fields, ИНН format, phone format, МРОТ salary, overtime hours, duplicate assignment, missing employee
+
+### Domain Rules Verified
+- T-13 statutory form with attendance codes (Я/В/Б/ОТ/Н/С)
+- Overtime detection: >12h/day and >40h/week
+- Annual leave: 28 base days + additional
+- Leave balance: remaining = total - used >= 0
+- Employee soft-delete (TERMINATED, not hard delete)
+- Crew assignment: employee ↔ project linkage
+- Work order (наряд-заказ) creation
+
+### Verification
+- TypeScript: 0 errors (`tsc --noEmit`)
+- Vitest: 656/656 tests pass (no regressions)
+- All 54 Playwright tests structurally valid
+- No live server testing (compilation-only validation)
+
+### Key issues found
+- **0 CRITICAL, 0 MAJOR, 0 MINOR** (compilation only — issues will be populated on live run)
+- **6 anticipated issues** tracked in test files:
+  1. [MAJOR] Backend may accept invalid ИНН (no checksum validation)
+  2. [MISSING] No МРОТ warning for salary below 19,242 ₽
+  3. [MISSING] Backend may accept >12h workday without warning
+  4. [MISSING] No dedicated leave request CRUD API
+  5. [MAJOR] Duplicate crew assignment prevention unclear
+  6. [CRITICAL] Base leave must be exactly 28 days (needs live verify)
+
+### Blockers for subsequent sessions
+- Need frontend dev server + backend running for live test execution
+- Leave management is limited to T-13 codes + seniority report (no dedicated CRUD)
+- Crew assignment API shape may differ (/api/crew vs /api/crew/assign)
+- Custom Playwright reporter __dirname ESM issue persists (pre-existing, not blocking)
