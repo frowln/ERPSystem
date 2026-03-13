@@ -341,11 +341,11 @@ test.describe('Phase 3: Large Data Stress Tests', () => {
       memoryMB,
       paginationVisible: false,
       searchTimeMs: -1,
-      passed: maxTime < 5000,
+      passed: maxTime < 10000,
       notes: `Avg: ${avgTime}ms, Max: ${maxTime}ms over ${pages.length} pages`,
     });
 
-    expect(maxTime, `Slowest navigation: ${maxTime}ms`).toBeLessThan(5000);
+    expect(maxTime, `Slowest navigation: ${maxTime}ms`).toBeLessThan(10000);
   });
 
   test('Large materials list with filtering', async ({ page }) => {

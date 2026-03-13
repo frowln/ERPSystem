@@ -36,29 +36,30 @@ import {
 const API = process.env.E2E_API_URL || 'http://localhost:8080';
 
 const VEHICLE_DATA = {
-  code: 'E2E-FLEET-001',
-  name: 'E2E-ГАЗ 3302 Газель',
-  type: 'TRUCK' as const,
-  brand: 'ГАЗ',
+  make: 'ГАЗ',
   model: '3302 "Газель"',
+  vehicleType: 'TRUCK' as const,
   licensePlate: 'А123ВС77',
   year: 2022,
-  fuelType: 'PETROL_92',
-  operatingHours: 1250,
-  status: 'AVAILABLE' as const,
+  fuelType: 'GASOLINE',
+  currentHours: 1250,
+  notes: 'E2E-FLEET-001',
+  // Keep name/code for assertion convenience
+  name: 'E2E-ГАЗ 3302 Газель',
+  code: 'E2E-FLEET-001',
 };
 
 const VEHICLE_2_DATA = {
-  code: 'E2E-FLEET-002',
-  name: 'E2E-КАМАЗ 65115',
-  type: 'TRUCK' as const,
-  brand: 'КАМАЗ',
+  make: 'КАМАЗ',
   model: '65115',
+  vehicleType: 'TRUCK' as const,
   licensePlate: 'В456ОР77',
   year: 2021,
   fuelType: 'DIESEL',
-  operatingHours: 3400,
-  status: 'AVAILABLE' as const,
+  currentHours: 3400,
+  notes: 'E2E-FLEET-002',
+  name: 'E2E-КАМАЗ 65115',
+  code: 'E2E-FLEET-002',
 };
 
 const WAYBILL_DATA = {
@@ -125,8 +126,8 @@ function trackIssue(i: Issue) {
 
 async function createVehicleViaApi(
   data: Record<string, unknown> = VEHICLE_DATA,
-): Promise<{ id: string; name: string; code: string }> {
-  return createEntity<{ id: string; name: string; code: string }>(
+): Promise<{ id: string; make: string; model: string; code: string; notes: string }> {
+  return createEntity<{ id: string; make: string; model: string; code: string; notes: string }>(
     '/api/fleet/vehicles',
     data,
     'admin',
@@ -160,12 +161,12 @@ async function cleanupE2EFleet(): Promise<void> {
     }
 
     // Cleanup vehicles last (parent entities)
-    const vehicles = await listEntities<{ id: string; name?: string; code?: string }>(
+    const vehicles = await listEntities<{ id: string; make?: string; notes?: string; code?: string }>(
       '/api/fleet/vehicles',
       { size: '200' },
     );
     const e2eVehicles = vehicles.filter(
-      (v) => (v.name ?? '').startsWith('E2E-') || (v.code ?? '').startsWith('E2E-'),
+      (v) => (v.notes ?? '').startsWith('E2E-') || (v.code ?? '').startsWith('E2E-') || (v.make ?? '').includes('E2E-'),
     );
     for (const v of e2eVehicles) {
       try { await deleteEntity('/api/fleet/vehicles', v.id); } catch { /* ignore */ }
@@ -210,10 +211,8 @@ test.describe('Fleet CRUD — Deep Lifecycle (Vehicles + Waybills + Fuel)', () =
     expect(vehicle.id).toBeTruthy();
     vehicleId = vehicle.id;
 
-    expect(vehicle.name).toBe(VEHICLE_DATA.name);
-    if (vehicle.code) {
-      expect(vehicle.code).toBe(VEHICLE_DATA.code);
-    }
+    expect(vehicle.make).toBe(VEHICLE_DATA.make);
+    expect(vehicle.model).toBe(VEHICLE_DATA.model);
   });
 
   test('A2: CREATE — second vehicle for comparative tests', async () => {

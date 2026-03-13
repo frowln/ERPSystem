@@ -27,12 +27,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/safety/briefings")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'SAFETY_MANAGER', 'PROJECT_MANAGER', 'FOREMAN')")
 @Tag(name = "Safety Briefings", description = "Safety briefing journal per GOST 12.0.004-2015")
 public class SafetyBriefingController {
 

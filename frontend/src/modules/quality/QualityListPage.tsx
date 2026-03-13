@@ -263,6 +263,8 @@ const QualityListPage: React.FC = () => {
         ]}
         emptyTitle={t('quality.list.emptyTitle')}
         emptyDescription={t('quality.list.emptyDescription')}
+        emptyActionLabel={t('quality.list.emptyActionLabel')}
+        onEmptyAction={() => navigate('/quality/new')}
       />
     </div>
   );

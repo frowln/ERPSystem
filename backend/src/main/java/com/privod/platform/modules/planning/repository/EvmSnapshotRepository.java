@@ -27,4 +27,7 @@ public interface EvmSnapshotRepository extends JpaRepository<EvmSnapshot, UUID> 
 
     List<EvmSnapshot> findByProjectIdAndSnapshotDateBetweenAndDeletedFalseOrderBySnapshotDate(
             UUID projectId, LocalDate from, LocalDate to);
+
+    // P0-6: Найти снимок на конкретную дату (для upsert при рефреше из реальных данных)
+    Optional<EvmSnapshot> findByProjectIdAndSnapshotDateAndDeletedFalse(UUID projectId, LocalDate snapshotDate);
 }

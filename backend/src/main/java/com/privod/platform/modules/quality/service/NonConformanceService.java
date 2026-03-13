@@ -93,9 +93,36 @@ public class NonConformanceService {
         }
         if (request.status() != null) {
             NonConformanceStatus oldStatus = nc.getStatus();
-            nc.setStatus(request.status());
+            NonConformanceStatus newStatus = request.status();
+
+            // P1-SAF-5: Проверка допустимости перехода (OPEN→INVESTIGATING→CORRECTIVE→VERIFIED→CLOSED)
+            if (!oldStatus.canTransitionTo(newStatus)) {
+                throw new IllegalStateException(
+                        String.format("Переход NCR из статуса '%s' в '%s' не допускается",
+                                oldStatus.getDisplayName(), newStatus.getDisplayName()));
+            }
+
+            // Обязательные поля на каждом этапе
+            String effectiveRootCause = request.rootCause() != null ? request.rootCause() : nc.getRootCause();
+            String effectiveCorrectiveAction = request.correctiveAction() != null ? request.correctiveAction() : nc.getCorrectiveAction();
+            java.time.LocalDate effectiveResolvedDate = request.resolvedDate() != null ? request.resolvedDate() : nc.getResolvedDate();
+
+            if (newStatus == NonConformanceStatus.INVESTIGATING && (effectiveRootCause == null || effectiveRootCause.isBlank())) {
+                throw new IllegalStateException("Для перевода в 'Расследование' необходимо заполнить поле 'Первопричина'");
+            }
+            if (newStatus == NonConformanceStatus.CORRECTIVE_ACTION && (effectiveCorrectiveAction == null || effectiveCorrectiveAction.isBlank())) {
+                throw new IllegalStateException("Для перевода в 'Корректирующее действие' необходимо заполнить поле 'Корректирующее действие'");
+            }
+            if (newStatus == NonConformanceStatus.VERIFIED && effectiveResolvedDate == null) {
+                nc.setResolvedDate(LocalDate.now());
+            }
+            if (newStatus == NonConformanceStatus.CLOSED && effectiveResolvedDate == null) {
+                nc.setResolvedDate(LocalDate.now());
+            }
+
+            nc.setStatus(newStatus);
             auditService.logStatusChange("NonConformance", nc.getId(),
-                    oldStatus.name(), request.status().name());
+                    oldStatus.name(), newStatus.name());
         }
         if (request.responsibleId() != null) {
             nc.setResponsibleId(request.responsibleId());

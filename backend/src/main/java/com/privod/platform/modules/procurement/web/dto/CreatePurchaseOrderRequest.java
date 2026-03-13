@@ -18,6 +18,9 @@ public record CreatePurchaseOrderRequest(
 
         UUID contractId,
 
+        /** Статья бюджета для контроля лимита (P0-WAR-2). Опционально. */
+        UUID budgetItemId,
+
         @NotNull(message = "Дата заказа обязательна")
         LocalDate orderDate,
 

@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RequestMapping("/api/tasks/{taskId}/time-entries")
 @RequiredArgsConstructor
 @Tag(name = "Task Time Tracking", description = "Timer and time entry management")
+@PreAuthorize("isAuthenticated()")
 public class TaskTimeTrackingController {
 
     private final TaskTimeTrackingService timeTrackingService;
@@ -32,6 +34,7 @@ public class TaskTimeTrackingController {
 
     @PostMapping("/timer/start")
     @Operation(summary = "Start timer for a task")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER')")
     public ResponseEntity<ApiResponse<TaskTimeEntryResponse>> startTimer(
             @PathVariable UUID taskId,
             @Valid @RequestBody StartTimerRequest request) {
@@ -41,6 +44,7 @@ public class TaskTimeTrackingController {
 
     @PostMapping("/timer/stop")
     @Operation(summary = "Stop timer for a task")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER')")
     public ResponseEntity<ApiResponse<TaskTimeEntryResponse>> stopTimer(
             @PathVariable UUID taskId,
             @RequestParam UUID userId) {
@@ -50,6 +54,7 @@ public class TaskTimeTrackingController {
 
     @PostMapping
     @Operation(summary = "Add manual time entry")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER')")
     public ResponseEntity<ApiResponse<TaskTimeEntryResponse>> addManualEntry(
             @PathVariable UUID taskId,
             @Valid @RequestBody CreateTimeEntryRequest request) {
@@ -61,6 +66,7 @@ public class TaskTimeTrackingController {
 
     @DeleteMapping("/{entryId}")
     @Operation(summary = "Delete a time entry")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER')")
     public ResponseEntity<ApiResponse<Void>> deleteEntry(
             @PathVariable UUID taskId,
             @PathVariable UUID entryId) {

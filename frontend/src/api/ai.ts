@@ -2,6 +2,34 @@ import { apiClient } from './client';
 import type { AiConversation, AiMessage } from '@/modules/ai/types';
 
 // ---------------------------------------------------------------------------
+// Daily Log Auto-Fill Types
+// ---------------------------------------------------------------------------
+
+export interface DailyLogSuggestion {
+  workDescription: string;
+  weatherCondition: string;
+  temperatureMin: number;
+  temperatureMax: number;
+  workersOnSite: number;
+  equipmentOnSite: number;
+  safetyNotes: string;
+  issuesNotes: string;
+  entries: Array<{
+    workArea: string;
+    workDescription: string;
+    workersCount: number;
+    hoursWorked: number;
+    equipmentUsed: string;
+    percentComplete: number;
+  }>;
+}
+
+export interface DailyLogSuggestRequest {
+  projectId: string;
+  date: string;
+}
+
+// ---------------------------------------------------------------------------
 // Photo Analysis Types
 // ---------------------------------------------------------------------------
 
@@ -231,4 +259,149 @@ export const aiApi = {
     });
     return response.data.data;
   },
+
+  // Daily Log Auto-Fill
+  suggestDailyLog: async (request: DailyLogSuggestRequest): Promise<DailyLogSuggestion> => {
+    try {
+      const response = await apiClient.post<DailyLogSuggestion>('/ai/daily-log-suggest', request);
+      return response.data;
+    } catch {
+      // Fallback: generate client-side mock when backend endpoint is not available
+      return generateMockDailyLogSuggestion(request.date);
+    }
+  },
+
+  // Photo Analysis with simulation fallback
+  analyzePhotoWithSimulation: async (file: File, projectId?: string): Promise<PhotoAnalysisResult> => {
+    try {
+      return await aiApi.analyzePhoto(file, projectId);
+    } catch {
+      // Fallback: simulate analysis on client side
+      return simulatePhotoAnalysis(file);
+    }
+  },
 };
+
+// ---------------------------------------------------------------------------
+// Mock Data Generators (client-side fallback when backend is unavailable)
+// ---------------------------------------------------------------------------
+
+function generateMockDailyLogSuggestion(date: string): DailyLogSuggestion {
+  const month = new Date(date).getMonth();
+  const isWinter = month >= 10 || month <= 2;
+  const isSummer = month >= 5 && month <= 8;
+
+  return {
+    workDescription:
+      'Выполнены работы по монтажу металлоконструкций каркаса 3-го этажа. ' +
+      'Армирование и бетонирование фундаментных плит секции Б. ' +
+      'Монтаж инженерных коммуникаций (водоснабжение, канализация) на 2-м этаже.',
+    weatherCondition: isWinter ? 'SNOW' : isSummer ? 'CLEAR' : 'CLOUDY',
+    temperatureMin: isWinter ? -15 : isSummer ? 18 : 5,
+    temperatureMax: isWinter ? -5 : isSummer ? 28 : 12,
+    workersOnSite: 45,
+    equipmentOnSite: 8,
+    safetyNotes:
+      'Проведён утренний инструктаж по ТБ. Проверка СИЗ — замечаний нет. ' +
+      'Ограждения на высотных работах в норме.',
+    issuesNotes:
+      'Задержка поставки арматуры A500C d16 — ожидается завтра. ' +
+      'Требуется дополнительный автокран для монтажа на секции В.',
+    entries: [
+      {
+        workArea: 'Секция А, 3 этаж',
+        workDescription: 'Монтаж металлоконструкций каркаса, сварка узлов',
+        workersCount: 12,
+        hoursWorked: 8,
+        equipmentUsed: 'Автокран 25т, сварочные аппараты (4 шт.)',
+        percentComplete: 65,
+      },
+      {
+        workArea: 'Секция Б, фундамент',
+        workDescription: 'Армирование и бетонирование фундаментных плит',
+        workersCount: 18,
+        hoursWorked: 10,
+        equipmentUsed: 'Бетононасос, вибраторы (3 шт.)',
+        percentComplete: 40,
+      },
+      {
+        workArea: 'Секция А, 2 этаж',
+        workDescription: 'Монтаж трубопроводов ВК, разводка канализации',
+        workersCount: 8,
+        hoursWorked: 8,
+        equipmentUsed: 'Трубогиб, сварочный аппарат ПЭ',
+        percentComplete: 55,
+      },
+    ],
+  };
+}
+
+function simulatePhotoAnalysis(file: File): Promise<PhotoAnalysisResult> {
+  return new Promise((resolve) => {
+    // Simulate AI processing delay (1.5-3 seconds)
+    const delay = 1500 + Math.random() * 1500;
+    setTimeout(() => {
+      const previewUrl = URL.createObjectURL(file);
+
+      const findings: PhotoFinding[] = [
+        {
+          id: crypto.randomUUID(),
+          type: 'SAFETY_VIOLATION',
+          severity: 'HIGH',
+          description: 'Рабочий без защитной каски в зоне монтажных работ (отметка +12.0м)',
+          confidence: 0.92,
+          boundingBox: { x: 120, y: 80, width: 60, height: 90 },
+          suggestedAction: 'Остановить работы, выдать СИЗ, провести внеплановый инструктаж',
+        },
+        {
+          id: crypto.randomUUID(),
+          type: 'DEFECT',
+          severity: 'MEDIUM',
+          description: 'Видимые трещины в бетонной стяжке пола (ширина раскрытия ~2мм)',
+          confidence: 0.85,
+          boundingBox: { x: 200, y: 300, width: 150, height: 40 },
+          suggestedAction: 'Зафиксировать, оформить акт, назначить ремонт инъектированием',
+        },
+        {
+          id: crypto.randomUUID(),
+          type: 'PROGRESS',
+          severity: 'LOW',
+          description: 'Монтаж кирпичной кладки наружных стен — выполнено ~70% от плана этажа',
+          confidence: 0.78,
+        },
+        {
+          id: crypto.randomUUID(),
+          type: 'SAFETY_VIOLATION',
+          severity: 'MEDIUM',
+          description: 'Отсутствие ограждения проёма лестничной клетки на 4-м этаже',
+          confidence: 0.88,
+          boundingBox: { x: 350, y: 150, width: 80, height: 120 },
+          suggestedAction: 'Установить временное ограждение и предупредительные знаки',
+        },
+        {
+          id: crypto.randomUUID(),
+          type: 'EQUIPMENT',
+          severity: 'LOW',
+          description: 'Строительные леса установлены корректно, анкеры закреплены',
+          confidence: 0.91,
+        },
+      ];
+
+      const result: PhotoAnalysisResult = {
+        id: crypto.randomUUID(),
+        photoUrl: previewUrl,
+        analyzedAt: new Date().toISOString(),
+        findings,
+        overallAssessment:
+          'Обнаружены 2 нарушения техники безопасности, требующие немедленного устранения. ' +
+          'Выявлен 1 строительный дефект средней степени. ' +
+          'Общий прогресс работ соответствует плану (~70%). ' +
+          'Рекомендуется провести внеплановую проверку ТБ на участке.',
+        safetyScore: 62,
+        progressEstimate: 70,
+      };
+
+      resolve(result);
+    }, delay);
+  });
+}

@@ -3,12 +3,14 @@ package com.privod.platform.modules.constructability.domain;
 import com.privod.platform.infrastructure.persistence.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "constructability_reviews")
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class ConstructabilityReview extends BaseEntity {
 

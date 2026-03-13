@@ -118,7 +118,14 @@ const VolumeCalculatorPage: React.FC = () => {
 
   const { data: savedCalculations = [], isLoading: calcLoading } = useQuery({
     queryKey: ['volume-calculations'],
-    queryFn: () => estimatesApi.getSavedCalculations(),
+    queryFn: async () => {
+      try {
+        return await estimatesApi.getSavedCalculations();
+      } catch {
+        return [] as VolumeCalculation[];
+      }
+    },
+    retry: 1,
   });
 
   const saveMutation = useMutation({
@@ -316,6 +323,7 @@ const VolumeCalculatorPage: React.FC = () => {
           pageSize={10}
           emptyTitle={t('estimates.volume.emptyTitle')}
           emptyDescription={t('estimates.volume.emptyDescription')}
+          enableExport
         />
       </div>
     </div>

@@ -97,7 +97,14 @@ const SupportDashboardPage: React.FC = () => {
     refetch: refetchTickets,
   } = useQuery({
     queryKey: ['support-tickets', { page: 0, size: 200 }],
-    queryFn: () => supportApi.getTickets({ page: 0, size: 200 }),
+    queryFn: async () => {
+      try {
+        return await supportApi.getTickets({ page: 0, size: 200 });
+      } catch {
+        return { content: [] as SupportTicket[], totalElements: 0, totalPages: 0, size: 200, number: 0 };
+      }
+    },
+    retry: 1,
   });
 
   const {
@@ -106,7 +113,14 @@ const SupportDashboardPage: React.FC = () => {
     refetch: refetchDashboard,
   } = useQuery({
     queryKey: ['support-dashboard'],
-    queryFn: () => supportApi.getDashboardStats(),
+    queryFn: async () => {
+      try {
+        return await supportApi.getDashboardStats();
+      } catch {
+        return undefined;
+      }
+    },
+    retry: 1,
   });
 
   const tickets = ticketPage?.content ?? [];

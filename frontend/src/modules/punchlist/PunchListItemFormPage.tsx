@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
+import { PhotoAttachments } from '@/components/PhotoAttachments';
 import { punchlistApi } from '@/api/punchlist';
 import { projectsApi } from '@/api/projects';
 import { permissionsApi } from '@/api/permissions';
@@ -282,6 +283,13 @@ const PunchListItemFormPage: React.FC = () => {
             </FormField>
           </div>
         </section>
+
+        {/* Photo attachments (only available in edit mode, after entity exists) */}
+        {isEdit && id && (
+          <div className="mb-6">
+            <PhotoAttachments entityType="PUNCH_ITEM" entityId={id} />
+          </div>
+        )}
 
         <div className="flex items-center gap-3">
           <Button type="submit" loading={isSubmitting}>

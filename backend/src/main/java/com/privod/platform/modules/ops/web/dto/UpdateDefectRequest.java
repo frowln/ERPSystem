@@ -25,6 +25,9 @@ public record UpdateDefectRequest(
         String fixDescription,
         UUID drawingId,
         Double pinX,
-        Double pinY
+        Double pinY,
+        Double planX,
+        Double planY,
+        String planId
 ) {
 }

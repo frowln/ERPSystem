@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { ArrowLeft, Save, Plus, Trash2, Sparkles } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
 import { projectsApi } from '@/api/projects';
+import { aiApi } from '@/api/ai';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
+import VoiceInput from '@/components/VoiceInput';
 
 const getWeatherOptions = () => [
   { value: 'CLEAR', label: t('operations.dailyLogCreate.weatherClear') },
@@ -51,6 +53,60 @@ const DailyLogCreatePage: React.FC = () => {
   const [safetyNotes, setSafetyNotes] = useState('');
   const [entries, setEntries] = useState<EntryForm[]>([{ ...emptyEntry }]);
 
+  // AI Auto-Fill
+  const autoFillMutation = useMutation({
+    mutationFn: () => aiApi.suggestDailyLog({ projectId, date: logDate }),
+    onSuccess: (suggestion) => {
+      setWeather(suggestion.weatherCondition);
+      setTemperatureMin(String(suggestion.temperatureMin));
+      setTemperatureMax(String(suggestion.temperatureMax));
+      setWorkersOnSite(String(suggestion.workersOnSite));
+      setEquipmentOnSite(String(suggestion.equipmentOnSite));
+      setWorkDescription(suggestion.workDescription);
+      setSafetyNotes(suggestion.safetyNotes);
+      setIssuesNotes(suggestion.issuesNotes);
+      if (suggestion.entries.length > 0) {
+        setEntries(
+          suggestion.entries.map((e) => ({
+            workArea: e.workArea,
+            workDescription: e.workDescription,
+            workersCount: String(e.workersCount),
+            hoursWorked: String(e.hoursWorked),
+            equipmentUsed: e.equipmentUsed,
+            percentComplete: String(e.percentComplete),
+          })),
+        );
+      }
+      toast.success(t('ai.dailyLog.autoFillSuccess'));
+    },
+    onError: () => {
+      toast.error(t('common.error'));
+    },
+  });
+
+  const handleAutoFill = () => {
+    if (!projectId) {
+      toast.error(t('ai.dailyLog.selectProjectFirst'));
+      return;
+    }
+    autoFillMutation.mutate();
+  };
+
+  // Voice input handler for work description
+  const handleVoiceWorkDescription = (text: string) => {
+    setWorkDescription((prev) => (prev ? `${prev} ${text}` : text));
+  };
+
+  // Voice input handler for issues
+  const handleVoiceIssues = (text: string) => {
+    setIssuesNotes((prev) => (prev ? `${prev} ${text}` : text));
+  };
+
+  // Voice input handler for safety
+  const handleVoiceSafety = (text: string) => {
+    setSafetyNotes((prev) => (prev ? `${prev} ${text}` : text));
+  };
+
   const addEntry = () => setEntries([...entries, { ...emptyEntry }]);
 
   const removeEntry = (index: number) => {
@@ -81,9 +137,20 @@ const DailyLogCreatePage: React.FC = () => {
           { label: t('operations.dailyLogCreate.breadcrumbNew') },
         ]}
         actions={
-          <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/operations/daily-logs')}>
-            {t('operations.dailyLogCreate.back')}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              iconLeft={<Sparkles size={16} />}
+              onClick={handleAutoFill}
+              loading={autoFillMutation.isPending}
+              title={t('ai.dailyLog.autoFillHint')}
+            >
+              {autoFillMutation.isPending ? t('ai.dailyLog.generating') : t('ai.dailyLog.autoFill')}
+            </Button>
+            <Button variant="secondary" iconLeft={<ArrowLeft size={16} />} onClick={() => navigate('/operations/daily-logs')}>
+              {t('operations.dailyLogCreate.back')}
+            </Button>
+          </div>
         }
       />
 
@@ -124,15 +191,30 @@ const DailyLogCreatePage: React.FC = () => {
           </div>
 
           <FormField label={t('operations.dailyLogCreate.workDescriptionLabel')} required>
-            <Textarea placeholder={t('operations.dailyLogCreate.workDescriptionPlaceholder')} value={workDescription} onChange={(e) => setWorkDescription(e.target.value)} rows={3} />
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Textarea placeholder={t('operations.dailyLogCreate.workDescriptionPlaceholder')} value={workDescription} onChange={(e) => setWorkDescription(e.target.value)} rows={3} />
+              </div>
+              <VoiceInput onTranscript={handleVoiceWorkDescription} className="mt-0.5 flex-shrink-0" />
+            </div>
           </FormField>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField label={t('operations.dailyLogCreate.issuesLabel')}>
-              <Textarea placeholder={t('operations.dailyLogCreate.issuesPlaceholder')} value={issuesNotes} onChange={(e) => setIssuesNotes(e.target.value)} rows={2} />
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Textarea placeholder={t('operations.dailyLogCreate.issuesPlaceholder')} value={issuesNotes} onChange={(e) => setIssuesNotes(e.target.value)} rows={2} />
+                </div>
+                <VoiceInput onTranscript={handleVoiceIssues} size="sm" className="mt-0.5 flex-shrink-0" />
+              </div>
             </FormField>
             <FormField label={t('operations.dailyLogCreate.safetyLabel')}>
-              <Textarea placeholder={t('operations.dailyLogCreate.safetyPlaceholder')} value={safetyNotes} onChange={(e) => setSafetyNotes(e.target.value)} rows={2} />
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Textarea placeholder={t('operations.dailyLogCreate.safetyPlaceholder')} value={safetyNotes} onChange={(e) => setSafetyNotes(e.target.value)} rows={2} />
+                </div>
+                <VoiceInput onTranscript={handleVoiceSafety} size="sm" className="mt-0.5 flex-shrink-0" />
+              </div>
             </FormField>
           </div>
         </div>

@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -26,12 +27,16 @@ import java.util.UUID;
         @Index(name = "idx_supplement_contract", columnList = "contract_id"),
         @Index(name = "idx_supplement_status", columnList = "status")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContractSupplement extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "contract_id", nullable = false)
     private UUID contractId;

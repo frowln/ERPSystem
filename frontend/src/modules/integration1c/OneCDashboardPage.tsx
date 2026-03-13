@@ -334,6 +334,7 @@ const OneCDashboardPage: React.FC = () => {
         pageSize={10}
         emptyTitle={t('integration1c.emptyActivityTitle')}
         emptyDescription={t('integration1c.emptyActivityDescription')}
+        enableExport
       />
     </div>
   );

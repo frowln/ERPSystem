@@ -296,6 +296,7 @@ const EstimateExportPage: React.FC = () => {
           pageSize={10}
           emptyTitle={t('estimates.export.historyEmpty')}
           emptyDescription={t('estimates.export.historyEmptyDesc')}
+          enableExport
         />
       </div>
     </div>

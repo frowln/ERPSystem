@@ -82,6 +82,7 @@ export const EmptyTable: Story = {
         emptyTitle="No contracts found"
         emptyDescription="Create your first contract to get started."
         tableLabel="Contracts table — empty"
+        enableExport
       />
     </div>
   ),
@@ -95,6 +96,7 @@ export const WithData: Story = {
         columns={COLUMNS}
         data={ROWS}
         tableLabel="Contracts table"
+        enableExport
       />
     </div>
   ),
@@ -108,6 +110,7 @@ export const WithSorting: Story = {
         columns={COLUMNS}
         data={ROWS}
         tableLabel="Contracts table — click headers to sort"
+        enableExport
       />
     </div>
   ),
@@ -122,6 +125,7 @@ export const Loading: Story = {
         data={[]}
         loading={true}
         tableLabel="Contracts table — loading"
+        enableExport
       />
     </div>
   ),

@@ -49,7 +49,14 @@ const PricingDatabaseListPage: React.FC = () => {
 
   const { data: dbData, isLoading } = useQuery({
     queryKey: ['pricing-databases'],
-    queryFn: () => pricingApi.getDatabases({ size: 500 }),
+    queryFn: async () => {
+      try {
+        return await pricingApi.getDatabases({ size: 500 });
+      } catch {
+        return { content: [] as PricingDatabase[], totalElements: 0, totalPages: 0, size: 500, number: 0 };
+      }
+    },
+    retry: 1,
   });
 
   const databases = dbData?.content ?? [];

@@ -32,6 +32,7 @@ const UsageLogFormPage = lazy(() => import('@/modules/fleet/UsageLogFormPage'));
 const WaybillListPage = lazy(() => import('@/modules/fleet/WaybillListPage'));
 const WaybillDetailPage = lazy(() => import('@/modules/fleet/WaybillDetailPage'));
 const WaybillFormPage = lazy(() => import('@/modules/fleet/WaybillFormPage'));
+const QrScanPage = lazy(() => import('@/modules/fleet/QrScanPage'));
 
 // IoT
 const DevicesPage = lazy(() => import('@/modules/iot/DevicesPage'));
@@ -103,6 +104,7 @@ export function operationsRoutes() {
       <Route path="fleet/waybills/new" element={<WaybillFormPage />} />
       <Route path="fleet/waybills/:id/edit" element={<WaybillFormPage />} />
       <Route path="fleet/waybills/:id" element={<WaybillDetailPage />} />
+      <Route path="fleet/qr-scan" element={<QrScanPage />} />
 
       {/* IoT */}
       <Route path="iot/devices" element={<DevicesPage />} />

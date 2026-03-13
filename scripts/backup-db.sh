@@ -10,12 +10,13 @@
 #   DB_USER     - database user       (default: privod)
 #   PGPASSWORD  - database password   (required)
 #   BACKUP_DIR  - backup directory    (default: /var/backups/privod)
-#   S3_BUCKET   - S3/MinIO bucket     (optional, for offsite copy)
-#   S3_ENDPOINT - S3 endpoint URL     (optional)
+#   S3_BUCKET     - S3/MinIO bucket     (optional, for offsite copy)
+#   S3_ENDPOINT   - S3 endpoint URL     (optional)
+#   GPG_RECIPIENT - GPG key recipient   (optional, encrypts backup)
 # =============================================================================
 set -euo pipefail
 
-RETENTION_DAYS="${1:-30}"
+RETENTION_DAYS="${1:-90}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 DB_HOST="${DB_HOST:-localhost}"
@@ -45,6 +46,15 @@ pg_dump \
 BACKUP_SIZE=$(du -h "${BACKUP_FILE}" | cut -f1)
 echo "[$(date -Iseconds)] Backup created: ${BACKUP_FILE} (${BACKUP_SIZE})"
 
+# Optional GPG encryption
+if [ -n "${GPG_RECIPIENT:-}" ]; then
+    echo "Encrypting backup with GPG for ${GPG_RECIPIENT}..."
+    gpg --batch --yes --trust-model always --recipient "${GPG_RECIPIENT}" --encrypt "${BACKUP_FILE}"
+    rm -f "${BACKUP_FILE}"
+    BACKUP_FILE="${BACKUP_FILE}.gpg"
+    echo "Encrypted: ${BACKUP_FILE}"
+fi
+
 # Upload to S3/MinIO if configured
 if [[ -n "${S3_BUCKET:-}" ]]; then
   S3_ARGS=""
@@ -57,7 +67,7 @@ fi
 
 # Remove old backups
 if [[ "${RETENTION_DAYS}" -gt 0 ]]; then
-  DELETED=$(find "${BACKUP_DIR}" -name "${DB_NAME}_*.sql.gz" -mtime "+${RETENTION_DAYS}" -delete -print | wc -l)
+  DELETED=$(find "${BACKUP_DIR}" \( -name "${DB_NAME}_*.sql.gz" -o -name "${DB_NAME}_*.sql.gz.gpg" \) -mtime "+${RETENTION_DAYS}" -delete -print | wc -l)
   echo "[$(date -Iseconds)] Removed ${DELETED} backup(s) older than ${RETENTION_DAYS} days"
 fi
 

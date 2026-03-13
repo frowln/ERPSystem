@@ -5,6 +5,7 @@ import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.warehouse.service.StockService;
 import com.privod.platform.modules.warehouse.web.dto.LowStockAlertResponse;
 import com.privod.platform.modules.warehouse.web.dto.MaterialAvailabilityResponse;
+import com.privod.platform.modules.warehouse.web.dto.MaterialConsumptionRow;
 import com.privod.platform.modules.warehouse.web.dto.StockEntryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -85,5 +86,13 @@ public class StockController {
 
         Page<StockEntryResponse> page = stockService.getProjectStock(projectId, pageable);
         return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
+    }
+
+    @GetMapping("/project/{projectId}/consumption-report")
+    @Operation(summary = "P1-WAR-2: Plan vs actual material consumption (ЛСР plan + warehouse actual)")
+    public ResponseEntity<ApiResponse<List<MaterialConsumptionRow>>> getConsumptionReport(
+            @PathVariable UUID projectId) {
+        List<MaterialConsumptionRow> report = stockService.getProjectConsumptionReport(projectId);
+        return ResponseEntity.ok(ApiResponse.ok(report));
     }
 }

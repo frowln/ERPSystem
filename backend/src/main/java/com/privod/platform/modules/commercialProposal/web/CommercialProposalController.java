@@ -261,6 +261,15 @@ public class CommercialProposalController {
                 .body(pdfContent);
     }
 
+    @PostMapping("/{id}/create-contract")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Create a contract from an approved commercial proposal")
+    public ResponseEntity<ApiResponse<Map<String, UUID>>> createContractFromProposal(@PathVariable UUID id) {
+        UUID contractId = service.createContractFromProposal(id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(Map.of("contractId", contractId)));
+    }
+
     @PostMapping("/{id}/apply-bid/{bidComparisonId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
     @Operation(summary = "Apply bid winner to commercial proposal work items")

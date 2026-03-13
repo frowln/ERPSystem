@@ -704,6 +704,7 @@ const CalendarPage: React.FC = () => {
                 pageSize={10}
                 emptyTitle={t('calendar.emptyTitle')}
                 emptyDescription={t('calendar.emptyDescription')}
+                enableExport
               />
 
               {/* Legend */}

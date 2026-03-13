@@ -51,7 +51,14 @@ const MinstroyIndexPage: React.FC = () => {
 
   const { data: estimatesData } = useQuery({
     queryKey: ['estimates'],
-    queryFn: () => estimatesApi.getEstimates(),
+    queryFn: async () => {
+      try {
+        return await estimatesApi.getEstimates();
+      } catch {
+        return { content: [], totalElements: 0, totalPages: 0, size: 20, page: 0 } as import('@/types').PaginatedResponse<Estimate>;
+      }
+    },
+    retry: 1,
   });
 
   const estimates = estimatesData?.content ?? [];
@@ -62,8 +69,15 @@ const MinstroyIndexPage: React.FC = () => {
 
   const { data: indices = [], isLoading: indicesLoading, refetch: refetchIndices } = useQuery({
     queryKey: ['minstroy-indices', region, quarter, year],
-    queryFn: () => estimatesApi.getMinstroyIndices(region, Number(quarter), Number(year)),
+    queryFn: async () => {
+      try {
+        return await estimatesApi.getMinstroyIndices(region, Number(quarter), Number(year));
+      } catch {
+        return [] as MinstroyIndex[];
+      }
+    },
     enabled: !!region && !!quarter && !!year,
+    retry: 1,
   });
 
   const applyMutation = useMutation({
@@ -268,6 +282,7 @@ const MinstroyIndexPage: React.FC = () => {
           pageSize={20}
           emptyTitle={t('estimates.minstroy.emptyTitle')}
           emptyDescription={t('estimates.minstroy.emptyDescription')}
+          enableExport
         />
       </div>
 

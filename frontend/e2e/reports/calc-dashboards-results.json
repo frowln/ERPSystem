@@ -1,0 +1,48 @@
+{
+  "checks": [
+    {
+      "page": "/closeout/dashboard",
+      "metric": "page_loads",
+      "expected": "present",
+      "actual": "present",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/closeout/dashboard",
+      "metric": "checklists_card",
+      "expected": "present",
+      "actual": "not found",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "MINOR"
+    },
+    {
+      "page": "/closeout/dashboard",
+      "metric": "commissioning_section",
+      "expected": "present",
+      "actual": "present",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "MINOR"
+    },
+    {
+      "page": "/closeout/dashboard",
+      "metric": "warranty_section",
+      "expected": "present",
+      "actual": "present",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "MINOR"
+    }
+  ],
+  "summary": {
+    "totalChecks": 4,
+    "passed": 4,
+    "failed": 0,
+    "passRate": 100,
+    "failedChecks": []
+  },
+  "timestamp": "2026-03-12T18:35:23.912Z"
+}

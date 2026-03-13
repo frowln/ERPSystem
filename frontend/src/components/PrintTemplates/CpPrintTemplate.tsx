@@ -51,16 +51,18 @@ export function printCommercialProposal(data: CpPrintData): void {
         <td>${escapeHtml(item.name)}</td>
         <td class="text-center">${escapeHtml(item.unitOfMeasure)}</td>
         <td class="num">${formatRuNumber(item.quantity, 3)}</td>
-        <td class="num">${formatRuMoney(item.costPrice)}</td>
-        <td class="num">${formatRuMoney(item.totalCost)}</td>
-        ${hasCustomerPrices ? `<td class="num">${formatRuMoney(item.customerPrice)}</td>` : ''}
-        ${hasCustomerPrices ? `<td class="num">${formatRuMoney(item.totalCustomer)}</td>` : ''}
+        ${hasCustomerPrices
+          // Client view: show customer price only (never expose internal cost)
+          ? `<td class="num">${formatRuMoney(item.customerPrice)}</td><td class="num">${formatRuMoney(item.totalCustomer)}</td>`
+          // Internal/draft view: show cost price as fallback
+          : `<td class="num">${formatRuMoney(item.costPrice)}</td><td class="num">${formatRuMoney(item.totalCost)}</td>`
+        }
       </tr>`,
       )
       .join('');
   }
 
-  const colCount = hasCustomerPrices ? 8 : 6;
+  const colCount = 6;
 
   const materialTotal = data.materialItems.reduce((s, i) => s + i.totalCost, 0);
   const workTotal = data.workItems.reduce((s, i) => s + i.totalCost, 0);
@@ -78,10 +80,10 @@ export function printCommercialProposal(data: CpPrintData): void {
         <th>${t('export.cp.colName')}</th>
         <th style="width: 55px">${t('export.cp.colUnit')}</th>
         <th style="width: 65px">${t('export.cp.colQty')}</th>
-        <th style="width: 85px">${t('export.cp.colCostPrice')}</th>
-        <th style="width: 95px">${t('export.cp.colTotalCost')}</th>
-        ${hasCustomerPrices ? `<th style="width: 85px">${t('export.cp.colCustomerPrice')}</th>` : ''}
-        ${hasCustomerPrices ? `<th style="width: 95px">${t('export.cp.colTotalCustomer')}</th>` : ''}
+        ${hasCustomerPrices
+          ? `<th style="width: 85px">${t('export.cp.colCustomerPrice')}</th><th style="width: 95px">${t('export.cp.colTotalCustomer')}</th>`
+          : `<th style="width: 85px">${t('export.cp.colCostPrice')}</th><th style="width: 95px">${t('export.cp.colTotalCost')}</th>`
+        }
       </tr>
     </thead>`;
 
@@ -113,9 +115,11 @@ export function printCommercialProposal(data: CpPrintData): void {
       <tbody>
         ${renderItemRows(data.materialItems)}
         <tr class="totals-row">
-          <td colspan="5" class="text-right">${t('export.cp.subtotalMaterials')}</td>
-          <td class="num">${formatRuMoney(materialTotal)}</td>
-          ${hasCustomerPrices ? `<td></td><td class="num">${formatRuMoney(materialTotalCustomer)}</td>` : ''}
+          <td colspan="4" class="text-right">${t('export.cp.subtotalMaterials')}</td>
+          ${hasCustomerPrices
+            ? `<td></td><td class="num">${formatRuMoney(materialTotalCustomer)}</td>`
+            : `<td></td><td class="num">${formatRuMoney(materialTotal)}</td>`
+          }
         </tr>
       </tbody>
     </table>` : ''}
@@ -127,9 +131,11 @@ export function printCommercialProposal(data: CpPrintData): void {
       <tbody>
         ${renderItemRows(data.workItems)}
         <tr class="totals-row">
-          <td colspan="5" class="text-right">${t('export.cp.subtotalWorks')}</td>
-          <td class="num">${formatRuMoney(workTotal)}</td>
-          ${hasCustomerPrices ? `<td></td><td class="num">${formatRuMoney(workTotalCustomer)}</td>` : ''}
+          <td colspan="4" class="text-right">${t('export.cp.subtotalWorks')}</td>
+          ${hasCustomerPrices
+            ? `<td></td><td class="num">${formatRuMoney(workTotalCustomer)}</td>`
+            : `<td></td><td class="num">${formatRuMoney(workTotal)}</td>`
+          }
         </tr>
       </tbody>
     </table>` : ''}
@@ -138,14 +144,12 @@ export function printCommercialProposal(data: CpPrintData): void {
       <tbody>
         <tr class="totals-row">
           <td style="width: 70%;" class="text-right"><strong>${t('export.cp.grandTotal')}</strong></td>
-          <td class="num"><strong>${formatRuMoney(data.totalCostPrice)}</strong></td>
-          ${hasCustomerPrices ? `<td class="num"><strong>${formatRuMoney(data.totalCustomerPrice)}</strong></td>` : ''}
+          <td class="num"><strong>${formatRuMoney(hasCustomerPrices ? data.totalCustomerPrice : data.totalCostPrice)}</strong></td>
         </tr>
-        ${data.totalMargin != null ? `
+        ${!hasCustomerPrices && data.totalMargin != null ? `
         <tr>
           <td class="text-right">${t('export.cp.margin')}</td>
           <td class="num">${formatRuMoney(data.totalMargin)}</td>
-          ${hasCustomerPrices ? `<td class="num">${data.marginPercent != null ? data.marginPercent.toFixed(1) + '%' : ''}</td>` : ''}
         </tr>` : ''}
       </tbody>
     </table>

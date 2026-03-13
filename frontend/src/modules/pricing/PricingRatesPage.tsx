@@ -255,6 +255,7 @@ const PricingRatesPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('pricing.rates.emptyTitle')}
         emptyDescription={t('pricing.rates.emptyDescription')}
+        enableExport
       />
 
       {/* Hidden file input */}

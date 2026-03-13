@@ -2,6 +2,8 @@ package com.privod.platform.modules.procurementExt.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.finance.domain.BudgetItem;
+import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.procurementExt.domain.PurchaseOrder;
 import com.privod.platform.modules.procurementExt.domain.PurchaseOrderItem;
 import com.privod.platform.modules.procurementExt.domain.PurchaseOrderStatus;
@@ -9,6 +11,7 @@ import com.privod.platform.modules.procurementExt.repository.PurchaseOrderItemRe
 import com.privod.platform.modules.procurementExt.repository.PurchaseOrderRepository;
 import com.privod.platform.modules.procurementExt.web.dto.PurchaseOrderBulkTransitionAction;
 import com.privod.platform.modules.procurementExt.web.dto.PurchaseOrderBulkTransitionResponse;
+import com.privod.platform.modules.warehouse.service.StockMovementService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,8 @@ public class PurchaseOrderService {
 
     private final PurchaseOrderRepository orderRepository;
     private final PurchaseOrderItemRepository itemRepository;
+    private final BudgetItemRepository budgetItemRepository; // P0-WAR-2: бюджетный контроль
+    private final StockMovementService stockMovementService;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -98,6 +103,15 @@ public class PurchaseOrderService {
 
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         normalizeAndValidateOrder(order, organizationId);
+
+        // P0-WAR-2: Проверка бюджетного лимита перед созданием заказа (ФСБУ 5/2019)
+        if (order.getBudgetItemId() != null && order.getTotalAmount() != null
+                && order.getTotalAmount().compareTo(BigDecimal.ZERO) > 0) {
+            validateBudgetLimit(order.getBudgetItemId(), order.getTotalAmount());
+            // Зарезервировать сумму в committed
+            reserveBudgetAmount(order.getBudgetItemId(), order.getTotalAmount());
+        }
+
         order = orderRepository.save(order);
 
         for (PurchaseOrderItem item : items) {
@@ -296,6 +310,28 @@ public class PurchaseOrderService {
         }
         log.info("Delivery registered for order {}: item={} qty={}",
                 order.getOrderNumber(), itemId, deliveredQty);
+
+        // P1-WAR-3: Auto-create StockMovement(RECEIPT) when PO becomes fully DELIVERED
+        if (allDelivered) {
+            try {
+                List<UUID> materialIds = items.stream()
+                        .map(PurchaseOrderItem::getMaterialId)
+                        .toList();
+                List<BigDecimal> quantities = items.stream()
+                        .map(PurchaseOrderItem::getQuantity)
+                        .toList();
+                List<String> units = items.stream()
+                        .map(PurchaseOrderItem::getUnit)
+                        .toList();
+                stockMovementService.createAutoReceiptFromDelivery(
+                        order.getId(), organizationId, materialIds, quantities, units);
+                log.info("Авто-приходный ордер создан для заказа {} ({})", order.getOrderNumber(), order.getId());
+            } catch (Exception e) {
+                log.warn("Не удалось создать авто-приходный ордер для заказа {} ({}): {}",
+                        order.getOrderNumber(), order.getId(), e.getMessage());
+            }
+        }
+
         return order;
     }
 
@@ -558,5 +594,44 @@ public class PurchaseOrderService {
         } catch (IllegalArgumentException ex) {
             return null;
         }
+    }
+
+    /**
+     * P0-WAR-2: Проверка бюджетного лимита перед созданием ПЗ (ФСБУ 5/2019).
+     * Доступный остаток = plannedAmount − committedAmount − contractedAmount.
+     * Если остатка недостаточно — выбрасывает исключение.
+     */
+    private void validateBudgetLimit(UUID budgetItemId, BigDecimal requiredAmount) {
+        BudgetItem budgetItem = budgetItemRepository.findById(budgetItemId)
+                .filter(bi -> !bi.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Статья бюджета не найдена: " + budgetItemId));
+
+        BigDecimal planned    = safe(budgetItem.getPlannedAmount());
+        BigDecimal committed  = safe(budgetItem.getCommittedAmount());
+        BigDecimal contracted = safe(budgetItem.getContractedAmount());
+        BigDecimal available  = planned.subtract(committed).subtract(contracted);
+
+        if (available.compareTo(requiredAmount) < 0) {
+            throw new IllegalStateException(
+                    String.format("Превышен лимит бюджета по статье «%s»: доступно %s руб., требуется %s руб.",
+                            budgetItem.getName(), available.toPlainString(), requiredAmount.toPlainString()));
+        }
+    }
+
+    /**
+     * Резервировать сумму в бюджете (committed — заказано, не оплачено).
+     */
+    private void reserveBudgetAmount(UUID budgetItemId, BigDecimal amount) {
+        budgetItemRepository.findById(budgetItemId)
+                .filter(bi -> !bi.isDeleted())
+                .ifPresent(bi -> {
+                    BigDecimal current = safe(bi.getCommittedAmount());
+                    bi.setCommittedAmount(current.add(amount));
+                    budgetItemRepository.save(bi);
+                });
+    }
+
+    private static BigDecimal safe(BigDecimal value) {
+        return value != null ? value : BigDecimal.ZERO;
     }
 }

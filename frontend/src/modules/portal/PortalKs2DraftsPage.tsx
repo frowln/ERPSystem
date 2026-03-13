@@ -263,6 +263,7 @@ const PortalKs2DraftsPage: React.FC = () => {
         columns={columns}
         data={drafts}
         loading={isLoading}
+        enableExport
       />
 
       {/* Create Draft Modal */}

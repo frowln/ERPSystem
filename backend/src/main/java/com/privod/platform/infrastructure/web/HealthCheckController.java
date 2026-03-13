@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import javax.sql.DataSource;
 import java.lang.management.ManagementFactory;
@@ -42,6 +45,12 @@ public class HealthCheckController {
 
     private final DataSource dataSource;
     private final StringRedisTemplate stringRedisTemplate;
+
+    @Autowired(required = false)
+    private S3Client s3Client;
+
+    @Autowired(required = false)
+    private JavaMailSender mailSender;
 
     @Value("${app.api.version:1.0.0}")
     private String apiVersion;
@@ -125,8 +134,8 @@ public class HealthCheckController {
 
         // If this endpoint responds, the API is up
         services.add(serviceEntry("api", "operational", 99.9));
-        services.add(serviceEntry("fileStorage", "operational", 99.9));
-        services.add(serviceEntry("notifications", "operational", 99.9));
+        services.add(checkFileStorage());
+        services.add(checkSmtp());
         services.add(serviceEntry("websocket", "operational", 99.9));
         services.add(serviceEntry("aiAssistant", "operational", 99.9));
 
@@ -202,6 +211,30 @@ public class HealthCheckController {
             entry.put("status", "down");
             entry.put("uptime", 0);
             return entry;
+        }
+    }
+
+    private Map<String, Object> checkFileStorage() {
+        try {
+            if (s3Client != null) {
+                s3Client.listBuckets();
+                return serviceEntry("fileStorage", "operational", 99.9);
+            }
+            return serviceEntry("fileStorage", "not_configured", 0.0);
+        } catch (Exception e) {
+            return serviceEntry("fileStorage", "degraded", 50.0);
+        }
+    }
+
+    private Map<String, Object> checkSmtp() {
+        try {
+            if (mailSender instanceof JavaMailSenderImpl impl) {
+                impl.testConnection();
+                return serviceEntry("notifications", "operational", 99.9);
+            }
+            return serviceEntry("notifications", "not_configured", 0.0);
+        } catch (Exception e) {
+            return serviceEntry("notifications", "degraded", 50.0);
         }
     }
 

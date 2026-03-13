@@ -2,19 +2,26 @@ package com.privod.platform.modules.selfEmployed.web;
 
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
+import com.privod.platform.modules.selfEmployed.domain.ActStatus;
 import com.privod.platform.modules.selfEmployed.domain.ContractorStatus;
 import com.privod.platform.modules.selfEmployed.domain.RegistryStatus;
 import com.privod.platform.modules.selfEmployed.domain.SelfEmployedPaymentStatus;
 import com.privod.platform.modules.selfEmployed.service.SelfEmployedService;
+import com.privod.platform.modules.selfEmployed.web.dto.ActResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.ContractorResponse;
+import com.privod.platform.modules.selfEmployed.web.dto.CreateActRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.CreateContractorRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.CreateRegistryRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.CreateSelfEmployedPaymentRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.CreateWorkerRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.GenerateRegistryRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.NpdVerificationResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.RegistryResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.SelfEmployedPaymentResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.UpdateContractorRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.UpdateSelfEmployedPaymentRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.UpdateWorkerRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.WorkerResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -207,5 +216,104 @@ public class SelfEmployedController {
             @PathVariable UUID id) {
         List<SelfEmployedPaymentResponse> payments = selfEmployedService.exportRegistry(id);
         return ResponseEntity.ok(ApiResponse.ok(payments));
+    }
+
+    // ---- Worker endpoints ----
+
+    @GetMapping("/workers")
+    @Operation(summary = "List self-employed workers with search and pagination")
+    public ResponseEntity<ApiResponse<PageResponse<WorkerResponse>>> listWorkers(
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<WorkerResponse> page = selfEmployedService.listWorkers(search, pageable);
+        return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
+    }
+
+    @GetMapping("/workers/{id}")
+    @Operation(summary = "Get self-employed worker by ID")
+    public ResponseEntity<ApiResponse<WorkerResponse>> getWorker(@PathVariable UUID id) {
+        WorkerResponse response = selfEmployedService.getWorker(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/workers")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER', 'FINANCE_MANAGER', 'PROJECT_MANAGER')")
+    @Operation(summary = "Register a new self-employed worker")
+    public ResponseEntity<ApiResponse<WorkerResponse>> createWorker(
+            @Valid @RequestBody CreateWorkerRequest request) {
+        WorkerResponse response = selfEmployedService.createWorker(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(response));
+    }
+
+    @PutMapping("/workers/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Update a self-employed worker")
+    public ResponseEntity<ApiResponse<WorkerResponse>> updateWorker(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateWorkerRequest request) {
+        WorkerResponse response = selfEmployedService.updateWorker(id, request);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @DeleteMapping("/workers/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER')")
+    @Operation(summary = "Soft-delete a self-employed worker")
+    public ResponseEntity<ApiResponse<Void>> deleteWorker(@PathVariable UUID id) {
+        selfEmployedService.deleteWorker(id);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    // ---- NPD Verification ----
+
+    @PostMapping("/verify-npd")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Verify NPD (self-employed tax) status by INN via FNS")
+    public ResponseEntity<ApiResponse<NpdVerificationResponse>> verifyNpd(
+            @RequestBody Map<String, String> request) {
+        String inn = request.get("inn");
+        NpdVerificationResponse response = selfEmployedService.verifyNpd(inn);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    // ---- Completion Act endpoints ----
+
+    @GetMapping("/acts")
+    @Operation(summary = "List completion acts with filtering and pagination")
+    public ResponseEntity<ApiResponse<PageResponse<ActResponse>>> listActs(
+            @RequestParam(required = false) UUID workerId,
+            @RequestParam(required = false) UUID projectId,
+            @RequestParam(required = false) ActStatus status,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<ActResponse> page = selfEmployedService.listActs(workerId, projectId, status, pageable);
+        return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
+    }
+
+    @PostMapping("/acts")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE_MANAGER', 'PROJECT_MANAGER')")
+    @Operation(summary = "Create a new completion act")
+    public ResponseEntity<ApiResponse<ActResponse>> createAct(
+            @Valid @RequestBody CreateActRequest request) {
+        ActResponse response = selfEmployedService.createAct(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(response));
+    }
+
+    @PatchMapping("/acts/{id}/sign")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE_MANAGER', 'PROJECT_MANAGER')")
+    @Operation(summary = "Sign a completion act")
+    public ResponseEntity<ApiResponse<ActResponse>> signAct(@PathVariable UUID id) {
+        ActResponse response = selfEmployedService.signAct(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PatchMapping("/acts/{id}/pay")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE_MANAGER')")
+    @Operation(summary = "Mark a completion act as paid and update worker's total")
+    public ResponseEntity<ApiResponse<ActResponse>> payAct(@PathVariable UUID id) {
+        ActResponse response = selfEmployedService.payAct(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

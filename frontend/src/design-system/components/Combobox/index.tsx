@@ -198,7 +198,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           aria-haspopup="listbox"
           aria-owns={listboxId}
           className={cn(
-            'flex items-center w-full h-9 border rounded-lg transition-colors duration-150 bg-white dark:bg-neutral-800',
+            'flex items-center w-full h-9 min-h-[44px] sm:min-h-0 border rounded-lg transition-colors duration-150 bg-white dark:bg-neutral-800',
             hasError
               ? 'border-danger-300 dark:border-danger-600'
               : isOpen

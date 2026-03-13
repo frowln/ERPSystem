@@ -34,6 +34,7 @@ import java.util.UUID;
 @RestController("financePaymentController")
 @RequestMapping({"/api/payments", "/api/transactions"})
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 @Tag(name = "Payments", description = "Payment management endpoints")
 public class PaymentController {
 

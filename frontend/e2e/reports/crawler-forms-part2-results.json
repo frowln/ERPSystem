@@ -1,0 +1,5368 @@
+[
+  {
+    "page": "/employees/new",
+    "formName": "Employee Create",
+    "group": "H-HR",
+    "totalFields": 18,
+    "filledFields": 17,
+    "requiredFields": 6,
+    "fieldsWithValidation": 6,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "lastName",
+        "type": "text",
+        "label": "Фамилия* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "firstName",
+        "type": "text",
+        "label": "Имя* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "middleName",
+        "type": "text",
+        "label": "Отчество",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "position",
+        "type": "text",
+        "label": "Должность* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "departmentId",
+        "type": "select",
+        "label": "Отдел* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "phone",
+        "type": "text",
+        "label": "Телефон",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "email",
+        "type": "email",
+        "label": "Email",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "hireDate",
+        "type": "date",
+        "label": "Дата приёма* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "contractType",
+        "type": "select",
+        "label": "Тип договора* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "projectId",
+        "type": "select",
+        "label": "Объект",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "passportNumber",
+        "type": "text",
+        "label": "Паспорт (серия и номер)",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "inn",
+        "type": "text",
+        "label": "ИНН",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "snils",
+        "type": "text",
+        "label": "СНИЛС",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "hourlyRate",
+        "type": "text",
+        "label": "Часовая ставка (руб.)",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "monthlyRate",
+        "type": "text",
+        "label": "Месячная ставка (руб.)",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/employees/new",
+        "form": "Employee Create",
+        "field": "notes",
+        "type": "textarea",
+        "label": "Примечания",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:12.336Z"
+  },
+  {
+    "page": "/employees",
+    "formName": "Employee List Page",
+    "group": "H-HR",
+    "totalFields": 26,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по ФИО, должности...",
+        "type": "text",
+        "label": "Поиск по ФИО, должности...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 8",
+        "type": "checkbox",
+        "label": "Выбрать строку 8",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 9",
+        "type": "checkbox",
+        "label": "Выбрать строку 9",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 10",
+        "type": "checkbox",
+        "label": "Выбрать строку 10",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 11",
+        "type": "checkbox",
+        "label": "Выбрать строку 11",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 12",
+        "type": "checkbox",
+        "label": "Выбрать строку 12",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 13",
+        "type": "checkbox",
+        "label": "Выбрать строку 13",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 14",
+        "type": "checkbox",
+        "label": "Выбрать строку 14",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 15",
+        "type": "checkbox",
+        "label": "Выбрать строку 15",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 16",
+        "type": "checkbox",
+        "label": "Выбрать строку 16",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 17",
+        "type": "checkbox",
+        "label": "Выбрать строку 17",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 18",
+        "type": "checkbox",
+        "label": "Выбрать строку 18",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 19",
+        "type": "checkbox",
+        "label": "Выбрать строку 19",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:13.919Z"
+  },
+  {
+    "page": "/crew",
+    "formName": "Crew Create (Modal)",
+    "group": "H-HR",
+    "totalFields": 2,
+    "filledFields": 2,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/crew",
+        "form": "Crew Create (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/crew",
+        "form": "Crew Create (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Received NaN for the `%s` attribute. If this is expected, cast the value to a string. children"
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:16.363Z"
+  },
+  {
+    "page": "/timesheets",
+    "formName": "Timesheet List Page",
+    "group": "H-HR",
+    "totalFields": 25,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по сотруднику, объекту...",
+        "type": "text",
+        "label": "Поиск по сотруднику, объекту...",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 8",
+        "type": "checkbox",
+        "label": "Выбрать строку 8",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 9",
+        "type": "checkbox",
+        "label": "Выбрать строку 9",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 10",
+        "type": "checkbox",
+        "label": "Выбрать строку 10",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 11",
+        "type": "checkbox",
+        "label": "Выбрать строку 11",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 12",
+        "type": "checkbox",
+        "label": "Выбрать строку 12",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 13",
+        "type": "checkbox",
+        "label": "Выбрать строку 13",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 14",
+        "type": "checkbox",
+        "label": "Выбрать строку 14",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 15",
+        "type": "checkbox",
+        "label": "Выбрать строку 15",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 16",
+        "type": "checkbox",
+        "label": "Выбрать строку 16",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 17",
+        "type": "checkbox",
+        "label": "Выбрать строку 17",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 18",
+        "type": "checkbox",
+        "label": "Выбрать строку 18",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 19",
+        "type": "checkbox",
+        "label": "Выбрать строку 19",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/timesheets",
+        "description": "No visible create/add button on list page \"Timesheet List Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:17.775Z"
+  },
+  {
+    "page": "/hr/timesheet-t13",
+    "formName": "Timesheet T-13 Page",
+    "group": "H-HR",
+    "totalFields": 4,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "_r_16_",
+        "type": "select",
+        "label": "Объект",
+        "required": false
+      },
+      {
+        "field": "_r_17_",
+        "type": "select",
+        "label": "Месяц",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/hr/timesheet-t13",
+        "description": "No visible create/add button on list page \"Timesheet T-13 Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:19.263Z"
+  },
+  {
+    "page": "/hr/work-orders",
+    "formName": "HR Work Orders Page",
+    "group": "H-HR",
+    "totalFields": 19,
+    "filledFields": 3,
+    "requiredFields": 5,
+    "fieldsWithValidation": 5,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "text:Поиск по номеру, описанию, бригаде...",
+        "type": "text",
+        "label": "Поиск по номеру, описанию, бригаде...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_8_",
+        "type": "select",
+        "label": "Тип наряда* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_9_",
+        "type": "text",
+        "label": "Объект* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_a_",
+        "type": "text",
+        "label": "Бригада* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_b_",
+        "type": "textarea",
+        "label": "Описание работ* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_c_",
+        "type": "date",
+        "label": "Дата начала* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_d_",
+        "type": "date",
+        "label": "Дата окончания",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/hr/work-orders",
+        "form": "HR Work Orders Page",
+        "field": "_r_e_",
+        "type": "textarea",
+        "label": "Требования безопасности",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "%o\n\n%s\n\n%s\n TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at http://localhost:4000/src/modules/hr/WorkOrderFormPage.tsx:121:165\n    at Array.filter (<anonymous>)\n    at http://localhost:4000/src/modules/hr/WorkOrderFormPage.tsx:120:19\n    at updateMemo (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:6545:21)\n    at Object.useMemo (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:18969:20)\n    at exports.useMemo (http://localhost:4000/node_modules/.vite/deps/chunk-DFQNUVCC.js?v=321d6203:947:36)\n    at WorkOrderFormPage (http://localhost:4000/src/modules/hr/WorkOrderFormPage.tsx:117:20)\n    at Object.react_stack_bottom_frame (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:18509:20)\n    at renderWithHooks (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:5654:24)\n    at updateFunctionComponent (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:7475:21) The above error occurred in the <WorkOrderFormPage> component. React will try to recreate this component tree from scratch using the error boundary you provided, PageErrorBoundary.",
+      "[PageErrorBoundary] TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at http://localhost:4000/src/modules/hr/WorkOrderFormPage.tsx:121:165\n    at Array.filter (<anonymous>)\n    at http://localhost:4000/src/modules/hr/WorkOrderFormPage.tsx:120:19\n    at updateMemo (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:6545:21)\n    at Object.useMemo (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:18969:20)\n    at exports.useMemo (http://localhost:4000/node_modules/.vite/deps/chunk-DFQNUVCC.js?v=321d6203:947:36)\n    at WorkOrderFormPage (http://localhost:4000/src/modules/hr/WorkOrderFormPage.tsx:117:20)\n    at Object.react_stack_bottom_frame (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:18509:20)\n    at renderWithHooks (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:5654:24)\n    at updateFunctionComponent (http://localhost:4000/node_modules/.vite/deps/react-dom_client.js?v=321d6203:7475:21) {componentStack: \n    at WorkOrderFormPage (http://localhost:4000/s…/deps/@tanstack_react-query.js?v=321d6203:3168:3)}"
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:21.836Z"
+  },
+  {
+    "page": "/leave/requests",
+    "formName": "Leave Requests Page",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Received NaN for the `%s` attribute. If this is expected, cast the value to a string. children"
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/leave/requests",
+        "description": "Could not find create button matching \"создать|подать|новый|добавить|new\" on page \"Leave Requests Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:23.337Z"
+  },
+  {
+    "page": "/hr-russian/employment-contracts",
+    "formName": "Employment Contracts (RU) Page",
+    "group": "H-HR",
+    "totalFields": 2,
+    "filledFields": 2,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/hr-russian/employment-contracts",
+        "form": "Employment Contracts (RU) Page",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/hr-russian/employment-contracts",
+        "form": "Employment Contracts (RU) Page",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:25.743Z"
+  },
+  {
+    "page": "/self-employed",
+    "formName": "Self-Employed Page",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/self-employed",
+        "description": "Could not find create button matching \"добавить|создать|new\" on page \"Self-Employed Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:27.312Z"
+  },
+  {
+    "page": "/hr/staffing-schedule",
+    "formName": "Staffing Schedule Page",
+    "group": "H-HR",
+    "totalFields": 22,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по отделу, должности...",
+        "type": "text",
+        "label": "Поиск по отделу, должности...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 8",
+        "type": "checkbox",
+        "label": "Выбрать строку 8",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 9",
+        "type": "checkbox",
+        "label": "Выбрать строку 9",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 10",
+        "type": "checkbox",
+        "label": "Выбрать строку 10",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 11",
+        "type": "checkbox",
+        "label": "Выбрать строку 11",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 12",
+        "type": "checkbox",
+        "label": "Выбрать строку 12",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 13",
+        "type": "checkbox",
+        "label": "Выбрать строку 13",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 14",
+        "type": "checkbox",
+        "label": "Выбрать строку 14",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:28.904Z"
+  },
+  {
+    "page": "/hr/certification-matrix",
+    "formName": "Certification Matrix Page",
+    "group": "H-HR",
+    "totalFields": 6,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск...",
+        "type": "text",
+        "label": "Поиск...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/hr/certification-matrix",
+        "description": "No visible create/add button on list page \"Certification Matrix Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:30.658Z"
+  },
+  {
+    "page": "/safety/incidents",
+    "formName": "Safety Incident Create (Modal)",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/safety/incidents",
+        "description": "Could not find create button matching \"зарегистрировать|создать|добавить|new\" on page \"Safety Incident Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:32.216Z"
+  },
+  {
+    "page": "/safety/inspections",
+    "formName": "Safety Inspection Create (Modal)",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Received NaN for the `%s` attribute. If this is expected, cast the value to a string. children"
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/safety/inspections",
+        "description": "Could not find create button matching \"провести|создать|добавить|new\" on page \"Safety Inspection Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:33.845Z"
+  },
+  {
+    "page": "/safety/briefings",
+    "formName": "Safety Briefing Create (Modal)",
+    "group": "I-Safety",
+    "totalFields": 8,
+    "filledFields": 8,
+    "requiredFields": 4,
+    "fieldsWithValidation": 4,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "_r_8_",
+        "type": "select",
+        "label": "Label type* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "_r_9_",
+        "type": "date",
+        "label": "Label date* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "_r_a_",
+        "type": "text",
+        "label": "Label instructor* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "_r_b_",
+        "type": "text",
+        "label": "Label topic* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "_r_c_",
+        "type": "textarea",
+        "label": "Label notes",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/safety/briefings",
+        "form": "Safety Briefing Create (Modal)",
+        "field": "text:Placeholder attendee name",
+        "type": "text",
+        "label": "Placeholder attendee name",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:53:56.532Z"
+  },
+  {
+    "page": "/safety/training-journal",
+    "formName": "Safety Training Journal Page",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/safety/training-journal",
+        "description": "Could not find create button matching \"создать|добавить|записать|new\" on page \"Safety Training Journal Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:53:58.165Z"
+  },
+  {
+    "page": "/safety/ppe",
+    "formName": "PPE Issue (Modal)",
+    "group": "I-Safety",
+    "totalFields": 7,
+    "filledFields": 6,
+    "requiredFields": 2,
+    "fieldsWithValidation": 2,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "text:Поиск по наименованию...",
+        "type": "text",
+        "label": "Поиск по наименованию...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "_r_g_",
+        "type": "select",
+        "label": "Наименование СИЗ* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "_r_h_",
+        "type": "text",
+        "label": "Сотрудник* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "_r_i_",
+        "type": "text",
+        "label": "Размер",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/safety/ppe",
+        "form": "PPE Issue (Modal)",
+        "field": "_r_j_",
+        "type": "number",
+        "label": "Количество",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:54:15.392Z"
+  },
+  {
+    "page": "/safety/accident-acts",
+    "formName": "Accident Act (Н-1) Page",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/safety/accident-acts",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Accident Act (Н-1) Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:17.055Z"
+  },
+  {
+    "page": "/safety",
+    "formName": "Safety Dashboard",
+    "group": "I-Safety",
+    "totalFields": 13,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск...",
+        "type": "text",
+        "label": "Поиск...",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:54:19.101Z"
+  },
+  {
+    "page": "/safety/metrics",
+    "formName": "Safety Metrics Page",
+    "group": "I-Safety",
+    "totalFields": 3,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/safety/metrics",
+        "description": "No visible create/add button on list page \"Safety Metrics Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:20.634Z"
+  },
+  {
+    "page": "/safety/compliance",
+    "formName": "Safety Compliance Page",
+    "group": "I-Safety",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/safety/compliance",
+        "description": "No visible create/add button on list page \"Safety Compliance Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:22.226Z"
+  },
+  {
+    "page": "/safety/violations",
+    "formName": "Safety Violations Page",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/safety/violations",
+        "description": "Could not find create button matching \"создать|зафиксировать|добавить|new\" on page \"Safety Violations Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:23.966Z"
+  },
+  {
+    "page": "/defects",
+    "formName": "Defect Create (Modal)",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/defects",
+        "description": "Could not find create button matching \"зафиксировать|создать|добавить|new\" on page \"Defect Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:26.332Z"
+  },
+  {
+    "page": "/quality/checklists",
+    "formName": "Quality Checklists Page",
+    "group": "J-Quality",
+    "totalFields": 2,
+    "filledFields": 2,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/quality/checklists",
+        "form": "Quality Checklists Page",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/quality/checklists",
+        "form": "Quality Checklists Page",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:54:28.858Z"
+  },
+  {
+    "page": "/quality/material-inspection",
+    "formName": "Material Inspection Create (Modal)",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/quality/material-inspection",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Material Inspection Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:30.457Z"
+  },
+  {
+    "page": "/quality/checklist-templates",
+    "formName": "Checklist Templates Page",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/quality/checklist-templates",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Checklist Templates Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:32.067Z"
+  },
+  {
+    "page": "/quality/tolerance-rules",
+    "formName": "Tolerance Rules Page",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/quality/tolerance-rules",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Tolerance Rules Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:33.561Z"
+  },
+  {
+    "page": "/quality/certificates",
+    "formName": "Quality Certificates Page",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/quality/certificates",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Quality Certificates Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:35.238Z"
+  },
+  {
+    "page": "/punchlist/items",
+    "formName": "Punch List Items Page",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/punchlist/items",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Punch List Items Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:36.635Z"
+  },
+  {
+    "page": "/quality/defect-register",
+    "formName": "Defect Register Page",
+    "group": "J-Quality",
+    "totalFields": 29,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по номеру, месту...",
+        "type": "text",
+        "label": "Поиск по номеру, месту...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 8",
+        "type": "checkbox",
+        "label": "Выбрать строку 8",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 9",
+        "type": "checkbox",
+        "label": "Выбрать строку 9",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 10",
+        "type": "checkbox",
+        "label": "Выбрать строку 10",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 11",
+        "type": "checkbox",
+        "label": "Выбрать строку 11",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 12",
+        "type": "checkbox",
+        "label": "Выбрать строку 12",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 13",
+        "type": "checkbox",
+        "label": "Выбрать строку 13",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 14",
+        "type": "checkbox",
+        "label": "Выбрать строку 14",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 15",
+        "type": "checkbox",
+        "label": "Выбрать строку 15",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 16",
+        "type": "checkbox",
+        "label": "Выбрать строку 16",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 17",
+        "type": "checkbox",
+        "label": "Выбрать строку 17",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 18",
+        "type": "checkbox",
+        "label": "Выбрать строку 18",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 19",
+        "type": "checkbox",
+        "label": "Выбрать строку 19",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Each child in a list should have a unique \"key\" prop.%s%s See https://react.dev/link/warning-keys for more information. \n\nCheck the render method of `select`.  It was passed a child from Select.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Each child in a list should have a unique \"key\" prop.%s%s See https://react.dev/link/warning-keys for more information. \n\nCheck the render method of `select`.  It was passed a child from Select."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/quality/defect-register",
+        "description": "No visible create/add button on list page \"Defect Register Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:39.055Z"
+  },
+  {
+    "page": "/quality",
+    "formName": "Quality Dashboard",
+    "group": "J-Quality",
+    "totalFields": 27,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по номеру, названию...",
+        "type": "text",
+        "label": "Поиск по номеру, названию...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 8",
+        "type": "checkbox",
+        "label": "Выбрать строку 8",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 9",
+        "type": "checkbox",
+        "label": "Выбрать строку 9",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 10",
+        "type": "checkbox",
+        "label": "Выбрать строку 10",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 11",
+        "type": "checkbox",
+        "label": "Выбрать строку 11",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 12",
+        "type": "checkbox",
+        "label": "Выбрать строку 12",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 13",
+        "type": "checkbox",
+        "label": "Выбрать строку 13",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 14",
+        "type": "checkbox",
+        "label": "Выбрать строку 14",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 15",
+        "type": "checkbox",
+        "label": "Выбрать строку 15",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 16",
+        "type": "checkbox",
+        "label": "Выбрать строку 16",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 17",
+        "type": "checkbox",
+        "label": "Выбрать строку 17",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 18",
+        "type": "checkbox",
+        "label": "Выбрать строку 18",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 19",
+        "type": "checkbox",
+        "label": "Выбрать строку 19",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/quality",
+        "description": "No visible create/add button on list page \"Quality Dashboard\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:40.690Z"
+  },
+  {
+    "page": "/defects/dashboard",
+    "formName": "Defect Dashboard",
+    "group": "J-Quality",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/defects/dashboard",
+        "description": "No visible create/add button on list page \"Defect Dashboard\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:42.086Z"
+  },
+  {
+    "page": "/punchlist/dashboard",
+    "formName": "Punch List Dashboard",
+    "group": "J-Quality",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Received NaN for the `%s` attribute. If this is expected, cast the value to a string. children"
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:54:43.542Z"
+  },
+  {
+    "page": "/quality/supervision-journal",
+    "formName": "Supervision Journal Page",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/quality/supervision-journal",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Supervision Journal Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:45.064Z"
+  },
+  {
+    "page": "/procurement",
+    "formName": "Procurement Request Create (Modal)",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/procurement",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Procurement Request Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:46.686Z"
+  },
+  {
+    "page": "/procurement/purchase-orders",
+    "formName": "Purchase Order Create (Modal)",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/procurement/purchase-orders",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Purchase Order Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:48.229Z"
+  },
+  {
+    "page": "/warehouse/materials",
+    "formName": "Material Create (Modal)",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/warehouse/materials",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Material Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:49.904Z"
+  },
+  {
+    "page": "/warehouse/quick-receipt",
+    "formName": "Quick Receipt Page",
+    "group": "K-Warehouse",
+    "totalFields": 4,
+    "filledFields": 0,
+    "requiredFields": 1,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "_r_o_",
+        "type": "text",
+        "label": "Метка Материал",
+        "required": false
+      },
+      {
+        "field": "_r_p_",
+        "type": "text",
+        "label": "Метка Количество* (Обязательное поле)",
+        "required": true
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/warehouse/quick-receipt",
+        "description": "No visible create/add button on list page \"Quick Receipt Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:51.250Z"
+  },
+  {
+    "page": "/warehouse/movements",
+    "formName": "Warehouse Movements Page",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/warehouse/movements",
+        "description": "Could not find create button matching \"создать|добавить|new|выдать|переместить\" on page \"Warehouse Movements Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:52.877Z"
+  },
+  {
+    "page": "/warehouse/inventory",
+    "formName": "Inventory Check Page",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/warehouse/inventory",
+        "description": "Could not find create button matching \"начать|создать|добавить|new\" on page \"Inventory Check Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:54.446Z"
+  },
+  {
+    "page": "/warehouse/limit-fence-cards",
+    "formName": "Limit Fence Cards Page",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/warehouse/limit-fence-cards",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Limit Fence Cards Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:55.983Z"
+  },
+  {
+    "page": "/dispatch/orders",
+    "formName": "Dispatch Orders Page",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/dispatch/orders",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Dispatch Orders Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:57.568Z"
+  },
+  {
+    "page": "/warehouse/stock",
+    "formName": "Warehouse Stock Page",
+    "group": "K-Warehouse",
+    "totalFields": 4,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по материалу, складу...",
+        "type": "text",
+        "label": "Поиск по материалу, складу...",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/warehouse/stock",
+        "description": "No visible create/add button on list page \"Warehouse Stock Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:54:59.364Z"
+  },
+  {
+    "page": "/warehouse/locations",
+    "formName": "Warehouse Locations Page",
+    "group": "K-Warehouse",
+    "totalFields": 10,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по коду, названию...",
+        "type": "text",
+        "label": "Поиск по коду, названию...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:00.854Z"
+  },
+  {
+    "page": "/operations/work-orders",
+    "formName": "Work Orders (Ops)",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/operations/work-orders",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Work Orders (Ops)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:02.445Z"
+  },
+  {
+    "page": "/fleet",
+    "formName": "Fleet Vehicle Create (Modal)",
+    "group": "L-Fleet",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/fleet",
+        "description": "Could not find create button matching \"добавить|создать|new\" on page \"Fleet Vehicle Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:04.013Z"
+  },
+  {
+    "page": "/fleet/waybills-esm",
+    "formName": "Waybill ESM Create (Modal)",
+    "group": "L-Fleet",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/fleet/waybills-esm",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Waybill ESM Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:05.724Z"
+  },
+  {
+    "page": "/fleet/fuel",
+    "formName": "Fuel Record Create (Modal)",
+    "group": "L-Fleet",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/fleet/fuel",
+        "description": "Could not find create button matching \"добавить|создать|new\" on page \"Fuel Record Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:07.408Z"
+  },
+  {
+    "page": "/fleet/maintenance",
+    "formName": "Maintenance Request Create (Modal)",
+    "group": "L-Fleet",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/fleet/maintenance",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Maintenance Request Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:08.940Z"
+  },
+  {
+    "page": "/maintenance/requests",
+    "formName": "Maintenance Requests Page",
+    "group": "L-Fleet",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/maintenance/requests",
+        "description": "Could not find create button matching \"создать|добавить|new\" on page \"Maintenance Requests Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:10.454Z"
+  },
+  {
+    "page": "/maintenance/equipment",
+    "formName": "Maintenance Equipment Page",
+    "group": "L-Fleet",
+    "totalFields": 2,
+    "filledFields": 2,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/maintenance/equipment",
+        "form": "Maintenance Equipment Page",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/maintenance/equipment",
+        "form": "Maintenance Equipment Page",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:16.262Z"
+  },
+  {
+    "page": "/fleet/usage-logs",
+    "formName": "Fleet Usage Logs Page",
+    "group": "L-Fleet",
+    "totalFields": 5,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск...",
+        "type": "text",
+        "label": "Поиск...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:17.837Z"
+  },
+  {
+    "page": "/fleet/maintenance-schedule",
+    "formName": "Fleet Maintenance Schedule Page",
+    "group": "L-Fleet",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:19.358Z"
+  },
+  {
+    "page": "/fleet/fuel-accounting",
+    "formName": "Fleet Fuel Accounting Page",
+    "group": "L-Fleet",
+    "totalFields": 7,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по технике, АЗС...",
+        "type": "text",
+        "label": "Поиск по технике, АЗС...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "date:с",
+        "type": "date",
+        "label": "с",
+        "required": false
+      },
+      {
+        "field": "date:по",
+        "type": "date",
+        "label": "по",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:20.926Z"
+  },
+  {
+    "page": "/portal/rfis",
+    "formName": "Portal RFI Create (Modal)",
+    "group": "M-Portal",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/portal/rfis",
+        "description": "Could not find create button matching \"создать|добавить|new|отправить\" on page \"Portal RFI Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:22.261Z"
+  },
+  {
+    "page": "/portal/defects",
+    "formName": "Portal Defect Report (Modal)",
+    "group": "M-Portal",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/portal/defects",
+        "description": "Could not find create button matching \"сообщить|создать|добавить|new\" on page \"Portal Defect Report (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:23.559Z"
+  },
+  {
+    "page": "/portal/tasks",
+    "formName": "Portal Task Create (Modal)",
+    "group": "M-Portal",
+    "totalFields": 9,
+    "filledFields": 1,
+    "requiredFields": 2,
+    "fieldsWithValidation": 2,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "_r_c_",
+        "type": "select",
+        "label": "Исполнитель* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "_r_d_",
+        "type": "text",
+        "label": "Заголовок* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "_r_e_",
+        "type": "select",
+        "label": "Объект",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "_r_f_",
+        "type": "textarea",
+        "label": "Описание",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "_r_g_",
+        "type": "select",
+        "label": "Приоритет",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      },
+      {
+        "page": "/portal/tasks",
+        "form": "Portal Task Create (Modal)",
+        "field": "_r_h_",
+        "type": "date",
+        "label": "Срок выполнения",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:26.219Z"
+  },
+  {
+    "page": "/portal/daily-reports",
+    "formName": "Portal Daily Report (Modal)",
+    "group": "M-Portal",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/portal/daily-reports",
+        "description": "Could not find create button matching \"создать|добавить|отправить|new\" on page \"Portal Daily Report (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:27.553Z"
+  },
+  {
+    "page": "/portal/photos",
+    "formName": "Portal Photos Page",
+    "group": "M-Portal",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/portal/photos",
+        "description": "No visible create/add button on list page \"Portal Photos Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:28.895Z"
+  },
+  {
+    "page": "/portal",
+    "formName": "Portal Dashboard",
+    "group": "M-Portal",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/portal",
+        "description": "No visible create/add button on list page \"Portal Dashboard\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:30.533Z"
+  },
+  {
+    "page": "/portal/projects",
+    "formName": "Portal Projects Page",
+    "group": "M-Portal",
+    "totalFields": 5,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по названию, коду...",
+        "type": "text",
+        "label": "Поиск по названию, коду...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/portal/projects",
+        "description": "No visible create/add button on list page \"Portal Projects Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:32.069Z"
+  },
+  {
+    "page": "/portal/documents",
+    "formName": "Portal Documents Page",
+    "group": "M-Portal",
+    "totalFields": 6,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по названию, файлу...",
+        "type": "text",
+        "label": "Поиск по названию, файлу...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      },
+      {
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/portal/documents",
+        "description": "No visible create/add button on list page \"Portal Documents Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:33.742Z"
+  },
+  {
+    "page": "/portal/contracts",
+    "formName": "Portal Contracts Page",
+    "group": "M-Portal",
+    "totalFields": 5,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по номеру, объекту...",
+        "type": "text",
+        "label": "Поиск по номеру, объекту...",
+        "required": false
+      },
+      {
+        "field": "select:",
+        "type": "select",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/portal/contracts",
+        "description": "No visible create/add button on list page \"Portal Contracts Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:35.352Z"
+  },
+  {
+    "page": "/portal/invoices",
+    "formName": "Portal Invoices Page",
+    "group": "M-Portal",
+    "totalFields": 4,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:Поиск по номеру, договору...",
+        "type": "text",
+        "label": "Поиск по номеру, договору...",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:37.029Z"
+  },
+  {
+    "page": "/portal/ks2-drafts",
+    "formName": "Portal KS-2 Drafts Page",
+    "group": "M-Portal",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:38.582Z"
+  },
+  {
+    "page": "/portal/schedule",
+    "formName": "Portal Schedule Page",
+    "group": "M-Portal",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/portal/schedule",
+        "description": "No visible create/add button on list page \"Portal Schedule Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:40.553Z"
+  },
+  {
+    "page": "/admin/users",
+    "formName": "User Create (Modal)",
+    "group": "N-Admin",
+    "totalFields": 40,
+    "filledFields": 8,
+    "requiredFields": 5,
+    "fieldsWithValidation": 5,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "text:Поиск по имени, email...",
+        "type": "text",
+        "label": "Поиск по имени, email...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать все строки на странице",
+        "type": "checkbox",
+        "label": "Выбрать все строки на странице",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 0",
+        "type": "checkbox",
+        "label": "Выбрать строку 0",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 1",
+        "type": "checkbox",
+        "label": "Выбрать строку 1",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 2",
+        "type": "checkbox",
+        "label": "Выбрать строку 2",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 3",
+        "type": "checkbox",
+        "label": "Выбрать строку 3",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 4",
+        "type": "checkbox",
+        "label": "Выбрать строку 4",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 5",
+        "type": "checkbox",
+        "label": "Выбрать строку 5",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 6",
+        "type": "checkbox",
+        "label": "Выбрать строку 6",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 7",
+        "type": "checkbox",
+        "label": "Выбрать строку 7",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 8",
+        "type": "checkbox",
+        "label": "Выбрать строку 8",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 9",
+        "type": "checkbox",
+        "label": "Выбрать строку 9",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 10",
+        "type": "checkbox",
+        "label": "Выбрать строку 10",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 11",
+        "type": "checkbox",
+        "label": "Выбрать строку 11",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 12",
+        "type": "checkbox",
+        "label": "Выбрать строку 12",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 13",
+        "type": "checkbox",
+        "label": "Выбрать строку 13",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 14",
+        "type": "checkbox",
+        "label": "Выбрать строку 14",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 15",
+        "type": "checkbox",
+        "label": "Выбрать строку 15",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 16",
+        "type": "checkbox",
+        "label": "Выбрать строку 16",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 17",
+        "type": "checkbox",
+        "label": "Выбрать строку 17",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 18",
+        "type": "checkbox",
+        "label": "Выбрать строку 18",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Выбрать строку 19",
+        "type": "checkbox",
+        "label": "Выбрать строку 19",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "_r_c_",
+        "type": "text",
+        "label": "Имя* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "_r_d_",
+        "type": "text",
+        "label": "Фамилия* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "_r_e_",
+        "type": "email",
+        "label": "Email* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "_r_f_",
+        "type": "select",
+        "label": "Роль* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "_r_g_",
+        "type": "password",
+        "label": "Пароль* (Обязательное поле)",
+        "required": true,
+        "filled": true,
+        "validation": "required",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Debug Test",
+        "type": "checkbox",
+        "label": "Debug Test",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:авыавы",
+        "type": "checkbox",
+        "label": "авыавы",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Базовый пользователь",
+        "type": "checkbox",
+        "label": "Базовый пользователь",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Менеджер проектов",
+        "type": "checkbox",
+        "label": "Менеджер проектов",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Руководитель",
+        "type": "checkbox",
+        "label": "Руководитель",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Бухгалтер",
+        "type": "checkbox",
+        "label": "Бухгалтер",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Кладовщик",
+        "type": "checkbox",
+        "label": "Кладовщик",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Инженер ОТ",
+        "type": "checkbox",
+        "label": "Инженер ОТ",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:HR-менеджер",
+        "type": "checkbox",
+        "label": "HR-менеджер",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/users",
+        "form": "User Create (Modal)",
+        "field": "checkbox:Администратор",
+        "type": "checkbox",
+        "label": "Администратор",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:49.180Z"
+  },
+  {
+    "page": "/admin/departments",
+    "formName": "Department Create (Modal)",
+    "group": "N-Admin",
+    "totalFields": 8,
+    "filledFields": 6,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "text:Поиск по названию или коду...",
+        "type": "text",
+        "label": "Поиск по названию или коду...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "text:Название подразделения",
+        "type": "text",
+        "label": "Название подразделения",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "text:Например: OMTS",
+        "type": "text",
+        "label": "Например: OMTS",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "select:Родительское подразделение",
+        "type": "select",
+        "label": "Родительское подразделение",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "number:Порядок сортировки",
+        "type": "number",
+        "label": "Порядок сортировки",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/admin/departments",
+        "form": "Department Create (Modal)",
+        "field": "textarea:Краткое описание функций подразделения",
+        "type": "textarea",
+        "label": "Краткое описание функций подразделения",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      }
+    ],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:55:54.979Z"
+  },
+  {
+    "page": "/admin/system-settings",
+    "formName": "System Settings Page",
+    "group": "N-Admin",
+    "totalFields": 51,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "text:",
+        "type": "text",
+        "label": "",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/admin/system-settings",
+        "description": "No visible create/add button on list page \"System Settings Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:55:56.661Z"
+  },
+  {
+    "page": "/support/tickets",
+    "formName": "Support Ticket Create (Modal)",
+    "group": "N-Admin",
+    "totalFields": 5,
+    "filledFields": 4,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "page": "/support/tickets",
+        "form": "Support Ticket Create (Modal)",
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/support/tickets",
+        "form": "Support Ticket Create (Modal)",
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/support/tickets",
+        "form": "Support Ticket Create (Modal)",
+        "field": "_r_c_",
+        "type": "textarea",
+        "label": "Добавить комментарий",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/support/tickets",
+        "form": "Support Ticket Create (Modal)",
+        "field": "checkbox:Внутренний комментарий",
+        "type": "checkbox",
+        "label": "Внутренний комментарий",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      },
+      {
+        "page": "/support/tickets",
+        "form": "Support Ticket Create (Modal)",
+        "field": "_r_d_",
+        "type": "select",
+        "label": "Изменить статус",
+        "required": false,
+        "filled": true,
+        "validation": "none",
+        "validationMessage": null,
+        "acceptedInvalidData": false,
+        "savedCorrectly": true
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:57:00.437Z"
+  },
+  {
+    "page": "/admin/dashboard",
+    "formName": "Admin Dashboard Page",
+    "group": "N-Admin",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:57:02.417Z"
+  },
+  {
+    "page": "/admin/permissions",
+    "formName": "Permissions Page",
+    "group": "N-Admin",
+    "totalFields": 1,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.",
+      "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:57:04.327Z"
+  },
+  {
+    "page": "/admin/security",
+    "formName": "Security Page",
+    "group": "N-Admin",
+    "totalFields": 6,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "number:",
+        "type": "number",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "number:",
+        "type": "number",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "number:",
+        "type": "number",
+        "label": "",
+        "required": false
+      },
+      {
+        "field": "number:",
+        "type": "number",
+        "label": "",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/admin/security",
+        "description": "No visible create/add button on list page \"Security Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:57:06.491Z"
+  },
+  {
+    "page": "/support/dashboard",
+    "formName": "Support Dashboard Page",
+    "group": "N-Admin",
+    "totalFields": 2,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      }
+    ],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/support/dashboard",
+        "description": "No visible create/add button on list page \"Support Dashboard Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:57:08.528Z"
+  },
+  {
+    "page": "/monitoring",
+    "formName": "Monitoring Page",
+    "group": "N-Admin",
+    "totalFields": 3,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": true,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [
+      {
+        "field": "text:Поиск по объектам, документам...",
+        "type": "text",
+        "label": "Поиск по объектам, документам...",
+        "required": false
+      },
+      {
+        "field": "textarea:Задайте вопрос...",
+        "type": "textarea",
+        "label": "Задайте вопрос...",
+        "required": false
+      },
+      {
+        "field": "select:Выбрать сохраненный вид таблицы",
+        "type": "select",
+        "label": "Выбрать сохраненный вид таблицы",
+        "required": false
+      }
+    ],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [
+      {
+        "severity": "UX",
+        "page": "/monitoring",
+        "description": "No visible create/add button on list page \"Monitoring Page\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:57:10.322Z"
+  },
+  {
+    "page": "/change-management/dashboard",
+    "formName": "Change Event Create (Modal)",
+    "group": "O-ChangeManagement",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/change-management/dashboard",
+        "description": "Could not find create button matching \"создать|добавить|new|событие\" on page \"Change Event Create (Modal)\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:57:11.633Z"
+  },
+  {
+    "page": "/change-management/dashboard",
+    "formName": "Change Order Create",
+    "group": "O-ChangeManagement",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/change-management/dashboard",
+        "description": "Could not find create button matching \"ордер|order|создать ордер\" on page \"Change Order Create\""
+      }
+    ],
+    "timestamp": "2026-03-12T19:57:13.032Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: Empty submit",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:57:35.930Z"
+  },
+  {
+    "page": "/safety/incidents",
+    "formName": "[NEG] Safety Incident: Empty submit (modal)",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:57:39.185Z"
+  },
+  {
+    "page": "/defects",
+    "formName": "[NEG] Defect: Empty submit (modal)",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:57:42.344Z"
+  },
+  {
+    "page": "/support/tickets",
+    "formName": "[NEG] Support Ticket: Empty submit (modal)",
+    "group": "N-Admin",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.",
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T19:58:45.328Z"
+  },
+  {
+    "page": "/change-management/dashboard",
+    "formName": "[NEG] Change Event: Empty submit (modal)",
+    "group": "O-ChangeManagement",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:58:49.030Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: Invalid СНИЛС (3 digits)",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:59:12.556Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: Invalid ИНН (3 digits)",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:59:35.921Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: Invalid email",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T19:59:59.479Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: Negative salary",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T20:00:22.927Z"
+  },
+  {
+    "page": "/warehouse/materials",
+    "formName": "[NEG] Material: Empty name (modal)",
+    "group": "K-Warehouse",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T20:00:26.323Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: XSS in lastName",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [],
+    "timestamp": "2026-03-12T20:00:28.549Z"
+  },
+  {
+    "page": "/support/tickets",
+    "formName": "[NEG] Support Ticket: XSS in description",
+    "group": "N-Admin",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T20:01:30.758Z"
+  },
+  {
+    "page": "/defects",
+    "formName": "[NEG] Defect: SQL injection in description",
+    "group": "J-Quality",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T20:01:34.809Z"
+  },
+  {
+    "page": "/employees/new",
+    "formName": "[NEG] Employee: 5000-char notes",
+    "group": "H-HR",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 1,
+    "submitSuccess": false,
+    "negativeTestsPassed": 0,
+    "negativeTestsFailed": 1,
+    "fields": [],
+    "jsErrors": [],
+    "issues": [
+      {
+        "severity": "MAJOR",
+        "page": "/employees/new",
+        "description": "MINOR: Fields accepted >3000 chars without truncation: notes=5000"
+      }
+    ],
+    "timestamp": "2026-03-12T20:01:37.597Z"
+  },
+  {
+    "page": "/safety/incidents",
+    "formName": "[NEG] Safety Incident: 5000-char description",
+    "group": "I-Safety",
+    "totalFields": 0,
+    "filledFields": 0,
+    "requiredFields": 0,
+    "fieldsWithValidation": 0,
+    "fieldsAcceptingInvalid": 0,
+    "submitSuccess": false,
+    "negativeTestsPassed": 1,
+    "negativeTestsFailed": 0,
+    "fields": [],
+    "jsErrors": [
+      "Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead."
+    ],
+    "issues": [],
+    "timestamp": "2026-03-12T20:01:39.616Z"
+  }
+]

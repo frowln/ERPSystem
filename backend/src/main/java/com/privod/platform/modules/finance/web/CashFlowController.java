@@ -34,6 +34,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/cash-flow")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
 @Tag(name = "Cash Flow", description = "Cash flow management endpoints")
 public class CashFlowController {
 

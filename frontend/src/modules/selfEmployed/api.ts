@@ -4,12 +4,23 @@ import type {
   SelfEmployedContractor,
   SelfEmployedPayment,
   SelfEmployedRegistry,
+  CompletionAct,
+  NpdStatus,
 } from './types';
 
 export interface ContractorFilters extends PaginationParams {
   status?: string;
   taxStatus?: string;
+  npdStatus?: string;
+  contractType?: string;
   search?: string;
+}
+
+export interface NpdVerifyResult {
+  inn: string;
+  npdStatus: NpdStatus;
+  verifiedAt: string;
+  fullName?: string;
 }
 
 export const selfEmployedApi = {
@@ -36,6 +47,38 @@ export const selfEmployedApi = {
 
   deleteContractor: async (id: string): Promise<void> => {
     await apiClient.delete(`/self-employed/contractors/${id}`);
+  },
+
+  // NPD verification
+  verifyNpd: async (inn: string): Promise<NpdVerifyResult> => {
+    const response = await apiClient.post<NpdVerifyResult>('/self-employed/verify-npd', { inn });
+    return response.data;
+  },
+
+  bulkVerifyNpd: async (ids: string[]): Promise<NpdVerifyResult[]> => {
+    const response = await apiClient.post<NpdVerifyResult[]>('/self-employed/verify-npd/bulk', { ids });
+    return response.data;
+  },
+
+  // Completion Acts
+  getActs: async (params?: PaginationParams & { workerId?: string }): Promise<PaginatedResponse<CompletionAct>> => {
+    const response = await apiClient.get<PaginatedResponse<CompletionAct>>('/self-employed/acts', { params });
+    return response.data;
+  },
+
+  createAct: async (data: Partial<CompletionAct>): Promise<CompletionAct> => {
+    const response = await apiClient.post<CompletionAct>('/self-employed/acts', data);
+    return response.data;
+  },
+
+  signAct: async (actId: string): Promise<CompletionAct> => {
+    const response = await apiClient.patch<CompletionAct>(`/self-employed/acts/${actId}/sign`);
+    return response.data;
+  },
+
+  payAct: async (actId: string): Promise<CompletionAct> => {
+    const response = await apiClient.patch<CompletionAct>(`/self-employed/acts/${actId}/pay`);
+    return response.data;
   },
 
   // Payments

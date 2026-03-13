@@ -228,6 +228,152 @@ export interface PortalContract {
   updatedAt?: string;
 }
 
+// Portal Daily Reports
+export type DailyReportStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED';
+export type WeatherCondition = 'SUNNY' | 'CLOUDY' | 'RAINY' | 'SNOWY' | 'WINDY' | 'FOGGY';
+
+export interface PortalDailyReport {
+  id: string;
+  projectId: string;
+  projectName: string;
+  reportDate: string;
+  status: DailyReportStatus;
+  weather?: WeatherCondition;
+  temperatureMin?: number;
+  temperatureMax?: number;
+  workersOnSite?: number;
+  workersCount?: number;
+  equipmentCount?: number;
+  workDescription: string;
+  workPerformed?: string;
+  materialsUsed?: string;
+  reviewComment?: string;
+  issues?: string;
+  safetyNotes?: string;
+  photos?: string[];
+  submittedByName?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Portal Defects
+export type DefectStatus = 'OPEN' | 'IN_PROGRESS' | 'FIXED' | 'VERIFIED' | 'CLOSED' | 'REJECTED';
+export type DefectPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type DefectCategory = 'STRUCTURAL' | 'MECHANICAL' | 'ELECTRICAL' | 'PLUMBING' | 'FINISHING' | 'SAFETY' | 'OTHER';
+
+export interface PortalDefect {
+  id: string;
+  defectNumber: string;
+  claimNumber?: string;
+  projectId: string;
+  projectName: string;
+  title: string;
+  description?: string;
+  category: DefectCategory;
+  categoryDisplayName?: string;
+  status: DefectStatus;
+  statusDisplayName?: string;
+  priority: DefectPriority;
+  priorityDisplayName?: string;
+  location?: string;
+  locationDescription?: string;
+  floor?: string;
+  assigneeName?: string;
+  reportedByName?: string;
+  reportedByPortalUserId?: string;
+  dueDate?: string;
+  slaDeadline?: string;
+  slaBreached?: boolean;
+  resolvedAt?: string;
+  photos?: string[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Portal RFI
+export type PortalRfiPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT' | 'CRITICAL';
+export type PortalRfiStatus = 'OPEN' | 'ASSIGNED' | 'ANSWERED' | 'CLOSED';
+
+export interface PortalRfiResponse {
+  id: string;
+  rfiId: string;
+  respondentName: string;
+  authorName?: string;
+  response: string;
+  content?: string;
+  isOfficial?: boolean;
+  attachments?: string[];
+  createdAt: string;
+}
+
+export interface PortalRfi {
+  id: string;
+  rfiNumber: string;
+  number?: string;
+  projectId: string;
+  projectName: string;
+  subject: string;
+  question: string;
+  answer?: string;
+  priority: PortalRfiPriority;
+  status: PortalRfiStatus;
+  requestedByName: string;
+  createdByName?: string;
+  createdById?: string;
+  assignedToName?: string;
+  specSection?: string;
+  costImpact?: number | boolean;
+  scheduleImpact?: string | boolean;
+  responseCount?: number;
+  dueDate?: string;
+  answeredAt?: string;
+  answeredDate?: string;
+  responses?: PortalRfiResponse[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Portal Photo Reports
+export type PhotoCategory = 'PROGRESS' | 'QUALITY' | 'SAFETY' | 'DEFECT' | 'GENERAL' | 'MATERIAL';
+
+export interface PortalPhotoReport {
+  id: string;
+  projectId: string;
+  projectName: string;
+  title: string;
+  description?: string;
+  category: PhotoCategory;
+  photoUrl: string;
+  thumbnailUrl?: string;
+  uploadedByName: string;
+  uploadedById?: string;
+  location?: string;
+  takenAt?: string;
+  createdAt: string;
+}
+
+// Portal Signatures
+export type SignatureStatus = 'PENDING' | 'SIGNED' | 'REJECTED' | 'EXPIRED';
+
+export interface PortalDocumentSignature {
+  id: string;
+  documentId: string;
+  documentTitle: string;
+  documentType?: string;
+  projectId: string;
+  projectName: string;
+  signerName: string;
+  signerRole?: string;
+  status: SignatureStatus;
+  requestedAt: string;
+  signedAt?: string;
+  rejectedAt?: string;
+  expiresAt?: string;
+  rejectionReason?: string;
+  signatureUrl?: string;
+  createdAt: string;
+}
+
 // Portal Schedule
 export interface PortalScheduleItem {
   id: string;

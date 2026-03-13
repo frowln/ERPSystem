@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @RequestMapping("/api/hr-russian/timesheets")
 @RequiredArgsConstructor
 @Tag(name = "HR Russian Timesheets", description = "Табели учёта рабочего времени (РФ)")
+@PreAuthorize("isAuthenticated()")
 public class HrRussianTimesheetController {
 
     private final TimesheetPeriodRepository timesheetPeriodRepository;
@@ -50,6 +52,7 @@ public class HrRussianTimesheetController {
 
     @PostMapping("/{id}/submit")
     @Operation(summary = "Submit timesheet period for approval")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER')")
     public ResponseEntity<ApiResponse<TimesheetPeriodResponse>> submit(@PathVariable UUID id) {
         TimesheetPeriod period = timesheetPeriodRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Табель не найден: " + id));
@@ -60,6 +63,7 @@ public class HrRussianTimesheetController {
 
     @PostMapping("/{id}/approve")
     @Operation(summary = "Approve a submitted timesheet period")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<TimesheetPeriodResponse>> approve(@PathVariable UUID id) {
         TimesheetPeriod period = timesheetPeriodRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Табель не найден: " + id));

@@ -195,6 +195,9 @@ public class OpsService {
         dr = dailyReportRepository.save(dr);
         auditService.logCreate("DailyReport", dr.getId());
 
+        // P1-CHN-4: авто-обновление прогресса наряд-задания по суммарным часам рапортов
+        updateWorkOrderProgressFromReports(request.workOrderId());
+
         log.info("Ежедневный отчёт создан: {} для наряд-задания {}", dr.getId(), request.workOrderId());
         return DailyReportResponse.fromEntity(dr);
     }
@@ -323,6 +326,31 @@ public class OpsService {
     // ========================================================================
     // Private helpers
     // ========================================================================
+
+    /**
+     * P1-CHN-4: Пересчитывает completionPercent наряд-задания на основе суммы
+     * отработанных часов во всех рапортах. Каждые 10 ч трудозатрат = 100%.
+     * Прогресс ограничивается 99% до явного завершения (статус COMPLETED → 100%).
+     */
+    private void updateWorkOrderProgressFromReports(UUID workOrderId) {
+        WorkOrder wo = workOrderRepository.findById(workOrderId)
+                .filter(w -> !w.isDeleted())
+                .orElse(null);
+        if (wo == null || wo.getStatus() == WorkOrderStatus.COMPLETED) {
+            return;
+        }
+        java.math.BigDecimal totalHours = dailyReportRepository.sumLaborHoursByWorkOrderId(workOrderId);
+        // 10 ч работы ≈ 100% (эвристика при отсутствии plannedLaborHours на сущности)
+        int percent = totalHours.multiply(java.math.BigDecimal.TEN).intValue();
+        percent = Math.min(percent, 99); // резервируем 100% для статуса COMPLETED
+        percent = Math.max(percent, wo.getCompletionPercent()); // прогресс не убывает
+        if (percent != wo.getCompletionPercent()) {
+            wo.setCompletionPercent(percent);
+            workOrderRepository.save(wo);
+            log.info("Прогресс наряд-задания {} обновлён до {}% (часов: {})",
+                    wo.getCode(), percent, totalHours);
+        }
+    }
 
     private WorkOrder getWorkOrderOrThrow(UUID id) {
         return workOrderRepository.findById(id)

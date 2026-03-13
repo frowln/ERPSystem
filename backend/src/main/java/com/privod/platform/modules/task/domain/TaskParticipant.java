@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.hibernate.annotations.Filter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +31,7 @@ import java.util.UUID;
                 @Index(name = "idx_tp_user", columnList = "user_id"),
                 @Index(name = "idx_tp_role", columnList = "role")
         })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -41,6 +43,9 @@ public class TaskParticipant {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "task_id", nullable = false)
     private UUID taskId;

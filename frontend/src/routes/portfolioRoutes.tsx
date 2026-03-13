@@ -69,6 +69,7 @@ const PortalInvoicesPage = lazy(() => import('@/modules/portal/PortalInvoicesPag
 const PortalKs2DraftsPage = lazy(() => import('@/modules/portal/PortalKs2DraftsPage'));
 const PortalSchedulePage = lazy(() => import('@/modules/portal/PortalSchedulePage'));
 const PortalSettingsPage = lazy(() => import('@/modules/portal/PortalSettingsPage'));
+const PortalBrandingPage = lazy(() => import('@/modules/portal/PortalBrandingPage'));
 const PortalTaskListPage = lazy(() => import('@/modules/portal/PortalTaskListPage'));
 
 // AI — additional
@@ -165,6 +166,7 @@ export function portfolioRoutes() {
       <Route path="portal/ks2-drafts" element={<PortalKs2DraftsPage />} />
       <Route path="portal/schedule" element={<PortalSchedulePage />} />
       <Route path="portal/settings" element={<PortalSettingsPage />} />
+      <Route path="portal/branding" element={<PortalBrandingPage />} />
       <Route path="portal/tasks" element={<PortalTaskListPage />} />
 
       {/* AI — additional */}

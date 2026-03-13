@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,12 +21,16 @@ import java.util.UUID;
         @Index(name = "idx_hr_crew_assign_crew", columnList = "crew_id"),
         @Index(name = "idx_hr_crew_assign_employee", columnList = "employee_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class HrCrewAssignment extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "crew_id", nullable = false)
     private UUID crewId;

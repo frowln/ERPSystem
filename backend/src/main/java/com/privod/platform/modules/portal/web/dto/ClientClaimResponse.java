@@ -42,6 +42,10 @@ public record ClientClaimResponse(
         Instant createdAt,
         Instant updatedAt
 ) {
+    /**
+     * Public factory — safe for portal-facing endpoints.
+     * internalNotes is never included; use ClientClaimDetailResponse for internal views.
+     */
     public static ClientClaimResponse fromEntity(ClientClaim claim) {
         return new ClientClaimResponse(
                 claim.getId(),
@@ -74,7 +78,7 @@ public record ClientClaimResponse(
                 claim.getResolutionFeedback(),
                 claim.getResolutionRating(),
                 claim.getWarrantyObligationId(),
-                claim.getInternalNotes(),
+                null, // internalNotes — never exposed in public response (152-ФЗ compliance)
                 claim.getTriagedAt(),
                 claim.getTriagedBy(),
                 claim.getCreatedAt(),

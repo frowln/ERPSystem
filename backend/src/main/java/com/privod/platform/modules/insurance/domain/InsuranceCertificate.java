@@ -3,12 +3,14 @@ package com.privod.platform.modules.insurance.domain;
 import com.privod.platform.infrastructure.persistence.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "insurance_certificates")
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class InsuranceCertificate extends BaseEntity {
 

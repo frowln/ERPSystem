@@ -5,6 +5,7 @@ export interface PortalBranding {
   companyName: string;
   logoUrl: string;
   primaryColor: string;
+  accentColor: string;
   welcomeMessage: string;
   contactPhone: string;
   contactEmail: string;
@@ -46,6 +47,7 @@ const defaultSettings: PortalSettings = {
     companyName: '',
     logoUrl: '',
     primaryColor: '#6366f1',
+    accentColor: '#f59e0b',
     welcomeMessage: '',
     contactPhone: '',
     contactEmail: '',

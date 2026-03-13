@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ import java.util.UUID;
         @Index(name = "idx_vehicle_insurance_expiry", columnList = "insurance_expiry_date"),
         @Index(name = "idx_vehicle_tech_inspection_expiry", columnList = "tech_inspection_expiry_date")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder

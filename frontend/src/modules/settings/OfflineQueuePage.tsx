@@ -236,6 +236,7 @@ const OfflineQueuePage: React.FC = () => {
           loading={false}
           pageSize={20}
           tableLabel={t('offline.queue.title')}
+          enableExport
         />
       )}
 

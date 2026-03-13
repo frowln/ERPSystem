@@ -9,6 +9,13 @@ export interface EstimatePrintData {
   status: string;
   statusDisplayName?: string;
   totalAmount: number;
+  // МДС 81-33/81-25 breakdown (direct costs / overhead / profit / VAT)
+  directCosts?: number;    // ПЗ — прямые затраты
+  laborCosts?: number;     // ОЗП — основная зарплата
+  overheadCosts?: number;  // НР — накладные расходы (80% от ОЗП)
+  profitCosts?: number;    // СП — сметная прибыль (50% от ОЗП)
+  vatAmount?: number;      // НДС 20%
+  totalWithVat?: number;   // Итого с НДС
   orderedAmount?: number;
   invoicedAmount?: number;
   totalSpent?: number;
@@ -16,16 +23,25 @@ export interface EstimatePrintData {
   createdBy?: string;
   createdAt?: string;
   notes?: string;
+  sections?: EstimatePrintSection[];
   items: EstimatePrintItem[];
+}
+
+export interface EstimatePrintSection {
+  sectionNumber: string;
+  sectionName: string;
+  total: number;
 }
 
 export interface EstimatePrintItem {
   rowNumber: number;
+  code?: string;           // Нормативный код (ГЭСН/ФЕР/ТЕР)
   name: string;
   unitOfMeasure: string;
   quantity: number;
   unitPrice: number;
   amount: number;
+  laborAmount?: number;    // ОЗП в позиции
   unitPriceCustomer?: number;
   amountCustomer?: number;
 }
@@ -34,10 +50,29 @@ export interface EstimatePrintItem {
  * Generate and print an Estimate document.
  */
 export function printEstimate(data: EstimatePrintData): void {
+  const hasCustomerPrices = data.items.some((item) => item.unitPriceCustomer != null);
+  const hasCode = data.items.some((item) => item.code);
+
+  const totalCustomer = hasCustomerPrices
+    ? data.items.reduce((sum, item) => sum + (item.amountCustomer ?? 0), 0)
+    : null;
+
+  const colCount = (hasCode ? 1 : 0) + (hasCustomerPrices ? 8 : 6);
+
+  // МДС 81 totals (auto-compute from totalAmount if not provided)
+  const pz = data.directCosts ?? data.totalAmount;
+  const ozp = data.laborCosts ?? 0;
+  const nr = data.overheadCosts ?? (ozp > 0 ? ozp * 0.8 : 0);
+  const sp = data.profitCosts ?? (ozp > 0 ? ozp * 0.5 : 0);
+  const vatBase = pz + nr + sp;
+  const vatAmt = data.vatAmount ?? vatBase * 0.2;
+  const totalWithVat = data.totalWithVat ?? vatBase + vatAmt;
+
   const itemRows = data.items
     .map(
       (item) => `
     <tr>
+      ${hasCode ? `<td class="text-center" style="font-size:7pt;color:#555;">${escapeHtml(item.code ?? '')}</td>` : ''}
       <td class="text-center">${item.rowNumber}</td>
       <td>${escapeHtml(item.name)}</td>
       <td class="text-center">${escapeHtml(item.unitOfMeasure)}</td>
@@ -49,14 +84,6 @@ export function printEstimate(data: EstimatePrintData): void {
     </tr>`,
     )
     .join('');
-
-  const hasCustomerPrices = data.items.some((item) => item.unitPriceCustomer != null);
-
-  const totalCustomer = hasCustomerPrices
-    ? data.items.reduce((sum, item) => sum + (item.amountCustomer ?? 0), 0)
-    : null;
-
-  const colCount = hasCustomerPrices ? 8 : 6;
 
   const bodyHtml = `
     <div class="doc-header">
@@ -75,6 +102,7 @@ export function printEstimate(data: EstimatePrintData): void {
     <table>
       <thead>
         <tr>
+          ${hasCode ? `<th style="width: 70px">${t('export.estimate.colCode')}</th>` : ''}
           <th style="width: 40px">${t('export.estimate.colRowNum')}</th>
           <th>${t('export.estimate.colName')}</th>
           <th style="width: 60px">${t('export.estimate.colUnit')}</th>
@@ -88,12 +116,34 @@ export function printEstimate(data: EstimatePrintData): void {
       <tbody>
         ${itemRows}
         <tr class="totals-row">
-          <td colspan="5" class="text-right">${t('export.estimate.total')}</td>
-          <td class="num">${formatRuMoney(data.totalAmount)}</td>
+          <td colspan="${(hasCode ? 2 : 1) + 4}" class="text-right">${t('export.estimate.subtotalPz')}</td>
+          <td class="num">${formatRuMoney(pz)}</td>
           ${hasCustomerPrices ? `<td></td><td class="num">${formatRuMoney(totalCustomer)}</td>` : ''}
         </tr>
       </tbody>
     </table>
+
+    ${data.sections && data.sections.length > 0 ? `
+    <div class="section-title" style="margin-top:10pt;">${t('export.estimate.sectionBreakdown')}</div>
+    <table style="margin-top:4pt; font-size:8pt;">
+      <thead><tr><th>${t('export.estimate.sectionNum')}</th><th>${t('export.estimate.sectionName')}</th><th style="width:110px" class="num">${t('export.estimate.colAmount')}</th></tr></thead>
+      <tbody>
+        ${data.sections.map(s => `<tr><td class="text-center">${escapeHtml(s.sectionNumber)}</td><td>${escapeHtml(s.sectionName)}</td><td class="num">${formatRuMoney(s.total)}</td></tr>`).join('')}
+      </tbody>
+    </table>` : ''}
+
+    <table style="margin-top: 10pt; float:right; min-width:300pt;">
+      <tbody>
+        <tr><td style="width:70%">${t('export.estimate.subtotalPz')}</td><td class="num">${formatRuMoney(pz)}</td></tr>
+        ${ozp > 0 ? `<tr><td>${t('export.estimate.subtotalOzp')}</td><td class="num">${formatRuMoney(ozp)}</td></tr>` : ''}
+        ${nr > 0 ? `<tr><td>${t('export.estimate.subtotalNr')}</td><td class="num">${formatRuMoney(nr)}</td></tr>` : ''}
+        ${sp > 0 ? `<tr><td>${t('export.estimate.subtotalSp')}</td><td class="num">${formatRuMoney(sp)}</td></tr>` : ''}
+        <tr class="totals-row"><td><strong>${t('export.estimate.subtotalNoVat')}</strong></td><td class="num"><strong>${formatRuMoney(vatBase)}</strong></td></tr>
+        <tr><td>${t('export.estimate.vatRow')}</td><td class="num">${formatRuMoney(vatAmt)}</td></tr>
+        <tr class="totals-row"><td><strong>${t('export.estimate.totalWithVat')}</strong></td><td class="num"><strong>${formatRuMoney(totalWithVat)}</strong></td></tr>
+      </tbody>
+    </table>
+    <div style="clear:both;"></div>
 
     ${data.notes ? `<div class="notes-block"><strong>${t('export.common.notes')}:</strong> ${escapeHtml(data.notes)}</div>` : ''}
 

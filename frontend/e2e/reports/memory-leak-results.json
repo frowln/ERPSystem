@@ -1,0 +1,294 @@
+[
+  {
+    "test": "Navigate 50 pages",
+    "iterations": 50,
+    "startMemoryMB": 51.021575927734375,
+    "endMemoryMB": 51.021575927734375,
+    "peakMemoryMB": 51.021575927734375,
+    "growthPercent": 0,
+    "leaked": false,
+    "snapshots": [
+      {
+        "url": "/",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/analytics",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/reports",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/tasks",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/calendar",
+        "heapMB": 51.021575927734375,
+        "domNodes": 486
+      },
+      {
+        "url": "/planning/gantt",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/planning/evm",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/planning/resource-planning",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/planning/work-volumes",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/pm/rfis",
+        "heapMB": 51.021575927734375,
+        "domNodes": 548
+      },
+      {
+        "url": "/pm/submittals",
+        "heapMB": 51.021575927734375,
+        "domNodes": 677
+      },
+      {
+        "url": "/pm/issues",
+        "heapMB": 51.021575927734375,
+        "domNodes": 389
+      },
+      {
+        "url": "/workflow/templates",
+        "heapMB": 51.021575927734375,
+        "domNodes": 337
+      },
+      {
+        "url": "/workflow/approval-inbox",
+        "heapMB": 51.021575927734375,
+        "domNodes": 586
+      },
+      {
+        "url": "/change-management/dashboard",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/projects",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/site-assessments",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/portfolio/health",
+        "heapMB": 51.021575927734375,
+        "domNodes": 1015
+      },
+      {
+        "url": "/crm/leads",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/crm/dashboard",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/counterparties",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/portfolio/opportunities",
+        "heapMB": 51.021575927734375,
+        "domNodes": 391
+      },
+      {
+        "url": "/portfolio/tenders",
+        "heapMB": 51.021575927734375,
+        "domNodes": 411
+      },
+      {
+        "url": "/bid-packages",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/documents",
+        "heapMB": 51.021575927734375,
+        "domNodes": 718
+      },
+      {
+        "url": "/documents/smart-recognition",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/cde/documents",
+        "heapMB": 51.021575927734375,
+        "domNodes": 332
+      },
+      {
+        "url": "/cde/transmittals",
+        "heapMB": 51.021575927734375,
+        "domNodes": 293
+      },
+      {
+        "url": "/pto/documents",
+        "heapMB": 51.021575927734375,
+        "domNodes": 317
+      },
+      {
+        "url": "/pto/hidden-work-acts",
+        "heapMB": 51.021575927734375,
+        "domNodes": 231
+      },
+      {
+        "url": "/pto/work-permits",
+        "heapMB": 51.021575927734375,
+        "domNodes": 296
+      },
+      {
+        "url": "/pto/lab-tests",
+        "heapMB": 51.021575927734375,
+        "domNodes": 401
+      },
+      {
+        "url": "/pto/ks6-calendar",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/pto/itd-validation",
+        "heapMB": 51.021575927734375,
+        "domNodes": 846
+      },
+      {
+        "url": "/russian-docs/ks2",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/russian-docs/ks3",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/russian-docs/edo",
+        "heapMB": 51.021575927734375,
+        "domNodes": 405
+      },
+      {
+        "url": "/russian-docs/list",
+        "heapMB": 51.021575927734375,
+        "domNodes": 320
+      },
+      {
+        "url": "/russian-docs/sbis",
+        "heapMB": 51.021575927734375,
+        "domNodes": 298
+      },
+      {
+        "url": "/data-exchange/import",
+        "heapMB": 51.021575927734375,
+        "domNodes": 376
+      },
+      {
+        "url": "/data-exchange/export",
+        "heapMB": 51.021575927734375,
+        "domNodes": 379
+      },
+      {
+        "url": "/data-exchange/mapping",
+        "heapMB": 51.021575927734375,
+        "domNodes": 28
+      },
+      {
+        "url": "/data-exchange/1c-config",
+        "heapMB": 51.021575927734375,
+        "domNodes": 124
+      },
+      {
+        "url": "/data-exchange/1c-logs",
+        "heapMB": 51.021575927734375,
+        "domNodes": 698
+      },
+      {
+        "url": "/design/versions",
+        "heapMB": 51.021575927734375,
+        "domNodes": 344
+      },
+      {
+        "url": "/design/reviews",
+        "heapMB": 51.021575927734375,
+        "domNodes": 332
+      },
+      {
+        "url": "/design/reviews/board",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      },
+      {
+        "url": "/design/sections",
+        "heapMB": 51.021575927734375,
+        "domNodes": 341
+      },
+      {
+        "url": "/exec-docs/aosr",
+        "heapMB": 51.021575927734375,
+        "domNodes": 336
+      },
+      {
+        "url": "/exec-docs/ks6",
+        "heapMB": 51.021575927734375,
+        "domNodes": 29
+      }
+    ],
+    "notes": "First-half avg: 51.0MB, Second-half avg: 51.0MB"
+  },
+  {
+    "test": "Modal open/close 20x",
+    "iterations": 20,
+    "startMemoryMB": 54.168701171875,
+    "endMemoryMB": 54.168701171875,
+    "peakMemoryMB": 54.168701171875,
+    "growthPercent": 0,
+    "leaked": false,
+    "notes": "DOM nodes: 1111 → 1111 (0). 20/20 iterations"
+  },
+  {
+    "test": "Rapid navigation 30x",
+    "iterations": 30,
+    "startMemoryMB": 9.5367431640625,
+    "endMemoryMB": 9.5367431640625,
+    "peakMemoryMB": 9.5367431640625,
+    "growthPercent": 0,
+    "leaked": false,
+    "notes": "30/30 successful navigations"
+  },
+  {
+    "test": "Search input 20x",
+    "iterations": 20,
+    "startMemoryMB": 54.168701171875,
+    "endMemoryMB": 54.168701171875,
+    "peakMemoryMB": 54.168701171875,
+    "growthPercent": 0,
+    "leaked": false,
+    "notes": "20/20 search cycles"
+  }
+]

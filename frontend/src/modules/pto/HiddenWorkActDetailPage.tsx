@@ -12,7 +12,7 @@ import { formatDate } from '@/lib/format';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 
-const tp = (k: string) => t(`aosr.${k}`);
+const tp = (k: string, params?: Record<string, string>) => t(`aosr.${k}`, params);
 
 const statusColorMap: Record<HiddenWorkActStatus, string> = {
   DRAFT: 'gray',
@@ -123,7 +123,14 @@ export default function HiddenWorkActDetailPage() {
             )}
             {act.status === 'INSPECTED' && (
               <>
-                <Button size="sm" variant="success" onClick={() => statusMutation.mutate('APPROVED')}>
+                {/* P1-SAF-4: АОСР requires ≥3 signatures (СП 48.13330, Приказ 14) */}
+                <Button
+                  size="sm"
+                  variant="success"
+                  onClick={() => statusMutation.mutate('APPROVED')}
+                  disabled={signedCount < 3}
+                  title={signedCount < 3 ? tp('approveRequires3Sigs', { count: String(signedCount) }) : undefined}
+                >
                   <CheckCircle size={14} className="mr-1" /> {tp('approve')}
                 </Button>
                 <Button size="sm" variant="danger" onClick={() => statusMutation.mutate('REJECTED')}>

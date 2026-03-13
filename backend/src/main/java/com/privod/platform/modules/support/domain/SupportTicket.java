@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ import java.util.UUID;
         @Index(name = "idx_support_ticket_assignee", columnList = "assignee_id"),
         @Index(name = "idx_support_ticket_code", columnList = "code", unique = true)
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -73,4 +75,12 @@ public class SupportTicket extends BaseEntity {
 
     @Column(name = "satisfaction_rating")
     private Integer satisfactionRating;
+
+    // P2-CRM-3: SLA deadline from TicketCategory.slaHours
+    @Column(name = "sla_deadline_at")
+    private Instant slaDeadlineAt;
+
+    @Column(name = "sla_status", length = 20)
+    @Builder.Default
+    private String slaStatus = "ON_TRACK";
 }

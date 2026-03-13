@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -25,12 +26,16 @@ import java.util.UUID;
         @UniqueConstraint(name = "uq_ts_period_employee_month_year",
                 columnNames = {"employee_id", "month", "year"})
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimesheetPeriod extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "month", nullable = false)
     private int month;

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,4 +44,11 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, UU
 
     @Query(value = "SELECT nextval('support_ticket_number_seq')", nativeQuery = true)
     long getNextNumberSequence();
+
+    /**
+     * Find tickets that are overdue (dueDate before given date)
+     * and not in the excluded statuses (e.g. CLOSED, RESOLVED).
+     */
+    List<SupportTicket> findByDueDateBeforeAndStatusNotInAndDeletedFalse(
+            LocalDate date, List<TicketStatus> excludedStatuses);
 }

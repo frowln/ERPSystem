@@ -17,12 +17,15 @@ public record PayrollCalculationResponse(
         BigDecimal basePay,
         BigDecimal overtimePay,
         BigDecimal bonusPay,
+        BigDecimal nightPay,          // ст.154 ТК РФ: доплата за ночные часы (+20%)
+        BigDecimal holidayPay,        // ст.153 ТК РФ: доплата за праздники/выходные (×2)
         BigDecimal grossPay,
-        BigDecimal taxDeduction,
-        BigDecimal pensionDeduction,
-        BigDecimal socialDeduction,
-        BigDecimal medicalDeduction,
-        BigDecimal totalDeductions,
+        BigDecimal taxDeduction,      // НДФЛ 13% — удерживается у сотрудника
+        BigDecimal pensionDeduction,  // ОПС 22% — взнос работодателя (не вычитается из netPay)
+        BigDecimal socialDeduction,   // ОСС 2.9% — взнос работодателя
+        BigDecimal medicalDeduction,  // ОМС 5.1% — взнос работодателя
+        BigDecimal totalDeductions,   // только НДФЛ (что реально удержано у сотрудника)
+        BigDecimal employerContributions, // итого страховых взносов работодателя
         BigDecimal netPay,
         PayrollCalculationStatus status,
         String statusDisplayName,
@@ -42,12 +45,15 @@ public record PayrollCalculationResponse(
                 c.getBasePay(),
                 c.getOvertimePay(),
                 c.getBonusPay(),
+                c.getNightPay(),
+                c.getHolidayPay(),
                 c.getGrossPay(),
                 c.getTaxDeduction(),
                 c.getPensionDeduction(),
                 c.getSocialDeduction(),
                 c.getMedicalDeduction(),
                 c.getTotalDeductions(),
+                c.getEmployerContributions(),
                 c.getNetPay(),
                 c.getStatus(),
                 c.getStatus().getDisplayName(),

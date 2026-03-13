@@ -91,9 +91,9 @@ const WaybillsPage: React.FC = () => {
       const q = search.toLowerCase();
       result = result.filter(
         (w) =>
-          w.number.toLowerCase().includes(q) ||
-          w.vehicleName.toLowerCase().includes(q) ||
-          w.driverName.toLowerCase().includes(q) ||
+          (w.number ?? '').toLowerCase().includes(q) ||
+          (w.vehicleName ?? '').toLowerCase().includes(q) ||
+          (w.driverName ?? '').toLowerCase().includes(q) ||
           w.routeFrom?.toLowerCase().includes(q) ||
           w.routeTo?.toLowerCase().includes(q),
       );
@@ -255,11 +255,19 @@ const WaybillsPage: React.FC = () => {
         accessorKey: 'vehicleName',
         header: t('fleet.waybillsEsm.colVehicle'),
         size: 170,
+        cell: ({ getValue }) => {
+          const v = getValue<string>();
+          return v ? v : <span className="text-neutral-400">{'\u2014'}</span>;
+        },
       },
       {
         accessorKey: 'driverName',
         header: t('fleet.waybillsEsm.colDriver'),
         size: 150,
+        cell: ({ getValue }) => {
+          const v = getValue<string>();
+          return v ? v : <span className="text-neutral-400">{'\u2014'}</span>;
+        },
       },
       {
         accessorKey: 'date',
@@ -274,12 +282,12 @@ const WaybillsPage: React.FC = () => {
         cell: ({ row }) => {
           const from = row.original.routeFrom;
           const to = row.original.routeTo;
-          if (from && to) {
+          if (from || to) {
             return (
               <span className="flex items-center gap-1 text-sm truncate">
-                <span className="text-neutral-700 dark:text-neutral-300">{from}</span>
+                <span className="text-neutral-700 dark:text-neutral-300">{from || '\u2014'}</span>
                 <ArrowRight className="w-3 h-3 text-neutral-400 flex-shrink-0" />
-                <span className="text-neutral-700 dark:text-neutral-300">{to}</span>
+                <span className="text-neutral-700 dark:text-neutral-300">{to || '\u2014'}</span>
               </span>
             );
           }
@@ -631,11 +639,11 @@ const WaybillsPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 text-neutral-600 dark:text-neutral-400">
                 <span>{t('fleet.waybillsEsm.colNumber')}:</span>
                 <span className="font-medium text-neutral-900 dark:text-neutral-100">
-                  {selectedWaybill.number}
+                  {selectedWaybill.number || '\u2014'}
                 </span>
                 <span>{t('fleet.waybillsEsm.colVehicle')}:</span>
                 <span className="font-medium text-neutral-900 dark:text-neutral-100">
-                  {selectedWaybill.vehicleName}
+                  {selectedWaybill.vehicleName || '\u2014'}
                 </span>
                 <span>{t('fleet.waybillsEsm.formMileageStart')}:</span>
                 <span className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">

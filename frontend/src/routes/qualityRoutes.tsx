@@ -40,6 +40,7 @@ const InspectionHistoryPage = lazy(() => import('@/modules/regulatory/Inspection
 const QualityChecklistListPage = lazy(() => import('@/modules/quality/QualityChecklistListPage'));
 const QualityChecklistDetailPage = lazy(() => import('@/modules/quality/QualityChecklistDetailPage'));
 const QualityGatesPage = lazy(() => import('@/modules/quality/QualityGatesPage'));
+const DefectPlanViewPage = lazy(() => import('@/modules/quality/DefectPlanViewPage'));
 
 // Punchlist — additional
 const PunchItemDetailPage = lazy(() => import('@/modules/punchlist/PunchItemDetailPage'));
@@ -107,6 +108,8 @@ export function qualityRoutes() {
       <Route path="quality/checklists" element={<QualityChecklistListPage />} />
       <Route path="quality/checklists/:id" element={<QualityChecklistDetailPage />} />
       <Route path="quality/gates" element={<QualityGatesPage />} />
+      <Route path="quality/plan-view" element={<DefectPlanViewPage />} />
+      <Route path="quality/plan-view/:projectId" element={<DefectPlanViewPage />} />
 
       {/* Punchlist — additional */}
       <Route path="punchlist/:id" element={<PunchItemDetailPage />} />

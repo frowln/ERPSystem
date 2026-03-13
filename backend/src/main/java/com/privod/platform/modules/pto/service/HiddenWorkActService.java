@@ -2,8 +2,10 @@ package com.privod.platform.modules.pto.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.modules.pto.domain.HiddenWorkAct;
+import com.privod.platform.modules.pto.domain.HiddenWorkActSignature;
 import com.privod.platform.modules.pto.domain.HiddenWorkActStatus;
 import com.privod.platform.modules.pto.repository.HiddenWorkActRepository;
+import com.privod.platform.modules.pto.repository.HiddenWorkActSignatureRepository;
 import com.privod.platform.modules.pto.web.dto.CreateHiddenWorkActRequest;
 import com.privod.platform.modules.pto.web.dto.HiddenWorkActResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,7 +27,10 @@ import java.util.UUID;
 @Slf4j
 public class HiddenWorkActService {
 
+    private static final int MIN_SIGNATURES_FOR_APPROVAL = 3;
+
     private final HiddenWorkActRepository repository;
+    private final HiddenWorkActSignatureRepository signatureRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -76,9 +81,25 @@ public class HiddenWorkActService {
     public HiddenWorkActResponse updateStatus(UUID id, HiddenWorkActStatus newStatus) {
         HiddenWorkAct act = getOrThrow(id);
         HiddenWorkActStatus oldStatus = act.getStatus();
+
+        // P0-SAF-4: АОСР (РД 11-02-2006) — требуется минимум 3 подписи перед утверждением
+        if (newStatus == HiddenWorkActStatus.APPROVED) {
+            long signedCount = signatureRepository.countByActIdAndStatusAndDeletedFalse(
+                    id, HiddenWorkActSignature.SignatureStatus.SIGNED);
+            if (signedCount < MIN_SIGNATURES_FOR_APPROVAL) {
+                throw new IllegalStateException(
+                        String.format("Для утверждения АОСР необходимо минимум %d подписи. " +
+                                      "Получено подписей: %d. " +
+                                      "Требуются подписи представителя застройщика, " +
+                                      "представителя подрядчика и технического надзора.",
+                                MIN_SIGNATURES_FOR_APPROVAL, signedCount));
+            }
+        }
+
         act.setStatus(newStatus);
         act = repository.save(act);
         auditService.logStatusChange("HiddenWorkAct", id, oldStatus.name(), newStatus.name());
+        log.info("Акт скрытых работ {} переведён в статус {} (подписи проверены)", id, newStatus);
         return HiddenWorkActResponse.fromEntity(act);
     }
 

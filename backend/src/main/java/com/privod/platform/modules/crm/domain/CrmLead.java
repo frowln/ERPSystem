@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ import java.util.UUID;
         @Index(name = "idx_crm_lead_won_date", columnList = "won_date"),
         @Index(name = "idx_crm_lead_next_activity", columnList = "next_activity_date")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -95,6 +97,10 @@ public class CrmLead extends BaseEntity {
 
     @Column(name = "project_id")
     private UUID projectId;
+
+    // P0-2: FK на контрагента, созданного при конвертации лида (Лид→Контрагент)
+    @Column(name = "counterparty_id")
+    private UUID counterpartyId;
 
     @Column(name = "next_activity_date")
     private LocalDate nextActivityDate;

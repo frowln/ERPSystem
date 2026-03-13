@@ -260,6 +260,8 @@ const BudgetListPage: React.FC = () => {
           pageSize={20}
           emptyTitle={t('finance.budgetList.emptyTitle')}
           emptyDescription={t('finance.budgetList.emptyDescription')}
+          emptyActionLabel={t('finance.budgetList.emptyActionLabel')}
+          onEmptyAction={() => navigate('/projects/new')}
         />
       )}
     </div>

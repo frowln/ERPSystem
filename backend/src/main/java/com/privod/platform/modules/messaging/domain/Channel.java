@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -25,12 +26,16 @@ import java.util.UUID;
         @Index(name = "idx_channel_archived", columnList = "is_archived"),
         @Index(name = "idx_channel_last_message", columnList = "last_message_at")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Channel extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "code", nullable = false, unique = true, length = 20)
     private String code;

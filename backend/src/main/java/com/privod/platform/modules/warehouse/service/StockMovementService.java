@@ -11,7 +11,9 @@ import com.privod.platform.modules.warehouse.domain.StockMovement;
 import com.privod.platform.modules.warehouse.domain.StockMovementLine;
 import com.privod.platform.modules.warehouse.domain.StockMovementStatus;
 import com.privod.platform.modules.warehouse.domain.StockMovementType;
+import com.privod.platform.modules.warehouse.domain.StockBatch;
 import com.privod.platform.modules.warehouse.repository.MaterialRepository;
+import com.privod.platform.modules.warehouse.repository.StockBatchRepository;
 import com.privod.platform.modules.warehouse.repository.StockEntryRepository;
 import com.privod.platform.modules.warehouse.repository.StockMovementLineRepository;
 import com.privod.platform.modules.warehouse.repository.StockMovementRepository;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +46,7 @@ public class StockMovementService {
     private final StockMovementRepository movementRepository;
     private final StockMovementLineRepository lineRepository;
     private final StockEntryRepository stockEntryRepository;
+    private final StockBatchRepository stockBatchRepository;
     private final MaterialRepository materialRepository;
     private final WarehouseLocationRepository warehouseLocationRepository;
     private final ProjectRepository projectRepository;
@@ -371,6 +375,64 @@ public class StockMovementService {
         return StockMovementResponse.fromEntity(movement, List.of());
     }
 
+    /**
+     * P1-WAR-3: Авто-создание приходного ордера при поступлении доставки.
+     * Вызывается из ProcurementExtService когда Delivery.status → DELIVERED.
+     * Создаёт StockMovement(RECEIPT, DRAFT) без привязки к складу —
+     * кладовщик указывает склад при подтверждении.
+     *
+     * @param deliveryId  ID доставки (для трассировки в notes)
+     * @param orgId       организация
+     * @param itemMaterialIds   materialId позиций доставки
+     * @param itemQuantities    количество позиций доставки
+     * @param itemUnits         единицы измерения позиций доставки
+     */
+    @Transactional
+    public StockMovementResponse createAutoReceiptFromDelivery(
+            UUID deliveryId, UUID orgId,
+            List<UUID> itemMaterialIds,
+            List<BigDecimal> itemQuantities,
+            List<String> itemUnits) {
+
+        StockMovement movement = StockMovement.builder()
+                .organizationId(orgId)
+                .number(generateMovementNumber())
+                .movementDate(LocalDate.now())
+                .movementType(StockMovementType.RECEIPT)
+                .status(StockMovementStatus.DRAFT)
+                .notes("Авто-приходный ордер из доставки: " + deliveryId)
+                .build();
+
+        movement = movementRepository.save(movement);
+
+        for (int i = 0; i < itemMaterialIds.size(); i++) {
+            UUID materialId = itemMaterialIds.get(i);
+            BigDecimal qty = itemQuantities.get(i);
+            String unit = i < itemUnits.size() ? itemUnits.get(i) : null;
+
+            Material material = materialRepository.findById(materialId).orElse(null);
+            String materialName = material != null ? material.getName() : materialId.toString();
+
+            StockMovementLine line = StockMovementLine.builder()
+                    .movementId(movement.getId())
+                    .materialId(materialId)
+                    .materialName(materialName)
+                    .sequence(i + 1)
+                    .quantity(qty)
+                    .unitOfMeasure(unit != null ? unit : (material != null ? material.getUnitOfMeasure() : null))
+                    .build();
+            line.recalculateTotal();
+            lineRepository.save(line);
+        }
+
+        auditService.logCreate("StockMovement", movement.getId());
+        log.info("Авто-приходный ордер создан из доставки {}: {} ({} позиций)",
+                deliveryId, movement.getNumber(), itemMaterialIds.size());
+
+        List<StockMovementLineResponse> lines = getMovementLines(movement.getId());
+        return StockMovementResponse.fromEntity(movement, lines);
+    }
+
     @Transactional
     public void deleteMovement(UUID id) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
@@ -427,12 +489,50 @@ public class StockMovementService {
 
     private void addStock(UUID locationId, StockMovementLine line, UUID organizationId) {
         StockEntry entry = getOrCreateStockEntry(locationId, line.getMaterialId(), line.getMaterialName(), organizationId);
-        entry.setQuantity(entry.getQuantity().add(line.getQuantity()));
-        if (line.getUnitPrice() != null) {
-            entry.setLastPricePerUnit(line.getUnitPrice());
+
+        // P0-WAR-1: ФСБУ 5/2019 — создать партию и пересчитать средневзвешенную цену
+        BigDecimal unitPrice = line.getUnitPrice() != null ? line.getUnitPrice() : BigDecimal.ZERO;
+        createBatch(line, locationId, organizationId, unitPrice);
+
+        // Получить обновлённую средневзвешенную цену из партий
+        BigDecimal weightedAvg = stockBatchRepository.computeWeightedAvgPrice(
+                organizationId, line.getMaterialId(), locationId);
+        if (weightedAvg != null && weightedAvg.compareTo(BigDecimal.ZERO) > 0) {
+            entry.setLastPricePerUnit(weightedAvg.setScale(4, RoundingMode.HALF_UP));
+        } else if (unitPrice.compareTo(BigDecimal.ZERO) > 0) {
+            entry.setLastPricePerUnit(unitPrice);
         }
+
+        entry.setQuantity(entry.getQuantity().add(line.getQuantity()));
         entry.recalculate();
         stockEntryRepository.save(entry);
+    }
+
+    /**
+     * P0-WAR-1: ФСБУ 5/2019 — создаёт новую партию при каждом RECEIPT / RETURN.
+     * Партия содержит цену прихода и начальное/остаточное количество.
+     *
+     * @param line         строка движения (содержит materialId, quantity)
+     * @param locationId   склад назначения
+     * @param organizationId организация
+     * @param unitCostPrice цена единицы на дату прихода
+     */
+    private void createBatch(StockMovementLine line, UUID locationId,
+                              UUID organizationId, BigDecimal unitCostPrice) {
+        // Получаем movementId через связь (movementId хранится прямо в строке)
+        StockBatch batch = StockBatch.builder()
+                .organizationId(organizationId)
+                .materialId(line.getMaterialId())
+                .locationId(locationId)
+                .receiptDate(LocalDate.now())
+                .unitCostPrice(unitCostPrice)
+                .originalQty(line.getQuantity())
+                .remainingQty(line.getQuantity())
+                .stockMovementId(line.getMovementId())
+                .build();
+        stockBatchRepository.save(batch);
+        log.debug("P0-WAR-1: партия создана material={} qty={} price={} location={}",
+                line.getMaterialId(), line.getQuantity(), unitCostPrice, locationId);
     }
 
     private void subtractStock(UUID locationId, StockMovementLine line, UUID organizationId) {

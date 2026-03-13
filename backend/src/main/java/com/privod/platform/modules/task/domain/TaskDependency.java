@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.hibernate.annotations.Filter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import java.util.UUID;
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uq_task_dependency", columnNames = {"task_id", "depends_on_task_id"})
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -36,6 +38,9 @@ public class TaskDependency {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "task_id", nullable = false)
     private UUID taskId;

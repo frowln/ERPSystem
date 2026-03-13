@@ -24,12 +24,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/safety/certificates")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'SAFETY_MANAGER', 'PROJECT_MANAGER', 'ENGINEER')")
 @Tag(name = "Safety Certificates", description = "Worker certification management and matrix")
 public class SafetyCertificateController {
 

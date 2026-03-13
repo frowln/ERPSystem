@@ -4,10 +4,12 @@ import com.privod.platform.modules.contract.domain.ContractBudgetItem;
 import com.privod.platform.modules.contract.domain.ContractStatus;
 import com.privod.platform.modules.contract.repository.ContractBudgetItemRepository;
 import com.privod.platform.modules.contract.repository.ContractRepository;
+import com.privod.platform.modules.finance.domain.Budget;
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.BudgetItemDocStatus;
 import com.privod.platform.modules.finance.domain.InvoiceStatus;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
+import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.finance.repository.InvoiceRepository;
 import com.privod.platform.modules.finance.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +49,7 @@ public class BudgetItemSyncService {
     );
 
     private final BudgetItemRepository budgetItemRepository;
+    private final BudgetRepository budgetRepository; // P1-FIN-4: авто-пересчёт Budget.actualCost
     private final ContractRepository contractRepository;
     private final ContractBudgetItemRepository contractBudgetItemRepository;
     private final InvoiceRepository invoiceRepository;
@@ -198,6 +201,26 @@ public class BudgetItemSyncService {
             item.setPaidAmount(nonNegative(totalPaid).setScale(2, RoundingMode.HALF_UP));
             updateFinancialDocStatus(item);
             budgetItemRepository.save(item);
+
+            // P1-FIN-4: После обновления статьи бюджета — пересчитываем фактические затраты бюджета
+            recalculateBudgetActuals(item.getBudgetId());
+        });
+    }
+
+    /**
+     * P1-FIN-4: Авто-пересчёт Budget.actualCost как суммы paidAmount по всем статьям.
+     * Вызывается автоматически при каждом изменении финансового состояния статьи бюджета.
+     */
+    private void recalculateBudgetActuals(UUID budgetId) {
+        if (budgetId == null) return;
+        budgetRepository.findByIdAndDeletedFalse(budgetId).ifPresent(budget -> {
+            List<BudgetItem> allItems = budgetItemRepository.findByBudgetIdAndDeletedFalseOrderBySequenceAsc(budgetId);
+            BigDecimal totalActualCost = allItems.stream()
+                    .map(bi -> bi.getPaidAmount() != null ? bi.getPaidAmount() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            budget.setActualCost(totalActualCost.setScale(2, RoundingMode.HALF_UP));
+            budgetRepository.save(budget);
+            log.debug("Budget.actualCost пересчитан: budgetId={}, actualCost={}", budgetId, totalActualCost);
         });
     }
 

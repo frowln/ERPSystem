@@ -112,7 +112,7 @@ export default function ExecutiveKpiDashboardPage() {
       )}
 
       {activeTab === 'projects' && (
-        <DataTable columns={projectColumns} data={dashboard?.projectHealth ?? []} loading={isLoading} />
+        <DataTable columns={projectColumns} data={dashboard?.projectHealth ?? []} loading={isLoading} enableExport />
       )}
 
       {activeTab === 'cashflow' && (

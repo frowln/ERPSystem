@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Filter;
 
+import com.privod.platform.infrastructure.finance.VatCalculator;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -83,7 +85,7 @@ public class LocalEstimate extends BaseEntity {
 
     @Column(name = "vat_rate", precision = 5, scale = 2)
     @Builder.Default
-    private BigDecimal vatRate = new BigDecimal("20.00");
+    private BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
@@ -91,11 +93,29 @@ public class LocalEstimate extends BaseEntity {
     @Column(name = "calculated_at")
     private Instant calculatedAt;
 
+    /**
+     * Индекс перевода из базисных цен 2001 года в текущий уровень цен.
+     * Применяется при методе BASIS_INDEX. Значение по умолчанию 8.0 соответствует
+     * усреднённому индексу Минстроя для СМР (РИМ, 2025 год).
+     * МДС 81-35.2004: текущая цена = базисная цена 2001 × индекс.
+     */
+    @Column(name = "index_factor", precision = 8, scale = 4)
+    @Builder.Default
+    private BigDecimal indexFactor = new BigDecimal("8.0000");
+
+    /**
+     * НР (накладные расходы) — per МДС 81-33: 80% от ФОТ (фонда оплаты труда рабочих).
+     * Default: 0.80.
+     */
     @Column(name = "overhead_rate", precision = 8, scale = 4)
     @Builder.Default
-    private BigDecimal overheadRate = new BigDecimal("0.1200");
+    private BigDecimal overheadRate = new BigDecimal("0.8000");
 
+    /**
+     * СП (сметная прибыль) — per МДС 81-25: 50% от ОЗП (основной зарплаты рабочих).
+     * Default: 0.50.
+     */
     @Column(name = "profit_rate", precision = 8, scale = 4)
     @Builder.Default
-    private BigDecimal profitRate = new BigDecimal("0.0800");
+    private BigDecimal profitRate = new BigDecimal("0.5000");
 }

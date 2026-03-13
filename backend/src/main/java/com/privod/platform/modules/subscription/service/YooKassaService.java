@@ -114,11 +114,13 @@ public class YooKassaService {
                 return new PaymentResult(paymentId, confirmationUrl, status);
             } else {
                 log.error("YooKassa payment creation failed: status={}, body={}", response.statusCode(), response.body());
-                return null;
+                throw new RuntimeException("YooKassa payment creation failed with status " + response.statusCode());
             }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             log.error("YooKassa API error: {}", e.getMessage(), e);
-            return null;
+            throw new RuntimeException("YooKassa API error: " + e.getMessage(), e);
         }
     }
 
@@ -139,11 +141,16 @@ public class YooKassaService {
             if (response.statusCode() == 200) {
                 JsonNode body = objectMapper.readTree(response.body());
                 return body.get("status").asText();
+            } else {
+                log.error("YooKassa payment status request failed: status={}, body={}", response.statusCode(), response.body());
+                throw new RuntimeException("YooKassa payment status request failed with status " + response.statusCode());
             }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("Failed to get YooKassa payment status for {}: {}", paymentId, e.getMessage());
+            log.error("Failed to get YooKassa payment status for {}: {}", paymentId, e.getMessage(), e);
+            throw new RuntimeException("Failed to get YooKassa payment status: " + e.getMessage(), e);
         }
-        return null;
     }
 
     private String basicAuth() {

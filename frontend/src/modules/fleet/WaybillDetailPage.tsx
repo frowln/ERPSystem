@@ -270,7 +270,7 @@ const WaybillDetailPage: React.FC = () => {
               <StatusBadge
                 status={waybill.status}
                 colorMap={waybillStatusColorMap}
-                label={waybillStatusLabels[waybill.status]}
+                label={waybillStatusLabels[waybill.status] ?? waybill.status}
                 size="md"
               />
             </div>

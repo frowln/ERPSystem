@@ -37,4 +37,17 @@ public interface PayrollCalculationRepository extends JpaRepository<PayrollCalcu
                                   @Param("periodEnd") LocalDate periodEnd);
 
     long countByStatusAndDeletedFalse(PayrollCalculationStatus status);
+
+    /**
+     * P1-HR-2: Суммарный доход сотрудника с начала года для прогрессивного НДФЛ.
+     * Считает grossPay по всем APPROVED расчётам с начала налогового года.
+     */
+    @Query("SELECT COALESCE(SUM(pc.grossPay), 0) FROM PayrollCalculation pc " +
+            "WHERE pc.deleted = false AND pc.status = 'APPROVED' " +
+            "AND pc.employeeId = :employeeId " +
+            "AND pc.periodStart >= :yearStart AND pc.periodStart < :currentPeriodStart")
+    BigDecimal sumGrossPayForEmployee(
+            @Param("employeeId") UUID employeeId,
+            @Param("yearStart") LocalDate yearStart,
+            @Param("currentPeriodStart") LocalDate currentPeriodStart);
 }

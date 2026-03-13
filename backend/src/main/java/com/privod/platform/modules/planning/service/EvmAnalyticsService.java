@@ -1,10 +1,15 @@
 package com.privod.platform.modules.planning.service;
 
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.finance.domain.Budget;
+import com.privod.platform.modules.finance.repository.BudgetItemRepository;
+import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.planning.domain.EvmSnapshot;
 import com.privod.platform.modules.planning.domain.WbsNode;
 import com.privod.platform.modules.planning.repository.EvmSnapshotRepository;
 import com.privod.platform.modules.planning.repository.WbsNodeRepository;
+import com.privod.platform.modules.task.domain.TaskStatus;
+import com.privod.platform.modules.task.repository.ProjectTaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +37,9 @@ public class EvmAnalyticsService {
 
     private final EvmSnapshotRepository evmSnapshotRepository;
     private final WbsNodeRepository wbsNodeRepository;
+    private final ProjectTaskRepository projectTaskRepository; // P0-6: EVM из реальных задач
+    private final BudgetRepository budgetRepository;           // P0-6: BAC из бюджета
+    private final BudgetItemRepository budgetItemRepository;   // P0-6: sumPlannedAmount
 
     // ── Inner records ───────────────────────────────────────────────────
 
@@ -255,6 +264,80 @@ public class EvmAnalyticsService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * P0-6: Пересчёт EVM-снимка из реальных операционных данных (Задачи + Бюджет).
+     * Устраняет разрыв «EVM ↛ Task/WorkOrder» — EV теперь вычисляется из факта задач.
+     *
+     * Алгоритм:
+     *   1. % выполнения = DONE / (TOTAL - CANCELLED) × 100  (из статусов задач)
+     *   2. BAC = сумма плановых бюджетных позиций проекта
+     *   3. EV = BAC × (% выполнения / 100)
+     *   4. PV = EV (упрощение — без календарного базового плана в данный момент)
+     *   5. AC = 0 (фактические затраты из счетов/платежей пока не интегрированы)
+     *   6. Создать/обновить EvmSnapshot на текущую дату
+     */
+    @Transactional
+    public EvmSnapshot refreshEvmSnapshotFromTasks(UUID projectId) {
+        SecurityUtils.requireCurrentOrganizationId();
+
+        // Step 1: Агрегация статусов задач
+        List<Object[]> statusCounts = projectTaskRepository.countByStatusAndProjectId(projectId);
+        long total = 0, done = 0, cancelled = 0;
+        for (Object[] row : statusCounts) {
+            TaskStatus status = (TaskStatus) row[0];
+            long count = ((Number) row[1]).longValue();
+            total += count;
+            if (TaskStatus.DONE == status) done += count;
+            if (TaskStatus.CANCELLED == status) cancelled += count;
+        }
+        long effective = total - cancelled;
+        BigDecimal percentComplete = effective > 0
+                ? BigDecimal.valueOf(done * 100.0 / effective).setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        // Step 2: BAC = Σ плановых сумм бюджетных позиций проекта
+        List<Budget> budgets = budgetRepository.findByProjectIdAndDeletedFalseOrderByCreatedAtDesc(projectId);
+        BigDecimal bac = BigDecimal.ZERO;
+        if (!budgets.isEmpty()) {
+            List<UUID> budgetIds = budgets.stream().map(Budget::getId).collect(Collectors.toList());
+            BigDecimal planned = budgetItemRepository.sumPlannedAmountByBudgetIds(budgetIds);
+            if (planned != null) bac = planned;
+        }
+
+        // Step 3: EV = BAC × % complete / 100
+        BigDecimal hundred = BigDecimal.valueOf(100);
+        BigDecimal ev = bac.multiply(percentComplete).divide(hundred, 2, RoundingMode.HALF_UP);
+        BigDecimal pv = ev; // упрощение: без базового календарного плана PV ≈ EV
+        BigDecimal ac = BigDecimal.ZERO; // AC из платежей/счетов: будет интегрировано в Phase 5
+
+        // Step 4: Индексы
+        BigDecimal cpi = isPositive(ac) ? ev.divide(ac, SCALE, RoundingMode.HALF_UP) : BigDecimal.ONE;
+        BigDecimal spi = isPositive(pv) ? ev.divide(pv, SCALE, RoundingMode.HALF_UP) : BigDecimal.ONE;
+        BigDecimal eac = isPositive(cpi) ? bac.divide(cpi, 2, RoundingMode.HALF_UP) : bac;
+
+        // Step 5: Upsert EvmSnapshot на сегодня
+        LocalDate today = LocalDate.now();
+        EvmSnapshot snapshot = evmSnapshotRepository
+                .findByProjectIdAndSnapshotDateAndDeletedFalse(projectId, today)
+                .orElseGet(() -> EvmSnapshot.builder().projectId(projectId).snapshotDate(today).build());
+
+        snapshot.setBudgetAtCompletion(bac);
+        snapshot.setPlannedValue(pv);
+        snapshot.setEarnedValue(ev);
+        snapshot.setActualCost(ac);
+        snapshot.setCpi(cpi);
+        snapshot.setSpi(spi);
+        snapshot.setEac(eac);
+        snapshot.setPercentComplete(percentComplete);
+        snapshot.setDataDate(today);
+        snapshot.setNotes("Авторасчёт из задач: " + done + "/" + effective + " завершено");
+
+        EvmSnapshot saved = evmSnapshotRepository.save(snapshot);
+        log.info("EVM-снимок обновлён из задач: projectId={}, %={}, ev={}, bac={}",
+                projectId, percentComplete, ev, bac);
+        return saved;
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────

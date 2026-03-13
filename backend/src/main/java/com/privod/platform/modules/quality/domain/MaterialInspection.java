@@ -12,9 +12,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.UUID;
         @Index(name = "idx_mi_result", columnList = "result"),
         @Index(name = "idx_mi_inspection_date", columnList = "inspection_date")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -72,4 +75,14 @@ public class MaterialInspection extends BaseEntity {
 
     @Column(name = "project_id", nullable = false)
     private UUID projectId;
+
+    // P1-SAF-6: При result=ACCEPTED и наличии material_id+quantity авто-создаётся StockMovement(RECEIPT)
+    @Column(name = "material_id")
+    private UUID materialId;
+
+    @Column(name = "quantity", precision = 16, scale = 3)
+    private BigDecimal quantity;
+
+    @Column(name = "destination_location_id")
+    private UUID destinationLocationId;
 }

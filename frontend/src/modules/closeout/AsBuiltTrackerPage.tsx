@@ -179,6 +179,7 @@ const AsBuiltTrackerPage: React.FC = () => {
             pageSize={50}
             emptyTitle={t('closeout.asBuiltNoData')}
             emptyDescription={t('closeout.asBuiltNoDataDesc')}
+            enableExport
           />
         </>
       )}

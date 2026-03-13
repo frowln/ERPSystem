@@ -201,6 +201,7 @@ const OneCConfigPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('dataExchange.emptyOnecTitle')}
         emptyDescription={t('dataExchange.emptyOnecDescription')}
+        enableExport
       />
     </div>
   );

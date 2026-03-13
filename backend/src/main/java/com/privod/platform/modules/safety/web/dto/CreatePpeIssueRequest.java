@@ -22,6 +22,9 @@ public record CreatePpeIssueRequest(
         @NotNull(message = "Дата выдачи обязательна")
         LocalDate issuedDate,
 
-        String notes
+        String notes,
+
+        /** P1-SAF-2: Optional — used to check PpeNorm compliance (norm check by job title) */
+        String jobTitle
 ) {
 }

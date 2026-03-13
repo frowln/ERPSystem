@@ -8,7 +8,9 @@ import com.privod.platform.modules.support.domain.SupportTicket;
 import com.privod.platform.modules.support.domain.TicketComment;
 import com.privod.platform.modules.support.domain.TicketPriority;
 import com.privod.platform.modules.support.domain.TicketStatus;
+import com.privod.platform.modules.support.domain.TicketCategory;
 import com.privod.platform.modules.support.repository.SupportTicketRepository;
+import com.privod.platform.modules.support.repository.TicketCategoryRepository;
 import com.privod.platform.modules.support.repository.TicketCommentRepository;
 import com.privod.platform.modules.support.web.dto.CreateSupportTicketRequest;
 import com.privod.platform.modules.support.web.dto.CreateTicketCommentRequest;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,7 @@ public class SupportTicketService {
 
     private final SupportTicketRepository ticketRepository;
     private final TicketCommentRepository commentRepository;
+    private final TicketCategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
     private final NotificationService notificationService;
@@ -70,6 +74,23 @@ public class SupportTicketService {
 
         String code = generateTicketCode();
 
+        // P2-CRM-3: Derive SLA deadline from TicketCategory.slaHours
+        Instant slaDeadlineAt = null;
+        if (request.category() != null) {
+            try {
+                TicketCategory cat = categoryRepository
+                        .findByOrganizationIdAndCodeAndDeletedFalse(organizationId, request.category())
+                        .orElse(null);
+                if (cat != null && cat.getSlaHours() != null && cat.getSlaHours() > 0) {
+                    slaDeadlineAt = Instant.now().plus(cat.getSlaHours(), ChronoUnit.HOURS);
+                    log.debug("SLA deadline set for ticket in category '{}': {} hours", request.category(), cat.getSlaHours());
+                }
+            } catch (Exception e) {
+                log.warn("Could not resolve TicketCategory SLA for code '{}': {}", request.category(), e.getMessage());
+            }
+        }
+        final Instant finalSlaDeadlineAt = slaDeadlineAt;
+
         SupportTicket ticket = SupportTicket.builder()
                 .organizationId(organizationId)
                 .code(code)
@@ -80,6 +101,7 @@ public class SupportTicketService {
                 .status(TicketStatus.OPEN)
                 .reporterId(reporterId)
                 .dueDate(request.dueDate())
+                .slaDeadlineAt(finalSlaDeadlineAt)
                 .build();
 
         ticket = ticketRepository.save(ticket);

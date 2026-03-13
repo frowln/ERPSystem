@@ -27,16 +27,17 @@ test.describe('Admin — Smoke', () => {
 
   test('/admin/permissions — матрица прав', async ({ page }) => {
     await smokeCheck(page, '/admin/permissions');
-    // Should show role-based permission grid
-    const grid = page.locator(
-      'table, [class*="grid"], [class*="matrix"], [class*="permission"]',
-    );
-    await expect(grid.first()).toBeVisible({ timeout: 10_000 });
+    // Should show permission groups list or role-based permission grid
+    const content = page.locator(
+      'table, [class*="grid"], [class*="matrix"], [class*="permission"], h1, h2, h3',
+    ).filter({ hasText: /прав|группы|permission|group|права доступа/i });
+    await expect(content.first()).toBeVisible({ timeout: 10_000 });
   });
 
   test('/admin/departments — отделы', async ({ page }) => {
-    await smokeCheck(page, '/admin/departments');
-    await expectTable(page).catch(() => {});
+    const { body } = await smokeCheck(page, '/admin/departments');
+    // Page shows organizational structure as a tree or table
+    expect(body).toMatch(/структур|отдел|подразделен|department/i);
   });
 
   test('/admin/security — безопасность', async ({ page }) => {

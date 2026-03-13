@@ -17,10 +17,8 @@ test.describe('Calendar — Smoke', () => {
       /январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр|january|february|march|april|june|july|august|september|october|november|december/i;
     const hasMonthName = monthPattern.test(body);
 
-    // Or has navigation buttons
-    const navButtons = page.locator(
-      'button:has-text(/[<>←→◀▶]/), button:has-text(/prev|next|назад|вперёд/i)',
-    );
+    // Or has navigation buttons (month/week switcher or prev/next arrows)
+    const navButtons = page.getByRole('button', { name: /предыдущ|следующ|prev|next|сегодня|today|месяц|неделя/i });
     const hasNav = (await navButtons.count()) > 0;
 
     expect(

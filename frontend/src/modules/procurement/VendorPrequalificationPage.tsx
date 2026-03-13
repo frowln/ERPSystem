@@ -202,7 +202,7 @@ const VendorPrequalificationPage: React.FC = () => {
         ))}
       </div>
 
-      <DataTable columns={columns} data={filtered} />
+      <DataTable columns={columns} data={filtered} enableExport />
 
       {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t('procurement.prequalification.editVendor') : t('procurement.prequalification.addVendor')}>

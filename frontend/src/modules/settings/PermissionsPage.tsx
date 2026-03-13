@@ -199,8 +199,15 @@ const PermissionsPage: React.FC = () => {
 
   const groups = useMemo(() => buildGroupTree(rawGroups), [rawGroups]);
 
+  // Auto-select the first group when groups load and none is selected
+  useEffect(() => {
+    if (!selectedGroupId && rawGroups.length > 0) {
+      setSelectedGroupId(rawGroups[0].id);
+    }
+  }, [rawGroups, selectedGroupId]);
+
   // Fetch ALL available model names (for the model access matrix)
-  const { data: allModelNames = [] } = useQuery<string[]>({
+  const { data: allModelNames = [], isLoading: modelNamesLoading } = useQuery<string[]>({
     queryKey: ['all-model-names'],
     queryFn: () => permissionsApi.getAllModelNames(),
     staleTime: 5 * 60 * 1000,
@@ -889,7 +896,7 @@ const PermissionsPage: React.FC = () => {
               {/* ============ MODEL ACCESS TAB ============ */}
               {detailTab === 'models' && (
                 <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-                  {modelAccessLoading ? (
+                  {modelAccessLoading || modelNamesLoading ? (
                     <LoadingSpinner />
                   ) : filteredModelAccess.length === 0 ? (
                     <EmptyState message={t('settings.permissions.noModelAccess')} />

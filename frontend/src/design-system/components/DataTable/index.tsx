@@ -42,6 +42,8 @@ interface DataTableProps<T> {
   pageSize?: number;
   emptyTitle?: string;
   emptyDescription?: string;
+  emptyActionLabel?: string;
+  onEmptyAction?: () => void;
   tableLabel?: string;
   enableSavedViews?: boolean;
   savedViewsKey?: string;
@@ -140,6 +142,8 @@ export function DataTable<T>({
   pageSize = 20,
   emptyTitle,
   emptyDescription,
+  emptyActionLabel,
+  onEmptyAction,
   tableLabel = t('table.dataTable'),
   enableSavedViews,
   savedViewsKey,
@@ -343,6 +347,8 @@ export function DataTable<T>({
           onRowClick={onRowClick}
           emptyTitle={emptyTitle}
           emptyDescription={emptyDescription}
+          emptyActionLabel={emptyActionLabel}
+          onEmptyAction={onEmptyAction}
         />
       ) : (
         <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
@@ -402,7 +408,7 @@ export function DataTable<T>({
               ) : (
                 <tr>
                   <td colSpan={allColumns.length}>
-                    <EmptyState variant="no-data" title={emptyTitle} description={emptyDescription} />
+                    <EmptyState variant="no-data" title={emptyTitle} description={emptyDescription} actionLabel={emptyActionLabel} onAction={onEmptyAction} />
                   </td>
                 </tr>
               )}

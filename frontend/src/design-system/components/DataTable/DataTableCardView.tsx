@@ -9,6 +9,8 @@ interface DataTableCardViewProps<T> {
   onRowClick?: (row: T) => void;
   emptyTitle?: string;
   emptyDescription?: string;
+  emptyActionLabel?: string;
+  onEmptyAction?: () => void;
 }
 
 function SkeletonCards({ count }: { count: number }) {
@@ -34,6 +36,8 @@ export function DataTableCardView<T>({
   onRowClick,
   emptyTitle,
   emptyDescription,
+  emptyActionLabel,
+  onEmptyAction,
 }: DataTableCardViewProps<T>) {
   const rows = table.getRowModel().rows;
   const visibleColumns = table.getVisibleLeafColumns().filter((c) => c.id !== '__select');
@@ -43,7 +47,7 @@ export function DataTableCardView<T>({
   }
 
   if (rows.length === 0) {
-    return <EmptyState variant="no-data" title={emptyTitle} description={emptyDescription} />;
+    return <EmptyState variant="no-data" title={emptyTitle} description={emptyDescription} actionLabel={emptyActionLabel} onAction={onEmptyAction} />;
   }
 
   return (

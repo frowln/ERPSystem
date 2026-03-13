@@ -43,9 +43,9 @@ public class CompetitiveListController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Список конкурентных листов по проекту")
+    @Operation(summary = "Список конкурентных листов (по проекту или все)")
     public ResponseEntity<ApiResponse<PageResponse<CompetitiveListResponse>>> list(
-            @RequestParam UUID projectId,
+            @RequestParam(required = false) UUID projectId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<CompetitiveListResponse> page = competitiveListService.list(projectId, pageable);

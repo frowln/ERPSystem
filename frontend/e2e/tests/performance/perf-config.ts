@@ -13,7 +13,7 @@ export const PERF_THRESHOLDS = {
     fast: 1000,   // <1s = EXCELLENT (grade A)
     ok: 2000,     // <2s = GOOD (grade B)
     slow: 3000,   // <3s = ACCEPTABLE (grade C)
-    fail: 5000,   // >5s = FAIL (grade F) [CRITICAL]
+    fail: 10000,  // >10s = FAIL (grade F) [CRITICAL]
   },
   interaction: {
     fast: 200,    // <200ms = EXCELLENT

@@ -372,7 +372,7 @@ public class AnalyticsDataService {
             String displayName = category;
             try {
                 displayName = com.privod.platform.modules.warehouse.domain.MaterialCategory.valueOf(category).getDisplayName();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) { log.debug("Unknown MaterialCategory: {}", category); }
 
             result.add(new WarehouseStockResponse(category, displayName, currentStock, minStock, maxStock, value));
         }

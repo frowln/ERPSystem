@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -8,9 +8,11 @@ import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
+import { PhotoAttachments } from '@/components/PhotoAttachments';
 import { dailyLogApi } from '@/api/dailylog';
 import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
+import VoiceInput from '@/components/VoiceInput';
 
 const dailyLogSchema = z.object({
   date: z.string().min(1, t('forms.dailyLog.validation.dateRequired')),
@@ -75,6 +77,8 @@ const DailyLogFormPage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<DailyLogFormData>({
     resolver: zodResolver(dailyLogSchema),
@@ -305,6 +309,13 @@ const DailyLogFormPage: React.FC = () => {
             </FormField>
           </div>
         </section>
+
+        {/* Photo attachments (only available in edit mode, after entity exists) */}
+        {isEdit && id && (
+          <div className="mb-8">
+            <PhotoAttachments entityType="DAILY_LOG" entityId={id} />
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex items-center gap-3">

@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-03-12T15:18:15.632Z",
+  "summary": {
+    "totalPagesScanned": 243,
+    "pagesWithIssues": 0,
+    "totalIssues": 0,
+    "issuesByKind": {},
+    "issuesByModule": {}
+  },
+  "topOffenders": [],
+  "allIssues": []
+}

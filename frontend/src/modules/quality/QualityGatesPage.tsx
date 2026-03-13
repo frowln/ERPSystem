@@ -188,7 +188,7 @@ export default function QualityGatesPage() {
             <MetricCard label={t('qualityGates.metricProgress')} value={gates.length > 0 ? `${Math.round((passedCount / gates.length) * 100)}%` : '0%'} icon={<AlertTriangle className="h-5 w-5" />} />
           </div>
 
-          <DataTable columns={columns} data={filteredGates} loading={isLoading} />
+          <DataTable columns={columns} data={filteredGates} loading={isLoading} enableExport />
         </>
       )}
 

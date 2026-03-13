@@ -149,8 +149,12 @@ export function useAiChat() {
 
   // Fetch real entity data whenever the route changes
   useEffect(() => {
+    let cancelled = false;
     setLiveData(null);
-    fetchLiveData(location.pathname, token).then(setLiveData).catch(() => {});
+    fetchLiveData(location.pathname, token)
+      .then((data) => { if (!cancelled) setLiveData(data); })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, [location.pathname, token]);
 
   useEffect(() => {

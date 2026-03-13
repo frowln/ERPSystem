@@ -210,4 +210,37 @@ export const qualityApi = {
   deleteChecklist: async (id: string): Promise<void> => {
     await apiClient.delete(`/quality/checklists/${id}`);
   },
+
+  // --- Floor Plans & Defects on Plan ---
+
+  getPlans: async (projectId: string): Promise<import('@/modules/quality/types').FloorPlan[]> => {
+    try {
+      const response = await apiClient.get(`/quality/plans/${projectId}`, { _silentErrors: true } as any);
+      return Array.isArray(response.data) ? response.data : response.data?.content ?? [];
+    } catch {
+      return [];
+    }
+  },
+
+  uploadPlan: async (projectId: string, file: File, name?: string): Promise<import('@/modules/quality/types').FloorPlan> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    if (name) fd.append('name', name);
+    const response = await apiClient.post(`/quality/plans/${projectId}/upload`, fd);
+    return response.data;
+  },
+
+  getDefectsByPlan: async (planId: string): Promise<import('@/modules/quality/types').DefectOnPlanEntry[]> => {
+    try {
+      const response = await apiClient.get(`/quality/plans/${planId}/defects`, { _silentErrors: true } as any);
+      return Array.isArray(response.data) ? response.data : response.data?.content ?? [];
+    } catch {
+      return [];
+    }
+  },
+
+  createDefectOnPlan: async (planId: string, data: import('@/modules/quality/types').CreateDefectOnPlanRequest): Promise<import('@/modules/quality/types').DefectOnPlanEntry> => {
+    const response = await apiClient.post(`/quality/plans/${planId}/defects`, data);
+    return response.data;
+  },
 };

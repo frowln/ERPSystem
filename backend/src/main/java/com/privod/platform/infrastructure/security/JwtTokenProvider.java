@@ -7,6 +7,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -27,14 +28,23 @@ public class JwtTokenProvider {
     private final SecretKey key;
     private final long jwtExpirationMs;
     private final long refreshExpirationMs;
+    private final String rawSecret;
 
     public JwtTokenProvider(
             @Value("${app.jwt.secret}") String jwtSecret,
             @Value("${app.jwt.expiration-ms}") long jwtExpirationMs,
             @Value("${app.jwt.refresh-expiration-ms:604800000}") long refreshExpirationMs) {
+        this.rawSecret = jwtSecret;
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         this.jwtExpirationMs = jwtExpirationMs;
         this.refreshExpirationMs = refreshExpirationMs;
+    }
+
+    @PostConstruct
+    void validateSecret() {
+        if (rawSecret.contains("CHANGE_ME") || rawSecret.length() < 32) {
+            log.warn("⚠️ JWT secret is default or too short. Set app.jwt.secret in production!");
+        }
     }
 
     public String generateToken(Authentication authentication) {

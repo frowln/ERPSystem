@@ -249,7 +249,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
         <div
           role="group"
           className={cn(
-            'flex items-center w-full h-9 border rounded-lg transition-colors duration-150 bg-white dark:bg-neutral-800 cursor-pointer',
+            'flex items-center w-full h-9 min-h-[44px] sm:min-h-0 border rounded-lg transition-colors duration-150 bg-white dark:bg-neutral-800 cursor-pointer',
             hasError
               ? 'border-danger-300 dark:border-danger-600'
               : isOpen

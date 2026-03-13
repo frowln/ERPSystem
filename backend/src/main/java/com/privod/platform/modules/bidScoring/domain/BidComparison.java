@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -24,6 +25,7 @@ import java.util.UUID;
         @Index(name = "idx_bid_comparison_status", columnList = "status"),
         @Index(name = "idx_bid_comparison_created_by", columnList = "created_by_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder

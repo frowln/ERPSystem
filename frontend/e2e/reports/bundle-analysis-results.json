@@ -1,0 +1,572 @@
+{
+  "totalJSKB": 15638.626953125,
+  "totalCSSKB": 248.126953125,
+  "totalFontKB": 0,
+  "totalImageKB": 0,
+  "chunks": [
+    {
+      "name": "client",
+      "size": 182835,
+      "duration": 4
+    },
+    {
+      "name": "main.tsx?t=1773324128648",
+      "size": 14547,
+      "duration": 3.899999976158142
+    },
+    {
+      "name": "@react-refresh",
+      "size": 113432,
+      "duration": 5.0999999940395355
+    },
+    {
+      "name": "react_jsx-dev-runtime.js?v=62d94b41",
+      "size": 12806,
+      "duration": 2.300000011920929
+    },
+    {
+      "name": "react.js?v=62d94b41",
+      "size": 1324,
+      "duration": 2.4000000059604645
+    },
+    {
+      "name": "@tanstack_react-query.js?v=41ac67d0",
+      "size": 130143,
+      "duration": 11.900000005960464
+    },
+    {
+      "name": "react-dom_client.js?v=5c2f76b1",
+      "size": 1005907,
+      "duration": 12
+    },
+    {
+      "name": "react-router-dom.js?v=93a0492b",
+      "size": 457169,
+      "duration": 17.700000017881393
+    },
+    {
+      "name": "sentry.ts",
+      "size": 3804,
+      "duration": 6.899999976158142
+    },
+    {
+      "name": "react-hot-toast.js?v=99ff03af",
+      "size": 17104,
+      "duration": 6.899999976158142
+    },
+    {
+      "name": "queryDefaults.ts",
+      "size": 7390,
+      "duration": 7.0999999940395355
+    },
+    {
+      "name": "App.tsx?t=1773324128648",
+      "size": 4101,
+      "duration": 10.5
+    },
+    {
+      "name": "globals.css?t=1773324128648",
+      "size": 253040,
+      "duration": 11.199999988079071
+    },
+    {
+      "name": "env.mjs",
+      "size": 4161,
+      "duration": 10.300000011920929
+    },
+    {
+      "name": "chunk-DFQNUVCC.js?v=33d55125",
+      "size": 45963,
+      "duration": 14.099999994039536
+    },
+    {
+      "name": "chunk-WOOG5QLI.js?v=33d55125",
+      "size": 15188,
+      "duration": 15.099999994039536
+    },
+    {
+      "name": "@sentry_react.js?v=e8e3c9d6",
+      "size": 1057778,
+      "duration": 11.199999988079071
+    },
+    {
+      "name": "index.tsx?t=1773324128648",
+      "size": 33280,
+      "duration": 7.200000017881393
+    },
+    {
+      "name": "ErrorBoundary.tsx",
+      "size": 14899,
+      "duration": 9.5
+    },
+    {
+      "name": "CookieConsent.tsx",
+      "size": 10548,
+      "duration": 9.700000017881393
+    },
+    {
+      "name": "chunk-6AL2VBJN.js?v=33d55125",
+      "size": 13154,
+      "duration": 7.199999988079071
+    },
+    {
+      "name": "chunk-LHDVKITD.js?v=33d55125",
+      "size": 16833,
+      "duration": 4.5999999940395355
+    },
+    {
+      "name": "authStore.ts",
+      "size": 6828,
+      "duration": 2.9000000059604645
+    },
+    {
+      "name": "index.ts",
+      "size": 17003,
+      "duration": 3.199999988079071
+    },
+    {
+      "name": "projectRoutes.tsx?t=1773324128648",
+      "size": 150832,
+      "duration": 5.299999982118607
+    },
+    {
+      "name": "financeRoutes.tsx?t=1773324128648",
+      "size": 153201,
+      "duration": 6.0999999940395355
+    },
+    {
+      "name": "hrRoutes.tsx?t=1773324128648",
+      "size": 75207,
+      "duration": 7.4000000059604645
+    },
+    {
+      "name": "operationsRoutes.tsx?t=1773324128648",
+      "size": 73848,
+      "duration": 6.699999988079071
+    },
+    {
+      "name": "warehouseRoutes.tsx?t=1773324128648",
+      "size": 43027,
+      "duration": 7.800000011920929
+    },
+    {
+      "name": "qualityRoutes.tsx?t=1773324128648",
+      "size": 60754,
+      "duration": 8.199999988079071
+    },
+    {
+      "name": "documentRoutes.tsx",
+      "size": 70878,
+      "duration": 8.800000011920929
+    },
+    {
+      "name": "settingsRoutes.tsx?t=1773324128648",
+      "size": 121551,
+      "duration": 10.699999988079071
+    },
+    {
+      "name": "execDocsRoutes.tsx",
+      "size": 9695,
+      "duration": 9.5
+    },
+    {
+      "name": "portfolioRoutes.tsx?t=1773324128648",
+      "size": 90145,
+      "duration": 9.200000017881393
+    },
+    {
+      "name": "closeoutRoutes.tsx?t=1773324128648",
+      "size": 30301,
+      "duration": 9.400000005960464
+    },
+    {
+      "name": "marketplaceRoutes.tsx",
+      "size": 8611,
+      "duration": 9.599999994039536
+    },
+    {
+      "name": "emailRoutes.tsx",
+      "size": 4576,
+      "duration": 10.800000011920929
+    },
+    {
+      "name": "defectsRoutes.tsx?t=1773324128648",
+      "size": 12469,
+      "duration": 13.5
+    },
+    {
+      "name": "lucide-react.js?v=c184ad33",
+      "size": 874055,
+      "duration": 44.5
+    },
+    {
+      "name": "zustand.js?v=dbc1ed47",
+      "size": 2344,
+      "duration": 9.800000011920929
+    },
+    {
+      "name": "zustand_middleware.js?v=e9ae59d2",
+      "size": 16920,
+      "duration": 10.300000011920929
+    },
+    {
+      "name": "ru.ts",
+      "size": 3619005,
+      "duration": 51.19999998807907
+    },
+    {
+      "name": "en.ts",
+      "size": 2804077,
+      "duration": 46.5
+    },
+    {
+      "name": "ProtectedRoute.tsx",
+      "size": 10784,
+      "duration": 21.900000005960464
+    },
+    {
+      "name": "routePermissions.ts",
+      "size": 13674,
+      "duration": 18.5
+    },
+    {
+      "name": "AppLayout.tsx",
+      "size": 39659,
+      "duration": 3.4000000059604645
+    },
+    {
+      "name": "cn.ts",
+      "size": 1030,
+      "duration": 2.2999999821186066
+    },
+    {
+      "name": "provider.tsx",
+      "size": 11794,
+      "duration": 3.199999988079071
+    },
+    {
+      "name": "sidebarStore.ts",
+      "size": 2865,
+      "duration": 8.5
+    },
+    {
+      "name": "useMediaQuery.ts",
+      "size": 3085,
+      "duration": 8.699999988079071
+    },
+    {
+      "name": "useWebSocket.ts",
+      "size": 12615,
+      "duration": 9
+    },
+    {
+      "name": "useKeyboardShortcuts.ts",
+      "size": 10702,
+      "duration": 9.099999994039536
+    },
+    {
+      "name": "index.ts",
+      "size": 1662,
+      "duration": 8.800000011920929
+    },
+    {
+      "name": "index.tsx",
+      "size": 11836,
+      "duration": 6.200000017881393
+    },
+    {
+      "name": "demoMode.ts",
+      "size": 2798,
+      "duration": 6.4000000059604645
+    },
+    {
+      "name": "clsx.js?v=2d5105aa",
+      "size": 1457,
+      "duration": 3.399999976158142
+    },
+    {
+      "name": "tailwind-merge.js?v=169d0348",
+      "size": 72953,
+      "duration": 9.199999988079071
+    },
+    {
+      "name": "websocket.ts",
+      "size": 28033,
+      "duration": 2.4000000059604645
+    },
+    {
+      "name": "notificationStore.ts",
+      "size": 2808,
+      "duration": 8.099999994039536
+    },
+    {
+      "name": "shadows.ts",
+      "size": 1864,
+      "duration": 8.400000005960464
+    },
+    {
+      "name": "colors.ts",
+      "size": 3988,
+      "duration": 9.5
+    },
+    {
+      "name": "typography.ts",
+      "size": 3920,
+      "duration": 11.100000023841858
+    },
+    {
+      "name": "spacing.ts",
+      "size": 3245,
+      "duration": 11.900000005960464
+    },
+    {
+      "name": "layout.ts",
+      "size": 3369,
+      "duration": 17.399999976158142
+    },
+    {
+      "name": "zIndex.ts",
+      "size": 2482,
+      "duration": 17.899999976158142
+    },
+    {
+      "name": "index.tsx",
+      "size": 25779,
+      "duration": 12.700000017881393
+    },
+    {
+      "name": "index.tsx",
+      "size": 12363,
+      "duration": 15.800000011920929
+    },
+    {
+      "name": "chunk-U7P2NEEE.js?v=33d55125",
+      "size": 926,
+      "duration": 15
+    },
+    {
+      "name": "index.tsx",
+      "size": 59968,
+      "duration": 5.0999999940395355
+    },
+    {
+      "name": "AssistantWidget.tsx",
+      "size": 24195,
+      "duration": 9.300000011920929
+    },
+    {
+      "name": "DashboardPage.tsx",
+      "size": 95800,
+      "duration": 15.800000011920929
+    },
+    {
+      "name": "usePermissions.ts",
+      "size": 4533,
+      "duration": 10.900000005960464
+    },
+    {
+      "name": "navigation.ts",
+      "size": 72441,
+      "duration": 14.900000005960464
+    },
+    {
+      "name": "useAiChat.ts",
+      "size": 39560,
+      "duration": 9.700000017881393
+    },
+    {
+      "name": "ChatHeader.tsx",
+      "size": 14124,
+      "duration": 11
+    },
+    {
+      "name": "ChatMessageList.tsx",
+      "size": 28169,
+      "duration": 11.5
+    },
+    {
+      "name": "ChatInput.tsx",
+      "size": 33421,
+      "duration": 28
+    },
+    {
+      "name": "SupportPanel.tsx",
+      "size": 63068,
+      "duration": 38.099999994039536
+    },
+    {
+      "name": "date-fns.js?v=f72d3832",
+      "size": 177261,
+      "duration": 22.399999976158142
+    },
+    {
+      "name": "index.tsx",
+      "size": 15791,
+      "duration": 29.400000005960464
+    },
+    {
+      "name": "date-fns_locale.js?v=5df863eb",
+      "size": 988861,
+      "duration": 33.69999998807907
+    },
+    {
+      "name": "projects.ts",
+      "size": 17800,
+      "duration": 42.900000005960464
+    },
+    {
+      "name": "analytics.ts",
+      "size": 39762,
+      "duration": 45.5
+    },
+    {
+      "name": "index.tsx",
+      "size": 130152,
+      "duration": 47.30000001192093
+    },
+    {
+      "name": "format.ts",
+      "size": 13295,
+      "duration": 68.5
+    },
+    {
+      "name": "OnboardingChecklist.tsx",
+      "size": 25309,
+      "duration": 69.09999999403954
+    },
+    {
+      "name": "types.ts",
+      "size": 1872,
+      "duration": 67.40000000596046
+    },
+    {
+      "name": "pageContext.ts",
+      "size": 57123,
+      "duration": 56.19999998807907
+    },
+    {
+      "name": "tools.ts",
+      "size": 105260,
+      "duration": 62.69999998807907
+    },
+    {
+      "name": "chunk-ZFXKT4LN.js?v=33d55125",
+      "size": 16435,
+      "duration": 59.099999994039536
+    },
+    {
+      "name": "client.ts",
+      "size": 21285,
+      "duration": 31.299999982118607
+    },
+    {
+      "name": "index.tsx",
+      "size": 47116,
+      "duration": 36.5
+    },
+    {
+      "name": "toolDefinitions.ts",
+      "size": 103090,
+      "duration": 15
+    },
+    {
+      "name": "onboardingStore.ts",
+      "size": 3946,
+      "duration": 35.19999998807907
+    },
+    {
+      "name": "axios.js?v=f7b4c4a9",
+      "size": 85775,
+      "duration": 26.30000001192093
+    },
+    {
+      "name": "notifications.ts",
+      "size": 8438,
+      "duration": 20
+    },
+    {
+      "name": "NotificationDropdown.tsx",
+      "size": 45420,
+      "duration": 20.69999998807907
+    },
+    {
+      "name": "useTheme.ts",
+      "size": 8747,
+      "duration": 28.69999998807907
+    },
+    {
+      "name": "index.tsx",
+      "size": 38094,
+      "duration": 17.099999994039536
+    },
+    {
+      "name": "index.tsx",
+      "size": 19695,
+      "duration": 1.5
+    },
+    {
+      "name": "index.tsx",
+      "size": 43633,
+      "duration": 6.4000000059604645
+    },
+    {
+      "name": "@stomp_stompjs.js?v=aec330cc",
+      "size": 68958,
+      "duration": 11.699999988079071
+    },
+    {
+      "name": "sockjs-client.js?v=b77f224b",
+      "size": 125316,
+      "duration": 15.5
+    },
+    {
+      "name": "useOfflineSync.ts",
+      "size": 11332,
+      "duration": 23.30000001192093
+    },
+    {
+      "name": "syncQueue.ts",
+      "size": 26021,
+      "duration": 1.800000011920929
+    },
+    {
+      "name": "offlineDb.ts",
+      "size": 24832,
+      "duration": 3.4000000059604645
+    },
+    {
+      "name": "InstallPrompt.tsx",
+      "size": 23864,
+      "duration": 4.699999988079071
+    },
+    {
+      "name": "BudgetChart.tsx",
+      "size": 17104,
+      "duration": 7.4000000059604645
+    },
+    {
+      "name": "DashboardCharts.tsx",
+      "size": 25588,
+      "duration": 7
+    },
+    {
+      "name": "recharts.js?v=a5bd9372",
+      "size": 1259932,
+      "duration": 29.5
+    },
+    {
+      "name": "TaskStatusChart.tsx",
+      "size": 19262,
+      "duration": 16.69999998807907
+    },
+    {
+      "name": "SpendTrendChart.tsx",
+      "size": 15882,
+      "duration": 1.9000000059604645
+    }
+  ],
+  "largestChunkKB": 3534.1845703125,
+  "chunkCount": 112,
+  "initialLoadResources": 120,
+  "transferSizeKB": 15653.1787109375
+}

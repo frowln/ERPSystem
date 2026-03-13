@@ -50,8 +50,19 @@ docker-compose.override.yml
 # migration/artifacts/*.json  # Keep these — they are our migration source of truth
 ui_audit/
 frontend/e2e/screenshots/
+frontend/e2e/screenshots-*/
 frontend/e2e/visual/*.png
 frontend/e2e/visual/*-snapshots/
+
+# --- Playwright test results (generated, binary artifacts) ---
+frontend/test-results/
+frontend/playwright-report/
+frontend/reports/
+frontend/e2e/audit-screenshots/
+frontend/e2e/audit-screenshots-r2/
+
+# --- Temp ad-hoc scripts (not real test specs) ---
+frontend/e2e/*.cjs
 
 # --- Data / Uploads (runtime artifacts, not source) ---
 backend/data/
@@ -61,9 +72,16 @@ backend/data/
 equivalence_audit/
 .backend_bootrun.log
 .backend_bootrun.pid
+audit/
 
 # --- UX audit docs ---
 UX_UI_Audit_Report_Privod.*
+
+# --- SSL certs (secrets) ---
+nginx/certs/
+
+# --- Temp / scratch files ---
+frontend/test_crm_activity.cjs
 
 # --- Claude Code (user-specific) ---
 .claude/

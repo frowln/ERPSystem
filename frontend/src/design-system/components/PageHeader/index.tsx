@@ -92,7 +92,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               key={tab.id}
               onClick={() => onTabChange?.(tab.id)}
               className={cn(
-                'relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap',
+                'relative px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] sm:min-h-0',
                 'hover:text-neutral-700 dark:hover:text-neutral-300',
                 activeTab === tab.id
                   ? 'text-primary-600 dark:text-primary-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary-600 dark:after:bg-primary-400 after:rounded-t'

@@ -1,6 +1,7 @@
 package com.privod.platform.modules.estimate.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.estimate.domain.CalculationMethod;
 import com.privod.platform.modules.estimate.domain.LocalEstimate;
@@ -48,9 +49,31 @@ import java.util.UUID;
 @Slf4j
 public class LocalEstimateService {
 
-    private static final BigDecimal DEFAULT_PROFIT_RATE = new BigDecimal("0.08");
+    /**
+     * МДС 81-33: НР (накладные расходы) = 80% от ФОТ рабочих.
+     * Default used when overheadRate is not explicitly set on the estimate.
+     */
+    private static final BigDecimal DEFAULT_OVERHEAD_RATE = new BigDecimal("0.80");
+
+    /**
+     * МДС 81-25: СП (сметная прибыль) = 50% от ОЗП рабочих.
+     * Default used when profitRate is not explicitly set on the estimate.
+     */
+    private static final BigDecimal DEFAULT_PROFIT_RATE = new BigDecimal("0.50");
     private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
 
+    /**
+     * Maximum allowed price escalation index (500%).
+     * Indices exceeding this cap are clamped and a warning is logged.
+     */
+    private static final BigDecimal MAX_ESCALATION_INDEX = new BigDecimal("5.0");
+
+    /** Returns НР rate (МДС 81-33: 80% от ФОТ). */
+    private BigDecimal overheadRate(LocalEstimate estimate) {
+        return estimate.getOverheadRate() != null ? estimate.getOverheadRate() : DEFAULT_OVERHEAD_RATE;
+    }
+
+    /** Returns СП rate (МДС 81-25: 50% от ОЗП). */
     private BigDecimal profitRate(LocalEstimate estimate) {
         return estimate.getProfitRate() != null ? estimate.getProfitRate() : DEFAULT_PROFIT_RATE;
     }
@@ -86,7 +109,7 @@ public class LocalEstimateService {
                 .totalOverhead(BigDecimal.ZERO)
                 .totalEstimatedProfit(BigDecimal.ZERO)
                 .totalWithVat(BigDecimal.ZERO)
-                .vatRate(new BigDecimal("20.00"))
+                .vatRate(VatCalculator.DEFAULT_RATE)
                 .build();
 
         estimate = estimateRepository.save(estimate);
@@ -180,10 +203,10 @@ public class LocalEstimateService {
                     .add(line.getCurrentMaterialCost())
                     .add(line.getCurrentEquipmentCost())
                     .setScale(2, RoundingMode.HALF_UP));
-            line.setOverheadCosts(line.getCurrentOverheadCost());
-            line.setEstimatedProfit(line.getDirectCosts()
-                    .multiply(profitRate(estimate))
-                    .setScale(2, RoundingMode.HALF_UP));
+            // НР = 80% от ФОТ (МДС 81-33); СП = 50% от ОЗП (МДС 81-25)
+            BigDecimal laborCostForLine = line.getCurrentLaborCost();
+            line.setOverheadCosts(scale2(laborCostForLine.multiply(overheadRate(estimate))));
+            line.setEstimatedProfit(scale2(laborCostForLine.multiply(profitRate(estimate))));
 
             if (request.justification() == null || request.justification().isBlank()) {
                 line.setJustification(rate.getCode());
@@ -229,17 +252,42 @@ public class LocalEstimateService {
 
         BigDecimal totalDirectCost = BigDecimal.ZERO;
         BigDecimal totalOverhead = BigDecimal.ZERO;
+        BigDecimal totalEstimatedProfitAcc = BigDecimal.ZERO;
+
+        // P1-EST-3: BASIS_INDEX method — single scalar factor applied uniformly to all cost components.
+        // МДС 81-35.2004: текущая цена = базисная цена 2001 × индекс пересчёта.
+        boolean isBasisIndex = estimate.getCalculationMethod() == CalculationMethod.BASIS_INDEX;
+        BigDecimal basisIndexFactor = null;
+        if (isBasisIndex) {
+            basisIndexFactor = estimate.getIndexFactor() != null
+                    ? estimate.getIndexFactor()
+                    : new BigDecimal("8.0000");
+            log.info("Локальная смета {}: метод BASIS_INDEX, коэффициент индексации = {}",
+                    estimate.getId(), basisIndexFactor);
+        }
 
         for (LocalEstimateLine line : lines) {
-            BigDecimal laborIdx = resolveIndex(region, targetQuarter, "СМР", "construction");
-            BigDecimal materialIdx = resolveIndex(region, targetQuarter, "Материалы", "materials");
-            BigDecimal equipmentIdx = resolveIndex(region, targetQuarter, "Машины", "equipment");
+            BigDecimal laborIdx;
+            BigDecimal materialIdx;
+            BigDecimal equipmentIdx;
+
+            if (isBasisIndex) {
+                // BASIS_INDEX: single index factor applied uniformly to all base-2001 cost components
+                laborIdx = basisIndexFactor;
+                materialIdx = basisIndexFactor;
+                equipmentIdx = basisIndexFactor;
+            } else {
+                // RIM method: separate indices per cost type from Minstroy PriceIndex registry
+                laborIdx = resolveIndex(region, targetQuarter, "СМР", "construction");
+                materialIdx = resolveIndex(region, targetQuarter, "Материалы", "materials");
+                equipmentIdx = resolveIndex(region, targetQuarter, "Машины", "equipment");
+            }
 
             line.setLaborIndex(laborIdx);
             line.setMaterialIndex(materialIdx);
             line.setEquipmentIndex(equipmentIdx);
 
-            // RIM method: current = base * index
+            // current = base * index (same formula for both RIM and BASIS_INDEX)
             line.setCurrentLaborCost(scale2(line.getBaseLaborCost().multiply(laborIdx)));
             line.setCurrentMaterialCost(scale2(line.getBaseMaterialCost().multiply(materialIdx)));
             line.setCurrentEquipmentCost(scale2(line.getBaseEquipmentCost().multiply(equipmentIdx)));
@@ -253,8 +301,10 @@ public class LocalEstimateService {
             line.setDirectCosts(scale2(line.getCurrentLaborCost()
                     .add(line.getCurrentMaterialCost())
                     .add(line.getCurrentEquipmentCost())));
-            line.setOverheadCosts(line.getCurrentOverheadCost());
-            line.setEstimatedProfit(scale2(line.getDirectCosts().multiply(profitRate(estimate))));
+            // НР = 80% от ФОТ (МДС 81-33); СП = 50% от ОЗП (МДС 81-25)
+            BigDecimal laborCost = line.getCurrentLaborCost();
+            line.setOverheadCosts(scale2(laborCost.multiply(overheadRate(estimate))));
+            line.setEstimatedProfit(scale2(laborCost.multiply(profitRate(estimate))));
             line.setPriceIndex(laborIdx);
             if (line.getQuantity() != null && line.getQuantity().compareTo(BigDecimal.ZERO) > 0) {
                 line.setCurrentPrice(scale2(line.getCurrentTotal()
@@ -267,10 +317,11 @@ public class LocalEstimateService {
 
             totalDirectCost = totalDirectCost.add(line.getDirectCosts());
             totalOverhead = totalOverhead.add(line.getOverheadCosts());
+            totalEstimatedProfitAcc = totalEstimatedProfitAcc.add(line.getEstimatedProfit());
         }
 
-        // Estimated profit = percentage of direct costs
-        BigDecimal totalEstimatedProfit = scale2(totalDirectCost.multiply(profitRate(estimate)));
+        // МДС 81-25: СП уже накоплена по строкам как 50% от ФОТ каждой строки
+        BigDecimal totalEstimatedProfit = scale2(totalEstimatedProfitAcc);
 
         BigDecimal subtotal = totalDirectCost.add(totalOverhead).add(totalEstimatedProfit);
         BigDecimal vatAmount = scale2(subtotal.multiply(estimate.getVatRate())
@@ -449,8 +500,10 @@ public class LocalEstimateService {
             line.setDirectCosts(scale2(line.getCurrentLaborCost()
                     .add(line.getCurrentMaterialCost())
                     .add(line.getCurrentEquipmentCost())));
-            line.setOverheadCosts(line.getCurrentOverheadCost());
-            line.setEstimatedProfit(scale2(line.getDirectCosts().multiply(profitRate(estimate))));
+            // НР = 80% от ФОТ (МДС 81-33); СП = 50% от ОЗП (МДС 81-25)
+            BigDecimal laborCostApply = line.getCurrentLaborCost();
+            line.setOverheadCosts(scale2(laborCostApply.multiply(overheadRate(estimate))));
+            line.setEstimatedProfit(scale2(laborCostApply.multiply(profitRate(estimate))));
             line.setPriceIndex(factor);
 
             if (line.getQuantity() != null && line.getQuantity().compareTo(BigDecimal.ZERO) > 0) {
@@ -515,30 +568,47 @@ public class LocalEstimateService {
             return BigDecimal.ONE;
         }
 
+        BigDecimal rawIndex = null;
+
         if (region != null && !region.isBlank()) {
             for (String workType : workTypeFallbacks) {
                 Optional<PriceIndex> regional = priceIndexRepository
                         .findByRegionAndWorkTypeAndTargetQuarter(region.trim(), workType, targetQuarter);
                 if (regional.isPresent()) {
-                    return regional.get().getIndexValue();
+                    rawIndex = regional.get().getIndexValue();
+                    break;
                 }
             }
         }
 
-        List<PriceIndex> targetQuarterIndices = priceIndexRepository.findByTargetQuarter(targetQuarter)
-                .stream()
-                .filter(i -> !i.isDeleted())
-                .toList();
-        for (String workType : workTypeFallbacks) {
-            Optional<PriceIndex> anyRegion = targetQuarterIndices.stream()
-                    .filter(i -> i.getWorkType().equalsIgnoreCase(workType))
-                    .findFirst();
-            if (anyRegion.isPresent()) {
-                return anyRegion.get().getIndexValue();
+        if (rawIndex == null) {
+            List<PriceIndex> targetQuarterIndices = priceIndexRepository.findByTargetQuarter(targetQuarter)
+                    .stream()
+                    .filter(i -> !i.isDeleted())
+                    .toList();
+            for (String workType : workTypeFallbacks) {
+                Optional<PriceIndex> anyRegion = targetQuarterIndices.stream()
+                        .filter(i -> i.getWorkType().equalsIgnoreCase(workType))
+                        .findFirst();
+                if (anyRegion.isPresent()) {
+                    rawIndex = anyRegion.get().getIndexValue();
+                    break;
+                }
             }
         }
 
-        return BigDecimal.ONE;
+        if (rawIndex == null) {
+            return BigDecimal.ONE;
+        }
+
+        // Cap the escalation index to prevent unreasonable price inflation
+        if (rawIndex.compareTo(MAX_ESCALATION_INDEX) > 0) {
+            log.warn("Escalation index {} exceeds maximum allowed {} for region={}, quarter={}. Capping to {}.",
+                    rawIndex, MAX_ESCALATION_INDEX, region, targetQuarter, MAX_ESCALATION_INDEX);
+            return MAX_ESCALATION_INDEX;
+        }
+
+        return rawIndex;
     }
 
     private BigDecimal safeMultiply(BigDecimal value, BigDecimal multiplier) {
@@ -567,6 +637,7 @@ public class LocalEstimateService {
     private void recalculateEstimateTotalsFromLines(LocalEstimate estimate, List<LocalEstimateLine> lines) {
         BigDecimal totalDirect = BigDecimal.ZERO;
         BigDecimal totalOverhead = BigDecimal.ZERO;
+        BigDecimal totalProfit = BigDecimal.ZERO;
         for (LocalEstimateLine line : lines) {
             totalDirect = totalDirect.add(line.getDirectCosts() != null
                     ? line.getDirectCosts()
@@ -574,9 +645,13 @@ public class LocalEstimateService {
             totalOverhead = totalOverhead.add(line.getOverheadCosts() != null
                     ? line.getOverheadCosts()
                     : line.getCurrentOverheadCost());
+            // МДС 81-25: СП уже накоплена по строкам как 50% от ФОТ
+            totalProfit = totalProfit.add(line.getEstimatedProfit() != null
+                    ? line.getEstimatedProfit()
+                    : BigDecimal.ZERO);
         }
 
-        BigDecimal totalEstimatedProfit = scale2(totalDirect.multiply(profitRate(estimate)));
+        BigDecimal totalEstimatedProfit = scale2(totalProfit);
         BigDecimal subtotal = totalDirect.add(totalOverhead).add(totalEstimatedProfit);
         BigDecimal vatAmount = scale2(subtotal.multiply(estimate.getVatRate())
                 .divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP));

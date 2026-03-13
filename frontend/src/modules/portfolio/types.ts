@@ -1,7 +1,7 @@
 // Portfolio / CRM types
 
 export type OpportunityStage = 'LEAD' | 'QUALIFICATION' | 'PROPOSAL' | 'NEGOTIATION' | 'WON' | 'LOST';
-export type BidStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'SHORTLISTED' | 'AWARDED' | 'REJECTED' | 'WITHDRAWN';
+export type BidStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'SHORTLISTED' | 'AWARDED' | 'REJECTED' | 'WITHDRAWN' | 'IN_PREPARATION' | 'UNDER_EVALUATION' | 'WON' | 'LOST' | 'NO_BID';
 export type PrequalificationStatus = 'PENDING' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
 
 export interface Opportunity {
@@ -36,19 +36,37 @@ export interface OpportunityActivity {
   performedAt: string;
 }
 
+export interface CompetitorInfo {
+  name: string;
+  estimatedBid?: number;
+  strengths?: string;
+  weaknesses?: string;
+}
+
 export interface BidPackage {
   id: string;
   bidNumber: string;
   projectName: string;
   clientName: string;
+  clientOrganization?: string;
   status: BidStatus;
   amount: number;
+  bidAmount?: number;
+  estimatedCost?: number;
+  estimatedMargin?: number;
+  bondRequired?: boolean;
+  bondAmount?: number;
   submissionDeadline: string;
   submittedDate?: string;
   evaluationScore?: number;
   responsibleName: string;
+  bidManagerId?: string;
+  technicalLeadId?: string;
+  opportunityId?: string;
+  competitorInfo?: CompetitorInfo[] | string;
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface PrequalificationRecord {

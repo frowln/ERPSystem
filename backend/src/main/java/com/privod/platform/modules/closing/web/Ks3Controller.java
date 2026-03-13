@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -129,5 +130,14 @@ public class Ks3Controller {
     public ResponseEntity<ApiResponse<Ks3Response>> close(@PathVariable UUID id) {
         Ks3Response response = closingDocumentService.closeKs3(id);
         return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PostMapping("/{id}/create-invoice")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ACCOUNTANT')")
+    @Operation(summary = "Создать счёт на основании КС-3")
+    public ResponseEntity<ApiResponse<Map<String, UUID>>> createInvoiceFromKs3(@PathVariable UUID id) {
+        UUID invoiceId = closingDocumentService.createInvoiceFromKs3(id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(Map.of("invoiceId", invoiceId)));
     }
 }

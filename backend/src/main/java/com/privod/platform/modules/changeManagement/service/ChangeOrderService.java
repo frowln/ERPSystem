@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class ChangeOrderService {
     private final ChangeOrderItemRepository changeOrderItemRepository;
     private final ChangeOrderRequestService changeOrderRequestService;
     private final AuditService auditService;
+    private final JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
     public Page<ChangeOrderResponse> listAll(Pageable pageable) {
@@ -156,6 +158,27 @@ public class ChangeOrderService {
             order.setApprovedDate(LocalDate.now());
             // Recalculate revised contract amount on approval
             recalculateRevisedContractAmount(order);
+
+            // Update budget with change order amount
+            if (order.getProjectId() != null && order.getTotalAmount() != null
+                    && order.getTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+                Integer existing = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM budget_items WHERE budget_id IN (SELECT id FROM budgets WHERE project_id = ? AND deleted = false) AND name = 'Change Orders' AND deleted = false",
+                    Integer.class, order.getProjectId()
+                );
+                if (existing != null && existing > 0) {
+                    jdbcTemplate.update(
+                        "UPDATE budget_items SET planned_amount = planned_amount + ?, updated_at = NOW() WHERE budget_id IN (SELECT id FROM budgets WHERE project_id = ? AND deleted = false) AND name = 'Change Orders' AND deleted = false",
+                        order.getTotalAmount(), order.getProjectId()
+                    );
+                } else {
+                    jdbcTemplate.update(
+                        "INSERT INTO budget_items (id, budget_id, name, category, planned_amount, created_at, updated_at, deleted) SELECT gen_random_uuid(), b.id, 'Change Orders', 'WORK', ?, NOW(), NOW(), false FROM budgets b WHERE b.project_id = ? AND b.deleted = false LIMIT 1",
+                        order.getTotalAmount(), order.getProjectId()
+                    );
+                }
+                log.info("Budget updated for project {} with change order amount {}", order.getProjectId(), order.getTotalAmount());
+            }
         }
 
         if (newStatus == ChangeOrderStatus.EXECUTED) {

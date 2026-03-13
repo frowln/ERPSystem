@@ -289,7 +289,7 @@ const ResourceAllocationBoardPage: React.FC = () => {
       </div>
 
       {/* Allocations Table */}
-      <DataTable columns={columns} data={allocations} loading={isLoading} />
+      <DataTable columns={columns} data={allocations} loading={isLoading} enableExport />
 
       {/* Create Allocation Modal */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title={tp('createModalTitle')}>

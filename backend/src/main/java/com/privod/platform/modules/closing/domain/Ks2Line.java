@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -18,12 +19,16 @@ import java.util.UUID;
 @Table(name = "ks2_lines", indexes = {
         @Index(name = "idx_ks2_line_ks2", columnList = "ks2_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ks2Line extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "ks2_id", nullable = false)
     private UUID ks2Id;
@@ -34,6 +39,10 @@ public class Ks2Line extends BaseEntity {
 
     @Column(name = "spec_item_id")
     private UUID specItemId;
+
+    // P1-CHN-3: FK на строку ЛСР (local_estimate_lines) — трассировка КС-2↔Смета
+    @Column(name = "estimate_line_id")
+    private UUID estimateLineId;
 
     @Column(name = "name", nullable = false, length = 500)
     private String name;

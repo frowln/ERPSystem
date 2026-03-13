@@ -32,7 +32,14 @@ const EstimatePivotPage: React.FC = () => {
 
   const { data: estimatesData } = useQuery({
     queryKey: ['estimates', 'pivot'],
-    queryFn: () => estimatesApi.getEstimates({ page: 0, size: 1000 }),
+    queryFn: async () => {
+      try {
+        return await estimatesApi.getEstimates({ page: 0, size: 1000 });
+      } catch {
+        return { content: [], totalElements: 0, totalPages: 0, size: 1000, number: 0 };
+      }
+    },
+    retry: 1,
   });
 
   const statusLabels: Record<string, string> = {

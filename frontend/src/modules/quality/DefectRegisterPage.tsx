@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
   Search,
@@ -8,6 +9,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
+  Map,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -51,6 +53,7 @@ type TabId = 'all' | 'open' | 'in_progress' | 'fixed' | 'closed';
 type GroupBy = 'none' | 'location' | 'type';
 
 const DefectRegisterPage: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -238,9 +241,14 @@ const DefectRegisterPage: React.FC = () => {
           { label: t('quality.defectRegister.breadcrumbDefects') },
         ]}
         actions={
-          <Button variant="secondary" iconLeft={<Download size={16} />} onClick={handleExport}>
-            {t('quality.defectRegister.btnExport')}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" iconLeft={<Map size={16} />} onClick={() => navigate('/quality/plan-view')}>
+              {t('quality.planView.btnPlanView')}
+            </Button>
+            <Button variant="secondary" iconLeft={<Download size={16} />} onClick={handleExport}>
+              {t('quality.defectRegister.btnExport')}
+            </Button>
+          </div>
         }
         tabs={[
           { id: 'all', label: t('quality.defectRegister.tabAll'), count: tabCounts.all },

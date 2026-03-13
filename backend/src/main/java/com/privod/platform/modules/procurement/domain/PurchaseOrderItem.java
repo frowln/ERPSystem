@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.privod.platform.infrastructure.finance.VatCalculator;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -46,7 +48,7 @@ public class PurchaseOrderItem extends BaseEntity {
 
     @Column(name = "vat_rate", precision = 5, scale = 2)
     @Builder.Default
-    private BigDecimal vatRate = new BigDecimal("20.00");
+    private BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
 
     @Column(name = "total_amount", precision = 18, scale = 2)
     private BigDecimal totalAmount;

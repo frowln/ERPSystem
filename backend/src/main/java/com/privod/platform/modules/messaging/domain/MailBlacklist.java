@@ -11,6 +11,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "mail_blacklist", indexes = {
@@ -18,12 +21,16 @@ import lombok.Setter;
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uq_mail_blacklist_email", columnNames = {"email"})
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MailBlacklist extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "email", nullable = false, unique = true, length = 500)
     private String email;

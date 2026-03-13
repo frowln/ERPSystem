@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shield, Check, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
@@ -6,6 +6,7 @@ import { PageHeader } from '@/design-system/components/PageHeader';
 import { Select } from '@/design-system/components/FormField';
 import { t } from '@/i18n';
 import { adminApi, type PermissionGroup, type ModelAccessRule } from '@/api/admin';
+import { permissionsApi } from '@/api/permissions';
 import toast from 'react-hot-toast';
 
 const OPERATIONS = ['canRead', 'canCreate', 'canUpdate', 'canDelete'] as const;
@@ -25,10 +26,24 @@ const PermissionMatrixPage: React.FC = () => {
     queryFn: adminApi.getPermissionGroups,
   });
 
+  // Auto-select the first group when groups load and none is selected
+  useEffect(() => {
+    if (!selectedGroupId && groups.length > 0) {
+      setSelectedGroupId(groups[0].id);
+    }
+  }, [groups, selectedGroupId]);
+
   const { data: accessRules = [], isLoading: rulesLoading } = useQuery<ModelAccessRule[]>({
     queryKey: ['model-access', selectedGroupId],
     queryFn: () => adminApi.getModelAccess(selectedGroupId || undefined),
     enabled: !!selectedGroupId,
+  });
+
+  // Fetch ALL available model names so matrix shows all models, not just ones with existing rules
+  const { data: allModelNames = [], isLoading: modelNamesLoading } = useQuery<string[]>({
+    queryKey: ['all-model-names'],
+    queryFn: () => permissionsApi.getAllModelNames(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const toggleMutation = useMutation({
@@ -43,7 +58,8 @@ const PermissionMatrixPage: React.FC = () => {
     },
   });
 
-  const modelNames = [...new Set(accessRules.map((r) => r.modelName))].sort();
+  // Merge all known model names with any models from existing rules
+  const modelNames = [...new Set([...allModelNames, ...accessRules.map((r) => r.modelName)])].sort();
 
   const getRule = (modelName: string): ModelAccessRule | undefined =>
     accessRules.find((r) => r.modelName === modelName);
@@ -92,7 +108,7 @@ const PermissionMatrixPage: React.FC = () => {
           <Shield className="h-12 w-12 mx-auto mb-3 opacity-30" />
           <p>{t('permissionMatrix.selectGroupHint')}</p>
         </div>
-      ) : rulesLoading ? (
+      ) : rulesLoading || modelNamesLoading ? (
         <div className="flex justify-center py-12">
           <div className="animate-spin h-8 w-8 border-2 border-primary-600 dark:border-primary-400 border-t-transparent rounded-full" />
         </div>

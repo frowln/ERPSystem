@@ -317,6 +317,8 @@ const ContractListPage: React.FC = () => {
         ]}
         emptyTitle={t('contracts.list.emptyTitle')}
         emptyDescription={t('contracts.list.emptyDescription')}
+        emptyActionLabel={t('contracts.list.emptyActionLabel')}
+        onEmptyAction={() => navigate('/contracts/new')}
       />
 
       {/* Footer summary */}

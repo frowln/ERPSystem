@@ -66,6 +66,14 @@ public class TaxDeclarationController {
                 .body(ApiResponse.ok(response));
     }
 
+    @PostMapping("/{id}/calculate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE_MANAGER', 'ACCOUNTANT')")
+    @Operation(summary = "P1-FIN-5: Auto-calculate tax amount from invoices for the declaration period")
+    public ResponseEntity<ApiResponse<TaxDeclarationResponse>> calculate(@PathVariable UUID id) {
+        TaxDeclarationResponse response = taxDeclarationService.calculateDeclaration(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
     @PostMapping("/{id}/submit")
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE_MANAGER')")
     @Operation(summary = "Submit a tax declaration")

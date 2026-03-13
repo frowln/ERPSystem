@@ -27,7 +27,13 @@ public record DefectResponse(
         Instant fixedAt,
         Instant createdAt,
         Instant updatedAt,
-        String createdBy
+        String createdBy,
+        UUID drawingId,
+        Double pinX,
+        Double pinY,
+        Double planX,
+        Double planY,
+        String planId
 ) {
     public static DefectResponse fromEntity(Defect d) {
         return new DefectResponse(
@@ -49,7 +55,13 @@ public record DefectResponse(
                 d.getFixedAt(),
                 d.getCreatedAt(),
                 d.getUpdatedAt(),
-                d.getCreatedBy()
+                d.getCreatedBy(),
+                d.getDrawingId(),
+                d.getPinX(),
+                d.getPinY(),
+                d.getPlanX(),
+                d.getPlanY(),
+                d.getPlanId()
         );
     }
 }

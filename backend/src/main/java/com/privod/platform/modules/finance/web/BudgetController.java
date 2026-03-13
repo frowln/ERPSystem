@@ -38,6 +38,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/budgets")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 @Tag(name = "Budgets", description = "Финансовый модуль — бюджеты и позиции")
 public class BudgetController {
 

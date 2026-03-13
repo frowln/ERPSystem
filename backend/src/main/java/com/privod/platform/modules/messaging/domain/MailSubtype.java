@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
 
@@ -19,12 +20,16 @@ import java.util.UUID;
         @Index(name = "idx_mail_subtype_parent", columnList = "parent_id"),
         @Index(name = "idx_mail_subtype_sequence", columnList = "sequence")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MailSubtype extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;

@@ -34,21 +34,21 @@ const columns: ColumnDef<TestRow, unknown>[] = [
 
 describe('DataTable', () => {
   it('renders table with column headers', () => {
-    render(<DataTable data={mockData} columns={columns} />);
+    render(<DataTable data={mockData} columns={columns} enableExport />);
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
     expect(screen.getByText('Amount')).toBeInTheDocument();
   });
 
   it('renders table data rows', () => {
-    render(<DataTable data={mockData} columns={columns} />);
+    render(<DataTable data={mockData} columns={columns} enableExport />);
     expect(screen.getByText('Alpha')).toBeInTheDocument();
     expect(screen.getByText('Beta')).toBeInTheDocument();
     expect(screen.getByText('Gamma')).toBeInTheDocument();
   });
 
   it('renders numeric cell values', () => {
-    render(<DataTable data={mockData} columns={columns} />);
+    render(<DataTable data={mockData} columns={columns} enableExport />);
     expect(screen.getByText('100')).toBeInTheDocument();
     expect(screen.getByText('200')).toBeInTheDocument();
     expect(screen.getByText('300')).toBeInTheDocument();
@@ -56,34 +56,34 @@ describe('DataTable', () => {
 
   it('shows empty state when data is empty', () => {
     render(
-      <DataTable data={[]} columns={columns} emptyTitle="No data found" />,
+      <DataTable data={[]} columns={columns} emptyTitle="No data found" enableExport />,
     );
     expect(screen.getByText('No data found')).toBeInTheDocument();
   });
 
   it('calls onRowClick when a row is clicked', () => {
     const onRowClick = vi.fn();
-    render(<DataTable data={mockData} columns={columns} onRowClick={onRowClick} />);
+    render(<DataTable data={mockData} columns={columns} onRowClick={onRowClick} enableExport />);
     fireEvent.click(screen.getByText('Alpha'));
     expect(onRowClick).toHaveBeenCalledWith(mockData[0]);
   });
 
   it('renders with custom tableLabel for accessibility', () => {
-    render(<DataTable data={mockData} columns={columns} tableLabel="Project list" />);
+    render(<DataTable data={mockData} columns={columns} tableLabel="Project list" enableExport />);
     const table = screen.getByRole('table', { name: 'Project list' });
     expect(table).toBeInTheDocument();
   });
 
   it('renders loading skeleton when loading=true', () => {
     const { container } = render(
-      <DataTable data={[]} columns={columns} loading />,
+      <DataTable data={[]} columns={columns} loading enableExport />,
     );
     // Skeleton rows should have animate-pulse
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 
   it('does not show data rows when loading', () => {
-    render(<DataTable data={mockData} columns={columns} loading />);
+    render(<DataTable data={mockData} columns={columns} loading enableExport />);
     // When loading, data should not be rendered -- skeleton replaces it
     // But the loading state replaces the tbody content
     const alphaElements = screen.queryAllByText('Alpha');
@@ -94,20 +94,20 @@ describe('DataTable', () => {
 
   it('applies custom className', () => {
     const { container } = render(
-      <DataTable data={mockData} columns={columns} className="my-custom-table" />,
+      <DataTable data={mockData} columns={columns} className="my-custom-table" enableExport />,
     );
     expect(container.firstElementChild?.className).toContain('my-custom-table');
   });
 
   it('renders caption with sr-only class for accessibility', () => {
-    render(<DataTable data={mockData} columns={columns} tableLabel="Items" />);
+    render(<DataTable data={mockData} columns={columns} tableLabel="Items" enableExport />);
     const caption = screen.getByText('Items', { selector: 'caption' });
     expect(caption).toBeInTheDocument();
     expect(caption.className).toContain('sr-only');
   });
 
   it('handles sorting by clicking column header', () => {
-    render(<DataTable data={mockData} columns={columns} />);
+    render(<DataTable data={mockData} columns={columns} enableExport />);
     // Click "Name" column header to sort
     const nameHeader = screen.getByText('Name');
     fireEvent.click(nameHeader);

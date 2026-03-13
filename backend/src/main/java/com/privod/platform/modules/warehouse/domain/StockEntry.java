@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.UUID;
         @UniqueConstraint(name = "uq_stock_material_location",
                 columnNames = {"organization_id", "material_id", "location_id", "deleted"})
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -34,6 +36,10 @@ public class StockEntry extends BaseEntity {
 
     @Column(name = "organization_id", nullable = false)
     private UUID organizationId;
+
+    // P1-WAR-4: per-project stock tracking
+    @Column(name = "project_id")
+    private UUID projectId;
 
     @Column(name = "material_id", nullable = false)
     private UUID materialId;

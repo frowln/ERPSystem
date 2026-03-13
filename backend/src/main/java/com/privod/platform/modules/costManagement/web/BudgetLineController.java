@@ -34,6 +34,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/budget-lines")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'COST_MANAGER', 'FINANCE_MANAGER', 'ENGINEER')")
 @Tag(name = "Budget Lines", description = "Budget line management endpoints")
 public class BudgetLineController {
 

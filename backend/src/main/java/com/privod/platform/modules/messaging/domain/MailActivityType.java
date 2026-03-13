@@ -12,18 +12,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "mail_activity_types", indexes = {
         @Index(name = "idx_mail_activity_type_name", columnList = "name"),
         @Index(name = "idx_mail_activity_type_category", columnList = "category")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MailActivityType extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;

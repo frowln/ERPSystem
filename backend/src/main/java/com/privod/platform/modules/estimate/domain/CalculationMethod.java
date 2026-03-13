@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum CalculationMethod {
 
     RIM("Ресурсно-индексный метод"),
-    BASE_INDEX("Базисно-индексный метод");
+    BASE_INDEX("Базисно-индексный метод"),
+    BASIS_INDEX("Базисно-индексный метод (2001 база × индекс)");
 
     private final String displayName;
 }

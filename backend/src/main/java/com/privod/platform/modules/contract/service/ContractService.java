@@ -1,6 +1,7 @@
 package com.privod.platform.modules.contract.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.ApprovalStatus;
 import com.privod.platform.modules.contract.domain.Contract;
@@ -31,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -85,9 +85,9 @@ public class ContractService {
 
         String number = generateContractNumber();
 
-        BigDecimal vatRate = request.vatRate() != null ? request.vatRate() : new BigDecimal("20.00");
+        BigDecimal vatRate = VatCalculator.resolveRate(request.vatRate());
         BigDecimal amount = request.amount() != null ? request.amount() : BigDecimal.ZERO;
-        BigDecimal vatAmount = calculateVatAmount(amount, vatRate);
+        BigDecimal vatAmount = VatCalculator.vatAmount(amount, vatRate);
         BigDecimal totalWithVat = amount.add(vatAmount);
 
         Contract contract = Contract.builder()
@@ -197,8 +197,8 @@ public class ContractService {
 
         // Recalculate VAT amounts
         BigDecimal amount = contract.getAmount() != null ? contract.getAmount() : BigDecimal.ZERO;
-        BigDecimal vatRate = contract.getVatRate() != null ? contract.getVatRate() : new BigDecimal("20.00");
-        contract.setVatAmount(calculateVatAmount(amount, vatRate));
+        BigDecimal vatRate = VatCalculator.resolveRate(contract.getVatRate());
+        contract.setVatAmount(VatCalculator.vatAmount(amount, vatRate));
         contract.setTotalWithVat(amount.add(contract.getVatAmount()));
 
         validateDates(contract.getPlannedStartDate(), contract.getPlannedEndDate());
@@ -492,13 +492,6 @@ public class ContractService {
         if (start != null && end != null && end.isBefore(start)) {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
         }
-    }
-
-    private BigDecimal calculateVatAmount(BigDecimal amount, BigDecimal vatRate) {
-        if (amount == null || vatRate == null) {
-            return BigDecimal.ZERO;
-        }
-        return amount.multiply(vatRate).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
     }
 
     private List<String> getRequiredApprovalStages(UUID typeId) {

@@ -45,11 +45,18 @@ public class ApprovalService {
 
         int order = 1;
         for (CreateApprovalChainRequest.StepData stepData : request.getSteps()) {
+            // P1-DOC-1: Устанавливаем deadline = now() + slaHours при создании шага
+            Instant stepDeadline = null;
+            if (stepData.getSlaHours() != null && stepData.getSlaHours() > 0) {
+                stepDeadline = Instant.now().plus(stepData.getSlaHours(), java.time.temporal.ChronoUnit.HOURS);
+            }
             ApprovalStep step = ApprovalStep.builder()
                     .stepOrder(order++)
                     .approverName(stepData.getApproverName())
                     .approverRole(stepData.getApproverRole())
                     .status("PENDING")
+                    .slaHours(stepData.getSlaHours())
+                    .deadline(stepDeadline)
                     .createdAt(Instant.now())
                     .updatedAt(Instant.now())
                     .build();

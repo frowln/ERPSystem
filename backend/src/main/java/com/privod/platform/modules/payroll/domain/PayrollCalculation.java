@@ -56,6 +56,16 @@ public class PayrollCalculation extends BaseEntity {
     @Builder.Default
     private BigDecimal bonusPay = BigDecimal.ZERO;
 
+    // ст.154 ТК РФ — доплата за работу в ночное время (22:00–06:00), не менее 20%
+    @Column(name = "night_pay", precision = 18, scale = 2)
+    @Builder.Default
+    private BigDecimal nightPay = BigDecimal.ZERO;
+
+    // ст.153 ТК РФ — доплата за работу в праздники и выходные дни, до двойного размера
+    @Column(name = "holiday_pay", precision = 18, scale = 2)
+    @Builder.Default
+    private BigDecimal holidayPay = BigDecimal.ZERO;
+
     @Column(name = "gross_pay", precision = 18, scale = 2)
     @Builder.Default
     private BigDecimal grossPay = BigDecimal.ZERO;
@@ -80,6 +90,12 @@ public class PayrollCalculation extends BaseEntity {
     @Builder.Default
     private BigDecimal totalDeductions = BigDecimal.ZERO;
 
+    // НК РФ гл.34 — страховые взносы работодателя (ОПС 22% + ОМС 5.1% + ОСС 2.9%).
+    // Это расходы РАБОТОДАТЕЛЯ сверх gross_pay, они НЕ вычитаются из зарплаты сотрудника.
+    @Column(name = "employer_contributions", precision = 18, scale = 2)
+    @Builder.Default
+    private BigDecimal employerContributions = BigDecimal.ZERO;
+
     @Column(name = "net_pay", precision = 18, scale = 2)
     @Builder.Default
     private BigDecimal netPay = BigDecimal.ZERO;
@@ -94,6 +110,10 @@ public class PayrollCalculation extends BaseEntity {
 
     @Column(name = "approved_at")
     private Instant approvedAt;
+
+    // P0-4: FK на бюджет проекта — при утверждении gross_pay добавляется в BudgetItem(LABOR)
+    @Column(name = "budget_id")
+    private UUID budgetId;
 
     public boolean canTransitionTo(PayrollCalculationStatus newStatus) {
         return this.status.canTransitionTo(newStatus);

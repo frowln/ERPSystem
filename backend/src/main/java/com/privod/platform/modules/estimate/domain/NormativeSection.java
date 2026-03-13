@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
         @Index(name = "idx_ns_parent", columnList = "parent_id"),
         @Index(name = "idx_ns_code", columnList = "code")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder

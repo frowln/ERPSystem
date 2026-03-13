@@ -1,0 +1,435 @@
+{
+  "timestamp": "2026-03-12T19:44:55.950Z",
+  "summary": {
+    "totalPagesScanned": 0,
+    "pagesWithExportButtons": 0,
+    "totalExportButtonsFound": 0,
+    "totalDownloadAttempts": 9,
+    "successfulDownloads": 2,
+    "emptyFiles": 0,
+    "corruptFiles": 0,
+    "failedDownloads": 0,
+    "printDialogsFound": 1,
+    "printDialogsWorking": 1,
+    "criticalDocsFound": 6,
+    "criticalDocsGenerated": 2,
+    "importTestsPassed": 3,
+    "totalIssues": 25
+  },
+  "scanResults": [],
+  "downloadResults": [
+    {
+      "url": "/portal/ks2-drafts",
+      "pageName": "Portal KS-2 Drafts",
+      "buttonText": "Фотоотчёты (портал)",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/ks2-drafts",
+      "pageName": "Portal KS-2 Drafts",
+      "buttonText": "Ежедневные отчёты (портал)",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/ks2-drafts",
+      "pageName": "Portal KS-2 Drafts",
+      "buttonText": "",
+      "result": "downloaded",
+      "filename": "export_2026-03-12.csv",
+      "fileSize": 706,
+      "fileType": "csv",
+      "isEmpty": false,
+      "isValidFormat": true,
+      "csvRows": 9
+    },
+    {
+      "url": "/portal/settings",
+      "pageName": "Portal Settings",
+      "buttonText": "Фотоотчёты (портал)",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/settings",
+      "pageName": "Portal Settings",
+      "buttonText": "Ежедневные отчёты (портал)",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/settings",
+      "pageName": "Portal Settings",
+      "buttonText": "Загрузить логотип",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/admin",
+      "pageName": "Portal Admin",
+      "buttonText": "Фотоотчёты (портал)",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/admin",
+      "pageName": "Portal Admin",
+      "buttonText": "Ежедневные отчёты (портал)",
+      "result": "no_download"
+    },
+    {
+      "url": "/portal/admin",
+      "pageName": "Portal Admin",
+      "buttonText": "",
+      "result": "downloaded",
+      "filename": "export_2026-03-12.csv",
+      "fileSize": 362,
+      "fileType": "csv",
+      "isEmpty": false,
+      "isValidFormat": true,
+      "csvRows": 4
+    }
+  ],
+  "printResults": [
+    {
+      "url": "/russian-docs/ks2",
+      "pageName": "Russian KS-2",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/russian-docs/ks3",
+      "pageName": "Russian KS-3",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/russian-docs/edo",
+      "pageName": "Russian EDO",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/russian-docs/list",
+      "pageName": "Russian Docs",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/invoices",
+      "pageName": "Invoices",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/commercial-proposals",
+      "pageName": "Commercial Proposals",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/hr/timesheet-t13",
+      "pageName": "Timesheet T-13",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/hr-russian/employment-contracts",
+      "pageName": "Employment Contracts",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/safety/accident-acts",
+      "pageName": "Accident Acts",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/safety/training-journal",
+      "pageName": "Training Journal",
+      "printButtonFound": true,
+      "printDialogOpened": true
+    },
+    {
+      "url": "/exec-docs/aosr",
+      "pageName": "AOSR",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/exec-docs/ks6",
+      "pageName": "KS6",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/quality/certificates",
+      "pageName": "Certificates",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/closeout/commissioning",
+      "pageName": "Commissioning",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/closeout/handover",
+      "pageName": "Handover",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/estimates",
+      "pageName": "Estimates",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/procurement/purchase-orders",
+      "pageName": "Purchase Orders",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/fleet/waybills-esm",
+      "pageName": "Waybills ESM",
+      "printButtonFound": false,
+      "printDialogOpened": false,
+      "error": "PAGE_LOAD_FAILED"
+    },
+    {
+      "url": "/reports",
+      "pageName": "Reports",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    },
+    {
+      "url": "/warehouse/m29-report",
+      "pageName": "M29 Report",
+      "printButtonFound": false,
+      "printDialogOpened": false
+    }
+  ],
+  "criticalDocResults": [
+    {
+      "document": "КС-2 (Акт о приёмке выполненных работ)",
+      "url": "/russian-docs/ks2",
+      "found": true,
+      "generated": false,
+      "formatOk": false,
+      "contentOk": false,
+      "details": "Export button clicked but no download triggered"
+    },
+    {
+      "document": "КС-3 (Справка о стоимости)",
+      "url": "/russian-docs/ks3",
+      "found": true,
+      "generated": false,
+      "formatOk": false,
+      "contentOk": false,
+      "details": "Export button clicked but no download triggered"
+    },
+    {
+      "document": "Коммерческое предложение",
+      "url": "/commercial-proposals",
+      "found": true,
+      "generated": false,
+      "formatOk": false,
+      "contentOk": false,
+      "details": "Export button clicked but no download triggered"
+    },
+    {
+      "document": "Счёт на оплату",
+      "url": "/invoices",
+      "found": true,
+      "generated": false,
+      "formatOk": false,
+      "contentOk": false,
+      "details": "Export button clicked but no download triggered"
+    },
+    {
+      "document": "Смета (Estimate)",
+      "url": "/estimates",
+      "found": true,
+      "generated": true,
+      "formatOk": true,
+      "contentOk": true,
+      "details": "Downloaded: export_2026-03-12.csv (3607 bytes, format: csv)"
+    },
+    {
+      "document": "Акт Н-1 (Accident Report)",
+      "url": "/safety/accident-acts",
+      "found": true,
+      "generated": true,
+      "formatOk": true,
+      "contentOk": false,
+      "details": "Downloaded: export_2026-03-12.csv (109 bytes, format: csv)"
+    },
+    {
+      "document": "Табель Т-13 (Timesheet)",
+      "url": "/hr/timesheet-t13",
+      "found": false,
+      "generated": false,
+      "formatOk": false,
+      "contentOk": false,
+      "details": "No export button found on page"
+    }
+  ],
+  "importResults": [
+    {
+      "url": "/data-exchange/import",
+      "testName": "Import page structure",
+      "result": "success",
+      "details": "upload: false, dropZone: true, formatSelector: false"
+    },
+    {
+      "url": "/specifications",
+      "testName": "Specification XLSX upload capability",
+      "result": "success",
+      "details": "create: true, import: true"
+    },
+    {
+      "url": "/documents",
+      "testName": "Document upload capability",
+      "result": "error",
+      "details": "uploadButton: false, fileInput: false"
+    },
+    {
+      "url": "/data-exchange/export",
+      "testName": "Data export page structure",
+      "result": "success",
+      "details": "moduleSelector: false, formatOptions: true, exportButton: true"
+    },
+    {
+      "url": "/financial-models",
+      "testName": "ЛСР import on FM page",
+      "result": "error",
+      "details": "importButton: false, pageContent: 2773 chars"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "MISSING",
+      "page": "/russian-docs/ks2",
+      "description": "No print button on document page: Russian KS-2"
+    },
+    {
+      "severity": "MISSING",
+      "page": "/russian-docs/ks3",
+      "description": "No print button on document page: Russian KS-3"
+    },
+    {
+      "severity": "MISSING",
+      "page": "/russian-docs/edo",
+      "description": "No print button on document page: Russian EDO"
+    },
+    {
+      "severity": "MISSING",
+      "page": "/russian-docs/list",
+      "description": "No print button on document page: Russian Docs"
+    },
+    {
+      "severity": "MISSING",
+      "page": "/exec-docs/aosr",
+      "description": "No print button on document page: AOSR"
+    },
+    {
+      "severity": "MISSING",
+      "page": "/exec-docs/ks6",
+      "description": "No print button on document page: KS6"
+    },
+    {
+      "severity": "CRITICAL",
+      "page": "/russian-docs/ks2",
+      "description": "Critical document КС-2 (Акт о приёмке выполненных работ) cannot be exported/printed"
+    },
+    {
+      "severity": "CRITICAL",
+      "page": "/russian-docs/ks3",
+      "description": "Critical document КС-3 (Справка о стоимости) cannot be exported/printed"
+    },
+    {
+      "severity": "CRITICAL",
+      "page": "/commercial-proposals",
+      "description": "Critical document Коммерческое предложение cannot be exported/printed"
+    },
+    {
+      "severity": "CRITICAL",
+      "page": "/invoices",
+      "description": "Critical document Счёт на оплату cannot be exported/printed"
+    },
+    {
+      "severity": "MISSING",
+      "page": "/hr/timesheet-t13",
+      "description": "No export button for critical document: Табель Т-13 (Timesheet)"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/invoices",
+      "description": "Invoices: has row selection but no \"Export selected\" button"
+    },
+    {
+      "severity": "UX",
+      "page": "/employees",
+      "description": "Table page Employees has no export functionality — hasSelectAll: true, rowCheckboxes: 20, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/employees",
+      "description": "Employees: has row selection but no \"Export selected\" button"
+    },
+    {
+      "severity": "UX",
+      "page": "/warehouse/materials",
+      "description": "Table page Materials has no export functionality — hasSelectAll: true, rowCheckboxes: 20, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/warehouse/materials",
+      "description": "Materials: has row selection but no \"Export selected\" button"
+    },
+    {
+      "severity": "UX",
+      "page": "/defects",
+      "description": "Table page Defects has no export functionality — hasSelectAll: true, rowCheckboxes: 20, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/defects",
+      "description": "Defects: has row selection but no \"Export selected\" button"
+    },
+    {
+      "severity": "UX",
+      "page": "/projects",
+      "description": "Table page Projects List has no export functionality — hasSelectAll: false, rowCheckboxes: 0, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "UX",
+      "page": "/safety/incidents",
+      "description": "Table page Incidents has no export functionality — hasSelectAll: true, rowCheckboxes: 20, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/safety/incidents",
+      "description": "Incidents: has row selection but no \"Export selected\" button"
+    },
+    {
+      "severity": "UX",
+      "page": "/crm/leads",
+      "description": "Table page CRM Leads has no export functionality — hasSelectAll: false, rowCheckboxes: 0, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "UX",
+      "page": "/procurement/purchase-orders",
+      "description": "Table page Purchase Orders has no export functionality — hasSelectAll: true, rowCheckboxes: 0, hasBulkExport: false, hasExport: false"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/procurement/purchase-orders",
+      "description": "Purchase Orders: has row selection but no \"Export selected\" button"
+    },
+    {
+      "severity": "MINOR",
+      "page": "/payments",
+      "description": "Payments: has row selection but no \"Export selected\" button"
+    }
+  ]
+}

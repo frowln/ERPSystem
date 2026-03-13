@@ -28,10 +28,10 @@ export function DataTablePagination<T>({ table }: DataTablePaginationProps<T>) {
       </p>
 
       <div className="flex items-center gap-1">
-        <button onClick={() => table.setPageIndex(0)} aria-label={t('table.firstPage')} disabled={!table.getCanPreviousPage()} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
+        <button onClick={() => table.setPageIndex(0)} aria-label={t('table.firstPage')} disabled={!table.getCanPreviousPage()} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
           <ChevronsLeft size={15} />
         </button>
-        <button onClick={() => table.previousPage()} aria-label={t('table.previousPage')} disabled={!table.getCanPreviousPage()} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
+        <button onClick={() => table.previousPage()} aria-label={t('table.previousPage')} disabled={!table.getCanPreviousPage()} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
           <ChevronLeft size={15} />
         </button>
 
@@ -51,7 +51,7 @@ export function DataTablePagination<T>({ table }: DataTablePaginationProps<T>) {
               key={pageNum}
               onClick={() => table.setPageIndex(pageNum)}
               className={cn(
-                'min-w-[28px] h-7 px-1 text-xs font-medium rounded transition-colors',
+                'min-w-[28px] h-7 px-1 text-xs font-medium rounded transition-colors min-h-[44px] sm:min-h-0',
                 pageNum === currentPage
                   ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
                   : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800',
@@ -62,10 +62,10 @@ export function DataTablePagination<T>({ table }: DataTablePaginationProps<T>) {
           );
         })}
 
-        <button onClick={() => table.nextPage()} aria-label={t('table.nextPage')} disabled={!table.getCanNextPage()} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
+        <button onClick={() => table.nextPage()} aria-label={t('table.nextPage')} disabled={!table.getCanNextPage()} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
           <ChevronRight size={15} />
         </button>
-        <button onClick={() => table.setPageIndex(totalPages - 1)} aria-label={t('table.lastPage')} disabled={!table.getCanNextPage()} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
+        <button onClick={() => table.setPageIndex(totalPages - 1)} aria-label={t('table.lastPage')} disabled={!table.getCanNextPage()} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded disabled:opacity-30 disabled:pointer-events-none transition-colors">
           <ChevronsRight size={15} />
         </button>
       </div>

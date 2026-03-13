@@ -213,6 +213,7 @@ const Ks2PipelinePage: React.FC = () => {
             columns={volumeColumns}
             data={volumeList}
             loading={volumesLoading}
+            enableExport
           />
         </div>
       )}

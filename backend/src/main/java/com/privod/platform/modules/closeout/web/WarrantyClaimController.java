@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 import java.util.UUID;
 
 @RestController
@@ -82,5 +84,60 @@ public class WarrantyClaimController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         warrantyService.delete(id);
         return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    // P2-PRJ-3: Workflow transition endpoints
+    @PostMapping("/{id}/submit-review")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "P2-PRJ-3: Передать рекламацию на рассмотрение (OPEN → UNDER_REVIEW)")
+    public ResponseEntity<ApiResponse<WarrantyClaimResponse>> submitReview(
+            @PathVariable UUID id, @RequestBody(required = false) Map<String, String> body) {
+        String note = body != null ? body.get("note") : null;
+        return ResponseEntity.ok(ApiResponse.ok(warrantyService.transition(id, WarrantyClaimStatus.UNDER_REVIEW, note)));
+    }
+
+    @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
+    @Operation(summary = "P2-PRJ-3: Одобрить рекламацию (UNDER_REVIEW → APPROVED)")
+    public ResponseEntity<ApiResponse<WarrantyClaimResponse>> approve(
+            @PathVariable UUID id, @RequestBody(required = false) Map<String, String> body) {
+        String note = body != null ? body.get("note") : null;
+        return ResponseEntity.ok(ApiResponse.ok(warrantyService.transition(id, WarrantyClaimStatus.APPROVED, note)));
+    }
+
+    @PostMapping("/{id}/reject")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
+    @Operation(summary = "P2-PRJ-3: Отклонить рекламацию (UNDER_REVIEW → REJECTED)")
+    public ResponseEntity<ApiResponse<WarrantyClaimResponse>> reject(
+            @PathVariable UUID id, @RequestBody(required = false) Map<String, String> body) {
+        String note = body != null ? body.get("note") : null;
+        return ResponseEntity.ok(ApiResponse.ok(warrantyService.transition(id, WarrantyClaimStatus.REJECTED, note)));
+    }
+
+    @PostMapping("/{id}/start-repair")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "P2-PRJ-3: Начать ремонт (APPROVED → IN_REPAIR)")
+    public ResponseEntity<ApiResponse<WarrantyClaimResponse>> startRepair(
+            @PathVariable UUID id, @RequestBody(required = false) Map<String, String> body) {
+        String note = body != null ? body.get("note") : null;
+        return ResponseEntity.ok(ApiResponse.ok(warrantyService.transition(id, WarrantyClaimStatus.IN_REPAIR, note)));
+    }
+
+    @PostMapping("/{id}/resolve")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'ENGINEER')")
+    @Operation(summary = "P2-PRJ-3: Пометить как решённую (IN_REPAIR → RESOLVED)")
+    public ResponseEntity<ApiResponse<WarrantyClaimResponse>> resolve(
+            @PathVariable UUID id, @RequestBody(required = false) Map<String, String> body) {
+        String note = body != null ? body.get("note") : null;
+        return ResponseEntity.ok(ApiResponse.ok(warrantyService.transition(id, WarrantyClaimStatus.RESOLVED, note)));
+    }
+
+    @PostMapping("/{id}/close")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
+    @Operation(summary = "P2-PRJ-3: Закрыть рекламацию (RESOLVED → CLOSED)")
+    public ResponseEntity<ApiResponse<WarrantyClaimResponse>> close(
+            @PathVariable UUID id, @RequestBody(required = false) Map<String, String> body) {
+        String note = body != null ? body.get("note") : null;
+        return ResponseEntity.ok(ApiResponse.ok(warrantyService.transition(id, WarrantyClaimStatus.CLOSED, note)));
     }
 }

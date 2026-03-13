@@ -14,14 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * MfaService manages MFA configuration entities (MfaConfig, MfaAttempt).
+ * TOTP operations (secret generation, code verification) are delegated to TwoFactorService.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,10 +31,7 @@ public class MfaService {
 
     private final MfaConfigRepository mfaConfigRepository;
     private final MfaAttemptRepository mfaAttemptRepository;
-
-    private static final int BACKUP_CODE_COUNT = 10;
-    private static final int SECRET_LENGTH = 20;
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private final TwoFactorService twoFactorService;
 
     @Transactional
     public MfaConfigResponse enableMfa(EnableMfaRequest request) {
@@ -80,7 +79,7 @@ public class MfaService {
             throw new IllegalStateException("MFA не включена для пользователя: " + request.userId());
         }
 
-        // Check against TOTP (simplified - in production use proper TOTP library)
+        // Verify TOTP code (delegated to TwoFactorService) or backup code
         boolean isValid = verifyCode(config, request.code());
 
         // Log the attempt
@@ -134,26 +133,15 @@ public class MfaService {
             return true;
         }
 
-        // In production, implement proper TOTP verification per RFC 6238
-        // For now, placeholder that validates format
-        return code != null && code.matches("\\d{6}") && config.getSecret() != null;
+        // Delegate TOTP verification to TwoFactorService (RFC 6238)
+        return twoFactorService.verifyCode(config.getSecret(), code);
     }
 
     private String generateSecret() {
-        byte[] bytes = new byte[SECRET_LENGTH];
-        SECURE_RANDOM.nextBytes(bytes);
-        return Base64.getEncoder().encodeToString(bytes);
+        return twoFactorService.generateSecret();
     }
 
     private List<String> generateBackupCodes() {
-        List<String> codes = new ArrayList<>();
-        for (int i = 0; i < BACKUP_CODE_COUNT; i++) {
-            byte[] bytes = new byte[4];
-            SECURE_RANDOM.nextBytes(bytes);
-            String code = String.format("%08X", java.nio.ByteBuffer.wrap(bytes).getInt() & 0xFFFFFFFFL)
-                    .substring(0, 8);
-            codes.add(code);
-        }
-        return codes;
+        return twoFactorService.generateRecoveryCodes();
     }
 }

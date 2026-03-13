@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +56,17 @@ public class VacationService {
             throw new IllegalStateException("У сотрудника уже есть отпуск на указанные даты");
         }
 
+        // ст.139 ТК РФ: расчёт отпускных при наличии данных о заработке
+        BigDecimal annualEarnings = request.totalAnnualEarnings();
+        BigDecimal averageDailyEarnings = null;
+        BigDecimal vacationPay = null;
+        if (annualEarnings != null && annualEarnings.compareTo(BigDecimal.ZERO) > 0) {
+            averageDailyEarnings = computeAverageDailyEarnings(annualEarnings);
+            vacationPay = averageDailyEarnings
+                    .multiply(BigDecimal.valueOf(request.daysCount()))
+                    .setScale(2, RoundingMode.HALF_UP);
+        }
+
         Vacation vacation = Vacation.builder()
                 .employeeId(request.employeeId())
                 .vacationType(request.vacationType())
@@ -63,6 +76,9 @@ public class VacationService {
                 .status(VacationStatus.PLANNED)
                 .orderId(request.orderId())
                 .substitutingEmployeeId(request.substitutingEmployeeId())
+                .annualEarnings(annualEarnings)
+                .averageDailyEarnings(averageDailyEarnings)
+                .vacationPay(vacationPay)
                 .build();
 
         vacation = vacationRepository.save(vacation);
@@ -116,6 +132,17 @@ public class VacationService {
         vacationRepository.save(vacation);
         auditService.logDelete("Vacation", id);
         log.info("Vacation soft-deleted: {}", id);
+    }
+
+    /**
+     * ст.139 ТК РФ: средний дневной заработок для расчёта отпускных.
+     * Расчётный период: 12 календарных месяцев, среднемесячное число дней = 29.3.
+     * Формула: Σ начислений за 12 мес / (12 × 29.3).
+     */
+    private BigDecimal computeAverageDailyEarnings(BigDecimal annualEarnings) {
+        // 12 × 29.3 = 351.6 — среднегодовое число календарных дней
+        BigDecimal divisor = new BigDecimal("351.6");
+        return annualEarnings.divide(divisor, 4, RoundingMode.HALF_UP);
     }
 
     private Vacation getVacationOrThrow(UUID id) {

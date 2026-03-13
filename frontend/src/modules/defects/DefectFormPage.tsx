@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -12,6 +12,7 @@ import { defectsApi } from '@/api/defects';
 import { t } from '@/i18n';
 import { useFormDraft } from '@/hooks/useFormDraft';
 import { useProjectOptions, useEmployeeOptions, usePartnerOptions } from '@/hooks/useSelectOptions';
+import VoiceInput from '@/components/VoiceInput';
 
 const getSlaOptions = () => [
   { value: '', label: '—' },
@@ -70,6 +71,8 @@ const DefectFormPage: React.FC = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<DefectFormData>({
     resolver: zodResolver(defectSchema),
@@ -99,6 +102,14 @@ const DefectFormPage: React.FC = () => {
   useEffect(() => {
     if (!isEdit) saveDraft(formValues);
   }, [formValues, isEdit, saveDraft]);
+
+  const handleVoiceDescription = useCallback(
+    (text: string) => {
+      const current = getValues('description') ?? '';
+      setValue('description', current ? `${current} ${text}` : text, { shouldDirty: true });
+    },
+    [getValues, setValue],
+  );
 
   const createMutation = useMutation({
     mutationFn: (data: DefectFormData) =>
@@ -194,7 +205,12 @@ const DefectFormPage: React.FC = () => {
           </div>
           <div className="mt-5">
             <FormField label={t('common.description')} error={errors.description?.message}>
-              <Textarea placeholder={t('defects.form.placeholderDescription')} rows={4} hasError={!!errors.description} {...register('description')} />
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Textarea placeholder={t('defects.form.placeholderDescription')} rows={4} hasError={!!errors.description} {...register('description')} />
+                </div>
+                <VoiceInput onTranscript={handleVoiceDescription} className="mt-0.5 flex-shrink-0" />
+              </div>
             </FormField>
           </div>
         </section>

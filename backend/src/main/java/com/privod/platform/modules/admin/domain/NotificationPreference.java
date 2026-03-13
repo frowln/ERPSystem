@@ -2,11 +2,14 @@ package com.privod.platform.modules.admin.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity(name = "AdminNotificationPreference")
 @Table(name = "notification_preferences")
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class NotificationPreference {
     @Id

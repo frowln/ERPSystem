@@ -263,7 +263,7 @@ const ReportBuilderPage: React.FC = () => {
         <MetricCard icon={<Play size={18} />} label={tp('metricRuns')} value={metrics.recentRuns} />
       </div>
 
-      <DataTable columns={columns} data={filteredTemplates} loading={isLoading} />
+      <DataTable columns={columns} data={filteredTemplates} loading={isLoading} enableExport />
 
       {/* Create Template Modal */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title={tp('createModalTitle')}>

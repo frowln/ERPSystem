@@ -157,7 +157,7 @@ export default function HiddenWorkActListPage() {
         <MetricCard label={tp('metricApproved')} value={String(approvedCount)} loading={isLoading} />
       </div>
 
-      <DataTable columns={columns} data={filtered} loading={isLoading} />
+      <DataTable columns={columns} data={filtered} loading={isLoading} enableExport />
     </div>
   );
 }

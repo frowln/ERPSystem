@@ -9,5 +9,6 @@ export { default as PortalSchedulePage } from './PortalSchedulePage';
 export { default as PortalCpApprovalPage } from './PortalCpApprovalPage';
 export { default as PortalKs2DraftsPage } from './PortalKs2DraftsPage';
 export { default as PortalSettingsPage } from './PortalSettingsPage';
+export { default as PortalBrandingPage } from './PortalBrandingPage';
 export { default as PortalAdminPage } from './PortalAdminPage';
 export * from './types';

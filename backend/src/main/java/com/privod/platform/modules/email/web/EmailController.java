@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/email")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER', 'ACCOUNTANT')")
 @Tag(name = "Email", description = "Email integration (Yandex IMAP/SMTP)")
 public class EmailController {
 
@@ -83,14 +85,16 @@ public class EmailController {
     }
 
     @DeleteMapping("/messages/{id}")
-    @Operation(summary = "Move message to trash")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Move message to trash (ADMIN/MANAGER only)")
     public ResponseEntity<ApiResponse<Void>> deleteMessage(@PathVariable UUID id) {
         mailboxService.deleteMessage(id);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PostMapping("/send")
-    @Operation(summary = "Send a new email")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ACCOUNTANT')")
+    @Operation(summary = "Send a new email (ADMIN/MANAGER/ACCOUNTANT only)")
     public ResponseEntity<ApiResponse<EmailMessageResponse>> sendEmail(
             @Valid @RequestBody SendEmailRequest request) {
         var sent = composeService.sendEmail(request.to(), request.cc(), request.subject(), request.bodyHtml());
@@ -99,7 +103,8 @@ public class EmailController {
     }
 
     @PostMapping("/reply/{id}")
-    @Operation(summary = "Reply to an email")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ACCOUNTANT')")
+    @Operation(summary = "Reply to an email (ADMIN/MANAGER/ACCOUNTANT only)")
     public ResponseEntity<ApiResponse<EmailMessageResponse>> replyEmail(
             @PathVariable UUID id,
             @Valid @RequestBody ReplyEmailRequest request) {
@@ -109,7 +114,8 @@ public class EmailController {
     }
 
     @PostMapping("/forward/{id}")
-    @Operation(summary = "Forward an email")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ACCOUNTANT')")
+    @Operation(summary = "Forward an email (ADMIN/MANAGER/ACCOUNTANT only)")
     public ResponseEntity<ApiResponse<EmailMessageResponse>> forwardEmail(
             @PathVariable UUID id,
             @Valid @RequestBody ForwardEmailRequest request) {
@@ -144,6 +150,7 @@ public class EmailController {
     }
 
     @DeleteMapping("/messages/{id}/unlink-project/{projectId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Unlink email from a project")
     public ResponseEntity<ApiResponse<Void>> unlinkProject(
             @PathVariable UUID id, @PathVariable UUID projectId) {
@@ -166,14 +173,16 @@ public class EmailController {
     }
 
     @PostMapping("/sync")
-    @Operation(summary = "Trigger manual email sync (async)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Trigger manual email sync (ADMIN/MANAGER only)")
     public ResponseEntity<ApiResponse<Map<String, String>>> syncNow() {
         Thread.ofVirtual().start(emailSyncService::syncAllFolders);
         return ResponseEntity.ok(ApiResponse.ok(Map.of("status", "started")));
     }
 
     @PostMapping("/sync-full")
-    @Operation(summary = "Trigger full email sync of ALL messages (async, may take a long time)")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Trigger full email sync (ADMIN only)")
     public ResponseEntity<ApiResponse<Map<String, String>>> syncFull() {
         Thread.ofVirtual().start(emailSyncService::syncAllFoldersFull);
         return ResponseEntity.ok(ApiResponse.ok(Map.of("status", "full_sync_started")));

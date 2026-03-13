@@ -1,6 +1,7 @@
 package com.privod.platform.modules.commercialProposal.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.commercialProposal.domain.CommercialProposal;
 import com.privod.platform.modules.commercialProposal.domain.CommercialProposalItem;
@@ -27,6 +28,10 @@ import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.finance.repository.InvoiceLineRepository;
 import com.privod.platform.modules.finance.repository.InvoiceRepository;
+import com.privod.platform.modules.contract.domain.Contract;
+import com.privod.platform.modules.contract.domain.ContractDirection;
+import com.privod.platform.modules.contract.domain.ContractStatus;
+import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.specification.domain.CompetitiveListEntry;
 import com.privod.platform.modules.specification.repository.CompetitiveListEntryRepository;
 import com.privod.platform.modules.estimate.domain.EstimateItem;
@@ -63,6 +68,7 @@ public class CommercialProposalService {
     private final InvoiceLineRepository invoiceLineRepository;
     private final EstimateItemRepository estimateItemRepository;
     private final CompetitiveListEntryRepository competitiveListEntryRepository;
+    private final ContractRepository contractRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
 
@@ -915,5 +921,44 @@ public class CommercialProposalService {
 
         log.info("Applied bid winner {} to {} work items in CP {}", winnerVendorId, count, cpId);
         return count;
+    }
+
+    // ── КП→Договор ─────────────────────────────────────────────────────────────
+
+    @Transactional
+    public UUID createContractFromProposal(UUID cpId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CommercialProposal cp = proposalRepository.findById(cpId)
+                .filter(p -> !p.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("КП не найдено: " + cpId));
+
+        if (cp.getStatus() != ProposalStatus.APPROVED && cp.getStatus() != ProposalStatus.ACTIVE) {
+            throw new IllegalStateException("Создать договор можно только из утверждённого КП (текущий статус: " + cp.getStatus() + ")");
+        }
+
+        BigDecimal amount = cp.getTotalCustomerPrice() != null ? cp.getTotalCustomerPrice() : BigDecimal.ZERO;
+        BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
+        BigDecimal vatAmount = VatCalculator.vatAmount(amount, vatRate);
+
+        Contract contract = Contract.builder()
+                .organizationId(organizationId)
+                .name("Договор по КП " + cp.getName())
+                .number("КП-" + cp.getId().toString().substring(0, 8))
+                .contractDate(java.time.LocalDate.now())
+                .projectId(cp.getProjectId())
+                .status(ContractStatus.DRAFT)
+                .amount(amount)
+                .vatRate(vatRate)
+                .vatAmount(vatAmount)
+                .totalWithVat(amount.add(vatAmount))
+                .direction(ContractDirection.CLIENT)
+                .notes("Автоматически создан из КП: " + cp.getName())
+                .build();
+
+        contract = contractRepository.save(contract);
+        auditService.logCreate("Contract", contract.getId());
+
+        log.info("Договор {} создан из КП {} для проекта {}", contract.getId(), cpId, cp.getProjectId());
+        return contract.getId();
     }
 }

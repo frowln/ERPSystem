@@ -1,7 +1,10 @@
 package com.privod.platform.modules.procurement.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.finance.domain.BudgetItem;
+import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.procurement.domain.PurchaseOrder;
 import com.privod.platform.modules.procurement.domain.PurchaseOrderItem;
 import com.privod.platform.modules.procurement.domain.PurchaseOrderStatus;
@@ -20,11 +23,14 @@ import com.privod.platform.modules.procurement.web.dto.PurchaseOrderResponse;
 import com.privod.platform.modules.procurement.web.dto.RecordDeliveryRequest;
 import com.privod.platform.modules.procurement.web.dto.UpdatePurchaseOrderRequest;
 import com.privod.platform.modules.project.repository.ProjectRepository;
+import com.privod.platform.modules.warehouse.service.StockMovementService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,6 +49,8 @@ public class PurchaseOrderService {
     private final PurchaseRequestRepository purchaseRequestRepository;
     private final PurchaseRequestItemRepository purchaseRequestItemRepository;
     private final ProjectRepository projectRepository;
+    private final BudgetItemRepository budgetItemRepository;
+    private final StockMovementService stockMovementService;
     private final AuditService auditService;
 
     @Transactional
@@ -122,6 +130,33 @@ public class PurchaseOrderService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         validateProjectTenant(request.projectId(), organizationId);
 
+        // P0-WAR-2: Проверить остаток бюджетной статьи перед созданием заказа
+        if (request.budgetItemId() != null) {
+            BudgetItem budgetItem = budgetItemRepository.findById(request.budgetItemId())
+                    .filter(bi -> !bi.isDeleted())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Статья бюджета не найдена: " + request.budgetItemId()));
+
+            // Предварительно вычислить итог заказа по позициям
+            BigDecimal estimatedTotal = BigDecimal.ZERO;
+            if (request.items() != null) {
+                for (CreatePurchaseOrderItemRequest itemReq : request.items()) {
+                    if (itemReq.quantity() != null && itemReq.unitPrice() != null) {
+                        estimatedTotal = estimatedTotal.add(
+                                itemReq.quantity().multiply(itemReq.unitPrice()));
+                    }
+                }
+            }
+
+            BigDecimal remaining = budgetItem.calculateRemainingAmount();
+            if (remaining.compareTo(estimatedTotal) < 0) {
+                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                        String.format("Недостаточно средств по статье бюджета «%s». " +
+                                        "Доступно: %s, Требуется: %s",
+                                budgetItem.getName(), remaining, estimatedTotal));
+            }
+        }
+
         String orderNumber = generateOrderNumber(organizationId);
 
         PurchaseOrder po = PurchaseOrder.builder()
@@ -131,6 +166,7 @@ public class PurchaseOrderService {
                 .purchaseRequestId(request.purchaseRequestId())
                 .contractId(request.contractId())
                 .supplierId(request.supplierId())
+                .budgetItemId(request.budgetItemId())
                 .orderDate(request.orderDate())
                 .expectedDeliveryDate(request.expectedDeliveryDate())
                 .paymentTerms(request.paymentTerms())
@@ -151,7 +187,7 @@ public class PurchaseOrderService {
                         .unit(itemReq.unit())
                         .quantity(itemReq.quantity())
                         .unitPrice(itemReq.unitPrice())
-                        .vatRate(itemReq.vatRate() != null ? itemReq.vatRate() : new BigDecimal("20.00"))
+                        .vatRate(VatCalculator.resolveRate(itemReq.vatRate()))
                         .specificationItemId(itemReq.specificationItemId())
                         .build();
                 item.computeTotalAmount();
@@ -263,6 +299,27 @@ public class PurchaseOrderService {
 
         log.info("Доставка заказа зафиксирована: {} ({}) -> {}", po.getOrderNumber(), po.getId(), newStatus.getDisplayName());
 
+        // P1-WAR-3: Auto-create StockMovement(RECEIPT) when PO becomes fully DELIVERED
+        if (allDelivered) {
+            try {
+                List<UUID> materialIds = allItems.stream()
+                        .map(PurchaseOrderItem::getMaterialId)
+                        .toList();
+                List<BigDecimal> quantities = allItems.stream()
+                        .map(PurchaseOrderItem::getQuantity)
+                        .toList();
+                List<String> units = allItems.stream()
+                        .map(PurchaseOrderItem::getUnit)
+                        .toList();
+                stockMovementService.createAutoReceiptFromDelivery(
+                        po.getId(), organizationId, materialIds, quantities, units);
+                log.info("Авто-приходный ордер создан для заказа {} ({})", po.getOrderNumber(), po.getId());
+            } catch (Exception e) {
+                log.warn("Не удалось создать авто-приходный ордер для заказа {} ({}): {}",
+                        po.getOrderNumber(), po.getId(), e.getMessage());
+            }
+        }
+
         // If fully delivered, update linked PurchaseRequest
         if (allDelivered && po.getPurchaseRequestId() != null) {
             purchaseRequestRepository.findByIdAndOrganizationIdAndDeletedFalse(po.getPurchaseRequestId(), organizationId)
@@ -371,8 +428,8 @@ public class PurchaseOrderService {
             BigDecimal itemTotal = item.getTotalAmount() != null ? item.getTotalAmount() : BigDecimal.ZERO;
             subtotal = subtotal.add(itemTotal);
 
-            BigDecimal vatRate = item.getVatRate() != null ? item.getVatRate() : new BigDecimal("20.00");
-            BigDecimal itemVat = itemTotal.multiply(vatRate).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+            BigDecimal vatRate = VatCalculator.resolveRate(item.getVatRate());
+            BigDecimal itemVat = VatCalculator.vatAmount(itemTotal, vatRate);
             vatTotal = vatTotal.add(itemVat);
         }
 

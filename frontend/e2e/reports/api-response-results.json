@@ -1,0 +1,16 @@
+{
+  "totalCalls": 207,
+  "validCalls": 0,
+  "avgTime": 0,
+  "p95Time": 0,
+  "slowAPIs": 0,
+  "failedAPIs": 0,
+  "errors": 7,
+  "grades": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "F": 0
+  },
+  "slowestEndpoints": []
+}

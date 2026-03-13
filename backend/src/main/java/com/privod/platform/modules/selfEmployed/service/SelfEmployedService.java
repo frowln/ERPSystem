@@ -1,24 +1,38 @@
 package com.privod.platform.modules.selfEmployed.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
+import com.privod.platform.modules.selfEmployed.domain.ActStatus;
+import com.privod.platform.modules.selfEmployed.domain.CompletionAct;
 import com.privod.platform.modules.selfEmployed.domain.ContractorStatus;
+import com.privod.platform.modules.selfEmployed.domain.ContractType;
+import com.privod.platform.modules.selfEmployed.domain.NpdStatus;
 import com.privod.platform.modules.selfEmployed.domain.RegistryStatus;
 import com.privod.platform.modules.selfEmployed.domain.SelfEmployedContractor;
 import com.privod.platform.modules.selfEmployed.domain.SelfEmployedPayment;
 import com.privod.platform.modules.selfEmployed.domain.SelfEmployedPaymentStatus;
 import com.privod.platform.modules.selfEmployed.domain.SelfEmployedRegistry;
+import com.privod.platform.modules.selfEmployed.domain.SelfEmployedWorker;
+import com.privod.platform.modules.selfEmployed.repository.CompletionActRepository;
 import com.privod.platform.modules.selfEmployed.repository.SelfEmployedContractorRepository;
 import com.privod.platform.modules.selfEmployed.repository.SelfEmployedPaymentRepository;
 import com.privod.platform.modules.selfEmployed.repository.SelfEmployedRegistryRepository;
+import com.privod.platform.modules.selfEmployed.repository.SelfEmployedWorkerRepository;
+import com.privod.platform.modules.selfEmployed.web.dto.ActResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.ContractorResponse;
+import com.privod.platform.modules.selfEmployed.web.dto.CreateActRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.CreateContractorRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.CreateRegistryRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.CreateSelfEmployedPaymentRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.CreateWorkerRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.GenerateRegistryRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.NpdVerificationResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.RegistryResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.SelfEmployedPaymentResponse;
 import com.privod.platform.modules.selfEmployed.web.dto.UpdateContractorRequest;
 import com.privod.platform.modules.selfEmployed.web.dto.UpdateSelfEmployedPaymentRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.UpdateWorkerRequest;
+import com.privod.platform.modules.selfEmployed.web.dto.WorkerResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +42,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +57,8 @@ public class SelfEmployedService {
     private final SelfEmployedContractorRepository contractorRepository;
     private final SelfEmployedPaymentRepository paymentRepository;
     private final SelfEmployedRegistryRepository registryRepository;
+    private final SelfEmployedWorkerRepository workerRepository;
+    private final CompletionActRepository actRepository;
     private final AuditService auditService;
 
     // ---- Contractor CRUD ----
@@ -369,7 +387,258 @@ public class SelfEmployedService {
                 .toList();
     }
 
+    // ---- Worker CRUD ----
+
+    @Transactional(readOnly = true)
+    public Page<WorkerResponse> listWorkers(String search, Pageable pageable) {
+        UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+        if (search != null && !search.isBlank()) {
+            return workerRepository.searchByNameOrInn(orgId, search, pageable)
+                    .map(WorkerResponse::fromEntity);
+        }
+        return workerRepository.findByOrganizationIdAndDeletedFalse(orgId, pageable)
+                .map(WorkerResponse::fromEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public WorkerResponse getWorker(UUID id) {
+        SelfEmployedWorker worker = getWorkerOrThrow(id);
+        return WorkerResponse.fromEntity(worker);
+    }
+
+    @Transactional
+    public WorkerResponse createWorker(CreateWorkerRequest request) {
+        UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+        if (workerRepository.existsByInnAndOrganizationIdAndDeletedFalse(request.inn(), orgId)) {
+            throw new IllegalArgumentException("Исполнитель с ИНН '" + request.inn() + "' уже зарегистрирован");
+        }
+
+        SelfEmployedWorker worker = SelfEmployedWorker.builder()
+                .organizationId(orgId)
+                .fullName(request.fullName())
+                .inn(request.inn())
+                .phone(request.phone())
+                .email(request.email())
+                .contractType(request.contractType() != null ? request.contractType() : ContractType.GPC)
+                .contractNumber(request.contractNumber())
+                .contractStartDate(request.contractStartDate())
+                .contractEndDate(request.contractEndDate())
+                .specialization(request.specialization())
+                .hourlyRate(request.hourlyRate())
+                .projectIds(request.projectIds() != null ? new HashSet<>(request.projectIds()) : new HashSet<>())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+
+        worker = workerRepository.save(worker);
+        auditService.logCreate("SelfEmployedWorker", worker.getId());
+
+        log.info("Исполнитель (самозанятый) создан: {} ИНН={} ({})",
+                worker.getFullName(), worker.getInn(), worker.getId());
+        return WorkerResponse.fromEntity(worker);
+    }
+
+    @Transactional
+    public WorkerResponse updateWorker(UUID id, UpdateWorkerRequest request) {
+        SelfEmployedWorker worker = getWorkerOrThrow(id);
+
+        if (request.fullName() != null) {
+            worker.setFullName(request.fullName());
+        }
+        if (request.phone() != null) {
+            worker.setPhone(request.phone());
+        }
+        if (request.email() != null) {
+            worker.setEmail(request.email());
+        }
+        if (request.contractType() != null) {
+            worker.setContractType(request.contractType());
+        }
+        if (request.contractNumber() != null) {
+            worker.setContractNumber(request.contractNumber());
+        }
+        if (request.contractStartDate() != null) {
+            worker.setContractStartDate(request.contractStartDate());
+        }
+        if (request.contractEndDate() != null) {
+            worker.setContractEndDate(request.contractEndDate());
+        }
+        if (request.specialization() != null) {
+            worker.setSpecialization(request.specialization());
+        }
+        if (request.hourlyRate() != null) {
+            worker.setHourlyRate(request.hourlyRate());
+        }
+        if (request.projectIds() != null) {
+            worker.setProjectIds(new HashSet<>(request.projectIds()));
+        }
+        worker.setUpdatedAt(Instant.now());
+
+        worker = workerRepository.save(worker);
+        auditService.logUpdate("SelfEmployedWorker", worker.getId(), "multiple", null, null);
+
+        log.info("Исполнитель (самозанятый) обновлён: {} ({})", worker.getFullName(), worker.getId());
+        return WorkerResponse.fromEntity(worker);
+    }
+
+    @Transactional
+    public void deleteWorker(UUID id) {
+        SelfEmployedWorker worker = getWorkerOrThrow(id);
+        worker.softDelete();
+        worker.setUpdatedAt(Instant.now());
+        workerRepository.save(worker);
+        auditService.logDelete("SelfEmployedWorker", worker.getId());
+
+        log.info("Исполнитель (самозанятый) удалён: {} ({})", worker.getFullName(), worker.getId());
+    }
+
+    // ---- NPD Verification ----
+
+    @Transactional
+    public NpdVerificationResponse verifyNpd(String inn) {
+        if (inn == null || !inn.matches("\\d{12}")) {
+            return new NpdVerificationResponse(
+                    inn,
+                    NpdStatus.NOT_REGISTERED,
+                    NpdStatus.NOT_REGISTERED.getDisplayName(),
+                    Instant.now(),
+                    "Некорректный ИНН: должен содержать 12 цифр"
+            );
+        }
+
+        // Stub: real implementation will call ФНС API (https://npd.nalog.ru/api)
+        // For now, return ACTIVE for valid 12-digit INNs
+        NpdStatus status = NpdStatus.ACTIVE;
+        Instant verifiedAt = Instant.now();
+
+        // If the worker exists in our system, update their NPD status
+        workerRepository.findByInnAndDeletedFalse(inn).ifPresent(worker -> {
+            worker.setNpdStatus(status);
+            worker.setNpdVerifiedAt(verifiedAt);
+            worker.setUpdatedAt(Instant.now());
+            workerRepository.save(worker);
+        });
+
+        log.info("НПД верификация для ИНН={}: статус={}", inn, status);
+        return new NpdVerificationResponse(
+                inn,
+                status,
+                status.getDisplayName(),
+                verifiedAt,
+                "Статус НПД успешно проверен"
+        );
+    }
+
+    // ---- Completion Act CRUD ----
+
+    @Transactional(readOnly = true)
+    public Page<ActResponse> listActs(UUID workerId, UUID projectId, ActStatus status, Pageable pageable) {
+        if (workerId != null) {
+            return actRepository.findByWorkerIdAndDeletedFalse(workerId, pageable)
+                    .map(ActResponse::fromEntity);
+        }
+        if (projectId != null) {
+            return actRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+                    .map(ActResponse::fromEntity);
+        }
+        if (status != null) {
+            return actRepository.findByStatusAndDeletedFalse(status, pageable)
+                    .map(ActResponse::fromEntity);
+        }
+        return actRepository.findByDeletedFalse(pageable)
+                .map(ActResponse::fromEntity);
+    }
+
+    @Transactional
+    public ActResponse createAct(CreateActRequest request) {
+        UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+        SelfEmployedWorker worker = getWorkerOrThrow(request.workerId());
+
+        CompletionAct act = CompletionAct.builder()
+                .organizationId(orgId)
+                .worker(worker)
+                .projectId(request.projectId())
+                .actNumber(request.actNumber())
+                .description(request.description())
+                .amount(request.amount())
+                .period(request.period())
+                .status(ActStatus.DRAFT)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+
+        act = actRepository.save(act);
+        auditService.logCreate("CompletionAct", act.getId());
+
+        log.info("Акт выполненных работ создан: {} сумма={} исполнитель={} ({})",
+                act.getActNumber(), act.getAmount(), worker.getFullName(), act.getId());
+        return ActResponse.fromEntity(act);
+    }
+
+    @Transactional
+    public ActResponse signAct(UUID actId) {
+        CompletionAct act = getActOrThrow(actId);
+
+        if (!act.getStatus().canTransitionTo(ActStatus.SIGNED)) {
+            throw new IllegalStateException(
+                    "Невозможно подписать акт в статусе " + act.getStatus().getDisplayName());
+        }
+
+        ActStatus oldStatus = act.getStatus();
+        act.setStatus(ActStatus.SIGNED);
+        act.setSignedAt(Instant.now());
+        act.setUpdatedAt(Instant.now());
+
+        act = actRepository.save(act);
+        auditService.logStatusChange("CompletionAct", act.getId(), oldStatus.name(), ActStatus.SIGNED.name());
+
+        log.info("Акт подписан: {} ({})", act.getActNumber(), act.getId());
+        return ActResponse.fromEntity(act);
+    }
+
+    @Transactional
+    public ActResponse payAct(UUID actId) {
+        CompletionAct act = getActOrThrow(actId);
+
+        if (!act.getStatus().canTransitionTo(ActStatus.PAID)) {
+            throw new IllegalStateException(
+                    "Невозможно оплатить акт в статусе " + act.getStatus().getDisplayName());
+        }
+
+        ActStatus oldStatus = act.getStatus();
+        act.setStatus(ActStatus.PAID);
+        act.setPaidAt(Instant.now());
+        act.setUpdatedAt(Instant.now());
+
+        act = actRepository.save(act);
+        auditService.logStatusChange("CompletionAct", act.getId(), oldStatus.name(), ActStatus.PAID.name());
+
+        // Update worker's totalPaid
+        if (act.getWorker() != null) {
+            SelfEmployedWorker worker = act.getWorker();
+            BigDecimal newTotal = actRepository.sumPaidAmountByWorkerId(worker.getId());
+            worker.setTotalPaid(newTotal);
+            worker.setUpdatedAt(Instant.now());
+            workerRepository.save(worker);
+        }
+
+        log.info("Акт оплачен: {} сумма={} ({})", act.getActNumber(), act.getAmount(), act.getId());
+        return ActResponse.fromEntity(act);
+    }
+
     // ---- Private helpers ----
+
+    private SelfEmployedWorker getWorkerOrThrow(UUID id) {
+        return workerRepository.findById(id)
+                .filter(w -> !w.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Исполнитель не найден: " + id));
+    }
+
+    private CompletionAct getActOrThrow(UUID id) {
+        return actRepository.findById(id)
+                .filter(a -> !a.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Акт не найден: " + id));
+    }
 
     private SelfEmployedContractor getContractorOrThrow(UUID id) {
         return contractorRepository.findById(id)

@@ -95,6 +95,9 @@ public class DefectService {
                 .drawingId(request.drawingId())
                 .pinX(request.pinX())
                 .pinY(request.pinY())
+                .planX(request.planX())
+                .planY(request.planY())
+                .planId(request.planId())
                 .build();
 
         defect = defectRepository.save(defect);
@@ -119,6 +122,9 @@ public class DefectService {
         if (request.drawingId() != null) defect.setDrawingId(request.drawingId());
         if (request.pinX() != null) defect.setPinX(request.pinX());
         if (request.pinY() != null) defect.setPinY(request.pinY());
+        if (request.planX() != null) defect.setPlanX(request.planX());
+        if (request.planY() != null) defect.setPlanY(request.planY());
+        if (request.planId() != null) defect.setPlanId(request.planId());
 
         defect = defectRepository.save(defect);
         return DefectResponse.fromEntity(defect);

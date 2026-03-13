@@ -379,6 +379,7 @@ const MaintenanceSchedulePage: React.FC = () => {
           loading={rulesLoading}
           emptyTitle={t('fleet.schedule.rulesEmpty')}
           emptyDescription={t('fleet.schedule.rulesEmptyDesc')}
+          enableExport
         />
       )}
 
@@ -390,6 +391,7 @@ const MaintenanceSchedulePage: React.FC = () => {
           loading={dueLoading}
           emptyTitle={t('fleet.schedule.dueEmpty')}
           emptyDescription={t('fleet.schedule.dueEmptyDesc')}
+          enableExport
         />
       )}
 
@@ -573,7 +575,7 @@ function ComplianceTab({
       {data.insuranceAlerts.length > 0 && (
         <div>
           <h3 className="text-base font-semibold mb-3">{t('fleet.schedule.sectionInsurance')}</h3>
-          <DataTable columns={columns} data={data.insuranceAlerts} />
+          <DataTable columns={columns} data={data.insuranceAlerts} enableExport />
         </div>
       )}
 
@@ -581,7 +583,7 @@ function ComplianceTab({
       {data.techInspectionAlerts.length > 0 && (
         <div>
           <h3 className="text-base font-semibold mb-3">{t('fleet.schedule.sectionTechInspection')}</h3>
-          <DataTable columns={columns} data={data.techInspectionAlerts} />
+          <DataTable columns={columns} data={data.techInspectionAlerts} enableExport />
         </div>
       )}
 

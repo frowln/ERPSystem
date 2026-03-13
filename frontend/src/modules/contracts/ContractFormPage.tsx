@@ -52,11 +52,11 @@ const contractSchema = z.object({
 type ContractFormData = z.input<typeof contractSchema>;
 
 const fallbackTypeOptions = [
-  { value: '', label: t('forms.contract.contractTypes.general') },
-  { value: '', label: t('forms.contract.contractTypes.subcontract') },
-  { value: '', label: t('forms.contract.contractTypes.supply') },
-  { value: '', label: t('forms.contract.contractTypes.design') },
-  { value: '', label: t('forms.contract.contractTypes.services') },
+  { value: 'GENERAL', label: t('forms.contract.contractTypes.general') },
+  { value: 'SUBCONTRACT', label: t('forms.contract.contractTypes.subcontract') },
+  { value: 'SUPPLY', label: t('forms.contract.contractTypes.supply') },
+  { value: 'DESIGN', label: t('forms.contract.contractTypes.design') },
+  { value: 'SERVICES', label: t('forms.contract.contractTypes.services') },
 ];
 
 const vatRateOptions = [
@@ -66,10 +66,10 @@ const vatRateOptions = [
 ];
 
 const procurementLawOptions = [
-  { value: '', label: t('contracts.procurement.commercial') },
+  { value: '', label: '—' },
+  { value: 'COMMERCIAL', label: t('contracts.procurement.commercial') },
   { value: '44-FZ', label: t('contracts.procurement.44fz') },
   { value: '223-FZ', label: t('contracts.procurement.223fz') },
-  { value: 'COMMERCIAL', label: t('contracts.procurement.commercial') },
 ];
 
 const procurementMethodOptions = [

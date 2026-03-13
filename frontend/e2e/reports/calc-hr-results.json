@@ -1,0 +1,109 @@
+{
+  "checks": [
+    {
+      "page": "self-employed",
+      "metric": "contract_amount",
+      "expected": 150000,
+      "actual": 150000,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "platform_tax_6pct",
+      "expected": 9000,
+      "actual": 9000,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "net_to_contractor",
+      "expected": 150000,
+      "actual": 150000,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "no_vat",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "no_payroll_taxes",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "individual_rate",
+      "expected": 0.04,
+      "actual": 0.04,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "org_rate",
+      "expected": 0.06,
+      "actual": 0.06,
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "self-employed",
+      "metric": "annual_income_within_limit",
+      "expected": "<= 2400000",
+      "actual": "1800000",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "MAJOR"
+    },
+    {
+      "page": "cross-check",
+      "metric": "No project ID — cannot run cross-checks",
+      "expected": "exists",
+      "actual": "missing",
+      "tolerance": 0,
+      "passed": false,
+      "severity": "MISSING",
+      "note": "Feature not implemented or not found on page"
+    }
+  ],
+  "summary": {
+    "totalChecks": 9,
+    "passed": 8,
+    "failed": 1,
+    "bySeverity": {
+      "CRITICAL": 0,
+      "MAJOR": 0,
+      "MINOR": 0,
+      "UX": 0,
+      "MISSING": 1
+    },
+    "failedChecks": [
+      {
+        "page": "cross-check",
+        "metric": "No project ID — cannot run cross-checks",
+        "expected": "exists",
+        "actual": "missing",
+        "severity": "MISSING",
+        "note": "Feature not implemented or not found on page"
+      }
+    ]
+  },
+  "timestamp": "2026-03-12T18:37:18.053Z"
+}

@@ -1,0 +1,841 @@
+{
+  "checks": [
+    {
+      "page": "/fm/:id",
+      "metric": "item1_costTotal",
+      "expected": 63750,
+      "actual": 63750,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_customerTotal",
+      "expected": 87000,
+      "actual": 87000,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_ndv",
+      "expected": 17400,
+      "actual": 17400,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_margin",
+      "expected": 23250,
+      "actual": 23250,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_marginPct",
+      "expected": "26.72%",
+      "actual": "26.72413793103448%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_profitable",
+      "expected": "true",
+      "actual": "true",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL",
+      "note": "customerPrice=58 costPrice=42.5"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_costTotal",
+      "expected": 42000,
+      "actual": 42000,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_customerTotal",
+      "expected": 50400,
+      "actual": 50400,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_ndv",
+      "expected": 10080,
+      "actual": 10080,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_margin",
+      "expected": 8400,
+      "actual": 8400,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_marginPct",
+      "expected": "16.67%",
+      "actual": "16.666666666666664%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_profitable",
+      "expected": "true",
+      "actual": "true",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL",
+      "note": "customerPrice=1050 costPrice=875"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_costTotal",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_customerTotal",
+      "expected": 142500,
+      "actual": 142500,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_ndv",
+      "expected": 28500,
+      "actual": 28500,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_margin",
+      "expected": 142500,
+      "actual": 142500,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_marginPct",
+      "expected": "100%",
+      "actual": "100%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_costTotal",
+      "expected": 121600,
+      "actual": 121600,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_customerTotal",
+      "expected": 156800,
+      "actual": 156800,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_ndv",
+      "expected": 31360,
+      "actual": 31360,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_margin",
+      "expected": 35200,
+      "actual": 35200,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_marginPct",
+      "expected": "22.45%",
+      "actual": "22.448979591836736%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_profitable",
+      "expected": "true",
+      "actual": "true",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "CRITICAL",
+      "note": "customerPrice=490 costPrice=380"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_costTotal",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_customerTotal",
+      "expected": 44800,
+      "actual": 44800,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_ndv",
+      "expected": 8960,
+      "actual": 8960,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_margin",
+      "expected": 44800,
+      "actual": 44800,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_marginPct",
+      "expected": "100%",
+      "actual": "100%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_costTotal",
+      "expected": 227350,
+      "actual": 227350,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_customerTotal",
+      "expected": 481500,
+      "actual": 481500,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_estimateTotal",
+      "expected": 387900,
+      "actual": 387900,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_ndvTotal",
+      "expected": 96300,
+      "actual": 96300,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_marginTotal",
+      "expected": 254150,
+      "actual": 254150,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_marginPct",
+      "expected": "52.78%",
+      "actual": "52.782969885773625%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "formula_margin_equals_customer_minus_cost",
+      "expected": "254150",
+      "actual": "254150",
+      "tolerance": 0.01,
+      "passed": true
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "formula_ndv_equals_customer_times_020",
+      "expected": "96300",
+      "actual": "96300",
+      "tolerance": 0.01,
+      "passed": true
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "section_elec_costTotal",
+      "expected": 105750,
+      "actual": 105750,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "section_elec_customerTotal",
+      "expected": 279900,
+      "actual": 279900,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "section_elec_ndvTotal",
+      "expected": 55980,
+      "actual": 55980,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "section_vent_costTotal",
+      "expected": 121600,
+      "actual": 121600,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "section_vent_customerTotal",
+      "expected": 201600,
+      "actual": 201600,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "section_vent_ndvTotal",
+      "expected": 40320,
+      "actual": 40320,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "sections_sum_costTotal",
+      "expected": 227350,
+      "actual": 227350,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "sections_sum_customerTotal",
+      "expected": 481500,
+      "actual": 481500,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_overhead",
+      "expected": 7650,
+      "actual": 7650,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_profit",
+      "expected": 5100,
+      "actual": 5100,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_contingency",
+      "expected": 2142,
+      "actual": 2142,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_overhead",
+      "expected": 5040,
+      "actual": 5040,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_profit",
+      "expected": 3360,
+      "actual": 3360,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_contingency",
+      "expected": 1411.2,
+      "actual": 1411.2,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_overhead",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_profit",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_contingency",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_overhead",
+      "expected": 14592,
+      "actual": 14592,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_profit",
+      "expected": 9728,
+      "actual": 9728,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_contingency",
+      "expected": 4085.76,
+      "actual": 4085.7599999999998,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_overhead",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_profit",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_contingency",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_overheadTotal",
+      "expected": 27282,
+      "actual": 27282,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_profitTotal",
+      "expected": 18188,
+      "actual": 18188,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "grand_contingencyTotal",
+      "expected": 7638.96,
+      "actual": 7638.96,
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "margin_healthy_range",
+      "expected": "15-60%",
+      "actual": "52.78%",
+      "tolerance": 0,
+      "passed": true,
+      "note": "Overall project margin should be 15-60% for construction"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item1_positive_margin",
+      "expected": ">0%",
+      "actual": "26.72%",
+      "tolerance": 0,
+      "passed": true,
+      "note": "E2E-CALC Кабель ВВГнг 3x2.5: margin=26.72%"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item2_positive_margin",
+      "expected": ">0%",
+      "actual": "16.67%",
+      "tolerance": 0,
+      "passed": true,
+      "note": "E2E-CALC Автомат АВВ 25А: margin=16.67%"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item3_missing_cost_margin_100",
+      "expected": "100%",
+      "actual": "100.00%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "UX",
+      "note": "E2E-CALC Монтаж каб.линий: no costPrice → margin shows 100% (data gap, not error)"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item4_positive_margin",
+      "expected": ">0%",
+      "actual": "22.45%",
+      "tolerance": 0,
+      "passed": true,
+      "note": "E2E-CALC Воздуховод оцинк.: margin=22.45%"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "item5_missing_cost_margin_100",
+      "expected": "100%",
+      "actual": "100.00%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "UX",
+      "note": "E2E-CALC Монтаж воздуховодов: no costPrice → margin shows 100% (data gap, not error)"
+    },
+    {
+      "page": "/fm/:id",
+      "metric": "ndv_rate_is_20_percent",
+      "expected": "20%",
+      "actual": "20%",
+      "tolerance": 0.1,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "/budgets/782621d5-3d7e-43c7-82d1-7ef7fab58cd6",
+      "metric": "fm_table_visible",
+      "expected": "true",
+      "actual": "true",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "MAJOR"
+    },
+    {
+      "page": "/invoices",
+      "metric": "numeric_cells_found",
+      "expected": ">0",
+      "actual": "40",
+      "tolerance": 0,
+      "passed": true,
+      "severity": "MINOR",
+      "note": "Found 40 numeric cells, 40 Russian-formatted"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"1 234 567,89\"",
+      "expected": 1234567.89,
+      "actual": 1234567.89,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"15 000 000,00\"",
+      "expected": 15000000,
+      "actual": 15000000,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"42,50\"",
+      "expected": 42.5,
+      "actual": 42.5,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"-1 234,56\"",
+      "expected": -1234.56,
+      "actual": -1234.56,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"0,00\"",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"100%\"",
+      "expected": 100,
+      "actual": 100,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"26,72%\"",
+      "expected": 26.72,
+      "actual": 26.72,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseRussianNumber",
+      "metric": "parse_\"583 333,33\"",
+      "expected": 583333.33,
+      "actual": 583333.33,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseCurrency",
+      "metric": "parse_\"1 200 000,00 ₽\"",
+      "expected": 1200000,
+      "actual": 1200000,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseCurrency",
+      "metric": "parse_\"₽ 500 000,00\"",
+      "expected": 500000,
+      "actual": 500000,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "parseCurrency",
+      "metric": "parse_\"42,50 руб.\"",
+      "expected": 42.5,
+      "actual": 42.5,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "VAT",
+      "metric": "zero_base",
+      "expected": 0,
+      "actual": 0,
+      "tolerance": 0.01,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "VAT",
+      "metric": "one_kopeck",
+      "expected": 0.002,
+      "actual": 0.002,
+      "tolerance": 0.001,
+      "passed": true,
+      "severity": "CRITICAL"
+    },
+    {
+      "page": "VAT",
+      "metric": "old_18pct_rate_would_fail",
+      "expected": "200000",
+      "actual": "180000",
+      "tolerance": 1,
+      "passed": true,
+      "severity": "CRITICAL",
+      "note": "Old 18% rate produces 180000, must be 200000 at 20%"
+    },
+    {
+      "page": "helpers",
+      "metric": "all_calc_helpers_pass",
+      "expected": "true",
+      "actual": "true",
+      "tolerance": 0,
+      "passed": true
+    },
+    {
+      "page": "/budgets",
+      "metric": "budget_list_loaded",
+      "expected": ">0 rows",
+      "actual": "20 rows",
+      "tolerance": 0,
+      "passed": true
+    },
+    {
+      "page": "/payments",
+      "metric": "payment_list_loaded",
+      "expected": "page renders",
+      "actual": "4 rows",
+      "tolerance": 0,
+      "passed": true
+    },
+    {
+      "page": "/payments",
+      "metric": "payment_amount_positive",
+      "expected": ">0",
+      "actual": "14233333",
+      "tolerance": 0,
+      "passed": true,
+      "note": "Negative payment amounts are not allowed"
+    },
+    {
+      "page": "/payments",
+      "metric": "payment_amount_positive",
+      "expected": ">0",
+      "actual": "3733333",
+      "tolerance": 0,
+      "passed": true,
+      "note": "Negative payment amounts are not allowed"
+    },
+    {
+      "page": "/payments",
+      "metric": "payment_amount_positive",
+      "expected": ">0",
+      "actual": "6883333",
+      "tolerance": 0,
+      "passed": true,
+      "note": "Negative payment amounts are not allowed"
+    },
+    {
+      "page": "/payments",
+      "metric": "payment_amount_positive",
+      "expected": ">0",
+      "actual": "5250000",
+      "tolerance": 0,
+      "passed": true,
+      "note": "Negative payment amounts are not allowed"
+    }
+  ],
+  "summary": {
+    "totalChecks": 92,
+    "passed": 92,
+    "failed": 0,
+    "failedChecks": []
+  },
+  "timestamp": "2026-03-12T18:36:39.627Z"
+}

@@ -142,6 +142,46 @@ public class WarrantyClaimService {
         log.info("Гарантийная рекламация удалена: {} ({})", claim.getTitle(), id);
     }
 
+    /**
+     * P2-PRJ-3: Enforce valid status transitions.
+     * OPEN → UNDER_REVIEW → APPROVED → IN_REPAIR → RESOLVED → CLOSED
+     *                  ↘ REJECTED
+     */
+    @Transactional
+    public WarrantyClaimResponse transition(UUID id, WarrantyClaimStatus targetStatus, String note) {
+        WarrantyClaim claim = getOrThrow(id);
+        WarrantyClaimStatus current = claim.getStatus();
+
+        boolean allowed = switch (targetStatus) {
+            case UNDER_REVIEW  -> current == WarrantyClaimStatus.OPEN;
+            case APPROVED   -> current == WarrantyClaimStatus.UNDER_REVIEW;
+            case REJECTED   -> current == WarrantyClaimStatus.UNDER_REVIEW;
+            case IN_REPAIR  -> current == WarrantyClaimStatus.APPROVED;
+            case RESOLVED   -> current == WarrantyClaimStatus.IN_REPAIR;
+            case CLOSED     -> current == WarrantyClaimStatus.RESOLVED;
+            default         -> false;
+        };
+
+        if (!allowed) {
+            throw new IllegalStateException(
+                    String.format("Недопустимый переход статуса: %s → %s", current.getDisplayName(), targetStatus.getDisplayName()));
+        }
+
+        claim.setStatus(targetStatus);
+        if (targetStatus == WarrantyClaimStatus.RESOLVED || targetStatus == WarrantyClaimStatus.CLOSED) {
+            if (claim.getResolvedDate() == null) {
+                claim.setResolvedDate(java.time.LocalDate.now());
+            }
+        }
+        if (note != null && !note.isBlank()) {
+            claim.setResolutionDescription(note);
+        }
+        claim = warrantyRepository.save(claim);
+        auditService.logStatusChange("WarrantyClaim", id, current.name(), targetStatus.name());
+        log.info("Рекламация {} переведена: {} → {}", id, current, targetStatus);
+        return WarrantyClaimResponse.fromEntity(claim);
+    }
+
     private WarrantyClaim getOrThrow(UUID id) {
         return warrantyRepository.findById(id)
                 .filter(c -> !c.isDeleted())

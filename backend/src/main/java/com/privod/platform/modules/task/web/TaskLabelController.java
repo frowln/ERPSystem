@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/task-labels")
 @RequiredArgsConstructor
 @Tag(name = "Task Labels", description = "Label/tag management for tasks")
+@PreAuthorize("isAuthenticated()")
 public class TaskLabelController {
 
     private final TaskLabelService labelService;
@@ -32,6 +34,7 @@ public class TaskLabelController {
 
     @PostMapping
     @Operation(summary = "Create a new label")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<TaskLabelResponse>> createLabel(
             @Valid @RequestBody CreateTaskLabelRequest request,
             @RequestParam(required = false) UUID organizationId) {
@@ -42,6 +45,7 @@ public class TaskLabelController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a label")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<TaskLabelResponse>> updateLabel(
             @PathVariable UUID id,
             @Valid @RequestBody CreateTaskLabelRequest request) {
@@ -51,6 +55,7 @@ public class TaskLabelController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a label")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> deleteLabel(@PathVariable UUID id) {
         labelService.deleteLabel(id);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -58,6 +63,7 @@ public class TaskLabelController {
 
     @PostMapping("/tasks/{taskId}/labels/{labelId}")
     @Operation(summary = "Assign a label to a task")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> assignLabel(
             @PathVariable UUID taskId,
             @PathVariable UUID labelId) {
@@ -67,6 +73,7 @@ public class TaskLabelController {
 
     @DeleteMapping("/tasks/{taskId}/labels/{labelId}")
     @Operation(summary = "Remove a label from a task")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> removeLabel(
             @PathVariable UUID taskId,
             @PathVariable UUID labelId) {

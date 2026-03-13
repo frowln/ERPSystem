@@ -22,10 +22,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,9 @@ public class PaymentController {
     private final SubscriptionPlanRepository planRepository;
     private final TenantSubscriptionRepository subscriptionRepository;
     private final BillingRecordRepository billingRecordRepository;
+
+    @Value("${app.yookassa.webhook-secret:}")
+    private String webhookSecret;
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -87,19 +92,17 @@ public class PaymentController {
                 .periodEnd(plan.getBillingPeriod() == com.privod.platform.modules.subscription.domain.BillingPeriod.YEARLY
                         ? Instant.now().plus(365, ChronoUnit.DAYS)
                         : Instant.now().plus(30, ChronoUnit.DAYS))
-                .invoiceNumber("INV-" + System.currentTimeMillis())
+                .invoiceNumber("INV-" + java.time.LocalDate.now().toString().replace("-", "") + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .description(description)
                 .yookassaIdempotency(idempotencyKey)
                 .build();
 
-        // Call YooKassa
+        // Call YooKassa — throws RuntimeException on failure
         YooKassaService.PaymentResult result = yooKassaService.createPayment(
                 plan.getPrice(), plan.getCurrency(), description, idempotencyKey, userEmail);
 
-        if (result != null) {
-            record.setYookassaPaymentId(result.paymentId());
-            record.setConfirmationUrl(result.confirmationUrl());
-        }
+        record.setYookassaPaymentId(result.paymentId());
+        record.setConfirmationUrl(result.confirmationUrl());
 
         record = billingRecordRepository.save(record);
 
@@ -108,8 +111,8 @@ public class PaymentController {
 
         return ResponseEntity.ok(ApiResponse.ok(new PaymentResponse(
                 record.getId().toString(),
-                result != null ? result.confirmationUrl() : null,
-                result != null ? result.paymentId() : null,
+                result.confirmationUrl(),
+                result.paymentId(),
                 "pending"
         )));
     }
@@ -121,7 +124,17 @@ public class PaymentController {
     @PostMapping("/webhook/yookassa")
     @Operation(summary = "YooKassa payment webhook (called by YooKassa)")
     @Transactional
-    public ResponseEntity<Void> handleYooKassaWebhook(@RequestBody String body) {
+    public ResponseEntity<Void> handleYooKassaWebhook(
+            @RequestBody String body,
+            @RequestHeader(value = "X-YooKassa-Signature", required = false) String signature) {
+
+        if (webhookSecret != null && !webhookSecret.isBlank()) {
+            if (!verifyHmacSignature(body, signature, webhookSecret)) {
+                log.warn("YooKassa webhook: HMAC signature verification failed");
+                return ResponseEntity.status(401).build();
+            }
+        }
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(body);
@@ -179,5 +192,18 @@ public class PaymentController {
 
         // Always return 200 to YooKassa
         return ResponseEntity.ok().build();
+    }
+
+    private boolean verifyHmacSignature(String body, String signature, String secret) {
+        if (signature == null || signature.isBlank()) return false;
+        try {
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            mac.init(new javax.crypto.spec.SecretKeySpec(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] hash = mac.doFinal(body.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            String computed = java.util.Base64.getEncoder().encodeToString(hash);
+            return java.security.MessageDigest.isEqual(computed.getBytes(), signature.getBytes());
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

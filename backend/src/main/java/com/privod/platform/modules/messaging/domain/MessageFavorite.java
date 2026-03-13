@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
 
@@ -23,12 +24,16 @@ import java.util.UUID;
                 @Index(name = "idx_favorite_message", columnList = "message_id"),
                 @Index(name = "idx_favorite_user", columnList = "user_id")
         })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageFavorite extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "message_id", nullable = false)
     private UUID messageId;

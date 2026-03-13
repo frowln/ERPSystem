@@ -1,7 +1,9 @@
 package com.privod.platform.modules.hrRussian.domain;
 
 import com.privod.platform.infrastructure.persistence.BaseEntity;
+import com.privod.platform.infrastructure.security.EncryptedFieldConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,12 +25,16 @@ import java.util.UUID;
         @Index(name = "idx_sick_employee", columnList = "employee_id"),
         @Index(name = "idx_sick_status", columnList = "status")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SickLeave extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
@@ -41,7 +48,8 @@ public class SickLeave extends BaseEntity {
     @Column(name = "sick_leave_number", length = 50)
     private String sickLeaveNumber;
 
-    @Column(name = "diagnosis", length = 500)
+    @Convert(converter = EncryptedFieldConverter.class)
+    @Column(name = "diagnosis", columnDefinition = "TEXT")
     private String diagnosis;
 
     @Column(name = "is_extension", nullable = false)

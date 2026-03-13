@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
         @Index(name = "idx_ticket_category_org", columnList = "organization_id"),
         @Index(name = "idx_ticket_category_org_code", columnList = "organization_id, code", unique = true)
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder

@@ -1,5 +1,6 @@
 package com.privod.platform.infrastructure.security;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,12 +31,24 @@ public class FieldEncryptionService {
 
     private final SecretKey secretKey;
     private final SecureRandom secureRandom = new SecureRandom();
+    private final String rawFieldKey;
 
     public FieldEncryptionService(
             @Value("${app.encryption.field-key}") String fieldKey) {
+        this.rawFieldKey = fieldKey;
         byte[] keyBytes = normalizeKey(fieldKey);
         this.secretKey = new SecretKeySpec(keyBytes, "AES");
         log.info("FieldEncryptionService initialized (AES-256-GCM)");
+    }
+
+    @PostConstruct
+    void validateKey() {
+        if (rawFieldKey.equals("0123456789abcdef0123456789abcdef")) {
+            log.warn("⚠️ FIELD_ENCRYPTION_KEY is using the default value. Set a unique key in production!");
+        }
+        if (rawFieldKey.length() < 32) {
+            log.warn("⚠️ FIELD_ENCRYPTION_KEY is shorter than 32 bytes. Use a 32-character key in production!");
+        }
     }
 
     /**

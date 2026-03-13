@@ -1,0 +1,604 @@
+[
+  {
+    "group": "Home",
+    "page": "/",
+    "name": "Dashboard",
+    "loadTimeMs": 1953,
+    "elements": [
+      {
+        "page": "/",
+        "element": "button:Свернуть боковое меню",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/",
+        "element": "button:Включить тёмную тему",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/",
+        "element": "button:15",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/",
+        "element": "button:ДКДамир",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/",
+        "element": "button:Открыть ассистента",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/",
+        "element": "button:AI-ассистент",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(34)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/",
+        "element": "button:Поддержка",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(35)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/",
+        "element": "button:Clear chat",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(36)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/",
+        "element": "button:Minimize",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(37)\u001b[22m\n\u001b[2m    - locator resolved to <button dis"
+      },
+      {
+        "page": "/",
+        "element": "button:Что происходит на проектах?",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/projects/new"
+      },
+      {
+        "page": "/",
+        "element": "button:Explain statuses",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(39)\u001b[22m\n\u001b[2m    - locator resolved to <button dis"
+      },
+      {
+        "page": "/",
+        "element": "button:What next",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/projects/new"
+      },
+      {
+        "page": "/",
+        "element": "button:Слушаю...",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/",
+        "element": "button:(unlabeled-button)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(42)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Новый объект",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(43)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Закрыть",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(44)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Просмотрите объектыОзнакомьтесь с текущими объекта...",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(45)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Создайте задачуПерейдите на доску задач и создайте...",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(46)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Изучите документыПосмотрите раздел документов и за...",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(47)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Проверьте аналитикуОткройте дашборд аналитики для ...",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(48)\u001b[22m\n"
+      },
+      {
+        "page": "/",
+        "element": "button:Все объекты",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(49)\u001b[22m\n"
+      }
+    ],
+    "jsErrors": [],
+    "totalElements": 21,
+    "timestamp": "2026-03-12T18:38:31.646Z"
+  },
+  {
+    "group": "Home",
+    "page": "/analytics",
+    "name": "Analytics",
+    "loadTimeMs": 1719,
+    "elements": [
+      {
+        "page": "/analytics",
+        "element": "button:Свернуть боковое меню",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Включить тёмную тему",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:15",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:ДКДамир",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Открыть ассистента",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:AI-ассистент",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(34)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Поддержка",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(35)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Clear chat",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(36)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Minimize",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(37)\u001b[22m\n\u001b[2m    - locator resolved to <button dis"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Покажи ключевые показатели",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Explain statuses",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(39)\u001b[22m\n\u001b[2m    - locator resolved to <button dis"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:What next",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Слушаю...",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:(unlabeled-button)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Обновить",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Экспорт",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(45)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Печать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(46)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:Справка по странице",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(47)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "button:(unlabeled-button)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(48)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "select:1 месяц3 месяца6 месяцев1 год",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('select:visible, [role=\"combobox\"]:visible').first()\u001b[22m\n\u001b[2m    - loca"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:(unlabeled-a)(/kb/screenshots/analytics/dashboard.png)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:(unlabeled-a)(/kb/screenshots/analytics/executive-kpi....)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:(unlabeled-a)(/kb/screenshots/analytics/kpi-achievemen...)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:(unlabeled-a)(/kb/screenshots/analytics/kpi.png)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:(unlabeled-a)(/kb/screenshots/analytics/report-builder...)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:(unlabeled-a)(/kb/screenshots/analytics/reports.png)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Проекты(projects.md)",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/projects.md"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Финансы(finance.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(18)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Кадры(hr.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(19)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Задачи(tasks.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(20)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Безопасность(safety.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(21)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Качество(quality.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(22)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Техника(fleet.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(23)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Настройки(settings.md)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(24)\u001b[22m\n"
+      },
+      {
+        "page": "/analytics",
+        "element": "link:Открыть статью полностью(/help/article/analytics)",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href]:visible').nth(25)\u001b[22m\n"
+      }
+    ],
+    "jsErrors": [],
+    "totalElements": 35,
+    "timestamp": "2026-03-12T18:40:15.487Z"
+  },
+  {
+    "group": "Home",
+    "page": "/reports",
+    "name": "Reports",
+    "loadTimeMs": 1561,
+    "elements": [
+      {
+        "page": "/reports",
+        "element": "button:Свернуть боковое меню",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Включить тёмную тему",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:15",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:ДКДамир",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Открыть ассистента",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:AI-ассистент",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(34)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Поддержка",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(35)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Clear chat",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(36)\u001b[22m\n\u001b[2m    - locator resolved to <button cla"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Minimize",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(37)\u001b[22m\n\u001b[2m    - locator resolved to <button dis"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Чем могу помочь?",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Explain statuses",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(39)\u001b[22m\n\u001b[2m    - locator resolved to <button dis"
+      },
+      {
+        "page": "/reports",
+        "element": "button:What next",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Слушаю...",
+        "action": "click",
+        "result": "navigated",
+        "detail": "/analytics"
+      },
+      {
+        "page": "/reports",
+        "element": "button:(unlabeled-button)",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Все",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Объект",
+        "action": "click",
+        "result": "nothing"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Финансы",
+        "action": "click",
+        "result": "modal_opened"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Безопасность",
+        "action": "click",
+        "result": "modal_opened"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Операции",
+        "action": "click",
+        "result": "modal_opened"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "modal_opened"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "modal_opened"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(52)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(53)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(54)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(55)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(56)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(57)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(58)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(59)\u001b[22m\n"
+      },
+      {
+        "page": "/reports",
+        "element": "button:Сформировать",
+        "action": "click",
+        "result": "click_failed",
+        "detail": "locator.click: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button:visible').nth(60)\u001b[22m\n"
+      }
+    ],
+    "jsErrors": [],
+    "totalElements": 30,
+    "timestamp": "2026-03-12T18:41:41.530Z"
+  }
+]

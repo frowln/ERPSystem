@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -27,12 +28,16 @@ import java.util.UUID;
                 @Index(name = "idx_channel_member_user", columnList = "user_id"),
                 @Index(name = "idx_channel_member_role", columnList = "channel_id, role")
         })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelMember extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "channel_id", nullable = false)
     private UUID channelId;

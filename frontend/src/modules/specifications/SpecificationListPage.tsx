@@ -181,6 +181,8 @@ const SpecificationListPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('specifications.emptyTitle')}
         emptyDescription={t('specifications.emptyDescription')}
+        emptyActionLabel={t('specifications.emptyActionLabel')}
+        onEmptyAction={() => navigate('/specifications/new')}
       />
     </div>
   );

@@ -281,6 +281,7 @@ const CloseoutDashboardPage: React.FC = () => {
               pageSize={5}
               emptyTitle={t('closeout.dashboardEmptyChecks')}
               emptyDescription={t('closeout.dashboardEmptyChecksDesc')}
+              enableExport
             />
           </div>
 
@@ -298,6 +299,7 @@ const CloseoutDashboardPage: React.FC = () => {
               pageSize={5}
               emptyTitle={t('closeout.dashboardEmptyClaims')}
               emptyDescription={t('closeout.dashboardEmptyClaimsDesc')}
+              enableExport
             />
           </div>
         </>

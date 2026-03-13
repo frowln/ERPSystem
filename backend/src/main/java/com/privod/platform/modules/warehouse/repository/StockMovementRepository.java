@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,4 +40,54 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, UU
 
     @Query(value = "SELECT nextval('stock_movement_number_seq')", nativeQuery = true)
     long getNextNumberSequence();
+
+    /**
+     * P1-WAR-4: Aggregate material consumption by project.
+     * Returns [materialId, SUM(quantity)] for CONSUMPTION movements in COMPLETED status.
+     * Replaces StockEntry.projectId — project-level inventory tracking via movement aggregation.
+     */
+    @Query(value =
+            "SELECT sml.material_id, SUM(sml.quantity) AS consumed " +
+            "FROM stock_movement_lines sml " +
+            "JOIN stock_movements sm ON sml.movement_id = sm.id " +
+            "WHERE sm.deleted = false AND sml.deleted = false " +
+            "  AND sm.project_id = :projectId " +
+            "  AND sm.movement_type = 'CONSUMPTION' " +
+            "  AND sm.status = 'COMPLETED' " +
+            "GROUP BY sml.material_id",
+            nativeQuery = true)
+    List<Object[]> sumConsumptionByProject(@Param("projectId") UUID projectId);
+
+    /**
+     * P1-WAR-4: Aggregate consumption for a specific material on a project.
+     */
+    @Query(value =
+            "SELECT COALESCE(SUM(sml.quantity), 0) " +
+            "FROM stock_movement_lines sml " +
+            "JOIN stock_movements sm ON sml.movement_id = sm.id " +
+            "WHERE sm.deleted = false AND sml.deleted = false " +
+            "  AND sm.project_id = :projectId " +
+            "  AND sml.material_id = :materialId " +
+            "  AND sm.movement_type = 'CONSUMPTION' " +
+            "  AND sm.status = 'COMPLETED'",
+            nativeQuery = true)
+    BigDecimal sumConsumptionByProjectAndMaterial(@Param("projectId") UUID projectId,
+                                                   @Param("materialId") UUID materialId);
+
+    /**
+     * P1-WAR-2: Returns [material_id, material_name, unit_of_measure, SUM(quantity)]
+     * for consumption report (plan vs actual).
+     */
+    @Query(value =
+            "SELECT sml.material_id, sml.material_name, sml.unit_of_measure, SUM(sml.quantity) AS consumed " +
+            "FROM stock_movement_lines sml " +
+            "JOIN stock_movements sm ON sml.movement_id = sm.id " +
+            "WHERE sm.deleted = false AND sml.deleted = false " +
+            "  AND sm.project_id = :projectId " +
+            "  AND sm.movement_type = 'CONSUMPTION' " +
+            "  AND sm.status = 'COMPLETED' " +
+            "GROUP BY sml.material_id, sml.material_name, sml.unit_of_measure " +
+            "ORDER BY sml.material_name",
+            nativeQuery = true)
+    List<Object[]> consumptionByProjectGroupedByMaterial(@Param("projectId") UUID projectId);
 }

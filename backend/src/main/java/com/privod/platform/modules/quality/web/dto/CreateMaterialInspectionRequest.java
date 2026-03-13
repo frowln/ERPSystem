@@ -4,6 +4,7 @@ import com.privod.platform.modules.quality.domain.MaterialInspectionResult;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,11 @@ public record CreateMaterialInspectionRequest(
         String notes,
 
         @NotNull(message = "Идентификатор проекта обязателен")
-        UUID projectId
+        UUID projectId,
+
+        // P1-SAF-6: При result=accepted и наличии этих полей → авто StockMovement(RECEIPT)
+        UUID materialId,
+        BigDecimal quantity,
+        UUID destinationLocationId
 ) {
 }

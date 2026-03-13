@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -23,6 +24,7 @@ import java.util.UUID;
         @Index(name = "idx_portal_user_status", columnList = "status"),
         @Index(name = "idx_portal_user_role", columnList = "portal_role")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder

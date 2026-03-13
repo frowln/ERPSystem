@@ -254,6 +254,64 @@ public class WorkCalendarService {
         return current;
     }
 
+    /**
+     * P1-HR-1: Returns the normative working hours for a given year and month based on
+     * the STANDARD production calendar for that year.
+     *
+     * <p>If a STANDARD calendar for the year exists with pre-generated day records, the
+     * sum of {@code work_hours} for all WORKING/SHORT_DAY entries in the requested month
+     * is returned. Otherwise a reasonable statutory default is used: Russia's average
+     * norm is 8 hours × working days, with ~21 working days per month as a fallback.
+     *
+     * @param year  the calendar year (e.g. 2026)
+     * @param month the month number 1–12
+     * @return normative hours as a {@link BigDecimal} (e.g. 168.00 for a standard month)
+     */
+    @Transactional(readOnly = true)
+    public BigDecimal getNormativeHoursForMonth(int year, int month) {
+        // Try to find an existing STANDARD calendar for this year.
+        var calendarOpt = calendarRepository.findByYearAndCalendarTypeAndProjectIdIsNullAndDeletedFalse(
+                year, CalendarType.STANDARD);
+
+        if (calendarOpt.isPresent()) {
+            UUID calendarId = calendarOpt.get().getId();
+            LocalDate startDate = LocalDate.of(year, month, 1);
+            LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+            List<DayType> workingTypes = List.of(DayType.WORKING, DayType.SHORT_DAY);
+            // Sum work_hours for all working/short-day entries in the month.
+            BigDecimal totalHours = dayRepository
+                    .findByCalendarIdAndDateRange(calendarId, startDate, endDate)
+                    .stream()
+                    .filter(d -> workingTypes.contains(d.getDayType()))
+                    .map(d -> d.getWorkHours() != null ? d.getWorkHours() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            if (totalHours.compareTo(BigDecimal.ZERO) > 0) {
+                log.debug("[WorkCalendarService] Normative hours for {}/{} from calendar {}: {} h",
+                        year, month, calendarId, totalHours);
+                return totalHours;
+            }
+        }
+
+        // Fallback: statutory Russian norm — count weekdays in the month × 8 hours.
+        // Russian federal holidays reduce this further but we cannot account for them
+        // without a calendar, so we use the basic weekday count.
+        LocalDate firstDay = LocalDate.of(year, month, 1);
+        LocalDate lastDay = firstDay.withDayOfMonth(firstDay.lengthOfMonth());
+        long weekdays = 0;
+        for (LocalDate d = firstDay; !d.isAfter(lastDay); d = d.plusDays(1)) {
+            DayOfWeek dow = d.getDayOfWeek();
+            if (dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY) {
+                weekdays++;
+            }
+        }
+        BigDecimal fallback = new BigDecimal(weekdays * 8);
+        log.debug("[WorkCalendarService] No STANDARD calendar for {}/{}, using weekday fallback: {} h",
+                year, month, fallback);
+        return fallback;
+    }
+
     private WorkCalendar getCalendarOrThrow(UUID id) {
         return calendarRepository.findById(id)
                 .filter(c -> !c.isDeleted())

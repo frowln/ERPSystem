@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Camera,
@@ -22,6 +22,63 @@ import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Skeleton } from '@/design-system/components/Skeleton';
 import toast from 'react-hot-toast';
+
+// ---------------------------------------------------------------------------
+// Progress Bar Component
+// ---------------------------------------------------------------------------
+
+const AnalysisProgressBar: React.FC<{ isActive: boolean }> = ({ isActive }) => {
+  const [progress, setProgress] = useState(0);
+  const [stage, setStage] = useState('');
+
+  useEffect(() => {
+    if (!isActive) {
+      setProgress(0);
+      setStage('');
+      return;
+    }
+
+    setProgress(0);
+    setStage(t('ai.photoAnalysis.progressStages.uploading'));
+
+    const stages = [
+      { at: 15, label: t('ai.photoAnalysis.progressStages.preprocessing') },
+      { at: 35, label: t('ai.photoAnalysis.progressStages.detectingObjects') },
+      { at: 55, label: t('ai.photoAnalysis.progressStages.analyzingSafety') },
+      { at: 75, label: t('ai.photoAnalysis.progressStages.assessingProgress') },
+      { at: 90, label: t('ai.photoAnalysis.progressStages.generatingReport') },
+    ];
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        const next = prev + 1 + Math.random() * 2;
+        const capped = Math.min(next, 95);
+        const matchedStage = [...stages].reverse().find((s) => capped >= s.at);
+        if (matchedStage) setStage(matchedStage.label);
+        return capped;
+      });
+    }, 80);
+
+    return () => clearInterval(interval);
+  }, [isActive]);
+
+  if (!isActive) return null;
+
+  return (
+    <div className="space-y-2" data-testid="analysis-progress">
+      <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
+        <span>{stage}</span>
+        <span>{Math.round(progress)}%</span>
+      </div>
+      <div className="w-full h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-primary-500 rounded-full transition-all duration-200 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  );
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -112,6 +169,7 @@ const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, disabled }) => {
       role="button"
       tabIndex={0}
       aria-label={t('ai.photoAnalysis.dropZoneTitle')}
+      data-testid="photo-upload-area"
     >
       <input
         ref={inputRef}
@@ -120,6 +178,7 @@ const DropZone: React.FC<DropZoneProps> = ({ onFileSelect, disabled }) => {
         className="hidden"
         onChange={handleFileChange}
         disabled={disabled}
+        data-testid="photo-file-input"
       />
       <div className="flex flex-col items-center gap-3">
         <div className={cn(
@@ -193,7 +252,7 @@ const AnalysisResultsPanel: React.FC<{ result: PhotoAnalysisResult }> = ({ resul
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="analysis-results">
       {/* Overview metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
@@ -423,9 +482,10 @@ const AiPhotoAnalysisPage: React.FC = () => {
   });
 
   const analyzeMutation = useMutation({
-    mutationFn: (file: File) => aiApi.analyzePhoto(file),
+    mutationFn: (file: File) => aiApi.analyzePhotoWithSimulation(file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ai', 'photo-analyses'] });
+      toast.success(t('ai.photoAnalysis.analysisComplete'));
     },
     onError: () => {
       toast.error(t('common.error'));
@@ -464,7 +524,7 @@ const AiPhotoAnalysisPage: React.FC = () => {
 
           {/* Preview */}
           {previewUrl && (
-            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4" data-testid="photo-preview">
               <img
                 src={previewUrl}
                 alt=""
@@ -475,6 +535,7 @@ const AiPhotoAnalysisPage: React.FC = () => {
                   onClick={handleAnalyze}
                   loading={analyzeMutation.isPending}
                   iconLeft={<Camera size={16} />}
+                  data-testid="analyze-button"
                 >
                   {analyzeMutation.isPending
                     ? t('ai.photoAnalysis.analyzing')
@@ -489,8 +550,10 @@ const AiPhotoAnalysisPage: React.FC = () => {
         <div>
           {analyzeMutation.isPending && (
             <div className="space-y-4">
+              <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
+                <AnalysisProgressBar isActive={analyzeMutation.isPending} />
+              </div>
               <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-16 w-full" />
               <Skeleton className="h-16 w-full" />
               <Skeleton className="h-16 w-full" />
             </div>
@@ -510,7 +573,7 @@ const AiPhotoAnalysisPage: React.FC = () => {
       </div>
 
       {/* History */}
-      <div className="mt-8">
+      <div className="mt-8" data-testid="analysis-history">
         <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700">
           <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
             <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">

@@ -142,13 +142,16 @@ const WaybillListPage: React.FC = () => {
         accessorKey: 'status',
         header: t('fleet.waybills.colStatus'),
         size: 130,
-        cell: ({ getValue }) => (
-          <StatusBadge
-            status={getValue<string>()}
-            colorMap={waybillStatusColorMap}
-            label={waybillStatusLabels[getValue<string>()]}
-          />
-        ),
+        cell: ({ getValue }) => {
+          const s = getValue<string>();
+          return (
+            <StatusBadge
+              status={s}
+              colorMap={waybillStatusColorMap}
+              label={waybillStatusLabels[s] ?? s}
+            />
+          );
+        },
       },
     ],
     [],
@@ -226,6 +229,7 @@ const WaybillListPage: React.FC = () => {
         onRowClick={(row) => navigate(`/fleet/waybills/${row.id}`)}
         emptyTitle={t('fleet.waybills.emptyTitle')}
         emptyDescription={t('fleet.waybills.emptyDescription')}
+        enableExport
       />
     </div>
   );

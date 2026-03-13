@@ -382,24 +382,17 @@ const PAGES: PageDef[] = [
   { group: 'Admin', name: 'Marketplace', url: '/marketplace' },
 ];
 
-// ─── Locator selectors for export/download/print buttons ─────────────────────
+// ─── Text keywords to match inside buttons (case-insensitive) ────────────────
 
-const EXPORT_BUTTON_SELECTOR = [
-  'button:has-text("Экспорт")',
-  'button:has-text("Export")',
-  'button:has-text("Скачать")',
-  'button:has-text("Download")',
-  'button:has-text("PDF")',
-  'button:has-text("Excel")',
-  'button:has-text("CSV")',
-  'button:has-text("Печать")',
-  'button:has-text("Print")',
-  'button:has-text("Выгрузить")',
-  'button:has-text("Выгрузка")',
-  'button:has-text("Сохранить как")',
-  'button:has-text("Сформировать")',
-  'button:has-text("Отчёт")',
-  'button:has-text("Загрузить")',
+const EXPORT_TEXT_KEYWORDS = [
+  'Экспорт', 'Export', 'Скачать', 'Download', 'PDF', 'Excel', 'CSV',
+  'Печать', 'Print', 'Выгрузить', 'Выгрузка', 'Сохранить как',
+  'Сформировать', 'Отчёт', 'Загрузить',
+];
+
+// CSS-only selectors (valid for querySelectorAll) ─────────────────────────────
+
+const CSS_ONLY_SELECTOR = [
   'a[download]',
   'button[data-export]',
   '[aria-label*="export" i]',
@@ -417,23 +410,21 @@ const EXPORT_BUTTON_SELECTOR = [
 
 /**
  * Scan a page for all export/download/print-related buttons.
+ * Uses valid CSS selectors + text-content matching (not Playwright's has-text).
  */
 async function scanExportButtons(page: Page): Promise<ExportButtonInfo[]> {
-  return page.evaluate((selector) => {
-    const els = document.querySelectorAll(selector);
+  return page.evaluate(({ cssSelector, textKeywords }) => {
     const results: ExportButtonInfo[] = [];
     const seen = new Set<Element>();
 
-    els.forEach((el) => {
+    const collect = (el: Element) => {
       if (seen.has(el)) return;
       seen.add(el);
 
-      // Try to get icon hint from inner SVG or icon class
       const svg = el.querySelector('svg');
       let iconHint = '';
       if (svg) {
-        const cls = svg.getAttribute('class') || '';
-        iconHint = cls;
+        iconHint = svg.getAttribute('class') || '';
       }
       const iconEl = el.querySelector('[class*="icon"], [data-lucide]');
       if (iconEl) {
@@ -448,10 +439,22 @@ async function scanExportButtons(page: Page): Promise<ExportButtonInfo[]> {
         hasDataExport: el.hasAttribute('data-export'),
         iconHint,
       });
+    };
+
+    // 1. Match by valid CSS selectors (aria-label, [download], [data-export])
+    document.querySelectorAll(cssSelector).forEach(collect);
+
+    // 2. Match buttons/links by text content (replaces invalid :has-text)
+    const lowerKeywords = textKeywords.map((k: string) => k.toLowerCase());
+    document.querySelectorAll('button, a').forEach((el) => {
+      const text = (el.textContent || '').trim().toLowerCase();
+      if (text && lowerKeywords.some((kw: string) => text.includes(kw))) {
+        collect(el);
+      }
     });
 
     return results;
-  }, EXPORT_BUTTON_SELECTOR);
+  }, { cssSelector: CSS_ONLY_SELECTOR, textKeywords: EXPORT_TEXT_KEYWORDS });
 }
 
 /**

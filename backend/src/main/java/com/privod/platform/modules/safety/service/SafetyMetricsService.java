@@ -25,7 +25,13 @@ import java.util.UUID;
 @Slf4j
 public class SafetyMetricsService {
 
+    // Условное базовое число человеко-часов для оценки, когда нет данных табеля.
+    // 1 год × 250 раб.дней × 8ч × 100 человек ≈ 200 000 ч
     private static final long DEFAULT_MAN_HOURS = 200_000L;
+    // LTIFR multiplier per ISO 45001 / OHSAS 18001: 1 000 000 человеко-часов
+    private static final long LTIFR_MULTIPLIER = 1_000_000L;
+    // TRIR multiplier per OSHA 300: 200 000 человеко-часов (100 человек × 2 000 ч/год)
+    private static final long TRIR_MULTIPLIER = 200_000L;
 
     private final SafetyIncidentRepository incidentRepository;
     private final SafetyInspectionRepository inspectionRepository;
@@ -55,18 +61,27 @@ public class SafetyMetricsService {
 
         int totalWorkDaysLost = incidentRepository.sumWorkDaysLost(organizationId, null);
 
-        // LTIR = (Lost Time Incidents / Man Hours) * 200,000
+        // Фактические человеко-часы (в идеале — из табеля; пока используем базовую оценку)
+        long safeManHours = DEFAULT_MAN_HOURS - (totalWorkDaysLost * 8L);
+        long actualWorkedHours = Math.max(1L, DEFAULT_MAN_HOURS);
+
+        // P0-SAF-1: LTIFR — Lost Time Injury Frequency Rate (ISO 45001 / OHSAS 18001)
+        // Формула: (кол-во НС с потерей трудоспособности × 1 000 000) / фактические чел.-часы
+        // BUG WAS: делили на тот же DEFAULT_MAN_HOURS что множили → всегда = кол-во НС
         long lostTimeIncidents = totalIncidents - nearMisses - firstAidCases;
-        BigDecimal ltir = totalIncidents > 0
+        BigDecimal ltir = lostTimeIncidents > 0
                 ? BigDecimal.valueOf(lostTimeIncidents)
-                    .multiply(BigDecimal.valueOf(DEFAULT_MAN_HOURS))
-                    .divide(BigDecimal.valueOf(Math.max(1, DEFAULT_MAN_HOURS)), 4, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(LTIFR_MULTIPLIER))
+                    .divide(BigDecimal.valueOf(actualWorkedHours), 4, RoundingMode.HALF_UP)
                 : BigDecimal.ZERO;
 
-        // TRIR = (Total Recordable Incidents / Man Hours) * 200,000
-        BigDecimal trir = BigDecimal.valueOf(totalIncidents)
-                .multiply(BigDecimal.valueOf(DEFAULT_MAN_HOURS))
-                .divide(BigDecimal.valueOf(Math.max(1, DEFAULT_MAN_HOURS)), 4, RoundingMode.HALF_UP);
+        // TRIR — Total Recordable Incident Rate (OSHA 300)
+        // Формула: (все НС × 200 000) / фактические чел.-часы
+        BigDecimal trir = totalIncidents > 0
+                ? BigDecimal.valueOf(totalIncidents)
+                    .multiply(BigDecimal.valueOf(TRIR_MULTIPLIER))
+                    .divide(BigDecimal.valueOf(actualWorkedHours), 4, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
 
         // Training completion rate
         long totalRecords = trainingRecordRepository.countTotal(organizationId);
@@ -75,9 +90,6 @@ public class SafetyMetricsService {
                 ? BigDecimal.valueOf(validRecords * 100)
                     .divide(BigDecimal.valueOf(totalRecords), 2, RoundingMode.HALF_UP)
                 : BigDecimal.valueOf(100);
-
-        // Safe man-hours (stub — in reality would come from timesheet data)
-        long safeManHours = DEFAULT_MAN_HOURS - (totalWorkDaysLost * 8L);
 
         // Days without incident (stub — would need last incident date query)
         long daysWithoutIncident = 0;

@@ -242,7 +242,7 @@ const RiskRegisterPage: React.FC = () => {
       </div>
 
       {/* DataTable */}
-      <DataTable columns={columns} data={risks} />
+      <DataTable columns={columns} data={risks} enableExport />
 
       {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t('projects.risks.editRisk') : t('projects.risks.addRisk')}>

@@ -287,6 +287,7 @@ const ArchivePolicyListPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('cde.archivePolicies.emptyTitle')}
         emptyDescription={t('cde.archivePolicies.emptyDescription')}
+        enableExport
       />
 
       {/* Create / Edit Modal */}

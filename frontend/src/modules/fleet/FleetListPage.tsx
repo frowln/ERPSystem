@@ -22,6 +22,11 @@ const vehicleStatusColorMap: Record<string, 'green' | 'blue' | 'yellow' | 'orang
   maintenance: 'yellow',
   repair: 'orange',
   decommissioned: 'gray',
+  AVAILABLE: 'green',
+  IN_USE: 'blue',
+  MAINTENANCE: 'yellow',
+  REPAIR: 'orange',
+  DECOMMISSIONED: 'gray',
 };
 const getVehicleStatusLabels = (): Record<string, string> => ({
   available: t('fleet.list.statusAvailable'),
@@ -29,6 +34,11 @@ const getVehicleStatusLabels = (): Record<string, string> => ({
   maintenance: t('fleet.list.statusMaintenance'),
   repair: t('fleet.list.statusRepair'),
   decommissioned: t('fleet.list.statusDecommissioned'),
+  AVAILABLE: t('fleet.list.statusAvailable'),
+  IN_USE: t('fleet.list.statusInUse'),
+  MAINTENANCE: t('fleet.list.statusMaintenance'),
+  REPAIR: t('fleet.list.statusRepair'),
+  DECOMMISSIONED: t('fleet.list.statusDecommissioned'),
 });
 const getVehicleTypeLabels = (): Record<string, string> => ({
   excavator: t('fleet.list.typeExcavator'),
@@ -40,6 +50,15 @@ const getVehicleTypeLabels = (): Record<string, string> => ({
   generator: t('fleet.list.typeGenerator'),
   compressor: t('fleet.list.typeCompressor'),
   other: t('fleet.list.typeOther'),
+  EXCAVATOR: t('fleet.list.typeExcavator'),
+  CRANE: t('fleet.list.typeCrane'),
+  TRUCK: t('fleet.list.typeTruck'),
+  LOADER: t('fleet.list.typeLoader'),
+  BULLDOZER: t('fleet.list.typeBulldozer'),
+  CONCRETE_MIXER: t('fleet.list.typeConcreteMixer'),
+  GENERATOR: t('fleet.list.typeGenerator'),
+  COMPRESSOR: t('fleet.list.typeCompressor'),
+  OTHER: t('fleet.list.typeOther'),
 });
 
 type TabId = 'all' | 'IN_USE' | 'AVAILABLE' | 'MAINTENANCE';
@@ -150,9 +169,10 @@ const FleetListPage: React.FC = () => {
         accessorKey: 'status',
         header: t('fleet.list.colStatus'),
         size: 120,
-        cell: ({ getValue }) => (
-          <StatusBadge status={getValue<string>()} colorMap={vehicleStatusColorMap} label={vehicleStatusLabels[getValue<string>()]} />
-        ),
+        cell: ({ getValue }) => {
+          const s = getValue<string>();
+          return <StatusBadge status={s} colorMap={vehicleStatusColorMap} label={vehicleStatusLabels[s] ?? s} />;
+        },
       },
       {
         accessorKey: 'projectName',

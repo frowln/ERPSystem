@@ -65,6 +65,15 @@ export const portfolioApi = {
     return response.data;
   },
 
+  updateBidPackage: async (id: string, data: Partial<BidPackage>): Promise<BidPackage> => {
+    const response = await apiClient.put<BidPackage>(`/portfolio/bid-packages/${id}`, data);
+    return response.data;
+  },
+
+  deleteBidPackage: async (id: string): Promise<void> => {
+    await apiClient.delete(`/portfolio/bid-packages/${id}`);
+  },
+
   // Go/No-Go Checklist (Phase 0)
   updateGoNoGoChecklist: async (id: string, checklist: Record<string, boolean>, score: number): Promise<Opportunity> => {
     const response = await apiClient.patch<Opportunity>(`/portfolio/opportunities/${id}/checklist`, {

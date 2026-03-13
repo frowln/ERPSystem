@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -28,6 +29,7 @@ import java.util.UUID;
         @Index(name = "idx_ic_status", columnList = "status"),
         @Index(name = "idx_ic_name", columnList = "name")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder

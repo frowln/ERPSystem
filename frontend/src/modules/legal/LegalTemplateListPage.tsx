@@ -75,7 +75,7 @@ const LegalTemplateListPage: React.FC = () => {
 
   const metrics = useMemo(() => {
     const active = templates.filter((t) => t.status === 'ACTIVE').length;
-    const totalClauses = templates.reduce((s, t) => s + t.clauseCount, 0);
+    const totalClauses = templates.reduce((s, t) => s + (t.clauseCount ?? 0), 0);
     const categories = new Set(templates.map((t) => t.category)).size;
     return { total: templates.length, active, totalClauses, categories };
   }, [templates]);

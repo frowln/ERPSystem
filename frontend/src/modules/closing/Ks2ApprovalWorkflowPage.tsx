@@ -326,6 +326,7 @@ const Ks2ApprovalWorkflowPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('closing.approval.emptyTitle')}
         emptyDescription={t('closing.approval.emptyDescription')}
+        enableExport
       />
 
       {/* Approve / Reject Modal */}

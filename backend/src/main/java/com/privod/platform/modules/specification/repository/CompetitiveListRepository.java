@@ -15,6 +15,8 @@ public interface CompetitiveListRepository extends JpaRepository<CompetitiveList
 
     Page<CompetitiveList> findByProjectIdAndDeletedFalse(UUID projectId, Pageable pageable);
 
+    Page<CompetitiveList> findByOrganizationIdAndDeletedFalse(UUID organizationId, Pageable pageable);
+
     List<CompetitiveList> findBySpecificationIdAndDeletedFalse(UUID specificationId);
 
     Optional<CompetitiveList> findByIdAndDeletedFalse(UUID id);

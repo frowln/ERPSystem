@@ -71,4 +71,41 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
     @Query("SELECT i.status, COUNT(i) FROM Invoice i " +
             "WHERE i.projectId IN :projectIds AND i.deleted = false GROUP BY i.status")
     List<Object[]> countByStatusAndProjectIds(@Param("projectIds") List<UUID> projectIds);
+
+    @Query("SELECT COALESCE(SUM(i.totalAmount), 0) FROM Invoice i " +
+            "WHERE i.contractId = :contractId AND i.invoiceType = :type " +
+            "AND i.invoiceDate >= :from AND i.invoiceDate <= :to " +
+            "AND i.status NOT IN ('DRAFT', 'CANCELLED') AND i.deleted = false")
+    BigDecimal sumTotalByContractIdAndTypeAndDateRange(@Param("contractId") UUID contractId,
+                                                       @Param("type") InvoiceType type,
+                                                       @Param("from") java.time.LocalDate from,
+                                                       @Param("to") java.time.LocalDate to);
+
+    @Query("SELECT COALESCE(SUM(i.paidAmount), 0) FROM Invoice i " +
+            "WHERE i.contractId = :contractId AND i.invoiceType = :type " +
+            "AND i.invoiceDate >= :from AND i.invoiceDate <= :to " +
+            "AND i.deleted = false")
+    BigDecimal sumPaidByContractIdAndTypeAndDateRange(@Param("contractId") UUID contractId,
+                                                      @Param("type") InvoiceType type,
+                                                      @Param("from") java.time.LocalDate from,
+                                                      @Param("to") java.time.LocalDate to);
+
+    // P1-FIN-5: Tax declaration auto-calculation queries
+    @Query("SELECT COALESCE(SUM(i.vatAmount), 0) FROM Invoice i " +
+            "WHERE i.organizationId = :organizationId AND i.invoiceType = :type " +
+            "AND i.status = 'PAID' " +
+            "AND i.invoiceDate >= :from AND i.invoiceDate <= :to AND i.deleted = false")
+    BigDecimal sumVatAmountByOrgAndTypeAndDateRange(@Param("organizationId") UUID organizationId,
+                                                    @Param("type") InvoiceType type,
+                                                    @Param("from") java.time.LocalDate from,
+                                                    @Param("to") java.time.LocalDate to);
+
+    @Query("SELECT COALESCE(SUM(i.totalAmount), 0) FROM Invoice i " +
+            "WHERE i.organizationId = :organizationId AND i.invoiceType = :type " +
+            "AND i.status = 'PAID' " +
+            "AND i.invoiceDate >= :from AND i.invoiceDate <= :to AND i.deleted = false")
+    BigDecimal sumTotalAmountByOrgAndTypeAndDateRange(@Param("organizationId") UUID organizationId,
+                                                      @Param("type") InvoiceType type,
+                                                      @Param("from") java.time.LocalDate from,
+                                                      @Param("to") java.time.LocalDate to);
 }

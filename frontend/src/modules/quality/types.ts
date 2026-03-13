@@ -348,3 +348,48 @@ export interface ChecklistExecutionItem {
   notes?: string;
   photoUrls?: string[];
 }
+
+// --- Floor Plans (Pin-on-plan) ---
+
+export interface FloorPlan {
+  id: string;
+  projectId: string;
+  name: string;
+  code?: string;
+  floor?: string;
+  imageUrl: string;
+  defectCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type DefectOnPlanSeverity = 'MINOR' | 'MAJOR' | 'CRITICAL';
+export type DefectOnPlanStatus = 'OPEN' | 'IN_PROGRESS' | 'CLOSED';
+
+export interface DefectOnPlanEntry {
+  id: string;
+  number: number;
+  planId: string;
+  title: string;
+  description?: string;
+  severity: DefectOnPlanSeverity;
+  status: DefectOnPlanStatus;
+  assigneeId?: string;
+  assigneeName?: string;
+  dueDate?: string;
+  x: number;
+  y: number;
+  photoUrls?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateDefectOnPlanRequest {
+  title: string;
+  description?: string;
+  severity: DefectOnPlanSeverity;
+  assigneeId?: string;
+  dueDate?: string;
+  x: number;
+  y: number;
+}

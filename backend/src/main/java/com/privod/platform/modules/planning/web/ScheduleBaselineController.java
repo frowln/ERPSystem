@@ -3,6 +3,7 @@ package com.privod.platform.modules.planning.web;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.planning.service.ScheduleBaselineService;
+import com.privod.platform.modules.planning.web.dto.BaselineDiffResponse;
 import com.privod.platform.modules.planning.web.dto.CreateScheduleBaselineRequest;
 import com.privod.platform.modules.planning.web.dto.ScheduleBaselineResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,6 +59,17 @@ public class ScheduleBaselineController {
             @Valid @RequestBody CreateScheduleBaselineRequest request) {
         ScheduleBaselineResponse response = baselineService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
+    }
+
+    /**
+     * P2-PRJ-2: Compare baseline against current schedule state.
+     * Returns per-node deltas: startDate slip, endDate slip, ADDED/REMOVED/CHANGED status.
+     */
+    @GetMapping("/{id}/diff")
+    @Operation(summary = "Сравнение базового плана с текущим расписанием (P2-PRJ-2)")
+    public ResponseEntity<ApiResponse<BaselineDiffResponse>> diff(@PathVariable UUID id) {
+        BaselineDiffResponse response = baselineService.compareWithCurrent(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     @DeleteMapping("/{id}")

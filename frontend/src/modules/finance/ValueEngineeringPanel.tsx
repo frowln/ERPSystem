@@ -176,7 +176,7 @@ const ValueEngineeringPanel: React.FC<{ projectId: string }> = ({ projectId }) =
         </Button>
       </div>
 
-      <DataTable columns={columns} data={items} />
+      <DataTable columns={columns} data={items} enableExport />
 
       {/* Add/Edit Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t('finance.valueEngineering.editItem') : t('finance.valueEngineering.addItem')}>

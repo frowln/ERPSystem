@@ -24,6 +24,17 @@ public record PayrollCalculateRequest(
         BigDecimal overtimeHours,
 
         @DecimalMin(value = "0", message = "Количество рабочих часов не может быть отрицательным")
-        BigDecimal workedHours
+        BigDecimal workedHours,
+
+        // ст.154 ТК РФ — часы работы в ночное время (22:00–06:00) за расчётный период
+        @DecimalMin(value = "0", message = "Ночные часы не могут быть отрицательными")
+        BigDecimal nightHours,
+
+        // ст.153 ТК РФ — часы работы в праздничные и выходные дни за расчётный период
+        @DecimalMin(value = "0", message = "Праздничные/выходные часы не могут быть отрицательными")
+        BigDecimal holidayHours,
+
+        // P0-4: Budget.id проекта — при утверждении расчёта gross_pay пишется в BudgetItem(LABOR)
+        UUID budgetId
 ) {
 }

@@ -156,11 +156,11 @@ export default function SafetyComplianceDashboardPage() {
       )}
 
       {activeTab === 'blocks' && (
-        <DataTable columns={blockColumns} data={accessBlocks} loading={blocksLoading} />
+        <DataTable columns={blockColumns} data={accessBlocks} loading={blocksLoading} enableExport />
       )}
 
       {activeTab === 'prescriptions' && (
-        <DataTable columns={prescriptionColumns} data={prescriptions} loading={prescLoading} />
+        <DataTable columns={prescriptionColumns} data={prescriptions} loading={prescLoading} enableExport />
       )}
 
       <Modal open={showCheckModal} onClose={() => setShowCheckModal(false)} title={t('safetyCompliance.checkModalTitle')}>

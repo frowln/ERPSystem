@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+
+import com.privod.platform.infrastructure.finance.VatCalculator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,6 +33,7 @@ import java.util.UUID;
         @Index(name = "idx_contract_number", columnList = "number"),
         @Index(name = "idx_contract_planned_end", columnList = "planned_end_date")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -71,7 +75,7 @@ public class Contract extends BaseEntity {
 
     @Column(name = "vat_rate", precision = 5, scale = 2)
     @Builder.Default
-    private BigDecimal vatRate = new BigDecimal("20.00");
+    private BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
 
     @Column(name = "vat_amount", precision = 18, scale = 2)
     private BigDecimal vatAmount;
@@ -127,6 +131,10 @@ public class Contract extends BaseEntity {
 
     @Column(name = "budget_item_id")
     private UUID budgetItemId;
+
+    // P0-1: FK на КП, из которого создан договор (аудитный след КП→Договор)
+    @Column(name = "proposal_id")
+    private UUID proposalId;
 
     @Column(name = "prepayment_percent", precision = 5, scale = 2)
     @Builder.Default

@@ -230,6 +230,8 @@ const EstimateListPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('estimates.list.emptyTitle')}
         emptyDescription={t('estimates.list.emptyDescription')}
+        emptyActionLabel={t('estimates.list.emptyActionLabel')}
+        onEmptyAction={() => navigate('/estimates/new')}
       />
 
       <EstimateImportWizard open={importWizardOpen} onClose={() => setImportWizardOpen(false)} />

@@ -22,11 +22,20 @@ import type {
   PortalContract,
   PortalContractStatus,
   PortalScheduleItem,
+  PortalDailyReport,
+  PortalDefect,
+  PortalRfi,
+  PortalRfiResponse,
+  PortalPhotoReport,
+  PortalDocumentSignature,
 } from '@/modules/portal/types';
 
 export interface PortalFilters extends PaginationParams {
   search?: string;
   projectId?: string;
+  status?: string;
+  category?: string;
+  priority?: string;
 }
 
 export const portalApi = {
@@ -193,6 +202,89 @@ export const portalApi = {
   // Portal Schedule
   getSchedule: async (params?: { size?: number }): Promise<PaginatedResponse<PortalScheduleItem>> => {
     const response = await apiClient.get<PaginatedResponse<PortalScheduleItem>>('/portal/schedule', { params });
+    return response.data;
+  },
+
+  // Portal Daily Reports
+  getDailyReports: async (params?: PortalFilters): Promise<PaginatedResponse<PortalDailyReport>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalDailyReport>>('/portal/daily-reports', { params });
+    return response.data;
+  },
+
+  createDailyReport: async (data: Partial<PortalDailyReport>): Promise<PortalDailyReport> => {
+    const response = await apiClient.post<PortalDailyReport>('/portal/daily-reports', data);
+    return response.data;
+  },
+
+  submitDailyReport: async (id: string): Promise<PortalDailyReport> => {
+    const response = await apiClient.post<PortalDailyReport>(`/portal/daily-reports/${id}/submit`);
+    return response.data;
+  },
+
+  deleteDailyReport: async (id: string): Promise<void> => {
+    await apiClient.delete(`/portal/daily-reports/${id}`);
+  },
+
+  // Portal Defects
+  getDefects: async (params?: PortalFilters): Promise<PaginatedResponse<PortalDefect>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalDefect>>('/portal/defects', { params });
+    return response.data;
+  },
+
+  createDefect: async (data: Partial<PortalDefect>): Promise<PortalDefect> => {
+    const response = await apiClient.post<PortalDefect>('/portal/defects', data);
+    return response.data;
+  },
+
+  // Portal RFI
+  getRfis: async (params?: PortalFilters): Promise<PaginatedResponse<PortalRfi>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalRfi>>('/portal/rfis', { params });
+    return response.data;
+  },
+
+  createRfi: async (data: Partial<PortalRfi>): Promise<PortalRfi> => {
+    const response = await apiClient.post<PortalRfi>('/portal/rfis', data);
+    return response.data;
+  },
+
+  getRfiResponses: async (rfiId: string): Promise<PortalRfiResponse[]> => {
+    const response = await apiClient.get<PortalRfiResponse[]>(`/portal/rfis/${rfiId}/responses`);
+    return response.data;
+  },
+
+  addRfiResponse: async (rfiId: string, data: { response: string }): Promise<PortalRfiResponse> => {
+    const response = await apiClient.post<PortalRfiResponse>(`/portal/rfis/${rfiId}/responses`, data);
+    return response.data;
+  },
+
+  // Portal Photos
+  getPhotos: async (params?: PortalFilters): Promise<PaginatedResponse<PortalPhotoReport>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalPhotoReport>>('/portal/photos', { params });
+    return response.data;
+  },
+
+  uploadPhoto: async (data: FormData | Record<string, unknown>): Promise<PortalPhotoReport> => {
+    const response = await apiClient.post<PortalPhotoReport>('/portal/photos', data);
+    return response.data;
+  },
+
+  deletePhoto: async (id: string): Promise<void> => {
+    await apiClient.delete(`/portal/photos/${id}`);
+  },
+
+  // Portal Signatures
+  getSignatures: async (params?: PortalFilters): Promise<PaginatedResponse<PortalDocumentSignature>> => {
+    const response = await apiClient.get<PaginatedResponse<PortalDocumentSignature>>('/portal/signatures', { params });
+    return response.data;
+  },
+
+  signDocument: async (id: string): Promise<PortalDocumentSignature> => {
+    const response = await apiClient.post<PortalDocumentSignature>(`/portal/signatures/${id}/sign`);
+    return response.data;
+  },
+
+  rejectSignature: async (id: string, reason: string): Promise<PortalDocumentSignature> => {
+    const response = await apiClient.post<PortalDocumentSignature>(`/portal/signatures/${id}/reject`, { reason });
     return response.data;
   },
 };

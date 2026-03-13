@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+
+import com.privod.platform.infrastructure.finance.VatCalculator;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,6 +30,7 @@ import java.util.UUID;
         @Index(name = "idx_invoice_status", columnList = "status"),
         @Index(name = "idx_invoice_number", columnList = "number", unique = true)
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -80,7 +84,7 @@ public class Invoice extends BaseEntity {
 
     @Column(name = "vat_rate", precision = 5, scale = 2)
     @Builder.Default
-    private BigDecimal vatRate = new BigDecimal("20.00");
+    private BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
 
     @Column(name = "vat_amount", precision = 18, scale = 2)
     private BigDecimal vatAmount;
@@ -120,6 +124,10 @@ public class Invoice extends BaseEntity {
 
     @Column(name = "matching_confidence", precision = 5, scale = 2)
     private BigDecimal matchingConfidence;
+
+    // P1-CHN-1: FK на строку ФМ (BudgetItem) — закрывает разрыв Счёт↔ФМ
+    @Column(name = "budget_item_id")
+    private UUID budgetItemId;
 
     public boolean isOverdue() {
         if (dueDate == null) {

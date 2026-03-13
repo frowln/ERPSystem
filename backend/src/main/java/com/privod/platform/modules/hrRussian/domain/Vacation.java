@@ -12,7 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -21,12 +23,16 @@ import java.util.UUID;
         @Index(name = "idx_vacation_employee", columnList = "employee_id"),
         @Index(name = "idx_vacation_status", columnList = "status")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vacation extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
@@ -54,6 +60,19 @@ public class Vacation extends BaseEntity {
 
     @Column(name = "substituting_employee_id")
     private UUID substitutingEmployeeId;
+
+    // ст.139 ТК РФ — расчёт отпускных
+    // Сумма начислений за 12 календарных месяцев, предшествующих отпуску
+    @Column(name = "annual_earnings", precision = 18, scale = 2)
+    private BigDecimal annualEarnings;
+
+    // Средний дневной заработок = annual_earnings / (12 × 29.3)
+    @Column(name = "average_daily_earnings", precision = 18, scale = 4)
+    private BigDecimal averageDailyEarnings;
+
+    // Отпускные = averageDailyEarnings × daysCount
+    @Column(name = "vacation_pay", precision = 18, scale = 2)
+    private BigDecimal vacationPay;
 
     public boolean isActive() {
         LocalDate today = LocalDate.now();

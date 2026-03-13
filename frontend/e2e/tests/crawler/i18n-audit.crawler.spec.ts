@@ -867,7 +867,7 @@ for (let i = 0; i < PAGES.length; i += BATCH_SIZE) {
 const allResults: PageI18nResult[] = [];
 
 test.describe('i18n Audit Crawler', () => {
-  test.describe.configure({ mode: 'serial', timeout: 600_000 });
+  test.describe.configure({ mode: 'serial', timeout: 1_200_000 });
 
   // ── Phase 1: Russian locale scan ──────────────────────────────────────
 

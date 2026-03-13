@@ -1,5 +1,6 @@
 package com.privod.platform.modules.planning.web;
 
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.planning.service.EvmSnapshotService;
@@ -8,6 +9,7 @@ import com.privod.platform.modules.planning.web.dto.EvmSnapshotResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -86,6 +88,20 @@ public class EvmSnapshotController {
     public ResponseEntity<ApiResponse<EvmSnapshotResponse>> create(
             @Valid @RequestBody CreateEvmSnapshotRequest request) {
         EvmSnapshotResponse response = evmSnapshotService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
+    }
+
+    /**
+     * P0-CHN-6: Авто-снимок EVM из реальных данных задач и платежей проекта.
+     * POST /api/evm-snapshots/auto?projectId={uuid}
+     */
+    @PostMapping("/auto")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
+    @Operation(summary = "Авто-создать EVM снимок из реальных данных задач и платежей")
+    public ResponseEntity<ApiResponse<EvmSnapshotResponse>> autoCreate(
+            @RequestParam @NotNull UUID projectId) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        EvmSnapshotResponse response = evmSnapshotService.autoSnapshot(projectId, organizationId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(response));
     }
 

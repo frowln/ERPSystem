@@ -65,7 +65,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         type={type}
         className={cn(
-          'w-full h-9 px-3 text-sm bg-white dark:bg-neutral-800 dark:text-neutral-100 border rounded-lg transition-colors duration-150',
+          'w-full h-9 px-3 text-sm bg-white dark:bg-neutral-800 dark:text-neutral-100 border rounded-lg transition-colors duration-150 min-h-[44px] sm:min-h-0',
           'placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
           'focus:outline-none focus:ring-2 focus:ring-offset-0',
           hasError
@@ -128,7 +128,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       <select
         ref={ref}
         className={cn(
-          'w-full h-9 px-3 text-sm bg-white dark:bg-neutral-800 dark:text-neutral-100 border rounded-lg appearance-none transition-colors duration-150',
+          'w-full h-9 px-3 text-sm bg-white dark:bg-neutral-800 dark:text-neutral-100 border rounded-lg appearance-none transition-colors duration-150 min-h-[44px] sm:min-h-0',
           'focus:outline-none focus:ring-2 focus:ring-offset-0',
           'bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E")] bg-[length:16px] bg-[right_8px_center] bg-no-repeat pr-8',
           hasError
@@ -164,7 +164,7 @@ interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, label, id, ...props }, ref) => {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 min-h-[44px] sm:min-h-0">
         <input
           ref={ref}
           type="checkbox"
@@ -176,7 +176,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           {...props}
         />
         {label && (
-          <label htmlFor={id} className="text-sm text-neutral-700 dark:text-neutral-300 cursor-pointer select-none">
+          <label htmlFor={id} className="text-sm text-neutral-700 dark:text-neutral-300 cursor-pointer select-none py-2 sm:py-0">
             {label}
           </label>
         )}

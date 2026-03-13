@@ -68,4 +68,18 @@ public class ApprovalStep {
     @Version
     @Column(name = "version")
     private Long version;
+
+    // P1-DOC-1: SLA дедлайны согласования
+    @Column(name = "sla_hours")
+    private Integer slaHours;
+
+    @Column(name = "deadline")
+    private Instant deadline;
+
+    @Column(name = "is_overdue", nullable = false)
+    @Builder.Default
+    private boolean isOverdue = false;
+
+    @Column(name = "escalated_at")
+    private Instant escalatedAt;
 }

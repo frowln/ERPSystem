@@ -45,6 +45,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/invoices")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 @Tag(name = "Invoices", description = "Invoice management endpoints")
 public class InvoiceController {
 

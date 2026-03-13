@@ -40,5 +40,7 @@ public class CreateApprovalChainRequest {
         @NotBlank
         private String approverName;
         private String approverRole;
+        /** P1-DOC-1: Максимальное время на согласование в часах. */
+        private Integer slaHours;
     }
 }

@@ -9,3 +9,5 @@ export { default as ChecklistTemplatesPage } from './ChecklistTemplatesPage';
 export { default as DefectRegisterPage } from './DefectRegisterPage';
 export { default as DefectParetoPage } from './DefectParetoPage';
 export { default as AuthorSupervisionJournalPage } from './AuthorSupervisionJournalPage';
+export { default as DefectPlanViewPage } from './DefectPlanViewPage';
+export { DefectPinCreateModal } from './DefectPinCreateModal';

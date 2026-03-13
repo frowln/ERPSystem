@@ -102,32 +102,32 @@ export function DataTableToolbar<T>({
                 if (!nextId) { setActiveViewId(null); return; }
                 applySavedView(nextId);
               }}
-              className="h-7 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-2 text-xs text-neutral-600 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900 focus:border-primary-300"
+              className="h-7 min-h-[44px] sm:min-h-0 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-2 text-xs text-neutral-600 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900 focus:border-primary-300"
             >
               <option value="">{t('table.currentView')}</option>
               {savedViews.map((view) => (
                 <option key={view.id} value={view.id}>{view.name}</option>
               ))}
             </select>
-            <button onClick={saveCurrentView} aria-label={t('table.saveCurrentView')} title={t('table.saveCurrentView')} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
+            <button onClick={saveCurrentView} aria-label={t('table.saveCurrentView')} title={t('table.saveCurrentView')} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
               <BookmarkPlus size={15} />
             </button>
-            <button onClick={deleteActiveView} aria-label={t('table.deleteSavedView')} title={t('table.deleteSavedView')} disabled={!activeViewId} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md disabled:opacity-30 disabled:pointer-events-none transition-colors">
+            <button onClick={deleteActiveView} aria-label={t('table.deleteSavedView')} title={t('table.deleteSavedView')} disabled={!activeViewId} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md disabled:opacity-30 disabled:pointer-events-none transition-colors">
               <Trash2 size={15} />
             </button>
-            <button onClick={resetView} aria-label={t('table.resetView')} title={t('table.resetView')} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
+            <button onClick={resetView} aria-label={t('table.resetView')} title={t('table.resetView')} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
               <RotateCcw size={15} />
             </button>
           </div>
         )}
         {enableDensityToggle && (
-          <button onClick={cycleDensity} aria-label={t('table.changeDensity')} title={t('table.changeDensity')} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
+          <button onClick={cycleDensity} aria-label={t('table.changeDensity')} title={t('table.changeDensity')} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
             <Rows3 size={15} />
           </button>
         )}
         {enableColumnVisibility && (
           <div className="relative">
-            <button onClick={() => setShowColumnPicker(!showColumnPicker)} aria-label={showColumnPicker ? t('table.hideColumnPicker') : t('table.showColumnPicker')} title={t('table.columns')} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
+            <button onClick={() => setShowColumnPicker(!showColumnPicker)} aria-label={showColumnPicker ? t('table.hideColumnPicker') : t('table.showColumnPicker')} title={t('table.columns')} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
               <Columns3 size={15} />
             </button>
             {showColumnPicker && (
@@ -144,7 +144,7 @@ export function DataTableToolbar<T>({
           </div>
         )}
         {enableExport && (
-          <button onClick={handleExportCSV} aria-label={t('table.exportCsv')} title={t('table.exportCsv')} className="p-1.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
+          <button onClick={handleExportCSV} aria-label={t('table.exportCsv')} title={t('table.exportCsv')} className="p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 inline-flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors">
             <Download size={15} />
           </button>
         )}

@@ -4,8 +4,10 @@ import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.safety.domain.PpeIssue;
 import com.privod.platform.modules.safety.domain.PpeItem;
+import com.privod.platform.modules.safety.domain.PpeNorm;
 import com.privod.platform.modules.safety.repository.PpeIssueRepository;
 import com.privod.platform.modules.safety.repository.PpeItemRepository;
+import com.privod.platform.modules.safety.repository.PpeNormRepository;
 import com.privod.platform.modules.safety.web.dto.CreatePpeIssueRequest;
 import com.privod.platform.modules.safety.web.dto.PpeIssueResponse;
 import com.privod.platform.modules.safety.web.dto.PpeItemResponse;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,6 +31,7 @@ public class SafetyPpeService {
 
     private final PpeItemRepository ppeItemRepository;
     private final PpeIssueRepository ppeIssueRepository;
+    private final PpeNormRepository ppeNormRepository;
     private final AuditService auditService;
 
     // ---- Inventory ----
@@ -70,6 +75,38 @@ public class SafetyPpeService {
         item.setAvailableQuantity(item.getAvailableQuantity() - request.quantity());
         ppeItemRepository.save(item);
 
+        // P1-SAF-2: Check PpeNorm compliance if jobTitle provided
+        String normWarning = null;
+        if (request.jobTitle() != null && !request.jobTitle().isBlank()) {
+            List<PpeNorm> norms = ppeNormRepository.findByOrganizationIdAndJobTitleIgnoreCaseAndDeletedFalse(
+                    organizationId, request.jobTitle());
+            String itemNameLower = item.getName().toLowerCase();
+            for (PpeNorm norm : norms) {
+                if (norm.getPpeName() != null && itemNameLower.contains(norm.getPpeName().toLowerCase())) {
+                    if (norm.getAnnualQty() != null && norm.getAnnualQty() > 0) {
+                        LocalDate yearStart = LocalDate.of(request.issuedDate().getYear(), 1, 1);
+                        LocalDate yearEnd = LocalDate.of(request.issuedDate().getYear(), 12, 31);
+                        Integer alreadyIssued = ppeIssueRepository.sumQuantityByEmployeeAndItemInPeriod(
+                                organizationId, request.employeeId(), request.itemId(), yearStart, yearEnd);
+                        int total = (alreadyIssued != null ? alreadyIssued : 0) + request.quantity();
+                        if (total > norm.getAnnualQty()) {
+                            normWarning = String.format(
+                                    "Превышение нормы выдачи: %s для должности '%s' — норма %d шт./год, уже выдано %d, запрошено %d",
+                                    item.getName(), request.jobTitle(), norm.getAnnualQty(),
+                                    (alreadyIssued != null ? alreadyIssued : 0), request.quantity());
+                            log.warn("PPE norm exceeded: {}", normWarning);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        String issueNotes = request.notes();
+        if (normWarning != null) {
+            issueNotes = (issueNotes != null ? issueNotes + " | " : "") + "[НОРМА ПРЕВЫШЕНА] " + normWarning;
+        }
+
         PpeIssue issue = PpeIssue.builder()
                 .organizationId(organizationId)
                 .itemId(request.itemId())
@@ -78,7 +115,7 @@ public class SafetyPpeService {
                 .employeeName(request.employeeName())
                 .quantity(request.quantity())
                 .issuedDate(request.issuedDate())
-                .notes(request.notes())
+                .notes(issueNotes)
                 .build();
 
         issue = ppeIssueRepository.save(issue);

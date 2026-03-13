@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.util.UUID;
 
@@ -21,12 +22,16 @@ import java.util.UUID;
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uk_ks3_ks2", columnNames = {"ks3_id", "ks2_id"})
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ks3Ks2Link extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "ks3_id", nullable = false)
     private UUID ks3Id;

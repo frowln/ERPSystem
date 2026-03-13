@@ -45,4 +45,14 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, UUID> {
             @Param("projectId") UUID projectId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    // P0-3: Агрегация сверхурочных часов для автозаполнения PayrollCalculateRequest
+    @Query("SELECT COALESCE(SUM(t.overtimeHours), 0) FROM Timesheet t " +
+            "WHERE t.employeeId = :employeeId AND t.workDate BETWEEN :startDate AND :endDate " +
+            "AND t.status = :status AND t.deleted = false")
+    BigDecimal sumOvertimeHoursByEmployeeAndDateRange(
+            @Param("employeeId") UUID employeeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") TimesheetStatus status);
 }

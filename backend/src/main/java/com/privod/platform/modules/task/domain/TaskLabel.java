@@ -2,6 +2,7 @@ package com.privod.platform.modules.task.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import java.util.UUID;
 @Table(name = "task_labels", indexes = {
     @Index(name = "idx_task_label_org", columnList = "organization_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class TaskLabel {
     @Id

@@ -400,7 +400,7 @@ export default function ApprovalConfigPage() {
           </Button>
         </div>
       ) : (
-        <DataTable columns={columns} data={filtered} />
+        <DataTable columns={columns} data={filtered} enableExport />
       )}
 
       {/* Create / Edit modal */}

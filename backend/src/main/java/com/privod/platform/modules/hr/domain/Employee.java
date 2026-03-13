@@ -1,7 +1,10 @@
 package com.privod.platform.modules.hr.domain;
 
 import com.privod.platform.infrastructure.persistence.BaseEntity;
+import com.privod.platform.infrastructure.security.EncryptedFieldConverter;
+import com.privod.platform.infrastructure.validation.ValidSnils;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,6 +28,7 @@ import java.util.UUID;
         @Index(name = "idx_employee_status", columnList = "status"),
         @Index(name = "idx_employee_number", columnList = "employee_number", unique = true)
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -69,19 +74,25 @@ public class Employee extends BaseEntity {
     @Builder.Default
     private EmployeeStatus status = EmployeeStatus.ACTIVE;
 
-    @Column(name = "phone", length = 50)
+    @Convert(converter = EncryptedFieldConverter.class)
+    @Column(name = "phone", columnDefinition = "TEXT")
     private String phone;
 
-    @Column(name = "email", length = 255)
+    @Convert(converter = EncryptedFieldConverter.class)
+    @Column(name = "email", columnDefinition = "TEXT")
     private String email;
 
-    @Column(name = "passport_number", length = 20)
+    @Convert(converter = EncryptedFieldConverter.class)
+    @Column(name = "passport_number", columnDefinition = "TEXT")
     private String passportNumber;
 
-    @Column(name = "inn", length = 12)
+    @Convert(converter = EncryptedFieldConverter.class)
+    @Column(name = "inn", columnDefinition = "TEXT")
     private String inn;
 
-    @Column(name = "snils", length = 14)
+    @ValidSnils
+    @Convert(converter = EncryptedFieldConverter.class)
+    @Column(name = "snils", columnDefinition = "TEXT")
     private String snils;
 
     @Column(name = "hourly_rate", precision = 10, scale = 2)

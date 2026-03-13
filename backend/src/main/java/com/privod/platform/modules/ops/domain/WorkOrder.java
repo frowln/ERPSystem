@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.UUID;
         @Index(name = "idx_wo_planned_start", columnList = "planned_start"),
         @Index(name = "idx_wo_code", columnList = "code")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -85,6 +87,11 @@ public class WorkOrder extends BaseEntity {
     @Column(name = "completion_percent", nullable = false)
     @Builder.Default
     private Integer completionPercent = 0;
+
+    // P0-5: FK на задачу (ProjectTask), из которой создан или с которой связан наряд.
+    // Закрывает разрыв Task↔WorkOrder — теперь можно отследить Задача→Наряд→Рапорт.
+    @Column(name = "task_id")
+    private UUID taskId;
 
     public boolean canTransitionTo(WorkOrderStatus newStatus) {
         return this.status.canTransitionTo(newStatus);

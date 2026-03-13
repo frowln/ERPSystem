@@ -55,7 +55,8 @@ public class ClientClaimController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Получить заявку по ID с историей действий")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER')")
+    @Operation(summary = "Получить заявку по ID с историей действий (внутренний просмотр, содержит internalNotes)")
     public ResponseEntity<ApiResponse<ClientClaimDetailResponse>> getById(@PathVariable UUID id) {
         ClientClaimDetailResponse response = claimService.getClaim(id);
         return ResponseEntity.ok(ApiResponse.ok(response));

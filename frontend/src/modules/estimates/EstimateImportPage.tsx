@@ -272,6 +272,7 @@ const EstimateImportPage: React.FC = () => {
           pageSize={10}
           emptyTitle={t('estimates.advancedImport.historyEmpty')}
           emptyDescription={t('estimates.advancedImport.historyEmptyDesc')}
+          enableExport
         />
       </div>
 

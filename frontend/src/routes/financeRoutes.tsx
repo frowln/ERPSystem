@@ -86,8 +86,10 @@ const PayrollCalculationPage = lazy(() => import('@/modules/payroll/PayrollCalcu
 // Self-Employed
 const SelfEmployedContractorListPage = lazy(() => import('@/modules/selfEmployed/ContractorListPage'));
 const SelfEmployedContractorFormPage = lazy(() => import('@/modules/selfEmployed/ContractorFormPage'));
+const SelfEmployedDetailPage = lazy(() => import('@/modules/selfEmployed/SelfEmployedDetailPage'));
 const SelfEmployedPaymentListPage = lazy(() => import('@/modules/selfEmployed/PaymentListPage'));
 const SelfEmployedRegistryListPage = lazy(() => import('@/modules/selfEmployed/RegistryListPage'));
+const CompletionActFormPage = lazy(() => import('@/modules/selfEmployed/CompletionActFormPage'));
 
 // Tax Risk
 const TaxRiskListPage = lazy(() => import('@/modules/taxRisk/TaxRiskListPage'));
@@ -236,8 +238,12 @@ export function financeRoutes() {
 
       {/* Self-Employed */}
       <Route path="self-employed" element={<SelfEmployedContractorListPage />} />
+      <Route path="self-employed/new" element={<SelfEmployedContractorFormPage />} />
+      <Route path="self-employed/:id" element={<SelfEmployedDetailPage />} />
+      <Route path="self-employed/:id/edit" element={<SelfEmployedContractorFormPage />} />
       <Route path="self-employed/contractors/new" element={<SelfEmployedContractorFormPage />} />
       <Route path="self-employed/contractors/:id/edit" element={<SelfEmployedContractorFormPage />} />
+      <Route path="self-employed/acts/new" element={<CompletionActFormPage />} />
       <Route path="self-employed/payments" element={<SelfEmployedPaymentListPage />} />
       <Route path="self-employed/registries" element={<SelfEmployedRegistryListPage />} />
 

@@ -32,6 +32,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const location = useLocation();
 
   if (!isAuthenticated) {
+    // Deep-link preserved via router state={{ from: location }} — LoginPage reads location.state.from
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

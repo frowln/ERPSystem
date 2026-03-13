@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ import java.util.UUID;
         @Index(name = "idx_po_status", columnList = "status"),
         @Index(name = "idx_po_number", columnList = "order_number")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -91,6 +93,10 @@ public class PurchaseOrder extends BaseEntity {
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    /** FK на статью бюджета для контроля лимита при создании ЗаказаПоставщику (P0-WAR-2). */
+    @Column(name = "budget_item_id")
+    private UUID budgetItemId;
 
     public boolean canTransitionTo(PurchaseOrderStatus newStatus) {
         return this.status.canTransitionTo(newStatus);

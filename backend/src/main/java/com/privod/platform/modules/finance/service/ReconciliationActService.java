@@ -1,8 +1,10 @@
 package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.modules.finance.domain.InvoiceType;
 import com.privod.platform.modules.finance.domain.ReconciliationAct;
 import com.privod.platform.modules.finance.domain.ReconciliationActStatus;
+import com.privod.platform.modules.finance.repository.InvoiceRepository;
 import com.privod.platform.modules.finance.repository.ReconciliationActRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class ReconciliationActService {
 
     private final ReconciliationActRepository actRepository;
+    private final InvoiceRepository invoiceRepository;
     private final AuditService auditService;
 
     @Transactional(readOnly = true)
@@ -149,6 +152,49 @@ public class ReconciliationActService {
         actRepository.save(act);
         auditService.logDelete("ReconciliationAct", id);
         log.info("Reconciliation act deleted: {} ({})", act.getActNumber(), id);
+    }
+
+    /**
+     * P0-FIN-5: Auto-generate ReconciliationAct from invoices for a contract/period (402-ФЗ).
+     * ourDebit   = sum of ISSUED invoices (выставленные нами)
+     * ourCredit  = sum of paid amounts on RECEIVED invoices (оплаченные нами)
+     * Idempotent: always creates a new DRAFT act; existing acts are not modified.
+     */
+    @Transactional
+    public ReconciliationAct generateFromInvoices(UUID contractId, UUID counterpartyId,
+                                                   LocalDate periodStart, LocalDate periodEnd) {
+        if (contractId == null) {
+            throw new IllegalArgumentException("contractId обязателен для авто-генерации акта сверки");
+        }
+
+        BigDecimal ourDebit = invoiceRepository.sumTotalByContractIdAndTypeAndDateRange(
+                contractId, InvoiceType.ISSUED, periodStart, periodEnd);
+        BigDecimal ourCredit = invoiceRepository.sumPaidByContractIdAndTypeAndDateRange(
+                contractId, InvoiceType.RECEIVED, periodStart, periodEnd);
+
+        String actNumber = "ACT-SVER-" + java.time.LocalDate.now()
+                + "-" + contractId.toString().substring(0, 8).toUpperCase();
+
+        ReconciliationAct act = ReconciliationAct.builder()
+                .actNumber(actNumber)
+                .contractId(contractId)
+                .counterpartyId(counterpartyId)
+                .periodStart(periodStart)
+                .periodEnd(periodEnd)
+                .ourDebit(ourDebit != null ? ourDebit : BigDecimal.ZERO)
+                .ourCredit(ourCredit != null ? ourCredit : BigDecimal.ZERO)
+                .counterpartyDebit(BigDecimal.ZERO)
+                .counterpartyCredit(BigDecimal.ZERO)
+                .status(ReconciliationActStatus.DRAFT)
+                .notes("Авто-сгенерирован из счетов за период " + periodStart + " — " + periodEnd)
+                .build();
+
+        calculateBalances(act);
+        act = actRepository.save(act);
+        auditService.logCreate("ReconciliationAct", act.getId());
+        log.info("ReconciliationAct auto-generated: {} contract={} period={}—{} ourDebit={} ourCredit={}",
+                act.getActNumber(), contractId, periodStart, periodEnd, act.getOurDebit(), act.getOurCredit());
+        return act;
     }
 
     private void calculateBalances(ReconciliationAct act) {

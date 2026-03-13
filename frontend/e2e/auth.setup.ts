@@ -58,6 +58,37 @@ setup('authenticate as admin user', async ({ page }) => {
     return Boolean(token);
   }, { timeout: 20_000 }).toBe(true);
 
+  // Accept cookie consent if present
+  const cookieAcceptBtn = page.getByRole('button', { name: /accept|принять/i });
+  if (await cookieAcceptBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await cookieAcceptBtn.click();
+  }
+
+  // Dismiss onboarding overlay if present
+  const onboardingSkipBtn = page.locator('dialog button, [role="dialog"] button').filter({ hasText: /пропустить|skip/i }).first();
+  if (await onboardingSkipBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await onboardingSkipBtn.click();
+    await page.waitForTimeout(500);
+  }
+
+  // Mark onboarding and cookie consent as completed in localStorage
+  await page.evaluate(() => {
+    localStorage.setItem('privod-onboarding', JSON.stringify({
+      state: {
+        dismissed: true,
+        steps: [
+          { id: 'view-projects', completed: true },
+          { id: 'create-task', completed: true },
+          { id: 'explore-documents', completed: true },
+          { id: 'check-analytics', completed: true },
+        ],
+        hasCompletedOnboarding: true,
+      },
+      version: 0,
+    }));
+    localStorage.setItem('privod-cookie-consent', 'accepted');
+  });
+
   // Save the storage state (localStorage + cookies)
   await page.context().storageState({ path: authFile });
 });

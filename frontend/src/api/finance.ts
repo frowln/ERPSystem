@@ -711,7 +711,12 @@ export const financeApi = {
 
   // Competitive List Registry
   getAllCompetitiveLists: async (params?: { projectId?: string; status?: string }): Promise<CompetitiveList[]> => {
-    const response = await apiClient.get<CompetitiveList[]>('/competitive-lists', { params });
-    return response.data;
+    const response = await apiClient.get<{ content: CompetitiveList[] } | CompetitiveList[]>('/competitive-lists', { params });
+    const data = response.data;
+    // Backend returns PageResponse with content array
+    if (data && typeof data === 'object' && 'content' in data && Array.isArray((data as { content: CompetitiveList[] }).content)) {
+      return (data as { content: CompetitiveList[] }).content;
+    }
+    return Array.isArray(data) ? data : [];
   },
 };

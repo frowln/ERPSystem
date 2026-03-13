@@ -25,6 +25,8 @@ import com.privod.platform.modules.procurementExt.web.dto.DeliveryResponse;
 import com.privod.platform.modules.procurementExt.web.dto.DispatchItemResponse;
 import com.privod.platform.modules.procurementExt.web.dto.DispatchOrderResponse;
 import com.privod.platform.modules.procurementExt.web.dto.SupplierRatingResponse;
+import com.privod.platform.modules.warehouse.service.StockMovementService;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,6 +54,7 @@ public class ProcurementExtService {
     private final MaterialReservationRepository materialReservationRepository;
     private final SupplierRatingRepository supplierRatingRepository;
     private final AuditService auditService;
+    private final StockMovementService stockMovementService;
 
     // ========================================================================
     // Deliveries
@@ -169,6 +173,22 @@ public class ProcurementExtService {
 
         d = deliveryRepository.save(d);
         auditService.logStatusChange("Delivery", d.getId(), oldStatus.name(), targetStatus.name());
+
+        // P1-WAR-3: Авто-создание приходного ордера при поступлении доставки
+        if (targetStatus == DeliveryStatus.DELIVERED) {
+            List<DeliveryItem> deliveryItems = deliveryItemRepository.findByDeliveryIdAndDeletedFalse(id);
+            if (!deliveryItems.isEmpty()) {
+                try {
+                    List<UUID> materialIds = deliveryItems.stream().map(DeliveryItem::getMaterialId).toList();
+                    List<BigDecimal> quantities = deliveryItems.stream().map(DeliveryItem::getQuantity).toList();
+                    List<String> units = deliveryItems.stream().map(DeliveryItem::getUnit).toList();
+                    UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+                    stockMovementService.createAutoReceiptFromDelivery(id, orgId, materialIds, quantities, units);
+                } catch (Exception ex) {
+                    log.warn("Не удалось авто-создать приходный ордер из доставки {}: {}", id, ex.getMessage());
+                }
+            }
+        }
 
         log.info("Доставка {} переведена: {} -> {}", d.getId(), oldStatus, targetStatus);
         List<DeliveryItemResponse> items = deliveryItemRepository.findByDeliveryIdAndDeletedFalse(id)

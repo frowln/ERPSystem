@@ -278,6 +278,7 @@ const PortalTaskListPage: React.FC = () => {
         data={tasks}
         loading={isLoading}
         enableSavedViews
+        enableExport
       />
 
       {/* Create Task Modal */}

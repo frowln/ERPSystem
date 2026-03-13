@@ -44,6 +44,15 @@ import java.util.UUID;
 @Slf4j
 public class CompetitiveListService {
 
+    /** Scoring weight for unit price criterion (out of 100). */
+    private static final BigDecimal WEIGHT_PRICE = new BigDecimal("50");
+    /** Scoring weight for delivery time criterion (out of 100). */
+    private static final BigDecimal WEIGHT_DELIVERY = new BigDecimal("25");
+    /** Scoring weight for warranty duration criterion (out of 100). */
+    private static final BigDecimal WEIGHT_WARRANTY = new BigDecimal("15");
+    /** Scoring weight for payment terms criterion (out of 100). */
+    private static final BigDecimal WEIGHT_PAYMENT = new BigDecimal("10");
+
     private final CompetitiveListRepository competitiveListRepository;
     private final CompetitiveListEntryRepository competitiveListEntryRepository;
     private final SpecificationRepository specificationRepository;
@@ -55,7 +64,12 @@ public class CompetitiveListService {
 
     @Transactional(readOnly = true)
     public Page<CompetitiveListResponse> list(UUID projectId, Pageable pageable) {
-        return competitiveListRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+        if (projectId != null) {
+            return competitiveListRepository.findByProjectIdAndDeletedFalse(projectId, pageable)
+                    .map(CompetitiveListResponse::fromEntity);
+        }
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return competitiveListRepository.findByOrganizationIdAndDeletedFalse(organizationId, pageable)
                 .map(CompetitiveListResponse::fromEntity);
     }
 
@@ -417,9 +431,9 @@ public class CompetitiveListService {
                 if (maxPrice.compareTo(minPrice) != 0) {
                     priceScore = maxPrice.subtract(entry.getUnitPrice())
                             .divide(maxPrice.subtract(minPrice), 4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("50"));
+                            .multiply(WEIGHT_PRICE);
                 } else {
-                    priceScore = new BigDecimal("50");
+                    priceScore = WEIGHT_PRICE;
                 }
 
                 BigDecimal deliveryScore = BigDecimal.ZERO;
@@ -427,9 +441,9 @@ public class CompetitiveListService {
                 if (maxDays > minDays) {
                     deliveryScore = BigDecimal.valueOf(maxDays - days)
                             .divide(BigDecimal.valueOf(maxDays - minDays), 4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("25"));
+                            .multiply(WEIGHT_DELIVERY);
                 } else {
-                    deliveryScore = new BigDecimal("25");
+                    deliveryScore = WEIGHT_DELIVERY;
                 }
 
                 BigDecimal warrantyScore = BigDecimal.ZERO;
@@ -437,15 +451,15 @@ public class CompetitiveListService {
                 if (maxWarranty > 0) {
                     warrantyScore = BigDecimal.valueOf(warranty)
                             .divide(BigDecimal.valueOf(maxWarranty), 4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("15"));
+                            .multiply(WEIGHT_WARRANTY);
                 }
 
                 // Payment terms: lower prepayment and longer delay = better
-                BigDecimal paymentScore = new BigDecimal("10");
+                BigDecimal paymentScore = WEIGHT_PAYMENT;
                 BigDecimal prepay = entry.getPrepaymentPercent() != null ? entry.getPrepaymentPercent() : BigDecimal.ZERO;
                 if (prepay.compareTo(BigDecimal.ZERO) > 0) {
-                    paymentScore = new BigDecimal("10").subtract(
-                            prepay.divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP).multiply(new BigDecimal("10")));
+                    paymentScore = WEIGHT_PAYMENT.subtract(
+                            prepay.divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP).multiply(WEIGHT_PAYMENT));
                 }
 
                 entry.setScore(priceScore.add(deliveryScore).add(warrantyScore).add(paymentScore)

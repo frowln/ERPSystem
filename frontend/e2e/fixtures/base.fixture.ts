@@ -69,6 +69,11 @@ export const test = base.extend<TestFixtures>({
       consoleErrors.push(`PAGE_ERROR: ${err.message}`);
     });
 
+    // Auto-dismiss cookie consent banner so it doesn't block UI interactions
+    await page.addInitScript(() => {
+      localStorage.setItem('privod-cookie-consent', 'accepted');
+    });
+
     await use(page);
 
     // Auto-screenshot on failure with descriptive name

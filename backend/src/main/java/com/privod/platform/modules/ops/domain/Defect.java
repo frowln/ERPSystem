@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.UUID;
         @Index(name = "idx_def_assigned_to", columnList = "assigned_to_id"),
         @Index(name = "idx_def_detected_by", columnList = "detected_by_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
@@ -109,6 +111,15 @@ public class Defect extends BaseEntity {
 
     @Column(name = "pin_y")
     private Double pinY;
+
+    @Column(name = "plan_x")
+    private Double planX;
+
+    @Column(name = "plan_y")
+    private Double planY;
+
+    @Column(name = "plan_id", length = 255)
+    private String planId;
 
     public boolean canTransitionTo(DefectStatus newStatus) {
         return this.status.canTransitionTo(newStatus);

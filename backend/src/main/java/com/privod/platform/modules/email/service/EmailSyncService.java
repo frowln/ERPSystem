@@ -364,7 +364,7 @@ public class EmailSyncService {
             if (fileName != null) {
                 try {
                     fileName = jakarta.mail.internet.MimeUtility.decodeText(fileName);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) { log.debug("Failed to decode email filename: {}", fileName); }
             }
             List<Map<String, Object>> atts = (List<Map<String, Object>>) result.get("attachments");
             try (InputStream is = part.getInputStream()) {

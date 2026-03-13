@@ -292,6 +292,7 @@ const ProfitabilityDashboardPage: React.FC = () => {
             data={filteredForecasts}
             loading={forecastsLoading}
             onRowClick={handleRowClick}
+            enableExport
           />
 
           {selectedProjectId && snapshots && snapshots.length > 0 && (
@@ -302,6 +303,7 @@ const ProfitabilityDashboardPage: React.FC = () => {
               <DataTable
                 columns={snapshotColumns}
                 data={snapshots}
+                enableExport
               />
             </div>
           )}

@@ -1,6 +1,8 @@
 package com.privod.platform.modules.closing.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.closing.domain.ClosingDocumentStatus;
 import com.privod.platform.modules.closing.domain.Ks2Document;
 import com.privod.platform.modules.closing.domain.Ks2Line;
@@ -21,6 +23,7 @@ import com.privod.platform.modules.closing.web.dto.Ks3Response;
 import com.privod.platform.modules.closing.web.dto.UpdateKs2LineRequest;
 import com.privod.platform.modules.closing.web.dto.UpdateKs2Request;
 import com.privod.platform.modules.closing.web.dto.UpdateKs3Request;
+import com.privod.platform.modules.contract.repository.ContractRepository;
 import com.privod.platform.modules.finance.service.BudgetItemSyncService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,8 +50,10 @@ public class ClosingDocumentService {
     private final Ks2LineRepository ks2LineRepository;
     private final Ks3DocumentRepository ks3DocumentRepository;
     private final Ks3Ks2LinkRepository ks3Ks2LinkRepository;
+    private final ContractRepository contractRepository;
     private final AuditService auditService;
     private final BudgetItemSyncService budgetItemSyncService;
+    private final JdbcTemplate jdbcTemplate;
 
     // ========================================================================
     // KS-2 Methods
@@ -289,11 +296,24 @@ public class ClosingDocumentService {
         BigDecimal totalAmount = ks2LineRepository.sumAmountByKs2Id(ks2Id);
         BigDecimal totalQuantity = ks2LineRepository.sumQuantityByKs2Id(ks2Id);
 
-        doc.setTotalAmount(totalAmount != null ? totalAmount : BigDecimal.ZERO);
+        BigDecimal amount = totalAmount != null ? totalAmount : BigDecimal.ZERO;
+        doc.setTotalAmount(amount);
         doc.setTotalQuantity(totalQuantity != null ? totalQuantity : BigDecimal.ZERO);
-        ks2DocumentRepository.save(doc);
 
-        log.debug("КС-2 итоги пересчитаны: {} - сумма={}, количество={}", ks2Id, totalAmount, totalQuantity);
+        // Calculate VAT from contract rate (default 20%)
+        BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
+        if (doc.getContractId() != null) {
+            var contract = contractRepository.findByIdAndDeletedFalse(doc.getContractId()).orElse(null);
+            if (contract != null && contract.getVatRate() != null) {
+                vatRate = contract.getVatRate();
+            }
+        }
+        BigDecimal vatAmount = VatCalculator.vatAmount(amount, vatRate);
+        doc.setTotalVatAmount(vatAmount);
+        doc.setTotalWithVat(amount.add(vatAmount));
+
+        ks2DocumentRepository.save(doc);
+        log.debug("КС-2 итоги пересчитаны: {} - сумма={}, НДС={}, с НДС={}", ks2Id, amount, vatAmount, doc.getTotalWithVat());
     }
 
     // ========================================================================
@@ -544,6 +564,43 @@ public class ClosingDocumentService {
 
         log.debug("КС-3 итоги пересчитаны: {} - сумма={}, удержание={}, нетто={}",
                 ks3Id, doc.getTotalAmount(), doc.getRetentionAmount(), doc.getNetAmount());
+    }
+
+    // ========================================================================
+    // KS-3 → Invoice automation
+    // ========================================================================
+
+    @Transactional
+    public UUID createInvoiceFromKs3(UUID ks3Id) {
+        Ks3Document ks3 = getKs3OrThrow(ks3Id);
+
+        UUID invoiceId = UUID.randomUUID();
+        BigDecimal totalAmount = ks3.getTotalAmount() != null ? ks3.getTotalAmount() : BigDecimal.ZERO;
+        BigDecimal vatRate = VatCalculator.DEFAULT_RATE;
+        BigDecimal vatAmount = VatCalculator.vatAmount(totalAmount);
+
+        jdbcTemplate.update(
+            "INSERT INTO invoices (id, organization_id, project_id, contract_id, number, invoice_date, invoice_type, status, subtotal, vat_rate, vat_amount, total_amount, remaining_amount, ks3_id, notes, created_at, updated_at, deleted) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),false)",
+            invoiceId,
+            SecurityUtils.requireCurrentOrganizationId(),
+            ks3.getProjectId(),
+            ks3.getContractId(),
+            "INV-KS3-" + ks3.getNumber(),
+            LocalDate.now(),
+            "ISSUED",
+            "NEW",
+            totalAmount,
+            vatRate,
+            vatAmount,
+            totalAmount.add(vatAmount),
+            totalAmount.add(vatAmount),
+            ks3Id,
+            "Счёт на основании КС-3 №" + ks3.getNumber()
+        );
+
+        log.info("Created Invoice {} from KS-3 {}", invoiceId, ks3Id);
+        return invoiceId;
     }
 
     // ========================================================================

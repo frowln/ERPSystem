@@ -4,11 +4,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRight,
   Award,
+  ChevronDown,
   ChevronRight,
   Clock,
   CreditCard,
   ListChecks,
   Package,
+  Paperclip,
   Plus,
   ShoppingCart,
   Sparkles,
@@ -24,6 +26,7 @@ import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
 import { FormField, Input, Textarea } from '@/design-system/components/FormField';
+import { FileAttachmentPanel } from '@/design-system/components/FileAttachmentPanel';
 import { financeApi } from '@/api/finance';
 import { specificationsApi } from '@/api/specifications';
 import { formatMoney, formatMoneyCompact } from '@/lib/format';
@@ -112,6 +115,7 @@ const CompetitiveListPage: React.FC = () => {
   const [winnerModalOpen, setWinnerModalOpen] = useState(false);
   const [selectedEntryForWinner, setSelectedEntryForWinner] = useState<string | null>(null);
   const [winnerReason, setWinnerReason] = useState('');
+  const [expandedEntryId, setExpandedEntryId] = useState<string | null>(null);
   const [form, setForm] = useState<ProposalFormData>(INITIAL_FORM);
 
   // ---------------------------------------------------------------------------
@@ -629,113 +633,146 @@ const CompetitiveListPage: React.FC = () => {
                           const isBestPrice =
                             selectedItemEntries.length > 1 &&
                             entry.unitPrice === Math.min(...selectedItemEntries.map((e) => e.unitPrice).filter((p) => p > 0));
+                          const isExpanded = expandedEntryId === entry.id;
                           return (
-                            <tr
-                              key={entry.id}
-                              className={cn(
-                                'border-b border-neutral-100 dark:border-neutral-800 transition-colors',
-                                'hover:bg-neutral-50 dark:hover:bg-neutral-800/50',
-                                entry.isWinner && 'bg-success-50/50 dark:bg-success-900/10',
-                              )}
-                            >
-                              <td className="px-4 py-3">
-                                <div className="flex items-center gap-2">
-                                  {entry.isWinner && <Trophy size={14} className="text-warning-500 flex-shrink-0" />}
-                                  <span className="font-medium text-neutral-900 dark:text-neutral-100">
-                                    {entry.vendorName || entry.supplierName || entry.contractorName || t('competitiveList.detail.unknownVendor', { defaultValue: 'Не указан' })}
-                                  </span>
-                                </div>
-                                {entry.selectionReason && (
-                                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 italic">
-                                    {entry.selectionReason}
-                                  </p>
+                            <React.Fragment key={entry.id}>
+                              <tr
+                                className={cn(
+                                  'border-b border-neutral-100 dark:border-neutral-800 transition-colors',
+                                  'hover:bg-neutral-50 dark:hover:bg-neutral-800/50',
+                                  entry.isWinner && 'bg-success-50/50 dark:bg-success-900/10',
+                                  isExpanded && 'border-b-0',
                                 )}
-                              </td>
-                              <td className="px-4 py-3 text-right tabular-nums">
-                                <span className="inline-flex items-center gap-1.5">
-                                  <PriceIndicator
-                                    price={entry.unitPrice}
-                                    allPrices={selectedItemEntries.map((e) => e.unitPrice)}
-                                  />
-                                  <span className={cn(
-                                    'font-medium',
-                                    isBestPrice
-                                      ? 'text-success-600 dark:text-success-400'
-                                      : 'text-neutral-900 dark:text-neutral-100',
-                                  )}>
-                                    {formatMoney(entry.unitPrice)}
-                                  </span>
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                                {formatMoney(entry.totalPrice)}
-                              </td>
-                              <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                                {entry.deliveryDays != null ? (
-                                  <span className="inline-flex items-center gap-1">
-                                    <Clock size={12} className="text-neutral-400" />
-                                    {entry.deliveryDays}
-                                  </span>
-                                ) : '---'}
-                              </td>
-                              <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                                {entry.prepaymentPercent != null ? `${entry.prepaymentPercent}%` : '---'}
-                              </td>
-                              <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                                {entry.warrantyMonths != null ? `${entry.warrantyMonths} ${t('competitiveList.entry.months')}` : '---'}
-                              </td>
-                              <td className="px-4 py-3 text-center">
-                                {entry.score != null ? (
-                                  <span className="inline-flex items-center gap-1 text-xs font-medium">
+                              >
+                                <td className="px-4 py-3">
+                                  <div className="flex items-center gap-2">
+                                    {entry.isWinner && <Trophy size={14} className="text-warning-500 flex-shrink-0" />}
+                                    <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                                      {entry.vendorName || entry.supplierName || entry.contractorName || t('competitiveList.detail.unknownVendor', { defaultValue: 'Не указан' })}
+                                    </span>
+                                  </div>
+                                  {entry.selectionReason && (
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 italic">
+                                      {entry.selectionReason}
+                                    </p>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-right tabular-nums">
+                                  <span className="inline-flex items-center gap-1.5">
+                                    <PriceIndicator
+                                      price={entry.unitPrice}
+                                      allPrices={selectedItemEntries.map((e) => e.unitPrice)}
+                                    />
                                     <span className={cn(
-                                      'px-2 py-0.5 rounded-full',
-                                      entry.rankPosition === 1
-                                        ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
-                                        : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400',
+                                      'font-medium',
+                                      isBestPrice
+                                        ? 'text-success-600 dark:text-success-400'
+                                        : 'text-neutral-900 dark:text-neutral-100',
                                     )}>
-                                      {entry.score.toFixed(1)}
-                                      {entry.rankPosition != null && ` (#${entry.rankPosition})`}
+                                      {formatMoney(entry.unitPrice)}
                                     </span>
                                   </span>
-                                ) : (
-                                  <span className="text-xs text-neutral-400">---</span>
-                                )}
-                              </td>
-                              <td className="px-4 py-3 text-center">
-                                {entry.isWinner ? (
-                                  <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300">
-                                    <Trophy size={12} />
-                                    {t('competitiveList.detail.winner')}
-                                  </span>
-                                ) : (
-                                  <span className="text-xs text-neutral-400 dark:text-neutral-500">---</span>
-                                )}
-                              </td>
-                              <td className="px-4 py-3 text-right">
-                                <div className="flex items-center justify-end gap-1">
-                                  {!entry.isWinner && cl?.status !== 'APPROVED' && (
-                                    <>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleOpenWinnerModal(entry.id)}
-                                        title={t('competitiveList.detail.selectWinner')}
-                                        className="p-1.5 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
-                                      >
-                                        <Award size={15} />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => deleteEntryMutation.mutate(entry.id)}
-                                        title={t('common.delete')}
-                                        className="p-1.5 text-neutral-400 hover:text-danger-600 dark:hover:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors"
-                                      >
-                                        <Trash2 size={15} />
-                                      </button>
-                                    </>
+                                </td>
+                                <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
+                                  {formatMoney(entry.totalPrice)}
+                                </td>
+                                <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
+                                  {entry.deliveryDays != null ? (
+                                    <span className="inline-flex items-center gap-1">
+                                      <Clock size={12} className="text-neutral-400" />
+                                      {entry.deliveryDays}
+                                    </span>
+                                  ) : '---'}
+                                </td>
+                                <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
+                                  {entry.prepaymentPercent != null ? `${entry.prepaymentPercent}%` : '---'}
+                                </td>
+                                <td className="px-4 py-3 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
+                                  {entry.warrantyMonths != null ? `${entry.warrantyMonths} ${t('competitiveList.entry.months')}` : '---'}
+                                </td>
+                                <td className="px-4 py-3 text-center">
+                                  {entry.score != null ? (
+                                    <span className="inline-flex items-center gap-1 text-xs font-medium">
+                                      <span className={cn(
+                                        'px-2 py-0.5 rounded-full',
+                                        entry.rankPosition === 1
+                                          ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300'
+                                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400',
+                                      )}>
+                                        {entry.score.toFixed(1)}
+                                        {entry.rankPosition != null && ` (#${entry.rankPosition})`}
+                                      </span>
+                                    </span>
+                                  ) : (
+                                    <span className="text-xs text-neutral-400">---</span>
                                   )}
-                                </div>
-                              </td>
-                            </tr>
+                                </td>
+                                <td className="px-4 py-3 text-center">
+                                  {entry.isWinner ? (
+                                    <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-success-50 dark:bg-success-900/30 text-success-700 dark:text-success-300">
+                                      <Trophy size={12} />
+                                      {t('competitiveList.detail.winner')}
+                                    </span>
+                                  ) : (
+                                    <span className="text-xs text-neutral-400 dark:text-neutral-500">---</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-right">
+                                  <div className="flex items-center justify-end gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => setExpandedEntryId(isExpanded ? null : entry.id)}
+                                      title={t('competitiveList.files.attachFiles')}
+                                      className={cn(
+                                        'p-1.5 rounded transition-colors',
+                                        isExpanded
+                                          ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30'
+                                          : 'text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30',
+                                      )}
+                                    >
+                                      <Paperclip size={15} />
+                                    </button>
+                                    {!entry.isWinner && cl?.status !== 'APPROVED' && (
+                                      <>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleOpenWinnerModal(entry.id)}
+                                          title={t('competitiveList.detail.selectWinner')}
+                                          className="p-1.5 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded transition-colors"
+                                        >
+                                          <Award size={15} />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => deleteEntryMutation.mutate(entry.id)}
+                                          title={t('common.delete')}
+                                          className="p-1.5 text-neutral-400 hover:text-danger-600 dark:hover:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded transition-colors"
+                                        >
+                                          <Trash2 size={15} />
+                                        </button>
+                                      </>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                              {/* Expandable file attachments row */}
+                              {isExpanded && (
+                                <tr className="border-b border-neutral-100 dark:border-neutral-800">
+                                  <td colSpan={9} className="px-4 py-3 bg-neutral-50/50 dark:bg-neutral-800/30">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Paperclip size={14} className="text-neutral-400 dark:text-neutral-500" />
+                                      <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                                        {t('competitiveList.files.title')} — {entry.vendorName || entry.supplierName || entry.contractorName || t('competitiveList.detail.unknownVendor')}
+                                      </span>
+                                    </div>
+                                    <FileAttachmentPanel
+                                      entityType="COMPETITIVE_LIST_ENTRY"
+                                      entityId={entry.id}
+                                    />
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
                           );
                         })}
                       </tbody>

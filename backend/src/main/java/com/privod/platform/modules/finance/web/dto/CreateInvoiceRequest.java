@@ -43,6 +43,9 @@ public record CreateInvoiceRequest(
         @Size(max = 50)
         String disciplineMark,
 
-        String notes
+        String notes,
+
+        // P1-CHN-1: опциональная привязка к строке ФМ
+        UUID budgetItemId
 ) {
 }

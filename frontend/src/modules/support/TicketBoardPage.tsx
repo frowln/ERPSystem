@@ -85,7 +85,14 @@ const TicketBoardPage: React.FC = () => {
     refetch,
   } = useQuery({
     queryKey: ['support-tickets', { page: 0, size: 300 }],
-    queryFn: () => supportApi.getTickets({ page: 0, size: 300 }),
+    queryFn: async () => {
+      try {
+        return await supportApi.getTickets({ page: 0, size: 300 });
+      } catch {
+        return { content: [] as SupportTicket[], totalElements: 0, totalPages: 0, size: 300, number: 0 };
+      }
+    },
+    retry: 1,
   });
 
   useEffect(() => {

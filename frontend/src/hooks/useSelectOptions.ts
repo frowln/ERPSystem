@@ -227,7 +227,7 @@ export function useVehicleOptions(status?: string): { options: SelectOption[]; i
     select: (res) =>
       (res.content ?? []).map((v) => ({
         value: v.id,
-        label: `${v.code} — ${v.brand} ${v.model} (${v.licensePlate ?? '—'})`,
+        label: `${v.code} — ${[v.brand, v.model].filter(Boolean).join(' ') || v.name || '—'} (${v.licensePlate ?? '—'})`,
       })),
   });
   return { options: data ?? [], isLoading };

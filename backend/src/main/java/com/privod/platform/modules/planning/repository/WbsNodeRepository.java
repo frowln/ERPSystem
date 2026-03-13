@@ -33,4 +33,7 @@ public interface WbsNodeRepository extends JpaRepository<WbsNode, UUID>, JpaSpec
 
     @Query("SELECT COUNT(w) FROM WbsNode w WHERE w.projectId = :projectId AND w.deleted = false")
     long countByProjectId(@Param("projectId") UUID projectId);
+
+    /** P2-PRJ-2: Baseline comparison — ordered by code for consistent diff output */
+    List<WbsNode> findByProjectIdAndDeletedFalseOrderByCode(UUID projectId);
 }

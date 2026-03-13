@@ -35,6 +35,9 @@ const InstallPrompt = lazy(() =>
 const AssistantWidget = lazy(() =>
   import('@/components/AssistantWidget/AssistantWidget'),
 );
+const OnboardingOverlay = lazy(() =>
+  import('@/components/OnboardingOverlay'),
+);
 
 /** Error boundary that keeps sidebar/topbar functional when a page crashes */
 class PageErrorBoundary extends React.Component<
@@ -165,6 +168,10 @@ export const AppLayout: React.FC = () => {
             <AssistantWidget />
           </Suspense>
         </div>
+        {/* Onboarding overlay for new users */}
+        <Suspense fallback={null}>
+          <OnboardingOverlay />
+        </Suspense>
         <main
           className={cn(
             tw.ptTopBar, 'transition-[padding] duration-200 min-h-screen isolate',

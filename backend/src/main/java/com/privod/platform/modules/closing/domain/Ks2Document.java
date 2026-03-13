@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,12 +26,16 @@ import java.util.UUID;
         @Index(name = "idx_ks2_contract", columnList = "contract_id"),
         @Index(name = "idx_ks2_status", columnList = "status")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ks2Document extends BaseEntity {
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "number", nullable = false, length = 50)
     private String number;
@@ -112,6 +117,22 @@ public class Ks2Document extends BaseEntity {
 
     @Column(name = "onec_posted_at")
     private Instant oneCPostedAt;
+
+    // P1-EST-5: Регуляторные поля КС-2 (унифицированная форма Госкомстата)
+    @Column(name = "investor_name", length = 500)
+    private String investorName;
+
+    @Column(name = "okdp", length = 50)
+    private String okdp;
+
+    @Column(name = "norm_code", length = 100)
+    private String normCode;
+
+    @Column(name = "reporting_period_start")
+    private LocalDate reportingPeriodStart;
+
+    @Column(name = "reporting_period_end")
+    private LocalDate reportingPeriodEnd;
 
     public void computeName() {
         this.name = "КС-2 №" + this.number + " от " + this.documentDate;

@@ -1,6 +1,13 @@
 server:
   port: 8080
 
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${SENTRY_ENV:development}
+  traces-sample-rate: 0.1
+  send-default-pii: false
+  in-app-includes: com.privod.platform
+
 spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:15432/privod2}
@@ -107,6 +114,9 @@ app:
     shop-id: ${YOOKASSA_SHOP_ID:}
     secret-key: ${YOOKASSA_SECRET_KEY:}
     return-url: ${YOOKASSA_RETURN_URL:http://localhost:4000/settings/subscription/result?payment=success}
+    webhook-secret: ${YOOKASSA_WEBHOOK_SECRET:}
+  dadata:
+    token: ${DADATA_TOKEN:}
   ai:
     provider: openai
     api-key: ${AI_API_KEY:}

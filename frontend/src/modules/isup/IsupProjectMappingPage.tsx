@@ -345,6 +345,7 @@ const IsupProjectMappingPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('isup.mappings.emptyTitle')}
         emptyDescription={t('isup.mappings.emptyDescription')}
+        enableExport
       />
 
       {/* Add mapping modal */}

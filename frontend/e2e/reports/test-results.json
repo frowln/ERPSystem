@@ -1,0 +1,5119 @@
+{
+  "timestamp": "2026-03-12T18:21:36.117Z",
+  "totalTests": 406,
+  "passed": 379,
+  "failed": 25,
+  "skipped": 0,
+  "flaky": 0,
+  "totalDuration": 4400342,
+  "tests": [
+    {
+      "name": "authenticate as admin user",
+      "file": "e2e/auth.setup.ts",
+      "module": "users",
+      "testType": "other",
+      "duration": 3283,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/accounting — бухгалтерский учёт",
+      "file": "e2e/tests/smoke/accounting.smoke.spec.ts",
+      "module": "accounting",
+      "testType": "smoke",
+      "duration": 2865,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/admin/dashboard — панель администратора",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 4988,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/admin/users — управление пользователями",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 2733,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/admin/permissions — матрица прав",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 13249,
+      "status": "failed",
+      "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('table, [class*=\"grid\"], [class*=\"matrix\"], [class*=\"permission\"]').first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('table, [class*=\"grid\"], [class*=\"matrix\"], [class*=\"permission\"]').first()\u001b[22m\n",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-admin.smoke-Ad-76661--permissions-—-матрица-прав-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/admin/departments — отделы",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 13873,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/admin/security — безопасность",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 2593,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/admin/system-settings — системные настройки",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 3060,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/monitoring — мониторинг системы",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 4612,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /admin/dashboard",
+      "file": "e2e/tests/smoke/admin.smoke.spec.ts",
+      "module": "admin",
+      "testType": "smoke",
+      "duration": 5372,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/ai/photo-analysis — ИИ фотоанализ",
+      "file": "e2e/tests/smoke/ai.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 2859,
+      "status": "failed",
+      "error": "Error: Photo analysis should have upload area or results\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-ai.smoke-AI-—--02408-to-analysis-—-ИИ-фотоанализ-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/ai/risk-dashboard — ИИ оценка рисков",
+      "file": "e2e/tests/smoke/ai.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 3047,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/analytics — аналитика",
+      "file": "e2e/tests/smoke/analytics.smoke.spec.ts",
+      "module": "analytics",
+      "testType": "smoke",
+      "duration": 3617,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/reports — отчёты",
+      "file": "e2e/tests/smoke/analytics.smoke.spec.ts",
+      "module": "analytics",
+      "testType": "smoke",
+      "duration": 2591,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/workflow/approval-inbox — очередь согласований",
+      "file": "e2e/tests/smoke/approval.smoke.spec.ts",
+      "module": "approval",
+      "testType": "smoke",
+      "duration": 3082,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bid-packages — тендерные пакеты",
+      "file": "e2e/tests/smoke/bid-management.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 13364,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bim/models — BIM модели",
+      "file": "e2e/tests/smoke/bim.smoke.spec.ts",
+      "module": "bim",
+      "testType": "smoke",
+      "duration": 3174,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bim/clash-detection — поиск коллизий",
+      "file": "e2e/tests/smoke/bim.smoke.spec.ts",
+      "module": "bim",
+      "testType": "smoke",
+      "duration": 2756,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bim/drawing-overlay — наложение чертежей",
+      "file": "e2e/tests/smoke/bim.smoke.spec.ts",
+      "module": "bim",
+      "testType": "smoke",
+      "duration": 11674,
+      "status": "failed",
+      "error": "Error: /bim/drawing-overlay should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m11511\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-bim.smoke-BIM--a84ad-verlay-—-наложение-чертежей-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bim/drawing-pins — пины на чертежах",
+      "file": "e2e/tests/smoke/bim.smoke.spec.ts",
+      "module": "bim",
+      "testType": "smoke",
+      "duration": 3628,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bim/construction-progress — ход строительства BIM",
+      "file": "e2e/tests/smoke/bim.smoke.spec.ts",
+      "module": "bim",
+      "testType": "smoke",
+      "duration": 2838,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bim/defect-heatmap — тепловая карта дефектов",
+      "file": "e2e/tests/smoke/bim.smoke.spec.ts",
+      "module": "bim",
+      "testType": "smoke",
+      "duration": 2944,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/calendar — календарь",
+      "file": "e2e/tests/smoke/calendar.smoke.spec.ts",
+      "module": "calendar",
+      "testType": "smoke",
+      "duration": 2414,
+      "status": "failed",
+      "error": "Error: locator.count: Unexpected token \"/\" while parsing css selector \"button:has-text(/[<>←→◀▶]/), button:has-text(/prev|next|назад|вперёд/i)\". Did you mean to CSS.escape it?",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-calendar.smoke-e2db5--Smoke-calendar-—-календарь-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cde/documents — документы CDE",
+      "file": "e2e/tests/smoke/cde.smoke.spec.ts",
+      "module": "cde",
+      "testType": "smoke",
+      "duration": 2531,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cde/transmittals — трансмиттальные пакеты",
+      "file": "e2e/tests/smoke/cde.smoke.spec.ts",
+      "module": "cde",
+      "testType": "smoke",
+      "duration": 5230,
+      "status": "failed",
+      "error": "Error: /cde/transmittals should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m5028\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-cde.smoke-CDE--256a2-ls-—-трансмиттальные-пакеты-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/change-management/dashboard — обзор изменений",
+      "file": "e2e/tests/smoke/change-management.smoke.spec.ts",
+      "module": "change-management",
+      "testType": "smoke",
+      "duration": 3558,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/change-management/events — события изменений",
+      "file": "e2e/tests/smoke/change-management.smoke.spec.ts",
+      "module": "change-management",
+      "testType": "smoke",
+      "duration": 3132,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/change-management/orders — ордера изменений",
+      "file": "e2e/tests/smoke/change-management.smoke.spec.ts",
+      "module": "change-management",
+      "testType": "smoke",
+      "duration": 3398,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/dashboard — обзор завершения",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 3684,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/commissioning — пусконаладка",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 2486,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/commissioning-templates — шаблоны ПНР",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 2650,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/handover — передача объекта",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 7371,
+      "status": "failed",
+      "error": "Error: /closeout/handover should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m7181\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-closeout.smoke-fb195-handover-—-передача-объекта-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/warranty — гарантия",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 5300,
+      "status": "failed",
+      "error": "Error: /closeout/warranty should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m5105\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-closeout.smoke-a72f5-loseout-warranty-—-гарантия-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/warranty-obligations — гарантийные обязательства",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 7988,
+      "status": "failed",
+      "error": "Error: /closeout/warranty-obligations should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m7767\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-closeout.smoke-fc519-—-гарантийные-обязательства-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/warranty-tracking — отслеживание гарантий",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 7387,
+      "status": "failed",
+      "error": "Error: /closeout/warranty-tracking should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m7167\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-closeout.smoke-2b329-ing-—-отслеживание-гарантий-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/as-built — исполнительная документация",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 2968,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/zos — ЗОС (заключение о соответствии)",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 2770,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/stroynadzor — стройнадзор",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 2831,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/closeout/executive-schemas — исполнительные схемы",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 6993,
+      "status": "failed",
+      "error": "Error: /closeout/executive-schemas should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m6814\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-closeout.smoke-ef7b6-emas-—-исполнительные-схемы-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /closeout/dashboard",
+      "file": "e2e/tests/smoke/closeout.smoke.spec.ts",
+      "module": "closeout",
+      "testType": "smoke",
+      "duration": 3121,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/russian-docs/ks2 — акты КС-2",
+      "file": "e2e/tests/smoke/closing.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 14220,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/russian-docs/ks3 — справки КС-3",
+      "file": "e2e/tests/smoke/closing.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 7799,
+      "status": "failed",
+      "error": "Error: /russian-docs/ks3 should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m7632\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-closing.smoke--a467d-ian-docs-ks3-—-справки-КС-3-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/commercial-proposals — коммерческие предложения",
+      "file": "e2e/tests/smoke/commercial-proposals.smoke.spec.ts",
+      "module": "commercial-proposals",
+      "testType": "smoke",
+      "duration": 2907,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/contracts — реестр договоров",
+      "file": "e2e/tests/smoke/contracts.smoke.spec.ts",
+      "module": "contracts",
+      "testType": "smoke",
+      "duration": 3982,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/codes — коды затрат (WBS)",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 2902,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/budget — бюджет vs факт",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 13186,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/commitments — обязательства",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 4345,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/forecast — прогноз затрат (EAC/ETC)",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 4580,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/cashflow-forecast — прогноз ДДС",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 9240,
+      "status": "failed",
+      "error": "Error: /cost-management/cashflow-forecast should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m9039\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-cost-managemen-27493-flow-forecast-—-прогноз-ДДС-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/forecasting-hub — хаб прогнозирования",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 4695,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cost-management/profitability — рентабельность",
+      "file": "e2e/tests/smoke/cost-management.smoke.spec.ts",
+      "module": "cost-management",
+      "testType": "smoke",
+      "duration": 8709,
+      "status": "failed",
+      "error": "Error: /cost-management/profitability should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m8538\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-cost-managemen-66407-fitability-—-рентабельность-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/counterparties — контрагенты",
+      "file": "e2e/tests/smoke/counterparties.smoke.spec.ts",
+      "module": "counterparties",
+      "testType": "smoke",
+      "duration": 2035,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/crm/leads — воронка лидов",
+      "file": "e2e/tests/smoke/crm.smoke.spec.ts",
+      "module": "crm",
+      "testType": "smoke",
+      "duration": 2385,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/crm/dashboard — CRM дашборд",
+      "file": "e2e/tests/smoke/crm.smoke.spec.ts",
+      "module": "crm",
+      "testType": "smoke",
+      "duration": 2003230,
+      "status": "timedOut",
+      "error": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-crm.smoke-CRM--11a22-crm-dashboard-—-CRM-дашборд-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /crm/dashboard",
+      "file": "e2e/tests/smoke/crm.smoke.spec.ts",
+      "module": "crm",
+      "testType": "smoke",
+      "duration": 6100,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/operations/daily-logs — журнал ежедневных работ",
+      "file": "e2e/tests/smoke/daily-logs.smoke.spec.ts",
+      "module": "daily-logs",
+      "testType": "smoke",
+      "duration": 10173,
+      "status": "failed",
+      "error": "Error: /operations/daily-logs should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m5761\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-daily-logs.smo-8d7fa-s-—-журнал-ежедневных-работ-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/operations/dashboard — панель управления стройплощадкой",
+      "file": "e2e/tests/smoke/daily-logs.smoke.spec.ts",
+      "module": "daily-logs",
+      "testType": "smoke",
+      "duration": 631952,
+      "status": "timedOut",
+      "error": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-daily-logs.smo-453d6-ь-управления-стройплощадкой-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/operations/work-orders — наряд-заказы",
+      "file": "e2e/tests/smoke/daily-logs.smoke.spec.ts",
+      "module": "daily-logs",
+      "testType": "smoke",
+      "duration": 1932,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/operations/dispatch-calendar — календарь диспетчеризации",
+      "file": "e2e/tests/smoke/daily-logs.smoke.spec.ts",
+      "module": "daily-logs",
+      "testType": "smoke",
+      "duration": 1867,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/data-exchange/import — импорт данных (CSV, Excel, 1C)",
+      "file": "e2e/tests/smoke/data-exchange.smoke.spec.ts",
+      "module": "data-exchange",
+      "testType": "smoke",
+      "duration": 1759,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/data-exchange/export — экспорт данных",
+      "file": "e2e/tests/smoke/data-exchange.smoke.spec.ts",
+      "module": "data-exchange",
+      "testType": "smoke",
+      "duration": 1722,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/data-exchange/mapping — маппинг полей",
+      "file": "e2e/tests/smoke/data-exchange.smoke.spec.ts",
+      "module": "data-exchange",
+      "testType": "smoke",
+      "duration": 1709,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/data-exchange/1c-config — настройки интеграции 1С",
+      "file": "e2e/tests/smoke/data-exchange.smoke.spec.ts",
+      "module": "data-exchange",
+      "testType": "smoke",
+      "duration": 1635,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/data-exchange/1c-logs — журнал синхронизации 1С",
+      "file": "e2e/tests/smoke/data-exchange.smoke.spec.ts",
+      "module": "data-exchange",
+      "testType": "smoke",
+      "duration": 1738,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/defects — реестр замечаний",
+      "file": "e2e/tests/smoke/defects.smoke.spec.ts",
+      "module": "defects",
+      "testType": "smoke",
+      "duration": 1938,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/defects/dashboard — аналитика дефектов",
+      "file": "e2e/tests/smoke/defects.smoke.spec.ts",
+      "module": "defects",
+      "testType": "smoke",
+      "duration": 2833,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/defects/on-plan — дефекты на плане этажа",
+      "file": "e2e/tests/smoke/defects.smoke.spec.ts",
+      "module": "defects",
+      "testType": "smoke",
+      "duration": 1609,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /defects",
+      "file": "e2e/tests/smoke/defects.smoke.spec.ts",
+      "module": "defects",
+      "testType": "smoke",
+      "duration": 2449,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/design/versions — история версий проектной документации",
+      "file": "e2e/tests/smoke/design.smoke.spec.ts",
+      "module": "design",
+      "testType": "smoke",
+      "duration": 1881,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/design/reviews — журнал проверок проектной документации",
+      "file": "e2e/tests/smoke/design.smoke.spec.ts",
+      "module": "design",
+      "testType": "smoke",
+      "duration": 1821,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/design/reviews/board — канбан проверок",
+      "file": "e2e/tests/smoke/design.smoke.spec.ts",
+      "module": "design",
+      "testType": "smoke",
+      "duration": 1718,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/design/sections — разделы проектной документации",
+      "file": "e2e/tests/smoke/design.smoke.spec.ts",
+      "module": "design",
+      "testType": "smoke",
+      "duration": 1763,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/dispatch/orders — заявки на доставку",
+      "file": "e2e/tests/smoke/dispatch.smoke.spec.ts",
+      "module": "dispatch",
+      "testType": "smoke",
+      "duration": 1823,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/dispatch/routes — маршруты доставки",
+      "file": "e2e/tests/smoke/dispatch.smoke.spec.ts",
+      "module": "dispatch",
+      "testType": "smoke",
+      "duration": 1791,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/documents — реестр документов",
+      "file": "e2e/tests/smoke/documents.smoke.spec.ts",
+      "module": "documents",
+      "testType": "smoke",
+      "duration": 1764,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/documents/smart-recognition — AI-распознавание документов",
+      "file": "e2e/tests/smoke/documents.smoke.spec.ts",
+      "module": "documents",
+      "testType": "smoke",
+      "duration": 1271,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/mail — почтовый клиент",
+      "file": "e2e/tests/smoke/email.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1305,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/estimates — реестр смет",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 1539,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/estimates/minstroy — индексы Минстроя",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 61678,
+      "status": "failed",
+      "error": "Error: /estimates/minstroy should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m60283\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-estimates.smok-b1f8b-minstroy-—-индексы-Минстроя-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/estimates/pivot — сводная таблица анализа",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 61705,
+      "status": "failed",
+      "error": "Error: /estimates/pivot should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m60280\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-estimates.smok-9611e-t-—-сводная-таблица-анализа-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/estimates/volume-calculator — калькулятор объёмов",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 61699,
+      "status": "failed",
+      "error": "Error: /estimates/volume-calculator should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m60271\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-estimates.smok-9cc69-lator-—-калькулятор-объёмов-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/estimates/pricing/databases — базы расценок (ГЭСН, ФЕР, ТЕР)",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 61809,
+      "status": "failed",
+      "error": "Error: /estimates/pricing/databases should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m60257\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-estimates.smok-bfc39-базы-расценок-ГЭСН-ФЕР-ТЕР--chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/specifications — реестр спецификаций",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 1482,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/specifications/competitive-registry — реестр конкурентных листов",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 61820,
+      "status": "failed",
+      "error": "Error: /specifications/competitive-registry should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m60232\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-estimates.smok-924bd--реестр-конкурентных-листов-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/price-coefficients — коэффициенты пересчёта",
+      "file": "e2e/tests/smoke/estimates.smoke.spec.ts",
+      "module": "estimates",
+      "testType": "smoke",
+      "duration": 1564,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/exec-docs/aosr — реестр АОСР (акты скрытых работ)",
+      "file": "e2e/tests/smoke/exec-docs.smoke.spec.ts",
+      "module": "exec-docs",
+      "testType": "smoke",
+      "duration": 1559,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/exec-docs/ks6 — журнал КС-6 (общий журнал работ)",
+      "file": "e2e/tests/smoke/exec-docs.smoke.spec.ts",
+      "module": "exec-docs",
+      "testType": "smoke",
+      "duration": 1330,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/exec-docs/incoming-control — входной контроль материалов",
+      "file": "e2e/tests/smoke/exec-docs.smoke.spec.ts",
+      "module": "exec-docs",
+      "testType": "smoke",
+      "duration": 1537,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/exec-docs/welding — журнал сварочных работ",
+      "file": "e2e/tests/smoke/exec-docs.smoke.spec.ts",
+      "module": "exec-docs",
+      "testType": "smoke",
+      "duration": 11742,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/exec-docs/special-journals — журналы специальных работ",
+      "file": "e2e/tests/smoke/exec-docs.smoke.spec.ts",
+      "module": "exec-docs",
+      "testType": "smoke",
+      "duration": 11783,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/budgets — реестр бюджетов",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1697,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/financial-models — финансовые модели",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1658,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/invoices — реестр счетов",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1493,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/payments — реестр платежей",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1606,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cash-flow — панель денежных потоков",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 2610,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/cash-flow/charts — графики ДДС",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 2600,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bank-statement-matching — сверка банковских выписок",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1407,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bank-export — экспорт платёжных поручений",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1436,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/treasury-calendar — казначейский календарь",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1535,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/tax-calendar — налоговый календарь",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1621,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/factoring-calculator — калькулятор факторинга",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1460,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/bdds — БДДС (бюджет движения денежных средств)",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1446,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/finance/expenses — отчёты о расходах",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1449,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/finance/s-curve-cashflow — S-кривая денежных потоков",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 6552,
+      "status": "failed",
+      "error": "Error: /finance/s-curve-cashflow should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m6369\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-finance.smoke--bf7f8-—-S-кривая-денежных-потоков-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/tax-risk — оценка налоговых рисков",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1539,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/revenue/dashboard — панель доходов",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 2443,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/revenue/recognition-periods — периоды признания выручки",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1508,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/revenue/all-contracts — все договоры с выручкой",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1506,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/execution-chain — цепочка исполнения договора",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1454,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /invoices",
+      "file": "e2e/tests/smoke/finance.smoke.spec.ts",
+      "module": "finance",
+      "testType": "smoke",
+      "duration": 1971,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet — реестр транспортных средств",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1595,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/fuel — журнал заправок",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1452,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/fuel-accounting — учёт ГСМ (нормы vs факт)",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1589,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/maintenance — журнал ТО",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1606,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/maint-repair — история ремонтов",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1686,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/maintenance-schedule — график ТО",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1651,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/waybills-esm — путевые листы (форма ЕСМ)",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1605,
+      "status": "failed",
+      "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: not \u001b[32m/undefined|NaN/\u001b[39m\nReceived string:      \u001b[31m\"\u001b[39m\n\u001b[31m    ПРИВОДГлавнаяЗадачиКалендарьПланированиеПроцессыОбъектыCRM и тендерыДокументыПроектированиеИсполнительная документацияФинансыЦенообразованиеСнабжениеКадрыОхрана трудаКачество и регуляторикаТехника и IoTТранспортТопливоУчёт топливаОбслуживаниеТО и ремонтГрафик ТОПутевые листыЖурнал эксплуатацииGPS",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-fleet.smoke-Fl-79bf0--—-путевые-листы-форма-ЕСМ--chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/usage-logs — журнал использования техники",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1602,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/gps-tracking — GPS-мониторинг",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1287,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/fleet/driver-rating — рейтинг водителей",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 1597,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /fleet",
+      "file": "e2e/tests/smoke/fleet.smoke.spec.ts",
+      "module": "fleet",
+      "testType": "smoke",
+      "duration": 2074,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/employees — реестр сотрудников",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1520,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/hr/staffing-schedule — штатное расписание",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1517,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/crew — управление бригадами",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1480,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/timesheets — реестр табелей",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1531,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/hr/timesheet-t13 — табель Т-13 (унифицированная форма)",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1307,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/hr/work-orders — наряд-заказы",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1449,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/hr/certification-matrix — матрица компетенций",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1593,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/leave/requests — реестр заявлений на отпуск",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1508,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/hr-russian/employment-contracts — трудовые договоры",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1493,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/self-employed — реестр самозанятых",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1489,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /employees",
+      "file": "e2e/tests/smoke/hr.smoke.spec.ts",
+      "module": "hr",
+      "testType": "smoke",
+      "duration": 1968,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/integrations — хаб интеграций",
+      "file": "e2e/tests/smoke/integrations.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1298,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/marketplace — маркетплейс плагинов",
+      "file": "e2e/tests/smoke/integrations.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1348,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/iot/devices — реестр IoT-устройств",
+      "file": "e2e/tests/smoke/iot.smoke.spec.ts",
+      "module": "iot",
+      "testType": "smoke",
+      "duration": 1561,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/iot/sensors — данные датчиков",
+      "file": "e2e/tests/smoke/iot.smoke.spec.ts",
+      "module": "iot",
+      "testType": "smoke",
+      "duration": 2572,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/iot/alerts — оповещения IoT",
+      "file": "e2e/tests/smoke/iot.smoke.spec.ts",
+      "module": "iot",
+      "testType": "smoke",
+      "duration": 1566,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "page loads with correct header, breadcrumbs, and button",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 2559,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "all 4 metric cards display correct values",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3040,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "all 6 tabs are present with correct counts",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3035,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "each tab filters correctly",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 6380,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "type filter dropdown works",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 5187,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "search filters by number, title, and opposing party",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 5142,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "table columns are correct and all Russian",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3042,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "status badges show correct Russian labels",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3238,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "opposing party is shown in table rows",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3040,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "claim amounts are formatted as Russian money",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3004,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "DRAFT case detail — all sections render",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4157,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "CLOSED case with decisions — decisions render correctly",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4624,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "IN_PROGRESS case with remarks — remarks render correctly",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4633,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "back navigation works from detail to list",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3031,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "page loads with correct header and metrics",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 2625,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "all 7 templates are in the table",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3129,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "template type badges show Russian labels",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3068,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "status column shows Active/Archived in Russian",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4312,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "version column shows version numbers",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3169,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "category filter works for all types",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 7869,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "search filters templates",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4032,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "table columns are correct",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3145,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "category subtitles show under template names",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3046,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "legal cases visible in sidebar under ФИНАНСЫ",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 2563,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "navigating between cases and templates via sidebar",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 1904,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "no raw i18n keys or English on any legal page",
+      "file": "e2e/tests/smoke/legal-full-audit.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 6640,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Legal Cases list page loads with data",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 1550,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Legal Cases list — tabs filter correctly",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 5848,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Legal Cases list — search works",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4049,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Legal Case detail page loads correctly",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 5744,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Contract Templates list page loads with data",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 1617,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Contract Templates — filter by type works",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 3967,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "All strings are in Russian (no raw i18n keys)",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 9013,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode renders correctly on legal pages",
+      "file": "e2e/tests/smoke/legal-module.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 4089,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/legal/cases — реестр юридических дел",
+      "file": "e2e/tests/smoke/legal.smoke.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 2241,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/legal/templates — шаблоны юридических документов",
+      "file": "e2e/tests/smoke/legal.smoke.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 1472,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/insurance-certificates — реестр страховых полисов",
+      "file": "e2e/tests/smoke/legal.smoke.spec.ts",
+      "module": "legal",
+      "testType": "smoke",
+      "duration": 1286,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/maintenance/dashboard — дашборд обслуживания",
+      "file": "e2e/tests/smoke/maintenance.smoke.spec.ts",
+      "module": "maintenance",
+      "testType": "smoke",
+      "duration": 2469,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/maintenance/requests — заявки на обслуживание",
+      "file": "e2e/tests/smoke/maintenance.smoke.spec.ts",
+      "module": "maintenance",
+      "testType": "smoke",
+      "duration": 1452,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/maintenance/equipment — реестр оборудования",
+      "file": "e2e/tests/smoke/maintenance.smoke.spec.ts",
+      "module": "maintenance",
+      "testType": "smoke",
+      "duration": 1508,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/messaging — мессенджер",
+      "file": "e2e/tests/smoke/messenger.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1403,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/planning/gantt — диаграмма Ганта",
+      "file": "e2e/tests/smoke/planning.smoke.spec.ts",
+      "module": "planning",
+      "testType": "smoke",
+      "duration": 1744,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/planning/evm — освоенный объём (EVM)",
+      "file": "e2e/tests/smoke/planning.smoke.spec.ts",
+      "module": "planning",
+      "testType": "smoke",
+      "duration": 2457,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/planning/resource-planning — планирование ресурсов",
+      "file": "e2e/tests/smoke/planning.smoke.spec.ts",
+      "module": "planning",
+      "testType": "smoke",
+      "duration": 1493,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/planning/work-volumes — объёмы работ",
+      "file": "e2e/tests/smoke/planning.smoke.spec.ts",
+      "module": "planning",
+      "testType": "smoke",
+      "duration": 11996,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /planning/gantt",
+      "file": "e2e/tests/smoke/planning.smoke.spec.ts",
+      "module": "planning",
+      "testType": "smoke",
+      "duration": 1875,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal — дашборд подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 2543,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/projects — проекты подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1535,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/documents — документы",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1898,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/contracts — договоры подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1717,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/invoices — счета подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 5367,
+      "status": "failed",
+      "error": "Error: /portal/invoices should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m5163\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-portal.smoke-P-ece65-invoices-—-счета-подрядчика-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/tasks — задачи подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1717,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/schedule — график подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1348,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/rfis — RFI подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1573,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/defects — дефекты подрядчика",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1559,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/signatures — электронные подписи",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1481,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/photos — фотоотчёты",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1534,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/daily-reports — ежедневные отчёты",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1632,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/cp-approval — согласование КП",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1324,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/ks2-drafts — черновики КС-2",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1512,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/settings — настройки портала",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1354,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portal/admin — администрирование портала",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1612,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /portal",
+      "file": "e2e/tests/smoke/portal.smoke.spec.ts",
+      "module": "portal",
+      "testType": "smoke",
+      "duration": 1950,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portfolio/health — здоровье портфеля (RAG-матрица)",
+      "file": "e2e/tests/smoke/portfolio.smoke.spec.ts",
+      "module": "portfolio",
+      "testType": "smoke",
+      "duration": 2433,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portfolio/opportunities — возможности (pipeline)",
+      "file": "e2e/tests/smoke/portfolio.smoke.spec.ts",
+      "module": "portfolio",
+      "testType": "smoke",
+      "duration": 1540,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/portfolio/tenders — тендеры",
+      "file": "e2e/tests/smoke/portfolio.smoke.spec.ts",
+      "module": "portfolio",
+      "testType": "smoke",
+      "duration": 1578,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "01 — Дашборд загружается после авторизации",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 2637,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "02 — Список спецификаций",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 3595,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "03 — Создание спецификации (форма)",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 6426,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "04 — Детальная спецификация (первая в списке)",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 6630,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "05 — Реестр конкурентных листов",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 3537,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "06 — Детальная страница КЛ",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 6801,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "07 — Список проектов",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 3617,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "08 — ФМ: список бюджетов",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 6773,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "09 — ФМ: детальная с колонками цен",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 487,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "10 — Коммерческие предложения (список)",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 6885,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "11 — Импорт ЛСР (wizard)",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 3675,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "12 — Список локальных смет",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 6719,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "13 — Sidebar содержит все модули цепочки",
+      "file": "e2e/tests/smoke/pricing-chain-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 2670,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 1 — Создать проект",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 2639,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 2 — Создать спецификацию и проверить авто-КЛ",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 3811,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 3 — КЛ: добавить 3 поставщиков с ценами",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 4748,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 4 — Передать позиции спецификации в ФМ",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 5683,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 5 — Создать КП из бюджета",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 4685,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 6 — Push КП в ФМ и проверить цены",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 5896,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 7 — Импорт ЛСР и проверить estimatePrice",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 8866,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаг 8 — Итоговая проверка: все цены в ФМ",
+      "file": "e2e/tests/smoke/pricing-chain-full-e2e.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 5816,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "01 — Создать проект через форму",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 7244,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "02 — Создать спецификацию с импортом xlsx",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 10998,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "03 — Спецификация → Передать в ФМ",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 11637,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "04 — ФМ: позиции + создать КП",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 16069,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "05 — КП: заполнить цены через API + UI",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 10577,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "05b — КП: утвердить и передать в ФМ",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 12091,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "06 — ФМ: импорт ЛСР через xlsx",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 17747,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "07 — ФМ: финальная проверка — себестоимость, сметная, цена заказчику",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 11777,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "08 — Все страницы цепочки загружаются",
+      "file": "e2e/tests/smoke/pricing-chain-ui-journey.spec.ts",
+      "module": "pricing",
+      "testType": "smoke",
+      "duration": 11317,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pm/rfis — реестр RFI (запросов на разъяснение)",
+      "file": "e2e/tests/smoke/processes.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1608,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pm/submittals — реестр подач (Submittals)",
+      "file": "e2e/tests/smoke/processes.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1476,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pm/issues — трекер проблем",
+      "file": "e2e/tests/smoke/processes.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1511,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/workflow/templates — шаблоны процессов",
+      "file": "e2e/tests/smoke/processes.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1457,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/procurement — реестр заявок на закупку",
+      "file": "e2e/tests/smoke/procurement.smoke.spec.ts",
+      "module": "procurement",
+      "testType": "smoke",
+      "duration": 1507,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/procurement/purchase-orders — реестр заказов поставщикам",
+      "file": "e2e/tests/smoke/procurement.smoke.spec.ts",
+      "module": "procurement",
+      "testType": "smoke",
+      "duration": 1469,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/procurement/tenders — тендеры на закупку",
+      "file": "e2e/tests/smoke/procurement.smoke.spec.ts",
+      "module": "procurement",
+      "testType": "smoke",
+      "duration": 11793,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/procurement/bid-comparison — сравнение предложений поставщиков",
+      "file": "e2e/tests/smoke/procurement.smoke.spec.ts",
+      "module": "procurement",
+      "testType": "smoke",
+      "duration": 1425,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/procurement/prequalification — преквалификация подрядчиков",
+      "file": "e2e/tests/smoke/procurement.smoke.spec.ts",
+      "module": "procurement",
+      "testType": "smoke",
+      "duration": 11634,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/projects — реестр объектов",
+      "file": "e2e/tests/smoke/projects.smoke.spec.ts",
+      "module": "projects",
+      "testType": "smoke",
+      "duration": 1676,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/site-assessments — предстроительные обследования",
+      "file": "e2e/tests/smoke/projects.smoke.spec.ts",
+      "module": "projects",
+      "testType": "smoke",
+      "duration": 3610,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pto/documents — реестр документов ПТО",
+      "file": "e2e/tests/smoke/pto.smoke.spec.ts",
+      "module": "pto",
+      "testType": "smoke",
+      "duration": 1748,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pto/hidden-work-acts — акты скрытых работ (АОСР)",
+      "file": "e2e/tests/smoke/pto.smoke.spec.ts",
+      "module": "pto",
+      "testType": "smoke",
+      "duration": 1470,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pto/work-permits — допуски к работам",
+      "file": "e2e/tests/smoke/pto.smoke.spec.ts",
+      "module": "pto",
+      "testType": "smoke",
+      "duration": 1543,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pto/lab-tests — результаты лабораторных испытаний",
+      "file": "e2e/tests/smoke/pto.smoke.spec.ts",
+      "module": "pto",
+      "testType": "smoke",
+      "duration": 2486,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pto/ks6-calendar — журнал работ КС-6",
+      "file": "e2e/tests/smoke/pto.smoke.spec.ts",
+      "module": "pto",
+      "testType": "smoke",
+      "duration": 1316,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/pto/itd-validation — проверка ИТД (чек-лист)",
+      "file": "e2e/tests/smoke/pto.smoke.spec.ts",
+      "module": "pto",
+      "testType": "smoke",
+      "duration": 1377,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/punchlist/items — реестр предписаний",
+      "file": "e2e/tests/smoke/punchlist.smoke.spec.ts",
+      "module": "punchlist",
+      "testType": "smoke",
+      "duration": 1400,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/punchlist/dashboard — аналитика предписаний",
+      "file": "e2e/tests/smoke/punchlist.smoke.spec.ts",
+      "module": "punchlist",
+      "testType": "smoke",
+      "duration": 2495,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Дашборд качества (/quality) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3153,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Канбан проверок (/quality/board) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 2980,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Создание проверки (/quality/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3046,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Чек-листы качества (/quality/checklists) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3173,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаблоны чек-листов (/quality/checklist-templates) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 2960,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр дефектов (/quality/defect-register) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3065,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Парето-анализ дефектов (/quality/defect-pareto) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3035,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Правила допусков (/quality/tolerance-rules) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 5797,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Проверки допусков (/quality/tolerance-checks) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3083,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Входной контроль (/quality/material-inspection) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3102,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Сертификаты материалов (/quality/certificates) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3234,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Журнал авторского надзора (/quality/supervision-journal) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3035,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Quality Gates (/quality/gates) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3934,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Форма инспекции (/quality/inspections/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 4343,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Проверки качества — таблица и табы загружаются",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3750,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Канбан проверок — колонки отображаются",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3101,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр дефектов — таблица или пустое состояние",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 2567,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Парето-анализ — диаграмма или контент",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3529,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Чек-листы качества — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3649,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Шаблоны чек-листов — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3539,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Правила допусков — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3663,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Проверки допусков — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3575,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Входной контроль — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3726,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Сертификаты материалов — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3565,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Журнал авторского надзора — таблица загружается",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 2676,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Quality Gates — страница с табами и селектором проекта",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3382,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Форма инспекции — поля формы отображаются",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 3607,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Тёмная тема — основные страницы качества не ломаются",
+      "file": "e2e/tests/smoke/quality-full-audit.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 7180,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality — обзор качества (дашборд)",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 2719,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/defect-pareto — Парето-анализ дефектов",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1491,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/material-inspection — входной контроль материалов",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 6797,
+      "status": "failed",
+      "error": "Error: /quality/material-inspection should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m6570\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-quality.smoke--2b04e-входной-контроль-материалов-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/checklist-templates — шаблоны чек-листов",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1497,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/checklists — активные чек-листы",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1470,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/gates — quality gates (контрольные точки)",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 11780,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/tolerance-rules — допуски и нормы",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1492,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/tolerance-checks — результаты проверок допусков",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1507,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/certificates — сертификаты качества",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1608,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/defect-register — полный реестр дефектов",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1552,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/quality/supervision-journal — журнал авторского надзора",
+      "file": "e2e/tests/smoke/quality.smoke.spec.ts",
+      "module": "quality",
+      "testType": "smoke",
+      "duration": 1577,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Дашборд регуляторики (/regulatory/dashboard) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3129,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр разрешений (/regulatory/permits) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 8793,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Канбан разрешений (/regulatory/permits/board) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2891,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Лицензии (/regulatory/licenses) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3080,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Проверки надзорных органов (/regulatory/inspections) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3147,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "История проверок (/regulatory/inspection-history) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2979,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр предписаний (/regulatory/prescriptions) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3130,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Создание предписания (/regulatory/prescriptions/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2891,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Журнал предписаний (/regulatory/prescriptions-journal) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3093,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Ответы на предписания (/regulatory/prescription-responses) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3152,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Календарь отчётности (/regulatory/reporting-calendar) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3561,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр СРО (/regulatory/sro-licenses) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2972,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Подготовка к проверке (/regulatory/inspection-prep) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2854,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Соответствие требованиям (/regulatory/compliance) — загрузка и проверка",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2910,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Дашборд регуляторики — метрики и KPI-карточки",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2888,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр разрешений — таблица или пустое состояние",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3664,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Канбан разрешений — колонки отображаются",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3121,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Лицензии — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3612,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Проверки надзорных органов — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 6405,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "История проверок — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3764,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр предписаний — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3651,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Создание предписания — поля формы отображаются",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 6468,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Журнал предписаний — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3894,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Ответы на предписания — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3549,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Календарь отчётности — контент загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3639,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр СРО — таблица загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3730,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Подготовка к проверке — контент загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3371,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Соответствие требованиям — контент загружается",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 3435,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Тёмная тема — основные страницы регуляторики не ломаются",
+      "file": "e2e/tests/smoke/regulatory-full-audit.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 9921,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/permits — разрешительная документация",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1641,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/inspections — проверки надзорных органов",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1626,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/dashboard — дашборд комплаенса",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2348,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/prescriptions — реестр предписаний",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1518,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/compliance — матрица соответствия",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1405,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/licenses — реестр лицензий",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1738,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/sro-licenses — свидетельства СРО",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1542,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/reporting-calendar — календарь отчётности",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1630,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/inspection-prep — подготовка к проверке (чек-лист)",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1301,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/inspection-history — история проверок",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1547,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/prescription-responses — ответы на предписания",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 2276,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/regulatory/prescriptions-journal — журнал предписаний",
+      "file": "e2e/tests/smoke/regulatory.smoke.spec.ts",
+      "module": "regulatory",
+      "testType": "smoke",
+      "duration": 1476,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/russian-docs/list — реестр нормативных документов",
+      "file": "e2e/tests/smoke/russian-docs.smoke.spec.ts",
+      "module": "russian-docs",
+      "testType": "smoke",
+      "duration": 1595,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/russian-docs/sbis — интеграция СБИС",
+      "file": "e2e/tests/smoke/russian-docs.smoke.spec.ts",
+      "module": "russian-docs",
+      "testType": "smoke",
+      "duration": 1621,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/russian-docs/edo — электронный документооборот (ЭДО)",
+      "file": "e2e/tests/smoke/russian-docs.smoke.spec.ts",
+      "module": "russian-docs",
+      "testType": "smoke",
+      "duration": 1473,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Дашборд ОТ (/safety) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3170,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Канбан-доска инцидентов (/safety/board) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3052,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр инцидентов (/safety/incidents) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3240,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Создание инцидента (/safety/incidents/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2973,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр проверок (/safety/inspections) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3145,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Создание проверки (/safety/inspections/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2895,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр нарушений (/safety/violations) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3363,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Обучение по безопасности (/safety/training) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3189,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Новое обучение (/safety/training/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 5875,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Журнал инструктажей (/safety/training-journal) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3174,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Инструктажи по ОТ (/safety/briefings) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3115,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Новый инструктаж (/safety/briefings/new) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2913,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "LTIR/TRIR метрики (/safety/metrics) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3107,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Управление СИЗ (/safety/ppe) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3241,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Карточки СОУТ (/safety/sout) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3071,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Акты Н-1 (/safety/accident-acts) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3035,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Матрица удостоверений (/safety/certification-matrix) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2928,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Соответствие требованиям ОТ (/safety/compliance) — загрузка и проверка",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2951,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Дашборд ОТ — метрики не захардкожены",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2964,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Канбан-доска — колонки отображаются",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2960,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр инцидентов — таблица загружается",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3696,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр проверок — таблица загружается",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3681,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Реестр нарушений — таблица загружается",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3668,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Обучение — список и метрики",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3576,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "СИЗ — инвентарь и выдача",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 4343,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "СОУТ — карточки и фильтры",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3628,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Инструктажи — список и создание",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3517,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Матрица удостоверений — загружается",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3621,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Compliance-дашборд — загружается и dark mode корректен",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 3474,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Тёмная тема — основные страницы не ломаются",
+      "file": "e2e/tests/smoke/safety-full-audit.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 4726,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety — дашборд охраны труда",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2603,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/incidents — реестр инцидентов",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1569,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/inspections — проверки ОТ",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1652,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/briefings — журнал инструктажей",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1468,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/training-journal — журнал обучения",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1472,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/ppe — учёт СИЗ",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1552,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/accident-acts — акты о несчастных случаях (Н-1)",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1507,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/metrics — метрики безопасности (LTIFR, TRIR)",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1571,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/sout — СОУТ (спецоценка условий труда)",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1551,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/compliance — матрица соответствия ОТ",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1398,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/violations — реестр нарушений",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1499,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/worker-certs — удостоверения работников",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1571,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/safety/certification-matrix — матрица аттестаций",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 1341,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /safety",
+      "file": "e2e/tests/smoke/safety.smoke.spec.ts",
+      "module": "safety",
+      "testType": "smoke",
+      "duration": 2002,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/m29 — отчёт М-29 (расход материалов)",
+      "file": "e2e/tests/smoke/site-mobile.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1534,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/mobile/dashboard — мобильный дашборд",
+      "file": "e2e/tests/smoke/site-mobile.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 2781,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/mobile/reports — мобильные отчёты",
+      "file": "e2e/tests/smoke/site-mobile.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1526,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/mobile/photos — мобильные фотоотчёты",
+      "file": "e2e/tests/smoke/site-mobile.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 1315,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/support/tickets — реестр заявок",
+      "file": "e2e/tests/smoke/support.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 62137,
+      "status": "failed",
+      "error": "Error: /support/tickets should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m60302\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-support.smoke--88de8-ort-tickets-—-реестр-заявок-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/support/dashboard — дашборд поддержки",
+      "file": "e2e/tests/smoke/support.smoke.spec.ts",
+      "module": "users",
+      "testType": "smoke",
+      "duration": 2557,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/tasks — менеджер задач (список/канбан/календарь)",
+      "file": "e2e/tests/smoke/tasks.smoke.spec.ts",
+      "module": "tasks",
+      "testType": "smoke",
+      "duration": 1437,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /tasks",
+      "file": "e2e/tests/smoke/tasks.smoke.spec.ts",
+      "module": "tasks",
+      "testType": "smoke",
+      "duration": 2252,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/locations — складские площадки",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1854,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/stock — обзор остатков",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1614,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/materials — реестр материалов",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1669,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/movements — движение материалов",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1414,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/inventory — инвентаризация",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1630,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/quick-receipt — быстрый приход",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1305,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/quick-confirm — быстрое подтверждение",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 6333,
+      "status": "failed",
+      "error": "Error: /warehouse/quick-confirm should load in <5s\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m5000\u001b[39m\nReceived:   \u001b[31m6139\u001b[39m",
+      "screenshots": [
+        "/Users/damirkasimov/Desktop/privod2/privod2_next/frontend/test-results/tests-smoke-warehouse.smok-d3453-irm-—-быстрое-подтверждение-chromium/test-failed-1.png"
+      ],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/barcode-scanner — сканер штрих-кодов",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1448,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/inter-project-transfer — межобъектное перемещение",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1709,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/inter-site-transfer — межплощадочное перемещение",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 11823,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/stock-limits — настройка лимитов запасов",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1613,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/stock-alerts — оповещения о запасах",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1599,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/m29-report — отчёт М-29",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1596,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/limit-fence-cards — лимитно-заборные карты",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1444,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/limit-fence-sheets — лимитно-заборные ведомости",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1626,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/address-storage — адресное хранение",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1309,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/material-demand — планирование потребности",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1509,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "/warehouse/warehouse-orders — складские ордера",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1413,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    },
+    {
+      "name": "Dark mode: /warehouse/materials",
+      "file": "e2e/tests/smoke/warehouse.smoke.spec.ts",
+      "module": "warehouse",
+      "testType": "smoke",
+      "duration": 1923,
+      "status": "passed",
+      "screenshots": [],
+      "retries": 0,
+      "wasFlaky": false
+    }
+  ],
+  "modules": [
+    {
+      "module": "accounting",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 2865,
+      "slowest": {
+        "name": "/accounting — бухгалтерский учёт",
+        "duration": 2865
+      }
+    },
+    {
+      "module": "admin",
+      "total": 8,
+      "passed": 7,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 88,
+      "avgDuration": 6310,
+      "slowest": {
+        "name": "/admin/departments — отделы",
+        "duration": 13873
+      }
+    },
+    {
+      "module": "analytics",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3104,
+      "slowest": {
+        "name": "/analytics — аналитика",
+        "duration": 3617
+      }
+    },
+    {
+      "module": "approval",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3082,
+      "slowest": {
+        "name": "/workflow/approval-inbox — очередь согласований",
+        "duration": 3082
+      }
+    },
+    {
+      "module": "bim",
+      "total": 6,
+      "passed": 5,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 83,
+      "avgDuration": 4502,
+      "slowest": {
+        "name": "/bim/drawing-overlay — наложение чертежей",
+        "duration": 11674
+      }
+    },
+    {
+      "module": "calendar",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 0,
+      "avgDuration": 2414,
+      "slowest": {
+        "name": "/calendar — календарь",
+        "duration": 2414
+      }
+    },
+    {
+      "module": "cde",
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 50,
+      "avgDuration": 3881,
+      "slowest": {
+        "name": "/cde/transmittals — трансмиттальные пакеты",
+        "duration": 5230
+      }
+    },
+    {
+      "module": "change-management",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3363,
+      "slowest": {
+        "name": "/change-management/dashboard — обзор изменений",
+        "duration": 3558
+      }
+    },
+    {
+      "module": "closeout",
+      "total": 12,
+      "passed": 7,
+      "failed": 5,
+      "skipped": 0,
+      "passRate": 58,
+      "avgDuration": 4629,
+      "slowest": {
+        "name": "/closeout/warranty-obligations — гарантийные обязательства",
+        "duration": 7988
+      }
+    },
+    {
+      "module": "commercial-proposals",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 2907,
+      "slowest": {
+        "name": "/commercial-proposals — коммерческие предложения",
+        "duration": 2907
+      }
+    },
+    {
+      "module": "contracts",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3982,
+      "slowest": {
+        "name": "/contracts — реестр договоров",
+        "duration": 3982
+      }
+    },
+    {
+      "module": "cost-management",
+      "total": 7,
+      "passed": 5,
+      "failed": 2,
+      "skipped": 0,
+      "passRate": 71,
+      "avgDuration": 6808,
+      "slowest": {
+        "name": "/cost-management/budget — бюджет vs факт",
+        "duration": 13186
+      }
+    },
+    {
+      "module": "counterparties",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 2035,
+      "slowest": {
+        "name": "/counterparties — контрагенты",
+        "duration": 2035
+      }
+    },
+    {
+      "module": "crm",
+      "total": 3,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 67,
+      "avgDuration": 670572,
+      "slowest": {
+        "name": "/crm/dashboard — CRM дашборд",
+        "duration": 2003230
+      }
+    },
+    {
+      "module": "daily-logs",
+      "total": 4,
+      "passed": 2,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 50,
+      "avgDuration": 161481,
+      "slowest": {
+        "name": "/operations/dashboard — панель управления стройплощадкой",
+        "duration": 631952
+      }
+    },
+    {
+      "module": "data-exchange",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1713,
+      "slowest": {
+        "name": "/data-exchange/import — импорт данных (CSV, Excel, 1C)",
+        "duration": 1759
+      }
+    },
+    {
+      "module": "defects",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 2207,
+      "slowest": {
+        "name": "/defects/dashboard — аналитика дефектов",
+        "duration": 2833
+      }
+    },
+    {
+      "module": "design",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1796,
+      "slowest": {
+        "name": "/design/versions — история версий проектной документации",
+        "duration": 1881
+      }
+    },
+    {
+      "module": "dispatch",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1807,
+      "slowest": {
+        "name": "/dispatch/orders — заявки на доставку",
+        "duration": 1823
+      }
+    },
+    {
+      "module": "documents",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1518,
+      "slowest": {
+        "name": "/documents — реестр документов",
+        "duration": 1764
+      }
+    },
+    {
+      "module": "estimates",
+      "total": 8,
+      "passed": 3,
+      "failed": 5,
+      "skipped": 0,
+      "passRate": 38,
+      "avgDuration": 39162,
+      "slowest": {
+        "name": "/specifications/competitive-registry — реестр конкурентных листов",
+        "duration": 61820
+      }
+    },
+    {
+      "module": "exec-docs",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 5590,
+      "slowest": {
+        "name": "/exec-docs/special-journals — журналы специальных работ",
+        "duration": 11783
+      }
+    },
+    {
+      "module": "finance",
+      "total": 20,
+      "passed": 19,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 95,
+      "avgDuration": 1950,
+      "slowest": {
+        "name": "/finance/s-curve-cashflow — S-кривая денежных потоков",
+        "duration": 6552
+      }
+    },
+    {
+      "module": "fleet",
+      "total": 11,
+      "passed": 10,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 91,
+      "avgDuration": 1613,
+      "slowest": {
+        "name": "Dark mode: /fleet",
+        "duration": 2074
+      }
+    },
+    {
+      "module": "hr",
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1532,
+      "slowest": {
+        "name": "Dark mode: /employees",
+        "duration": 1968
+      }
+    },
+    {
+      "module": "iot",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1900,
+      "slowest": {
+        "name": "/iot/sensors — данные датчиков",
+        "duration": 2572
+      }
+    },
+    {
+      "module": "legal",
+      "total": 37,
+      "passed": 37,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3797,
+      "slowest": {
+        "name": "All strings are in Russian (no raw i18n keys)",
+        "duration": 9013
+      }
+    },
+    {
+      "module": "maintenance",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1810,
+      "slowest": {
+        "name": "/maintenance/dashboard — дашборд обслуживания",
+        "duration": 2469
+      }
+    },
+    {
+      "module": "planning",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3913,
+      "slowest": {
+        "name": "/planning/work-volumes — объёмы работ",
+        "duration": 11996
+      }
+    },
+    {
+      "module": "portal",
+      "total": 17,
+      "passed": 16,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 94,
+      "avgDuration": 1862,
+      "slowest": {
+        "name": "/portal/invoices — счета подрядчика",
+        "duration": 5367
+      }
+    },
+    {
+      "module": "portfolio",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1850,
+      "slowest": {
+        "name": "/portfolio/health — здоровье портфеля (RAG-матрица)",
+        "duration": 2433
+      }
+    },
+    {
+      "module": "pricing",
+      "total": 30,
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 7068,
+      "slowest": {
+        "name": "06 — ФМ: импорт ЛСР через xlsx",
+        "duration": 17747
+      }
+    },
+    {
+      "module": "procurement",
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 5566,
+      "slowest": {
+        "name": "/procurement/tenders — тендеры на закупку",
+        "duration": 11793
+      }
+    },
+    {
+      "module": "projects",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 2643,
+      "slowest": {
+        "name": "/site-assessments — предстроительные обследования",
+        "duration": 3610
+      }
+    },
+    {
+      "module": "pto",
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1657,
+      "slowest": {
+        "name": "/pto/lab-tests — результаты лабораторных испытаний",
+        "duration": 2486
+      }
+    },
+    {
+      "module": "punchlist",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1948,
+      "slowest": {
+        "name": "/punchlist/dashboard — аналитика предписаний",
+        "duration": 2495
+      }
+    },
+    {
+      "module": "quality",
+      "total": 39,
+      "passed": 38,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 97,
+      "avgDuration": 3409,
+      "slowest": {
+        "name": "/quality/gates — quality gates (контрольные точки)",
+        "duration": 11780
+      }
+    },
+    {
+      "module": "regulatory",
+      "total": 41,
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 3262,
+      "slowest": {
+        "name": "Тёмная тема — основные страницы регуляторики не ломаются",
+        "duration": 9921
+      }
+    },
+    {
+      "module": "russian-docs",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1563,
+      "slowest": {
+        "name": "/russian-docs/sbis — интеграция СБИС",
+        "duration": 1621
+      }
+    },
+    {
+      "module": "safety",
+      "total": 44,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 2842,
+      "slowest": {
+        "name": "Новое обучение (/safety/training/new) — загрузка и проверка",
+        "duration": 5875
+      }
+    },
+    {
+      "module": "tasks",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "passRate": 100,
+      "avgDuration": 1845,
+      "slowest": {
+        "name": "Dark mode: /tasks",
+        "duration": 2252
+      }
+    },
+    {
+      "module": "users",
+      "total": 20,
+      "passed": 17,
+      "failed": 3,
+      "skipped": 0,
+      "passRate": 85,
+      "avgDuration": 6391,
+      "slowest": {
+        "name": "/support/tickets — реестр заявок",
+        "duration": 62137
+      }
+    },
+    {
+      "module": "warehouse",
+      "total": 19,
+      "passed": 18,
+      "failed": 1,
+      "skipped": 0,
+      "passRate": 95,
+      "avgDuration": 2360,
+      "slowest": {
+        "name": "/warehouse/inter-site-transfer — межплощадочное перемещение",
+        "duration": 11823
+      }
+    }
+  ]
+}

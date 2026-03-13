@@ -2,6 +2,7 @@ package com.privod.platform.modules.task.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -10,12 +11,16 @@ import java.util.UUID;
     @Index(name = "idx_time_entry_task", columnList = "task_id"),
     @Index(name = "idx_time_entry_user", columnList = "user_id")
 })
+@Filter(name = "tenantFilter", condition = "organization_id = :organizationId")
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class TaskTimeEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    @Column(name = "organization_id")
+    private UUID organizationId;
 
     @Column(name = "task_id", nullable = false)
     private UUID taskId;

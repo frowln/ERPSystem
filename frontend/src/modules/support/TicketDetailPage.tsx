@@ -91,6 +91,7 @@ const TicketDetailPage: React.FC = () => {
     queryKey: ['support-ticket', id],
     queryFn: () => supportApi.getTicket(id!),
     enabled: Boolean(id),
+    retry: 1,
   });
 
   const {
@@ -99,8 +100,15 @@ const TicketDetailPage: React.FC = () => {
     refetch: refetchComments,
   } = useQuery({
     queryKey: ['support-ticket-comments', id],
-    queryFn: () => supportApi.getTicketComments(id!),
+    queryFn: async () => {
+      try {
+        return await supportApi.getTicketComments(id!);
+      } catch {
+        return [];
+      }
+    },
     enabled: Boolean(id),
+    retry: 1,
   });
 
   const addCommentMutation = useMutation({

@@ -260,11 +260,11 @@ export default function ChangeManagementDashboardPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <div>
               <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{tp('byTypeTitle')}</h3>
-              <DataTable columns={typeColumns} data={budgetData?.byType ?? []} loading={budgetLoading} />
+              <DataTable columns={typeColumns} data={budgetData?.byType ?? []} loading={budgetLoading} enableExport />
             </div>
             <div>
               <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{tp('monthlyImpactTitle')}</h3>
-              <DataTable columns={monthlyColumns} data={budgetData?.monthlyImpact ?? []} loading={budgetLoading} />
+              <DataTable columns={monthlyColumns} data={budgetData?.monthlyImpact ?? []} loading={budgetLoading} enableExport />
             </div>
           </div>
         </div>
@@ -298,12 +298,12 @@ export default function ChangeManagementDashboardPage() {
 
           <div>
             <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{tp('affectedWbsNodes')}</h3>
-            <DataTable columns={wbsColumns} data={scheduleData?.affectedNodes ?? []} loading={scheduleLoading} />
+            <DataTable columns={wbsColumns} data={scheduleData?.affectedNodes ?? []} loading={scheduleLoading} enableExport />
           </div>
 
           <div>
             <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{tp('changeOrderImpacts')}</h3>
-            <DataTable columns={coImpactColumns} data={scheduleData?.changeOrderImpacts ?? []} loading={scheduleLoading} />
+            <DataTable columns={coImpactColumns} data={scheduleData?.changeOrderImpacts ?? []} loading={scheduleLoading} enableExport />
           </div>
         </div>
       )}
@@ -340,11 +340,11 @@ export default function ChangeManagementDashboardPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <div>
               <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{tp('bySourceTitle')}</h3>
-              <DataTable columns={sourceColumns} data={trendData?.bySource ?? []} loading={trendLoading} />
+              <DataTable columns={sourceColumns} data={trendData?.bySource ?? []} loading={trendLoading} enableExport />
             </div>
             <div>
               <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">{tp('byTypeBreakdown')}</h3>
-              <DataTable columns={typeBreakdownColumns} data={trendData?.byType ?? []} loading={trendLoading} />
+              <DataTable columns={typeBreakdownColumns} data={trendData?.byType ?? []} loading={trendLoading} enableExport />
             </div>
           </div>
         </div>

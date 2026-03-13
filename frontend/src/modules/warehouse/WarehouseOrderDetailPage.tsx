@@ -245,6 +245,7 @@ const WarehouseOrderDetailPage: React.FC = () => {
             columns={itemColumns}
             pageSize={50}
             emptyTitle={t('warehouse.orders.emptyTitle')}
+            enableExport
           />
         </section>
       </div>

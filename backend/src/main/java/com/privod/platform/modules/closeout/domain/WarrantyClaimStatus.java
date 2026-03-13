@@ -12,6 +12,7 @@ public enum WarrantyClaimStatus {
     APPROVED("Одобрен"),
     IN_REPAIR("В ремонте"),
     RESOLVED("Решён"),
+    CLOSED("Закрыт"),
     REJECTED("Отклонён");
 
     private final String displayName;

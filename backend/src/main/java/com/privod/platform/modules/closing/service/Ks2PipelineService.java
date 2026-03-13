@@ -3,6 +3,7 @@ package com.privod.platform.modules.closing.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.modules.closing.domain.ClosingDocumentStatus;
 import com.privod.platform.modules.closing.domain.Ks2Document;
 import com.privod.platform.modules.closing.domain.Ks2Line;
@@ -130,7 +131,7 @@ public class Ks2PipelineService {
         auditService.logCreate("Ks2Document", doc.getId());
 
         // Create KS-2 lines from volumes
-        BigDecimal vatRate = contract.getVatRate() != null ? contract.getVatRate() : new BigDecimal("20.00");
+        BigDecimal vatRate = VatCalculator.resolveRate(contract.getVatRate());
         List<Ks2Line> lines = createKs2Lines(doc.getId(), volumes, vatRate);
 
         // Recalculate totals

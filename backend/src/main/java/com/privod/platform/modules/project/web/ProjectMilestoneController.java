@@ -13,12 +13,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/projects/{projectId}/milestones")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER')")
 @Tag(name = "Project Milestones", description = "Milestone schedule endpoints")
 public class ProjectMilestoneController {
 

@@ -1,13 +1,21 @@
 package com.privod.platform.modules.finance.service;
 
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.finance.domain.BudgetItem;
 import com.privod.platform.modules.finance.domain.CashFlowCategory;
 import com.privod.platform.modules.finance.domain.CashFlowEntry;
+import com.privod.platform.modules.contract.domain.Contract;
+import com.privod.platform.modules.contract.repository.ContractRepository;
+import com.privod.platform.modules.contractExt.domain.ContractMilestone;
+import com.privod.platform.modules.contractExt.repository.ContractMilestoneRepository;
+import com.privod.platform.modules.finance.domain.Payment;
+import com.privod.platform.modules.finance.domain.PaymentStatus;
 import com.privod.platform.modules.finance.repository.BudgetItemRepository;
 import com.privod.platform.modules.finance.repository.BudgetRepository;
 import com.privod.platform.modules.finance.repository.CashFlowEntryRepository;
+import com.privod.platform.modules.finance.repository.PaymentRepository;
 import com.privod.platform.modules.finance.web.dto.CashFlowEntryResponse;
 import com.privod.platform.modules.finance.web.dto.CashFlowSummaryResponse;
 import com.privod.platform.modules.finance.web.dto.CreateCashFlowEntryRequest;
@@ -40,6 +48,10 @@ public class CashFlowService {
     private final BudgetItemRepository budgetItemRepository;
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
+    // P1-FIN-3: Прогноз из контрактных графиков и фактических платежей
+    private final ContractRepository contractRepository;
+    private final ContractMilestoneRepository contractMilestoneRepository;
+    private final PaymentRepository paymentRepository;
 
     @Transactional(readOnly = true)
     public Page<CashFlowEntryResponse> listEntries(UUID projectId, Pageable pageable) {
@@ -187,10 +199,6 @@ public class CashFlowService {
             throw new IllegalStateException("Нет позиций в бюджете. Импортируйте смету перед генерацией прогноза.");
         }
 
-        BigDecimal totalRevenue = allItems.stream()
-                .map(i -> i.getCustomerTotal() != null ? i.getCustomerTotal() : BigDecimal.ZERO)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         BigDecimal totalCost = allItems.stream()
                 .map(i -> {
                     BigDecimal cp = i.getCostPrice() != null ? i.getCostPrice() : BigDecimal.ZERO;
@@ -218,42 +226,75 @@ public class CashFlowService {
         long totalMonths = java.time.temporal.ChronoUnit.MONTHS.between(startDate, endDate);
         if (totalMonths <= 0) totalMonths = 6;
 
-        BigDecimal vatMultiplier = includeVat ? new BigDecimal("1.20") : BigDecimal.ONE;
+        BigDecimal vatMultiplier = includeVat ? BigDecimal.ONE.add(VatCalculator.DEFAULT_RATE.divide(new BigDecimal("100"))) : BigDecimal.ONE;
 
         cashFlowEntryRepository.deleteByProjectIdAndNotes(projectId, "AUTO_FORECAST");
 
         List<CashFlowEntry> entries = new ArrayList<>();
 
-        BigDecimal advancePercent = new BigDecimal("0.30");
-        BigDecimal monthlyRevenue = totalRevenue.subtract(totalRevenue.multiply(advancePercent))
-                .divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP)
-                .multiply(vatMultiplier);
+        // P1-FIN-3: Build inflow forecast from contract milestones if available
+        List<ContractMilestone> allMilestones = new ArrayList<>();
+        List<Contract> contracts = contractRepository.findByProjectIdAndDeletedFalse(projectId);
+        for (Contract contract : contracts) {
+            allMilestones.addAll(contractMilestoneRepository.findByContractIdAndDeletedFalseOrderByDueDateAsc(contract.getId()));
+        }
 
-        CashFlowEntry advance = CashFlowEntry.builder()
-                .projectId(projectId)
-                .entryDate(startDate)
-                .direction("in")
-                .category(CashFlowCategory.CONTRACT_PAYMENT)
-                .amount(totalRevenue.multiply(advancePercent).multiply(vatMultiplier).setScale(2, RoundingMode.HALF_UP))
-                .description("Аванс по договору (30%)")
-                .notes("AUTO_FORECAST")
-                .build();
-        entries.add(advance);
+        List<ContractMilestone> forecastMilestones = allMilestones.stream()
+                .filter(m -> m.getAmount() != null && m.getAmount().compareTo(BigDecimal.ZERO) > 0)
+                .filter(m -> !m.getDueDate().isBefore(startDate) && !m.getDueDate().isAfter(endDate))
+                .toList();
 
-        for (long m = 1; m <= totalMonths; m++) {
-            LocalDate monthDate = startDate.plusMonths(m);
+        if (!forecastMilestones.isEmpty()) {
+            // Milestone-based inflow: each milestone payment date + amount
+            for (ContractMilestone milestone : forecastMilestones) {
+                entries.add(CashFlowEntry.builder()
+                        .projectId(projectId)
+                        .entryDate(milestone.getDueDate())
+                        .direction("in")
+                        .category(CashFlowCategory.CONTRACT_PAYMENT)
+                        .amount(milestone.getAmount().multiply(vatMultiplier).setScale(2, RoundingMode.HALF_UP))
+                        .description("Оплата по этапу: " + milestone.getName())
+                        .notes("AUTO_FORECAST")
+                        .build());
+            }
+            log.info("Cash flow inflow forecast for project {}: {} milestones from contracts", projectId, forecastMilestones.size());
+        } else {
+            // Fallback: 30% advance on start date + equal monthly payments from budget revenue
+            BigDecimal totalRevenue = allItems.stream()
+                    .map(i -> i.getCustomerTotal() != null ? i.getCustomerTotal() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal advancePercent = new BigDecimal("0.30");
+            BigDecimal monthlyRevenue = totalRevenue.subtract(totalRevenue.multiply(advancePercent))
+                    .divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP)
+                    .multiply(vatMultiplier);
 
             entries.add(CashFlowEntry.builder()
                     .projectId(projectId)
-                    .entryDate(monthDate)
+                    .entryDate(startDate)
                     .direction("in")
                     .category(CashFlowCategory.CONTRACT_PAYMENT)
-                    .amount(monthlyRevenue.setScale(2, RoundingMode.HALF_UP))
-                    .description("Оплата по КС-2/КС-3 за " + monthDate.getMonth().getValue() + " мес.")
+                    .amount(totalRevenue.multiply(advancePercent).multiply(vatMultiplier).setScale(2, RoundingMode.HALF_UP))
+                    .description("Аванс по договору (30%)")
                     .notes("AUTO_FORECAST")
                     .build());
+
+            for (long m = 1; m <= totalMonths; m++) {
+                LocalDate monthDate = startDate.plusMonths(m);
+                entries.add(CashFlowEntry.builder()
+                        .projectId(projectId)
+                        .entryDate(monthDate)
+                        .direction("in")
+                        .category(CashFlowCategory.CONTRACT_PAYMENT)
+                        .amount(monthlyRevenue.setScale(2, RoundingMode.HALF_UP))
+                        .description("Оплата по КС-2/КС-3 за " + monthDate.getMonth().getValue() + " мес.")
+                        .notes("AUTO_FORECAST")
+                        .build());
+            }
+            log.info("Cash flow inflow forecast for project {}: budget-based fallback (30% advance + equal monthly)", projectId);
         }
 
+        // Outflow forecast: evenly distribute budget cost items across months
         BigDecimal monthlyMaterials = totalMaterials.divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP);
         BigDecimal monthlyLabor = totalLabor.divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP);
         BigDecimal monthlyEquipment = totalEquipment.divide(BigDecimal.valueOf(totalMonths), 2, RoundingMode.HALF_UP);
@@ -303,10 +344,39 @@ public class CashFlowService {
             saved.add(cashFlowEntryRepository.save(entry));
         }
 
-        log.info("Сгенерирован прогноз Cash Flow для проекта {}: {} записей, выручка {}, себестоимость {}",
-                projectId, saved.size(), totalRevenue, totalCost);
+        log.info("Сгенерирован прогноз Cash Flow для проекта {}: {} записей, себестоимость {}",
+                projectId, saved.size(), totalCost);
 
         return saved.stream().map(CashFlowEntryResponse::fromEntity).toList();
+    }
+
+    /**
+     * P1-CHN-2: Auto-create CashFlowEntry when Invoice becomes PAID.
+     * Called from InvoiceService when status transitions to PAID.
+     * Idempotent: skips if an entry with this invoiceId already exists.
+     */
+    @Transactional
+    public void createFromInvoicePaid(UUID invoiceId, UUID projectId, BigDecimal amount,
+                                       String description, UUID organizationId) {
+        if (projectId == null) {
+            return; // Cannot create cash-flow entry without project
+        }
+        // Idempotency: skip if already recorded
+        if (cashFlowEntryRepository.existsByInvoiceIdAndDeletedFalse(invoiceId)) {
+            return;
+        }
+        CashFlowEntry entry = CashFlowEntry.builder()
+                .projectId(projectId)
+                .entryDate(java.time.LocalDate.now())
+                .direction("out")
+                .category(CashFlowCategory.CONTRACT_PAYMENT)
+                .amount(amount != null ? amount : java.math.BigDecimal.ZERO)
+                .description(description != null ? description : "Оплата счёта")
+                .invoiceId(invoiceId)
+                .notes("AUTO_FROM_INVOICE_PAID")
+                .build();
+        cashFlowEntryRepository.save(entry);
+        log.info("Auto-created CashFlowEntry from invoice {} (project {})", invoiceId, projectId);
     }
 
     private List<UUID> getOrganizationProjectIds(UUID organizationId) {

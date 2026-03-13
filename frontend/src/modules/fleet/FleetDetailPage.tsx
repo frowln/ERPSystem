@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
-  Truck, MapPin, Calendar, Fuel, Wrench, ClipboardCheck, Clock, User,
+  Truck, MapPin, Calendar, Fuel, Wrench, ClipboardCheck, Clock, User, QrCode,
 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
@@ -14,16 +14,17 @@ import { cn } from '@/lib/cn';
 import { formatDate, formatMoney, formatNumber } from '@/lib/format';
 import { fleetApi } from '@/api/fleet';
 import { t } from '@/i18n';
+import { QrCodeButton } from '@/components/QrCode';
 import type { Vehicle, VehicleAssignment, MaintenanceRecord, FuelRecord, InspectionRecord } from '@/api/fleet';
 
-const vehicleStatusColorMap: Record<string, 'green' | 'blue' | 'yellow' | 'orange' | 'gray'> = { available: 'green', in_use: 'blue', maintenance: 'yellow', repair: 'orange', decommissioned: 'gray' };
-const getVehicleStatusLabels = (): Record<string, string> => ({ available: t('fleet.detail.statusAvailable'), in_use: t('fleet.detail.statusInUse'), maintenance: t('fleet.detail.statusMaintenance'), repair: t('fleet.detail.statusRepair'), decommissioned: t('fleet.detail.statusDecommissioned') });
-const assignmentStatusMap: Record<string, 'green' | 'blue' | 'gray'> = { active: 'green', completed: 'gray', cancelled: 'gray' };
-const getAssignmentStatusLabels = (): Record<string, string> => ({ active: t('fleet.detail.assignmentActive'), completed: t('fleet.detail.assignmentCompleted'), cancelled: t('fleet.detail.assignmentCancelled') });
-const maintenanceStatusMap: Record<string, 'yellow' | 'blue' | 'green'> = { scheduled: 'yellow', in_progress: 'blue', completed: 'green' };
-const getMaintenanceStatusLabels = (): Record<string, string> => ({ scheduled: t('fleet.detail.maintenanceScheduled'), in_progress: t('fleet.detail.maintenanceInProgress'), completed: t('fleet.detail.maintenanceCompleted') });
-const inspectionResultMap: Record<string, 'green' | 'red' | 'yellow'> = { passed: 'green', failed: 'red', conditional: 'yellow' };
-const getInspectionResultLabels = (): Record<string, string> => ({ PASSED: t('fleet.detail.inspectionPassed'), FAILED: t('fleet.detail.inspectionFailed'), CONDITIONAL: t('fleet.detail.inspectionConditional') });
+const vehicleStatusColorMap: Record<string, 'green' | 'blue' | 'yellow' | 'orange' | 'gray'> = { available: 'green', in_use: 'blue', maintenance: 'yellow', repair: 'orange', decommissioned: 'gray', AVAILABLE: 'green', IN_USE: 'blue', MAINTENANCE: 'yellow', REPAIR: 'orange', DECOMMISSIONED: 'gray' };
+const getVehicleStatusLabels = (): Record<string, string> => ({ available: t('fleet.detail.statusAvailable'), in_use: t('fleet.detail.statusInUse'), maintenance: t('fleet.detail.statusMaintenance'), repair: t('fleet.detail.statusRepair'), decommissioned: t('fleet.detail.statusDecommissioned'), AVAILABLE: t('fleet.detail.statusAvailable'), IN_USE: t('fleet.detail.statusInUse'), MAINTENANCE: t('fleet.detail.statusMaintenance'), REPAIR: t('fleet.detail.statusRepair'), DECOMMISSIONED: t('fleet.detail.statusDecommissioned') });
+const assignmentStatusMap: Record<string, 'green' | 'blue' | 'gray'> = { active: 'green', completed: 'gray', cancelled: 'gray', ACTIVE: 'green', COMPLETED: 'gray', CANCELLED: 'gray' };
+const getAssignmentStatusLabels = (): Record<string, string> => ({ active: t('fleet.detail.assignmentActive'), completed: t('fleet.detail.assignmentCompleted'), cancelled: t('fleet.detail.assignmentCancelled'), ACTIVE: t('fleet.detail.assignmentActive'), COMPLETED: t('fleet.detail.assignmentCompleted'), CANCELLED: t('fleet.detail.assignmentCancelled') });
+const maintenanceStatusMap: Record<string, 'yellow' | 'blue' | 'green'> = { scheduled: 'yellow', in_progress: 'blue', completed: 'green', SCHEDULED: 'yellow', IN_PROGRESS: 'blue', COMPLETED: 'green' };
+const getMaintenanceStatusLabels = (): Record<string, string> => ({ scheduled: t('fleet.detail.maintenanceScheduled'), in_progress: t('fleet.detail.maintenanceInProgress'), completed: t('fleet.detail.maintenanceCompleted'), SCHEDULED: t('fleet.detail.maintenanceScheduled'), IN_PROGRESS: t('fleet.detail.maintenanceInProgress'), COMPLETED: t('fleet.detail.maintenanceCompleted') });
+const inspectionResultMap: Record<string, 'green' | 'red' | 'yellow'> = { passed: 'green', failed: 'red', conditional: 'yellow', PASSED: 'green', FAILED: 'red', CONDITIONAL: 'yellow' };
+const getInspectionResultLabels = (): Record<string, string> => ({ PASSED: t('fleet.detail.inspectionPassed'), FAILED: t('fleet.detail.inspectionFailed'), CONDITIONAL: t('fleet.detail.inspectionConditional'), passed: t('fleet.detail.inspectionPassed'), failed: t('fleet.detail.inspectionFailed'), conditional: t('fleet.detail.inspectionConditional') });
 
 type TabId = 'assignments' | 'maintenance' | 'fuel' | 'inspections';
 
@@ -49,7 +50,7 @@ const FleetDetailPage: React.FC = () => {
       { accessorKey: 'operatorName', header: t('fleet.detail.colOperator'), size: 160 },
       { accessorKey: 'startDate', header: t('fleet.detail.colStart'), size: 120, cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span> },
       { accessorKey: 'endDate', header: t('fleet.detail.colEnd'), size: 120, cell: ({ getValue }) => { const v = getValue<string>(); return v ? <span className="tabular-nums">{formatDate(v)}</span> : <span className="text-neutral-400">—</span>; } },
-      { accessorKey: 'status', header: t('fleet.detail.colStatus'), size: 120, cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={assignmentStatusMap} label={assignmentStatusLabels[getValue<string>()]} /> },
+      { accessorKey: 'status', header: t('fleet.detail.colStatus'), size: 120, cell: ({ getValue }) => { const s = getValue<string>(); return <StatusBadge status={s} colorMap={assignmentStatusMap} label={assignmentStatusLabels[s] ?? s} />; } },
       { accessorKey: 'hoursUsed', header: t('fleet.detail.colEngineHours'), size: 100, cell: ({ getValue }) => <span className="tabular-nums">{formatNumber(getValue<number>())}</span> },
     ];
   }, []);
@@ -62,7 +63,7 @@ const FleetDetailPage: React.FC = () => {
       { accessorKey: 'scheduledDate', header: t('fleet.detail.colDate'), size: 120, cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span> },
       { accessorKey: 'COST', header: t('fleet.detail.colCost'), size: 140, cell: ({ getValue }) => <span className="font-medium tabular-nums">{formatMoney(getValue<number>())}</span> },
       { accessorKey: 'performedBy', header: t('fleet.detail.colPerformer'), size: 180 },
-      { accessorKey: 'status', header: t('fleet.detail.colStatus'), size: 130, cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={maintenanceStatusMap} label={maintenanceStatusLabels[getValue<string>()]} /> },
+      { accessorKey: 'status', header: t('fleet.detail.colStatus'), size: 130, cell: ({ getValue }) => { const s = getValue<string>(); return <StatusBadge status={s} colorMap={maintenanceStatusMap} label={maintenanceStatusLabels[s] ?? s} />; } },
     ];
   }, []);
 
@@ -80,7 +81,7 @@ const FleetDetailPage: React.FC = () => {
     return [
       { accessorKey: 'date', header: t('fleet.detail.colInspectionDate'), size: 130, cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span> },
       { accessorKey: 'inspectorName', header: t('fleet.detail.colInspector'), size: 160 },
-      { accessorKey: 'result', header: t('fleet.detail.colResult'), size: 130, cell: ({ getValue }) => <StatusBadge status={getValue<string>()} colorMap={inspectionResultMap} label={inspectionResultLabels[getValue<string>()]} /> },
+      { accessorKey: 'result', header: t('fleet.detail.colResult'), size: 130, cell: ({ getValue }) => { const s = getValue<string>(); return <StatusBadge status={s} colorMap={inspectionResultMap} label={inspectionResultLabels[s] ?? s} />; } },
       { accessorKey: 'notes', header: t('fleet.detail.colNotes'), size: 300, cell: ({ getValue }) => <span className="text-neutral-600">{getValue<string>()}</span> },
       { accessorKey: 'nextInspectionDate', header: t('fleet.detail.colNextInspection'), size: 150, cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue<string>())}</span> },
     ];
@@ -100,7 +101,14 @@ const FleetDetailPage: React.FC = () => {
           { label: vehicle.name },
         ]}
         actions={
-          <Button variant="secondary" onClick={() => navigate(`/fleet/${vehicle.id}/edit`)}>{t('fleet.detail.edit')}</Button>
+          <div className="flex items-center gap-2">
+            <QrCodeButton
+              url={`${window.location.origin}/fleet/${vehicle.id}`}
+              label={vehicle.name}
+              sublabel={vehicle.code}
+            />
+            <Button variant="secondary" onClick={() => navigate(`/fleet/${vehicle.id}/edit`)}>{t('fleet.detail.edit')}</Button>
+          </div>
         }
       />
 
@@ -115,11 +123,11 @@ const FleetDetailPage: React.FC = () => {
           <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('fleet.detail.infoStatus')}</p>
-              <StatusBadge status={vehicle.status} colorMap={vehicleStatusColorMap} label={vehicleStatusLabels[vehicle.status]} />
+              <StatusBadge status={vehicle.status} colorMap={vehicleStatusColorMap} label={vehicleStatusLabels[vehicle.status] ?? vehicle.status} />
             </div>
             <div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('fleet.detail.infoLicensePlate')}</p>
-              <p className="text-sm font-mono font-medium text-neutral-900 dark:text-neutral-100">{vehicle.licensePlate}</p>
+              <p className="text-sm font-mono font-medium text-neutral-900 dark:text-neutral-100">{vehicle.licensePlate || '\u2014'}</p>
             </div>
             <div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">{t('fleet.detail.infoCurrentProject')}</p>
@@ -176,16 +184,16 @@ const FleetDetailPage: React.FC = () => {
 
       {/* Tab content */}
       {activeTab === 'assignments' && (
-        <DataTable<VehicleAssignment> data={[]} columns={assignmentColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyAssignments')} />
+        <DataTable<VehicleAssignment> data={[]} columns={assignmentColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyAssignments')} enableExport />
       )}
       {activeTab === 'maintenance' && (
-        <DataTable<MaintenanceRecord> data={[]} columns={maintenanceColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyMaintenance')} />
+        <DataTable<MaintenanceRecord> data={[]} columns={maintenanceColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyMaintenance')} enableExport />
       )}
       {activeTab === 'fuel' && (
-        <DataTable<FuelRecord> data={[]} columns={fuelColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyFuel')} />
+        <DataTable<FuelRecord> data={[]} columns={fuelColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyFuel')} enableExport />
       )}
       {activeTab === 'inspections' && (
-        <DataTable<InspectionRecord> data={[]} columns={inspectionColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyInspections')} />
+        <DataTable<InspectionRecord> data={[]} columns={inspectionColumns} pageSize={10} emptyTitle={t('fleet.detail.emptyInspections')} enableExport />
       )}
     </div>
   );

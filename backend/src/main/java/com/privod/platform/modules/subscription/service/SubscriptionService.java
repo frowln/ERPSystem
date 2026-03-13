@@ -113,7 +113,7 @@ public class SubscriptionService {
                     .periodEnd(newPlan.getBillingPeriod() == com.privod.platform.modules.subscription.domain.BillingPeriod.YEARLY
                             ? Instant.now().plus(365, ChronoUnit.DAYS)
                             : Instant.now().plus(30, ChronoUnit.DAYS))
-                    .invoiceNumber("INV-" + System.currentTimeMillis())
+                    .invoiceNumber("INV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                     .description("Подписка: " + newPlan.getDisplayName())
                     .build();
             billingRecordRepository.save(billingRecord);
@@ -167,12 +167,12 @@ public class SubscriptionService {
             case "users" -> {
                 long currentUsers = userRepository.findByOrganizationId(organizationId, Pageable.unpaged()).getTotalElements();
                 int maxUsers = plan.getMaxUsers() != null ? plan.getMaxUsers() : Integer.MAX_VALUE;
-                yield new QuotaResponse("users", currentUsers, maxUsers, currentUsers >= maxUsers);
+                yield new QuotaResponse("users", currentUsers, maxUsers, currentUsers > maxUsers);
             }
             case "projects" -> {
                 long currentProjects = projectRepository.countActiveProjectsByOrganizationId(organizationId);
                 int maxProjects = plan.getMaxProjects() != null ? plan.getMaxProjects() : Integer.MAX_VALUE;
-                yield new QuotaResponse("projects", currentProjects, maxProjects, currentProjects >= maxProjects);
+                yield new QuotaResponse("projects", currentProjects, maxProjects, currentProjects > maxProjects);
             }
             case "storage" -> {
                 // Storage tracking would require a dedicated service; return plan limits for now

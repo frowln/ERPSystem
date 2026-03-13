@@ -240,6 +240,7 @@ const UsageLogListPage: React.FC = () => {
             onRowClick={(row) => navigate(`/fleet/usage-logs/${row.id}`)}
             emptyTitle={t('fleet.usageLogs.emptyTitle')}
             emptyDescription={t('fleet.usageLogs.emptyDescription')}
+            enableExport
           />
         </>
       )}

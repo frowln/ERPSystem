@@ -187,6 +187,7 @@ const RevenueDashboardPage: React.FC = () => {
           pageSize={10}
           emptyTitle={t('revenueRecognition.emptyTitle')}
           emptyDescription={t('revenueRecognition.loadingData')}
+          enableExport
         />
       </div>
     </div>

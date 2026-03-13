@@ -1,5 +1,7 @@
 package com.privod.platform.modules.accounting.web;
 
+import com.privod.platform.infrastructure.dadata.DaDataParty;
+import com.privod.platform.infrastructure.dadata.DaDataService;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.accounting.service.CounterpartyService;
@@ -35,6 +37,7 @@ import java.util.UUID;
 public class CounterpartyController {
 
     private final CounterpartyService counterpartyService;
+    private final DaDataService daDataService;
 
     @GetMapping
     @Operation(summary = "List counterparties with search")
@@ -78,5 +81,16 @@ public class CounterpartyController {
     public ResponseEntity<ApiResponse<Void>> deactivate(@PathVariable UUID id) {
         counterpartyService.deactivateCounterparty(id);
         return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @GetMapping("/lookup")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCE_MANAGER', 'ACCOUNTANT', 'MANAGER')")
+    @Operation(summary = "P2-CRM-1: Auto-fill counterparty data from DaData by INN/OGRN")
+    public ResponseEntity<ApiResponse<DaDataParty>> lookupByInn(
+            @RequestParam String inn) {
+        return daDataService.findByInn(inn)
+                .map(party -> ResponseEntity.ok(ApiResponse.ok(party)))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error(404, "Контрагент с ИНН " + inn + " не найден в реестре ФНС")));
     }
 }

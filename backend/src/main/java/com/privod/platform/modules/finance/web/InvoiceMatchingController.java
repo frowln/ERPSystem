@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/invoices")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
 @Tag(name = "Invoice Matching", description = "Invoice matching and 3-way validation")
 public class InvoiceMatchingController {
 

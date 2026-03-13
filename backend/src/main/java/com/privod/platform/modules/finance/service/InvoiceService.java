@@ -1,6 +1,7 @@
 package com.privod.platform.modules.finance.service;
 
 import com.privod.platform.infrastructure.audit.AuditService;
+import com.privod.platform.infrastructure.finance.VatCalculator;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.contract.domain.Contract;
 import com.privod.platform.modules.contract.repository.ContractRepository;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +48,7 @@ public class InvoiceService {
     private final ProjectRepository projectRepository;
     private final AuditService auditService;
     private final BudgetItemSyncService budgetItemSyncService;
+    private final CashFlowService cashFlowService;
 
     @Transactional(readOnly = true)
     public Page<InvoiceResponse> listInvoices(UUID projectId, InvoiceStatus status,
@@ -117,13 +118,13 @@ public class InvoiceService {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         String number = generateInvoiceNumber();
 
-        BigDecimal vatRate = request.vatRate() != null ? request.vatRate() : new BigDecimal("20.00");
+        BigDecimal vatRate = VatCalculator.resolveRate(request.vatRate());
         BigDecimal subtotal = request.subtotal();
         BigDecimal vatAmount;
         BigDecimal totalAmount = request.totalAmount();
 
         if (subtotal != null) {
-            vatAmount = subtotal.multiply(vatRate).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+            vatAmount = VatCalculator.vatAmount(subtotal, vatRate);
         } else {
             vatAmount = BigDecimal.ZERO;
         }
@@ -174,6 +175,7 @@ public class InvoiceService {
                 .matchedPoId(effectiveContractId)
                 .matchedReceiptId(request.ks2Id() != null ? request.ks2Id() : request.ks3Id())
                 .notes(request.notes())
+                .budgetItemId(request.budgetItemId())
                 .build();
 
         invoice = invoiceRepository.save(invoice);
@@ -236,6 +238,9 @@ public class InvoiceService {
         if (request.notes() != null) {
             invoice.setNotes(request.notes());
         }
+        if (request.budgetItemId() != null) {
+            invoice.setBudgetItemId(request.budgetItemId());
+        }
 
         // Keep 3-way references synchronized with core document links.
         invoice.setMatchedPoId(invoice.getContractId());
@@ -243,10 +248,7 @@ public class InvoiceService {
 
         // Recalculate VAT amount
         if (invoice.getSubtotal() != null && invoice.getVatRate() != null) {
-            BigDecimal vatAmount = invoice.getSubtotal()
-                    .multiply(invoice.getVatRate())
-                    .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
-            invoice.setVatAmount(vatAmount);
+            invoice.setVatAmount(VatCalculator.vatAmount(invoice.getSubtotal(), invoice.getVatRate()));
         }
 
         // Recalculate remaining
@@ -325,6 +327,16 @@ public class InvoiceService {
             auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), invoice.getStatus().name());
         }
 
+        // P1-CHN-2: Auto-create CashFlowEntry when invoice becomes fully PAID
+        if (invoice.getStatus() == InvoiceStatus.PAID) {
+            UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+            cashFlowService.createFromInvoicePaid(
+                    invoice.getId(), invoice.getProjectId(),
+                    invoice.getTotalAmount(),
+                    "Оплата счёта " + invoice.getNumber(),
+                    orgId);
+        }
+
         log.info("Оплата зарегистрирована для счёта {}: {} ({})", invoice.getNumber(), amount, invoice.getId());
         return InvoiceResponse.fromEntity(invoice);
     }
@@ -389,6 +401,16 @@ public class InvoiceService {
         invoice.setStatus(targetStatus);
         invoice = invoiceRepository.save(invoice);
         budgetItemSyncService.onInvoiceFinancialStateChanged(invoice.getContractId());
+
+        // P1-CHN-2: Auto-create CashFlowEntry when manually transitioned to PAID
+        if (targetStatus == InvoiceStatus.PAID) {
+            UUID orgId = SecurityUtils.requireCurrentOrganizationId();
+            cashFlowService.createFromInvoicePaid(
+                    invoice.getId(), invoice.getProjectId(),
+                    invoice.getTotalAmount(),
+                    "Оплата счёта " + invoice.getNumber(),
+                    orgId);
+        }
 
         auditService.logStatusChange("Invoice", invoice.getId(), oldStatus.name(), targetStatus.name());
         return InvoiceResponse.fromEntity(invoice);

@@ -200,7 +200,7 @@ export default function MchDListPage() {
         <MetricCard label={tp('metricExpired')} value={String(expiredCount)} loading={isLoading} />
       </div>
 
-      <DataTable columns={columns} data={filtered} loading={isLoading} />
+      <DataTable columns={columns} data={filtered} loading={isLoading} enableExport />
 
       {/* Create MChD modal */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title={tp('createTitle')} size="lg">

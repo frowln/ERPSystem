@@ -25,6 +25,8 @@ import com.privod.platform.modules.crm.web.dto.CrmPipelineResponse;
 import com.privod.platform.modules.crm.web.dto.CrmStageResponse;
 import com.privod.platform.modules.crm.web.dto.CrmTeamResponse;
 import com.privod.platform.modules.crm.web.dto.UpdateCrmLeadRequest;
+import com.privod.platform.modules.accounting.domain.Counterparty;
+import com.privod.platform.modules.accounting.repository.CounterpartyRepository;
 import com.privod.platform.modules.project.domain.Project;
 import com.privod.platform.modules.project.domain.ProjectStatus;
 import com.privod.platform.modules.project.repository.ProjectRepository;
@@ -58,6 +60,7 @@ public class CrmService {
     private final CrmActivityRepository activityRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final CounterpartyRepository counterpartyRepository;
     private final AuditService auditService;
 
     // ===================== Leads =====================
@@ -182,6 +185,30 @@ public class CrmService {
         CrmLead lead = getLeadOrThrow(leadId, organizationId);
         CrmStage stage = getStageOrThrow(stageId, organizationId);
 
+        // P1-CRM-2: Валидация переходов по этапам — только последовательно (canTransitionTo).
+        // Терминальные этапы (won/lost) всегда доступны напрямую.
+        if (lead.getStageId() != null && !stage.isWon() && !stage.isClosed()) {
+            CrmStage currentStage = stageRepository.findAccessibleById(lead.getStageId(), organizationId)
+                    .orElse(null);
+            if (currentStage != null) {
+                int delta = stage.getSequence() - currentStage.getSequence();
+                if (delta < 0) {
+                    throw new IllegalStateException(
+                            "Нельзя перевести лид на предыдущий этап: текущий «"
+                                    + currentStage.getName() + "» (порядок " + currentStage.getSequence()
+                                    + "), целевой «" + stage.getName()
+                                    + "» (порядок " + stage.getSequence() + ")");
+                }
+                if (delta > 1) {
+                    throw new IllegalStateException(
+                            "Перескок через этапы запрещён: переходите последовательно. "
+                                    + "Текущий: «" + currentStage.getName() + "» (порядок " + currentStage.getSequence()
+                                    + "), целевой: «" + stage.getName()
+                                    + "» (порядок " + stage.getSequence() + ")");
+                }
+            }
+        }
+
         UUID oldStageId = lead.getStageId();
         lead.setStageId(stageId);
         lead.setProbability(stage.getProbability());
@@ -236,6 +263,46 @@ public class CrmService {
         auditService.logUpdate("CrmLead", lead.getId(), "projectId", null, projectId.toString());
 
         log.info("CRM lead {} converted to project {} ({})", lead.getName(), projectId, lead.getId());
+        return CrmLeadResponse.fromEntity(lead);
+    }
+
+    /**
+     * P0-2: Конвертация Лида в Контрагента.
+     * Закрывает разрыв в цепочке: Лид → Контрагент → КП → Договор.
+     * ИНН обязателен (реквизит для идентификации юрлица в РФ).
+     */
+    @Transactional
+    public CrmLeadResponse convertToCounterparty(UUID leadId, String inn, String kpp,
+                                                   String phone, String email, String legalAddress) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        CrmLead lead = getLeadOrThrow(leadId, organizationId);
+
+        if (lead.getCounterpartyId() != null) {
+            throw new IllegalStateException("Лид уже связан с контрагентом");
+        }
+
+        String name = lead.getCompanyName() != null ? lead.getCompanyName() : lead.getPartnerName();
+        if (name == null || name.isBlank()) {
+            throw new IllegalStateException("Невозможно создать контрагента: у лида не указано название компании");
+        }
+        if (inn == null || inn.isBlank()) {
+            throw new IllegalArgumentException("ИНН обязателен для создания контрагента");
+        }
+
+        Counterparty counterparty = Counterparty.builder()
+                .organizationId(organizationId)
+                .name(name)
+                .inn(inn)
+                .kpp(kpp)
+                .legalAddress(legalAddress)
+                .build();
+        counterparty = counterpartyRepository.save(counterparty);
+
+        lead.setCounterpartyId(counterparty.getId());
+        lead = leadRepository.save(lead);
+        auditService.logUpdate("CrmLead", lead.getId(), "counterpartyId", null, counterparty.getId().toString());
+
+        log.info("CRM lead {} converted to counterparty {} ({})", lead.getName(), counterparty.getId(), lead.getId());
         return CrmLeadResponse.fromEntity(lead);
     }
 

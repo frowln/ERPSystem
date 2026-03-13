@@ -170,6 +170,7 @@ const LeaveTypesPage: React.FC = () => {
         pageSize={20}
         emptyTitle={t('leave.types.emptyTitle')}
         emptyDescription={t('leave.types.emptyDescription')}
+        enableExport
       />
     </div>
   );
