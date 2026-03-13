@@ -225,7 +225,7 @@ public class Integration1cService {
             syncLog.setRecordsProcessed(importedCount + updatedCount);
         } catch (Exception e) {
             log.error("1C counterparty import failed: {}", e.getMessage());
-            syncLog.setStatus(SyncStatus.ERROR);
+            syncLog.setStatus(SyncStatus.FAILED);
             syncLog.setErrorMessage(e.getMessage());
         }
 
@@ -234,7 +234,7 @@ public class Integration1cService {
         config.setLastSyncAt(Instant.now());
         configRepository.save(config);
 
-        return syncLog.getStatus() == SyncStatus.SUCCESS
+        return syncLog.getStatus() != SyncStatus.FAILED
                 ? Integration1cSyncResult.success(syncLog.getId(),
                         "Imported " + importedCount + " new, updated " + updatedCount + " counterparties from 1C",
                         importedCount + updatedCount)

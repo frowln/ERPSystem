@@ -62,6 +62,16 @@ public class BouncyCastleCryptoProvider implements CryptoProviderService {
         } catch (Exception e) {
             log.error("Failed to register BouncyCastle provider", e);
         }
+
+        // P0-DOC-1: warn prominently at startup that GOST signing is not available.
+        // Real ГОСТ Р 34.10-2012 signature requires CryptoPro JCP 2.0 (commercial license).
+        // Until CryptoPro JCP is installed and its JAR is added to the classpath, all
+        // signing operations that do NOT supply a private key will throw an exception
+        // (they will not silently return a SHA-256 hash, which is NOT a valid signature).
+        log.warn("[КЭП P0] ГОСТ Р 34.10-2012 digital signature is NOT available. " +
+                "Юридически значимые электронные подписи требуют CryptoPro JCP 2.0. " +
+                "Обратитесь к поставщику: https://cryptopro.ru. " +
+                "До установки CryptoPro JCP подписание документов без приватного ключа RSA невозможно.");
     }
 
     @Override
@@ -97,11 +107,13 @@ public class BouncyCastleCryptoProvider implements CryptoProviderService {
                 return signatureBytes;
             }
 
-            // If no private key provided, return the hash as a placeholder
-            // In production, this would delegate to CryptoPro CSP or HSM
-            log.warn("No private key provided — returning SHA-256 hash as signature placeholder. " +
-                    "Production should use CryptoPro CSP or HSM for GOST signing.");
-            return hash;
+            // P0-DOC-1: Do NOT return a hash as a fake signature.
+            // A SHA-256 hash is NOT a digital signature and would be accepted nowhere.
+            // Throw explicitly so callers understand signing is impossible without a key.
+            throw new CryptoOperationException(
+                    "Подписание невозможно: приватный ключ не передан. " +
+                    "Для ГОСТ Р 34.10-2012 необходим CryptoPro JCP 2.0 (лицензионная библиотека). " +
+                    "Для RSA-подписи передайте privateKeyHint в формате PKCS#8.");
 
         } catch (Exception e) {
             log.error("Failed to sign data", e);
