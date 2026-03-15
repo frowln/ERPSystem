@@ -27,5 +27,6 @@ public record TenantDetailResponse(
         long projectCount,
         long storageUsedMb,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        Instant lastActiveAt
 ) {}

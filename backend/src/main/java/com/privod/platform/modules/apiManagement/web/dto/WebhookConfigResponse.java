@@ -18,6 +18,9 @@ public record WebhookConfigResponse(
         String lastFailureMessage,
         RetryPolicy retryPolicy,
         String retryPolicyDisplayName,
+        boolean hasSecondarySecret,
+        Instant secretRotationAt,
+        String resourceFilter,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -34,6 +37,9 @@ public record WebhookConfigResponse(
                 config.getLastFailureMessage(),
                 config.getRetryPolicy(),
                 config.getRetryPolicy().getDisplayName(),
+                config.getSecondarySecret() != null && !config.getSecondarySecret().isBlank(),
+                config.getSecretRotationAt(),
+                config.getResourceFilter(),
                 config.getCreatedAt(),
                 config.getUpdatedAt()
         );

@@ -42,9 +42,31 @@ public class AiProperties {
     private String systemPrompt = "";
 
     /**
+     * GigaChat (Sber) provider configuration.
+     * Data stays within Russian Federation (152-FZ compliant).
+     */
+    private GigaChatProperties gigachat = new GigaChatProperties();
+
+    /**
      * Check if AI is properly configured with an API key
      */
     public boolean isConfigured() {
         return apiKey != null && !apiKey.isBlank();
+    }
+
+    @Getter
+    @Setter
+    public static class GigaChatProperties {
+        /** OAuth2 client ID from Sber Developer Portal */
+        private String clientId = "";
+
+        /** OAuth2 client secret from Sber Developer Portal */
+        private String clientSecret = "";
+
+        /** GigaChat model name */
+        private String model = "GigaChat";
+
+        /** OAuth2 scope (e.g. GIGACHAT_API_PERS, GIGACHAT_API_CORP) */
+        private String scope = "GIGACHAT_API_PERS";
     }
 }

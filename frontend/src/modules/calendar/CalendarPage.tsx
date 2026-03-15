@@ -24,7 +24,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { EmptyState } from '@/design-system/components/EmptyState';
 import { calendarApi, type CalendarEvent, type CalendarEventType } from '@/api/calendar';
 import { tasksApi } from '@/api/tasks';
-import { formatDate } from '@/lib/format';
+import { formatDate, formatDateLong } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 
@@ -129,9 +129,8 @@ function getWeekStart(date: Date): Date {
 function formatWeekRange(weekStart: Date): string {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 6);
-  const locale = document.documentElement.lang === 'en' ? 'en-US' : 'ru-RU';
-  const startStr = weekStart.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
-  const endStr = weekEnd.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
+  const startStr = formatDateLong(weekStart);
+  const endStr = formatDateLong(weekEnd);
   return `${startStr} \u2014 ${endStr}`;
 }
 

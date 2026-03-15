@@ -148,6 +148,8 @@ const PurchaseOrderFormPage: React.FC = () => {
   const sourceRequestName = searchParams.get('sourceRequestName')?.trim() ?? '';
   const sourcePurchaseRequestId = isUuidLike(sourcePurchaseRequestIdRaw) ? sourcePurchaseRequestIdRaw : '';
   const sourceProjectId = isUuidLike(sourceProjectIdRaw) ? sourceProjectIdRaw : '';
+  const sourceRepeatFrom = searchParams.get('repeatFrom')?.trim() ?? '';
+  const [isRepeatApplied, setIsRepeatApplied] = useState(false);
 
   const { data: suppliers = [] } = useQuery({
     queryKey: ['procurement-suppliers'],
@@ -290,6 +292,42 @@ const PurchaseOrderFormPage: React.FC = () => {
     sourcePurchaseRequestId,
     sourceRequestName,
   ]);
+
+  // Pre-fill from repeated order
+  useEffect(() => {
+    if (!sourceRepeatFrom || isRepeatApplied || !isDraftHydrated) return;
+    try {
+      const raw = window.localStorage.getItem('procurement:purchase-order:repeat:v1');
+      if (!raw) { setIsRepeatApplied(true); return; }
+      const data = JSON.parse(raw) as {
+        supplierId?: string;
+        projectId?: string;
+        contractId?: string;
+        purchaseRequestId?: string;
+        currency?: string;
+        paymentTerms?: string;
+        deliveryAddress?: string;
+        notes?: string;
+        items?: DraftItem[];
+      };
+      window.localStorage.removeItem('procurement:purchase-order:repeat:v1');
+      if (data.supplierId) setValue('supplierId', data.supplierId, { shouldDirty: true });
+      if (data.projectId) setValue('projectId', data.projectId, { shouldDirty: true });
+      if (data.contractId) setValue('contractId', data.contractId, { shouldDirty: true });
+      if (data.purchaseRequestId) setValue('purchaseRequestId', data.purchaseRequestId, { shouldDirty: true });
+      if (data.currency) setValue('currency', data.currency, { shouldDirty: true });
+      if (data.paymentTerms) setValue('paymentTerms', data.paymentTerms, { shouldDirty: true });
+      if (data.deliveryAddress) setValue('deliveryAddress', data.deliveryAddress, { shouldDirty: true });
+      if (data.notes) setValue('notes', data.notes, { shouldDirty: true });
+      if (Array.isArray(data.items) && data.items.length > 0) {
+        setItems(data.items.map(normalizeDraftItem));
+      }
+      toast.success(t('procurement.repeatOrderHint'));
+    } catch {
+      // invalid data, ignore
+    }
+    setIsRepeatApplied(true);
+  }, [isDraftHydrated, isRepeatApplied, setValue, sourceRepeatFrom]);
 
   const clearDraft = () => {
     window.localStorage.removeItem(PURCHASE_ORDER_DRAFT_KEY);

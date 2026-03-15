@@ -3,10 +3,12 @@ package com.privod.platform.modules.admin.web;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.infrastructure.web.PageResponse;
 import com.privod.platform.modules.admin.service.TenantManagementService;
+import com.privod.platform.modules.admin.web.dto.ExtendSubscriptionRequest;
 import com.privod.platform.modules.admin.web.dto.TenantDetailResponse;
 import com.privod.platform.modules.admin.web.dto.TenantListResponse;
 import com.privod.platform.modules.admin.web.dto.UpdateTenantPlanRequest;
 import com.privod.platform.modules.admin.web.dto.UpdateTenantStatusRequest;
+import com.privod.platform.modules.subscription.domain.BillingRecord;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -68,5 +70,23 @@ public class TenantManagementController {
             @Valid @RequestBody UpdateTenantPlanRequest request) {
         TenantDetailResponse detail = tenantManagementService.updateTenantPlan(id, request.planId());
         return ResponseEntity.ok(ApiResponse.ok(detail));
+    }
+
+    @PutMapping("/{id}/extend")
+    @Operation(summary = "Extend tenant subscription by N months")
+    public ResponseEntity<ApiResponse<TenantDetailResponse>> extendSubscription(
+            @PathVariable UUID id,
+            @Valid @RequestBody ExtendSubscriptionRequest request) {
+        TenantDetailResponse detail = tenantManagementService.extendSubscription(id, request.months());
+        return ResponseEntity.ok(ApiResponse.ok(detail));
+    }
+
+    @GetMapping("/{id}/billing")
+    @Operation(summary = "Get billing records for a tenant's organization")
+    public ResponseEntity<ApiResponse<PageResponse<BillingRecord>>> getTenantBilling(
+            @PathVariable UUID id,
+            @PageableDefault(size = 20, sort = "invoiceDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<BillingRecord> page = tenantManagementService.getTenantBillingRecords(id, pageable);
+        return ResponseEntity.ok(ApiResponse.ok(PageResponse.of(page)));
     }
 }

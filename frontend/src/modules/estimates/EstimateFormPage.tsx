@@ -73,16 +73,19 @@ const EstimateFormPage: React.FC = () => {
   const { options: contractOptions } = useContractOptions(selectedProjectId || undefined);
 
   const { data: specificationData } = useQuery({
-    queryKey: ['estimate-form-specifications', selectedProjectId || 'none'],
-    queryFn: () => specificationsApi.getSpecifications({ projectId: selectedProjectId, page: 0, size: 300 }),
-    enabled: Boolean(selectedProjectId),
+    queryKey: ['estimate-form-specifications', selectedProjectId || 'all'],
+    queryFn: () => specificationsApi.getSpecifications({
+      ...(selectedProjectId ? { projectId: selectedProjectId } : {}),
+      page: 0,
+      size: 300,
+    }),
   });
 
   const specificationOptions = useMemo(
     () =>
       (specificationData?.content ?? []).map((spec) => ({
         value: spec.id,
-        label: spec.name,
+        label: spec.title ? `${spec.name} — ${spec.title}` : spec.name,
       })),
     [specificationData],
   );

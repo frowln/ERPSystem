@@ -8,6 +8,7 @@ import { Button } from '@/design-system/components/Button';
 import { FormField, Input } from '@/design-system/components/FormField';
 import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/api/auth';
+import { apiClient } from '@/api/client';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
 
@@ -69,6 +70,9 @@ const RegisterPage: React.FC = () => {
         organizationName: data.organizationName || undefined,
       });
       setAuth(response.user, response.token);
+      try {
+        await apiClient.post('/api/consent', { consentType: 'PRIVACY_POLICY' });
+      } catch (e) { /* non-critical */ }
       toast.success(t('auth.registerSuccess'));
       navigate('/', { replace: true });
     } catch (err: unknown) {

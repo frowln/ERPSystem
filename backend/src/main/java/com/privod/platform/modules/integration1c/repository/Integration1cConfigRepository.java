@@ -4,6 +4,7 @@ import com.privod.platform.modules.integration1c.domain.Integration1cConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,4 +14,6 @@ public interface Integration1cConfigRepository extends JpaRepository<Integration
     Optional<Integration1cConfig> findByOrganizationIdAndDeletedFalse(UUID organizationId);
 
     Optional<Integration1cConfig> findByIdAndDeletedFalse(UUID id);
+
+    List<Integration1cConfig> findBySyncEnabledTrueAndDeletedFalse();
 }

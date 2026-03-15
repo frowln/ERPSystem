@@ -5,9 +5,10 @@ import { apiClient } from './client';
 // ---------------------------------------------------------------------------
 
 export interface FeedbackPayload {
-  type: 'NPS';
-  score: number;
+  type: 'NPS' | 'FEATURE_REQUEST' | 'CSAT';
+  score?: number;
   comment: string | null;
+  title?: string;
   page: string;
 }
 

@@ -1,7 +1,11 @@
 package com.privod.platform.infrastructure.scheduler.jobs;
 
+import com.privod.platform.modules.integration.telegram.service.TelegramBotService;
+import com.privod.platform.modules.notification.domain.NotificationType;
+import com.privod.platform.modules.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,6 +14,9 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Checks support ticket SLA every 30 minutes.
@@ -22,6 +29,10 @@ import java.time.temporal.ChronoUnit;
 public class SupportSlaCheckJob {
 
     private final JdbcTemplate jdbcTemplate;
+    private final NotificationService notificationService;
+
+    @Autowired(required = false)
+    private TelegramBotService telegramBotService;
 
     @Scheduled(cron = "0 */30 * * * *")
     public void checkSupportTicketSla() {
@@ -31,7 +42,20 @@ public class SupportSlaCheckJob {
         try {
             Timestamp now = Timestamp.from(Instant.now());
 
-            // Find tickets that have breached SLA (not responded within SLA hours)
+            // Find tickets that are about to breach SLA (query BEFORE update)
+            List<Map<String, Object>> aboutToBreach = jdbcTemplate.queryForList(
+                    """
+                    SELECT id, code, subject, assignee_id
+                    FROM support_tickets
+                    WHERE deleted = false
+                      AND status NOT IN ('RESOLVED', 'CLOSED')
+                      AND sla_status != 'BREACHED'
+                      AND sla_deadline_at < ?
+                    """,
+                    now
+            );
+
+            // Mark as BREACHED
             int breached = jdbcTemplate.update(
                     """
                     UPDATE support_tickets
@@ -46,6 +70,43 @@ public class SupportSlaCheckJob {
 
             if (breached > 0) {
                 log.warn("[SupportSlaCheckJob] {} tickets have breached SLA!", breached);
+
+                // Send notifications for each breached ticket
+                for (Map<String, Object> row : aboutToBreach) {
+                    String code = (String) row.get("code");
+                    String subject = (String) row.get("subject");
+                    UUID assigneeId = row.get("assignee_id") != null ? (UUID) row.get("assignee_id") : null;
+                    UUID ticketId = (UUID) row.get("id");
+
+                    // Notify assignee via in-app notification
+                    if (assigneeId != null) {
+                        try {
+                            notificationService.send(
+                                    assigneeId,
+                                    "SLA нарушен: " + code,
+                                    "SLA нарушен по тикету " + code + ": " + subject,
+                                    NotificationType.WARNING,
+                                    "SupportTicket",
+                                    ticketId,
+                                    "/support/tickets/" + ticketId
+                            );
+                        } catch (Exception e) {
+                            log.warn("[SupportSlaCheckJob] Failed to send SLA breach notification for ticket {}: {}",
+                                    code, e.getMessage());
+                        }
+                    }
+
+                    // Also try Telegram
+                    if (telegramBotService != null) {
+                        try {
+                            telegramBotService.sendMessage(null,
+                                    "\u26A0\uFE0F SLA нарушен по тикету " + code + ": " + subject);
+                        } catch (Exception e) {
+                            log.warn("[SupportSlaCheckJob] Failed to send Telegram SLA breach alert for ticket {}: {}",
+                                    code, e.getMessage());
+                        }
+                    }
+                }
             }
 
             // Find tickets approaching SLA breach (within 1 hour)

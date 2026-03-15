@@ -15,6 +15,8 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, onClose 
   const animFrameRef = useRef<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [manualCode, setManualCode] = useState('');
+  const hasBarcodeApi = 'BarcodeDetector' in window;
 
   const stopStream = useCallback(() => {
     cancelAnimationFrame(animFrameRef.current);
@@ -45,7 +47,16 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, onClose 
     animFrameRef.current = requestAnimationFrame(detect);
   }, [onScan, stopStream]);
 
+  const handleManualSubmit = useCallback(() => {
+    const trimmed = manualCode.trim();
+    if (trimmed) {
+      onScan(trimmed);
+    }
+  }, [manualCode, onScan]);
+
   useEffect(() => {
+    if (!hasBarcodeApi) return; // skip camera init when API unsupported
+
     let cancelled = false;
 
     async function startScanner() {
@@ -92,7 +103,37 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, onClose 
       cancelled = true;
       stopStream();
     };
-  }, [detect, stopStream]);
+  }, [detect, stopStream, hasBarcodeApi]);
+
+  // ---------------------------------------------------------------------------
+  // Manual input fallback (rendered when BarcodeDetector is unavailable)
+  // ---------------------------------------------------------------------------
+  const renderManualInput = () => (
+    <div className="bg-white dark:bg-neutral-900 rounded-xl p-8 space-y-4">
+      <div className="text-center space-y-2">
+        <Camera className="w-10 h-10 mx-auto text-neutral-400 dark:text-neutral-500" />
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          {t('warehouse.scanner.unsupported')}
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={manualCode}
+          onChange={(e) => setManualCode(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleManualSubmit();
+          }}
+          placeholder={t('warehouse.scanner.manualPlaceholder')}
+          autoFocus
+          className="flex-1 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+        <Button onClick={handleManualSubmit} disabled={!manualCode.trim()}>
+          {t('warehouse.scanner.manualSubmit')}
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex flex-col items-center justify-center">
@@ -108,11 +149,28 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ onScan, onClose 
           <X className="w-5 h-5" />
         </button>
 
-        {error ? (
+        {!hasBarcodeApi ? (
+          renderManualInput()
+        ) : error ? (
           <div className="bg-white dark:bg-neutral-900 rounded-xl p-8 text-center space-y-4">
             <AlertTriangle className="w-12 h-12 mx-auto text-warning-500" />
             <p className="text-sm text-neutral-600 dark:text-neutral-400">{error}</p>
             <p className="text-xs text-neutral-500">{t('warehouse.scanner.manualHint')}</p>
+            <div className="flex gap-2 justify-center">
+              <input
+                type="text"
+                value={manualCode}
+                onChange={(e) => setManualCode(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleManualSubmit();
+                }}
+                placeholder={t('warehouse.scanner.manualPlaceholder')}
+                className="flex-1 max-w-xs rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+              <Button onClick={handleManualSubmit} disabled={!manualCode.trim()}>
+                {t('warehouse.scanner.manualSubmit')}
+              </Button>
+            </div>
             <Button variant="secondary" onClick={onClose}>
               {t('common.close')}
             </Button>

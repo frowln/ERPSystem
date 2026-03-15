@@ -217,7 +217,32 @@ export const estimatesApi = {
 
   // --- LSR Hierarchical Import ---
   importLsrHierarchical: async (data: ImportLsrRequest): Promise<ImportLsrResult> => {
-    const response = await apiClient.post<ImportLsrResult>('/estimates/local/import-hierarchical', data);
+    const response = await apiClient.post<ImportLsrResult>('/estimates/local/import-lsr', data);
+    return response.data;
+  },
+
+  // === Status & lifecycle ===
+
+  changeEstimateStatus: async (id: string, status: string): Promise<Estimate> => {
+    const response = await apiClient.patch<Estimate>(`/estimates/${id}/status`, { status });
+    return response.data;
+  },
+
+  deleteEstimate: async (id: string): Promise<void> => {
+    await apiClient.delete(`/estimates/${id}`);
+  },
+
+  approveLocalEstimate: async (id: string): Promise<LocalEstimate> => {
+    const response = await apiClient.post<LocalEstimate>(`/estimates/local/${id}/approve`);
+    return response.data;
+  },
+
+  deleteLocalEstimate: async (id: string): Promise<void> => {
+    await apiClient.delete(`/estimates/local/${id}`);
+  },
+
+  updateLocalEstimateLine: async (estimateId: string, lineId: string, data: Record<string, unknown>): Promise<LocalEstimateLine> => {
+    const response = await apiClient.put<LocalEstimateLine>(`/estimates/local/${estimateId}/lines/${lineId}`, data);
     return response.data;
   },
 };

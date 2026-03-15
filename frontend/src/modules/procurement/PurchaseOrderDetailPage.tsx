@@ -16,6 +16,8 @@ import {
   Send,
   Trash2,
   Truck,
+  Warehouse,
+  Copy,
   XCircle,
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -746,6 +748,61 @@ const PurchaseOrderDetailPage: React.FC = () => {
                 </Button>
               );
             })}
+            {(order.status === 'CONFIRMED' || order.status === 'PARTIALLY_DELIVERED' || order.status === 'DELIVERED') && (
+              <Button
+                variant="primary"
+                size="sm"
+                iconLeft={<Warehouse size={14} />}
+                title={t('procurement.poReceiveGoodsHint')}
+                onClick={() => {
+                  const wParams = new URLSearchParams();
+                  wParams.set('purchaseOrderId', order.id);
+                  if (order.projectId) wParams.set('projectId', order.projectId);
+                  navigate(`/warehouse/orders/new?${wParams.toString()}`);
+                }}
+              >
+                {t('procurement.poReceiveGoods')}
+              </Button>
+            )}
+            <Button
+              variant="secondary"
+              size="sm"
+              iconLeft={<Copy size={14} />}
+              title={t('procurement.repeatOrderHint')}
+              onClick={() => {
+                const repeatData = {
+                  supplierId: order.supplierId,
+                  projectId: order.projectId ?? '',
+                  contractId: order.contractId ?? '',
+                  purchaseRequestId: order.purchaseRequestId ?? '',
+                  currency: order.currency,
+                  paymentTerms: order.paymentTerms ?? '',
+                  deliveryAddress: order.deliveryAddress ?? '',
+                  notes: order.notes ?? '',
+                  items: items.map((item) => ({
+                    materialId: item.materialId,
+                    materialName: item.materialName ?? '',
+                    unit: item.unit ?? '',
+                    quantity: String(item.quantity ?? ''),
+                    unitPrice: String(item.unitPrice ?? ''),
+                    vatRate: String(item.vatRate ?? '20'),
+                  })),
+                };
+                try {
+                  window.localStorage.setItem(
+                    'procurement:purchase-order:repeat:v1',
+                    JSON.stringify(repeatData),
+                  );
+                } catch { /* storage full */ }
+                const rParams = new URLSearchParams();
+                rParams.set('repeatFrom', order.id);
+                if (order.supplierId) rParams.set('supplierId', order.supplierId);
+                if (order.projectId) rParams.set('projectId', order.projectId);
+                navigate(`/procurement/purchase-orders/new?${rParams.toString()}`);
+              }}
+            >
+              {t('procurement.repeatOrder')}
+            </Button>
             {isDraft && (
               <Button
                 variant="danger"

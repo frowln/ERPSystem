@@ -117,11 +117,37 @@ export const contractsApi = {
     await apiClient.delete(`/counterparties/${id}`);
   },
 
+  checkCounterpartyRisk: async (inn: string): Promise<ChekkaRiskResponse> => {
+    const response = await apiClient.get<ChekkaRiskResponse>('/counterparties/check', { params: { inn } });
+    return response.data;
+  },
+
+  lookupCounterparty: async (inn: string) => {
+    const response = await apiClient.get('/counterparties/lookup', { params: { inn } });
+    return response.data;
+  },
+
   validateProcurementCompliance: async (contractId: string): Promise<ProcurementComplianceResult> => {
     const response = await apiClient.get<ProcurementComplianceResult>(`/contracts/${contractId}/procurement-compliance`);
     return response.data;
   },
 };
+
+export interface ChekkaRiskResponse {
+  inn: string;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN';
+  riskScore: number | null;
+  isActive: boolean | null;
+  hasBankruptcy: boolean | null;
+  hasDebts: boolean | null;
+  arbitrationCount: number | null;
+  arbitrationAsPlaintiff: number | null;
+  arbitrationAsDefendant: number | null;
+  relatedCompanies: string[] | null;
+  legalAddress: string | null;
+  lastUpdated: string | null;
+  error: string | null;
+}
 
 export interface ProcurementComplianceResult {
   contractId: string;

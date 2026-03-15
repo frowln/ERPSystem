@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { formatDateShort } from '@/lib/format';
 import {
   Calendar,
   CheckSquare,
@@ -57,9 +58,7 @@ const STATUS_MENU_ITEMS: { status: TaskStatus; label: () => string; color: strin
 ];
 
 function formatShortDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  const locale = document.documentElement.lang === 'en' ? 'en-US' : 'ru-RU';
-  return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  return formatDateShort(dateStr);
 }
 
 function isOverdue(task: ProjectTask): boolean {

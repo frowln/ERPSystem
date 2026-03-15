@@ -201,14 +201,15 @@ export const navigation: NavGroup[] = [
   navGroup('projects', FolderKanban, [
     navItem('projects-list', FolderKanban, '/projects'),
     navItem('site-assessments', Search, '/site-assessments'),
-    navItem('portfolio-health', BarChart3, '/portfolio/health'),
   ]),
 
-  // ── CRM и тендеры ───────────────────────────────────────────────────
-  navGroup('crm', Target, [
+  // ── Продажи ─────────────────────────────────────────────────────────
+  navGroup('sales', Briefcase, [
     navItem('crm-leads', Target, '/crm/leads'),
     navItem('crm-dashboard', LayoutDashboard, '/crm/dashboard'),
     navItem('counterparties', Building2, '/counterparties'),
+    navItem('fin-commercial-proposals', FileText, '/commercial-proposals'),
+    navItem('portfolio-health', BarChart3, '/portfolio/health'),
     navItem('fin-opportunities', Briefcase, '/portfolio/opportunities'),
     navItem('portfolio-tenders', Briefcase, '/portfolio/tenders'),
     navItem('bid-packages', Package, '/bid-packages'),
@@ -260,7 +261,6 @@ export const navigation: NavGroup[] = [
     navItem('fin-budgets', Wallet, '/budgets'),
     navItem('fin-fm', BarChart3, '/financial-models'),
     navItem('CONTRACTS', FileSignature, '/contracts'),
-    navItem('fin-commercial-proposals', FileText, '/commercial-proposals'),
     navItem('fin-invoices', Receipt, '/invoices'),
     navItem('fin-payments', CreditCard, '/payments'),
     navItem('fin-cashflow', TrendingDown, '/cash-flow'),
@@ -514,6 +514,8 @@ export const navigation: NavGroup[] = [
     navItem('adm-security', ShieldCheck, '/admin/security'),
     navItem('an-monitoring', Activity, '/monitoring'),
     navItem('adm-integrations-hub', Plug, '/integrations'),
+    navItem('adm-custom-fields', ListChecks, '/admin/custom-fields'),
+    navItem('adm-sso', Shield, '/admin/sso'),
     navItem('adm-system-settings', Settings, '/admin/system-settings'),
     navItem('sup-tickets', LifeBuoy, '/support/tickets'),
     navItem('sup-dashboard', LayoutDashboard, '/support/dashboard'),

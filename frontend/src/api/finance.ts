@@ -295,6 +295,10 @@ export const financeApi = {
     await apiClient.post(`/competitive-lists/${competitiveListId}/apply-to-cp/${cpId}`);
   },
 
+  sendRfq: async (competitiveListId: string, supplierIds: string[]): Promise<void> => {
+    await apiClient.post(`/competitive-lists/${competitiveListId}/send-rfq`, supplierIds);
+  },
+
   // Invoice Matching
   matchInvoiceToPositions: async (invoiceId: string, budgetId: string): Promise<InvoiceMatchCandidate[]> => {
     const response = await apiClient.get<InvoiceMatchCandidate[]>(`/invoices/${invoiceId}/matches`, {

@@ -21,6 +21,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Button } from '@/design-system/components/Button';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import {
   validateItdDocument,
   getValidationSummary,
@@ -135,7 +136,7 @@ function downloadReport(results: ValidationResultEntry[]) {
   const summary = getValidationSummary(results);
   const lines: string[] = [
     '=== ОТЧЁТ ПРОВЕРКИ ИСПОЛНИТЕЛЬНОЙ ДОКУМЕНТАЦИИ ===',
-    `Дата формирования: ${new Date().toLocaleDateString('ru-RU')}`,
+    `Дата формирования: ${formatDate(new Date())}`,
     '',
     `Всего проверок: ${summary.total}`,
     `Пройдено: ${summary.passed}`,

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { financeApi } from '@/api/finance';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import type { BudgetSnapshot, SnapshotComparison, SnapshotItemDelta } from '@/types';
 import { ArrowLeft } from 'lucide-react';
 
@@ -82,7 +83,7 @@ export default function SnapshotCompareTable({ budgetId, snapshotId, onBack }: S
             {t('finance.fm.snapshot.compareTitle', { name: data.snapshotName })}
           </h3>
           <p className="text-xs text-neutral-500">
-            {new Date(data.snapshotDate).toLocaleDateString('ru-RU')}
+            {formatDate(data.snapshotDate)}
           </p>
           <p className="text-xs text-neutral-500">
             {t('finance.fm.snapshot.compareTargetLabel')}: {targetLabel}

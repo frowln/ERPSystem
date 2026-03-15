@@ -3,22 +3,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Mail, Unlink, Link2, Paperclip } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@/i18n';
+import { formatDateTime } from '@/lib/format';
 import { Button } from '@/design-system/components/Button';
 import { emailApi, type EmailMessage } from '@/api/email';
 import toast from 'react-hot-toast';
 
 interface ProjectMailTabProps {
   projectId: string;
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 export const ProjectMailTab: React.FC<ProjectMailTabProps> = ({ projectId }) => {
@@ -93,7 +84,7 @@ export const ProjectMailTab: React.FC<ProjectMailTabProps> = ({ projectId }) => 
                     </div>
                   </td>
                   <td className="px-3 py-2 text-neutral-500 text-xs whitespace-nowrap">
-                    {formatDate(msg.receivedAt)}
+                    {formatDateTime(msg.receivedAt)}
                   </td>
                   <td className="px-2">
                     <button
@@ -189,7 +180,7 @@ const LinkEmailToProjectModal: React.FC<{
                   {msg.subject || t('mail.noSubject')}
                 </div>
                 <div className="text-xs text-neutral-500 truncate">
-                  {msg.fromName || msg.fromAddress} — {new Date(msg.receivedAt).toLocaleDateString('ru-RU')}
+                  {msg.fromName || msg.fromAddress} — {formatDateTime(msg.receivedAt)}
                 </div>
               </button>
             ))

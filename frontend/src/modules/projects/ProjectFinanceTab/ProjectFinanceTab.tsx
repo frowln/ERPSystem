@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { t } from '@/i18n';
 import { contractsApi } from '@/api/contracts';
 import { financeApi } from '@/api/finance';
-import { formatMoneyWhole } from '@/lib/format';
+import { formatMoneyWhole, formatDate } from '@/lib/format';
 import type { Project, ProjectFinancialSummary, Contract, FinanceExpenseItem } from '@/types';
 import type { ComputedFinancials } from '../hooks/useProjectFinancials';
 import type { ProjectBudgetItem, BudgetTreeNode } from './types';
@@ -344,7 +344,7 @@ export const ProjectFinanceTab: React.FC<Props> = ({
     const escapeCsv = (value: unknown): string => `"${String(value ?? '').replace(/"/g, '""')}"`;
     const summaryRows = [
       [t('projects.finance.excelReportTitle'), p?.name ?? ''],
-      [t('projects.finance.excelExportDate'), new Date().toLocaleDateString('ru-RU')],
+      [t('projects.finance.excelExportDate'), formatDate(new Date())],
       [],
       [t('projects.finance.excelRevenueFromClient')],
       [t('projects.finance.colContract'), t('projects.finance.colCounterparty'), t('projects.finance.colAmount'), t('projects.finance.colWithVat'), t('projects.finance.colInvoiced'), t('projects.finance.colReceived'), t('projects.finance.colReceivables')],

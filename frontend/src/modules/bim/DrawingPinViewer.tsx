@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import type { TaskStatus, TaskPriority } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -422,7 +423,7 @@ const DrawingPinViewer: React.FC<DrawingPinViewerProps> = ({
                             <PopoverRow
                               icon={Calendar}
                               label={t('drawingPins.pinDetailDueDate')}
-                              value={new Date(pin.dueDate).toLocaleDateString()}
+                              value={formatDate(pin.dueDate)}
                               valueClass={pin.isOverdue ? 'text-danger-500 font-medium' : undefined}
                             />
                           )}

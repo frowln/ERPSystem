@@ -6,9 +6,11 @@ import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.organization.domain.Organization;
 import com.privod.platform.modules.organization.repository.OrganizationRepository;
 import com.privod.platform.modules.project.repository.ProjectRepository;
+import com.privod.platform.modules.subscription.domain.BillingRecord;
 import com.privod.platform.modules.subscription.domain.SubscriptionPlan;
 import com.privod.platform.modules.subscription.domain.SubscriptionStatus;
 import com.privod.platform.modules.subscription.domain.TenantSubscription;
+import com.privod.platform.modules.subscription.repository.BillingRecordRepository;
 import com.privod.platform.modules.subscription.repository.SubscriptionPlanRepository;
 import com.privod.platform.modules.subscription.repository.TenantSubscriptionRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,9 +18,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -31,6 +36,8 @@ public class TenantManagementService {
     private final ProjectRepository projectRepository;
     private final TenantSubscriptionRepository tenantSubscriptionRepository;
     private final SubscriptionPlanRepository subscriptionPlanRepository;
+    private final BillingRecordRepository billingRecordRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
     public Page<TenantListResponse> findAllTenants(String search, Pageable pageable) {
@@ -69,6 +76,21 @@ public class TenantManagementService {
         UUID planId = plan != null ? plan.getId() : null;
         String subscriptionStatus = subscription != null ? subscription.getStatus().name() : "NONE";
 
+        // Query last active timestamp from login audit logs (via user_id → users.organization_id)
+        Instant lastActiveAt = null;
+        try {
+            lastActiveAt = jdbcTemplate.queryForObject(
+                    """
+                    SELECT MAX(l.created_at)
+                    FROM login_audit_log l
+                    JOIN users u ON u.id = l.user_id
+                    WHERE u.organization_id = ?
+                    """,
+                    Instant.class, id);
+        } catch (Exception e) {
+            log.debug("Could not query lastActiveAt for tenant {}: {}", id, e.getMessage());
+        }
+
         return new TenantDetailResponse(
                 org.getId(),
                 org.getName(),
@@ -93,7 +115,8 @@ public class TenantManagementService {
                 projectCount,
                 0L, // storageUsedMb — placeholder
                 org.getCreatedAt(),
-                org.getUpdatedAt()
+                org.getUpdatedAt(),
+                lastActiveAt
         );
     }
 
@@ -154,6 +177,41 @@ public class TenantManagementService {
 
         log.info("Tenant {} plan updated to {}", id, plan.getName());
         return getTenantDetail(id);
+    }
+
+    @Transactional
+    public TenantDetailResponse extendSubscription(UUID id, int months) {
+        Organization org = organizationRepository.findById(id)
+                .filter(o -> !o.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + id));
+
+        TenantSubscription subscription = tenantSubscriptionRepository
+                .findByOrganizationIdAndDeletedFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException("No subscription found for organization: " + id));
+
+        Instant currentEnd = subscription.getEndDate();
+        Instant baseDate = (currentEnd != null && currentEnd.isAfter(Instant.now()))
+                ? currentEnd
+                : Instant.now();
+
+        Instant newEndDate = baseDate.plus((long) months * 30, ChronoUnit.DAYS);
+        subscription.setEndDate(newEndDate);
+        subscription.setStatus(SubscriptionStatus.ACTIVE);
+        tenantSubscriptionRepository.save(subscription);
+
+        log.info("Tenant {} subscription extended by {} months, new endDate={}", id, months, newEndDate);
+        return getTenantDetail(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BillingRecord> getTenantBillingRecords(UUID organizationId, Pageable pageable) {
+        // Verify org exists
+        organizationRepository.findById(organizationId)
+                .filter(o -> !o.isDeleted())
+                .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + organizationId));
+
+        return billingRecordRepository.findByOrganizationIdAndDeletedFalseOrderByInvoiceDateDesc(
+                organizationId, pageable);
     }
 
     private TenantListResponse toTenantListResponse(Organization org) {

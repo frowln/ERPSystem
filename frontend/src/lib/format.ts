@@ -111,6 +111,36 @@ export function formatDateTime(date: string | Date | null | undefined): string {
 }
 
 /**
+ * Format time only: 14:30
+ */
+export function formatTime(date: string | Date | null | undefined): string {
+  if (!date) return '—';
+  const parsed = typeof date === 'string' ? parseISO(date) : date;
+  if (!isValid(parsed)) return '—';
+  return format(parsed, 'HH:mm', { locale: ru });
+}
+
+/**
+ * Format date short: 15 янв
+ */
+export function formatDateShort(date: string | Date | null | undefined): string {
+  if (!date) return '—';
+  const parsed = typeof date === 'string' ? parseISO(date) : date;
+  if (!isValid(parsed)) return '—';
+  return format(parsed, 'd MMM', { locale: ru });
+}
+
+/**
+ * Format month and year: январь 2026
+ */
+export function formatMonthYear(date: string | Date | null | undefined): string {
+  if (!date) return '—';
+  const parsed = typeof date === 'string' ? parseISO(date) : date;
+  if (!isValid(parsed)) return '—';
+  return format(parsed, 'LLLL yyyy', { locale: ru });
+}
+
+/**
  * Format file size: 1,5 МБ, 256 КБ, 2,3 ГБ
  */
 export function formatFileSize(bytes: number | null | undefined): string {

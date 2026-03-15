@@ -1,5 +1,6 @@
 package com.privod.platform.modules.settings.web;
 
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.infrastructure.web.ApiResponse;
 import com.privod.platform.modules.settings.service.FeatureFlagService;
 import com.privod.platform.modules.settings.web.dto.FeatureFlagResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/feature-flags")
@@ -38,19 +40,27 @@ public class FeatureFlagController {
     }
 
     @GetMapping("/check")
-    @Operation(summary = "Проверить состояние feature flag")
+    @Operation(summary = "Проверить состояние feature flag для текущего пользователя")
     public ResponseEntity<ApiResponse<Map<String, Boolean>>> check(@RequestParam String key) {
         boolean enabled = featureFlagService.isEnabled(key);
         return ResponseEntity.ok(ApiResponse.ok(Map.of("enabled", enabled)));
     }
 
+    @GetMapping("/variant")
+    @Operation(summary = "Получить вариант A/B теста для текущего пользователя")
+    public ResponseEntity<ApiResponse<Map<String, String>>> getVariant(@RequestParam String key) {
+        UUID userId = SecurityUtils.requireCurrentUserId();
+        String variant = featureFlagService.getVariant(key, userId);
+        return ResponseEntity.ok(ApiResponse.ok(Map.of("variant", variant != null ? variant : "")));
+    }
+
     @PutMapping("/{key}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Включить/выключить feature flag")
+    @Operation(summary = "Обновить feature flag")
     public ResponseEntity<ApiResponse<FeatureFlagResponse>> update(
             @PathVariable String key,
             @Valid @RequestBody UpdateFeatureFlagRequest request) {
-        FeatureFlagResponse flag = featureFlagService.setEnabled(key, request.enabled());
+        FeatureFlagResponse flag = featureFlagService.update(key, request);
         return ResponseEntity.ok(ApiResponse.ok(flag));
     }
 }

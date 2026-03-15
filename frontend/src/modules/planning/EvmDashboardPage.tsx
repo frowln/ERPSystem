@@ -4,7 +4,7 @@ import { TrendingUp, TrendingDown, Activity, DollarSign, Target } from 'lucide-r
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { Select } from '@/design-system/components/FormField';
-import { formatMoneyCompact, formatPercent } from '@/lib/format';
+import { formatMoneyCompact, formatPercent, formatDateShort } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { planningApi } from '@/api/planning';
 import { projectsApi } from '@/api/projects';
@@ -233,7 +233,7 @@ const EvmDashboardPage: React.FC = () => {
         <div className="flex gap-1 mt-1">
           {sCurve.map((point, idx) => {
             const label = point.period.length >= 7
-              ? new Date(point.period + 'T00:00:00').toLocaleDateString('ru-RU', { month: 'short' })
+              ? formatDateShort(point.period + 'T00:00:00')
               : point.period.slice(0, 3);
             return (
               <div key={idx} className="flex-1 text-center">

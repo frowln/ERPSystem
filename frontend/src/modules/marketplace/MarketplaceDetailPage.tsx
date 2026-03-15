@@ -23,6 +23,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { PageSkeleton } from '@/design-system/components/Skeleton';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import { marketplaceApi, type MarketplacePlugin, type MarketplaceReview } from '@/api/marketplace';
 const PluginConfigModal = React.lazy(() => import('./components/PluginConfigModal'));
 
@@ -149,7 +150,7 @@ const ReviewItem: React.FC<{ review: MarketplaceReview }> = ({ review }) => (
         <div className="flex items-center gap-2">
           <StarRating rating={review.rating} size={11} />
           <span className="text-xs text-neutral-400">
-            {new Date(review.createdAt).toLocaleDateString()}
+            {formatDate(review.createdAt)}
           </span>
         </div>
       </div>
@@ -299,7 +300,7 @@ const MarketplaceDetailPage: React.FC = () => {
                 {t('marketplace.installedVersion')}: {plugin.installedVersion}
                 {plugin.installedAt && (
                   <span className="ml-3">
-                    {t('marketplace.installedAt')}: {new Date(plugin.installedAt).toLocaleDateString()}
+                    {t('marketplace.installedAt')}: {formatDate(plugin.installedAt)}
                   </span>
                 )}
               </div>

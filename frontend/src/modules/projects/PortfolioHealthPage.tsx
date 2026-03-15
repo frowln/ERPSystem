@@ -22,6 +22,7 @@ import {
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { t } from '@/i18n';
 import { cn } from '@/lib/cn';
+import { formatDate } from '@/lib/format';
 import { projectsApi } from '@/api/projects';
 import type { Project } from '@/types';
 
@@ -576,14 +577,7 @@ const CardView: React.FC<{ items: ProjectHealth[] }> = ({ items }) => {
   );
 };
 
-function formatDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
-}
+// formatDate is imported from @/lib/format
 
 // ---------------------------------------------------------------------------
 // Aggregate summary section

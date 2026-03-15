@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LifeBuoy, Send, Search, ChevronRight, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import { apiClient } from '@/api/client';
 import toast from 'react-hot-toast';
 
@@ -206,7 +207,7 @@ const SupportPanel: React.FC<SupportPanelProps> = ({ onClose }) => {
                   </span>
                 </div>
                 <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">{ticket.subject}</p>
-                <p className="text-xs text-neutral-400 mt-0.5">{new Date(ticket.createdAt).toLocaleDateString()}</p>
+                <p className="text-xs text-neutral-400 mt-0.5">{formatDate(ticket.createdAt)}</p>
               </div>
             ))}
           </div>

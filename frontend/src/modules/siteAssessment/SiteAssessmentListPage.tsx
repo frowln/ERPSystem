@@ -7,6 +7,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { apiClient } from '@/api/client';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import { MapPin, Plus, CheckCircle, AlertTriangle, XCircle, ClipboardCheck } from 'lucide-react';
 
 interface SiteAssessment {
@@ -111,7 +112,7 @@ const SiteAssessmentListPage: React.FC = () => {
                     onClick={() => navigate(`/site-assessments/${a.id}`)}
                   >
                     <td className="px-4 py-3 text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                      {new Date(a.assessmentDate).toLocaleDateString('ru-RU')}
+                      {formatDate(a.assessmentDate)}
                     </td>
                     <td className="px-4 py-3 text-sm text-neutral-700 dark:text-neutral-300">
                       {a.siteAddress || '—'}

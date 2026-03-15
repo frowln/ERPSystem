@@ -308,6 +308,31 @@ public class Integration1cService {
                 .map(Integration1cSyncLogResponse::from);
     }
 
+    // ── Auto-sync helpers ────────────────────────────────────────────────
+
+    /**
+     * Returns all Integration1cConfig entries that have syncEnabled=true.
+     * Used by {@link com.privod.platform.infrastructure.scheduler.jobs.Integration1cSyncJob}
+     * to find configs that may be due for automatic synchronization.
+     */
+    @Transactional(readOnly = true)
+    public List<Integration1cConfig> getConfigsDueForSync() {
+        return configRepository.findBySyncEnabledTrueAndDeletedFalse();
+    }
+
+    /**
+     * Runs a full bidirectional sync for the given config: imports counterparties,
+     * chart of accounts, and syncs materials.
+     */
+    @Transactional
+    public void runFullSync(UUID configId) {
+        log.info("Running full 1C sync for config={}", configId);
+        importCounterparties(configId);
+        importChartOfAccounts(configId);
+        syncMaterials(configId);
+        log.info("Full 1C sync completed for config={}", configId);
+    }
+
     // ── Internal helpers ─────────────────────────────────────────────────
 
     private Integration1cConfig requireConfig(UUID configId) {

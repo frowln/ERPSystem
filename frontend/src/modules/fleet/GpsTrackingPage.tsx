@@ -20,7 +20,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { fleetApi } from '@/api/fleet';
-import { formatNumber, formatDate } from '@/lib/format';
+import { formatNumber, formatDate, formatTime } from '@/lib/format';
 import { t } from '@/i18n';
 import { cn } from '@/lib/cn';
 import type { GpsVehicleStatus, GeofenceAlert } from './types';
@@ -146,7 +146,7 @@ const GpsTrackingPage: React.FC = () => {
       const diffMin = Math.floor(diffMs / 60000);
       if (diffMin < 1) return t('fleet.gps.justNow');
       if (diffMin < 60) return `${diffMin} ${t('fleet.gps.minutesAgo')}`;
-      return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      return formatTime(d);
     } catch {
       return '\u2014';
     }
@@ -537,11 +537,7 @@ const GpsTrackingPage: React.FC = () => {
                             {trackData.points.slice(0, 50).map((pt, i) => (
                               <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
                                 <td className="px-2 py-1 tabular-nums text-neutral-700 dark:text-neutral-300">
-                                  {new Date(pt.timestamp).toLocaleTimeString('ru-RU', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit',
-                                  })}
+                                  {formatTime(pt.timestamp)}
                                 </td>
                                 <td className="px-2 py-1 text-neutral-600 dark:text-neutral-400 truncate max-w-[200px]">
                                   {pt.address || formatCoord(pt.latitude, pt.longitude)}

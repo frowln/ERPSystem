@@ -7,6 +7,7 @@ import { Building2, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input } from '@/design-system/components/FormField';
 import { useAuthStore } from '@/stores/authStore';
+import { usePortalBrandingStore } from '@/stores/portalBrandingStore';
 import { authApi, type TwoFactorRequired } from '@/api/auth';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
@@ -27,6 +28,7 @@ type LoginFormData = z.infer<ReturnType<typeof getLoginSchema>>;
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { setAuth, redirectAfterLogin, setRedirectAfterLogin } = useAuthStore();
+  const { logoUrl, primaryColor, companyName } = usePortalBrandingStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -99,16 +101,28 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen flex">
       {/* Left: Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-neutral-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/30 via-transparent to-primary-600/10" />
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-primary-900/30 via-transparent to-primary-600/10"
+          style={primaryColor && primaryColor !== '#6366f1' ? { background: `linear-gradient(to bottom right, ${primaryColor}4D, transparent, ${primaryColor}1A)` } : undefined}
+        />
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary-500/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
-              <Building2 size={22} className="text-white" />
-            </div>
-            <span className="text-xl font-bold text-white tracking-wide">{t('auth.brandName')}</span>
+            {logoUrl ? (
+              <img src={logoUrl} alt={companyName || t('auth.brandName')} className="w-10 h-10 rounded-xl object-contain" />
+            ) : (
+              <div
+                className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center"
+                style={primaryColor && primaryColor !== '#6366f1' ? { backgroundColor: primaryColor } : undefined}
+              >
+                <Building2 size={22} className="text-white" />
+              </div>
+            )}
+            <span className="text-xl font-bold text-white tracking-wide">
+              {companyName || t('auth.brandName')}
+            </span>
           </div>
 
           <div className="max-w-md">
@@ -147,10 +161,19 @@ const LoginPage: React.FC = () => {
         <div className="w-full max-w-[400px]">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-3 mb-10">
-            <div className="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center">
-              <Building2 size={20} className="text-white" />
-            </div>
-            <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-wide">{t('auth.brandName')}</span>
+            {logoUrl ? (
+              <img src={logoUrl} alt={companyName || t('auth.brandName')} className="w-9 h-9 rounded-lg object-contain" />
+            ) : (
+              <div
+                className="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center"
+                style={primaryColor && primaryColor !== '#6366f1' ? { backgroundColor: primaryColor } : undefined}
+              >
+                <Building2 size={20} className="text-white" />
+              </div>
+            )}
+            <span className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-wide">
+              {companyName || t('auth.brandName')}
+            </span>
           </div>
 
           <div className="mb-8">

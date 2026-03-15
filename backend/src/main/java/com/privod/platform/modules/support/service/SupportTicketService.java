@@ -20,9 +20,11 @@ import com.privod.platform.modules.support.web.dto.TicketDashboardResponse;
 import com.privod.platform.modules.support.web.dto.UpdateSupportTicketRequest;
 import com.privod.platform.modules.notification.domain.NotificationType;
 import com.privod.platform.modules.notification.service.NotificationService;
+import com.privod.platform.modules.integration.telegram.service.TelegramBotService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,9 @@ public class SupportTicketService {
     private final UserRepository userRepository;
     private final AuditService auditService;
     private final NotificationService notificationService;
+
+    @Autowired(required = false)
+    private TelegramBotService telegramBotService;
 
     @Transactional(readOnly = true)
     public Page<SupportTicketResponse> listTickets(TicketStatus status, Pageable pageable) {
@@ -106,6 +111,18 @@ public class SupportTicketService {
 
         ticket = ticketRepository.save(ticket);
         auditService.logCreate("SupportTicket", ticket.getId());
+
+        // Send Telegram notification for HIGH/CRITICAL priority tickets
+        if (telegramBotService != null
+                && (ticket.getPriority() == TicketPriority.HIGH || ticket.getPriority() == TicketPriority.CRITICAL)) {
+            try {
+                telegramBotService.sendMessage(null,
+                        "\uD83D\uDEA8 Новый тикет [" + ticket.getPriority() + "]: "
+                                + ticket.getSubject() + " (код: " + ticket.getCode() + ")");
+            } catch (Exception e) {
+                log.warn("Failed to send Telegram notification for ticket {}: {}", ticket.getCode(), e.getMessage());
+            }
+        }
 
         log.info("Support ticket created: {} - {} ({})", ticket.getCode(),
                 ticket.getSubject(), ticket.getId());

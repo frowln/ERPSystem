@@ -15,6 +15,7 @@ public record CreateWebhookConfigRequest(
 
         String secret,
         String events,
-        RetryPolicy retryPolicy
+        RetryPolicy retryPolicy,
+        String resourceFilter
 ) {
 }

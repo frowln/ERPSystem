@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { t } from '@/i18n';
 import { cn } from '@/lib/cn';
+import { formatDate } from '@/lib/format';
 import { aiApi } from '@/api/ai';
 import type { PhotoAnalysisResult, PhotoFinding } from '@/api/ai';
 import { PageHeader } from '@/design-system/components/PageHeader';
@@ -428,7 +429,7 @@ const HistoryTable: React.FC<{ analyses: PhotoAnalysisResult[]; loading: boolean
               className="border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
             >
               <td className="py-3 px-4 text-neutral-700 dark:text-neutral-300">
-                {new Date(a.analyzedAt).toLocaleDateString('ru-RU')}
+                {formatDate(a.analyzedAt)}
               </td>
               <td className="py-3 px-4">
                 {a.photoUrl ? (

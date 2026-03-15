@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
+import { Copy } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
@@ -17,7 +18,7 @@ import VoiceInput from '@/components/VoiceInput';
 const dailyLogSchema = z.object({
   date: z.string().min(1, t('forms.dailyLog.validation.dateRequired')),
   projectId: z.string().min(1, t('forms.dailyLog.validation.projectRequired')),
-  weatherCondition: z.enum([ 'CLEAR', 'CLOUDY', 'RAIN', 'SNOW', 'FOG', 'WIND'], {
+  weatherCondition: z.enum(['CLEAR', 'CLOUDY', 'RAIN', 'SNOW', 'FOG', 'WIND'], {
     required_error: t('forms.dailyLog.validation.weatherRequired'),
   }),
   temperature: z
@@ -61,6 +62,7 @@ const DailyLogFormPage: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEdit = !!id;
+  const [isCopyingYesterday, setIsCopyingYesterday] = useState(false);
 
   const { data: existingLog } = useQuery({
     queryKey: ['daily-log', id],
@@ -72,7 +74,7 @@ const DailyLogFormPage: React.FC = () => {
     queryKey: ['projects'],
     queryFn: () => projectsApi.getProjects(),
   });
-  const projectOptions = (projectsData?.content ?? []).map(p => ({ value: p.id, label: p.name }));
+  const projectOptions = (projectsData?.content ?? []).map((p) => ({ value: p.id, label: p.name }));
 
   const {
     register,
@@ -89,13 +91,12 @@ const DailyLogFormPage: React.FC = () => {
           weatherCondition: existingLog.weather.condition,
           temperature: String(existingLog.weather.temperature),
           windSpeed: String(existingLog.weather.windSpeed),
-          workDescription: existingLog.entries
-            .filter((e) => e.type === 'WORK')
-            .map((e) => e.description)
-            .join('\n') || '',
-          crewCount: existingLog.entries[0]?.workerCount
-            ? String(existingLog.entries[0].workerCount)
-            : '',
+          workDescription:
+            existingLog.entries
+              .filter((e) => e.type === 'WORK')
+              .map((e) => e.description)
+              .join('\n') || '',
+          crewCount: existingLog.entries[0]?.workerCount ? String(existingLog.entries[0].workerCount) : '',
           hoursWorked: '',
           safetyNotes: existingLog.notes ?? '',
           delayDescription: '',
@@ -126,13 +127,14 @@ const DailyLogFormPage: React.FC = () => {
           windSpeed: parsed.windSpeed as number,
           humidity: 0,
         },
-        notes: [
-          data.workDescription,
-          data.safetyNotes ? `${t('forms.dailyLog.notesSafetyPrefix')} ${data.safetyNotes}` : '',
-          data.delayDescription ? `${t('forms.dailyLog.notesDelayPrefix')} ${data.delayDescription}` : '',
-        ]
-          .filter(Boolean)
-          .join('\n\n') || undefined,
+        notes:
+          [
+            data.workDescription,
+            data.safetyNotes ? `${t('forms.dailyLog.notesSafetyPrefix')} ${data.safetyNotes}` : '',
+            data.delayDescription ? `${t('forms.dailyLog.notesDelayPrefix')} ${data.delayDescription}` : '',
+          ]
+            .filter(Boolean)
+            .join('\n\n') || undefined,
       });
     },
     onSuccess: () => {
@@ -157,13 +159,14 @@ const DailyLogFormPage: React.FC = () => {
           windSpeed: parsed.windSpeed as number,
           humidity: 0,
         },
-        notes: [
-          data.workDescription,
-          data.safetyNotes ? `${t('forms.dailyLog.notesSafetyPrefix')} ${data.safetyNotes}` : '',
-          data.delayDescription ? `${t('forms.dailyLog.notesDelayPrefix')} ${data.delayDescription}` : '',
-        ]
-          .filter(Boolean)
-          .join('\n\n') || undefined,
+        notes:
+          [
+            data.workDescription,
+            data.safetyNotes ? `${t('forms.dailyLog.notesSafetyPrefix')} ${data.safetyNotes}` : '',
+            data.delayDescription ? `${t('forms.dailyLog.notesDelayPrefix')} ${data.delayDescription}` : '',
+          ]
+            .filter(Boolean)
+            .join('\n\n') || undefined,
       });
     },
     onSuccess: () => {
@@ -179,6 +182,61 @@ const DailyLogFormPage: React.FC = () => {
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
+  const handleCopyYesterday = useCallback(async () => {
+    const projectId = getValues('projectId');
+    if (!projectId) {
+      toast.error(t('forms.dailyLog.validation.projectRequired'));
+      return;
+    }
+
+    setIsCopyingYesterday(true);
+    try {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      const yesterdayLog = await dailyLogApi.getDailyLogByDate(yesterdayStr, projectId);
+
+      if (!yesterdayLog) {
+        toast.error(t('dailyLog.copyYesterdayEmpty'));
+        return;
+      }
+
+      if (yesterdayLog.weather?.condition) {
+        setValue('weatherCondition', yesterdayLog.weather.condition);
+      }
+      if (yesterdayLog.weather?.temperature != null) {
+        setValue('temperature', String(yesterdayLog.weather.temperature));
+      }
+      if (yesterdayLog.weather?.windSpeed != null) {
+        setValue('windSpeed', String(yesterdayLog.weather.windSpeed));
+      }
+
+      const workEntries = yesterdayLog.entries
+        ?.filter((e) => e.type === 'WORK')
+        .map((e) => e.description)
+        .join('\n');
+      if (workEntries) {
+        setValue('workDescription', workEntries);
+      }
+
+      const crewCount = yesterdayLog.entries?.[0]?.workerCount;
+      if (crewCount) {
+        setValue('crewCount', String(crewCount));
+      }
+
+      if (yesterdayLog.notes) {
+        setValue('safetyNotes', yesterdayLog.notes);
+      }
+
+      toast.success(t('dailyLog.copyYesterdaySuccess'));
+    } catch {
+      toast.error(t('dailyLog.copyYesterdayEmpty'));
+    } finally {
+      setIsCopyingYesterday(false);
+    }
+  }, [getValues, setValue]);
+
   const onSubmit = (data: DailyLogFormData) => {
     if (isEdit) {
       updateMutation.mutate(data);
@@ -191,19 +249,39 @@ const DailyLogFormPage: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         title={isEdit ? t('forms.dailyLog.editTitle') : t('forms.dailyLog.createTitle')}
-        subtitle={isEdit ? t('forms.dailyLog.editSubtitle', { date: existingLog?.date ?? '' }) : t('forms.dailyLog.createSubtitle')}
+        subtitle={
+          isEdit
+            ? t('forms.dailyLog.editSubtitle', { date: existingLog?.date ?? '' })
+            : t('forms.dailyLog.createSubtitle')
+        }
         backTo="/daily-log"
         breadcrumbs={[
           { label: t('forms.common.home'), href: '/' },
           { label: t('forms.dailyLog.breadcrumbDailyLog'), href: '/daily-log' },
           { label: isEdit ? t('forms.common.editing') : t('forms.common.creating') },
         ]}
+        actions={
+          !isEdit ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              loading={isCopyingYesterday}
+              iconLeft={<Copy className="h-4 w-4" />}
+              onClick={handleCopyYesterday}
+            >
+              {t('dailyLog.copyYesterday')}
+            </Button>
+          ) : undefined
+        }
       />
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl">
         {/* Section: Date & Project */}
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.dailyLog.sectionDateProject')}</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('forms.dailyLog.sectionDateProject')}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.dailyLog.labelDate')} error={errors.date?.message} required>
               <Input type="date" hasError={!!errors.date} {...register('date')} />
@@ -221,9 +299,15 @@ const DailyLogFormPage: React.FC = () => {
 
         {/* Section: Weather */}
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.dailyLog.sectionWeather')}</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('forms.dailyLog.sectionWeather')}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <FormField label={t('forms.dailyLog.labelWeatherCondition')} error={errors.weatherCondition?.message} required>
+            <FormField
+              label={t('forms.dailyLog.labelWeatherCondition')}
+              error={errors.weatherCondition?.message}
+              required
+            >
               <Select
                 options={weatherOptions}
                 placeholder={t('forms.dailyLog.placeholderWeather')}
@@ -254,9 +338,15 @@ const DailyLogFormPage: React.FC = () => {
 
         {/* Section: Work details */}
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.dailyLog.sectionWork')}</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('forms.dailyLog.sectionWork')}
+          </h2>
           <div className="grid grid-cols-1 gap-5">
-            <FormField label={t('forms.dailyLog.labelWorkDescription')} error={errors.workDescription?.message} required>
+            <FormField
+              label={t('forms.dailyLog.labelWorkDescription')}
+              error={errors.workDescription?.message}
+              required
+            >
               <Textarea
                 placeholder={t('forms.dailyLog.placeholderWorkDescription')}
                 rows={5}
@@ -289,7 +379,9 @@ const DailyLogFormPage: React.FC = () => {
 
         {/* Section: Safety & Delays */}
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
-          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">{t('forms.dailyLog.sectionSafety')}</h2>
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('forms.dailyLog.sectionSafety')}
+          </h2>
           <div className="grid grid-cols-1 gap-5">
             <FormField label={t('forms.dailyLog.labelSafetyNotes')} error={errors.safetyNotes?.message}>
               <Textarea
@@ -322,11 +414,7 @@ const DailyLogFormPage: React.FC = () => {
           <Button type="submit" loading={isSubmitting}>
             {isEdit ? t('forms.common.saveChanges') : t('forms.dailyLog.createButton')}
           </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => navigate('/daily-log')}
-          >
+          <Button type="button" variant="secondary" onClick={() => navigate('/daily-log')}>
             {t('common.back')}
           </Button>
         </div>

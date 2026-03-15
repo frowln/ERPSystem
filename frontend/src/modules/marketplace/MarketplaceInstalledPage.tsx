@@ -18,6 +18,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Skeleton } from '@/design-system/components/Skeleton';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import { marketplaceApi, type ConnectorInstallation } from '@/api/marketplace';
 const PluginConfigModal = React.lazy(() => import('./components/PluginConfigModal'));
 
@@ -143,10 +144,10 @@ const MarketplaceInstalledPage: React.FC = () => {
                         </h3>
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-                        {t('marketplace.installedAt')}: {new Date(installation.createdAt).toLocaleDateString()}
+                        {t('marketplace.installedAt')}: {formatDate(installation.createdAt)}
                         {installation.lastSyncAt && (
                           <span className="ml-3">
-                            {t('marketplace.lastSync')}: {new Date(installation.lastSyncAt).toLocaleDateString()}
+                            {t('marketplace.lastSync')}: {formatDate(installation.lastSyncAt)}
                           </span>
                         )}
                       </p>

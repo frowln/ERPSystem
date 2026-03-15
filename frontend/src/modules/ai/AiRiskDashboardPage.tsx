@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { t } from '@/i18n';
 import { cn } from '@/lib/cn';
+import { formatDateTime } from '@/lib/format';
 import { aiApi } from '@/api/ai';
 import type { RiskFactor } from '@/api/ai';
 import { PageHeader } from '@/design-system/components/PageHeader';
@@ -336,7 +337,7 @@ const AiRiskDashboardPage: React.FC = () => {
       {prediction?.predictedAt && (
         <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-6">
           {t('ai.riskDashboard.predictedAt')}:{' '}
-          {new Date(prediction.predictedAt).toLocaleString('ru-RU')}
+          {formatDateTime(prediction.predictedAt)}
         </p>
       )}
 

@@ -3,6 +3,8 @@
 // Inspired by Hardroller — 52 rules for Russian construction compliance
 // =============================================================================
 
+import { formatDate } from '@/lib/format';
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -276,7 +278,7 @@ const D09: ValidationRule = {
     const cursor = new Date(start);
     while (cursor <= end) {
       if (isWeekend(cursor)) {
-        weekendDays.push(cursor.toLocaleDateString('ru-RU'));
+        weekendDays.push(formatDate(cursor));
       }
       cursor.setDate(cursor.getDate() + 1);
     }

@@ -1,13 +1,17 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Building2, Edit, Phone, Mail, MapPin, CreditCard, Globe, User, FileText, Power } from 'lucide-react';
+import {
+  Building2, Edit, Phone, Mail, MapPin, CreditCard, Globe, User, FileText, Power,
+  ShieldAlert, Scale, AlertTriangle, CheckCircle, XCircle, RefreshCw, Loader2,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
-import { contractsApi } from '@/api/contracts';
+import { contractsApi, type ChekkaRiskResponse } from '@/api/contracts';
 import { t } from '@/i18n';
+import { cn } from '@/lib/cn';
 
 const CounterpartyDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +22,14 @@ const CounterpartyDetailPage: React.FC = () => {
     queryKey: ['counterparty', id],
     queryFn: () => contractsApi.getCounterparty(id!),
     enabled: !!id,
+  });
+
+  const { data: riskData, isLoading: riskLoading, refetch: refetchRisk } = useQuery({
+    queryKey: ['counterparty-risk', cp?.inn],
+    queryFn: () => contractsApi.checkCounterpartyRisk(cp!.inn),
+    enabled: !!cp?.inn,
+    staleTime: 24 * 60 * 60 * 1000, // 24h — matches backend cache
+    retry: false,
   });
 
   const deactivateMutation = useMutation({
@@ -180,8 +192,159 @@ const CounterpartyDetailPage: React.FC = () => {
           )}
         </div>
 
-        {/* Right: Contact info */}
+        {/* Right: Contact info + Risk check */}
         <div className="space-y-6">
+          {/* Risk check (Chekka) */}
+          <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <ShieldAlert size={16} className="text-neutral-400" />
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('counterparties.riskCheck')}</h3>
+              </div>
+              <button
+                onClick={() => refetchRisk()}
+                disabled={riskLoading}
+                className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                title={t('counterparties.riskRefresh')}
+              >
+                {riskLoading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+              </button>
+            </div>
+
+            {riskLoading && !riskData && (
+              <div className="flex items-center gap-2 text-sm text-neutral-400 py-4">
+                <Loader2 size={14} className="animate-spin" />
+                {t('counterparties.riskLoading')}
+              </div>
+            )}
+
+            {riskData?.error && (
+              <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded-lg px-3 py-2">
+                <AlertTriangle size={14} />
+                {riskData.error}
+              </div>
+            )}
+
+            {riskData && !riskData.error && (
+              <div className="space-y-3">
+                {/* Risk level badge */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('counterparties.riskLevel')}</span>
+                  <span className={cn(
+                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold',
+                    riskData.riskLevel === 'LOW' && 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300',
+                    riskData.riskLevel === 'MEDIUM' && 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300',
+                    riskData.riskLevel === 'HIGH' && 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300',
+                    riskData.riskLevel === 'UNKNOWN' && 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400',
+                  )}>
+                    {riskData.riskLevel === 'LOW' && <CheckCircle size={12} />}
+                    {riskData.riskLevel === 'MEDIUM' && <AlertTriangle size={12} />}
+                    {riskData.riskLevel === 'HIGH' && <XCircle size={12} />}
+                    {t(`counterparties.risk_${riskData.riskLevel}` as any)}
+                  </span>
+                </div>
+
+                {/* Risk score */}
+                {riskData.riskScore != null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('counterparties.riskScore')}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            'h-full rounded-full transition-all',
+                            riskData.riskScore < 40 ? 'bg-green-500' : riskData.riskScore < 70 ? 'bg-amber-500' : 'bg-red-500',
+                          )}
+                          style={{ width: `${riskData.riskScore}%` }}
+                        />
+                      </div>
+                      <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">{riskData.riskScore}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Activity status */}
+                {riskData.isActive != null && (
+                  <InfoRow
+                    label={t('counterparties.riskIsActive')}
+                    value={riskData.isActive ? t('counterparties.riskActive') : t('counterparties.riskLiquidated')}
+                  />
+                )}
+
+                {/* Bankruptcy */}
+                <div className="flex items-center justify-between py-2.5 border-b border-neutral-100 dark:border-neutral-800">
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('counterparties.riskBankruptcy')}</span>
+                  {riskData.hasBankruptcy ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-red-600 dark:text-red-400">
+                      <XCircle size={12} /> {t('counterparties.riskYes')}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
+                      <CheckCircle size={12} /> {t('counterparties.riskNo')}
+                    </span>
+                  )}
+                </div>
+
+                {/* Debts */}
+                <div className="flex items-center justify-between py-2.5 border-b border-neutral-100 dark:border-neutral-800">
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">{t('counterparties.riskDebts')}</span>
+                  {riskData.hasDebts ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-red-600 dark:text-red-400">
+                      <XCircle size={12} /> {t('counterparties.riskYes')}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
+                      <CheckCircle size={12} /> {t('counterparties.riskNo')}
+                    </span>
+                  )}
+                </div>
+
+                {/* Arbitration */}
+                {(riskData.arbitrationCount != null && riskData.arbitrationCount > 0) && (
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Scale size={13} className="text-neutral-400" />
+                      <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">
+                        {t('counterparties.riskArbitration')}
+                      </span>
+                    </div>
+                    <InfoRow label={t('counterparties.riskArbTotal')} value={String(riskData.arbitrationCount)} />
+                    {riskData.arbitrationAsPlaintiff != null && (
+                      <InfoRow label={t('counterparties.riskArbPlaintiff')} value={String(riskData.arbitrationAsPlaintiff)} />
+                    )}
+                    {riskData.arbitrationAsDefendant != null && (
+                      <InfoRow label={t('counterparties.riskArbDefendant')} value={String(riskData.arbitrationAsDefendant)} />
+                    )}
+                  </div>
+                )}
+
+                {/* Related companies */}
+                {riskData.relatedCompanies && riskData.relatedCompanies.length > 0 && (
+                  <div className="pt-2">
+                    <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider">
+                      {t('counterparties.riskRelated')}
+                    </span>
+                    <div className="mt-2 space-y-1">
+                      {riskData.relatedCompanies.map((c, i) => (
+                        <div key={i} className="text-xs text-neutral-600 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-800 rounded px-2 py-1.5">
+                          {c}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Last updated */}
+                {riskData.lastUpdated && (
+                  <div className="pt-2 text-[11px] text-neutral-400">
+                    {t('counterparties.riskUpdatedAt')}: {new Date(riskData.lastUpdated).toLocaleString()}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* Contact info */}
           <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
             <div className="flex items-center gap-2 mb-4">
               <User size={16} className="text-neutral-400" />

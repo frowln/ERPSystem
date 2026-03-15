@@ -14,6 +14,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { t } from '@/i18n';
+import { formatTime } from '@/lib/format';
 import { apiClient } from '@/api/client';
 
 // ---------------------------------------------------------------------------
@@ -188,7 +189,7 @@ const StatusPage: React.FC = () => {
             <p className={`text-lg font-semibold ${cfg.textClass}`}>{cfg.label}</p>
             {lastChecked && (
               <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                {t('systemStatus.lastChecked')}: {lastChecked.toLocaleTimeString()}
+                {t('systemStatus.lastChecked')}: {formatTime(lastChecked)}
               </p>
             )}
           </div>

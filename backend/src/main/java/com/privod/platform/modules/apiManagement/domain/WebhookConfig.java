@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 
@@ -61,4 +63,15 @@ public class WebhookConfig extends BaseEntity {
     @Column(name = "retry_policy", nullable = false, length = 20)
     @Builder.Default
     private RetryPolicy retryPolicy = RetryPolicy.EXPONENTIAL;
+
+    @Column(name = "secondary_secret", length = 255)
+    private String secondarySecret;
+
+    @Column(name = "secret_rotation_at")
+    private Instant secretRotationAt;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "resource_filter", columnDefinition = "JSONB")
+    @Builder.Default
+    private String resourceFilter = "{}";
 }

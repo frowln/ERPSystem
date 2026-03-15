@@ -15,6 +15,7 @@ import {
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import { sroApi, type SroVerificationResult } from '@/api/sro';
 import { Button } from '@/design-system/components/Button';
 
@@ -29,13 +30,7 @@ const fmtCurrency = (value: number): string =>
     maximumFractionDigits: 0,
   }).format(value);
 
-const fmtDate = (iso: string): string => {
-  try {
-    return new Date(iso).toLocaleDateString('ru-RU');
-  } catch {
-    return iso;
-  }
-};
+const fmtDate = (iso: string): string => formatDate(iso);
 
 const getCompetencyLabel = (level: number | string): string => {
   const lvl = String(level);

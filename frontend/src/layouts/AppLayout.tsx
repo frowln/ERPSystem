@@ -38,6 +38,9 @@ const AssistantWidget = lazy(() =>
 const OnboardingOverlay = lazy(() =>
   import('@/components/OnboardingOverlay'),
 );
+const OnboardingWizard = lazy(() =>
+  import('@/components/OnboardingWizard'),
+);
 
 /** Error boundary that keeps sidebar/topbar functional when a page crashes */
 class PageErrorBoundary extends React.Component<
@@ -118,6 +121,15 @@ export const AppLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Show onboarding wizard on first login
+  useEffect(() => {
+    const done = localStorage.getItem('privod-onboarding-complete');
+    if (!done && isAuthenticated) {
+      setShowOnboarding(true);
+    }
+  }, [isAuthenticated]);
 
   // Establish the WebSocket connection for the authenticated session
   useWebSocket(isAuthenticated ? token : null);
@@ -147,7 +159,7 @@ export const AppLayout: React.FC = () => {
   useKeyboardShortcuts(openCommandPalette, openShortcutsHelp);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return (
@@ -172,6 +184,12 @@ export const AppLayout: React.FC = () => {
         <Suspense fallback={null}>
           <OnboardingOverlay />
         </Suspense>
+        {/* Onboarding wizard on first login */}
+        {showOnboarding && (
+          <Suspense fallback={null}>
+            <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
+          </Suspense>
+        )}
         <main
           className={cn(
             tw.ptTopBar, 'transition-[padding] duration-200 min-h-screen isolate',

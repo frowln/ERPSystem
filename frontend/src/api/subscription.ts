@@ -77,6 +77,34 @@ export interface CreatePaymentResponse {
   status: string;
 }
 
+export interface BankInvoiceResponse {
+  id: string;
+  invoiceNumber: string;
+  amount: number;
+  currency: string;
+  status: string;
+  buyerName: string;
+  buyerInn: string;
+  buyerKpp: string | null;
+  buyerAddress: string | null;
+  sellerName: string;
+  sellerInn: string;
+  sellerKpp: string | null;
+  sellerBankAccount: string;
+  sellerBankBik: string;
+  sellerBankName: string;
+  createdAt: string | null;
+  paidAt: string | null;
+}
+
+export interface CreateBankInvoiceRequest {
+  planId: string;
+  buyerName: string;
+  buyerInn: string;
+  buyerKpp?: string;
+  buyerAddress?: string;
+}
+
 const EMPTY_BILLING: PaginatedBillingRecords = {
   content: [],
   totalElements: 0,
@@ -157,5 +185,19 @@ export const subscriptionApi = {
   createPayment: async (planId: string): Promise<CreatePaymentResponse> => {
     const response = await apiClient.post<{ data: CreatePaymentResponse }>('/payments/create', { planId });
     return response.data.data;
+  },
+
+  createBankInvoice: async (data: CreateBankInvoiceRequest): Promise<BankInvoiceResponse> => {
+    const response = await apiClient.post<{ data: BankInvoiceResponse }>('/payments/bank-invoice', data);
+    return response.data.data;
+  },
+
+  listBankInvoices: async (): Promise<BankInvoiceResponse[]> => {
+    try {
+      const response = await apiClient.get<{ data: BankInvoiceResponse[] }>('/payments/bank-invoices', { _silentErrors: true } as never);
+      return response.data.data ?? [];
+    } catch {
+      return [];
+    }
   },
 };

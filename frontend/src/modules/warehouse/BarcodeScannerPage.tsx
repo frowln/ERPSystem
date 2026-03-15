@@ -19,7 +19,7 @@ import { FormField, Input } from '@/design-system/components/FormField';
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import { warehouseApi } from '@/api/warehouse';
 import { t } from '@/i18n';
-import { formatNumber } from '@/lib/format';
+import { formatNumber, formatTime } from '@/lib/format';
 
 interface ScannedMaterial {
   id: string;
@@ -129,10 +129,6 @@ const BarcodeScannerPage: React.FC = () => {
     } else {
       navigate(`/warehouse/inter-project-transfers?materialId=${material.id}`);
     }
-  }
-
-  function formatTime(d: Date): string {
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   return (

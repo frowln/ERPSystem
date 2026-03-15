@@ -12,6 +12,12 @@ public record FeatureFlagResponse(
         String description,
         boolean enabled,
         boolean organizationScoped,
+        Integer rolloutPercentage,
+        String targetUserIds,
+        String targetOrganizationIds,
+        String variants,
+        Instant expiresAt,
+        String metadata,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -23,6 +29,12 @@ public record FeatureFlagResponse(
                 flag.getDescription(),
                 flag.isEnabled(),
                 flag.isOrganizationScoped(),
+                flag.getRolloutPercentage(),
+                flag.getTargetUserIds(),
+                flag.getTargetOrganizationIds(),
+                flag.getVariants(),
+                flag.getExpiresAt(),
+                flag.getMetadata(),
                 flag.getCreatedAt(),
                 flag.getUpdatedAt()
         );

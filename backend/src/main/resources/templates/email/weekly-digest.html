@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{email/base-layout :: *}">
+<body>
+<div th:fragment="content">
+
+    <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600; color: #1a1a1a;">
+        Еженедельный дайджест
+    </h2>
+
+    <p style="margin: 0 0 20px 0; font-size: 15px; color: #4a4a4a;">
+        Здравствуйте, <span th:text="${userName}">Пользователь</span>!
+        Вот краткая сводка за неделю.
+    </p>
+
+    <!-- Summary cards -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+           style="background-color: #f8f9fa; border-radius: 6px; margin-bottom: 24px;">
+        <tr>
+            <td style="padding: 16px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                    <tr th:if="${tasksOverdue > 0}">
+                        <td style="padding: 8px 0; font-size: 13px; color: #6c757d; width: 220px;">Просроченные задачи:</td>
+                        <td style="padding: 8px 0; font-size: 16px; font-weight: 700; color: #dc3545;" th:text="${tasksOverdue}">0</td>
+                    </tr>
+                    <tr th:if="${tasksDue > 0}">
+                        <td style="padding: 8px 0; font-size: 13px; color: #6c757d; width: 220px;">Задачи на этой неделе:</td>
+                        <td style="padding: 8px 0; font-size: 16px; font-weight: 600; color: #1a1a1a;" th:text="${tasksDue}">0</td>
+                    </tr>
+                    <tr th:if="${pendingApprovals > 0}">
+                        <td style="padding: 8px 0; font-size: 13px; color: #6c757d;">Ожидающие согласования:</td>
+                        <td style="padding: 8px 0; font-size: 16px; font-weight: 600; color: #f59e0b;" th:text="${pendingApprovals}">0</td>
+                    </tr>
+                    <tr th:if="${safetyIncidents > 0}">
+                        <td style="padding: 8px 0; font-size: 13px; color: #6c757d;">Инциденты ОТ за неделю:</td>
+                        <td style="padding: 8px 0; font-size: 16px; font-weight: 600; color: #dc3545;" th:text="${safetyIncidents}">0</td>
+                    </tr>
+                    <tr th:if="${expiringContracts > 0}">
+                        <td style="padding: 8px 0; font-size: 13px; color: #6c757d;">Истекающие контракты:</td>
+                        <td style="padding: 8px 0; font-size: 16px; font-weight: 600; color: #f59e0b;" th:text="${expiringContracts}">0</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Action button -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 8px 0;">
+                <a th:href="${baseUrl + '/'}"
+                   style="display: inline-block; background-color: #1a56db; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 12px 32px; border-radius: 6px;">
+                    Открыть платформу
+                </a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+</body>
+</html>

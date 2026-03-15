@@ -8,6 +8,8 @@ public record UpdateWebhookConfigRequest(
         String secret,
         String events,
         Boolean isActive,
-        RetryPolicy retryPolicy
+        RetryPolicy retryPolicy,
+        String secondarySecret,
+        String resourceFilter
 ) {
 }

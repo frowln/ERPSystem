@@ -22,6 +22,7 @@ import {
   AlertTriangle,
   CheckCircle,
 } from 'lucide-react';
+import { formatDate } from '@/lib/format';
 import { SroVerificationCard } from './components/SroVerificationCard';
 
 const WORK_TYPE_LABELS: Record<string, string> = {
@@ -222,7 +223,7 @@ const PrequalificationDetailPage: React.FC = () => {
                 icon={<Calendar size={16} />}
                 label="Дата создания"
                 value={
-                  pq.createdAt ? new Date(pq.createdAt).toLocaleDateString('ru-RU') : undefined
+                  pq.createdAt ? formatDate(pq.createdAt) : undefined
                 }
               />
             </div>

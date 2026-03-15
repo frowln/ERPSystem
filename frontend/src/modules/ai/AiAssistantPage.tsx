@@ -4,6 +4,7 @@ import { aiApi } from '@/api/ai';
 import type { AiConversation, AiMessage, AiSuggestion } from './types';
 import toast from 'react-hot-toast';
 import { t } from '@/i18n';
+import { formatDate, formatTime } from '@/lib/format';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -236,7 +237,7 @@ const AiAssistantPage: React.FC = () => {
                     <p className="text-sm truncate">{conv.title}</p>
                   )}
                   <p className="text-xs text-neutral-400 mt-0.5">
-                    {new Date(conv.updatedAt).toLocaleDateString('ru-RU')}
+                    {formatDate(conv.updatedAt)}
                   </p>
                 </div>
                 <div className="hidden group-hover:flex items-center gap-0.5">
@@ -362,7 +363,7 @@ const AiAssistantPage: React.FC = () => {
                   />
                 )}
                 <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-primary-200' : 'text-neutral-400'}`}>
-                  {new Date(msg.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                  {formatTime(msg.createdAt)}
                 </p>
               </div>
               {msg.role === 'user' && (

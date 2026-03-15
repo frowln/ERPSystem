@@ -34,6 +34,9 @@ const TreasuryCalendarPage = lazy(() => import('@/modules/finance/TreasuryCalend
 const TaxCalendarPage = lazy(() => import('@/modules/finance/TaxCalendarPage'));
 const BankExportPage = lazy(() => import('@/modules/finance/BankExportPage'));
 
+// Financing Schedule
+const FinancingSchedulePage = lazy(() => import('@/modules/finance/FinancingSchedulePage'));
+
 // Execution Chain
 const ExecutionChainPage = lazy(() => import('@/modules/finance/ExecutionChainPage'));
 
@@ -181,6 +184,9 @@ export function financeRoutes() {
 
       {/* Bank Export (FINANCE+) */}
       <Route path="bank-export" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><BankExportPage /></ProtectedRoute>} />
+
+      {/* Financing Schedule */}
+      <Route path="financing-schedule" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><FinancingSchedulePage /></ProtectedRoute>} />
 
       {/* Execution Chain — cross-cutting Estimate→Budget→KS-2→Invoice→Payment */}
       <Route path="execution-chain" element={<ProtectedRoute requiredRoles={[...FINANCE_ROLES]}><ExecutionChainPage /></ProtectedRoute>} />

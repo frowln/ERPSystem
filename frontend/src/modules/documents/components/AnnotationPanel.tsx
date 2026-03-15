@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import type { DrawingMarkup } from '@/api/markups';
 
 type StatusFilter = 'ALL' | 'ACTIVE' | 'RESOLVED';
@@ -121,11 +122,7 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({
           const Icon = typeIcons[markup.markupType] ?? Square;
           const isSelected = markup.id === selectedMarkupId;
           const isResolved = markup.status === 'RESOLVED';
-          const date = new Date(markup.createdAt).toLocaleDateString('ru-RU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-          });
+          const date = formatDate(markup.createdAt);
 
           return (
             <div

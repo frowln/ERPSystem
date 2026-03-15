@@ -2,6 +2,7 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatTime } from '@/lib/format';
 import type { ChatMessage, PageContext } from './types';
 
 // ---------------------------------------------------------------------------
@@ -70,7 +71,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = React.memo(({ msg }) => (
         'text-[10px] mt-1',
         msg.role === 'user' ? 'text-primary-200' : 'text-neutral-400',
       )}>
-        {new Date(msg.ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+        {formatTime(msg.ts)}
       </p>
     </div>
   </div>

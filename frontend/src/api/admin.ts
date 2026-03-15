@@ -511,4 +511,8 @@ export const adminApi = {
     const response = await apiClient.put<TenantDetail>(`/admin/tenants/${id}/plan`, { planId });
     return response.data;
   },
+
+  seedDemoData: async (): Promise<void> => {
+    await apiClient.post('/admin/seed-demo');
+  },
 };

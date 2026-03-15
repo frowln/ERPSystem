@@ -1,0 +1,17 @@
+{
+  "currentVersion": "1.0",
+  "versions": [
+    {
+      "version": "1.0",
+      "date": "2026-03-15",
+      "changes": [
+        {"type": "added", "description": "Initial public API release"},
+        {"type": "added", "description": "Custom Fields API (/api/custom-fields/)"},
+        {"type": "added", "description": "Feature Flags API with percentage rollout"},
+        {"type": "added", "description": "Webhook resource-level filtering"},
+        {"type": "added", "description": "Enhanced rate limiting with Redis backend"}
+      ],
+      "deprecations": []
+    }
+  ]
+}

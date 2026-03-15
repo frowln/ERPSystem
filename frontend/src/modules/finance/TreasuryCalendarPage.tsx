@@ -16,7 +16,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Modal } from '@/design-system/components/Modal';
 import { financeApi } from '@/api/finance';
 import type { TreasuryPayment } from '@/modules/finance/types';
-import { formatMoney, formatDate } from '@/lib/format';
+import { formatMoney, formatDate, formatMonthYear } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
@@ -39,9 +39,8 @@ function getFirstDayOfWeek(year: number, month: number): number {
   return day === 0 ? 6 : day - 1; // Monday-based
 }
 
-function formatMonthYear(year: number, month: number): string {
-  const date = new Date(year, month, 1);
-  return date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+function formatMonthYearLocal(year: number, month: number): string {
+  return formatMonthYear(new Date(year, month, 1));
 }
 
 const TreasuryCalendarPage: React.FC = () => {
@@ -199,7 +198,7 @@ const TreasuryCalendarPage: React.FC = () => {
           </Button>
           <div className="flex items-center gap-3">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 capitalize">
-              {formatMonthYear(currentYear, currentMonth)}
+              {formatMonthYearLocal(currentYear, currentMonth)}
             </h3>
             <Button variant="outline" size="xs" onClick={handleToday}>
               {t('finance.treasuryCalendar.today')}

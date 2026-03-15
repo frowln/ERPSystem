@@ -12,6 +12,7 @@ import { tw } from '@/design-system/tokens';
 import { isDemoMode } from '@/lib/demoMode';
 import { useThemeStore } from '@/hooks/useTheme';
 import { NotificationDropdown } from '@/components/NotificationDropdown';
+import { WhatsNewBadge } from '@/components/WhatsNewBadge';
 import { t } from '@/i18n';
 
 const ThemeToggle: React.FC = () => {
@@ -129,6 +130,9 @@ export const TopBar: React.FC = () => {
 
         {/* Theme toggle */}
         <ThemeToggle />
+
+        {/* What's new */}
+        <WhatsNewBadge />
 
         {/* Notifications */}
         <div className="relative" ref={notifRef}>

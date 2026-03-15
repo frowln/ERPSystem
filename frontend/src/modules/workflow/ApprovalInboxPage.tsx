@@ -14,6 +14,7 @@ import { Modal } from '@/design-system/components/Modal';
 import { Input, Select } from '@/design-system/components/FormField';
 import { workflowApi } from './api';
 import { t } from '@/i18n';
+import { formatDateTime } from '@/lib/format';
 import type { ApprovalInstance } from './types';
 import toast from 'react-hot-toast';
 
@@ -432,7 +433,7 @@ export default function ApprovalInboxPage() {
         return (
           <div className="text-xs">
             <span className="tabular-nums text-neutral-700 dark:text-neutral-300">
-              {new Date(dl).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+              {formatDateTime(dl)}
             </span>
             {remaining && (
               <p className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-medium ${colorCls}`}>
@@ -767,7 +768,7 @@ export default function ApprovalInboxPage() {
               <div>
                 <span className="text-xs text-neutral-500 dark:text-neutral-400 block">{tp('detailCreated')}</span>
                 <span className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">
-                  {new Date(detailInstance.createdAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  {formatDateTime(detailInstance.createdAt)}
                 </span>
               </div>
               <div>
@@ -775,7 +776,7 @@ export default function ApprovalInboxPage() {
                 {detailInstance.slaDeadline ? (
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-neutral-900 dark:text-neutral-100 tabular-nums">
-                      {new Date(detailInstance.slaDeadline).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      {formatDateTime(detailInstance.slaDeadline)}
                     </span>
                     {(() => {
                       const remaining = formatSlaRemaining(detailInstance.slaDeadline);

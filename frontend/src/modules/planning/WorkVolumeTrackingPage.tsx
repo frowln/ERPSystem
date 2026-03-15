@@ -8,17 +8,17 @@ import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { planningApi } from '@/api/planning';
 import { t } from '@/i18n';
+import { formatDateLong } from '@/lib/format';
 import { useProjectOptions } from '@/hooks/useSelectOptions';
 import toast from 'react-hot-toast';
 import type { WorkVolumeSummary } from './types';
 
-function formatDate(date: Date): string {
+function toIsoDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
 
 function formatDisplayDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+  return formatDateLong(dateStr + 'T00:00:00');
 }
 
 interface VolumeInput {
@@ -32,7 +32,7 @@ const WorkVolumeTrackingPage: React.FC = () => {
   const { options: projectOptions } = useProjectOptions();
 
   const [projectId, setProjectId] = useState('');
-  const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
+  const [selectedDate, setSelectedDate] = useState(toIsoDate(new Date()));
   const [volumeInputs, setVolumeInputs] = useState<Record<string, VolumeInput>>({});
   const [saving, setSaving] = useState(false);
 
@@ -82,14 +82,14 @@ const WorkVolumeTrackingPage: React.FC = () => {
   const prevDay = useCallback(() => {
     const d = new Date(selectedDate + 'T00:00:00');
     d.setDate(d.getDate() - 1);
-    setSelectedDate(formatDate(d));
+    setSelectedDate(toIsoDate(d));
     setVolumeInputs({});
   }, [selectedDate]);
 
   const nextDay = useCallback(() => {
     const d = new Date(selectedDate + 'T00:00:00');
     d.setDate(d.getDate() + 1);
-    setSelectedDate(formatDate(d));
+    setSelectedDate(toIsoDate(d));
     setVolumeInputs({});
   }, [selectedDate]);
 

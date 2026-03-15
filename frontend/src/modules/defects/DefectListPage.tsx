@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Plus, Search, Trash2, Clock, BarChart3 } from 'lucide-react';
+import { Plus, Search, Trash2, Clock, BarChart3, Zap, Camera, ChevronDown, ChevronUp } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { useConfirmDialog } from '@/design-system/components/ConfirmDialog/provider';
@@ -11,6 +11,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { defectsApi, type Defect, type DefectSeverity, type DefectStatus as DStatus } from '@/api/defects';
 import { formatDate } from '@/lib/format';
+import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import toast from 'react-hot-toast';
 
@@ -65,6 +66,14 @@ const DefectListPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [severityFilter, setSeverityFilter] = useState('');
 
+  // Quick create state
+  const [quickOpen, setQuickOpen] = useState(false);
+  const [quickTitle, setQuickTitle] = useState('');
+  const [quickSeverity, setQuickSeverity] = useState<DefectSeverity>('MEDIUM');
+  const [quickLocation, setQuickLocation] = useState('');
+  const [quickPhoto, setQuickPhoto] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const { data: defectsData, isLoading } = useQuery({
     queryKey: ['defects'],
     queryFn: () => defectsApi.getDefects({ size: 200 }),
@@ -79,6 +88,30 @@ const DefectListPage: React.FC = () => {
       toast.success(t('defects.toastDeleted'));
     },
     onError: () => toast.error(t('defects.toastDeleteError')),
+  });
+
+  const quickCreateMutation = useMutation({
+    mutationFn: async () => {
+      const photoUrls = quickPhoto ? JSON.stringify([quickPhoto.name]) : undefined;
+      return defectsApi.createDefect({
+        projectId: '',
+        title: quickTitle.trim(),
+        severity: quickSeverity,
+        location: quickLocation.trim() || undefined,
+        photoUrls,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['defects'] });
+      toast.success(t('defects.quickCreateSuccess'));
+      setQuickTitle('');
+      setQuickSeverity('MEDIUM');
+      setQuickLocation('');
+      setQuickPhoto(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setQuickOpen(false);
+    },
+    onError: () => toast.error(t('defects.quickCreateError')),
   });
 
   const defects = defectsData?.content ?? [];
@@ -220,6 +253,106 @@ const DefectListPage: React.FC = () => {
         activeTab={activeTab}
         onTabChange={(id) => setActiveTab(id as TabId)}
       />
+
+      {/* Quick defect creation */}
+      <div className="mb-4">
+        <button
+          type="button"
+          onClick={() => setQuickOpen(!quickOpen)}
+          className={cn(
+            'flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg transition-colors',
+            'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20',
+            'hover:bg-amber-100 dark:hover:bg-amber-900/40',
+          )}
+        >
+          <Zap size={14} />
+          {t('defects.quickCreate')}
+          {quickOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </button>
+
+        {quickOpen && (
+          <div className="mt-2 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-3">
+              {t('defects.quickCreateHint')}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                  {t('defects.quickCreateTitle')} *
+                </label>
+                <Input
+                  value={quickTitle}
+                  onChange={(e) => setQuickTitle(e.target.value)}
+                  placeholder={t('defects.quickCreatePlaceholderTitle')}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                  {t('defects.quickSeverity')}
+                </label>
+                <Select
+                  value={quickSeverity}
+                  onChange={(e) => setQuickSeverity(e.target.value as DefectSeverity)}
+                  options={[
+                    { value: 'LOW', label: getSeverityLabels().LOW },
+                    { value: 'MEDIUM', label: getSeverityLabels().MEDIUM },
+                    { value: 'HIGH', label: getSeverityLabels().HIGH },
+                    { value: 'CRITICAL', label: getSeverityLabels().CRITICAL },
+                  ]}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                  {t('defects.quickLocation')}
+                </label>
+                <Input
+                  value={quickLocation}
+                  onChange={(e) => setQuickLocation(e.target.value)}
+                  placeholder={t('defects.quickCreatePlaceholderLocation')}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                  {t('defects.quickPhoto')}
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm transition-colors',
+                      'border-neutral-300 dark:border-neutral-600',
+                      'text-neutral-700 dark:text-neutral-300',
+                      'hover:bg-neutral-50 dark:hover:bg-neutral-800',
+                    )}
+                  >
+                    <Camera size={14} />
+                    {quickPhoto ? quickPhoto.name.slice(0, 20) : t('defects.quickPhoto')}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => setQuickPhoto(e.target.files?.[0] ?? null)}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 flex justify-end">
+              <Button
+                size="sm"
+                iconLeft={<Zap size={14} />}
+                loading={quickCreateMutation.isPending}
+                disabled={!quickTitle.trim()}
+                onClick={() => quickCreateMutation.mutate()}
+              >
+                {t('defects.quickCreateSubmit')}
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">

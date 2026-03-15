@@ -153,6 +153,26 @@ public class EmailNotificationService {
     }
 
     /**
+     * Send an email verification link to a user.
+     */
+    @Async
+    public void sendEmailVerification(User user, String verificationToken) {
+        String subject = "Подтверждение email — Привод";
+        String verifyLink = baseUrl + "/auth/verify-email?token=" + verificationToken;
+        String body = buildHtmlTemplate(
+                "Подтвердите ваш email",
+                "<p>Здравствуйте, <strong>" + user.getFirstName() + "</strong>!</p>"
+                        + "<p>Для завершения регистрации подтвердите ваш email-адрес, нажав на кнопку ниже:</p>"
+                        + "<div style=\"text-align:center;margin:24px 0;\">"
+                        + "<a href=\"" + verifyLink + "\" style=\"display:inline-block;background:#4f46e5;color:#fff;padding:12px 32px;text-decoration:none;border-radius:6px;font-weight:600;\">Подтвердить email</a>"
+                        + "</div>"
+                        + "<p style=\"color:#6b7280;font-size:13px;\">Если вы не регистрировались в системе Привод, проигнорируйте это письмо. Ссылка действительна 24 часа.</p>"
+        );
+
+        sendEmail(user.getEmail(), subject, body, user.getOrganizationId());
+    }
+
+    /**
      * Send a welcome email to a newly registered user.
      */
     @Async

@@ -36,6 +36,7 @@ const EstimatePivotPage = lazy(() => import('@/modules/estimates/EstimatePivotPa
 const EstimateNormativeView = lazy(() => import('@/modules/estimates/EstimateNormativeView'));
 const EstimateFmReconciliation = lazy(() => import('@/modules/estimates/EstimateFmReconciliation'));
 const EstimateImportPage = lazy(() => import('@/modules/estimates/EstimateImportPage'));
+const LsrImportWizard = lazy(() => import('@/modules/estimates/LsrImportWizard'));
 const EstimateExportPage = lazy(() => import('@/modules/estimates/EstimateExportPage'));
 const VolumeCalculatorPage = lazy(() => import('@/modules/estimates/VolumeCalculatorPage'));
 const EstimateComparisonPage = lazy(() => import('@/modules/estimates/EstimateComparisonPage'));
@@ -162,6 +163,16 @@ const CounterpartyDetailPage = lazy(() => import('@/modules/counterparties/Count
 // Documents (additional)
 const DrawingViewerPage = lazy(() => import('@/modules/documents/DrawingViewerPage'));
 
+// Activity
+const ActivityFeedPage = lazy(() => import('@/modules/activity/ActivityFeedPage'));
+
+// Contractor ratings
+const ContractorRatingsPage = lazy(() => import('@/modules/counterparties/ContractorRatingsPage'));
+
+// Contracts extras
+const ReclamationsPage = lazy(() => import('@/modules/contracts/ReclamationsPage'));
+const BankGuaranteesPage = lazy(() => import('@/modules/contracts/BankGuaranteesPage'));
+
 export function projectRoutes() {
   const PRICING_ROLES = ['ADMIN', 'ESTIMATOR', 'PROJECT_MANAGER'] as const;
   return (
@@ -194,6 +205,14 @@ export function projectRoutes() {
       <Route path="counterparties/new" element={<CounterpartyFormPage />} />
       <Route path="counterparties/:id" element={<CounterpartyDetailPage />} />
       <Route path="counterparties/:id/edit" element={<CounterpartyFormPage />} />
+      <Route path="counterparties/ratings" element={<ContractorRatingsPage />} />
+
+      {/* Activity Feed */}
+      <Route path="activity" element={<ActivityFeedPage />} />
+
+      {/* Contracts: Reclamations & Bank Guarantees */}
+      <Route path="contracts/reclamations" element={<ReclamationsPage />} />
+      <Route path="contracts/bank-guarantees" element={<BankGuaranteesPage />} />
 
       {/* Contracts */}
       <Route path="contracts" element={<ContractListPage />} />
@@ -211,6 +230,7 @@ export function projectRoutes() {
       <Route path="estimates/:id/normative" element={<EstimateNormativeView />} />
       <Route path="estimates/:id/fm-reconciliation" element={<EstimateFmReconciliation />} />
       <Route path="estimates/import" element={<EstimateImportPage />} />
+      <Route path="estimates/import-lsr" element={<LsrImportWizard />} />
       <Route path="estimates/export" element={<EstimateExportPage />} />
       <Route path="estimates/volume-calculator" element={<VolumeCalculatorPage />} />
       <Route path="estimates/comparison" element={<EstimateComparisonPage />} />

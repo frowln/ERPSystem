@@ -16,6 +16,7 @@ import {
 import { bidManagementApi, type BidPackage, type BidInvitation } from '@/api/bidManagement';
 import { t } from '@/i18n';
 import { cn } from '@/lib/cn';
+import { formatDateTime } from '@/lib/format';
 import toast from 'react-hot-toast';
 
 const BidLevelingMatrix = lazy(() => import('./BidLevelingMatrix'));
@@ -239,7 +240,7 @@ const BidPackageDetailPage: React.FC = () => {
                 {t('bidManagement.bidDueDate')}
               </label>
               <p className="mt-1 text-neutral-900 dark:text-neutral-100">
-                {pkg.bidDueDate ? new Date(pkg.bidDueDate).toLocaleString() : '\u2014'}
+                {formatDateTime(pkg.bidDueDate)}
               </p>
             </div>
             <div>

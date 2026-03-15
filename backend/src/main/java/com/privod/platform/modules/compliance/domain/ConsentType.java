@@ -5,6 +5,8 @@ package com.privod.platform.modules.compliance.domain;
  */
 public enum ConsentType {
     PERSONAL_DATA,
+    PRIVACY_POLICY,
+    COOKIES,
     SPECIAL_CATEGORY,
     CROSS_BORDER,
     MARKETING,

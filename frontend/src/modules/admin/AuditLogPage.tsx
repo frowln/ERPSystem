@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, RefreshCw } from 'lucide-react';
+import { Search, RefreshCw, Download } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Input } from '@/design-system/components/FormField';
@@ -24,6 +24,16 @@ export const AuditLogContent: React.FC = () => {
 
   const logs = data?.content ?? [];
 
+  const handleExportCsv = () => {
+    if (!logs.length) return;
+    const headers = ['timestamp', 'userName', 'action', 'entityType', 'field', 'oldValue', 'newValue', 'ipAddress'];
+    const csv = [headers.join(','), ...logs.map(row => headers.map(h => JSON.stringify((row as any)[h] ?? '')).join(','))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'audit-log.csv'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const actionColors: Record<string, string> = {
     CREATE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
     UPDATE: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -43,8 +53,11 @@ export const AuditLogContent: React.FC = () => {
             className="pl-9"
           />
         </div>
-        <button onClick={() => refetch()} className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
+        <button onClick={() => refetch()} className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800" title={t('common.refresh')}>
           <RefreshCw className="h-4 w-4 text-neutral-500" />
+        </button>
+        <button onClick={handleExportCsv} disabled={logs.length === 0} className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 disabled:opacity-40" title={t('auditLog.exportCsv')}>
+          <Download className="h-4 w-4 text-neutral-500" />
         </button>
       </div>
 

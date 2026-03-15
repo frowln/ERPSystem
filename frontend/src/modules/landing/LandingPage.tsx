@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Building2,
@@ -13,8 +13,14 @@ import {
   Globe,
   Lock,
   Layers,
+  Calculator,
+  Clock,
+  TrendingUp,
+  ShieldCheck,
 } from 'lucide-react';
 import { t } from '@/i18n';
+import { apiClient } from '@/api/client';
+import toast from 'react-hot-toast';
 
 const features = [
   { icon: Building2, titleKey: 'landing.features.projects.title', descKey: 'landing.features.projects.desc' },
@@ -70,10 +76,49 @@ const plans = [
       'landing.pricing.enterprise.f5',
     ],
     highlighted: false,
+    isEnterprise: true,
   },
 ];
 
+const employeeOptions = ['1-10', '10-50', '50-200', '200+'];
+
 const LandingPage: React.FC = () => {
+  const [demoForm, setDemoForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    employeeCount: '',
+  });
+  const [demoSubmitting, setDemoSubmitting] = useState(false);
+
+  const [roiEmployees, setRoiEmployees] = useState(30);
+  const [roiProjects, setRoiProjects] = useState(5);
+  const [roiBudget, setRoiBudget] = useState(50);
+
+  const timeSavedHours = roiEmployees * 4;
+  const costSavedMonth = timeSavedHours * 800;
+  const riskReduction = roiProjects * roiBudget * 1_000_000 * 0.02;
+  const annualRoi = costSavedMonth * 12 + riskReduction - 9900 * 12;
+  const roiPercent = Math.round((annualRoi / (9900 * 12)) * 100);
+
+  const formatNumber = (n: number): string =>
+    n.toLocaleString('ru-RU', { maximumFractionDigits: 0 });
+
+  const handleDemoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDemoSubmitting(true);
+    try {
+      await apiClient.post('/api/demo-requests', demoForm);
+      toast.success(t('landing.demo.success'));
+      setDemoForm({ name: '', email: '', phone: '', company: '', employeeCount: '' });
+    } catch {
+      toast.error(t('common.error'));
+    } finally {
+      setDemoSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
@@ -187,6 +232,39 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Screenshots */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+              {t('landing.screenshots.title')}
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {[
+              { src: '/kb/screenshots/dashboard/main-dashboard.png', captionKey: 'landing.screenshots.dashboard' },
+              { src: '/kb/screenshots/projects/list-projects.png', captionKey: 'landing.screenshots.projects' },
+              { src: '/kb/screenshots/estimates/list-estimates.png', captionKey: 'landing.screenshots.estimates' },
+              { src: '/kb/screenshots/safety/dashboard.png', captionKey: 'landing.screenshots.safety' },
+            ].map((item) => (
+              <div key={item.captionKey} className="group">
+                <div className="overflow-hidden rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700">
+                  <img
+                    src={item.src}
+                    alt={t(item.captionKey)}
+                    className="w-full h-auto object-cover transition-transform group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                <p className="text-center text-sm font-medium text-neutral-600 dark:text-neutral-400 mt-3">
+                  {t(item.captionKey)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Advantages */}
       <section id="advantages" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -264,19 +342,280 @@ const LandingPage: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  to="/register"
-                  className={`block text-center text-sm font-semibold py-3 rounded-lg transition-colors ${
-                    plan.highlighted
-                      ? 'bg-white text-primary-600 hover:bg-primary-50'
-                      : 'bg-primary-600 text-white hover:bg-primary-700'
-                  }`}
-                >
-                  {t('landing.pricing.cta')}
-                </Link>
+                {'isEnterprise' in plan && plan.isEnterprise ? (
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('demo-form')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="block w-full text-center text-sm font-semibold py-3 rounded-lg transition-colors bg-primary-600 text-white hover:bg-primary-700"
+                  >
+                    {t('landing.pricing.cta')}
+                  </button>
+                ) : (
+                  <Link
+                    to="/register"
+                    className={`block text-center text-sm font-semibold py-3 rounded-lg transition-colors ${
+                      plan.highlighted
+                        ? 'bg-white text-primary-600 hover:bg-primary-50'
+                        : 'bg-primary-600 text-white hover:bg-primary-700'
+                    }`}
+                  >
+                    {t('landing.pricing.cta')}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ROI Calculator */}
+      <section id="roi" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium px-3 py-1.5 rounded-full mb-4">
+              <Calculator size={14} />
+              ROI
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+              {t('landing.roi.title')}
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-10">
+            {/* Inputs */}
+            <div className="space-y-8 bg-white dark:bg-neutral-800 rounded-2xl p-8 border border-neutral-200 dark:border-neutral-700 shadow-sm">
+              {/* Employees */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    {t('landing.roi.employees')}
+                  </label>
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 rounded-lg">
+                    {roiEmployees}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={5}
+                  max={500}
+                  step={5}
+                  value={roiEmployees}
+                  onChange={(e) => setRoiEmployees(Number(e.target.value))}
+                  className="w-full h-2 bg-neutral-200 dark:bg-neutral-600 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                />
+                <div className="flex justify-between text-xs text-neutral-400 mt-1">
+                  <span>5</span>
+                  <span>500</span>
+                </div>
+              </div>
+
+              {/* Projects */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    {t('landing.roi.projects')}
+                  </label>
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 rounded-lg">
+                    {roiProjects}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={50}
+                  step={1}
+                  value={roiProjects}
+                  onChange={(e) => setRoiProjects(Number(e.target.value))}
+                  className="w-full h-2 bg-neutral-200 dark:bg-neutral-600 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                />
+                <div className="flex justify-between text-xs text-neutral-400 mt-1">
+                  <span>1</span>
+                  <span>50</span>
+                </div>
+              </div>
+
+              {/* Budget */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                    {t('landing.roi.budget')}
+                  </label>
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 rounded-lg">
+                    {roiBudget}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={500}
+                  step={1}
+                  value={roiBudget}
+                  onChange={(e) => setRoiBudget(Number(e.target.value))}
+                  className="w-full h-2 bg-neutral-200 dark:bg-neutral-600 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                />
+                <div className="flex justify-between text-xs text-neutral-400 mt-1">
+                  <span>1</span>
+                  <span>500</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Results */}
+            <div className="space-y-4">
+              {/* Time saved */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 border border-blue-100 dark:border-blue-800">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-xl flex items-center justify-center">
+                    <Clock size={20} className="text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    {t('landing.roi.timeSaved')}
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-blue-900 dark:text-blue-100">
+                  {formatNumber(timeSavedHours)} {t('landing.roi.hours')}
+                </p>
+              </div>
+
+              {/* Cost saved */}
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-6 border border-green-100 dark:border-green-800">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-xl flex items-center justify-center">
+                    <TrendingUp size={20} className="text-green-600 dark:text-green-400" />
+                  </div>
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                    {t('landing.roi.costSaved')}
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-green-900 dark:text-green-100">
+                  {formatNumber(costSavedMonth)} &#8381;
+                </p>
+              </div>
+
+              {/* Risk reduction */}
+              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-6 border border-amber-100 dark:border-amber-800">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-amber-100 dark:bg-amber-800 rounded-xl flex items-center justify-center">
+                    <ShieldCheck size={20} className="text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                    {t('landing.roi.riskReduction')}
+                  </span>
+                </div>
+                <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">
+                  {formatNumber(riskReduction)} &#8381;
+                </p>
+              </div>
+
+              {/* Annual ROI */}
+              <div className="bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-6 border border-primary-200 dark:border-primary-800 ring-2 ring-primary-200 dark:ring-primary-700">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-800 rounded-xl flex items-center justify-center">
+                    <BarChart3 size={20} className="text-primary-600 dark:text-primary-400" />
+                  </div>
+                  <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                    {t('landing.roi.annualRoi')}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <p className="text-3xl font-bold text-primary-900 dark:text-primary-100">
+                    {formatNumber(annualRoi)} &#8381;
+                  </p>
+                  <span className={`text-lg font-bold ${roiPercent >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {roiPercent >= 0 ? '+' : ''}{formatNumber(roiPercent)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Request Form */}
+      <section id="demo-form" className="py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 dark:bg-primary-900/20">
+        <div className="max-w-lg mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+              {t('landing.demo.title')}
+            </h2>
+            <p className="text-lg text-neutral-500 dark:text-neutral-400">
+              {t('landing.demo.subtitle')}
+            </p>
+          </div>
+          <form onSubmit={handleDemoSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('landing.demo.name')}
+              </label>
+              <input
+                type="text"
+                required
+                value={demoForm.name}
+                onChange={(e) => setDemoForm((prev) => ({ ...prev, name: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('landing.demo.email')}
+              </label>
+              <input
+                type="email"
+                required
+                value={demoForm.email}
+                onChange={(e) => setDemoForm((prev) => ({ ...prev, email: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('landing.demo.phone')}
+              </label>
+              <input
+                type="tel"
+                value={demoForm.phone}
+                onChange={(e) => setDemoForm((prev) => ({ ...prev, phone: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('landing.demo.company')}
+              </label>
+              <input
+                type="text"
+                required
+                value={demoForm.company}
+                onChange={(e) => setDemoForm((prev) => ({ ...prev, company: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('landing.demo.employees')}
+              </label>
+              <select
+                required
+                value={demoForm.employeeCount}
+                onChange={(e) => setDemoForm((prev) => ({ ...prev, employeeCount: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors"
+              >
+                <option value="" disabled />
+                {employeeOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="submit"
+              disabled={demoSubmitting}
+              className="w-full py-3 rounded-2xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 transition-colors shadow-lg shadow-primary-600/20"
+            >
+              {demoSubmitting ? '...' : t('landing.demo.submit')}
+            </button>
+          </form>
         </div>
       </section>
 

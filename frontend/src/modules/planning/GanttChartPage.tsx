@@ -14,7 +14,7 @@ import { DataTable } from '@/design-system/components/DataTable';
 import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
-import { formatDate, formatMoney } from '@/lib/format';
+import { formatDate, formatDateShort, formatMoney } from '@/lib/format';
 import { planningApi } from '@/api/planning';
 import { projectsApi } from '@/api/projects';
 import { t } from '@/i18n';
@@ -69,7 +69,7 @@ function computeTimeRange(nodes: WbsNode[]): { start: Date; end: Date; totalDays
 function computeMonths(start: Date, end: Date): string[] {
   const result: string[] = [];
   for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 3)) {
-    result.push(d.toLocaleDateString('ru-RU', { month: 'short', year: '2-digit' }));
+    result.push(formatDateShort(d));
   }
   return result;
 }
@@ -132,7 +132,7 @@ function computeTimeLabels(start: Date, end: Date, zoom: ZoomLevel): { label: st
   for (let d = new Date(start.getFullYear(), start.getMonth(), 1); d <= end; ) {
     const pct = ((d.getTime() - start.getTime()) / totalMs) * 100;
     if (pct >= 0 && pct <= 100) {
-      result.push({ label: d.toLocaleDateString(locale, fmt), pct });
+      result.push({ label: formatDateShort(d), pct });
     }
     d.setMonth(d.getMonth() + step);
   }

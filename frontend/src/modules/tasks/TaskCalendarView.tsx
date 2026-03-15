@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatMonthYear } from '@/lib/format';
 import type { ProjectTask, TaskStatus, TaskPriority } from '@/types';
 
 interface TaskCalendarViewProps {
@@ -47,10 +48,8 @@ function getFirstDayOfWeek(year: number, month: number): number {
   return day === 0 ? 6 : day - 1;
 }
 
-function formatMonthYear(year: number, month: number): string {
-  const date = new Date(year, month, 1);
-  const locale = document.documentElement.lang === 'en' ? 'en-US' : 'ru-RU';
-  const formatted = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+function formatMonthYearLocal(year: number, month: number): string {
+  const formatted = formatMonthYear(new Date(year, month, 1));
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
@@ -235,7 +234,7 @@ function TaskCalendarView({ tasks, onTaskClick, onDateClick }: TaskCalendarViewP
             <ChevronLeft className="h-5 w-5" />
           </button>
           <h3 className="min-w-[180px] text-center text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-            {formatMonthYear(currentYear, currentMonth)}
+            {formatMonthYearLocal(currentYear, currentMonth)}
           </h3>
           <button
             type="button"

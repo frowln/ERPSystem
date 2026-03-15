@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageHeader, MetricCard, DataTable, Button, StatusBadge, Modal, FormField } from '@/design-system/components';
 import { ShieldCheck, AlertTriangle, Users, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import { safetyComplianceApi } from '@/api/safetyCompliance';
 import type { AccessBlock, PrescriptionTracker } from '@/api/safetyCompliance';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -70,7 +71,7 @@ export default function SafetyComplianceDashboardPage() {
       header: t('safetyCompliance.colStatus'),
       cell: ({ row }) => <StatusBadge status={row.original.status} colorMap={STATUS_COLORS} />,
     },
-    { accessorKey: 'blockedAt', header: t('safetyCompliance.colBlockedAt'), cell: ({ row }) => new Date(row.original.blockedAt).toLocaleDateString() },
+    { accessorKey: 'blockedAt', header: t('safetyCompliance.colBlockedAt'), cell: ({ row }) => formatDate(row.original.blockedAt) },
     {
       id: 'actions',
       header: t('common.actions'),
@@ -87,7 +88,7 @@ export default function SafetyComplianceDashboardPage() {
     { accessorKey: 'prescriptionNumber', header: t('safetyCompliance.colNumber') },
     { accessorKey: 'description', header: t('safetyCompliance.colDescription') },
     { accessorKey: 'issuedBy', header: t('safetyCompliance.colIssuedBy') },
-    { accessorKey: 'deadline', header: t('safetyCompliance.colDeadline'), cell: ({ row }) => new Date(row.original.deadline).toLocaleDateString() },
+    { accessorKey: 'deadline', header: t('safetyCompliance.colDeadline'), cell: ({ row }) => formatDate(row.original.deadline) },
     {
       accessorKey: 'daysRemaining',
       header: t('safetyCompliance.colDaysRemaining'),

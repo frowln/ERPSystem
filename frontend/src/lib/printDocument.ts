@@ -3,6 +3,8 @@
  * Opens a new browser window with styled HTML content and triggers window.print().
  */
 
+import { t } from '@/i18n';
+
 /** Base CSS for A4 print format with Russian construction document styling */
 const PRINT_BASE_CSS = `
   @page {
@@ -258,6 +260,13 @@ ${bodyHtml}
       printWindow.print();
     }, 300);
   };
+}
+
+/**
+ * Generate HTML for a stamp circle placeholder (М.П.)
+ */
+export function stampCircleHtml(): string {
+  return `<div class="stamp-circle">${escapeHtml(t('print.stampPlace'))}</div>`;
 }
 
 function escapeHtml(text: string): string {

@@ -11,6 +11,7 @@ import { bidManagementApi, type BidPackage } from '@/api/bidManagement';
 import { bidPackageStatusColorMap, bidPackageStatusLabels } from '@/design-system/components/StatusBadge/statusConfig';
 import { t } from '@/i18n';
 import { cn } from '@/lib/cn';
+import { formatDate } from '@/lib/format';
 import toast from 'react-hot-toast';
 
 type StatusFilter = 'ALL' | BidPackage['status'];
@@ -130,7 +131,7 @@ const BidPackageListPage: React.FC = () => {
                 {pkg.bidDueDate && (
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />
-                    {new Date(pkg.bidDueDate).toLocaleDateString()}
+                    {formatDate(pkg.bidDueDate)}
                   </span>
                 )}
                 <span className="flex items-center gap-1">

@@ -29,6 +29,7 @@ import { Skeleton } from '@/design-system/components/Skeleton';
 import { FormField, Input, Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDateTime } from '@/lib/format';
 import {
   aiApi,
   type AiModelConfig,
@@ -76,20 +77,6 @@ function getDateRange(period: UsagePeriod): { from: string; to: string } {
     from: from.toISOString().split('T')[0],
     to: to.toISOString().split('T')[0],
   };
-}
-
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return iso;
-  }
 }
 
 function formatCostRub(cost: number): string {
@@ -405,7 +392,7 @@ const UsageSection: React.FC = () => {
         size: 160,
         cell: ({ getValue }) => (
           <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400 tabular-nums">
-            {formatDate(getValue<string>())}
+            {formatDateTime(getValue<string>())}
           </span>
         ),
       },

@@ -304,7 +304,7 @@ export const KepSignWizard: React.FC<KepSignWizardProps> = ({ open, onClose, doc
               </p>
               <div className="mt-4 text-sm text-success-700 space-y-1">
                 <p>{t('russianDocs.kepSignSigner')}: {selectedCert?.owner}</p>
-                <p>{t('russianDocs.kepSignDate')}: {new Date().toLocaleDateString('ru-RU')}</p>
+                <p>{t('russianDocs.kepSignDate')}: {formatDate(new Date())}</p>
                 <p>{t('russianDocs.kepSignCA')}: {selectedCert?.issuer}</p>
               </div>
             </div>

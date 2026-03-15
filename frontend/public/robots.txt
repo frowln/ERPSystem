@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /welcome
+Allow: /terms
+Allow: /privacy
+Allow: /dpa
+Allow: /sla
+Allow: /changelog
+Allow: /pricing
+Allow: /status
+Disallow: /api/
+Disallow: /admin/
+Disallow: /settings/
+
+Sitemap: https://privod.ru/sitemap.xml

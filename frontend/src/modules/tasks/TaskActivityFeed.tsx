@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Activity, Clock } from 'lucide-react';
 import { t } from '@/i18n';
+import { formatDateTime } from '@/lib/format';
 import { tasksApi, type TaskActivity } from '@/api/tasks';
 
 interface Props {
@@ -51,7 +52,7 @@ export const TaskActivityFeed: React.FC<Props> = ({ taskId }) => {
             )}
             <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5 flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {new Date(activity.createdAt).toLocaleString()}
+              {formatDateTime(activity.createdAt)}
             </p>
           </div>
         </div>

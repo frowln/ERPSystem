@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{email/base-layout :: *}">
+<body>
+<div th:fragment="content">
+
+    <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 600; color: #1a1a1a;">
+        Добро пожаловать в Привод!
+    </h2>
+
+    <p style="margin: 0 0 8px 0; font-size: 15px; color: #4a4a4a;">
+        Здравствуйте, <span th:text="${userName}" style="font-weight: 600;">Пользователь</span>!
+    </p>
+
+    <p style="margin: 0 0 20px 0; font-size: 15px; color: #4a4a4a;">
+        Ваша учётная запись успешно создана. Добро пожаловать в строительную ERP-платформу Привод.
+        Пройдите мастер настройки, чтобы быстро приступить к работе.
+    </p>
+
+    <!-- Setup wizard button -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 8px 0 24px 0;">
+                <a th:href="${setupLink}"
+                   style="display: inline-block; background-color: #1a56db; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 14px 40px; border-radius: 6px;">
+                    Начать настройку
+                </a>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Quick start tips -->
+    <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #1a1a1a;">
+        3 шага для быстрого старта
+    </h3>
+
+    <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td style="width: 32px; vertical-align: top; font-size: 18px;">1.</td>
+                <td style="font-size: 14px; color: #1e3a5f;">
+                    <strong>Создайте проект</strong> — добавьте первый объект строительства,
+                    укажите сроки и бюджет.
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td style="width: 32px; vertical-align: top; font-size: 18px;">2.</td>
+                <td style="font-size: 14px; color: #1e3a5f;">
+                    <strong>Пригласите команду</strong> — добавьте коллег и назначьте роли
+                    (инженер, бухгалтер, руководитель).
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td style="width: 32px; vertical-align: top; font-size: 18px;">3.</td>
+                <td style="font-size: 14px; color: #1e3a5f;">
+                    <strong>Загрузите смету</strong> — импортируйте локальный сметный расчёт (ЛСР)
+                    для автоматического формирования бюджета.
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Support contact -->
+    <div style="background-color: #f8f9fa; border-radius: 6px; padding: 16px; margin-bottom: 8px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td style="font-size: 13px; color: #6c757d;">
+                    <strong>Нужна помощь?</strong> Наша команда поддержки готова помочь:
+                    <br/>
+                    Email: <a href="mailto:support@privod.ru" style="color: #1a56db;">support@privod.ru</a>
+                    <br/>
+                    Telegram: <a href="https://t.me/privod_support" style="color: #1a56db;">@privod_support</a>
+                    <br/>
+                    База знаний: <a th:href="${baseUrl + '/help'}" style="color: #1a56db;">Справочный центр</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

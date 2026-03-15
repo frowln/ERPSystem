@@ -1,5 +1,7 @@
 package com.privod.platform.modules.accounting.web;
 
+import com.privod.platform.infrastructure.dadata.ChekkaResponse;
+import com.privod.platform.infrastructure.dadata.ChekkaService;
 import com.privod.platform.infrastructure.dadata.DaDataParty;
 import com.privod.platform.infrastructure.dadata.DaDataService;
 import com.privod.platform.infrastructure.web.ApiResponse;
@@ -38,6 +40,7 @@ public class CounterpartyController {
 
     private final CounterpartyService counterpartyService;
     private final DaDataService daDataService;
+    private final ChekkaService chekkaService;
 
     @GetMapping
     @Operation(summary = "List counterparties with search")
@@ -92,5 +95,13 @@ public class CounterpartyController {
                 .map(party -> ResponseEntity.ok(ApiResponse.ok(party)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.error(404, "Контрагент с ИНН " + inn + " не найден в реестре ФНС")));
+    }
+
+    @GetMapping("/check")
+    @Operation(summary = "Check counterparty risk via Chekka.ru (arbitration, bankruptcy, debts)")
+    public ResponseEntity<ApiResponse<ChekkaResponse>> checkRisk(
+            @RequestParam String inn) {
+        ChekkaResponse result = chekkaService.checkCounterparty(inn);
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 }

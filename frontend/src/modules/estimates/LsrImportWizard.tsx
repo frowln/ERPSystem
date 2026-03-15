@@ -195,23 +195,40 @@ const LsrImportWizard: React.FC = () => {
     mutationFn: async () => {
       if (!parseResult) throw new Error('No parse result');
 
-      const lines: ImportLsrLine[] = parseResult.flatLines.map(node => ({
-        lineNumber: node.lineNumber,
-        lineType: node.lineType,
-        positionType: node.positionType,
-        resourceType: node.resourceType,
-        justification: node.justification,
-        name: node.name,
-        unit: node.unit,
-        quantity: node.quantityTotal,
-        baseCost: node.baseCost,
-        indexValue: node.indexValue,
-        currentCost: node.currentCost,
-        totalAmount: node.totalAmount,
-        coefficients: node.coefficients,
-        sectionName: node.sectionName,
-        depth: node.depth,
-      }));
+      // Build lines with parentLineNumber from tree hierarchy
+      let lastSectionLineNum: number | null = null;
+      let lastPositionLineNum: number | null = null;
+      const lines: ImportLsrLine[] = parseResult.flatLines.map(node => {
+        let parentLineNumber: number | undefined;
+        if (node.lineType === 'SECTION') {
+          lastSectionLineNum = node.lineNumber;
+          lastPositionLineNum = null;
+          parentLineNumber = undefined;
+        } else if (node.lineType === 'POSITION') {
+          lastPositionLineNum = node.lineNumber;
+          parentLineNumber = lastSectionLineNum ?? undefined;
+        } else if (node.lineType === 'RESOURCE') {
+          parentLineNumber = lastPositionLineNum ?? lastSectionLineNum ?? undefined;
+        }
+        return {
+          lineNumber: node.lineNumber,
+          lineType: node.lineType,
+          positionType: node.positionType,
+          resourceType: node.resourceType,
+          justification: node.justification,
+          name: node.name,
+          unit: node.unit,
+          quantity: node.quantityTotal,
+          baseCost: node.baseCost,
+          indexValue: node.indexValue,
+          currentCost: node.currentCost,
+          totalAmount: node.totalAmount,
+          coefficients: node.coefficients,
+          sectionName: node.sectionName,
+          depth: node.depth,
+          parentLineNumber,
+        };
+      });
 
       const request: ImportLsrRequest = {
         projectId,

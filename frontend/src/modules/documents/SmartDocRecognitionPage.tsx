@@ -21,6 +21,7 @@ import { StatusBadge } from '@/design-system/components/StatusBadge';
 import { Select } from '@/design-system/components/FormField';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDateTime } from '@/lib/format';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -878,7 +879,7 @@ const SmartDocRecognitionPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-neutral-500 dark:text-neutral-400 text-xs">
-                      {entry.processedAt.toLocaleDateString()} {entry.processedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {formatDateTime(entry.processedAt)}
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge

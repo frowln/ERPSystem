@@ -19,7 +19,7 @@ import { MetricCard } from '@/design-system/components/MetricCard';
 import { Input, Select } from '@/design-system/components/FormField';
 import { warehouseApi } from '@/api/warehouse';
 import { useProjectOptions } from '@/hooks/useSelectOptions';
-import { formatNumber, formatPercent } from '@/lib/format';
+import { formatNumber, formatPercent, formatMonthYear } from '@/lib/format';
 import type { M29ReportEntry } from './types';
 
 const currentYear = new Date().getFullYear();
@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
 
 const monthOptions = Array.from({ length: 12 }, (_, i) => ({
   value: String(i + 1),
-  label: new Date(2020, i).toLocaleString('ru-RU', { month: 'long' }),
+  label: formatMonthYear(new Date(2020, i)).split(' ')[0],
 }));
 
 const yearOptions = Array.from({ length: 5 }, (_, i) => ({

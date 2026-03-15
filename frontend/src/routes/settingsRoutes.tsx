@@ -66,6 +66,9 @@ const AuditLogPage = lazy(() => import('@/modules/admin/AuditLogPage'));
 const PermissionMatrixPage = lazy(() => import('@/modules/admin/PermissionMatrixPage'));
 const SystemSettingsPage = lazy(() => import('@/modules/admin/SystemSettingsPage'));
 const TenantManagementPage = lazy(() => import('@/modules/admin/TenantManagementPage'));
+const ErrorLogPage = lazy(() => import('@/modules/admin/ErrorLogPage'));
+const CustomFieldsPage = lazy(() => import('@/modules/admin/CustomFieldsPage'));
+const SsoSettingsPage = lazy(() => import('@/modules/admin/SsoSettingsPage'));
 
 // Settings: Automation, EDO, Notifications, Profile
 const AutomationBuilderPage = lazy(() => import('@/modules/settings/automation/AutomationBuilderPage'));
@@ -75,6 +78,7 @@ const ProfilePage = lazy(() => import('@/modules/settings/ProfilePage'));
 
 // Integration API Keys (distinct from apiManagement ApiKeysPage)
 const IntegrationApiKeysPage = lazy(() => import('@/modules/integrations/ApiKeysPage'));
+const SlackSettingsPage = lazy(() => import('@/modules/integrations/SlackSettingsPage'));
 
 // Onboarding
 const SetupWizardPage = lazy(() => import('@/modules/onboarding/SetupWizardPage'));
@@ -171,11 +175,15 @@ export function settingsRoutes() {
       <Route path="integrations/gov-registries" element={<ProtectedRoute><GovRegistriesPage /></ProtectedRoute>} />
       <Route path="integrations/sms" element={<ProtectedRoute><SmsSettingsPage /></ProtectedRoute>} />
       <Route path="integrations/webdav" element={<ProtectedRoute><WebDavSettingsPage /></ProtectedRoute>} />
+      <Route path="integrations/slack" element={<ProtectedRoute><SlackSettingsPage /></ProtectedRoute>} />
 
       {/* Admin: Permission Matrix, System Settings, Tenants (ADMIN only) */}
       <Route path="admin/permission-matrix" element={<ProtectedRoute requiredRoles={['ADMIN']}><PermissionMatrixPage /></ProtectedRoute>} />
       <Route path="admin/system-settings" element={<ProtectedRoute requiredRoles={['ADMIN']}><SystemSettingsPage /></ProtectedRoute>} />
       <Route path="admin/tenants" element={<ProtectedRoute requiredRoles={['ADMIN']}><TenantManagementPage /></ProtectedRoute>} />
+      <Route path="admin/error-log" element={<ProtectedRoute requiredRoles={['ADMIN']}><ErrorLogPage /></ProtectedRoute>} />
+      <Route path="admin/custom-fields" element={<ProtectedRoute requiredRoles={['ADMIN']}><CustomFieldsPage /></ProtectedRoute>} />
+      <Route path="admin/sso" element={<ProtectedRoute requiredRoles={['ADMIN']}><SsoSettingsPage /></ProtectedRoute>} />
 
       {/* Settings: Automation, EDO (ADMIN only) */}
       <Route path="settings/automation" element={<ProtectedRoute requiredRoles={['ADMIN']}><AutomationBuilderPage /></ProtectedRoute>} />

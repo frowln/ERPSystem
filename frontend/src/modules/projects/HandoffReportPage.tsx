@@ -26,7 +26,7 @@ import { risksApi } from '@/api/risks';
 import { surveysApi } from '@/api/surveys';
 import { meetingsApi } from '@/api/meetings';
 import { safetyChecklistApi } from '@/api/safetyChecklist';
-import { formatDate, formatMoney, formatPercent } from '@/lib/format';
+import { formatDate, formatDateTime, formatMoney, formatPercent } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 import type { PermitStatus, RiskStatus } from '@/types';
@@ -664,7 +664,7 @@ const HandoffReportPage: React.FC = () => {
 
         {/* ---- Footer (print only) ---- */}
         <div className="hidden print:block text-center text-xs text-neutral-400 mt-8 pt-4 border-t border-neutral-200">
-          {t('handoffReport.generatedAt')}: {new Date().toLocaleString('ru-RU')}
+          {t('handoffReport.generatedAt')}: {formatDateTime(new Date())}
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Download, X } from 'lucide-react';
+import { Download, Share, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
 
@@ -53,16 +53,28 @@ export const InstallPrompt: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [installing, setInstalling] = useState(false);
+  const [iosPrompt, setIosPrompt] = useState(false);
   const promptRef = useRef<BeforeInstallPromptEvent | null>(null);
 
   // -------------------------------------------------------------------------
-  // Intercept beforeinstallprompt
+  // Intercept beforeinstallprompt (Android / Desktop Chrome)
   // -------------------------------------------------------------------------
   useEffect(() => {
     if (isDismissed()) return;
 
     // Check if already installed (standalone mode)
     if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+    // iOS Safari detection: no beforeinstallprompt, so show manual hint
+    const isIos =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+      !(window as any).navigator.standalone;
+
+    if (isIos) {
+      setIosPrompt(true);
+      setVisible(true);
+      return;
+    }
 
     const handler = (e: Event) => {
       e.preventDefault();
@@ -124,7 +136,7 @@ export const InstallPrompt: React.FC = () => {
     promptRef.current = null;
   }, []);
 
-  if (!visible || !deferredPrompt) return null;
+  if (!visible || (!deferredPrompt && !iosPrompt)) return null;
 
   return (
     <div
@@ -151,30 +163,38 @@ export const InstallPrompt: React.FC = () => {
         {/* Text */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-            {t('pwa.installTitle')}
+            {iosPrompt ? t('pwa.iosInstallTitle') : t('pwa.installTitle')}
           </p>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-            {t('pwa.installDescription')}
+            {iosPrompt
+              ? t('pwa.iosInstallHint')
+              : t('pwa.installDescription')}
           </p>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button
-            type="button"
-            onClick={handleInstall}
-            disabled={installing}
-            className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium',
-              'bg-primary-600 text-white',
-              'hover:bg-primary-700 active:bg-primary-800',
-              'disabled:opacity-50 disabled:cursor-not-allowed',
-              'transition-colors',
-            )}
-          >
-            <Download className="h-4 w-4" />
-            {t('pwa.installButton')}
-          </button>
+          {iosPrompt ? (
+            <div className="flex-shrink-0 p-2 text-primary-600 dark:text-primary-400">
+              <Share className="h-5 w-5" />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleInstall}
+              disabled={installing}
+              className={cn(
+                'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium',
+                'bg-primary-600 text-white',
+                'hover:bg-primary-700 active:bg-primary-800',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                'transition-colors',
+              )}
+            >
+              <Download className="h-4 w-4" />
+              {t('pwa.installButton')}
+            </button>
+          )}
           <button
             type="button"
             onClick={handleDismiss}

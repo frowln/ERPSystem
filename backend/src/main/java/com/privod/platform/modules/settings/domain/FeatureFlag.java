@@ -10,6 +10,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "feature_flags", indexes = {
@@ -38,4 +42,30 @@ public class FeatureFlag extends BaseEntity {
     @Column(name = "organization_scoped", nullable = false)
     @Builder.Default
     private boolean organizationScoped = false;
+
+    @Column(name = "rollout_percentage")
+    @Builder.Default
+    private Integer rolloutPercentage = 100;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "target_user_ids", columnDefinition = "JSONB")
+    @Builder.Default
+    private String targetUserIds = "[]";
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "target_organization_ids", columnDefinition = "JSONB")
+    @Builder.Default
+    private String targetOrganizationIds = "[]";
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "variants", columnDefinition = "JSONB")
+    private String variants;
+
+    @Column(name = "expires_at")
+    private Instant expiresAt;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "metadata", columnDefinition = "JSONB")
+    @Builder.Default
+    private String metadata = "{}";
 }

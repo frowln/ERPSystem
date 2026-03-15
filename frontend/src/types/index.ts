@@ -916,6 +916,7 @@ export interface CompetitiveListEntry {
   id: string;
   competitiveListId: string;
   specItemId?: string;
+  vendorId?: string;
   supplierName: string;
   vendorName?: string;
   unitPrice: number;

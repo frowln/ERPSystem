@@ -17,6 +17,11 @@ const CookieConsent: React.FC = () => {
   const accept = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
     setVisible(false);
+    try {
+      import('@/api/client').then(({ apiClient }) => {
+        apiClient.post('/api/consent', { consentType: 'COOKIES' }).catch(() => {});
+      });
+    } catch (e) { /* non-critical, user may not be logged in */ }
   };
 
   const decline = () => {

@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Building2, Users, FolderKanban, Search, X, ChevronLeft, ChevronRight,
   Shield, Ban, CheckCircle, XCircle, Calendar, Mail, Phone, MapPin,
-  CreditCard, Clock, ArrowUpDown, ArrowUp, ArrowDown, Loader2,
+  CreditCard, Clock, ArrowUpDown, ArrowUp, ArrowDown, Loader2, Download,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn } from '@/lib/cn';
@@ -46,6 +46,8 @@ export const TenantManagementContent: React.FC = () => {
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
   const pageSize = 20;
 
   // ── List query ──
@@ -132,6 +134,48 @@ export const TenantManagementContent: React.FC = () => {
     }
   }, [sortField]);
 
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    if (selectedIds.size === filteredAndSorted.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredAndSorted.map((t) => t.id)));
+    }
+  }, [filteredAndSorted, selectedIds.size]);
+
+  const handleBulkAction = useCallback(async (status: string) => {
+    if (selectedIds.size === 0) return;
+    setBulkLoading(true);
+    try {
+      await Promise.all(Array.from(selectedIds).map((id) => adminApi.updateTenantStatus(id, status)));
+      queryClient.invalidateQueries({ queryKey: ['admin-tenants'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-tenant-detail'] });
+      toast.success(t('tenants.bulkStatusUpdated', { count: String(selectedIds.size) }));
+      setSelectedIds(new Set());
+    } catch {
+      toast.error(t('tenants.statusUpdateError'));
+    } finally {
+      setBulkLoading(false);
+    }
+  }, [selectedIds, queryClient]);
+
+  const handleExportCsv = useCallback(() => {
+    if (!allTenants.length) return;
+    const headers = ['name', 'inn', 'status', 'planName', 'userCount', 'projectCount', 'createdAt'];
+    const csv = [headers.join(','), ...allTenants.map(row => headers.map(h => JSON.stringify((row as any)[h] ?? '')).join(','))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'tenants.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }, [allTenants]);
+
   const SortIcon: React.FC<{ field: SortField }> = ({ field }) => {
     if (sortField !== field) return <ArrowUpDown className="h-3.5 w-3.5 text-neutral-400" />;
     return sortDir === 'asc'
@@ -210,8 +254,42 @@ export const TenantManagementContent: React.FC = () => {
                   {s === 'ALL' ? t('tenants.filterAll') : t(`tenants.status${s.charAt(0) + s.slice(1).toLowerCase()}`)}
                 </button>
               ))}
+              <button onClick={handleExportCsv} disabled={allTenants.length === 0} className="p-2 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-40 transition-colors" title={t('tenants.exportCsv')}>
+                <Download className="h-4 w-4 text-neutral-500" />
+              </button>
             </div>
           </div>
+
+          {/* Bulk action bar */}
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-3 px-4 py-2.5 mb-4 rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20 animate-fade-in">
+              <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                {t('tenants.selectedCount', { count: String(selectedIds.size) })}
+              </span>
+              <button
+                onClick={() => handleBulkAction('SUSPENDED')}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors disabled:opacity-50"
+              >
+                <Ban className="h-3.5 w-3.5 inline mr-1" />
+                {t('tenants.bulkSuspend')}
+              </button>
+              <button
+                onClick={() => handleBulkAction('ACTIVE')}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors disabled:opacity-50"
+              >
+                <CheckCircle className="h-3.5 w-3.5 inline mr-1" />
+                {t('tenants.bulkActivate')}
+              </button>
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="ml-auto text-xs text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              >
+                {t('common.cancel')}
+              </button>
+            </div>
+          )}
 
           {/* Table */}
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
@@ -219,6 +297,14 @@ export const TenantManagementContent: React.FC = () => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-neutral-100 dark:border-neutral-800">
+                    <th className="w-10 p-3">
+                      <input
+                        type="checkbox"
+                        checked={filteredAndSorted.length > 0 && selectedIds.size === filteredAndSorted.length}
+                        onChange={toggleSelectAll}
+                        className="h-4 w-4 rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500"
+                      />
+                    </th>
                     <th className="text-left p-3 font-medium text-neutral-500 dark:text-neutral-400">
                       <button onClick={() => handleSort('name')} className="flex items-center gap-1.5 hover:text-neutral-700 dark:hover:text-neutral-200">
                         {t('tenants.colOrganization')} <SortIcon field="name" />

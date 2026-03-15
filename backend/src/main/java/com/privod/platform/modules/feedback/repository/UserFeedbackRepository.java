@@ -17,4 +17,6 @@ public interface UserFeedbackRepository extends JpaRepository<UserFeedback, UUID
     List<UserFeedback> findByOrganizationIdOrderByCreatedAtDesc(UUID orgId);
 
     List<UserFeedback> findByOrganizationIdAndTypeOrderByCreatedAtDesc(UUID orgId, FeedbackType type);
+
+    boolean existsByUserIdAndType(UUID userId, FeedbackType type);
 }

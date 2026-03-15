@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/cn';
 import { t } from '@/i18n';
+import { formatDateLong } from '@/lib/format';
 
 interface DateSeparatorProps {
   date: string; // ISO date string
@@ -25,11 +26,7 @@ const formatDateLabel = (dateStr: string): string => {
     return t('messaging.dateYesterday');
   }
 
-  return date.toLocaleDateString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  return formatDateLong(dateStr);
 };
 
 export const DateSeparator: React.FC<DateSeparatorProps> = ({ date, className }) => {

@@ -9,6 +9,7 @@ import {
   Clock,
   CreditCard,
   ListChecks,
+  Mail,
   Package,
   Paperclip,
   Plus,
@@ -240,6 +241,36 @@ const CompetitiveListPage: React.FC = () => {
   const cl = competitiveList;
   const transitions = STATUS_TRANSITIONS[cl?.status ?? ''] ?? [];
 
+  // RFQ (Request for Quotation) email
+  const sendRfqMutation = useMutation({
+    mutationFn: () => {
+      const supplierIds = [...new Set(allEntries.map((e) => e.vendorId).filter(Boolean))] as string[];
+      if (supplierIds.length === 0) {
+        return Promise.reject(new Error(t('competitiveList.rfqSelectSuppliers')));
+      }
+      return financeApi.sendRfq(id!, supplierIds);
+    },
+    onSuccess: () => {
+      toast.success(t('competitiveList.rfqSent'));
+    },
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : t('common.operationError');
+      toast.error(msg);
+    },
+  });
+
+  const handleSendRfq = useCallback(() => {
+    if (!id) return;
+    const hasSuppliers = allEntries.some((e) => e.vendorId);
+    if (!hasSuppliers) {
+      toast.error(t('competitiveList.rfqSelectSuppliers'));
+      return;
+    }
+    if (window.confirm(t('competitiveList.rfqConfirm'))) {
+      sendRfqMutation.mutate();
+    }
+  }, [id, allEntries, sendRfqMutation]);
+
   // Group entries by specItemId for quick lookup
   const entriesByItem = useMemo(() => {
     const map = new Map<string, CompetitiveListEntry[]>();
@@ -393,6 +424,15 @@ const CompetitiveListPage: React.FC = () => {
             />
             {allEntries.length > 0 && cl?.status !== 'APPROVED' && (
               <>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  iconLeft={<Mail size={13} />}
+                  loading={sendRfqMutation.isPending}
+                  onClick={handleSendRfq}
+                >
+                  {t('competitiveList.sendRfq')}
+                </Button>
                 <Button
                   variant="secondary"
                   size="sm"

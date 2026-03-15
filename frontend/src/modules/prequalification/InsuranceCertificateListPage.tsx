@@ -9,7 +9,7 @@ import { insuranceApi } from '@/api/insurance';
 import type { InsuranceCertificate, InsuranceCertificateStatus } from '@/api/insurance';
 import { insuranceCertificateStatusColorMap, insuranceCertificateStatusLabels } from '@/design-system/components/StatusBadge/statusConfig';
 import { t } from '@/i18n';
-import { formatCountRu } from '@/lib/format';
+import { formatCountRu, formatDate } from '@/lib/format';
 import { Plus, ShieldCheck, Trash2, Edit, AlertTriangle, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -250,7 +250,7 @@ const InsuranceCertificateListPage: React.FC = () => {
                       <td className="px-4 py-3 text-sm">
                         <div className="flex flex-col gap-1">
                           <span className="text-neutral-700 dark:text-neutral-300">
-                            {cert.expiryDate ? new Date(cert.expiryDate).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}
+                            {formatDate(cert.expiryDate)}
                           </span>
                           {getExpiryBadge(days)}
                         </div>

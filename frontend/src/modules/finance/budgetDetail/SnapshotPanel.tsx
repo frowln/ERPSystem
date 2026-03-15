@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { financeApi } from '@/api/finance';
 import { t } from '@/i18n';
+import { formatDate } from '@/lib/format';
 import type { BudgetSnapshot } from '@/types';
 import { Camera, ChevronRight, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -170,7 +171,7 @@ export default function SnapshotPanel({ budgetId, onCompare }: SnapshotPanelProp
               <ChevronRight className="w-3.5 h-3.5 text-neutral-400 flex-shrink-0" />
             </div>
             <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
-              {new Date(snap.snapshotDate).toLocaleDateString('ru-RU')}
+              {formatDate(snap.snapshotDate)}
             </div>
             <div className="flex gap-3 mt-1 text-xs">
               <span className="text-neutral-500 dark:text-neutral-400">
