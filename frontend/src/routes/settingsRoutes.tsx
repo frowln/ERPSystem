@@ -208,7 +208,7 @@ export function settingsRoutes() {
       {/* Knowledge Base (authenticated) */}
       <Route path="help" element={<ProtectedRoute><KnowledgeBasePage /></ProtectedRoute>} />
       <Route path="help/article/:slug" element={<ProtectedRoute><KnowledgeBaseArticlePage /></ProtectedRoute>} />
-      <Route path="help/category/:category" element={<ProtectedRoute><KnowledgeBaseCategoryPage /></ProtectedRoute>} />
+      <Route path="help/category/:categoryId" element={<ProtectedRoute><KnowledgeBaseCategoryPage /></ProtectedRoute>} />
 
       {/* Route aliases */}
       <Route path="russian-docs" element={<Navigate to="/russian-docs/list" replace />} />

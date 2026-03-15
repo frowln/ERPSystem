@@ -93,10 +93,10 @@ services:
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       JAVA_OPTS: >-
-        -Xms128m -Xmx384m
+        -Xms256m -Xmx512m
         -XX:+UseG1GC
         -XX:+UseStringDeduplication
-        -XX:MaxMetaspaceSize=128m
+        -XX:MaxMetaspaceSize=256m
         -XX:+UseContainerSupport
         -Djava.security.egd=file:/dev/./urandom
         -Dspring.jmx.enabled=false
@@ -114,11 +114,11 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 120s
+      start_period: 600s
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1024M
     networks:
       - privod2
 
