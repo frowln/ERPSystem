@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "RussianDocEdoDocument")
 @Table(name = "edo_documents", indexes = {
         @Index(name = "idx_edo_doc_number", columnList = "document_number"),
         @Index(name = "idx_edo_doc_date", columnList = "document_date"),

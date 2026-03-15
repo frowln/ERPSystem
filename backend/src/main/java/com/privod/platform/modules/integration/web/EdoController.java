@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-@RestController
+@RestController("edoIntegrationController")
 @RequestMapping("/api/integrations/edo")
 @RequiredArgsConstructor
 @Tag(name = "EDO Integration", description = "Электронный документооборот (ЭДО)")

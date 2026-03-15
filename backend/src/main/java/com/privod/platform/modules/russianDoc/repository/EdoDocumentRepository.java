@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-@Repository
+@Repository("russianDocEdoDocumentRepository")
 public interface EdoDocumentRepository extends JpaRepository<EdoDocument, UUID> {
 
     Page<EdoDocument> findByDeletedFalse(Pageable pageable);
