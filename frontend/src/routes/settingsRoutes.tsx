@@ -87,8 +87,10 @@ const SetupWizardPage = lazy(() => import('@/modules/onboarding/SetupWizardPage'
 const NomenclatureSyncPage = lazy(() => import('@/modules/integration1c/NomenclatureSyncPage'));
 const PricingDatabasePage = lazy(() => import('@/modules/integration1c/PricingDatabasePage'));
 
-// Help Center
-const HelpCenterPage = lazy(() => import('@/modules/help/HelpCenterPage'));
+// Help Center / Knowledge Base
+const KnowledgeBasePage = lazy(() => import('@/modules/help/KnowledgeBasePage'));
+const KnowledgeBaseArticlePage = lazy(() => import('@/modules/help/KnowledgeBaseArticlePage'));
+const KnowledgeBaseCategoryPage = lazy(() => import('@/modules/help/KnowledgeBaseCategoryPage'));
 
 // Insurance
 const InsuranceCertificateListPage = lazy(() => import('@/modules/prequalification/InsuranceCertificateListPage'));
@@ -203,8 +205,10 @@ export function settingsRoutes() {
       <Route path="settings/1c/nomenclature" element={<ProtectedRoute requiredRoles={['ADMIN']}><NomenclatureSyncPage /></ProtectedRoute>} />
       <Route path="settings/1c/pricing-db" element={<ProtectedRoute requiredRoles={['ADMIN']}><PricingDatabasePage /></ProtectedRoute>} />
 
-      {/* Help Center (authenticated) */}
-      <Route path="help" element={<ProtectedRoute><HelpCenterPage /></ProtectedRoute>} />
+      {/* Knowledge Base (authenticated) */}
+      <Route path="help" element={<ProtectedRoute><KnowledgeBasePage /></ProtectedRoute>} />
+      <Route path="help/article/:slug" element={<ProtectedRoute><KnowledgeBaseArticlePage /></ProtectedRoute>} />
+      <Route path="help/category/:category" element={<ProtectedRoute><KnowledgeBaseCategoryPage /></ProtectedRoute>} />
 
       {/* Route aliases */}
       <Route path="russian-docs" element={<Navigate to="/russian-docs/list" replace />} />
