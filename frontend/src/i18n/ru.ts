@@ -12731,6 +12731,7 @@ export const ru = {
       references: 'Справочники',
       analytics: 'Аналитика',
       admin: 'Администрирование',
+      knowledge: 'База знаний',
       documents: 'Документы',
       supply: 'Снабжение',
       quality: 'Качество и регуляторика',
@@ -12943,6 +12944,7 @@ export const ru = {
       'adm-email-prefs': 'Email-уведомления',
       'adm-subscription': 'Подписка',
       'adm-marketplace': 'Маркетплейс',
+      'kb-main': 'База знаний',
       'adm-offline-sync': 'Синхронизация офлайн',
       'adm-api-docs': 'Документация API',
       'estimates-minstroy': 'Индексы Минстроя',
@@ -26288,6 +26290,15 @@ export const ru = {
       deleted: 'LDAP конфигурация удалена',
       empty: 'Нет настроенных LDAP конфигураций',
     },
+  },
+  help: {
+    contextHelp: 'Справка по разделу',
+    title: 'Справка',
+    searchPlaceholder: 'Поиск в базе знаний...',
+    noArticle: 'Нет статьи для этого раздела',
+    relatedArticles: 'Связанные статьи',
+    readMore: 'Читать далее',
+    backToList: 'Все статьи',
   },
 } as const;
 

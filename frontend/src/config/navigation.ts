@@ -523,4 +523,9 @@ export const navigation: NavGroup[] = [
     navItem('adm-api-docs', BookOpen, '/settings/api-docs'),
     navItem('adm-marketplace', Package, '/marketplace'),
   ]),
+
+  // ── База знаний ──────────────────────────────────────────────────────
+  navGroup('knowledge', BookOpen, [
+    navItem('kb-main', BookOpen, '/help'),
+  ]),
 ];
