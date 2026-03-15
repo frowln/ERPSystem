@@ -20994,6 +20994,8 @@ export const en: TranslationKeys = {
       summaryWinter: 'Winter conditions',
       summaryContingency: 'Contingency',
       summaryGrandTotal: 'GRAND TOTAL',
+      summaryTitle: 'Estimate totals',
+      uploadSuccess: 'File uploaded successfully',
     },
     benchmark: {
       historicalData: 'Historical data',

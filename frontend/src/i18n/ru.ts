@@ -21436,6 +21436,8 @@ export const ru = {
       summaryWinter: 'Зимние условия',
       summaryContingency: 'Непредвиденные расходы',
       summaryGrandTotal: 'ВСЕГО по смете',
+      summaryTitle: 'Итоги по смете',
+      uploadSuccess: 'Файл успешно загружен',
     },
     benchmark: {
       historicalData: 'Исторические данные',
