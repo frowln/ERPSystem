@@ -127,7 +127,7 @@ export default function KnowledgeBaseCategoryPage() {
                 </p>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-400 shrink-0">
-                <Clock className="w-3 h-3" /> {article.readTime} {t('knowledgeBase.readTime')}
+                <Clock className="w-3 h-3" /> {article.readTime} мин.
                 <ChevronRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
             </div>
