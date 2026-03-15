@@ -11,6 +11,7 @@ import com.privod.platform.modules.auth.web.dto.TwoFactorLoginRequest;
 import com.privod.platform.modules.auth.web.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.privod.platform.infrastructure.security.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -76,6 +78,21 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Void>> changePassword(
             @Valid @RequestBody ChangePasswordRequest request) {
         authService.changePassword(request);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @GetMapping("/verify-email")
+    @Operation(summary = "Verify user email address using token")
+    public ResponseEntity<ApiResponse<Void>> verifyEmail(@RequestParam String token) {
+        authService.verifyEmail(token);
+        return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/resend-verification")
+    @Operation(summary = "Resend email verification link for current user")
+    public ResponseEntity<ApiResponse<Void>> resendVerification() {
+        java.util.UUID userId = SecurityUtils.requireCurrentUserId();
+        authService.resendVerification(userId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 }

@@ -72,6 +72,10 @@ public class User extends BaseEntity {
     @Column(name = "two_factor_recovery_codes", length = 500)
     private String twoFactorRecoveryCodes;
 
+    @Column(name = "email_verified", nullable = false)
+    @Builder.Default
+    private boolean emailVerified = false;
+
     @Column(name = "last_login_at")
     private Instant lastLoginAt;
 

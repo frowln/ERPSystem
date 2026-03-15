@@ -5,8 +5,10 @@ import com.privod.platform.infrastructure.security.JwtTokenProvider;
 import com.privod.platform.modules.admin.domain.LoginAuditLog;
 import com.privod.platform.modules.admin.repository.LoginAuditLogRepository;
 import com.privod.platform.modules.admin.service.SystemSettingService;
+import com.privod.platform.modules.auth.domain.EmailVerificationToken;
 import com.privod.platform.modules.auth.domain.Role;
 import com.privod.platform.modules.auth.domain.User;
+import com.privod.platform.modules.auth.repository.EmailVerificationTokenRepository;
 import com.privod.platform.modules.auth.repository.RoleRepository;
 import com.privod.platform.modules.auth.repository.UserRepository;
 import com.privod.platform.modules.auth.web.dto.ChangePasswordRequest;
@@ -15,6 +17,7 @@ import com.privod.platform.modules.auth.web.dto.LoginResponse;
 import com.privod.platform.modules.auth.web.dto.RefreshTokenRequest;
 import com.privod.platform.modules.auth.web.dto.RegisterRequest;
 import com.privod.platform.modules.auth.web.dto.UserResponse;
+import com.privod.platform.modules.email.service.EmailNotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +40,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +56,10 @@ public class AuthService {
     private final LoginAuditLogRepository loginAuditLogRepository;
     private final SystemSettingService systemSettingService;
     private final TwoFactorService twoFactorService;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+
+    @Autowired(required = false)
+    private EmailNotificationService emailNotificationService;
 
     @Transactional
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
@@ -136,6 +145,25 @@ public class AuthService {
 
         user = userRepository.save(user);
         log.info("New user registered: {}", request.email());
+
+        // Create email verification token and send verification email
+        try {
+            String verificationToken = createVerificationToken(user.getId());
+            if (emailNotificationService != null) {
+                emailNotificationService.sendEmailVerification(user, verificationToken);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to send verification email to {}: {}", user.getEmail(), e.getMessage());
+        }
+
+        // Send welcome email (non-blocking)
+        if (emailNotificationService != null) {
+            try {
+                emailNotificationService.sendWelcome(user);
+            } catch (Exception e) {
+                log.warn("Failed to send welcome email to {}: {}", user.getEmail(), e.getMessage());
+            }
+        }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String accessToken = jwtTokenProvider.generateToken(userDetails);
@@ -272,6 +300,74 @@ public class AuthService {
     public LoginResponse verifyTwoFactorLogin(
             com.privod.platform.modules.auth.web.dto.TwoFactorLoginRequest request) {
         return verifyTwoFactorLogin(request, null);
+    }
+
+    // ── Email Verification ─────────────────────────────────────────────────
+
+    @Transactional
+    public String createVerificationToken(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // Delete any existing unverified tokens for this user
+        emailVerificationTokenRepository.deleteUnverifiedByUserId(userId);
+
+        String token = UUID.randomUUID().toString();
+        EmailVerificationToken verificationToken = EmailVerificationToken.builder()
+                .user(user)
+                .token(token)
+                .expiresAt(Instant.now().plus(24, ChronoUnit.HOURS))
+                .build();
+
+        emailVerificationTokenRepository.save(verificationToken);
+        log.info("Email verification token created for user: {}", user.getEmail());
+
+        return token;
+    }
+
+    @Transactional
+    public void verifyEmail(String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new IllegalArgumentException("Неверный токен подтверждения"));
+
+        if (verificationToken.isVerified()) {
+            throw new IllegalArgumentException("Email уже подтверждён");
+        }
+
+        if (verificationToken.isExpired()) {
+            throw new IllegalArgumentException("Срок действия токена истёк. Запросите повторную отправку");
+        }
+
+        verificationToken.setVerifiedAt(Instant.now());
+        emailVerificationTokenRepository.save(verificationToken);
+
+        User user = verificationToken.getUser();
+        user.setEmailVerified(true);
+        userRepository.save(user);
+
+        log.info("Email verified for user: {}", user.getEmail());
+    }
+
+    @Transactional
+    public void resendVerification(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (user.isEmailVerified()) {
+            throw new IllegalArgumentException("Email уже подтверждён");
+        }
+
+        String token = createVerificationToken(userId);
+
+        if (emailNotificationService != null) {
+            try {
+                emailNotificationService.sendEmailVerification(user, token);
+            } catch (Exception e) {
+                log.warn("Failed to send verification email to {}: {}", user.getEmail(), e.getMessage());
+            }
+        }
+
+        log.info("Verification email resent for user: {}", user.getEmail());
     }
 
     // ── Password Policy Validation ──────────────────────────────────────────

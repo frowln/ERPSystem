@@ -21,7 +21,8 @@ public record UserResponse(
         Set<String> roles,
         Instant createdAt,
         Instant lastLoginAt,
-        boolean twoFactorEnabled
+        boolean twoFactorEnabled,
+        boolean emailVerified
 ) {
     public static UserResponse fromUser(User user) {
         return new UserResponse(
@@ -40,7 +41,8 @@ public record UserResponse(
                         .collect(Collectors.toSet()),
                 user.getCreatedAt(),
                 user.getLastLoginAt(),
-                user.isTwoFactorEnabled()
+                user.isTwoFactorEnabled(),
+                user.isEmailVerified()
         );
     }
 }
