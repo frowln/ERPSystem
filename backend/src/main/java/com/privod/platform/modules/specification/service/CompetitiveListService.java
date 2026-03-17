@@ -74,6 +74,17 @@ public class CompetitiveListService {
     }
 
     @Transactional(readOnly = true)
+    public Page<CompetitiveListResponse> listBySpecification(UUID specificationId, Pageable pageable) {
+        List<CompetitiveList> all = competitiveListRepository.findBySpecificationIdAndDeletedFalse(specificationId);
+        // Wrap in a simple page for consistency
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), all.size());
+        List<CompetitiveListResponse> content = all.subList(Math.min(start, all.size()), end)
+                .stream().map(CompetitiveListResponse::fromEntity).toList();
+        return new org.springframework.data.domain.PageImpl<>(content, pageable, all.size());
+    }
+
+    @Transactional(readOnly = true)
     public CompetitiveListResponse getById(UUID id) {
         CompetitiveList cl = getOrThrow(id);
         return CompetitiveListResponse.fromEntity(cl);

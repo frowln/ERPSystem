@@ -3100,6 +3100,22 @@ export const en: TranslationKeys = {
     rfqSent: 'Price requests sent to suppliers',
     rfqConfirm: 'Send request for quotations to all suppliers in the competitive list?',
     rfqSelectSuppliers: 'No suppliers with linked counterparties to send request to',
+    registryTitle: 'Competitive Lists',
+    registrySubtitle: 'Competitive list registry across all projects',
+    registryTabAll: 'All',
+    registrySearch: 'Search by name, project, vendor...',
+    registryEmpty: 'No Competitive Lists',
+    registryEmptyHint: 'Competitive lists are created from project specifications',
+    registryLoading: 'Loading...',
+    registryColName: 'Name',
+    registryColProject: 'Project',
+    registryColPositions: 'Positions',
+    registryColProposals: 'Proposals',
+    registryColVendors: 'Vendors',
+    registryColBestPrice: 'Best Price',
+    registryColBestVendor: 'Best Vendor',
+    registryColDate: 'Date',
+    goToSpecifications: 'Go to Specifications',
     supply: {
       fullyCovered: 'Covered',
       partiallyCovered: 'Partial',
@@ -3184,7 +3200,11 @@ export const en: TranslationKeys = {
       matchInvoiceLine: 'Invoice Line',
       matchSpecItem: 'Spec Position',
       matchConfidence: 'Confidence',
-      matchNotFound: 'Not found'
+      matchNotFound: 'Not found',
+      confirmDeleteTitle: 'Delete Proposal',
+      confirmDeleteDesc: 'The vendor proposal will be permanently deleted.',
+      notFound: 'Competitive List Not Found',
+      notFoundDesc: 'The competitive list does not exist or has been deleted.'
     }
   },
   commercialProposal: {

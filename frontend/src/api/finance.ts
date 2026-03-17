@@ -734,6 +734,17 @@ export const financeApi = {
   },
 
   // Competitive List Registry
+  getCompetitiveListsBySpec: async (specificationId: string): Promise<CompetitiveList[]> => {
+    const response = await apiClient.get<{ content: CompetitiveList[] } | CompetitiveList[]>('/competitive-lists', {
+      params: { specificationId },
+    });
+    const data = response.data;
+    if (data && typeof data === 'object' && 'content' in data && Array.isArray((data as { content: CompetitiveList[] }).content)) {
+      return (data as { content: CompetitiveList[] }).content;
+    }
+    return Array.isArray(data) ? data : [];
+  },
+
   getAllCompetitiveLists: async (params?: { projectId?: string; status?: string }): Promise<CompetitiveList[]> => {
     const response = await apiClient.get<{ content: CompetitiveList[] } | CompetitiveList[]>('/competitive-lists', { params });
     const data = response.data;

@@ -48,9 +48,18 @@ export function matchInvoiceLine(
       }
       matchType = 'brand-mfr';
     }
-    // 3) Fuzzy name match
+    // 3) Fuzzy name match with engineering normalization
     else {
-      confidence = trigramSimilarity(normalize(line.name), normalize(item.name)) * 100;
+      const normA = normalizeEngineering(line.name);
+      const normB = normalizeEngineering(item.name);
+      confidence = trigramSimilarity(normA, normB) * 100;
+
+      // Bonus: if both contain same DN/PN values, boost confidence
+      const dnA = extractParams(line.name);
+      const dnB = extractParams(item.name);
+      if (dnA.dn && dnB.dn && dnA.dn === dnB.dn) confidence = Math.min(100, confidence + 15);
+      if (dnA.pn && dnB.pn && dnA.pn === dnB.pn) confidence = Math.min(100, confidence + 10);
+
       matchType = 'fuzzy-name';
     }
 
@@ -81,7 +90,67 @@ export function batchMatch(
 }
 
 // ---------------------------------------------------------------------------
-// Internals
+// Engineering abbreviation normalization
+// ---------------------------------------------------------------------------
+
+const ENGINEERING_SYNONYMS: [RegExp, string][] = [
+  // Diameter: Ду, DN, Д, д.у., d
+  [/\bд[уy]\.?\s*(\d+)/gi, 'dn$1'],
+  [/\bdn\s*(\d+)/gi, 'dn$1'],
+  [/\bd\.?\s*у\.?\s*(\d+)/gi, 'dn$1'],
+
+  // Pressure: Ру, PN, Р, р.у.
+  [/\bр[уy]\.?\s*(\d+)/gi, 'pn$1'],
+  [/\bpn\s*(\d+)/gi, 'pn$1'],
+  [/\bр\.?\s*у\.?\s*(\d+)/gi, 'pn$1'],
+
+  // Common abbreviations
+  [/\bш\.\s*/gi, 'шаровой '],
+  [/\bшар\.\s*/gi, 'шаровой '],
+  [/\bобр\.\s*/gi, 'обратный '],
+  [/\bзап\.\s*/gi, 'запорный '],
+  [/\bрег\.\s*/gi, 'регулирующий '],
+  [/\bнерж\.\s*/gi, 'нержавеющий '],
+  [/\bоц\.\s*/gi, 'оцинкованный '],
+  [/\bп\/п\b/gi, 'полипропилен'],
+  [/\bп\/э\b/gi, 'полиэтилен'],
+  [/\bэл\.\s*/gi, 'электро'],
+  [/\bциркуляц\.\s*/gi, 'циркуляционный '],
+
+  // Units
+  [/\bмм\b/gi, 'мм'],
+  [/\bм\b/gi, 'м'],
+  [/\bшт\b\.?/gi, 'шт'],
+  [/\bкг\b/gi, 'кг'],
+
+  // Remove ГОСТ references (they clutter matching)
+  [/гост\s*[\d.-]+/gi, ''],
+  [/ту\s*[\d.-]+/gi, ''],
+];
+
+function normalizeEngineering(s: string): string {
+  let result = normalize(s);
+  for (const [pattern, replacement] of ENGINEERING_SYNONYMS) {
+    result = result.replace(pattern, replacement);
+  }
+  return result.replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Extract DN and PN parameters from a string for bonus matching.
+ */
+function extractParams(s: string): { dn: string | null; pn: string | null } {
+  const lower = s.toLowerCase();
+  const dnMatch = lower.match(/(?:ду|dn|д\.?\s*у\.?)\s*(\d+)/i);
+  const pnMatch = lower.match(/(?:ру|pn|р\.?\s*у\.?)\s*(\d+)/i);
+  return {
+    dn: dnMatch ? dnMatch[1] : null,
+    pn: pnMatch ? pnMatch[1] : null,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Core text processing
 // ---------------------------------------------------------------------------
 
 function normalize(s: string): string {

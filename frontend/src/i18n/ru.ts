@@ -3100,6 +3100,22 @@ export const ru = {
     rfqSent: 'Запросы цен отправлены поставщикам',
     rfqConfirm: 'Отправить запрос коммерческих предложений всем поставщикам из конкурентного листа?',
     rfqSelectSuppliers: 'Нет поставщиков с привязанными контрагентами для отправки запроса',
+    registryTitle: 'Конкурентные листы',
+    registrySubtitle: 'Реестр конкурентных листов по всем проектам',
+    registryTabAll: 'Все',
+    registrySearch: 'Поиск по названию, проекту, поставщику...',
+    registryEmpty: 'Нет конкурентных листов',
+    registryEmptyHint: 'Конкурентные листы создаются из спецификаций проектов',
+    registryLoading: 'Загрузка...',
+    registryColName: 'Название',
+    registryColProject: 'Проект',
+    registryColPositions: 'Позиции',
+    registryColProposals: 'Предложения',
+    registryColVendors: 'Поставщики',
+    registryColBestPrice: 'Лучшая цена',
+    registryColBestVendor: 'Лучший поставщик',
+    registryColDate: 'Дата',
+    goToSpecifications: 'Перейти к спецификациям',
     supply: {
       fullyCovered: 'Обеспечена',
       partiallyCovered: 'Частично',
@@ -3184,7 +3200,11 @@ export const ru = {
       matchInvoiceLine: 'Строка счёта',
       matchSpecItem: 'Позиция спецификации',
       matchConfidence: 'Точность',
-      matchNotFound: 'Не найдено'
+      matchNotFound: 'Не найдено',
+      confirmDeleteTitle: 'Удалить предложение',
+      confirmDeleteDesc: 'Предложение поставщика будет безвозвратно удалено.',
+      notFound: 'Конкурентный лист не найден',
+      notFoundDesc: 'Конкурентный лист не существует или был удалён.'
     }
   },
   commercialProposal: {

@@ -7,6 +7,9 @@ import { financeApi } from '@/api/finance';
 import { specificationsApi } from '@/api/specifications';
 import { formatMoney } from '@/lib/format';
 import { t } from '@/i18n';
+import { useConfirmDialog } from '@/design-system/components/ConfirmDialog/provider';
+import { PageHeader } from '@/design-system/components/PageHeader';
+import { PageSkeleton } from '@/design-system/components/Skeleton';
 import type { CompetitiveList, CompetitiveListEntry, SpecItem } from '@/types';
 import { buildMatrix, filterRows, type CoverageFilter } from './lib/matrixBuilder';
 import { ClPageHeader } from './components/ClPageHeader';
@@ -23,6 +26,7 @@ export default function CompetitiveListPage() {
   const { specId, id } = useParams<{ specId: string; id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const confirm = useConfirmDialog();
   const isNew = id === 'new';
 
   // ---------------------------------------------------------------------------
@@ -35,7 +39,6 @@ export default function CompetitiveListPage() {
   const [importWizardOpen, setImportWizardOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addModalSpecItemId, setAddModalSpecItemId] = useState<string | null>(null);
-  const [addModalVendor, setAddModalVendor] = useState('');
   const [form, setForm] = useState<ProposalFormData>(INITIAL_FORM);
   const [winnerModalOpen, setWinnerModalOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
@@ -50,43 +53,64 @@ export default function CompetitiveListPage() {
     enabled: !!specId,
   });
 
-  const { data: specItems = [] } = useQuery({
+  const { data: specItems = [], isLoading: itemsLoading } = useQuery({
     queryKey: ['spec-items', specId],
     queryFn: () => specificationsApi.getSpecItems(specId!),
     enabled: !!specId,
   });
 
-  const { data: competitiveList } = useQuery({
+  const { data: competitiveList, isLoading: clLoading, isError: clError } = useQuery({
     queryKey: ['competitive-list', id],
     queryFn: () => financeApi.getCompetitiveList(id!),
     enabled: !!id && !isNew,
   });
 
-  const { data: entries = [] } = useQuery({
+  const { data: entries = [], isLoading: entriesLoading } = useQuery({
     queryKey: ['competitive-list-entries', id],
     queryFn: () => financeApi.getCompetitiveListEntries(id!),
     enabled: !!id && !isNew,
   });
 
+  const isLoading = clLoading || itemsLoading || entriesLoading;
+
   // ---------------------------------------------------------------------------
-  // Auto-create for new CL
+  // Auto-create or redirect to existing CL
   // ---------------------------------------------------------------------------
   const createMutation = useMutation({
     mutationFn: (data: { specificationId: string; name: string }) =>
       financeApi.createCompetitiveList(data),
     onSuccess: (cl) => {
-      toast.success(t('competitiveList.creating'));
       navigate(`/specifications/${specId}/competitive-list/${cl.id}`, { replace: true });
     },
+    onError: () => toast.error(t('common.error')),
   });
 
+  const [checkedExisting, setCheckedExisting] = useState(false);
+
   React.useEffect(() => {
-    if (isNew && specId && specification && !createMutation.isPending) {
+    if (!isNew || !specId || !specification || createMutation.isPending || checkedExisting) return;
+
+    setCheckedExisting(true);
+
+    // Check if a CL already exists for this specification
+    financeApi.getCompetitiveListsBySpec(specId).then((existing) => {
+      if (existing.length > 0) {
+        // Redirect to the first (most recent) existing CL
+        navigate(`/specifications/${specId}/competitive-list/${existing[0].id}`, { replace: true });
+      } else {
+        // No existing CL — create one
+        createMutation.mutate({
+          specificationId: specId,
+          name: `${t('competitiveList.title')} — ${specification.name ?? ''}`,
+        });
+      }
+    }).catch(() => {
+      // Fallback: create new if check fails
       createMutation.mutate({
         specificationId: specId,
         name: `${t('competitiveList.title')} — ${specification.name ?? ''}`,
       });
-    }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew, specId, specification]);
 
@@ -101,6 +125,7 @@ export default function CompetitiveListPage() {
   const statusMutation = useMutation({
     mutationFn: (status: string) => financeApi.changeCompetitiveListStatus(id!, status),
     onSuccess: invalidate,
+    onError: () => toast.error(t('common.error')),
   });
 
   const addEntryMutation = useMutation({
@@ -111,6 +136,7 @@ export default function CompetitiveListPage() {
       setAddModalOpen(false);
       setForm(INITIAL_FORM);
     },
+    onError: () => toast.error(t('common.error')),
   });
 
   const selectWinnerMutation = useMutation({
@@ -123,11 +149,13 @@ export default function CompetitiveListPage() {
       setSelectedEntryId(null);
       setWinnerReason('');
     },
+    onError: () => toast.error(t('common.error')),
   });
 
   const deleteEntryMutation = useMutation({
     mutationFn: (entryId: string) => financeApi.deleteCompetitiveListEntry(id!, entryId),
     onSuccess: invalidate,
+    onError: () => toast.error(t('common.error')),
   });
 
   const autoRankMutation = useMutation({
@@ -136,6 +164,7 @@ export default function CompetitiveListPage() {
       toast.success(t('competitiveList.toasts.autoRanked'));
       invalidate();
     },
+    onError: () => toast.error(t('common.error')),
   });
 
   const autoSelectMutation = useMutation({
@@ -144,6 +173,7 @@ export default function CompetitiveListPage() {
       toast.success(t('competitiveList.toasts.autoSelected'));
       invalidate();
     },
+    onError: () => toast.error(t('common.error')),
   });
 
   const sendRfqMutation = useMutation({
@@ -152,34 +182,36 @@ export default function CompetitiveListPage() {
       return financeApi.sendRfq(id!, vendorIds);
     },
     onSuccess: () => toast.success(t('competitiveList.rfqSent')),
+    onError: () => toast.error(t('common.error')),
   });
 
   const rejectMutation = useMutation({
     mutationFn: ({ entryId, type }: { entryId: string; type: string }) =>
       financeApi.rejectEntry(id!, entryId, type),
     onSuccess: invalidate,
+    onError: () => toast.error(t('common.error')),
   });
 
   const unrejectMutation = useMutation({
     mutationFn: (entryId: string) => financeApi.unrejectEntry(id!, entryId),
     onSuccess: invalidate,
+    onError: () => toast.error(t('common.error')),
   });
 
   const bulkImportMutation = useMutation({
-    mutationFn: (bulkEntries: { specItemId: string; vendorName: string; unitPrice: number; quantity: number }[]) => {
-      const formatted = bulkEntries.map(e => ({
+    mutationFn: (bulkEntries: { specItemId: string; vendorName: string; unitPrice: number; quantity: number }[]) =>
+      financeApi.bulkAddEntries(id!, bulkEntries.map(e => ({
         specItemId: e.specItemId,
         vendorName: e.vendorName,
         unitPrice: e.unitPrice,
         quantity: e.quantity,
-      }));
-      return financeApi.bulkAddEntries(id!, formatted);
-    },
+      }))),
     onSuccess: () => {
       toast.success(t('competitiveList.toasts.entryAdded'));
       invalidate();
       setImportWizardOpen(false);
     },
+    onError: () => toast.error(t('common.error')),
   });
 
   // ---------------------------------------------------------------------------
@@ -212,7 +244,6 @@ export default function CompetitiveListPage() {
 
   const handleAddProposal = useCallback((specItemId: string, vendorName?: string) => {
     setAddModalSpecItemId(specItemId);
-    setAddModalVendor(vendorName ?? '');
     setForm({ ...INITIAL_FORM, vendorName: vendorName ?? '' });
     setAddModalOpen(true);
   }, []);
@@ -233,6 +264,18 @@ export default function CompetitiveListPage() {
       notes: form.notes || undefined,
     });
   }, [addModalSpecItemId, form, specItems, addEntryMutation]);
+
+  const handleDeleteEntry = useCallback(async (entryId: string) => {
+    const entry = entries.find(e => e.id === entryId);
+    const ok = await confirm({
+      title: t('competitiveList.matrix.confirmDeleteTitle'),
+      description: t('competitiveList.matrix.confirmDeleteDesc'),
+      confirmLabel: t('common.delete'),
+      confirmVariant: 'danger',
+      items: entry ? [`${entry.vendorName ?? entry.supplierName} — ${formatMoney(entry.unitPrice)}`] : undefined,
+    });
+    if (ok) deleteEntryMutation.mutate(entryId);
+  }, [confirm, entries, deleteEntryMutation]);
 
   const handleExport = useCallback(() => {
     const wsData: any[][] = [
@@ -256,6 +299,13 @@ export default function CompetitiveListPage() {
           : '',
       ]);
     }
+    // Add totals row
+    wsData.push([
+      t('competitiveList.matrix.totals'),
+      '',
+      ...matrix.vendors.map(v => v.grandTotal || ''),
+      matrix.kpi.totalSelected || '',
+    ]);
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Matrix');
@@ -267,7 +317,7 @@ export default function CompetitiveListPage() {
   const hasWinner = entries.some(e => e.isWinner);
 
   // ---------------------------------------------------------------------------
-  // Loading state
+  // Loading / creating state
   // ---------------------------------------------------------------------------
   if (isNew) {
     return (
@@ -278,15 +328,39 @@ export default function CompetitiveListPage() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="p-4 md:p-6">
+        <PageSkeleton variant="list" />
+      </div>
+    );
+  }
+
+  if (clError || !competitiveList) {
+    return (
+      <div className="p-4 md:p-6">
+        <PageHeader
+          title={t('competitiveList.matrix.notFound')}
+          backTo={`/specifications/${specId}`}
+        />
+        <div className="text-center py-16">
+          <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+            {t('competitiveList.matrix.notFoundDesc')}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
   return (
     <div className="space-y-4 p-4 md:p-6">
       <ClPageHeader
-        name={competitiveList?.name ?? competitiveList?.title ?? t('competitiveList.title')}
+        name={competitiveList.name ?? competitiveList.title ?? t('competitiveList.title')}
         specId={specId!}
-        status={competitiveList?.status}
+        status={competitiveList.status}
         hasEntries={hasEntries}
         hasWinner={hasWinner}
         canCreatePO={hasWinner}
@@ -337,7 +411,7 @@ export default function CompetitiveListPage() {
             onSelectWinner={handleSelectWinner}
             onRejectEntry={(entryId, type) => rejectMutation.mutate({ entryId, type })}
             onUnrejectEntry={(entryId) => unrejectMutation.mutate(entryId)}
-            onDeleteEntry={(entryId) => deleteEntryMutation.mutate(entryId)}
+            onDeleteEntry={handleDeleteEntry}
             onAddProposal={handleAddProposal}
             disabled={isApproved}
           />

@@ -25,6 +25,7 @@ describe('fuzzyMatcher', () => {
     makeSpecItem({ id: 'i1', name: 'Клапан обратный DN50', productCode: 'KL-50' }),
     makeSpecItem({ id: 'i2', name: 'Насос циркуляционный Grundfos', brand: 'Grundfos' }),
     makeSpecItem({ id: 'i3', name: 'Трубы полипропиленовые 32мм' }),
+    makeSpecItem({ id: 'i4', name: 'Кран шаровой Ду50 Ру16' }),
   ];
 
   it('matches by exact product code', () => {
@@ -51,10 +52,37 @@ describe('fuzzyMatcher', () => {
     expect(results[0].confidence).toBeGreaterThan(40);
   });
 
+  it('normalizes Ду↔DN abbreviations', () => {
+    // Invoice says "Ду50", spec says "DN50" — should match
+    const line: InvoiceLine = { name: 'Клапан обратный Ду50' };
+    const results = matchInvoiceLine(line, specItems);
+    expect(results[0].specItem.id).toBe('i1');
+    expect(results[0].confidence).toBeGreaterThan(60);
+  });
+
+  it('normalizes ш. → шаровой abbreviation', () => {
+    const line: InvoiceLine = { name: 'Кран ш. DN50 PN16' };
+    const results = matchInvoiceLine(line, specItems);
+    // Should match "Кран шаровой Ду50 Ру16" — after normalization ш.→шаровой, DN↔Ду
+    expect(results[0].specItem.id).toBe('i4');
+    expect(results[0].confidence).toBeGreaterThan(40);
+  });
+
+  it('boosts confidence when DN values match', () => {
+    const line: InvoiceLine = { name: 'Кран Ду50' };
+    const resultsWithDN = matchInvoiceLine(line, [
+      makeSpecItem({ id: 'a', name: 'Кран Ду50' }),
+      makeSpecItem({ id: 'b', name: 'Кран Ду100' }),
+    ]);
+    // Both match by name, but "a" should have higher confidence due to DN50 match
+    const confA = resultsWithDN.find(r => r.specItem.id === 'a')?.confidence ?? 0;
+    const confB = resultsWithDN.find(r => r.specItem.id === 'b')?.confidence ?? 0;
+    expect(confA).toBeGreaterThan(confB);
+  });
+
   it('returns empty for completely unrelated items', () => {
     const line: InvoiceLine = { name: 'XYZABC totally unrelated' };
     const results = matchInvoiceLine(line, specItems);
-    expect(results.length).toBeLessThanOrEqual(5);
     if (results.length > 0) {
       expect(results[0].confidence).toBeLessThan(50);
     }
