@@ -133,4 +133,35 @@ public class LocalEstimateLine extends BaseEntity {
 
     @Column(name = "budget_item_id")
     private UUID budgetItemId;
+
+    // Hierarchy fields (V1126 migration — ГРАНД-Смета tree structure)
+    @Column(name = "line_type", length = 20)
+    private String lineType;
+
+    @Column(name = "position_type", length = 20)
+    private String positionType;
+
+    @Column(name = "resource_type", length = 10)
+    private String resourceType;
+
+    @Column(name = "parent_line_id")
+    private UUID parentLineId;
+
+    @Column(name = "section_name", length = 500)
+    private String sectionName;
+
+    @Column(name = "quantity_per_unit", precision = 15, scale = 4)
+    private BigDecimal quantityPerUnit;
+
+    @Column(name = "quantity_coeff", precision = 10, scale = 4)
+    private BigDecimal quantityCoeff;
+
+    @Column(name = "coefficients", length = 200)
+    private String coefficients;
+
+    @Column(name = "total_amount", precision = 18, scale = 2)
+    private BigDecimal totalAmount;
+
+    @Column(name = "normative_source", length = 20)
+    private String normativeSource;
 }

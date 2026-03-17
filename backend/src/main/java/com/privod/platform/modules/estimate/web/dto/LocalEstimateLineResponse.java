@@ -38,6 +38,17 @@ public record LocalEstimateLineResponse(
         BigDecimal overheadCosts,
         BigDecimal estimatedProfit,
         UUID budgetItemId,
+        // Hierarchy fields (ГРАНД-Смета tree structure)
+        String lineType,
+        String positionType,
+        String resourceType,
+        UUID parentLineId,
+        String sectionName,
+        BigDecimal quantityPerUnit,
+        BigDecimal quantityCoeff,
+        String coefficients,
+        BigDecimal totalAmount,
+        String normativeSource,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -74,6 +85,16 @@ public record LocalEstimateLineResponse(
                 entity.getOverheadCosts(),
                 entity.getEstimatedProfit(),
                 entity.getBudgetItemId(),
+                entity.getLineType(),
+                entity.getPositionType(),
+                entity.getResourceType(),
+                entity.getParentLineId(),
+                entity.getSectionName(),
+                entity.getQuantityPerUnit(),
+                entity.getQuantityCoeff(),
+                entity.getCoefficients(),
+                entity.getTotalAmount(),
+                entity.getNormativeSource(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
