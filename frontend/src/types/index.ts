@@ -113,7 +113,13 @@ export type ProjectType =
   | 'COMMERCIAL'
   | 'INDUSTRIAL'
   | 'INFRASTRUCTURE'
-  | 'RENOVATION';
+  | 'RENOVATION'
+  | 'SOCIAL'
+  | 'ADMINISTRATIVE'
+  | 'WAREHOUSE'
+  | 'LINEAR'
+  | 'ENERGY'
+  | 'MIXED';
 
 export type ProjectPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'CRITICAL';
 
@@ -933,6 +939,8 @@ export interface CompetitiveListEntry {
   notes?: string;
   isWinner?: boolean;
   contractorName?: string;
+  rejectionType?: string;
+  rejectionReason?: string;
 }
 
 export interface InvoiceLine {
@@ -1063,7 +1071,7 @@ export type TaskPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT' | 'CRITICAL';
 export interface ProjectTask { id: string; code: string; title: string; projectId?: string; projectName?: string; status: TaskStatus; priority: TaskPriority; assigneeId?: string; assigneeName?: string; plannedStartDate?: string; plannedEndDate?: string; progress: number; wbsCode?: string; subtaskCount: number; }
 
 // Documents
-export type DocumentCategory = 'CONTRACT' | 'ESTIMATE' | 'SPECIFICATION' | 'DRAWING' | 'PERMIT' | 'ACT' | 'INVOICE' | 'PROTOCOL' | 'CORRESPONDENCE' | 'PHOTO' | 'REPORT' | 'OTHER';
+export type DocumentCategory = 'CONTRACT' | 'APPENDIX' | 'ESTIMATE' | 'LOCAL_ESTIMATE' | 'SPECIFICATION' | 'DRAWING' | 'DESIGN_DOC' | 'PERMIT' | 'ACT' | 'INVOICE' | 'COMMERCIAL_PROPOSAL' | 'PROTOCOL' | 'CORRESPONDENCE' | 'CERTIFICATE' | 'SCHEDULE' | 'PHOTO' | 'REPORT' | 'TECHNICAL' | 'OTHER';
 export type DocumentStatus = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'ACTIVE' | 'ARCHIVED' | 'CANCELLED';
 export interface Document {
   id: string;
@@ -1075,8 +1083,8 @@ export interface Document {
   projectName?: string;
   contractId?: string;
   description?: string;
-  fileName: string;
-  fileSize: number;
+  fileName?: string;
+  fileSize?: number;
   mimeType?: string;
   storagePath?: string;
   authorName: string;

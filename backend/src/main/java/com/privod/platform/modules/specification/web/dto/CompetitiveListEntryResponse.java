@@ -26,6 +26,8 @@ public record CompetitiveListEntryResponse(
         Integer rankPosition,
         boolean isWinner,
         String selectionReason,
+        String rejectionType,
+        String rejectionReason,
         String notes,
         Instant createdAt,
         Instant updatedAt
@@ -51,6 +53,8 @@ public record CompetitiveListEntryResponse(
                 entity.getRankPosition(),
                 entity.isWinner(),
                 entity.getSelectionReason(),
+                entity.getRejectionType(),
+                entity.getRejectionReason(),
                 entity.getNotes(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()

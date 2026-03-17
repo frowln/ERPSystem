@@ -96,6 +96,13 @@ public class PurchaseOrderController {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
+    @GetMapping
+    @Operation(summary = "Получить все заказы поставщикам")
+    public ResponseEntity<ApiResponse<List<PurchaseOrderResponse>>> list() {
+        List<PurchaseOrderResponse> response = purchaseOrderService.listAll();
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Получить заказ поставщику по ID")
     public ResponseEntity<ApiResponse<PurchaseOrderResponse>> getById(@PathVariable UUID id) {

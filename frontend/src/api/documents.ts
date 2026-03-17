@@ -15,7 +15,7 @@ export interface DocumentFilters extends PaginationParams {
 
 export interface UpsertDocumentRequest {
   title: string;
-  documentNumber?: string;
+  documentNumber?: string | null;
   category?: string;
   projectId?: string;
   contractId?: string;
@@ -61,6 +61,26 @@ export const documentsApi = {
       { headers: { 'Content-Type': 'multipart/form-data' } },
     );
     return response.data;
+  },
+
+  deleteDocument: async (id: string): Promise<void> => {
+    await apiClient.delete(`/documents/${id}`);
+  },
+
+  /** Download file — proxied through backend, works with internal MinIO */
+  downloadFile: async (id: string, fileName?: string): Promise<void> => {
+    const response = await apiClient.get(`/documents/${id}/download`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([response.data as BlobPart]);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName || 'document';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   },
 
   getDownloadUrl: async (id: string): Promise<string> => {

@@ -21,6 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +40,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.http.ContentDisposition;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -83,6 +90,45 @@ public class DocumentController {
     public ResponseEntity<ApiResponse<String>> getDownloadUrl(@PathVariable UUID id) {
         String url = documentService.getDownloadUrl(id);
         return ResponseEntity.ok(ApiResponse.ok(url));
+    }
+
+    @GetMapping("/{id}/download")
+    @Operation(summary = "Download document file (proxied through backend)")
+    public ResponseEntity<Resource> download(@PathVariable UUID id) {
+        DocumentResponse doc = documentService.getDocument(id);
+
+        if (doc.storagePath() == null || doc.storagePath().isBlank()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        InputStream stream = documentService.downloadFile(id);
+
+        String filename = doc.fileName() != null ? doc.fileName() : "document";
+        String contentType = doc.mimeType() != null ? doc.mimeType() : "application/octet-stream";
+
+        // RFC 5987 compliant Content-Disposition with proper UTF-8 Cyrillic support
+        ContentDisposition contentDisposition = ContentDisposition.attachment()
+                .filename(filename, StandardCharsets.UTF_8)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(contentDisposition);
+        if (doc.fileSize() != null) {
+            headers.setContentLength(doc.fileSize());
+        }
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(new InputStreamResource(stream));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'DOCUMENT_MANAGER')")
+    @Operation(summary = "Delete a document (soft delete)")
+    public ResponseEntity<ApiResponse<Void>> deleteDocument(@PathVariable UUID id) {
+        documentService.deleteDocument(id);
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     @PostMapping

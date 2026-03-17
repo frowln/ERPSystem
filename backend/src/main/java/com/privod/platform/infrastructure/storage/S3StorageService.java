@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -102,6 +104,20 @@ public class S3StorageService implements StorageService {
             return true;
         } catch (NoSuchKeyException e) {
             return false;
+        }
+    }
+
+    @Override
+    public InputStream download(String key) {
+        try {
+            GetObjectRequest request = GetObjectRequest.builder()
+                    .bucket(properties.getBucket())
+                    .key(key)
+                    .build();
+            return s3Client.getObject(request);
+        } catch (Exception e) {
+            log.error("S3 download failed: bucket={}, key={}, error={}", properties.getBucket(), key, e.getMessage());
+            throw new StorageException("Failed to download file from storage: " + e.getMessage(), e);
         }
     }
 

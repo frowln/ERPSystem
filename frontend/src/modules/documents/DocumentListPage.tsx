@@ -29,16 +29,23 @@ const getStatusFilterOptions = () => [
 const getCategoryFilterOptions = () => [
   { value: '', label: t('documents.list.allCategories') },
   { value: 'CONTRACT', label: documentCategoryLabels.CONTRACT },
+  { value: 'APPENDIX', label: documentCategoryLabels.APPENDIX },
   { value: 'ESTIMATE', label: documentCategoryLabels.ESTIMATE },
+  { value: 'LOCAL_ESTIMATE', label: documentCategoryLabels.LOCAL_ESTIMATE },
   { value: 'SPECIFICATION', label: documentCategoryLabels.SPECIFICATION },
   { value: 'DRAWING', label: documentCategoryLabels.DRAWING },
+  { value: 'DESIGN_DOC', label: documentCategoryLabels.DESIGN_DOC },
   { value: 'PERMIT', label: documentCategoryLabels.PERMIT },
   { value: 'ACT', label: documentCategoryLabels.ACT },
   { value: 'INVOICE', label: documentCategoryLabels.INVOICE },
+  { value: 'COMMERCIAL_PROPOSAL', label: documentCategoryLabels.COMMERCIAL_PROPOSAL },
   { value: 'PROTOCOL', label: documentCategoryLabels.PROTOCOL },
   { value: 'CORRESPONDENCE', label: documentCategoryLabels.CORRESPONDENCE },
+  { value: 'CERTIFICATE', label: documentCategoryLabels.CERTIFICATE },
+  { value: 'SCHEDULE', label: documentCategoryLabels.SCHEDULE },
   { value: 'PHOTO', label: documentCategoryLabels.PHOTO },
   { value: 'REPORT', label: documentCategoryLabels.REPORT },
+  { value: 'TECHNICAL', label: documentCategoryLabels.TECHNICAL },
   { value: 'OTHER', label: documentCategoryLabels.OTHER },
 ];
 

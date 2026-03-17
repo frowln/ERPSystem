@@ -487,9 +487,10 @@ public class CompetitiveListService {
         CompetitiveList cl = getOrThrow(listId);
         List<CompetitiveListEntry> entries = competitiveListEntryRepository.findByCompetitiveListId(listId);
 
-        // Group by specItemId, find lowest price
+        // Group by specItemId, find lowest price (skip rejected)
         Map<UUID, CompetitiveListEntry> bestByItem = new HashMap<>();
         for (CompetitiveListEntry entry : entries) {
+            if (entry.getRejectionType() != null) continue;
             CompetitiveListEntry current = bestByItem.get(entry.getSpecItemId());
             if (current == null || entry.getUnitPrice().compareTo(current.getUnitPrice()) < 0) {
                 bestByItem.put(entry.getSpecItemId(), entry);
@@ -524,6 +525,58 @@ public class CompetitiveListService {
 
         log.info("Auto-selected best prices for competitive list {}: {} winners", listId, bestByItem.size());
         return CompetitiveListResponse.fromEntity(cl);
+    }
+
+    @Transactional
+    public List<CompetitiveListEntryResponse> bulkAddEntries(UUID listId, List<CreateCompetitiveListEntryRequest> requests) {
+        getOrThrow(listId);
+        List<CompetitiveListEntryResponse> results = new ArrayList<>();
+        for (CreateCompetitiveListEntryRequest request : requests) {
+            results.add(addEntry(listId, request));
+        }
+        log.info("Bulk added {} entries to competitive list {}", requests.size(), listId);
+        return results;
+    }
+
+    @Transactional
+    public CompetitiveListEntryResponse rejectEntry(UUID listId, UUID entryId, String rejectionType, String rejectionReason) {
+        getOrThrow(listId);
+        CompetitiveListEntry entry = getEntryOrThrow(entryId);
+        if (!entry.getCompetitiveListId().equals(listId)) {
+            throw new IllegalArgumentException("Запись не принадлежит данному конкурентному листу");
+        }
+
+        // If entry was a winner, remove winner status
+        if (entry.isWinner()) {
+            entry.setWinner(false);
+            entry.setSelectionReason(null);
+        }
+
+        entry.setRejectionType(rejectionType);
+        entry.setRejectionReason(rejectionReason);
+        entry = competitiveListEntryRepository.save(entry);
+        auditService.logUpdate("CompetitiveListEntry", entry.getId(), "rejectionType", null, rejectionType);
+
+        log.info("Entry {} rejected in competitive list {}: type={}, reason={}",
+                entryId, listId, rejectionType, rejectionReason);
+        return CompetitiveListEntryResponse.fromEntity(entry);
+    }
+
+    @Transactional
+    public CompetitiveListEntryResponse unrejectEntry(UUID listId, UUID entryId) {
+        getOrThrow(listId);
+        CompetitiveListEntry entry = getEntryOrThrow(entryId);
+        if (!entry.getCompetitiveListId().equals(listId)) {
+            throw new IllegalArgumentException("Запись не принадлежит данному конкурентному листу");
+        }
+
+        entry.setRejectionType(null);
+        entry.setRejectionReason(null);
+        entry = competitiveListEntryRepository.save(entry);
+        auditService.logUpdate("CompetitiveListEntry", entry.getId(), "rejectionType", "cleared", null);
+
+        log.info("Entry {} un-rejected in competitive list {}", entryId, listId);
+        return CompetitiveListEntryResponse.fromEntity(entry);
     }
 
     private CompetitiveList getOrThrow(UUID id) {

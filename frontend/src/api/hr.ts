@@ -68,7 +68,7 @@ const EMPTY_PAGE: PaginatedResponse<any> = { content: [], totalElements: 0, tota
 export const hrApi = {
   getDepartments: async (): Promise<Department[]> => {
     try {
-      const response = await apiClient.get<Department[]>('/departments');
+      const response = await apiClient.get<Department[]>('/admin/departments');
       return response.data;
     } catch {
       const stored = localStorage.getItem('hr_departments');

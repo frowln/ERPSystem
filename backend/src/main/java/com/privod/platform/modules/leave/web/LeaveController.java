@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/leave")
+@RequestMapping("/api/leave")
 @RequiredArgsConstructor
 @Tag(name = "Leave Management", description = "Leave management endpoints")
 public class LeaveController {

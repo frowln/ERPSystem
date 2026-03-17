@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Package, Wrench, Cpu, Layers, FilePlus2, ArrowUpRight, FileUp, Tag, Pencil, Trash2, Plus, GitBranch, Upload, Calculator, Clock } from 'lucide-react';
+import { Package, Wrench, Cpu, Layers, FilePlus2, ArrowUpRight, FileUp, Tag, Pencil, Trash2, Plus, GitBranch, Upload, Calculator, Clock, Check, X } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { MetricCard } from '@/design-system/components/MetricCard';
 import { DataTable } from '@/design-system/components/DataTable';
@@ -48,6 +48,16 @@ const SpecificationDetailPage: React.FC = () => {
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [addItemSection, setAddItemSection] = useState('');
   const [addItemForm, setAddItemForm] = useState<Partial<CreateSpecItemRequest>>({ itemType: 'EQUIPMENT', quantity: 1, unitOfMeasure: 'шт' });
+
+  // Edit item state
+  const [editItemOpen, setEditItemOpen] = useState(false);
+  const [editItemId, setEditItemId] = useState<string | null>(null);
+  const [editItemForm, setEditItemForm] = useState<Partial<CreateSpecItemRequest & { weight?: number; position?: string }>>({});
+
+  // Rename section state
+  const [renameSectionOpen, setRenameSectionOpen] = useState(false);
+  const [renameSectionOld, setRenameSectionOld] = useState('');
+  const [renameSectionNew, setRenameSectionNew] = useState('');
 
   // ─── Import state ─────────────────────────────────────────────────────────
   type ConflictAction = 'replace' | 'add_new' | 'sum_qty' | 'skip';
@@ -130,6 +140,15 @@ const SpecificationDetailPage: React.FC = () => {
         bySection.get(key)!.push(item);
       }
 
+      // Fetch existing budget items to detect already-existing sections (avoid duplicates)
+      const existingItems = await financeApi.getBudgetItems(budgetId);
+      const existingSectionsByName = new Map<string, { id: string }>();
+      for (const ei of existingItems) {
+        if (ei.section && ei.name) {
+          existingSectionsByName.set(ei.name, { id: ei.id });
+        }
+      }
+
       // Batch size: flush in chunks to avoid overwhelming the server for large specs (1000+ items)
       const CHUNK_SIZE = 20;
       const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -138,12 +157,23 @@ const SpecificationDetailPage: React.FC = () => {
       for (const [sectionKey, sectionItems] of bySection) {
         // Use the section name from PDF, or fall back to spec name if no sections
         const sectionLabel = sectionKey || (spec?.name ?? 'Спецификация');
-        const sectionHeader = await financeApi.createBudgetItem(budgetId, {
-          name: sectionLabel,
-          category: 'OTHER',
-          section: true,
-          plannedAmount: 0,
-        });
+
+        // Reuse existing section if one with the same name already exists in the budget
+        let sectionId: string;
+        const existingSection = existingSectionsByName.get(sectionLabel);
+        if (existingSection) {
+          sectionId = existingSection.id;
+        } else {
+          const sectionHeader = await financeApi.createBudgetItem(budgetId, {
+            name: sectionLabel,
+            category: 'OTHER',
+            section: true,
+            plannedAmount: 0,
+          });
+          sectionId = sectionHeader.id;
+          // Cache so subsequent specs in the same push don't re-create it
+          existingSectionsByName.set(sectionLabel, { id: sectionId });
+        }
 
         for (let i = 0; i < sectionItems.length; i++) {
           const item = sectionItems[i];
@@ -154,7 +184,7 @@ const SpecificationDetailPage: React.FC = () => {
             section: false,
             unit: item.unitOfMeasure,
             quantity: item.quantity,
-            parentId: sectionHeader.id,
+            parentId: sectionId,
             plannedAmount: 0,
           });
           // Back-link: записываем budgetItemId обратно в позицию спецификации
@@ -217,6 +247,37 @@ const SpecificationDetailPage: React.FC = () => {
     onError: () => toast.error(t('specifications.deleteItemError')),
   });
 
+  const editItemMutation = useMutation({
+    mutationFn: ({ itemId, data }: { itemId: string; data: Partial<CreateSpecItemRequest> & { weight?: number; position?: string } }) =>
+      specificationsApi.updateSpecItem(itemId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spec-items', id] });
+      toast.success(t('specifications.editItemSuccess'));
+      setEditItemOpen(false);
+      setEditItemId(null);
+      setEditItemForm({});
+    },
+    onError: () => toast.error(t('specifications.editItemError')),
+  });
+
+  const renameSectionMutation = useMutation({
+    mutationFn: async ({ oldName, newName }: { oldName: string; newName: string }) => {
+      const itemsInSection = specItems.filter((i) => (i.sectionName ?? '') === oldName);
+      for (const item of itemsInSection) {
+        await specificationsApi.updateSpecItem(item.id, { sectionName: newName || undefined }, { silent: true });
+      }
+      return itemsInSection.length;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['spec-items', id] });
+      toast.success(t('specifications.renameSectionSuccess'));
+      setRenameSectionOpen(false);
+      setRenameSectionOld('');
+      setRenameSectionNew('');
+    },
+    onError: () => toast.error(t('specifications.renameSectionError')),
+  });
+
   const createVersionMutation = useMutation({
     mutationFn: () => specificationsApi.createVersion(id!),
     onSuccess: (newSpec) => {
@@ -258,6 +319,50 @@ const SpecificationDetailPage: React.FC = () => {
       sectionName: addItemForm.sectionName || undefined,
       sequence: specItems.length + 1,
     } as CreateSpecItemRequest);
+  };
+
+  const handleEditItem = (item: SpecItem) => {
+    setEditItemId(item.id);
+    setEditItemForm({
+      name: item.name,
+      itemType: item.itemType,
+      brand: item.brand ?? '',
+      productCode: item.productCode ?? '',
+      manufacturer: item.manufacturer ?? '',
+      quantity: item.quantity,
+      unitOfMeasure: item.unitOfMeasure,
+      weight: item.weight ?? undefined,
+      notes: item.notes ?? '',
+      sectionName: item.sectionName ?? '',
+      position: item.position ?? '',
+    });
+    setEditItemOpen(true);
+  };
+
+  const handleEditItemSubmit = () => {
+    if (!editItemId || !editItemForm.name?.trim()) return;
+    editItemMutation.mutate({
+      itemId: editItemId,
+      data: {
+        name: editItemForm.name!,
+        itemType: (editItemForm.itemType as SpecItemType) ?? 'EQUIPMENT',
+        brand: editItemForm.brand || undefined,
+        productCode: editItemForm.productCode || undefined,
+        manufacturer: editItemForm.manufacturer || undefined,
+        quantity: editItemForm.quantity ?? 1,
+        unitOfMeasure: editItemForm.unitOfMeasure ?? 'шт',
+        weight: editItemForm.weight ?? undefined,
+        notes: editItemForm.notes || undefined,
+        sectionName: editItemForm.sectionName || undefined,
+        position: editItemForm.position || undefined,
+      },
+    });
+  };
+
+  const handleRenameSection = (sectionName: string) => {
+    setRenameSectionOld(sectionName);
+    setRenameSectionNew(sectionName);
+    setRenameSectionOpen(true);
   };
 
   // ─── Import handlers ───────────────────────────────────────────────────────
@@ -494,6 +599,14 @@ const SpecificationDetailPage: React.FC = () => {
         ),
       },
       {
+        accessorKey: 'unitOfMeasure',
+        header: t('specifications.itemColUnit'),
+        size: 70,
+        cell: ({ getValue }) => (
+          <span className="text-neutral-600 dark:text-neutral-400">{getValue<string>()}</span>
+        ),
+      },
+      {
         accessorKey: 'quantity',
         header: t('specifications.itemColQty'),
         size: 80,
@@ -501,14 +614,6 @@ const SpecificationDetailPage: React.FC = () => {
           <span className="tabular-nums font-medium text-neutral-800 dark:text-neutral-200">
             {row.original.quantity != null ? new Intl.NumberFormat('ru-RU').format(row.original.quantity) : '—'}
           </span>
-        ),
-      },
-      {
-        accessorKey: 'unitOfMeasure',
-        header: t('specifications.itemColUnit'),
-        size: 70,
-        cell: ({ getValue }) => (
-          <span className="text-neutral-600 dark:text-neutral-400">{getValue<string>()}</span>
         ),
       },
       {
@@ -584,16 +689,26 @@ const SpecificationDetailPage: React.FC = () => {
       {
         id: 'actions',
         header: '',
-        size: 50,
+        size: 80,
         cell: ({ row }) => (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setDeleteItemId(row.original.id); }}
-            className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-            title={t('common.delete')}
-          >
-            <Trash2 size={14} />
-          </button>
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); handleEditItem(row.original); }}
+              className="p-1.5 text-neutral-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded transition-colors"
+              title={t('common.edit')}
+            >
+              <Pencil size={14} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setDeleteItemId(row.original.id); }}
+              className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+              title={t('common.delete')}
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
         ),
       },
     ],
@@ -760,9 +875,15 @@ const SpecificationDetailPage: React.FC = () => {
               {sectionKey && (
                 <div className="flex items-center gap-3 px-4 py-2.5 mb-2 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800">
                   <Tag size={14} className="text-primary-600 dark:text-primary-400 flex-shrink-0" />
-                  <span className="text-sm font-semibold text-primary-800 dark:text-primary-300 leading-tight">
+                  <button
+                    type="button"
+                    onClick={() => handleRenameSection(sectionKey)}
+                    className="text-sm font-semibold text-primary-800 dark:text-primary-300 leading-tight hover:text-primary-600 dark:hover:text-primary-200 transition-colors group flex items-center gap-1.5"
+                    title={t('specifications.renameSectionTitle')}
+                  >
                     {sectionKey}
-                  </span>
+                    <Pencil size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-primary-500 dark:text-primary-400" />
+                  </button>
                   <span className="ml-auto text-xs text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/40 rounded-full px-2 py-0.5">
                     {sectionItems.length} поз.
                   </span>
@@ -1147,6 +1268,190 @@ const SpecificationDetailPage: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+      </Modal>
+
+      {/* Edit Item modal */}
+      <Modal
+        open={editItemOpen}
+        onClose={() => { setEditItemOpen(false); setEditItemId(null); setEditItemForm({}); }}
+        title={t('specifications.editItemTitle')}
+        size="lg"
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => { setEditItemOpen(false); setEditItemId(null); setEditItemForm({}); }}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              size="sm"
+              iconLeft={<Check size={14} />}
+              loading={editItemMutation.isPending}
+              disabled={!editItemForm.name?.trim()}
+              onClick={handleEditItemSubmit}
+            >
+              {t('specifications.editItemBtn')}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelName')} <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder={t('forms.specification.placeholderItemName')}
+                value={editItemForm.name ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, name: e.target.value }))}
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelType')}
+              </label>
+              <Select
+                options={[
+                  { value: 'EQUIPMENT', label: t('specifications.itemTypeEquipment') },
+                  { value: 'MATERIAL', label: t('specifications.itemTypeMaterial') },
+                  { value: 'WORK', label: t('specifications.itemTypeWork') },
+                ]}
+                value={editItemForm.itemType ?? 'EQUIPMENT'}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, itemType: e.target.value as SpecItemType }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelBrand')}
+              </label>
+              <Input
+                placeholder="—"
+                value={editItemForm.brand ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, brand: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelCode')}
+              </label>
+              <Input
+                placeholder="—"
+                value={editItemForm.productCode ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, productCode: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelManufacturer')}
+              </label>
+              <Input
+                placeholder="—"
+                value={editItemForm.manufacturer ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, manufacturer: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelQty')} <span className="text-red-500">*</span>
+              </label>
+              <Input
+                inputMode="numeric"
+                placeholder="1"
+                value={String(editItemForm.quantity ?? 1)}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, quantity: parseFloat(e.target.value) || 1 }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelUnit')}
+              </label>
+              <Input
+                placeholder="шт"
+                value={editItemForm.unitOfMeasure ?? 'шт'}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, unitOfMeasure: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelWeight')}
+              </label>
+              <Input
+                inputMode="numeric"
+                placeholder="—"
+                value={editItemForm.weight != null ? String(editItemForm.weight) : ''}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  setEditItemForm((f) => ({ ...f, weight: isNaN(val) ? undefined : val }));
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelPosition')}
+              </label>
+              <Input
+                placeholder="—"
+                value={editItemForm.position ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, position: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelSection')}
+              </label>
+              <Input
+                placeholder="—"
+                value={editItemForm.sectionName ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, sectionName: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                {t('specifications.addItemLabelNotes')}
+              </label>
+              <Input
+                placeholder="—"
+                value={editItemForm.notes ?? ''}
+                onChange={(e) => setEditItemForm((f) => ({ ...f, notes: e.target.value }))}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Rename Section modal */}
+      <Modal
+        open={renameSectionOpen}
+        onClose={() => { setRenameSectionOpen(false); setRenameSectionOld(''); setRenameSectionNew(''); }}
+        title={t('specifications.renameSectionTitle')}
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => { setRenameSectionOpen(false); setRenameSectionOld(''); setRenameSectionNew(''); }}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              size="sm"
+              iconLeft={<Check size={14} />}
+              loading={renameSectionMutation.isPending}
+              disabled={!renameSectionNew.trim() || renameSectionNew === renameSectionOld}
+              onClick={() => renameSectionMutation.mutate({ oldName: renameSectionOld, newName: renameSectionNew.trim() })}
+            >
+              {t('specifications.renameSectionBtn')}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-3">
+          <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            {t('specifications.renameSectionLabel')}
+          </label>
+          <Input
+            value={renameSectionNew}
+            onChange={(e) => setRenameSectionNew(e.target.value)}
+            autoFocus
+          />
         </div>
       </Modal>
 

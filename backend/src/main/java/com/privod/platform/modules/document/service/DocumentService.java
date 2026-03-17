@@ -36,9 +36,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +73,9 @@ public class DocumentService {
                 .and(DocumentSpecification.hasStatus(status))
                 .and(DocumentSpecification.searchByTitleOrDescription(search));
 
-        return documentRepository.findAll(spec, pageable).map(DocumentResponse::fromEntity);
+        Page<Document> page = documentRepository.findAll(spec, pageable);
+        Map<UUID, String> projectNames = resolveProjectNames(page.getContent());
+        return page.map(doc -> DocumentResponse.fromEntity(doc, projectNames.get(doc.getProjectId())));
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +87,8 @@ public class DocumentService {
                 .stream()
                 .map(DocumentAccessResponse::fromEntity)
                 .toList();
-        return DocumentResponse.fromEntity(document, accessList);
+        String projectName = resolveProjectName(document.getProjectId());
+        return DocumentResponse.fromEntity(document, accessList, projectName);
     }
 
     @Transactional
@@ -174,7 +183,8 @@ public class DocumentService {
             document.setTitle(request.title());
         }
         if (request.documentNumber() != null) {
-            document.setDocumentNumber(request.documentNumber());
+            // Allow clearing the document number by sending empty string
+            document.setDocumentNumber(request.documentNumber().isBlank() ? null : request.documentNumber());
         }
         if (request.category() != null) {
             document.setCategory(request.category());
@@ -406,6 +416,62 @@ public class DocumentService {
                 .stream()
                 .map(DocumentResponse::fromEntity)
                 .toList();
+    }
+
+    /**
+     * Download a file's content as an InputStream (proxied through the backend).
+     */
+    @Transactional(readOnly = true)
+    public InputStream downloadFile(UUID id) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Document document = getDocumentOrThrow(id, organizationId);
+        String storagePath = document.getStoragePath();
+
+        if (storagePath == null || storagePath.isBlank()) {
+            throw new IllegalStateException("Файл документа не загружен");
+        }
+        if (isExternalUrl(storagePath)) {
+            throw new IllegalStateException("Файл хранится по внешнему URL — скачайте напрямую");
+        }
+
+        return storageService.download(storagePath);
+    }
+
+    /**
+     * Soft-delete a document.
+     */
+    @Transactional
+    public void deleteDocument(UUID id) {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        Document document = getDocumentOrThrow(id, organizationId);
+        document.softDelete();
+        documentRepository.save(document);
+        auditService.logUpdate("Document", document.getId(), "deleted", "false", "true");
+        log.info("Document deleted (soft): {} ({})", document.getTitle(), document.getId());
+    }
+
+    // ─── Project name resolution ────────────────────────────────────────────────
+
+    private String resolveProjectName(UUID projectId) {
+        if (projectId == null) return null;
+        return projectRepository.findById(projectId)
+                .filter(p -> !p.isDeleted())
+                .map(Project::getName)
+                .orElse(null);
+    }
+
+    private Map<UUID, String> resolveProjectNames(List<Document> documents) {
+        Set<UUID> projectIds = documents.stream()
+                .map(Document::getProjectId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        if (projectIds.isEmpty()) return Map.of();
+
+        Map<UUID, String> result = new HashMap<>();
+        projectRepository.findAllById(projectIds).forEach(p -> {
+            if (!p.isDeleted()) result.put(p.getId(), p.getName());
+        });
+        return result;
     }
 
     private Document getDocumentOrThrow(UUID id, UUID organizationId) {

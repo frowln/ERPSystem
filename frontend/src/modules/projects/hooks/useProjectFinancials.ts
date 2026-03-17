@@ -28,9 +28,10 @@ export function useProjectFinancials(
   const fin = financials;
   const cf = p?.computedFinancials;
 
-  // Use ?? for zero-safe fallback — 0 is a valid financial value
-  const contractAmount = fin?.contractAmount ?? fin?.preliminaryContractAmount ?? cf?.contractAmount ?? p?.contractAmount ?? 0;
-  const plannedBudget = fin?.plannedBudget ?? fin?.preliminaryBudget ?? cf?.plannedBudget ?? p?.budget ?? 0;
+  // Use || for computed financial values (0 means "no data yet", fall through to entity)
+  // Use ?? for entity values (0 could be intentional)
+  const contractAmount = (fin?.contractAmount || fin?.preliminaryContractAmount || cf?.contractAmount || p?.contractAmount) ?? 0;
+  const plannedBudget = (fin?.plannedBudget || fin?.preliminaryBudget || cf?.plannedBudget || (p as any)?.budgetAmount || p?.budget) ?? 0;
   const actualCost = fin?.actualCost ?? cf?.actualCost ?? p?.spentAmount ?? 0;
   const completionPct = fin?.completionPercent ?? cf?.completionPercent ?? p?.progress ?? 0;
   const margin = fin?.margin ?? cf?.margin ?? (contractAmount - actualCost);

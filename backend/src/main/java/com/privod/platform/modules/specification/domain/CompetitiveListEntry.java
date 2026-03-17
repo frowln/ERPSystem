@@ -99,6 +99,12 @@ public class CompetitiveListEntry {
     @Column(name = "rank_position")
     private Integer rankPosition;
 
+    @Column(name = "rejection_type", length = 20)
+    private String rejectionType;
+
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
+    private String rejectionReason;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

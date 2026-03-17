@@ -7,7 +7,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Plus, ExternalLink, Search, Upload, X, FileText } from 'lucide-react';
+import { Plus, ExternalLink, Search, Upload, X, FileText, Info } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
@@ -15,26 +15,11 @@ import { projectsApi } from '@/api/projects';
 import { contractsApi } from '@/api/contracts';
 import { documentsApi } from '@/api/documents';
 import { financeApi } from '@/api/finance';
+import { permissionsApi } from '@/api/permissions';
 import { suggestParties, isDadataConfigured } from '@/lib/dadata';
 import { t } from '@/i18n';
 import type { ProjectType, ProjectPriority, ProjectStatus } from '@/types';
-
-// ---------------------------------------------------------------------------
-// Custom type helpers
-// ---------------------------------------------------------------------------
-const CUSTOM_TYPES_KEY = 'privod-custom-project-types';
-
-function getCustomTypes(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(CUSTOM_TYPES_KEY) ?? '[]') as string[];
-  } catch {
-    return [];
-  }
-}
-
-function saveCustomTypes(types: string[]) {
-  localStorage.setItem(CUSTOM_TYPES_KEY, JSON.stringify(types));
-}
+import type { PaginatedResponse as PaginatedResp } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Schema
@@ -67,7 +52,17 @@ const projectSchema = z.object({
   plannedEndDate: z.string().optional(),
   customerName: z.string().min(1, t('forms.project.validation.customerRequired')),
   customerId: z.string().optional(),
-});
+  budgetAmount: z.string().optional(),
+  managerId: z.string().optional(),
+}).refine(
+  (d) => {
+    if (d.plannedStartDate && d.plannedEndDate) {
+      return d.plannedEndDate >= d.plannedStartDate;
+    }
+    return true;
+  },
+  { message: t('forms.project.validation.endBeforeStart'), path: ['plannedEndDate'] },
+);
 
 type ProjectFormData = z.infer<typeof projectSchema>;
 
@@ -80,14 +75,24 @@ const constructionKindOptions = [
   { value: 'OVERHAUL',         label: t('forms.project.constructionKinds.overhaul') },
   { value: 'DEMOLITION',       label: t('forms.project.constructionKinds.demolition') },
   { value: 'TECH_REEQUIPMENT', label: t('forms.project.constructionKinds.techReequipment') },
+  { value: 'EXPANSION',        label: t('forms.project.constructionKinds.expansion') },
+  { value: 'MODERNIZATION',    label: t('forms.project.constructionKinds.modernization') },
+  { value: 'RESTORATION',      label: t('forms.project.constructionKinds.restoration') },
+  { value: 'CURRENT_REPAIR',   label: t('forms.project.constructionKinds.currentRepair') },
 ];
 
 const BUILTIN_TYPES = [
-  { value: 'RESIDENTIAL',   label: t('forms.project.projectTypes.residential') },
-  { value: 'COMMERCIAL',    label: t('forms.project.projectTypes.commercial') },
-  { value: 'INDUSTRIAL',    label: t('forms.project.projectTypes.industrial') },
-  { value: 'INFRASTRUCTURE', label: t('forms.project.projectTypes.infrastructure') },
-  { value: 'RENOVATION',    label: t('forms.project.projectTypes.renovation') },
+  { value: 'RESIDENTIAL',     label: t('forms.project.projectTypes.residential') },
+  { value: 'COMMERCIAL',      label: t('forms.project.projectTypes.commercial') },
+  { value: 'INDUSTRIAL',      label: t('forms.project.projectTypes.industrial') },
+  { value: 'INFRASTRUCTURE',  label: t('forms.project.projectTypes.infrastructure') },
+  { value: 'RENOVATION',      label: t('forms.project.projectTypes.renovation') },
+  { value: 'SOCIAL',          label: t('forms.project.projectTypes.social') },
+  { value: 'ADMINISTRATIVE',  label: t('forms.project.projectTypes.administrative') },
+  { value: 'WAREHOUSE',       label: t('forms.project.projectTypes.warehouse') },
+  { value: 'LINEAR',          label: t('forms.project.projectTypes.linear') },
+  { value: 'ENERGY',          label: t('forms.project.projectTypes.energy') },
+  { value: 'MIXED',           label: t('forms.project.projectTypes.mixed') },
 ];
 
 const statusOptions = [
@@ -97,6 +102,37 @@ const statusOptions = [
   { value: 'ON_HOLD',     label: t('forms.project.statuses.onHold') },
   { value: 'COMPLETED',   label: t('forms.project.statuses.completed') },
   { value: 'CANCELLED',   label: t('forms.project.statuses.cancelled') },
+];
+
+// ---------------------------------------------------------------------------
+// RF Regions (89 subjects)
+// ---------------------------------------------------------------------------
+const RF_REGIONS = [
+  'Республика Адыгея', 'Республика Алтай', 'Республика Башкортостан', 'Республика Бурятия',
+  'Республика Дагестан', 'Республика Ингушетия', 'Кабардино-Балкарская Республика',
+  'Республика Калмыкия', 'Карачаево-Черкесская Республика', 'Республика Карелия',
+  'Республика Коми', 'Республика Крым', 'Республика Марий Эл', 'Республика Мордовия',
+  'Республика Саха (Якутия)', 'Республика Северная Осетия — Алания', 'Республика Татарстан',
+  'Республика Тыва', 'Удмуртская Республика', 'Республика Хакасия', 'Чеченская Республика',
+  'Чувашская Республика', 'Алтайский край', 'Забайкальский край', 'Камчатский край',
+  'Краснодарский край', 'Красноярский край', 'Пермский край', 'Приморский край',
+  'Ставропольский край', 'Хабаровский край', 'Амурская область', 'Архангельская область',
+  'Астраханская область', 'Белгородская область', 'Брянская область', 'Владимирская область',
+  'Волгоградская область', 'Вологодская область', 'Воронежская область', 'Ивановская область',
+  'Иркутская область', 'Калининградская область', 'Калужская область',
+  'Кемеровская область — Кузбасс', 'Кировская область', 'Костромская область',
+  'Курганская область', 'Курская область', 'Ленинградская область', 'Липецкая область',
+  'Магаданская область', 'Московская область', 'Мурманская область', 'Нижегородская область',
+  'Новгородская область', 'Новосибирская область', 'Омская область', 'Оренбургская область',
+  'Орловская область', 'Пензенская область', 'Псковская область', 'Ростовская область',
+  'Рязанская область', 'Самарская область', 'Саратовская область', 'Сахалинская область',
+  'Свердловская область', 'Смоленская область', 'Тамбовская область', 'Тверская область',
+  'Томская область', 'Тульская область', 'Тюменская область', 'Ульяновская область',
+  'Челябинская область', 'Ярославская область', 'Москва', 'Санкт-Петербург', 'Севастополь',
+  'Еврейская автономная область', 'Ненецкий автономный округ',
+  'Ханты-Мансийский автономный округ — Югра', 'Чукотский автономный округ',
+  'Ямало-Ненецкий автономный округ', 'Донецкая Народная Республика',
+  'Луганская Народная Республика', 'Запорожская область', 'Херсонская область',
 ];
 
 // ---------------------------------------------------------------------------
@@ -240,70 +276,99 @@ interface TypeSelectProps {
 }
 
 const TypeSelectWithAdd: React.FC<TypeSelectProps> = ({ value, onChange, hasError }) => {
-  const [customTypes, setCustomTypes] = useState<string[]>(getCustomTypes);
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newTypeValue, setNewTypeValue] = useState('');
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`w-full rounded-lg border px-3 py-2 text-sm bg-white dark:bg-neutral-900
+        text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500
+        ${hasError ? 'border-danger-500' : 'border-neutral-300 dark:border-neutral-600'}`}
+    >
+      <option value="">{t('forms.project.placeholderType')}</option>
+      {BUILTIN_TYPES.map((opt) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  );
+};
 
-  const allOptions = [
-    ...BUILTIN_TYPES,
-    ...customTypes.map((ct) => ({ value: ct, label: ct })),
-  ];
-
-  const handleAdd = () => {
-    const trimmed = newTypeValue.trim();
-    if (!trimmed) return;
-    if (allOptions.some((o) => o.value === trimmed || o.label === trimmed)) return;
-    const updated = [...customTypes, trimmed];
-    saveCustomTypes(updated);
-    setCustomTypes(updated);
-    onChange(trimmed);
-    setShowAddInput(false);
-    setNewTypeValue('');
-    toast.success(t('forms.project.customTypeAdded'));
-  };
+// ---------------------------------------------------------------------------
+// Region autocomplete
+// ---------------------------------------------------------------------------
+const RegionAutocomplete: React.FC<{
+  value: string;
+  onChange: (v: string) => void;
+  hasError?: boolean;
+}> = ({ value, onChange, hasError }) => {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const filtered = RF_REGIONS.filter((r) =>
+    r.toLowerCase().includes((search || value).toLowerCase()),
+  ).slice(0, 15);
 
   return (
-    <div>
-      <select
+    <div className="relative">
+      <input
+        type="text"
         value={value}
-        onChange={(e) => {
-          if (e.target.value === '__ADD__') setShowAddInput(true);
-          else onChange(e.target.value);
-        }}
+        onChange={(e) => { onChange(e.target.value); setSearch(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        placeholder={t('forms.project.placeholderRegion')}
         className={`w-full rounded-lg border px-3 py-2 text-sm bg-white dark:bg-neutral-900
           text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500
           ${hasError ? 'border-danger-500' : 'border-neutral-300 dark:border-neutral-600'}`}
-      >
-        <option value="">{t('forms.project.placeholderType')}</option>
-        {allOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-        <option value="__ADD__">＋ {t('forms.project.addCustomType')}</option>
-      </select>
-
-      {showAddInput && (
-        <div className="mt-2 flex items-center gap-2">
-          <Input
-            placeholder={t('forms.project.customTypePlaceholder')}
-            value={newTypeValue}
-            onChange={(e) => setNewTypeValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') { e.preventDefault(); handleAdd(); }
-              if (e.key === 'Escape') { setShowAddInput(false); setNewTypeValue(''); }
-            }}
-            autoFocus
-          />
-          <Button type="button" size="sm" onClick={handleAdd} iconLeft={<Plus size={13} />}>
-            {t('common.add')}
-          </Button>
-          <Button
-            type="button" size="sm" variant="secondary"
-            onClick={() => { setShowAddInput(false); setNewTypeValue(''); }}
-          >
-            {t('common.cancel')}
-          </Button>
+      />
+      {open && filtered.length > 0 && (
+        <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white dark:bg-neutral-900
+          border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+          {filtered.map((region) => (
+            <button
+              key={region}
+              type="button"
+              onMouseDown={() => { onChange(region); setSearch(''); setOpen(false); }}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors
+                text-neutral-900 dark:text-neutral-100"
+            >
+              {region}
+            </button>
+          ))}
         </div>
       )}
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Manager picker
+// ---------------------------------------------------------------------------
+const ManagerPicker: React.FC<{
+  value: string;
+  onChange: (v: string) => void;
+}> = ({ value, onChange }) => {
+  const { data: usersData } = useQuery<PaginatedResp<{ id: string; firstName: string; lastName: string; fullName?: string; email: string }>>({
+    queryKey: ['admin-users-for-picker'],
+    queryFn: () => permissionsApi.getUsers({ size: 100 }),
+    staleTime: 60_000,
+  });
+  const users = usersData?.content ?? [];
+
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-lg border px-3 py-2 text-sm bg-white dark:bg-neutral-900
+          text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary-500
+          border-neutral-300 dark:border-neutral-600"
+      >
+        <option value="">{t('forms.project.placeholderManager')}</option>
+        {users.map((u) => (
+          <option key={u.id} value={u.id}>
+            {u.fullName || `${u.lastName} ${u.firstName}`} — {u.email}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };
@@ -473,6 +538,7 @@ const ProjectFormPage: React.FC = () => {
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -491,6 +557,8 @@ const ProjectFormPage: React.FC = () => {
           plannedEndDate: existingProject.plannedEndDate ?? '',
           customerName: existingProject.customerName ?? '',
           customerId: existingProject.customerId ?? '',
+          budgetAmount: (existingProject as any).budgetAmount ? String((existingProject as any).budgetAmount) : '',
+          managerId: (existingProject as any).managerId ?? '',
         }
       : {
           code: '',
@@ -506,8 +574,33 @@ const ProjectFormPage: React.FC = () => {
           plannedEndDate: '',
           customerName: '',
           customerId: '',
+          budgetAmount: '',
+          managerId: '',
         },
   });
+
+  // Reset form when existing project data loads (edit mode)
+  useEffect(() => {
+    if (existingProject && isEdit) {
+      reset({
+        code: existingProject.category ?? '',
+        name: existingProject.name,
+        constructionKind: (existingProject as any).constructionKind ?? '',
+        type: existingProject.type as string ?? '',
+        status: existingProject.status as ProjectStatus,
+        address: existingProject.address ?? '',
+        city: existingProject.city ?? '',
+        region: existingProject.region ?? '',
+        description: existingProject.description ?? '',
+        plannedStartDate: existingProject.plannedStartDate ?? '',
+        plannedEndDate: existingProject.plannedEndDate ?? '',
+        customerName: existingProject.customerName ?? '',
+        customerId: existingProject.customerId ?? '',
+        budgetAmount: (existingProject as any).budgetAmount ? String((existingProject as any).budgetAmount) : '',
+        managerId: (existingProject as any).managerId ?? '',
+      });
+    }
+  }, [existingProject, isEdit, reset]);
 
   const createMutation = useMutation({
     mutationFn: async (data: ProjectFormData) => {
@@ -524,7 +617,9 @@ const ProjectFormPage: React.FC = () => {
         customerId: data.customerId || undefined,
         category: data.code || undefined,
         constructionKind: data.constructionKind || undefined,
-      });
+        budgetAmount: data.budgetAmount ? Number(data.budgetAmount) : undefined,
+        managerId: data.managerId || undefined,
+      } as any);
 
       // Upload staged documents (non-blocking — failures are logged, not fatal)
       const total = stagedFiles.length;
@@ -618,7 +713,9 @@ const ProjectFormPage: React.FC = () => {
         customerId: data.customerId || undefined,
         category: data.code || undefined,
         constructionKind: data.constructionKind || undefined,
-      }),
+        budgetAmount: data.budgetAmount ? Number(data.budgetAmount) : undefined,
+        managerId: data.managerId || undefined,
+      } as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['PROJECT', id] });
@@ -659,6 +756,16 @@ const ProjectFormPage: React.FC = () => {
       />
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl">
+
+        {/* Draft status badge (only on create) */}
+        {!isEdit && (
+          <div className="flex items-center gap-2 mb-4 px-1">
+            <Info size={14} className="text-amber-500" />
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+              {t('forms.project.draftHint')}
+            </span>
+          </div>
+        )}
 
         {/* ── Блок 1: Основная информация ── */}
         <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
@@ -760,10 +867,16 @@ const ProjectFormPage: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.project.labelRegion')} error={errors.region?.message}>
-              <Input
-                placeholder={t('forms.project.placeholderRegion')}
-                hasError={!!errors.region}
-                {...register('region')}
+              <Controller
+                name="region"
+                control={control}
+                render={({ field }) => (
+                  <RegionAutocomplete
+                    value={field.value ?? ''}
+                    onChange={field.onChange}
+                    hasError={!!errors.region}
+                  />
+                )}
               />
             </FormField>
             <FormField label={t('forms.project.labelCity')} error={errors.city?.message}>
@@ -814,6 +927,62 @@ const ProjectFormPage: React.FC = () => {
                 )}
               />
             </FormField>
+
+            <FormField
+              label={t('forms.project.labelManager')}
+              className="sm:col-span-2"
+            >
+              <Controller
+                name="managerId"
+                control={control}
+                render={({ field }) => (
+                  <ManagerPicker value={field.value ?? ''} onChange={field.onChange} />
+                )}
+              />
+            </FormField>
+          </div>
+        </section>
+
+        {/* ── Блок 3.5: Финансы ── */}
+        <section className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6 mb-6">
+          <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100 mb-5">
+            {t('forms.project.sectionFinance')}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <FormField label={t('forms.project.labelBudget')} error={errors.budgetAmount?.message}>
+              <Controller
+                name="budgetAmount"
+                control={control}
+                render={({ field }) => {
+                  const fmt = (v: string) => {
+                    if (!v) return '';
+                    const [int, dec] = v.split('.');
+                    const spaced = int.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                    return dec !== undefined ? `${spaced},${dec}` : spaced;
+                  };
+                  const parse = (v: string) => v.replace(/\s/g, '').replace(',', '.');
+                  return (
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder={t('forms.project.placeholderBudget')}
+                      hasError={!!errors.budgetAmount}
+                      value={fmt(field.value ?? '')}
+                      onChange={(e) => {
+                        const raw = parse(e.target.value);
+                        if (raw === '' || /^\d+\.?\d{0,2}$/.test(raw)) {
+                          field.onChange(raw);
+                        }
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                  );
+                }}
+              />
+              <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">
+                {t('forms.project.hintBudget')}
+              </p>
+            </FormField>
           </div>
         </section>
 
@@ -823,7 +992,7 @@ const ProjectFormPage: React.FC = () => {
             {t('forms.project.sectionDates')}
           </h2>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-5">
-            Можно указать позже после составления графика работ.
+            {t('forms.project.hintDates')}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FormField label={t('forms.project.labelPlannedStart')} error={errors.plannedStartDate?.message}>

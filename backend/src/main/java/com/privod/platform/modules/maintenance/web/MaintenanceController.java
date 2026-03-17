@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/maintenance")
+@RequestMapping("/api/maintenance")
 @RequiredArgsConstructor
 @Tag(name = "Maintenance", description = "Maintenance management endpoints")
 public class MaintenanceController {

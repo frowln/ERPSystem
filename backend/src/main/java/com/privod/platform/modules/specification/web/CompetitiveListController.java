@@ -6,8 +6,10 @@ import com.privod.platform.modules.specification.service.CompetitiveListService;
 import com.privod.platform.modules.specification.web.dto.ChangeCompetitiveListStatusRequest;
 import com.privod.platform.modules.specification.web.dto.CompetitiveListEntryResponse;
 import com.privod.platform.modules.specification.web.dto.CompetitiveListResponse;
+import com.privod.platform.modules.specification.web.dto.BulkCreateEntriesRequest;
 import com.privod.platform.modules.specification.web.dto.CreateCompetitiveListEntryRequest;
 import com.privod.platform.modules.specification.web.dto.CreateCompetitiveListRequest;
+import com.privod.platform.modules.specification.web.dto.RejectEntryRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -188,5 +190,38 @@ public class CompetitiveListController {
             @PathVariable UUID cpId) {
         competitiveListService.applyToCp(id, cpId);
         return ResponseEntity.ok(ApiResponse.ok());
+    }
+
+    @PostMapping("/{id}/entries/bulk")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Массовое создание записей (импорт счёта)")
+    public ResponseEntity<ApiResponse<List<CompetitiveListEntryResponse>>> bulkAddEntries(
+            @PathVariable UUID id,
+            @Valid @RequestBody BulkCreateEntriesRequest request) {
+        List<CompetitiveListEntryResponse> entries = competitiveListService.bulkAddEntries(id, request.entries());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(entries));
+    }
+
+    @org.springframework.web.bind.annotation.PatchMapping("/{id}/entries/{entryId}/reject")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Отклонить запись конкурентного листа")
+    public ResponseEntity<ApiResponse<CompetitiveListEntryResponse>> rejectEntry(
+            @PathVariable UUID id,
+            @PathVariable UUID entryId,
+            @Valid @RequestBody RejectEntryRequest request) {
+        CompetitiveListEntryResponse response = competitiveListService.rejectEntry(
+                id, entryId, request.rejectionType(), request.rejectionReason());
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @org.springframework.web.bind.annotation.PatchMapping("/{id}/entries/{entryId}/unreject")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROJECT_MANAGER', 'FINANCE_MANAGER')")
+    @Operation(summary = "Снять отклонение записи конкурентного листа")
+    public ResponseEntity<ApiResponse<CompetitiveListEntryResponse>> unrejectEntry(
+            @PathVariable UUID id,
+            @PathVariable UUID entryId) {
+        CompetitiveListEntryResponse response = competitiveListService.unrejectEntry(id, entryId);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

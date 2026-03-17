@@ -2,6 +2,7 @@ package com.privod.platform.infrastructure.storage;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.Duration;
 
 /**
@@ -59,4 +60,12 @@ public interface StorageService {
      * @return {@code true} if the object exists
      */
     boolean exists(String key);
+
+    /**
+     * Download a file as an InputStream.
+     *
+     * @param key storage key
+     * @return input stream with the file content (caller must close)
+     */
+    InputStream download(String key);
 }

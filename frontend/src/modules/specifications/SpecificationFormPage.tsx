@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Upload, FileSpreadsheet, AlertCircle, Info, FileUp, Tag } from 'lucide-react';
+import { Plus, Trash2, Upload, FileSpreadsheet, AlertCircle, Info, FileUp, Tag, Pencil, FolderPlus, GripVertical } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
@@ -241,6 +241,60 @@ const SpecificationFormPage: React.FC = () => {
       return next;
     });
 
+  // ── Section management ──────────────────────────────────────────────────
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [editingSectionName, setEditingSectionName] = useState('');
+  const [addingSectionName, setAddingSectionName] = useState('');
+  const [isAddingSection, setIsAddingSection] = useState(false);
+
+  /** Insert a new empty item at the end of a given section */
+  const addItemToSection = (sectionName: string) => {
+    let insertIdx = lineItems.length;
+    for (let i = lineItems.length - 1; i >= 0; i--) {
+      if (lineItems[i].sectionName === sectionName) {
+        insertIdx = i + 1;
+        break;
+      }
+    }
+    const newItem = emptyLine();
+    newItem.sectionName = sectionName;
+    setLineItems((prev) => [...prev.slice(0, insertIdx), newItem, ...prev.slice(insertIdx)]);
+  };
+
+  /** Rename all items in a section */
+  const renameSection = (oldName: string, newName: string) => {
+    if (!newName.trim() || newName.trim() === oldName) {
+      setEditingSection(null);
+      return;
+    }
+    setLineItems((prev) =>
+      prev.map((item) =>
+        item.sectionName === oldName ? { ...item, sectionName: newName.trim() } : item,
+      ),
+    );
+    setEditingSection(null);
+  };
+
+  /** Remove a section — its items lose their sectionName */
+  const deleteSection = (sectionName: string) => {
+    setLineItems((prev) =>
+      prev.map((item) =>
+        item.sectionName === sectionName ? { ...item, sectionName: '' } : item,
+      ),
+    );
+  };
+
+  /** Add a brand-new section with one empty item */
+  const confirmAddSection = () => {
+    const name = addingSectionName.trim();
+    if (!name) { setIsAddingSection(false); return; }
+    const newItem = emptyLine();
+    newItem.sectionName = name;
+    setLineItems((prev) => [...prev, newItem]);
+    setAddingSectionName('');
+    setIsAddingSection(false);
+  };
+
   const handleXlsxFile = useCallback(async (file: File) => {
     if (!file.name.match(/\.xlsx?$/i)) {
       setImportError(t('specifications.importXlsxWrongType'));
@@ -367,15 +421,37 @@ const SpecificationFormPage: React.FC = () => {
               if (!bySection.has(key)) bySection.set(key, []);
               bySection.get(key)!.push(item);
             }
+
+            // Fetch existing budget items to detect already-existing sections (avoid duplicates)
+            const existingItems = await financeApi.getBudgetItems(budget.id);
+            const existingSectionsByName = new Map<string, { id: string }>();
+            for (const ei of existingItems) {
+              if (ei.section && ei.name) {
+                existingSectionsByName.set(ei.name, { id: ei.id });
+              }
+            }
+
             let pushed = 0;
             for (const [sectionKey, sectionItems] of bySection) {
               const sectionLabel = sectionKey || (data.name.trim() || 'Спецификация');
-              const sectionHeader = await financeApi.createBudgetItem(budget.id, {
-                name: sectionLabel,
-                category: 'OTHER',
-                section: true,
-                plannedAmount: 0,
-              });
+
+              // Reuse existing section if one with the same name already exists in the budget
+              let sectionId: string;
+              const existingSection = existingSectionsByName.get(sectionLabel);
+              if (existingSection) {
+                sectionId = existingSection.id;
+              } else {
+                const sectionHeader = await financeApi.createBudgetItem(budget.id, {
+                  name: sectionLabel,
+                  category: 'OTHER',
+                  section: true,
+                  plannedAmount: 0,
+                });
+                sectionId = sectionHeader.id;
+                // Cache so subsequent sections in the same push don't re-create it
+                existingSectionsByName.set(sectionLabel, { id: sectionId });
+              }
+
               for (const item of sectionItems) {
                 await financeApi.createBudgetItem(budget.id, {
                   name: item.name,
@@ -384,7 +460,7 @@ const SpecificationFormPage: React.FC = () => {
                   section: false,
                   unit: item.unitOfMeasure,
                   quantity: item.quantity,
-                  sectionId: sectionHeader.id,
+                  sectionId: sectionId,
                   plannedAmount: 0,
                 });
                 pushed++;
@@ -533,6 +609,9 @@ const SpecificationFormPage: React.FC = () => {
                 >
                   {t('specifications.importXlsx')}
                 </Button>
+                <Button type="button" variant="secondary" size="sm" iconLeft={<FolderPlus size={14} />} onClick={() => setIsAddingSection(true)}>
+                  Добавить раздел
+                </Button>
                 <Button type="button" variant="secondary" size="sm" iconLeft={<Plus size={14} />} onClick={addLineItem}>
                   {t('forms.specification.addLineItem')}
                 </Button>
@@ -590,21 +669,38 @@ const SpecificationFormPage: React.FC = () => {
             )}
 
             {/* Column headers */}
-            <div className="hidden lg:grid grid-cols-[2.5rem_2fr_1.2fr_0.9fr_1.2fr_0.5fr_0.6fr_0.6fr_1fr_0.8fr_auto] gap-2 px-2 mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            <div className="hidden lg:grid grid-cols-[2.5rem_2fr_1.2fr_0.9fr_1.2fr_0.6fr_0.5fr_0.6fr_1fr_0.8fr_auto] gap-2 px-2 mb-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">
               <div>{t('specifications.colPosition')}</div>
               <div>{t('specifications.itemColName')}</div>
               <div>{t('specifications.itemColBrand')}</div>
               <div>{t('specifications.itemColProductCode')}</div>
               <div>{t('specifications.itemColManufacturer')}</div>
-              <div>{t('specifications.itemColQty')}</div>
               <div>{t('specifications.itemColUnit')}</div>
+              <div>{t('specifications.itemColQty')}</div>
               <div>{t('specifications.itemColWeight')}</div>
               <div>{t('specifications.colNotes')}</div>
               <div>{t('specifications.colItemType')}</div>
               <div />
             </div>
 
-            {/* Rows — with section dividers when items come from PDF */}
+            {/* "Add section" inline form */}
+            {isAddingSection && (
+              <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-300 dark:border-green-700">
+                <FolderPlus size={14} className="text-green-600 dark:text-green-400 flex-shrink-0" />
+                <input
+                  autoFocus
+                  placeholder="Название раздела..."
+                  value={addingSectionName}
+                  onChange={(e) => setAddingSectionName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') confirmAddSection(); if (e.key === 'Escape') setIsAddingSection(false); }}
+                  className="flex-1 h-7 px-2 text-sm border border-green-300 dark:border-green-600 rounded bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-1 focus:ring-green-500"
+                />
+                <Button type="button" size="sm" onClick={confirmAddSection}>Создать</Button>
+                <button type="button" onClick={() => setIsAddingSection(false)} className="text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300">Отмена</button>
+              </div>
+            )}
+
+            {/* Rows — with interactive section dividers */}
             <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
               {(() => {
                 const rows: React.ReactNode[] = [];
@@ -615,10 +711,55 @@ const SpecificationFormPage: React.FC = () => {
                   if (section !== lastSection) {
                     lastSection = section;
                     if (section) {
+                      const isEditing = editingSection === section;
                       rows.push(
-                        <div key={`section-${idx}`} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800">
+                        <div key={`section-${section}`} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 group">
                           <Tag size={13} className="text-primary-600 dark:text-primary-400 flex-shrink-0" />
-                          <span className="text-xs font-semibold text-primary-800 dark:text-primary-300 leading-tight">{section}</span>
+                          {isEditing ? (
+                            <input
+                              autoFocus
+                              value={editingSectionName}
+                              onChange={(e) => setEditingSectionName(e.target.value)}
+                              onBlur={() => renameSection(section, editingSectionName)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') renameSection(section, editingSectionName); if (e.key === 'Escape') setEditingSection(null); }}
+                              className="flex-1 h-6 px-2 text-xs font-semibold border border-primary-300 dark:border-primary-600 rounded bg-white dark:bg-neutral-900 text-primary-800 dark:text-primary-200 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                            />
+                          ) : (
+                            <span
+                              className="text-xs font-semibold text-primary-800 dark:text-primary-300 leading-tight cursor-pointer hover:underline"
+                              onDoubleClick={() => { setEditingSection(section); setEditingSectionName(section); }}
+                              title="Двойной клик для переименования"
+                            >
+                              {section}
+                            </span>
+                          )}
+                          {/* Section action buttons */}
+                          <div className="ml-auto flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              type="button"
+                              onClick={() => addItemToSection(section)}
+                              className="p-1 text-primary-500 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 rounded"
+                              title="Добавить позицию в раздел"
+                            >
+                              <Plus size={13} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setEditingSection(section); setEditingSectionName(section); }}
+                              className="p-1 text-primary-500 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 rounded"
+                              title="Переименовать раздел"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteSection(section)}
+                              className="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                              title="Удалить раздел"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
                         </div>
                       );
                     }
@@ -626,7 +767,7 @@ const SpecificationFormPage: React.FC = () => {
                   rows.push(
                     <div
                       key={idx}
-                      className="grid grid-cols-1 lg:grid-cols-[2.5rem_2fr_1.2fr_0.9fr_1.2fr_0.5fr_0.6fr_0.6fr_1fr_0.8fr_auto] gap-2 items-center p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700"
+                      className="grid grid-cols-1 lg:grid-cols-[2.5rem_2fr_1.2fr_0.9fr_1.2fr_0.6fr_0.5fr_0.6fr_1fr_0.8fr_auto] gap-2 items-center p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700"
                     >
                       {/* Position (read-only badge from PDF) */}
                       <div className="flex items-center justify-center">
@@ -670,6 +811,15 @@ const SpecificationFormPage: React.FC = () => {
                           onChange={(e) => updateLineItem(idx, 'manufacturer', e.target.value)}
                         />
                       </div>
+                      {/* Unit (before Qty — matches ГОСТ document column order) */}
+                      <div>
+                        <label className="lg:hidden text-xs text-neutral-500 dark:text-neutral-400 mb-0.5 block">{t('specifications.itemColUnit')}</label>
+                        <Input
+                          placeholder="шт"
+                          value={item.unitOfMeasure}
+                          onChange={(e) => updateLineItem(idx, 'unitOfMeasure', e.target.value)}
+                        />
+                      </div>
                       {/* Qty */}
                       <div>
                         <label className="lg:hidden text-xs text-neutral-500 dark:text-neutral-400 mb-0.5 block">{t('specifications.itemColQty')}</label>
@@ -678,15 +828,6 @@ const SpecificationFormPage: React.FC = () => {
                           placeholder="1"
                           value={item.quantity}
                           onChange={(e) => updateLineItem(idx, 'quantity', e.target.value)}
-                        />
-                      </div>
-                      {/* Unit */}
-                      <div>
-                        <label className="lg:hidden text-xs text-neutral-500 dark:text-neutral-400 mb-0.5 block">{t('specifications.itemColUnit')}</label>
-                        <Input
-                          placeholder="шт"
-                          value={item.unitOfMeasure}
-                          onChange={(e) => updateLineItem(idx, 'unitOfMeasure', e.target.value)}
                         />
                       </div>
                       {/* Weight */}

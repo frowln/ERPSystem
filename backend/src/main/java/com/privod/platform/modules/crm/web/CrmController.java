@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/crm")
+@RequestMapping("/api/crm")
 @RequiredArgsConstructor
 @Tag(name = "CRM", description = "Customer Relationship Management endpoints")
 public class CrmController {

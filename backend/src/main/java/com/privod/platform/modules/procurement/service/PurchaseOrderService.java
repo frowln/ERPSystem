@@ -349,6 +349,13 @@ public class PurchaseOrderService {
     }
 
     @Transactional(readOnly = true)
+    public List<PurchaseOrderResponse> listAll() {
+        UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
+        return purchaseOrderRepository.findByOrganizationIdAndDeletedFalseOrderByCreatedAtDesc(organizationId)
+                .stream().map(this::buildFullResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<PurchaseOrderResponse> getByProject(UUID projectId) {
         UUID organizationId = SecurityUtils.requireCurrentOrganizationId();
         validateProjectTenant(projectId, organizationId);

@@ -18,7 +18,9 @@ import CvrView from './budgetDetail/CvrView';
 import ValueEngineeringPanel from './ValueEngineeringPanel';
 import { Camera, Download, Settings, Plus, ShieldCheck, ShieldAlert, FileSpreadsheet, Upload, AlertCircle, X, FileSignature, Wallet, SlidersHorizontal } from 'lucide-react';
 
-// ─── ЛСР xlsx parser ─────────────────────────────────────────────────────────
+// ─── ЛСР xlsx parser (ГРАНД-Смета Методика 2020 РИМ) ───────────────────────
+
+type LsrItemType = 'EQUIPMENT' | 'WORK' | 'MATERIAL';
 
 interface LsrRow {
   name: string;
@@ -26,8 +28,306 @@ interface LsrRow {
   quantity: number;
   estimatePrice: number; // цена за единицу из ЛСР
   total: number;         // quantity × estimatePrice
+  type: LsrItemType;
+  code: string;
+  section: string;
 }
 
+/** Parse a number from ГРАНД-Смета xlsx cell: strips spaces, replaces comma → dot */
+function parseGsNum(s: string): number {
+  return parseFloat(s.replace(/\s/g, '').replace(/,/g, '.').replace(/\r/g, '')) || 0;
+}
+
+/** Clean cell value: trim + strip hidden \r and \n */
+function cellVal(row: string[], idx: number): string {
+  if (idx < 0 || idx >= row.length) return '';
+  return (row[idx] ?? '').replace(/[\r\n]/g, '').trim();
+}
+
+/**
+ * Detect position type from position number (col0) and code (col1).
+ * Returns null if this row should be skipped.
+ */
+function detectPositionType(pos: string, code: string): LsrItemType | null {
+  // Normative rows (pos = "Н" or "н")
+  if (/^[Нн]$/i.test(pos)) return null;
+  // Auxiliary rows with decimal pos (3.1, 4.2) and codes like 421/пр_...
+  if (/^\d+\.\d+/.test(pos) && /^\d+\//.test(code)) return null;
+  // Equipment: pos ends with О/о/O/o (Russian or Latin)
+  if (/^\d+[ОоOo]$/i.test(pos)) return 'EQUIPMENT';
+  // ГЭСН works
+  if (/^Г[ЭЕ]СН/i.test(code)) return 'WORK';
+  // ТЦ materials
+  if (/^ТЦ[_-]/i.test(code)) return 'MATERIAL';
+  // ФСБЦ materials
+  if (/^ФСБЦ/i.test(code)) return 'MATERIAL';
+  // ФЕР / ТЕР — works
+  if (/^[ФТ]ЕР/i.test(code)) return 'WORK';
+  // Generic numeric position with some code — treat as work
+  if (/^\d+$/.test(pos) && code.length > 2) return 'WORK';
+  return null;
+}
+
+/**
+ * Check if a row is a section header: all-caps Cyrillic in col2, no position number.
+ */
+function isSectionHeader(pos: string, code: string, name: string): boolean {
+  if (pos || code) return false;
+  if (!name || name.length < 5) return false;
+  // Section headers: mostly uppercase Cyrillic with spaces/punctuation
+  return /^[А-ЯЁ\s\-–—.,:;!?()№«»"0-9]+$/u.test(name) && name.length > 8;
+}
+
+/**
+ * Scan forward from a ГЭСН work position to find its "Всего по позиции" summary row.
+ * Returns the unit price from col13 of that summary row, or 0.
+ */
+function findVsegoPoPozitiRow(rows: string[][], startRow: number, maxScan: number): number {
+  for (let r = startRow + 1; r < Math.min(startRow + maxScan, rows.length); r++) {
+    const name = cellVal(rows[r], 2).toLowerCase();
+    if (name.includes('всего по позиции')) {
+      return parseGsNum(cellVal(rows[r], 13)) || parseGsNum(cellVal(rows[r], 15));
+    }
+    // If we hit another position row (has code in col1), stop scanning
+    const nextCode = cellVal(rows[r], 1);
+    const nextPos = cellVal(rows[r], 0);
+    if (nextPos && nextCode && /^[А-Яа-яA-Za-z]/.test(nextCode)) break;
+  }
+  return 0;
+}
+
+/**
+ * Extract the primary equipment TYPE word from a name string.
+ * Returns the canonical type keyword (lowercase), or null if not identifiable.
+ */
+function extractEquipmentType(name: string): string | null {
+  const s = name.toLowerCase();
+  // Order matters: check multi-word types first, then single-word
+  const typePatterns: [RegExp, string][] = [
+    [/модуль\s+управлен/,    'модуль управления'],
+    [/узел\s+регулирующ/,    'узел регулирующий'],
+    [/узел\s+обвязки/,       'узел обвязки'],
+    [/шкаф\s+автоматик/,     'шкаф автоматики'],
+    [/шкаф\s+управлен/,      'шкаф управления'],
+    [/теплообменник/,         'теплообменник'],
+    [/установк/,             'установка'],       // приточная установка, etc.
+    [/вентилятор/,           'вентилятор'],
+    [/клапан/,               'клапан'],
+    [/насос/,                'насос'],
+    [/кондиционер/,          'кондиционер'],
+    [/калорифер/,            'калорифер'],
+    [/фильтр/,              'фильтр'],
+    [/воздуховод/,           'воздуховод'],
+    [/глушител/,             'глушитель'],
+    [/задвижк/,              'задвижка'],
+    [/кабел/,                'кабель'],
+    [/датчик/,               'датчик'],
+    [/электроконвектор/,     'конвектор'],
+    [/конвектор/,            'конвектор'],
+    [/агрегат/,              'агрегат'],
+    [/термостат/,            'термостат'],
+    [/коллектор/,            'коллектор'],
+    [/наружный\s+блок/,      'наружный блок'],
+    [/внутренний\s+(?:кассетный\s+)?блок/, 'внутренний блок'],
+    [/блок/,                 'блок'],
+  ];
+  for (const [pat, type] of typePatterns) {
+    if (pat.test(s)) return type;
+  }
+  return null;
+}
+
+/**
+ * Check if two equipment types are compatible for matching.
+ * Returns true if types are the same or both are null (unknown).
+ * Returns false if one is known and they conflict.
+ */
+function areEquipmentTypesCompatible(typeA: string | null, typeB: string | null): boolean {
+  // If either is unknown, be conservative — don't reject, but don't boost either
+  if (!typeA || !typeB) return true;
+  // Exact match
+  if (typeA === typeB) return true;
+  // "наружный блок" and "внутренний блок" are DIFFERENT
+  if ((typeA === 'наружный блок' && typeB === 'внутренний блок') ||
+      (typeA === 'внутренний блок' && typeB === 'наружный блок')) return false;
+  // "блок" is generic — compatible with наружный/внутренний блок
+  if ((typeA === 'блок' && typeB.includes('блок')) ||
+      (typeB === 'блок' && typeA.includes('блок'))) return true;
+  // "модуль управления" and "шкаф автоматики"/"шкаф управления" are automation — NOT equipment
+  const automationTypes = ['модуль управления', 'шкаф автоматики', 'шкаф управления'];
+  const equipmentTypes = ['установка', 'вентилятор', 'клапан', 'насос', 'кондиционер',
+    'калорифер', 'теплообменник', 'наружный блок', 'внутренний блок', 'блок',
+    'узел регулирующий', 'узел обвязки', 'конвектор', 'агрегат'];
+  if (automationTypes.includes(typeA) && equipmentTypes.includes(typeB)) return false;
+  if (equipmentTypes.includes(typeA) && automationTypes.includes(typeB)) return false;
+  // "вентилятор" and "установка" are DIFFERENT equipment — a fan is not a supply unit
+  if ((typeA === 'вентилятор' && typeB === 'установка') ||
+      (typeA === 'установка' && typeB === 'вентилятор')) return false;
+  // "узел регулирующий" should not match "конвектор"
+  if ((typeA === 'узел регулирующий' && typeB === 'конвектор') ||
+      (typeA === 'конвектор' && typeB === 'узел регулирующий')) return false;
+  // "кабель" should not match anything else
+  if (typeA === 'кабель' || typeB === 'кабель') return typeA === typeB;
+  // Different specific types — only match if same
+  return typeA === typeB;
+}
+
+/**
+ * Extract L= airflow value (e.g., "L= 8100" → 8100, "L=12000" → 12000).
+ */
+function extractAirflow(name: string): number | null {
+  const m = name.match(/l\s*=\s*([\d\s]+)/i);
+  if (!m) return null;
+  return parseInt(m[1].replace(/\s/g, ''), 10) || null;
+}
+
+/**
+ * Fuzzy match an LSR item name against an existing BudgetItem name.
+ * Returns a match score: 0 = no match, higher = better match.
+ *
+ * Matching rules (in priority order):
+ * 1. Exact match → 100
+ * 2. L= airflow value match + compatible type → 90
+ * 3. System designation + compatible equipment type → 85
+ * 4. System designation match WITHOUT compatible type → 0 (reject!)
+ * 5. Brand match + compatible equipment type → 70
+ * 6. Prefix match → 60
+ * 7. Common words match (3+) → 40-50
+ */
+function fuzzyMatchScore(lsrName: string, fmName: string): number {
+  const a = lsrName.toLowerCase().replace(/\s+/g, ' ').trim();
+  const b = fmName.toLowerCase().replace(/\s+/g, ' ').trim();
+
+  // Exact match
+  if (a === b) return 100;
+
+  const typeA = extractEquipmentType(a);
+  const typeB = extractEquipmentType(b);
+  const typesCompatible = areEquipmentTypesCompatible(typeA, typeB);
+
+  // L= airflow value match — very reliable identifier
+  const airflowA = extractAirflow(a);
+  const airflowB = extractAirflow(b);
+  if (airflowA && airflowB && airflowA === airflowB && typesCompatible) return 90;
+
+  // System designation match (П1.1, В2.1, К3, ВК1, ОВ2, etc.)
+  // IMPORTANT: Only match if equipment types are compatible!
+  const sysPattern = /\b([а-яА-Я]{1,3}\d+(?:\.\d+)?)\b/;
+  const sysA = a.match(sysPattern)?.[1];
+  const sysB = b.match(sysPattern)?.[1];
+  if (sysA && sysB && sysA === sysB) {
+    // System code matches — but MUST also have compatible equipment type
+    if (typesCompatible && typeA && typeB) return 85;
+    // If types are explicitly incompatible, REJECT the match entirely
+    if (!typesCompatible) return 0;
+    // One or both types unknown — allow with lower confidence
+    return 50;
+  }
+
+  // Brand/model keyword match — but only if equipment types are compatible
+  const brandPatterns = [
+    /вероса/i, /\bвектор\b/i, /канал[- ]?пкв/i, /кром/i, /ктп/i,
+    /daikin/i, /grundfos/i, /danfoss/i, /schneider/i, /abb/i,
+    /siemens/i, /carrier/i, /systemair/i, /арктос/i, /лиссант/i,
+  ];
+  for (const bp of brandPatterns) {
+    if (bp.test(a) && bp.test(b)) {
+      if (!typesCompatible) return 0; // Same brand but different equipment type → reject
+      return 70;
+    }
+  }
+
+  // First 30 chars prefix match
+  const prefixLen = 30;
+  if (a.length >= prefixLen && b.length >= prefixLen && a.substring(0, prefixLen) === b.substring(0, prefixLen)) {
+    return 60;
+  }
+
+  // Common words match (3+ shared meaningful words of 3+ chars)
+  const wordsA = new Set(a.split(/[\s,;().\-–—/]+/).filter((w) => w.length >= 3));
+  const wordsB = new Set(b.split(/[\s,;().\-–—/]+/).filter((w) => w.length >= 3));
+  const common = [...wordsA].filter((w) => wordsB.has(w));
+  if (common.length >= 3) {
+    // Even for common-words match, reject if types are explicitly incompatible
+    if (!typesCompatible) return 0;
+    return 40 + Math.min(common.length, 10);
+  }
+
+  return 0;
+}
+
+/**
+ * Check if a BudgetItem belongs to an automation discipline (АОВ).
+ * Automation items (modules, controllers) are from АОВ specs and should be
+ * deprioritized when matching physical equipment from estimates.
+ */
+function isAutomationItem(item: BudgetItem, allItems: BudgetItem[]): boolean {
+  // Check item's own disciplineMark
+  if (item.disciplineMark) {
+    const mark = item.disciplineMark.toUpperCase();
+    if (mark.startsWith('АОВ') || mark.startsWith('АВТ') || mark.startsWith('АСУ')) return true;
+  }
+  // Check parent section's disciplineMark
+  if (item.parentId) {
+    const parent = allItems.find((p) => p.id === item.parentId && p.section);
+    if (parent?.disciplineMark) {
+      const mark = parent.disciplineMark.toUpperCase();
+      if (mark.startsWith('АОВ') || mark.startsWith('АВТ') || mark.startsWith('АСУ')) return true;
+    }
+  }
+  // Check item name for automation keywords
+  const name = item.name.toLowerCase();
+  if (/модуль\s+управлен/.test(name) || /шкаф\s+автоматик/.test(name) || /шкаф\s+управлен/.test(name)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Find the best fuzzy match for an LSR name among existing FM items.
+ * Returns the matched BudgetItem and score, or null if no good match.
+ *
+ * When multiple items have the same score, prefers items from equipment
+ * disciplines (ОВ, ИТП, ВК, etc.) over automation disciplines (АОВ).
+ */
+function findBestFmMatch(
+  lsrName: string,
+  existingItems: BudgetItem[],
+  threshold: number = 40,
+  allItems?: BudgetItem[],
+): { item: BudgetItem; score: number } | null {
+  const all = allItems ?? existingItems;
+  let bestItem: BudgetItem | null = null;
+  let bestScore = 0;
+  let bestIsAutomation = false;
+  for (const item of existingItems) {
+    if (item.section) continue;
+    const score = fuzzyMatchScore(lsrName, item.name);
+    if (score < threshold) continue;
+    const itemIsAutomation = isAutomationItem(item, all);
+    // Prefer higher score. On equal score, prefer non-automation (ОВ/ИТП) over automation (АОВ)
+    if (score > bestScore || (score === bestScore && bestIsAutomation && !itemIsAutomation)) {
+      bestScore = score;
+      bestItem = item;
+      bestIsAutomation = itemIsAutomation;
+    }
+  }
+  return bestScore >= threshold && bestItem ? { item: bestItem, score: bestScore } : null;
+}
+
+/**
+ * Parse ГРАНД-Смета Методика 2020 РИМ xlsx file.
+ *
+ * XLSX column layout:
+ * - col0: Position number (1, 2О, 3, 3.1, Н)
+ * - col1: Code/basis (ГЭСН..., ТЦ_..., ФСБЦ-...)
+ * - col2: Name
+ * - col7: Unit of measure
+ * - col8: Quantity per unit
+ * - col10: Total quantity
+ * - col13: Unit price
+ * - col15: Total price
+ */
 function parseLsrXlsx(file: File): Promise<LsrRow[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -40,64 +340,124 @@ function parseLsrXlsx(file: File): Promise<LsrRow[]> {
           header: 1, defval: '', raw: false,
         }) as unknown[][]).map((r) => r.map((c) => String(c ?? '').trim()));
 
-        // ── Ищем строку с заголовками ──
-        let hRow = -1;
-        let nameCol = -1, unitCol = -1, qtyCol = -1, priceCol = -1, totalCol = -1;
-
-        for (let r = 0; r < Math.min(rows.length, 30); r++) {
-          const row = rows[r].map((c) => c.toLowerCase());
-          const ni = row.findIndex((c) =>
-            c.includes('наименован') || c.includes('название') || c === 'name',
-          );
-          if (ni < 0) continue;
-
-          hRow = r; nameCol = ni;
-          unitCol = row.findIndex((c) => (c.includes('ед') && c.includes('изм')) || c === 'unit');
-          qtyCol  = row.findIndex((c) => c.includes('кол') || c === 'qty' || c.includes('количеств'));
-
-          // Цена — ищем "цена" или "стоимость ед" но НЕ "сумма"
-          priceCol = row.findIndex((c) =>
-            (c.includes('цена') || c.includes('расценк') || (c.includes('стоимость') && !c.includes('сумм')))
-            && !c.includes('сумм') && !c.includes('итог'),
-          );
-          // Сумма — последний столбец с "сумм" или "итог"
-          totalCol = row.findLastIndex((c) => c.includes('сумм') || c.includes('итог'));
-          break;
-        }
-
-        // Fallback: стандартный порядок ГРАНД-Сметы
-        // №|Шифр|Наименование|Ед.изм.|Кол-во|ЦенаЕд|Сумма
-        if (hRow < 0 || nameCol < 0) {
-          hRow = 0;
-          nameCol = 2; unitCol = 3; qtyCol = 4; priceCol = 5; totalCol = 6;
-        }
-
-        const col = (row: string[], idx: number) => (idx >= 0 ? row[idx] ?? '' : '');
-        const parseNum = (s: string) => parseFloat(s.replace(/\s/g, '').replace(',', '.')) || 0;
-
         const items: LsrRow[] = [];
-        for (let r = hRow + 1; r < rows.length; r++) {
+        let currentSection = '';
+
+        for (let r = 0; r < rows.length; r++) {
           const row = rows[r];
-          const rawName = col(row, nameCol);
-          if (!rawName || rawName.length < 3) continue;
-          // Пропускаем строки-заголовки разделов (все заглавные без цифр)
-          if (/^[А-ЯA-Z\s\-–—.,:;!?()]+$/.test(rawName) && rawName.length > 40) continue;
+          const pos = cellVal(row, 0);
+          const code = cellVal(row, 1);
+          const name = cellVal(row, 2);
 
-          const qty   = parseNum(col(row, qtyCol)) || 1;
-          const price = parseNum(col(row, priceCol));
-          const sum   = parseNum(col(row, totalCol));
-          // Если нет колонки цены, вычисляем из суммы ÷ qty
-          const estimatePrice = price > 0 ? price : (sum > 0 && qty > 0 ? sum / qty : 0);
-          if (estimatePrice === 0) continue; // пропускаем пустые строки
+          // Section in col0 (ГРАНД-Смета puts "Раздел N. ..." in column A, col2 may be empty)
+          if (pos && !code && /^раздел\s/i.test(pos)) {
+            currentSection = pos;
+            continue;
+          }
 
-          items.push({
-            name: rawName,
-            unit: col(row, unitCol) || 'шт',
-            quantity: qty,
-            estimatePrice,
-            total: estimatePrice * qty,
-          });
+          // Skip empty name rows
+          if (!name || name.length < 3) continue;
+
+          // Section header detection (col0 empty, col1 empty, col2 is ALL CAPS)
+          if (isSectionHeader(pos, code, name)) {
+            currentSection = name;
+            continue;
+          }
+          // Alternative section detection: sometimes section is in col0/col2 with "Раздел" keyword
+          if (!pos && !code && /^раздел\s/i.test(name)) {
+            currentSection = name;
+            continue;
+          }
+
+          // Skip summary/total rows
+          const nameLower = name.toLowerCase();
+          if (nameLower.startsWith('итого') || nameLower.startsWith('всего')) continue;
+          if (nameLower.includes('накладные расходы') || nameLower.includes('сметная прибыль')) continue;
+
+          // Detect position type
+          const posType = detectPositionType(pos, code);
+          if (!posType) continue;
+
+          const unit = cellVal(row, 7) || cellVal(row, 3) || 'шт';
+          const qtyPerUnit = parseGsNum(cellVal(row, 8));
+          const qtyTotal = parseGsNum(cellVal(row, 10));
+          const quantity = qtyTotal > 0 ? qtyTotal : (qtyPerUnit > 0 ? qtyPerUnit : 1);
+          const unitPrice = parseGsNum(cellVal(row, 13));
+          const totalPrice = parseGsNum(cellVal(row, 15));
+
+          if (posType === 'WORK') {
+            // For ГЭСН works: the price in the same row is often 0.
+            // Real price is in the next "Всего по позиции" row.
+            let workPrice = unitPrice;
+            let workTotal = totalPrice;
+            if (workPrice === 0 && workTotal === 0) {
+              // Scan forward for "Всего по позиции"
+              const vsegoPrice = findVsegoPoPozitiRow(rows, r, 100);
+              if (vsegoPrice > 0) {
+                workTotal = vsegoPrice;
+                workPrice = quantity > 0 ? workTotal / quantity : workTotal;
+              }
+            }
+            if (workPrice === 0 && workTotal === 0) continue; // skip if no price found
+
+            // If we have total but no unit price, compute it
+            if (workPrice === 0 && workTotal > 0 && quantity > 0) {
+              workPrice = workTotal / quantity;
+            }
+            // If we have unit price but no total, compute it
+            if (workTotal === 0 && workPrice > 0) {
+              workTotal = workPrice * quantity;
+            }
+
+            items.push({
+              name,
+              unit,
+              quantity,
+              estimatePrice: workPrice,
+              total: workTotal,
+              type: 'WORK',
+              code,
+              section: currentSection,
+            });
+          } else {
+            // EQUIPMENT or MATERIAL — price in col13, total in col15
+            let itemPrice = unitPrice;
+            let itemTotal = totalPrice;
+
+            // For equipment, also check rows ahead for "Всего по позиции"
+            if (posType === 'EQUIPMENT' && itemPrice === 0 && itemTotal === 0) {
+              for (let look = r + 1; look < Math.min(r + 5, rows.length); look++) {
+                const lookName = cellVal(rows[look], 2).toLowerCase();
+                if (lookName.includes('всего по позиции')) {
+                  itemTotal = parseGsNum(cellVal(rows[look], 13)) || parseGsNum(cellVal(rows[look], 15));
+                  itemPrice = quantity > 0 ? itemTotal / quantity : itemTotal;
+                  break;
+                }
+              }
+            }
+
+            if (itemPrice === 0 && itemTotal === 0) continue;
+
+            if (itemPrice === 0 && itemTotal > 0 && quantity > 0) {
+              itemPrice = itemTotal / quantity;
+            }
+            if (itemTotal === 0 && itemPrice > 0) {
+              itemTotal = itemPrice * quantity;
+            }
+
+            items.push({
+              name,
+              unit,
+              quantity,
+              estimatePrice: itemPrice,
+              total: itemTotal,
+              type: posType,
+              code,
+              section: currentSection,
+            });
+          }
         }
+
         resolve(items);
       } catch (err) {
         reject(err);
@@ -292,44 +652,81 @@ export default function FmPage() {
     onError: () => toast.error(t('errors.unexpectedError')),
   });
 
-  // ─── ЛСР → ФМ import mutation ──────────────────────────────────────────────
+  // ─── ЛСР → ФМ import mutation (with fuzzy matching) ────────────────────────
   const importLsrMutation = useMutation({
     mutationFn: async (rows: LsrRow[]) => {
-      // Текущие позиции ФМ для матчинга по наименованию
-      const existingItems = items as BudgetItem[];
-      const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
-      const existingMap = new Map(existingItems.map((i) => [normalize(i.name), i]));
+      const allBudgetItems = items as BudgetItem[];
+      const existingItems = allBudgetItems.filter((i) => !i.section);
+      const usedIds = new Set<string>(); // track already-matched FM items to avoid double-update
 
-      let updated = 0; let created = 0;
+      let updated = 0;
+      let created = 0;
+      let skipped = 0;
+
+      // Map LsrItemType → BudgetCategory
+      const categoryMap: Record<LsrItemType, string> = {
+        EQUIPMENT: 'EQUIPMENT',
+        WORK: 'LABOR',
+        MATERIAL: 'MATERIALS',
+      };
+      const itemTypeMap: Record<LsrItemType, string> = {
+        EQUIPMENT: 'EQUIPMENT',
+        WORK: 'WORKS',
+        MATERIAL: 'MATERIALS',
+      };
+
       for (const row of rows) {
-        const key = normalize(row.name);
-        const existing = existingMap.get(key);
-        if (existing) {
-          // Обновляем estimatePrice у существующей позиции ФМ
-          await financeApi.updateBudgetItem(budgetId!, existing.id, {
-            estimatePrice: row.estimatePrice,
-            quantity: existing.quantity ?? row.quantity,
-          } as any);
-          updated++;
-        } else {
-          // Создаём новую позицию с estimatePrice
-          await financeApi.createBudgetItem(budgetId!, {
-            name: row.name,
-            category: 'WORKS',
-            unit: row.unit,
-            quantity: row.quantity,
-            estimatePrice: row.estimatePrice,
-          });
-          created++;
+        try {
+          if (row.type === 'WORK') {
+            // WORKS: always create new FM items with category LABOR
+            await financeApi.createBudgetItem(budgetId!, {
+              name: row.name,
+              category: categoryMap[row.type],
+              itemType: itemTypeMap[row.type],
+              unit: row.unit,
+              quantity: row.quantity,
+              estimatePrice: row.estimatePrice,
+              plannedAmount: row.total,
+            });
+            created++;
+          } else {
+            // EQUIPMENT / MATERIAL: try to match existing FM items
+            const match = findBestFmMatch(row.name, existingItems.filter((i) => !usedIds.has(i.id)), 40, allBudgetItems);
+            if (match) {
+              // Update existing item's estimate price
+              await financeApi.updateBudgetItem(budgetId!, match.item.id, {
+                estimatePrice: row.estimatePrice,
+                quantity: match.item.quantity ?? row.quantity,
+              } as any);
+              usedIds.add(match.item.id);
+              updated++;
+            } else {
+              // No match — create new item
+              await financeApi.createBudgetItem(budgetId!, {
+                name: row.name,
+                category: categoryMap[row.type],
+                itemType: itemTypeMap[row.type],
+                unit: row.unit,
+                quantity: row.quantity,
+                estimatePrice: row.estimatePrice,
+                plannedAmount: row.total,
+              });
+              created++;
+            }
+          }
+        } catch {
+          skipped++;
         }
       }
-      return { updated, created };
+      return { updated, created, skipped };
     },
-    onSuccess: ({ updated, created }) => {
+    onSuccess: ({ updated, created, skipped }) => {
       queryClient.invalidateQueries({ queryKey: ['budget-items', budgetId] });
-      toast.success(t('finance.fm.lsrImportSuccess', {
-        updated: String(updated), created: String(created),
-      }));
+      const msg = t('finance.fm.lsrImportSuccess', {
+        updated: String(updated),
+        created: String(created),
+      }) + (skipped > 0 ? ` (${t('finance.fm.lsrSkipped', { count: String(skipped) })})` : '');
+      toast.success(msg);
       setLsrImportOpen(false);
       setLsrRows([]);
       setLsrFile('');
@@ -634,7 +1031,7 @@ export default function FmPage() {
       {/* ─── ЛСР Import Modal ─────────────────────────────────────────────── */}
       {lsrImportOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col mx-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col mx-4">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
               <div>
@@ -700,70 +1097,136 @@ export default function FmPage() {
                     <li>{t('finance.fm.lsrInfo1')}</li>
                     <li>{t('finance.fm.lsrInfo2')}</li>
                     <li>{t('finance.fm.lsrInfo3')}</li>
+                    <li>{t('finance.fm.lsrInfo4')}</li>
+                    <li>{t('finance.fm.lsrInfo5')}</li>
                   </ul>
                 </div>
               )}
 
               {/* Preview table */}
-              {lsrRows.length > 0 && (
-                <div>
-                  <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-2">
-                    {t('finance.fm.lsrPreview', { count: String(lsrRows.length) })}
-                  </p>
-                  <div className="overflow-auto max-h-64 rounded-lg border border-neutral-200 dark:border-neutral-700">
-                    <table className="w-full text-xs">
-                      <thead className="sticky top-0 bg-neutral-50 dark:bg-neutral-800">
-                        <tr>
-                          <th className="px-3 py-2 text-left font-medium text-neutral-500 dark:text-neutral-400">{t('finance.fm.lsrColName')}</th>
-                          <th className="px-3 py-2 text-center font-medium text-neutral-500 dark:text-neutral-400 w-16">{t('finance.fm.lsrColUnit')}</th>
-                          <th className="px-3 py-2 text-right font-medium text-neutral-500 dark:text-neutral-400 w-20">{t('finance.fm.lsrColQty')}</th>
-                          <th className="px-3 py-2 text-right font-medium text-neutral-500 dark:text-neutral-400 w-28">{t('finance.fm.lsrColPrice')}</th>
-                          <th className="px-3 py-2 text-right font-medium text-neutral-500 dark:text-neutral-400 w-28">{t('finance.fm.lsrColTotal')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {lsrRows.map((row, i) => {
-                          const existingMatch = (items as BudgetItem[]).some(
-                            (bi) => bi.name.toLowerCase().trim() === row.name.toLowerCase().trim(),
-                          );
-                          return (
-                            <tr key={i} className={`border-t border-neutral-100 dark:border-neutral-800 ${existingMatch ? 'bg-green-50 dark:bg-green-900/10' : ''}`}>
-                              <td className="px-3 py-1.5 text-neutral-800 dark:text-neutral-200">
-                                {row.name}
-                                {existingMatch && (
-                                  <span className="ml-1.5 text-[10px] text-green-600 dark:text-green-400 font-medium">↻ обновит цену</span>
-                                )}
-                              </td>
-                              <td className="px-3 py-1.5 text-center text-neutral-500">{row.unit}</td>
-                              <td className="px-3 py-1.5 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                                {new Intl.NumberFormat('ru-RU').format(row.quantity)}
-                              </td>
-                              <td className="px-3 py-1.5 text-right tabular-nums text-blue-700 dark:text-blue-400 font-medium">
-                                {new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(row.estimatePrice)}
-                              </td>
-                              <td className="px-3 py-1.5 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
-                                {new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(row.total)}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                      <tfoot className="sticky bottom-0 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700">
-                        <tr>
-                          <td className="px-3 py-2 font-semibold text-neutral-900 dark:text-neutral-100" colSpan={4}>
-                            {t('finance.fm.lsrTotalLabel')}
-                          </td>
-                          <td className="px-3 py-2 text-right tabular-nums font-semibold text-neutral-900 dark:text-neutral-100">
-                            {new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(
-                              lsrRows.reduce((s, r) => s + r.total, 0),
-                            )}
-                          </td>
-                        </tr>
-                      </tfoot>
-                    </table>
+              {lsrRows.length > 0 && (() => {
+                // Pre-compute stats and matches
+                const allBudgetItemsPreview = items as BudgetItem[];
+                const nonSectionItems = allBudgetItemsPreview.filter((i) => !i.section);
+                const matchResults = lsrRows.map((row) => {
+                  if (row.type === 'WORK') return { action: 'create' as const, match: null };
+                  const m = findBestFmMatch(row.name, nonSectionItems, 40, allBudgetItemsPreview);
+                  return m ? { action: 'update' as const, match: m } : { action: 'create' as const, match: null };
+                });
+                const updateCount = matchResults.filter((m) => m.action === 'update').length;
+                const createCount = matchResults.filter((m) => m.action === 'create').length;
+                const workCount = lsrRows.filter((r) => r.type === 'WORK').length;
+                const equipCount = lsrRows.filter((r) => r.type === 'EQUIPMENT').length;
+                const matCount = lsrRows.filter((r) => r.type === 'MATERIAL').length;
+
+                const typeBadge = (type: LsrItemType) => {
+                  const cls = type === 'WORK'
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                    : type === 'EQUIPMENT'
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400';
+                  const label = type === 'WORK' ? t('finance.fm.lsrTypeWork') : type === 'EQUIPMENT' ? t('finance.fm.lsrTypeEquipment') : t('finance.fm.lsrTypeMaterial');
+                  return <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${cls}`}>{label}</span>;
+                };
+
+                return (
+                  <div>
+                    <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-1">
+                      {t('finance.fm.lsrPreview', { count: String(lsrRows.length) })}
+                    </p>
+                    {/* Stats strip */}
+                    <div className="flex items-center gap-3 mb-2 text-[11px]">
+                      <span className="text-blue-600 dark:text-blue-400">{t('finance.fm.lsrStatsWorks')}: {workCount}</span>
+                      <span className="text-amber-600 dark:text-amber-400">{t('finance.fm.lsrStatsEquip')}: {equipCount}</span>
+                      <span className="text-teal-600 dark:text-teal-400">{t('finance.fm.lsrStatsMat')}: {matCount}</span>
+                      <span className="text-neutral-400 dark:text-neutral-500">|</span>
+                      <span className="text-green-600 dark:text-green-400">{t('finance.fm.lsrStatsUpdate')}: {updateCount}</span>
+                      <span className="text-violet-600 dark:text-violet-400">{t('finance.fm.lsrStatsCreate')}: {createCount}</span>
+                    </div>
+                    <div className="overflow-auto max-h-72 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                      <table className="w-full text-xs">
+                        <thead className="sticky top-0 bg-neutral-50 dark:bg-neutral-800 z-10">
+                          <tr>
+                            <th className="px-2 py-2 text-left font-medium text-neutral-500 dark:text-neutral-400 w-16">{t('finance.fm.lsrColType')}</th>
+                            <th className="px-2 py-2 text-left font-medium text-neutral-500 dark:text-neutral-400 w-24">{t('finance.fm.lsrColCode')}</th>
+                            <th className="px-2 py-2 text-left font-medium text-neutral-500 dark:text-neutral-400">{t('finance.fm.lsrColName')}</th>
+                            <th className="px-2 py-2 text-center font-medium text-neutral-500 dark:text-neutral-400 w-14">{t('finance.fm.lsrColUnit')}</th>
+                            <th className="px-2 py-2 text-right font-medium text-neutral-500 dark:text-neutral-400 w-16">{t('finance.fm.lsrColQty')}</th>
+                            <th className="px-2 py-2 text-right font-medium text-neutral-500 dark:text-neutral-400 w-24">{t('finance.fm.lsrColPrice')}</th>
+                            <th className="px-2 py-2 text-right font-medium text-neutral-500 dark:text-neutral-400 w-24">{t('finance.fm.lsrColTotal')}</th>
+                            <th className="px-2 py-2 text-center font-medium text-neutral-500 dark:text-neutral-400 w-20">{t('finance.fm.lsrColAction')}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(() => {
+                            let lastSection = '';
+                            return lsrRows.map((row, i) => {
+                              const mr = matchResults[i];
+                              const sectionChanged = row.section && row.section !== lastSection;
+                              if (sectionChanged) lastSection = row.section;
+                              const isUpdate = mr.action === 'update';
+
+                              return (
+                                <React.Fragment key={i}>
+                                  {sectionChanged && (
+                                    <tr className="bg-neutral-100 dark:bg-neutral-800/70">
+                                      <td colSpan={8} className="px-3 py-1.5 text-[11px] font-semibold text-neutral-600 dark:text-neutral-300 uppercase tracking-wide">
+                                        {row.section}
+                                      </td>
+                                    </tr>
+                                  )}
+                                  <tr className={`border-t border-neutral-100 dark:border-neutral-800 ${isUpdate ? 'bg-green-50 dark:bg-green-900/10' : ''}`}>
+                                    <td className="px-2 py-1.5">{typeBadge(row.type)}</td>
+                                    <td className="px-2 py-1.5 text-neutral-400 dark:text-neutral-500 font-mono truncate max-w-[120px]" title={row.code}>{row.code}</td>
+                                    <td className="px-2 py-1.5 text-neutral-800 dark:text-neutral-200">
+                                      <span className="line-clamp-2">{row.name}</span>
+                                      {isUpdate && mr.match && (
+                                        <span className="ml-1.5 text-[10px] text-green-600 dark:text-green-400 font-medium">
+                                          {t('finance.fm.lsrMatchUpdate')} ({mr.match.score}%)
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className="px-2 py-1.5 text-center text-neutral-500">{row.unit}</td>
+                                    <td className="px-2 py-1.5 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
+                                      {new Intl.NumberFormat('ru-RU').format(row.quantity)}
+                                    </td>
+                                    <td className="px-2 py-1.5 text-right tabular-nums text-blue-700 dark:text-blue-400 font-medium">
+                                      {new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(row.estimatePrice)}
+                                    </td>
+                                    <td className="px-2 py-1.5 text-right tabular-nums text-neutral-700 dark:text-neutral-300">
+                                      {new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(row.total)}
+                                    </td>
+                                    <td className="px-2 py-1.5 text-center">
+                                      {isUpdate ? (
+                                        <span className="text-[10px] text-green-600 dark:text-green-400 font-medium">{t('finance.fm.lsrActionUpdate')}</span>
+                                      ) : (
+                                        <span className="text-[10px] text-violet-600 dark:text-violet-400 font-medium">{t('finance.fm.lsrActionCreate')}</span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                </React.Fragment>
+                              );
+                            });
+                          })()}
+                        </tbody>
+                        <tfoot className="sticky bottom-0 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700 z-10">
+                          <tr>
+                            <td className="px-3 py-2 font-semibold text-neutral-900 dark:text-neutral-100" colSpan={6}>
+                              {t('finance.fm.lsrTotalLabel')}
+                            </td>
+                            <td className="px-3 py-2 text-right tabular-nums font-semibold text-neutral-900 dark:text-neutral-100">
+                              {new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(
+                                lsrRows.reduce((s, r) => s + r.total, 0),
+                              )}
+                            </td>
+                            <td />
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* Footer */}

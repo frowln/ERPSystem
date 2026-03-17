@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/email")
+@RequestMapping("/api/email")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'ENGINEER', 'ACCOUNTANT')")
 @Tag(name = "Email", description = "Email integration (Yandex IMAP/SMTP)")

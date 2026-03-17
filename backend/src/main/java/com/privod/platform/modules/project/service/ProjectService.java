@@ -3,6 +3,7 @@ package com.privod.platform.modules.project.service;
 import com.privod.platform.infrastructure.audit.AuditService;
 import com.privod.platform.infrastructure.security.SecurityUtils;
 import com.privod.platform.modules.auth.repository.UserRepository;
+import com.privod.platform.modules.accounting.repository.CounterpartyRepository;
 import com.privod.platform.modules.notification.service.WebSocketNotificationService;
 import com.privod.platform.modules.project.domain.Project;
 import com.privod.platform.modules.task.domain.TaskStatus;
@@ -53,6 +54,7 @@ public class ProjectService {
     private final AuditService auditService;
     private final WebSocketNotificationService wsNotificationService;
     private final ProjectFinancialService financialService;
+    private final CounterpartyRepository counterpartyRepository;
 
     @Transactional(readOnly = true)
     public Page<ProjectResponse> findAll(String search, ProjectStatus status, ProjectType type,
@@ -144,6 +146,9 @@ public class ProjectService {
         }
         if (request.customerId() != null) {
             project.setCustomerId(request.customerId());
+            String cpName = counterpartyRepository.findByIdAndOrganizationIdAndDeletedFalse(request.customerId(), currentOrgId)
+                    .map(cp -> cp.getName()).orElse(null);
+            if (cpName != null) project.setCustomerName(cpName);
         }
         if (request.managerId() != null) {
             project.setManagerId(request.managerId());
@@ -414,6 +419,13 @@ public class ProjectService {
                     .constructionKind(request.constructionKind())
                     .priority(request.priority() != null ? request.priority() : ProjectPriority.NORMAL)
                     .build();
+
+            // Resolve customer name from customerId
+            if (request.customerId() != null) {
+                String cpName = counterpartyRepository.findByIdAndOrganizationIdAndDeletedFalse(request.customerId(), organizationId)
+                        .map(cp -> cp.getName()).orElse(null);
+                if (cpName != null) project.setCustomerName(cpName);
+            }
 
             try {
                 project = projectRepository.save(project);

@@ -503,22 +503,29 @@ export const documentStatusLowerLabels: Record<string, string> = i18nLabels(
 
 export const documentCategoryColorMap: Record<string, BadgeColor> = {
   CONTRACT: 'blue',
+  APPENDIX: 'blue',
   ESTIMATE: 'green',
+  LOCAL_ESTIMATE: 'green',
   SPECIFICATION: 'cyan',
   DRAWING: 'purple',
+  DESIGN_DOC: 'purple',
   PERMIT: 'orange',
   ACT: 'yellow',
   INVOICE: 'red',
+  COMMERCIAL_PROPOSAL: 'red',
   PROTOCOL: 'gray',
   CORRESPONDENCE: 'gray',
+  CERTIFICATE: 'orange',
+  SCHEDULE: 'yellow',
   PHOTO: 'cyan',
   REPORT: 'blue',
+  TECHNICAL: 'purple',
   OTHER: 'gray',
 };
 
 export const documentCategoryLabels: Record<string, string> = i18nLabels(
   'statusLabels.documentCategory',
-  ['CONTRACT', 'ESTIMATE', 'SPECIFICATION', 'DRAWING', 'PERMIT', 'ACT', 'INVOICE', 'PROTOCOL', 'CORRESPONDENCE', 'PHOTO', 'REPORT', 'OTHER'],
+  ['CONTRACT', 'APPENDIX', 'ESTIMATE', 'LOCAL_ESTIMATE', 'SPECIFICATION', 'DRAWING', 'DESIGN_DOC', 'PERMIT', 'ACT', 'INVOICE', 'COMMERCIAL_PROPOSAL', 'PROTOCOL', 'CORRESPONDENCE', 'CERTIFICATE', 'SCHEDULE', 'PHOTO', 'REPORT', 'TECHNICAL', 'OTHER'],
 );
 
 // =============================================================================

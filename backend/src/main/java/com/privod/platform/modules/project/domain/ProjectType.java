@@ -5,5 +5,11 @@ public enum ProjectType {
     COMMERCIAL,
     INDUSTRIAL,
     INFRASTRUCTURE,
-    RENOVATION
+    RENOVATION,
+    SOCIAL,
+    ADMINISTRATIVE,
+    WAREHOUSE,
+    LINEAR,
+    ENERGY,
+    MIXED
 }

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/design")
+@RequestMapping("/api/design")
 @RequiredArgsConstructor
 @Tag(name = "Проектирование", description = "Управление проектной документацией, рецензиями и разделами")
 public class DesignController {

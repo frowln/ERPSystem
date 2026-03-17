@@ -14,8 +14,10 @@ import type { Project } from '@/types';
 import toast from 'react-hot-toast';
 
 const DOCUMENT_CATEGORIES = [
-  'CONTRACT', 'ESTIMATE', 'SPECIFICATION', 'DRAWING', 'PERMIT',
-  'ACT', 'INVOICE', 'PROTOCOL', 'CORRESPONDENCE', 'PHOTO', 'REPORT', 'OTHER',
+  'CONTRACT', 'APPENDIX', 'ESTIMATE', 'LOCAL_ESTIMATE', 'SPECIFICATION',
+  'DRAWING', 'DESIGN_DOC', 'PERMIT', 'ACT', 'INVOICE', 'COMMERCIAL_PROPOSAL',
+  'PROTOCOL', 'CORRESPONDENCE', 'CERTIFICATE', 'SCHEDULE', 'PHOTO', 'REPORT',
+  'TECHNICAL', 'OTHER',
 ] as const;
 
 interface Props {
@@ -40,11 +42,12 @@ export const ProjectDocumentsTab: React.FC<Props> = ({ project: p }) => {
 
   const projectContracts = contractsData?.content ?? [];
   const projectDocuments = documentsData?.content ?? [];
+  const contractDocCount = projectDocuments.filter((d) => d.category === 'CONTRACT').length;
+  const totalContractsCount = projectContracts.length + contractDocCount;
 
-  const handleDownload = async (documentId: string) => {
+  const handleDownload = async (documentId: string, fileName?: string) => {
     try {
-      const url = await documentsApi.getDownloadUrl(documentId);
-      window.open(url, '_blank', 'noopener,noreferrer');
+      await documentsApi.downloadFile(documentId, fileName);
     } catch {
       toast.error(t('projects.documentsTab.downloadError'));
     }
@@ -58,7 +61,7 @@ export const ProjectDocumentsTab: React.FC<Props> = ({ project: p }) => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <MetricCard icon={<FileText size={18} />} label={t('projects.documentsTab.contracts')} value={String(projectContracts.length)} />
+        <MetricCard icon={<FileText size={18} />} label={t('projects.documentsTab.contracts')} value={String(totalContractsCount)} />
         <MetricCard icon={<FileText size={18} />} label={t('projects.documentsTab.documents')} value={String(projectDocuments.length)} />
         <MetricCard icon={<Calendar size={18} />} label={t('projects.documentsTab.lastUpdate')} value={formatDate(p?.updatedAt ?? '')} />
       </div>
@@ -145,7 +148,7 @@ export const ProjectDocumentsTab: React.FC<Props> = ({ project: p }) => {
                       size="sm"
                       iconLeft={<Download size={14} />}
                       disabled={!document.storagePath}
-                      onClick={() => void handleDownload(document.id)}
+                      onClick={() => void handleDownload(document.id, document.fileName)}
                     >
                       {t('common.download')}
                     </Button>

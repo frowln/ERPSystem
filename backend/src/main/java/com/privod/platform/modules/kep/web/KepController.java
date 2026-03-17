@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/kep")
+@RequestMapping("/api/kep")
 @RequiredArgsConstructor
 @Tag(name = "KEP", description = "Qualified Electronic Signature (КЭП) management")
 public class KepController {

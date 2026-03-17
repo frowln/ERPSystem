@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
+import { Trash2 } from 'lucide-react';
 import { PageHeader } from '@/design-system/components/PageHeader';
 import { Button } from '@/design-system/components/Button';
 import { FormField, Input, Textarea, Select } from '@/design-system/components/FormField';
@@ -14,12 +15,17 @@ import { t } from '@/i18n';
 
 const PD_SECTIONS = ['AR', 'KR', 'OViK', 'VK', 'EOM', 'SS', 'TH', 'GP', 'POS', 'EN', 'OTHER'] as const;
 
+const ALL_CATEGORIES = [
+  'CONTRACT', 'APPENDIX', 'ESTIMATE', 'LOCAL_ESTIMATE', 'SPECIFICATION',
+  'DRAWING', 'DESIGN_DOC', 'PERMIT', 'ACT', 'INVOICE', 'COMMERCIAL_PROPOSAL',
+  'PROTOCOL', 'CORRESPONDENCE', 'CERTIFICATE', 'SCHEDULE', 'PHOTO', 'REPORT',
+  'TECHNICAL', 'OTHER',
+] as const;
+
 const documentSchema = z.object({
   title: z.string().min(1, t('forms.document.validation.titleRequired')).max(300, t('forms.common.maxChars', { count: '300' })),
   description: z.string().max(2000, t('forms.common.maxChars', { count: '2000' })).optional(),
-  category: z.enum(['DRAWING', 'SPECIFICATION', 'CONTRACT', 'REPORT', 'PHOTO', 'CORRESPONDENCE', 'PERMIT', 'OTHER'], {
-    required_error: t('forms.document.validation.documentTypeRequired'),
-  }),
+  category: z.string().min(1, t('forms.document.validation.documentTypeRequired')),
   projectId: z.string().min(1, t('forms.document.validation.projectRequired')),
   documentNumber: z.string().max(200, t('forms.common.maxChars', { count: '200' })).optional(),
   tags: z.string().max(500, t('forms.common.maxChars', { count: '500' })).optional(),
@@ -29,16 +35,27 @@ const documentSchema = z.object({
 
 type DocumentFormData = z.input<typeof documentSchema>;
 
-const categoryOptions = [
-  { value: 'DRAWING', label: t('forms.document.documentTypes.drawing') },
-  { value: 'SPECIFICATION', label: t('forms.document.documentTypes.specification') },
-  { value: 'CONTRACT', label: t('forms.document.documentTypes.contract') },
-  { value: 'REPORT', label: t('forms.document.documentTypes.report') },
-  { value: 'PHOTO', label: t('forms.document.documentTypes.photo') },
-  { value: 'CORRESPONDENCE', label: t('forms.document.documentTypes.correspondence') },
-  { value: 'PERMIT', label: t('forms.document.documentTypes.permit') },
-  { value: 'OTHER', label: t('forms.document.documentTypes.other') },
-];
+const CATEGORY_LABELS: Record<string, string> = {
+  CONTRACT: 'Договор',
+  APPENDIX: 'Приложение',
+  ESTIMATE: 'Смета',
+  LOCAL_ESTIMATE: 'ЛСР',
+  SPECIFICATION: 'Спецификация',
+  DRAWING: 'Чертёж',
+  DESIGN_DOC: 'Проектная документация',
+  PERMIT: 'Разрешение',
+  ACT: 'Акт',
+  INVOICE: 'Счёт',
+  COMMERCIAL_PROPOSAL: 'Коммерческое предложение',
+  PROTOCOL: 'Протокол',
+  CORRESPONDENCE: 'Переписка',
+  CERTIFICATE: 'Сертификат',
+  SCHEDULE: 'График',
+  PHOTO: 'Фото',
+  REPORT: 'Отчёт',
+  TECHNICAL: 'Тех. документация',
+  OTHER: 'Прочее',
+};
 
 const DocumentFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,6 +63,7 @@ const DocumentFormPage: React.FC = () => {
   const queryClient = useQueryClient();
   const isEdit = Boolean(id);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
 
   const { data: existingDocument } = useQuery({
     queryKey: ['DOCUMENT', id],
@@ -57,6 +75,17 @@ const DocumentFormPage: React.FC = () => {
     queryKey: ['projects', 'document-form-options'],
     queryFn: () => projectsApi.getProjects({ size: 200 }),
   });
+
+  const categoryOptions = useMemo(
+    () => [
+      { value: '', label: t('forms.document.placeholderDocumentType') },
+      ...ALL_CATEGORIES.map((cat) => ({
+        value: cat,
+        label: CATEGORY_LABELS[cat] ?? cat,
+      })),
+    ],
+    [],
+  );
 
   const projectOptions = useMemo(
     () => [
@@ -91,7 +120,7 @@ const DocumentFormPage: React.FC = () => {
     defaultValues: {
       title: '',
       description: '',
-      category: undefined,
+      category: '',
       projectId: '',
       documentNumber: '',
       tags: '',
@@ -108,7 +137,7 @@ const DocumentFormPage: React.FC = () => {
     reset({
       title: existingDocument.title ?? '',
       description: existingDocument.description ?? '',
-      category: (existingDocument.category ?? 'OTHER') as DocumentFormData['category'],
+      category: existingDocument.category ?? 'OTHER',
       projectId: existingDocument.projectId ?? '',
       documentNumber: existingDocument.documentNumber ?? '',
       tags: Array.isArray(existingDocument.tags)
@@ -142,15 +171,29 @@ const DocumentFormPage: React.FC = () => {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: () => documentsApi.deleteDocument(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['DOCUMENTS'] });
+      toast.success(t('forms.document.deleteSuccess'));
+      navigate('/documents');
+    },
+    onError: () => {
+      toast.error(t('forms.document.deleteError'));
+    },
+  });
+
   const isSubmitting = createMutation.isPending || updateMutation.isPending || uploadMutation.isPending;
 
   const onSubmit = async (data: DocumentFormData) => {
+    // Send empty string for documentNumber so backend clears it (not undefined which is skipped)
+    const docNumber = data.documentNumber?.trim();
     const payload: UpsertDocumentRequest = {
       title: data.title.trim(),
       description: data.description?.trim() || undefined,
       category: data.category,
       projectId: data.projectId,
-      documentNumber: data.documentNumber?.trim() || undefined,
+      documentNumber: isEdit ? (docNumber || '') : (docNumber || undefined),
       tags: data.tags?.trim() || undefined,
       fileName: selectedFile?.name || existingDocument?.fileName,
       fileSize: selectedFile?.size || existingDocument?.fileSize,
@@ -228,9 +271,9 @@ const DocumentFormPage: React.FC = () => {
                 {...register('projectId')}
               />
             </FormField>
-            <FormField label={t('forms.document.labelCategory')} error={errors.documentNumber?.message}>
+            <FormField label={t('forms.document.labelDocumentNumber')} error={errors.documentNumber?.message}>
               <Input
-                placeholder={t('forms.document.placeholderCategory')}
+                placeholder={t('forms.document.placeholderDocumentNumber')}
                 hasError={!!errors.documentNumber}
                 {...register('documentNumber')}
               />
@@ -238,7 +281,7 @@ const DocumentFormPage: React.FC = () => {
             <FormField label={t('forms.document.labelVersion')}>
               <Input value={String(existingDocument?.docVersion ?? 1)} disabled />
             </FormField>
-            {(watchedCategory === 'DRAWING' || watchedCategory === 'SPECIFICATION') && (
+            {(watchedCategory === 'DRAWING' || watchedCategory === 'SPECIFICATION' || watchedCategory === 'DESIGN_DOC') && (
               <FormField label={t('documents.pdSection.label')} error={errors.pdSection?.message}>
                 <Select
                   options={pdSectionOptions}
@@ -314,6 +357,42 @@ const DocumentFormPage: React.FC = () => {
           >
             {t('common.back')}
           </Button>
+          {isEdit && (
+            <>
+              {showDeleteConfirm ? (
+                <div className="flex items-center gap-2 ml-auto">
+                  <span className="text-sm text-danger-600 dark:text-danger-400">{t('forms.document.deleteConfirm')}</span>
+                  <Button
+                    type="button"
+                    variant="danger"
+                    size="sm"
+                    loading={deleteMutation.isPending}
+                    onClick={() => deleteMutation.mutate()}
+                  >
+                    {t('common.delete')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="ml-auto text-danger-600 hover:text-danger-700 dark:text-danger-400"
+                  iconLeft={<Trash2 size={16} />}
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  {t('forms.document.deleteBtn')}
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </form>
     </div>

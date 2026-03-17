@@ -118,8 +118,8 @@ app:
   dadata:
     token: ${DADATA_TOKEN:}
   chekka:
-    api-key: ${CHEKKA_API_KEY:}
-    base-url: ${CHEKKA_BASE_URL:https://api.chekka.ru}
+    api-key: ${CHEKKA_API_KEY:gDNKuDwmiYCKzKat}
+    base-url: ${CHEKKA_BASE_URL:https://api.checko.ru}
   ai:
     provider: openai
     api-key: ${AI_API_KEY:}

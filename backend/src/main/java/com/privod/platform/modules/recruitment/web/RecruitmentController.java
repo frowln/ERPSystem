@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/recruitment")
+@RequestMapping("/api/recruitment")
 @RequiredArgsConstructor
 @Tag(name = "Recruitment", description = "Recruitment management endpoints")
 public class RecruitmentController {

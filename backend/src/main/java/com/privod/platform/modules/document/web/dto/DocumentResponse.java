@@ -18,6 +18,7 @@ public record DocumentResponse(
         DocumentStatus status,
         String statusDisplayName,
         UUID projectId,
+        String projectName,
         UUID contractId,
         String description,
         String fileName,
@@ -37,10 +38,18 @@ public record DocumentResponse(
         String createdBy
 ) {
     public static DocumentResponse fromEntity(Document document) {
-        return fromEntity(document, null);
+        return fromEntity(document, null, null);
+    }
+
+    public static DocumentResponse fromEntity(Document document, String projectName) {
+        return fromEntity(document, null, projectName);
     }
 
     public static DocumentResponse fromEntity(Document document, List<DocumentAccessResponse> accessList) {
+        return fromEntity(document, accessList, null);
+    }
+
+    public static DocumentResponse fromEntity(Document document, List<DocumentAccessResponse> accessList, String projectName) {
         return new DocumentResponse(
                 document.getId(),
                 document.getTitle(),
@@ -50,6 +59,7 @@ public record DocumentResponse(
                 document.getStatus(),
                 document.getStatus().getDisplayName(),
                 document.getProjectId(),
+                projectName,
                 document.getContractId(),
                 document.getDescription(),
                 document.getFileName(),

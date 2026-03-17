@@ -299,6 +299,26 @@ export const financeApi = {
     await apiClient.post(`/competitive-lists/${competitiveListId}/send-rfq`, supplierIds);
   },
 
+  bulkAddEntries: async (competitiveListId: string, entries: Partial<CompetitiveListEntry>[]): Promise<CompetitiveListEntry[]> => {
+    const response = await apiClient.post<CompetitiveListEntry[]>(`/competitive-lists/${competitiveListId}/entries/bulk`, { entries });
+    return response.data;
+  },
+
+  rejectEntry: async (competitiveListId: string, entryId: string, rejectionType: string, rejectionReason?: string): Promise<CompetitiveListEntry> => {
+    const response = await apiClient.patch<CompetitiveListEntry>(
+      `/competitive-lists/${competitiveListId}/entries/${entryId}/reject`,
+      { rejectionType, rejectionReason },
+    );
+    return response.data;
+  },
+
+  unrejectEntry: async (competitiveListId: string, entryId: string): Promise<CompetitiveListEntry> => {
+    const response = await apiClient.patch<CompetitiveListEntry>(
+      `/competitive-lists/${competitiveListId}/entries/${entryId}/unreject`,
+    );
+    return response.data;
+  },
+
   // Invoice Matching
   matchInvoiceToPositions: async (invoiceId: string, budgetId: string): Promise<InvoiceMatchCandidate[]> => {
     const response = await apiClient.get<InvoiceMatchCandidate[]>(`/invoices/${invoiceId}/matches`, {

@@ -147,6 +147,77 @@ export interface ChekkaRiskResponse {
   legalAddress: string | null;
   lastUpdated: string | null;
   error: string | null;
+  // Extended Checko data
+  ogrn?: string | null;
+  kpp?: string | null;
+  okpo?: string | null;
+  fullName?: string | null;
+  shortName?: string | null;
+  statusName?: string | null;
+  registrationDate?: string | null;
+  region?: string | null;
+  mainOkved?: string | null;
+  directors?: CheckoDirector[] | null;
+  founders?: CheckoFounder[] | null;
+  capitalType?: string | null;
+  capitalAmount?: number | null;
+  employeeCount?: number | null;
+  employeeCountYear?: number | null;
+  checkoPhone?: string | null;
+  checkoEmail?: string | null;
+  taxAuthorityName?: string | null;
+  taxAuthorityCode?: string | null;
+  licenses?: CheckoLicense[] | null;
+  additionalOkveds?: CheckoOkved[] | null;
+  unfairSupplier?: boolean | null;
+  disqualifiedPersons?: boolean | null;
+  massDirector?: boolean | null;
+  massFounder?: boolean | null;
+  illegalFinancing?: boolean | null;
+  hasSanctions?: boolean | null;
+  sanctionsFounders?: boolean | null;
+  smeCategory?: string | null;
+  financials?: CheckoFinancials | null;
+}
+
+export interface CheckoDirector {
+  fullName: string;
+  position: string;
+  inn: string | null;
+  massDirector: boolean;
+  disqualified: boolean;
+}
+
+export interface CheckoFounder {
+  name: string;
+  inn: string | null;
+  share: string | null;
+}
+
+export interface CheckoLicense {
+  number: string | null;
+  type: string | null;
+  issuedBy: string | null;
+  dateStart: string | null;
+  dateEnd: string | null;
+}
+
+export interface CheckoOkved {
+  code: string;
+  name: string;
+}
+
+export interface CheckoFinancials {
+  year: number;
+  revenue: number | null;
+  costOfSales: number | null;
+  grossProfit: number | null;
+  netProfit: number | null;
+  totalAssets: number | null;
+  totalLiabilities: number | null;
+  equity: number | null;
+  currentAssets: number | null;
+  fixedAssets: number | null;
 }
 
 export interface ProcurementComplianceResult {
