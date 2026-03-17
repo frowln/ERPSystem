@@ -111,9 +111,15 @@ export const VendorPriceCell: React.FC<VendorPriceCellProps> = ({
         )}
       </div>
 
-      {/* Context menu button */}
+      {/* Context menu button — always visible when menu is open */}
       {!disabled && (
-        <div className="absolute top-0.5 right-0.5 hidden group-hover/cell:block" ref={menuRef}>
+        <div
+          ref={menuRef}
+          className={cn(
+            'absolute top-0.5 right-0.5',
+            menuOpen ? 'block' : 'hidden group-hover/cell:block',
+          )}
+        >
           <button
             onClick={(e) => { e.stopPropagation(); setMenuOpen(!menuOpen); }}
             className="p-0.5 rounded hover:bg-neutral-200 dark:hover:bg-neutral-600"
@@ -121,7 +127,10 @@ export const VendorPriceCell: React.FC<VendorPriceCellProps> = ({
             <MoreHorizontal size={12} />
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-5 z-50 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-md shadow-lg py-1 min-w-[160px]">
+            <div
+              className="absolute right-0 top-5 z-50 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-md shadow-lg py-1 min-w-[180px]"
+              onClick={(e) => e.stopPropagation()}
+            >
               {!isWinner && !isRejected && (
                 <MenuItem onClick={() => { onSelect(); setMenuOpen(false); }}>
                   {t('competitiveList.matrix.selectWinner')}
