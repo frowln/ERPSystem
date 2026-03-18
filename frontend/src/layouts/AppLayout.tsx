@@ -8,6 +8,7 @@ import { useSidebarStore } from '@/stores/sidebarStore';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import { useWebSocket, useUserNotifications, useBroadcastNotifications } from '@/hooks/useWebSocket';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useModuleVisibilityStore } from '@/stores/moduleVisibilityStore';
 import { tw } from '@/design-system/tokens';
 import { t } from '@/i18n';
 
@@ -125,6 +126,14 @@ export const AppLayout: React.FC = () => {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Load module visibility settings on auth
+  const fetchDisabledModules = useModuleVisibilityStore((s) => s.fetchDisabledModules);
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDisabledModules();
+    }
+  }, [isAuthenticated, fetchDisabledModules]);
 
   // Show onboarding wizard on first login
   useEffect(() => {

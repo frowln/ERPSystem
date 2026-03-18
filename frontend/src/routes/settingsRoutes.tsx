@@ -69,6 +69,7 @@ const TenantManagementPage = lazy(() => import('@/modules/admin/TenantManagement
 const ErrorLogPage = lazy(() => import('@/modules/admin/ErrorLogPage'));
 const CustomFieldsPage = lazy(() => import('@/modules/admin/CustomFieldsPage'));
 const SsoSettingsPage = lazy(() => import('@/modules/admin/SsoSettingsPage'));
+const ModuleManagerPage = lazy(() => import('@/modules/admin/ModuleManagerPage'));
 
 // Settings: Automation, EDO, Notifications, Profile
 const AutomationBuilderPage = lazy(() => import('@/modules/settings/automation/AutomationBuilderPage'));
@@ -121,6 +122,7 @@ export function settingsRoutes() {
 
       {/* Admin Module (ADMIN only) */}
       <Route path="admin/dashboard" element={<ProtectedRoute requiredRoles={['ADMIN']}><AdminDashboardPage /></ProtectedRoute>} />
+      <Route path="admin/modules" element={<ProtectedRoute requiredRoles={['ADMIN']}><ModuleManagerPage /></ProtectedRoute>} />
       <Route path="admin/users/import" element={<ProtectedRoute requiredRoles={['ADMIN']}><BulkUserImportPage /></ProtectedRoute>} />
       <Route path="admin/departments" element={<ProtectedRoute requiredRoles={['ADMIN']}><DepartmentPage /></ProtectedRoute>} />
       <Route path="admin/security" element={<ProtectedRoute requiredRoles={['ADMIN']}><SecuritySettingsPage /></ProtectedRoute>} />

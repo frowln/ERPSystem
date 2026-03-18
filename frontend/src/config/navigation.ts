@@ -508,6 +508,7 @@ export const navigation: NavGroup[] = [
   // ── Администрирование ──────────────────────────────────────────────────
   navGroup('admin', Settings, [
     navItem('adm-dashboard', LayoutDashboard, '/admin/dashboard'),
+    navItem('adm-modules', Layers, '/admin/modules'),
     navItem('adm-users', UserCog, '/admin/users'),
     navItem('adm-permissions', Shield, '/admin/permissions'),
     navItem('adm-departments', Building2, '/admin/departments'),

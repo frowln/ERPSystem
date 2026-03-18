@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import { usePermissions } from '@/hooks/usePermissions';
 import { navigation, type NavItem, type NavGroup } from '@/config/navigation';
+import { useModuleVisibilityStore } from '@/stores/moduleVisibilityStore';
 import { tw } from '@/design-system/tokens';
 import { t } from '@/i18n';
 
@@ -160,17 +161,19 @@ export const Sidebar: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { canAccess } = usePermissions();
+  const isModuleEnabled = useModuleVisibilityStore((s) => s.isModuleEnabled);
 
-  // Filter navigation items based on user permissions
+  // Filter navigation items based on user permissions AND module visibility
   const filteredNavigation = useMemo(
     () =>
       navigation
+        .filter((group) => isModuleEnabled(group.id))
         .map((group) => ({
           ...group,
-          items: group.items.filter((item) => canAccess(item.href)),
+          items: group.items.filter((item) => canAccess(item.href) && isModuleEnabled(item.id)),
         }))
         .filter((group) => group.items.length > 0),
-    [canAccess],
+    [canAccess, isModuleEnabled],
   );
 
   // Track which groups are expanded
