@@ -42,6 +42,37 @@
 9. [NICE] [INFRA] Infrastructure as Code (Terraform) для воспроизводимых окружений
 10. [NICE] [MOBILE] Отдельная мобильная навигация (не просто адаптивный desktop)
 
+## UX Navigation (Сессия 1.UX) — 2026-03-18
+
+### MUST
+
+1. [MUST] [UX-NAV] Ролевая фильтрация навигации — прораб видит 5-7 пунктов, не 185. Admin настраивает наборы модулей по ролям (как Buildertrend)
+2. [MUST] [UX-NAV] Сократить 24 группы → 10 групп, ~185 пунктов → ~60. Объединить дублирующие пункты (6+), убрать настроечные вглубь
+3. [MUST] [UX-NAV] Вынести Портал подрядчика на отдельный URL/интерфейс — это НЕ пункт сайдбара основного пользователя
+4. [MUST] [UX-NAV] Удалить дублирующие пункты: наряд-заказы ×2, штатное ×2, табели ×2, М-29 ×2, реестр дефектов vs дефекты
+5. [MUST] [UX-NAV] Переименовать 10+ непонятных названий: RFI→Запросы на разъяснение, Сабмиталы→Согласование материалов, CDE→Общая среда данных, Quality Gates→Контрольные точки
+6. [MUST] [UX-NAV] Мессенджер/Почта/Согласования/Уведомления → кнопки в хедере с badge, не группы сайдбара
+7. [MUST] [UX-NAV] Поднять «Журналы работ» и «Входящие согласования» — ежедневные функции, сейчас спрятаны в группах 5 и 18 из 24
+
+### SHOULD
+
+8. [SHOULD] [UX-NAV] Проектно-центричная навигация (как Procore): выбрал объект → видишь инструменты этого объекта
+9. [SHOULD] [UX-NAV] Cmd+K/Ctrl+K поиск по всем разделам — альтернатива скроллингу 185 пунктов
+10. [SHOULD] [UX-NAV] Финансы: 29 → 7 пунктов (объединить Бюджеты+ФМ, Счета+Платежи, ДДС+Графики, убрать бухгалтерское вглубь)
+11. [SHOULD] [UX-NAV] Кадры: 28 → 7 пунктов (объединить Табели 4→1, Отпуска 4→1, СМЗ 3→1)
+12. [SHOULD] [UX-NAV] Качество: 27 → 7+5 (разделить на «Качество» и «Регуляторика», убрать дубли)
+13. [SHOULD] [UX-NAV] Снабжение: 27 → 6 (объединить Склады+Остатки+Материалы, ЛЗК+ЛЗВ)
+14. [SHOULD] [UX-NAV] Документы: 20 → 7 (убрать 1С-настройки в Админ, AI-распознавание внутрь, объединить КС-2/КС-3/Документы РФ)
+15. [SHOULD] [UX-NAV] «Избранное/закреплённые» — пользователь сам закрепляет 5 самых нужных страниц
+16. [SHOULD] [UX-NAV] Один раздел «Аналитика» с табами вместо 12+ отдельных дашбордов
+
+### NICE
+
+17. [NICE] [UX-NAV] Персональный дашборд «Мой день» — задачи на сегодня, согласования, просрочки, погода
+18. [NICE] [UX-NAV] Мобильная навигация — 5 пунктов bottom tab: Объекты, Журнал, Задачи, Фото, Ещё
+19. [NICE] [UX-NAV] Отчёт для заказчика «в 1 клик» — КС-2 + КС-3 + фото + журнал → PDF пакет
+20. [NICE] [UX-NAV] Виджет погоды на объекте (привязка к геолокации) в Журнале работ
+
 ## Finance Module (Сессия 1.1)
 
 11. [MUST] [FINANCE] Поддержка авансов и их зачёта — критическая функция для строительных контрактов
@@ -744,3 +775,98 @@
 488. [NICE] [ADMIN-LOGIC] FeatureFlag per-tenant scope (1 день)
 489. [NICE] [ADMIN-TEST] Frontend component tests для admin pages (2 дня)
 490. [NICE] [ADMIN-UX] KB CRUD в admin panel (2 дня)
+
+## Architecture / Infrastructure / Security (Сессия 1.X — 2026-03-18)
+
+### Must Have
+
+491. [MUST] [SECURITY] Исправить SQL injection в PortalDataProxyController — parameterized queries вместо string concat (1 день)
+492. [MUST] [SECURITY] PostgreSQL RLS на tenant-scoped таблицы — 4-й слой защиты (3 дня)
+493. [MUST] [SECURITY] Добавить organizationId + @Filter на 120+ бизнес-entities без tenant isolation (1 неделя)
+494. [MUST] [SECURITY] Убрать hardcoded credentials из docker-compose.server.yml — require env vars без defaults (1 час)
+495. [MUST] [SECURITY] JWT secret validation → throw exception вместо warning в prod (1 час)
+496. [MUST] [SECURITY] CORS: заменить allowedHeaders(*) на явный список (Content-Type, Authorization, Accept) (30 мин)
+497. [MUST] [SECURITY] Tenant prefix в MinIO key path: `{prefix}/{organizationId}/{UUID}.{ext}` (2 часа)
+498. [MUST] [SECURITY] Tenant namespace в кэш ключи: `{cacheName}:{orgId}:{key}` (2 часа)
+499. [MUST] [INFRA] SAST/DAST в CI — SonarQube/Semgrep + Trivy (1 день)
+500. [MUST] [COMPLIANCE] Модель угроз ИСПДн для 152-ФЗ (юрист, 2 дня)
+501. [MUST] [COMPLIANCE] Приказ о назначении ответственного за ПДн (юрист, 1 день)
+
+### Should Have
+
+502. [SHOULD] [SECURITY] JWT access token lifetime → 15-30 мин (1 час)
+503. [SHOULD] [SECURITY] JWT key rotation mechanism — scheduled или при компрометации (2 дня)
+504. [SHOULD] [SECURITY] WebSocket аутентификация при HTTP upgrade (1 день)
+505. [SHOULD] [SECURITY] PII masking в logback — regex replacement для email, password, ИНН (1 день)
+506. [SHOULD] [INFRA] Structured JSON logging (logstash-logback-encoder) (1 день)
+507. [SHOULD] [INFRA] Log aggregation — Loki + Grafana или ELK (2 дня)
+508. [SHOULD] [INFRA] Sentry error tracking (frontend + backend) (1 день)
+509. [SHOULD] [INFRA] Auto-rollback при failed health check в deploy pipeline (1 день)
+510. [SHOULD] [INFRA] Automated backup restore testing — weekly scheduled (1 день)
+511. [SHOULD] [INFRA] External uptime monitoring (UptimeRobot / Better Uptime) (1 час)
+512. [SHOULD] [INFRA] Status page для клиентов (status.privod.ru) (1 день)
+513. [SHOULD] [PERF] ApiRateLimitService → Redis-backed distributed counters (1 день)
+514. [SHOULD] [DB] Composite indexes: daily_reports(project_id, date), tasks(project_id, assignee_id) (1 час)
+515. [SHOULD] [DB] Notifications cleanup policy — TTL 90 дней, scheduled job (2 часа)
+516. [SHOULD] [DB] Flyway validate-on-migrate: true в production profile (30 мин)
+517. [SHOULD] [INFRA] Dependency vulnerability scanning (Dependabot/Snyk) в CI (1 час)
+518. [SHOULD] [SECURITY] File upload rate limiting + max-file-size → 500MB (1 час)
+519. [SHOULD] [INFRA] DR plan contacts заполнить реальными данными (1 час)
+
+### Nice to Have
+
+520. [NICE] [INFRA] PgBouncer для connection multiplexing (1 день)
+521. [NICE] [INFRA] Grafana dashboards для Prometheus metrics (2 дня)
+522. [NICE] [INFRA] RUM (Real User Monitoring) — frontend performance (1 день)
+523. [NICE] [INFRA] Blue-green deployments с auto-rollback (3 дня)
+524. [NICE] [INFRA] Let's Encrypt auto-renewal (certbot) (2 часа)
+525. [NICE] [INFRA] HashiCorp Vault для secrets management (1 неделя)
+526. [NICE] [INFRA] Kubernetes migration для multi-region HA (2-4 недели)
+527. [NICE] [INFRA] Infrastructure as Code (Terraform) (1 неделя)
+528. [NICE] [PERF] k6/Gatling load testing suite (3 дня)
+529. [NICE] [DB] iot_sensor_data partitioning (2 часа)
+530. [NICE] [SECURITY] CSP nonce-based вместо unsafe-inline (1 день)
+531. [NICE] [INFRA] CORS maxAge → 300-600 sec (30 мин)
+
+## Конкурентный анализ — ТОП-20 фич (Сессия COMPETITORS, 2026-03-18)
+
+> Источник: `COMPETITORS.md` — анализ 13 конкурентов (6 РФ + 7 мир)
+> Фичи, которые есть у конкурентов и отсутствуют у PRIVOD
+
+### Must Steal (критически важно для конкуренции)
+
+532. [MUST] [AI] AI Agent Builder (no-code) — пользователь создаёт AI-агентов через промпты. Готовые агенты: RFI Creation, Daily Log, КС-2 Checker (ref: Procore)
+533. [MUST] [AI] Photo AI / Computer Vision — AI-анализ фото стройки: прогресс, дефекты (трещины, повреждения), безопасность (ref: Procore, PlanRadar, Buildots)
+534. [MUST] [AI] OCR распознавание счетов/УПД — автоматическое считывание данных из сканов с автосверкой по заказам (ref: PUSK.APP)
+535. [MUST] [PRICING] Free Tier — бесплатный тариф для 3-5 юзеров / 3 проектов, генерирует bottom-up adoption (ref: Fieldwire, MacroERP)
+536. [MUST] [AI] Предиктивная аналитика — предсказание задержек, перерасхода, рисков на основе данных проектов (ref: Pragmacore, Procore Insights)
+537. [MUST] [AI] AI-ассистент для российского строительного права — NLP-агент понимающий КС-2, ГЭСН, НДС, ГОСТ, СП (уникальная возможность — никто не делает)
+
+### Should Steal (конкурентное преимущество)
+
+538. [SHOULD] [MOBILE] Нативное мобильное приложение (React Native) — не только PWA. Оффлайн для прорабов/кладовщиков (ref: PUSK, БИТ, Procore, Fieldwire)
+539. [SHOULD] [FIELD] 360° фотодокументация на поэтажных планах с хронологией (ref: PlanRadar, OpenSpace)
+540. [SHOULD] [FIELD] Plan-centric дефект-трекинг — тикеты прямо на чертеже, кликнул место → замечание с фото (ref: PlanRadar)
+541. [SHOULD] [AI] Кросс-проектный анализ паттернов — скоринг подрядчиков, типичные задержки, бюджетные проблемы по портфелю (ref: Fieldwire)
+542. [SHOULD] [SECURITY] Unalterable audit trail — immutable, append-only, cryptographic hash для судебных споров (ref: Aconex)
+543. [SHOULD] [AI] AI классификация материалов — автоприсвоение категорий из Excel/смет/BIM (ref: Pragmacore)
+544. [SHOULD] [BIM] BIM viewer 1 ГБ+ федеративный — orbit/walk/measure/metadata в браузере (ref: Fieldwire, Aconex)
+545. [SHOULD] [PORTAL] Клиентский портал с AI-обновлениями — автогенерация отчётов из фото для заказчика (ref: Buildertrend)
+546. [SHOULD] [AI] AI генерация submittals из спецификаций — загрузил спеку → AI создаёт submittal (ref: Fieldwire)
+547. [SHOULD] [PORTAL] Selections management — клиент выбирает отделку/материалы с ценами и дедлайнами решений (ref: Buildertrend, CoConstruct)
+
+### Nice to Steal
+
+548. [NICE] [FIELD] Takeoff из цифровых планов — измерения (линейные, площади, количества) из чертежей (ref: Buildertrend)
+549. [NICE] [AI] AI предсказание инцидентов безопасности — еженедельные алерты с митигацией (ref: Oracle Advisor for Safety)
+550. [NICE] [AI] Генеративное планирование — перебор миллионов вариантов расписания для оптимального (ref: ALICE Technologies)
+551. [NICE] [MARKETING] Email-маркетинг встроенный — рассылки клиентам из системы (ref: Buildertrend)
+552. [NICE] [MODULE] Facility Management — управление объектом после сдачи: recurring maintenance, заявки, SLA (ref: PlanRadar)
+
+### 5 уникальных возможностей PRIVOD (подробности в COMPETITORS.md часть 6)
+
+553. [STRATEGIC] [UNIQUE] "Полная российская цепочка Смета→КЛ→ФМ→КП→КС-2→КС-3→1С" — ни один конкурент не покрывает полностью
+554. [STRATEGIC] [UNIQUE] "AI-ассистент российского строительного права" — Procore Assist не знает ГЭСН/КС-2/НДС
+555. [STRATEGIC] [UNIQUE] "Scoring подрядчиков по реальным данным проектов" — Fieldwire близко, но нет российской специфики
+556. [STRATEGIC] [UNIQUE] "Document Chain Intelligence" — AI валидация полноты документальной цепочки
+557. [STRATEGIC] [UNIQUE] "Мультиязычный SaaS для СНГ (ru/en/kz/uz)" — 1С только русский, Procore нет российского compliance

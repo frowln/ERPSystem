@@ -762,3 +762,58 @@
 3. [P4] [CODE] DataTable CSV export не вызывает `t()` для заголовков — экспортирует raw keys | `frontend/src/design-system/components/DataTable/index.tsx:258`
 4. [P4] [CODE] Swagger UI exposed by default (application-prod.yml отключает, но по умолчанию открыт) | `backend/src/main/resources/application.yml`
 5. [P4] [LOGGING] com.privod DEBUG level в base config — verbose для production | `backend/src/main/resources/application.yml`
+
+## Architecture Audit (Сессия 1.X — 2026-03-18)
+
+### P1 — Critical
+
+479. [P1] [SECURITY] **SQL Injection в PortalDataProxyController** — 7 мест строковой конкатенации user input в SQL. `" AND c.status = '" + status + "'"` → полный доступ к БД | `PortalDataProxyController.java:97,134,267,268,421,422,74-79` | **Сессия 1.X**
+480. [P1] [SECURITY] **324 entities (53%) без organizationId/@Filter** — системная cross-tenant утечка. BIM 11, IoT 5, Leave 3, Payroll 2, Recruitment 3, Design 3, Portal 3, Dashboard 3, Maintenance 5, Email 1 — бизнес-данные видны всем тенантам | **Сессия 1.X**
+481. [P1] [SECURITY] **PostgreSQL RLS отсутствует** — native SQL queries (вкл. PortalDataProxyController) обходят Hibernate @Filter. Нет 4-го слоя защиты | Все миграции | **Сессия 1.X**
+482. [P1] [SECURITY] **MinIO без tenant prefix** — файлы хранятся как `attachments/{UUID}.ext`. Знание UUID = доступ к чужому файлу через S3 API | `S3StorageService.java:47-57` | **Сессия 1.X**
+483. [P1] [SECURITY] **JWT secret validation = warning-only** — приложение запускается со слабым/дефолтным секретом, все JWT подделываемы | `JwtTokenProvider.java:44-47` | **Сессия 1.X**
+484. [P1] [SECURITY] **Hardcoded production credentials в git** — Postgres, Redis, MinIO, JWT passwords с fallback defaults видны в репозитории | `docker-compose.server.yml:14,50,77,82,87` | **Сессия 1.X**
+485. [P1] [SECURITY] **Hardcoded Chekka API key** — `gDNKuDwmiYCKzKat` в application.yml | `application.yml:121` | **Сессия 1.X**
+486. [P1] [SECURITY] **CORS allowedHeaders(*) + credentials(true)** — RFC 6454 нарушение, arbitrary header injection в cross-origin | `SecurityConfig.java:105`, `WebConfig.java:26-27` | **Сессия 1.X**
+487. [P1] [SECURITY] **WebSocket /ws/** permitAll** — upgrade без аутентификации | `SecurityConfig.java:57` | **Сессия 1.X**
+488. [P1] [SECURITY] **Redis/cache без tenant namespace** — permissionModelAccess кэш shared между тенантами, cache poisoning | `CacheConfig.java:14-20` | **Сессия 1.X**
+489. [P1] [PERF] **ApiRateLimitService in-memory counters** — ConcurrentHashMap вместо Redis, multi-instance = rate limit bypass (3x) | `ApiRateLimitService.java:32` | **Сессия 1.X**
+490. [P1] [COMPLIANCE] **PII не маскируется в логах** — email, пароли, ИНН, СНИЛС могут попасть в stdout → нарушение 152-ФЗ | `logback-spring.xml` | **Сессия 1.X**
+
+### P2 — High
+
+491. [P2] [SECURITY] **200+ GET endpoints без @PreAuthorize** (суммарно по аудитам 1.1-1.26) — аутентифицированный пользователь видит данные без role check | Множество контроллеров | **Сессия 1.X**
+492. [P2] [SECURITY] **JWT access token 24h** — слишком долгий lifetime, украденный токен действует сутки | `JwtTokenProvider.java` | **Сессия 1.X**
+493. [P2] [SECURITY] **JWT key rotation отсутствует** — статический HMAC ключ, компрометация = долгосрочный доступ | `JwtTokenProvider.java` | **Сессия 1.X**
+494. [P2] [SECURITY] **CSP unsafe-inline** в nginx — XSS vector через инлайн-скрипты | `nginx.conf` | **Сессия 1.X**
+495. [P2] [SECURITY] **File upload 5GB/10GB без rate limit** — DoS через заполнение диска | `application.yml` | **Сессия 1.X**
+496. [P2] [INFRA] **Нет SAST/DAST в CI pipeline** — уязвимости не обнаруживаются автоматически | `.github/workflows/ci.yml` | **Сессия 1.X**
+497. [P2] [INFRA] **Нет dependency scanning** (Dependabot/Snyk) — vulnerable deps не обнаруживаются | `.github/workflows/ci.yml` | **Сессия 1.X**
+498. [P2] [INFRA] **Нет log aggregation** — stdout only, нет ELK/Loki, расследование инцидентов затруднено | `logback-spring.xml` | **Сессия 1.X**
+499. [P2] [INFRA] **Нет structured JSON logging** — plain text усложняет парсинг и алертинг | `logback-spring.xml` | **Сессия 1.X**
+500. [P2] [INFRA] **Нет auto-rollback** при failed health check после deploy | `.github/workflows/deploy.yml` | **Сессия 1.X**
+501. [P2] [INFRA] **Backup restore не тестируется** — pg_dump без validate, нет scheduled restore test | `scripts/backup-db.sh` | **Сессия 1.X**
+502. [P2] [INFRA] **DR plan contacts пустые** — Section 3 DR_PLAN.md = шаблон без имён/телефонов | `docs/DR_PLAN.md` | **Сессия 1.X**
+503. [P2] [INFRA] **Нет Sentry** (error tracking) — ошибки фронт/бэк не агрегируются | — | **Сессия 1.X**
+504. [P2] [INFRA] **Нет external uptime monitoring** — если сервер упал, узнаем от пользователей | — | **Сессия 1.X**
+505. [P2] [COMPLIANCE] **152-ФЗ модель угроз ИСПДн отсутствует** | — | **Сессия 1.X**
+506. [P2] [COMPLIANCE] **152-ФЗ назначение ответственного не задокументировано** | — | **Сессия 1.X**
+507. [P2] [DB] **validate-on-migrate: false** — Flyway не проверяет целостность миграций | `application.yml` | **Сессия 1.X**
+508. [P2] [DB] **Global UNIQUE constraints** — Specification.name, PurchaseRequest.name, M29Document.name через все организации | Миграции | **Сессия 1.X**
+
+### P3 — Medium
+
+509. [P3] [PERF] **N+1 User.roles EAGER** — @ManyToMany(fetch=EAGER) каждый findById = 2 queries | `User.java:82` | **Сессия 1.X**
+510. [P3] [PERF] **Нет PgBouncer** — bottleneck при >100 connections | — | **Сессия 1.X**
+511. [P3] [PERF] **Нагрузочные тесты не проводились** — нет k6/Gatling/JMeter | — | **Сессия 1.X**
+512. [P3] [INFRA] **CORS maxAge 1h** — изменения policy delayed | `SecurityConfig.java:107` | **Сессия 1.X**
+513. [P3] [INFRA] **Certificate renewal не автоматизирован** — нет Let's Encrypt | `nginx.conf` | **Сессия 1.X**
+514. [P3] [INFRA] **AlertManager только Telegram** — нет email fallback | `alertmanager.yml` | **Сессия 1.X**
+515. [P3] [DB] **notifications без cleanup policy** — таблица растёт бесконечно | — | **Сессия 1.X**
+516. [P3] [DB] **daily_reports без composite index** (project_id, date) | — | **Сессия 1.X**
+517. [P3] [INFRA] **Нет Grafana dashboards** — Prometheus без визуализации | — | **Сессия 1.X**
+518. [P3] [INFRA] **Нет status page** для клиентов | — | **Сессия 1.X**
+519. [P3] [INFRA] **Нет RUM** (Real User Monitoring) | — | **Сессия 1.X**
+520. [P3] [SECURITY] **SystemStatus endpoint раскрывает JVM info** — Java version, vendor, memory | `SystemStatusController.java:79-80` | **Сессия 1.X**
+521. [P3] [DB] **out-of-order: true** в Flyway — compliance risk | `application.yml` | **Сессия 1.X**
+522. [P3] [DB] **iot_sensor_data не партиционирована** — 100K-1M rows/day при активных датчиках | — | **Сессия 1.X**

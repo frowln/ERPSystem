@@ -5,9 +5,26 @@
 > КАЖДАЯ сессия заканчивается обновлением этого файла.
 
 ## Текущий статус
-- **Фаза**: 1 (Аудит)
-- **Последняя сессия**: 1.26 (Глубокий аудит legal + mail + messenger + ai + help) — 2026-03-16
-- **Следующая сессия**: Фаза 2 — формирование roadmap и задач (все 26 групп проаудитированы)
+- **Фаза**: 2 НАЧАТА 🚀 — ROADMAP v2 (полное покрытие всех аудитов), 71 задача / 287 сессий / 19 спринтов
+- **Последняя сессия**: 2.0-roadmap v2 (Формирование + кросс-проверка vs ВСЕ аудиты) — 2026-03-19
+- **Следующая сессия**: Спринт 1, задача S1-01 — Fix SQL Injection в PortalDataProxyController
+- **Roadmap**: `phase2-plan/ROADMAP.md` — **71 задач, 7 этапов, 19 спринтов, ~287 сессий Claude Code**
+- **Итоговый отчёт Фазы 1**: `phase1-audit/FINAL-REPORT.md`
+- **Конкурентный анализ**: `COMPETITORS.md` — 13 конкурентов (6 РФ + 7 мир), ТОП-20 фич, 5 уникальных возможностей, positioning
+- **Общая оценка (итоговая)**: 6.2/10 → целевая 9.8/10
+- **Production readiness**: 38% → целевая 99%
+- **Путь к коммерческому запуску**: 19 спринтов × 2 недели = ~9.5 месяцев
+
+### Прогресс по этапам
+| Этап | Спринты | Задач | Сессий | Статус |
+|------|---------|-------|--------|--------|
+| 1. Стабильность (безопасность, tenant isolation) | 1–4 | 20 | 58 | ⏳ Не начат |
+| 2. Ядро (финансы, документы, навигация) | 5–8 | 18 | 84 | ⏳ Не начат |
+| 3. SaaS-ready (мониторинг, тесты, billing) | 9–11 | 13 | 39 | ⏳ Не начат |
+| 4. Продажи (лендинг, демо, юридика, planning) | 12–13 | 5 | 21 | ⏳ Не начат |
+| 5. Масштаб (1С, ЭДО, мобилка, AI) | 14–17 | 5 | 36 | ⏳ Не начат |
+| 6. Стабилизация (module-level P2 bug fixes) | 18 | 6 | 25 | ⏳ Не начат |
+| 7. Конкурентность (AI Agent Builder, Predictive, 360°) | 19 | 4 | 24 | ⏳ Не начат |
 
 ## Ключевые выводы сессии 1.0
 
@@ -54,6 +71,19 @@
 | 1.24 | **admin + settings + subscription + monitoring** | done | 7.5/10 | 3 P1, 6 P2, 12 P3 | 2026-03-16 |
 | 1.25 | **closeout + maintenance (приёмка, гарантии, обслуживание)** | done | 6.5/10 | 5 P1, 11 P2, 11 P3 | 2026-03-16 |
 | 1.26 | **legal + mail + messenger + ai + help (юрид., почта, чат, AI, KB)** | done | 7.0/10 | 2 P1, 8 P2, 12 P3 | 2026-03-16 |
+| 1.X | **architecture + infrastructure + security + production-readiness** | done | 6.0/10 | 12 P1, 18 P2, 14 P3 | 2026-03-18 |
+| 1.UX | **UX-аудит навигации (24 группы, ~185 пунктов, сравнение с 5 конкурентами)** | done | 3.0/10 | — | 2026-03-18 |
+
+## Ключевые выводы UX-аудита навигации
+
+- **24 группы, ~185 пунктов** в сайдбаре. У Procore ~12, у PlanRadar ~7. Перегруз в 10-25x.
+- **5 групп с 20+ пунктами**: Финансы (29!), Кадры (28), Качество (27), Снабжение (27), Документы (20)
+- **6+ дублирующих пунктов**: наряд-заказы ×2, штатное ×2, табели ×2, М-29 ×2, дефекты/реестр дефектов, тендеры ×2
+- **15+ непонятных названий**: RFI, Сабмиталы, CDE, Quality Gates, Хаб прогнозирования, S-кривая ДДС
+- **Портал подрядчика (10 пунктов)** в основном сайдбаре (должен быть отдельный URL)
+- **Ролевая фильтрация не работает**: прораб видит «Калькулятор факторинга» и «IoT датчики»
+- **Рекомендация**: 24 → 10 групп, ~185 → ~60 пунктов, ролевые наборы, проектно-центричная навигация
+- **Подробно**: `phase1-audit/1.UX-navigation.md`
 
 ## Критические находки
 1. Hardcoded credentials в docker-compose (P1)
@@ -207,6 +237,16 @@
 141. **Maintenance — ZERO tenant isolation**: 5 entities без organizationId/@Filter, 24 service метода без SecurityUtils, 11 GET без @PreAuthorize (P1) ← 1.25
 142. **6+ closeout frontend API path mismatches**: commissioning-items, stroynadzor-documents, executive-schemas, warranty-records, templates, zos → 404 (P1) ← 1.25
 143. **computeChecklistMetrics() — FAKE data**: IN_PROGRESS=60%, FAILED=20% — frontend fabricates числа (P1) ← 1.25
+144. **SQL Injection в PortalDataProxyController — 7 мест** строковой конкатенации user input в SQL (P1) ← 1.X
+145. **324 entities (53%) без organizationId/@Filter** — системная cross-tenant утечка (P1) ← 1.X
+146. **PostgreSQL RLS отсутствует** — native queries обходят Hibernate @Filter (P1) ← 1.X
+147. **MinIO без tenant prefix** — UUID файла = cross-tenant access (P1) ← 1.X
+148. **JWT secret validation = warning-only** — приложение стартует со слабым секретом (P1) ← 1.X
+149. **Hardcoded production credentials в git** — DB/Redis/MinIO/JWT passwords (P1) ← 1.X
+150. **CORS allowedHeaders(*) + credentials(true)** — arbitrary header injection (P1) ← 1.X
+151. **Redis/cache без tenant namespace** — permission cache shared cross-tenant (P1) ← 1.X
+152. **ApiRateLimitService in-memory** — multi-instance = rate limit bypass (P1) ← 1.X
+153. **PII не маскируется в логах** — 152-ФЗ violation (P1) ← 1.X
 
 ## Рекомендованный порядок аудита (все 26 групп сайдбара)
 
@@ -279,21 +319,32 @@
 | 26 | knowledge | 1 | 1 | 0 | 0 |
 | | **ИТОГО** | **~200** | **~95 (47%)** | **~85 (43%)** | **~20 (10%)** |
 
-## Статистика
-- Групп сайдбара: 26 (все учтены)
+## Статистика (ФАЗА 1 ЗАВЕРШЕНА ✅)
+- Групп сайдбара: **26 / 26** ✅
 - Страниц в сайдбаре: ~200
-- Модулей проверено (deep dive): обзор + finance + estimates-pricing + closing/russianDocs/execDocs + specifications + contracts + operations-site + safety + quality-regulatory + supply + fleet+iot + planning + tasks+calendar + dashboard+analytics + projects+site-assessments + processes + documents+dataExchange+integration1c + portal + bim + design + workflow+approval + hr+hrRussian + leave+payroll+selfEmployed+recruitment + sales: crm+portfolio+bidManagement+CP+counterparties + **admin+settings+subscription+monitoring** + closeout+maintenance + legal+mail+messenger+ai+help / **26 групп — ВСЕ ПРОВЕРЕНЫ ✅**
-- Багов найдено: 677 (P1: 117, P2: 272, P3: 281, P4: 7)
-- Улучшений предложено: 635 (Must: 129, Should: 356, Nice: 159)
-- Задач в roadmap: 0 (создаются в фазе 2)
-- Задач выполнено: 0
+- Модулей проверено: **ВСЕ 26 групп + архитектура ✅**
+- Итоговый отчёт: **`phase1-audit/FINAL-REPORT.md`** ✅
+- Багов найдено: **721** (P1: 129, P2: 290, P3: 295, P4: 7)
+- Улучшений предложено: **676** (Must: 140, Should: 375, Nice: 171)
+- Критических блокеров продакшена: **15** (см. FINAL-REPORT раздел 2)
+- Средняя оценка модулей: **6.2/10** (min 5.0, max 7.5)
+- Entities без tenant isolation: **40+**
+- Endpoints без @PreAuthorize: **200+**
+- Production readiness: **38%** → целевая **99%**
+- Задач в roadmap: **71** (original 46 + 25 после кросс-проверки)
+- Сессий Claude Code: **~287**
+- Задач выполнено: **0 / 71**
+- Текущий спринт: **1** (Emergency Security)
+- Кросс-проверка vs все аудиты: **ЗАВЕРШЕНА** ✅
+- Product Backlog (P3 + Nice-to-Have): **~500+ пунктов** в Приложении B ROADMAP.md
 
 ## Файлы внешней памяти
+- **`phase1-audit/FINAL-REPORT.md`** — **ИТОГОВЫЙ СВОДНЫЙ ОТЧЁТ АУДИТА** (8 разделов: executive summary, блокеры, карта модулей, баги, improvements, gaps vs gold standard, конкуренты, порядок работы) ✅
 - `01-GOLD-STANDARD.md` — эталон идеальной системы (16 измерений, 38 чекбоксов)
 - `CLAUDE_CODE_MASTER_GUIDE.md` — руководство по промптам для сессий
-- `BUGS.md` — все найденные баги (424 шт)
-- `IMPROVEMENTS.md` — все идеи по улучшению (355 шт)
-- `COMPETITORS.md` — анализ конкурентов (заполняется позже)
+- `BUGS.md` — все найденные баги (721 шт)
+- `IMPROVEMENTS.md` — все идеи по улучшению (676 шт)
+- `COMPETITORS.md` — **ПОЛНЫЙ анализ 13 конкурентов** (6 РФ + 7 мир + 6 AI-инструментов): PUSK.APP, Pragmacore 360, MacroERP, БИТ.СТРОИТЕЛЬСТВО, 1С:ERP УСО, Procore, PlanRadar, Buildertrend, CoConstruct, Fieldwire, Oracle Aconex, Trimble Viewpoint. ТОП-20 фич конкурентов без PRIVOD, 5 возможностей уникального преимущества, positioning vs каждый конкурент. Легкорем исключён (не ПО)
 - `phase1-audit/1.11-projects-site-assessments.md` — **глубокий аудит projects+site-assessments (5.5/10, 5 P1: 2 IDOR milestone+collaborator, ProjectType DB CHECK, SiteAssessment edit сломан + entity/migration divergence. Monte Carlo + 7-RAG Portfolio уникальны. 85 файлов, ~15k LOC)**
 - `phase1-audit/1.0-overview.md` — первичный обзор (полная карта 26 групп, ~200 страниц)
 - `phase1-audit/1.1-finance.md` — **глубокий аудит модуля finance (6.0/10, 4 P1 bugs)**
@@ -319,7 +370,9 @@
 - `phase1-audit/1.22-leave-payroll-selfemployed-recruitment.md` — **глубокий аудит leave+payroll+selfEmployed+recruitment (6.0/10, 7 P1: tenant isolation 3/4 модулей, 28+ GET без PreAuthorize, IDOR approverId. Payroll НДФЛ+ОПС enterprise. SelfEmployed НПД stub. Уникально для стройки)**
 - `phase1-audit/1.23-sales-crm-portfolio-bidmanagement.md` — **глубокий аудит sales: CRM+Portfolio+BidManagement+CP+Counterparties (7.0/10, 4 P1: Dual BidPackage entity (Portfolio без @Filter), BidInvitation/BidEvaluation IDOR, listPackages cross-tenant. 83 backend + 22 frontend, 16 entities, 70+ endpoints, 21 миграций. CRM 8.0: sequential stage machine, Go/No-Go scorecard (15 критериев). Leveling Matrix = уникально. КП chain: Budget→CP→Push-to-FM. DaData/Checko risk scoring. 61 unit тест, 0 BidMgmt тестов)**
 - `phase1-audit/1.26-legal-mail-messenger-ai-help.md` — **глубокий аудит legal+mail+messenger+ai+help (7.0/10, 2 P1: EmailMessage без tenant isolation, AI IDOR resolveConversation. 189 backend + 48 frontend, 45 entities, ~120 endpoints, 13 миграций. Legal (8.0) = эталонная архитектура, уникальная фича (нет у Procore). Messenger (7.5) = enterprise-level с WebRTC calls, reactions, threads. AI (6.0) = multi-provider (OpenAI+GigaChat+YandexGPT), 40% mock (photo/risk). Mail (7.5) = IMAP/SMTP Yandex + 17 email templates + project linking. Help (7.0) = 92 KB статьи, 100+ route→slug context help, SLA ticketing. 0 тестов во всех 5 модулях)**
+- `phase1-audit/1.X-architecture.md` — **полный аудит архитектуры, инфраструктуры, безопасности, production-readiness (6.0/10, 12 P1: SQL injection 7 мест, 324 entities без tenant isolation, нет RLS, MinIO/Redis без tenant namespace, hardcoded secrets в git, JWT secret warning-only, CORS wildcard+creds, PII в логах. Docker 9/10, CI/CD 7/10, DR plan 1000 строк. 3-слойная tenant isolation (47% entities). TLS 1.2+, HSTS, security headers. Нет SAST/DAST, нет load tests, нет Vault)**
 - `phase1-audit/1.24-admin-settings-subscription-monitoring.md` — **глубокий аудит admin+settings+subscription+monitoring (7.5/10, 3 P1: HealthCheck 5/6 fake, BackupService simulated, webhook HMAC optional. ~200 backend + 46 frontend, 67 auth + 36 settings + 16 subscription + 18 monitoring файлов. ЛУЧШИЙ модуль: 3-layer tenant isolation (Hibernate @Filter + TenantFilterInterceptor + service validation), 15 roles × 37 permissions, JWT+TOTP 2FA+BCrypt+RateLimit (Redis+fallback), полный audit trail. Frontend 100% functional/dark/i18n. Уникально: BulkUserImport Russian CSV, RoskomnadzorPage 152-ФЗ, SettingEncryptionService, SsrfProtection. 49 тестов, 0 на subscription/payment/tenant)**
 - `phase1-audit/1.25-closeout-maintenance.md` — **глубокий аудит closeout+maintenance (6.5/10, 5 P1: maintenance ZERO tenant isolation (5 entities, 24 методов), 6 API path mismatches, fake checklist metrics. 11+5 entities, 22+6 frontend pages, 7+1 services. StroynadzorPackageService (9/10) уникально: BFS WBS, 5-source aggregation, TOC+missing report. Closeout backend 8.0, maintenance 4.0. 616 i18n keys)**
-- `phase2-plan/` — roadmap и задачи (фаза 2)
+- `phase1-audit/1.UX-navigation.md` — **UX-аудит навигации глазами прораба/директора (3.0/10 UX, 24 группы → 10, ~185 пунктов → ~60. 6+ дублей, 15+ непонятных названий, 12+ лишних дашбордов. Сравнение с Procore/PlanRadar/pusk.app/Buildertrend/1С:УСП. Ролевые наборы, проектно-центричная навигация, рекомендация по реструктуризации)**
+- **`phase2-plan/ROADMAP.md`** — **ДЕТАЛЬНЫЙ ROADMAP**: 46 задач, 5 этапов, 17 спринтов, ~178 сессий Claude Code. Каждая задача: ID, приоритет, модули, зависимости, объём, описание, критерий готовности, расписание сессий ✅
 - `phase3-execution/` — логи выполнения (фаза 3)
