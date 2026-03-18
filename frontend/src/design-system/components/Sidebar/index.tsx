@@ -161,19 +161,19 @@ export const Sidebar: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { canAccess } = usePermissions();
-  const isModuleEnabled = useModuleVisibilityStore((s) => s.isModuleEnabled);
+  const disabledModules = useModuleVisibilityStore((s) => s.disabledModules);
 
   // Filter navigation items based on user permissions AND module visibility
   const filteredNavigation = useMemo(
     () =>
       navigation
-        .filter((group) => isModuleEnabled(group.id))
+        .filter((group) => !disabledModules.has(group.id))
         .map((group) => ({
           ...group,
-          items: group.items.filter((item) => canAccess(item.href) && isModuleEnabled(item.id)),
+          items: group.items.filter((item) => canAccess(item.href) && !disabledModules.has(item.id)),
         }))
         .filter((group) => group.items.length > 0),
-    [canAccess, isModuleEnabled],
+    [canAccess, disabledModules],
   );
 
   // Track which groups are expanded
